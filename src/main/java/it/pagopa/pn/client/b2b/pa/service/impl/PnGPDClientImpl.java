@@ -1,15 +1,18 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
+import it.pagopa.pn.client.b2b.pa.config.PnBaseUrlConfig;
+import it.pagopa.pn.client.b2b.pa.config.PnExternalApiKeyConfig;
 import it.pagopa.pn.client.b2b.pa.service.IPnGPDClient;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.gpd.ApiClient;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.gpd.api.DebtPositionsApiApi;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.gpd.model.PaymentPositionModel;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.gpd.model.PaymentPositionModelBaseResponse;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.gpd.model.PaymentPositionsInfo;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
 import java.time.LocalDate;
 
 
@@ -17,10 +20,14 @@ import java.time.LocalDate;
 public class PnGPDClientImpl implements IPnGPDClient {
     private final DebtPositionsApiApi debtPositionsApiApi;
 
+    private final String subscriptionApiKey;
+
+    @Autowired
     public PnGPDClientImpl(RestTemplate restTemplate,
-                           @Value("${pn.internal.gpd-base-url}") String deliveryBasePath,
-                           @Value("${pn.external.api-subscription-key}") String key) {
-        this.debtPositionsApiApi = new DebtPositionsApiApi(newApiClient(restTemplate, deliveryBasePath, key));
+                           PnBaseUrlConfig pnBaseUrlConfig,
+                           PnExternalApiKeyConfig pnExternalApiKeyConfig) {
+        this.subscriptionApiKey = pnExternalApiKeyConfig.getSubscriptionApiKey();
+        this.debtPositionsApiApi = new DebtPositionsApiApi(newApiClient(restTemplate, pnBaseUrlConfig.getInternalGdpBaseUrl(), subscriptionApiKey));
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String key) {
@@ -53,6 +60,6 @@ public class PnGPDClientImpl implements IPnGPDClient {
 
     @Override
     public PaymentPositionModel updatePosition(String organizationfiscalcode, String iupd, PaymentPositionModel paymentPositionModel, String xRequestId) throws RestClientException {
-        return debtPositionsApiApi.updatePositionWithHttpInfo(organizationfiscalcode, iupd, paymentPositionModel, xRequestId,false).getBody();
+        return debtPositionsApiApi.updatePositionWithHttpInfo(organizationfiscalcode, iupd, paymentPositionModel, xRequestId, false).getBody();
     }
 }

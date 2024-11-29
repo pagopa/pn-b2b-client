@@ -3,46 +3,42 @@ package it.pagopa.pn.client.b2b.pa.service.impl;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.ApiClient;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.api.LegalFactsApi;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.model.LegalFactDownloadMetadataResponse;
+import it.pagopa.pn.client.b2b.pa.config.PnBaseUrlConfig;
+import it.pagopa.pn.client.b2b.pa.config.PnBearerTokenConfigs;
 import it.pagopa.pn.client.b2b.pa.service.IB2BDeliveryPushServiceClient;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 @Component
 public class B2BDeliveryPushServiceClientImpl implements IB2BDeliveryPushServiceClient {
-
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
     private final String basePath;
-
     private final String marioCucumberBearerToken;
     private final String marioGherkinBearerToken;
     private final String leonardoBearerToken;
     private final String gherkinSrlBearerToken;
     private final String cucumberSpaBearerToken;
+    private final LegalFactsApi legalFactsApi;
 
-    private LegalFactsApi legalFactsApi;
-
-    public B2BDeliveryPushServiceClientImpl(@Value("${pn.bearer-token.user1}") String marioCucumberBearerToken,
-                                            @Value("${pn.bearer-token.user2}") String marioGherkinBearerToken,
-                                            @Value("${pn.bearer-token.user3}") String leonardoBearerToken,
-                                            @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
-                                            @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken,
-                                            RestTemplate restTemplate,
-                                            @Value("${pn.delivery.base-url}") String basePath) {
-        this.basePath = basePath;
-        this.marioCucumberBearerToken = marioCucumberBearerToken;
-        this.marioGherkinBearerToken = marioGherkinBearerToken;
-        this.leonardoBearerToken = leonardoBearerToken;
-        this.gherkinSrlBearerToken = gherkinSrlBearerToken;
-        this.cucumberSpaBearerToken = cucumberSpaBearerToken;
+    @Autowired
+    public B2BDeliveryPushServiceClientImpl(RestTemplate restTemplate,
+                                            PnBearerTokenConfigs pnBearerTokenConfigs,
+                                            PnBaseUrlConfig pnBaseUrlConfig) {
+        this.basePath = pnBaseUrlConfig.getDeliveryBaseUrl();
+        this.marioCucumberBearerToken = pnBearerTokenConfigs.getUser1();
+        this.marioGherkinBearerToken = pnBearerTokenConfigs.getUser2();
+        this.leonardoBearerToken = pnBearerTokenConfigs.getUser3();
+        this.gherkinSrlBearerToken = pnBearerTokenConfigs.getPg1();
+        this.cucumberSpaBearerToken = pnBearerTokenConfigs.getPg2();
         this.restTemplate = restTemplate;
         this.legalFactsApi = new LegalFactsApi(newApiClient(restTemplate, basePath, cucumberSpaBearerToken));
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken) {
         ApiClient newApiClient = new ApiClient(restTemplate);
-        newApiClient.addDefaultHeader("Authorization","Bearer " + bearerToken);
+        newApiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
         newApiClient.setBasePath(basePath);
         return newApiClient;
     }
@@ -54,31 +50,17 @@ public class B2BDeliveryPushServiceClientImpl implements IB2BDeliveryPushService
 
     @Override
     public boolean setBearerToken(BearerTokenType bearerToken) {
-        boolean operation = false;
         switch (bearerToken) {
-            case USER_1 -> {
-                this.legalFactsApi.setApiClient(newApiClient(restTemplate, basePath, marioCucumberBearerToken));
-                operation = true;
-            }
-            case USER_2 -> {
-                this.legalFactsApi.setApiClient(newApiClient(restTemplate, basePath, marioGherkinBearerToken));
-                operation = true;
-            }
-            case USER_3 -> {
-                this.legalFactsApi.setApiClient(newApiClient(restTemplate, basePath, leonardoBearerToken));
-                operation = true;
-            }
-            case PG_1 -> {
-                this.legalFactsApi.setApiClient(newApiClient(restTemplate, basePath, gherkinSrlBearerToken));
-                operation = true;
-            }
-            case PG_2 -> {
-                this.legalFactsApi.setApiClient(newApiClient(restTemplate, basePath, cucumberSpaBearerToken));
-                operation = true;
-            }
+            case USER_1 ->
+                    this.legalFactsApi.setApiClient(newApiClient(restTemplate, basePath, marioCucumberBearerToken));
+            case USER_2 ->
+                    this.legalFactsApi.setApiClient(newApiClient(restTemplate, basePath, marioGherkinBearerToken));
+            case USER_3 -> this.legalFactsApi.setApiClient(newApiClient(restTemplate, basePath, leonardoBearerToken));
+            case PG_1 -> this.legalFactsApi.setApiClient(newApiClient(restTemplate, basePath, gherkinSrlBearerToken));
+            case PG_2 -> this.legalFactsApi.setApiClient(newApiClient(restTemplate, basePath, cucumberSpaBearerToken));
             default -> throw new IllegalStateException("Unexpected value: " + bearerToken);
         }
-        return operation;
+        return true;
     }
 
     @Override

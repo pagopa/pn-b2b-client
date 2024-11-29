@@ -3,9 +3,9 @@ package it.pagopa.pn.client.b2b.pa.service.impl;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.api.mock.ApiClient;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.api.mock.pec.MockReceivedMessagesApi;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.ReceivedMessage;
+import it.pagopa.pn.client.b2b.pa.config.PnBaseUrlConfig;
 import it.pagopa.pn.client.b2b.pa.service.IPnExternalChannelsServiceClient;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -23,23 +23,17 @@ public class PnExternalChannelsServiceClientImpl implements IPnExternalChannelsS
     private final String baseUrlMockConsolidatore;
     private final MockReceivedMessagesApi mockReceivedMessagesApi;
 
-    public PnExternalChannelsServiceClientImpl(
-            RestTemplate restTemplate,
-            @Value("${pn.safeStorage.base-url}") String baseUrlMockConsolidatore,
-            @Value("${pn.externalChannels.base-url}") String extChannelsBasePath,
-            @Value("${pn.dataVault.base-url}") String dataVaultBasePath
-    )
-    {
+    public PnExternalChannelsServiceClientImpl(RestTemplate restTemplate, PnBaseUrlConfig pnBaseUrlConfig) {
         this.restTemplate = restTemplate;
-        this.baseUrlMockConsolidatore = baseUrlMockConsolidatore;
-        this.extChannelsBasePath = extChannelsBasePath;
-        this.dataVaultBasePath = dataVaultBasePath;
-        this.mockReceivedMessagesApi = new MockReceivedMessagesApi( newApiClient( restTemplate, extChannelsBasePath) );
+        this.baseUrlMockConsolidatore = pnBaseUrlConfig.getSafeStorageBaseUrl();
+        this.extChannelsBasePath = pnBaseUrlConfig.getExternalChannelsBaseUrl();
+        this.dataVaultBasePath = pnBaseUrlConfig.getDataVaultBaseUrl();
+        this.mockReceivedMessagesApi = new MockReceivedMessagesApi(newApiClient(restTemplate, extChannelsBasePath));
     }
 
-    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath ) {
+    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath) {
         ApiClient newApiClient = new ApiClient(restTemplate);
-        newApiClient.setBasePath( basePath );
+        newApiClient.setBasePath(basePath);
         return newApiClient;
     }
 

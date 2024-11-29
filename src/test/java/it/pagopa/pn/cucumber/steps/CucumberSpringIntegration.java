@@ -2,8 +2,11 @@ package it.pagopa.pn.cucumber.steps;
 
 import io.cucumber.spring.CucumberContextConfiguration;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
-import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
+import it.pagopa.pn.client.b2b.pa.config.*;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.*;
+import it.pagopa.pn.client.b2b.pa.interop.config.InteropClientConfigs;
+import it.pagopa.pn.client.b2b.pa.interop.config.springconfig.InteropConfiguration;
+import it.pagopa.pn.client.b2b.pa.interop.service.impl.InteropTracingClientImpl;
 import it.pagopa.pn.client.b2b.pa.interop.service.impl.PnPollingInteropTracing;
 import it.pagopa.pn.client.b2b.pa.parsing.config.PnLegalFactTokenProperty;
 import it.pagopa.pn.client.b2b.pa.parsing.config.PnLegalFactTokens;
@@ -14,9 +17,6 @@ import it.pagopa.pn.client.b2b.pa.polling.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.IBffMandateServiceApi;
 import it.pagopa.pn.client.b2b.pa.service.IMandateReverseServiceClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
-import it.pagopa.pn.client.b2b.pa.interop.config.InteropClientConfigs;
-import it.pagopa.pn.client.b2b.pa.interop.config.springconfig.InteropConfiguration;
-import it.pagopa.pn.client.b2b.pa.interop.service.impl.InteropTracingClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.cucumber.interop.utility.TracingFileUtils;
@@ -52,6 +52,13 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnRaddAlternativeClientImpl.class,
         TimingForPolling.class,
         PnB2bClientTimingConfigs.class,
+        PnBearerTokenConfigs.class,
+        PnBearerTokenExternalConfig.class,
+        PnBaseUrlConfig.class,
+        PnOpenSearchConfig.class,
+        PnExternalApiKeyConfig.class,
+        PnInteropConfig.class,
+        PnExternalSenderConfig.class,
         PnPollingFactory.class,
         PnPollingServiceTimelineRapidV25.class,
         PnPollingServiceTimelineRapidV23.class,

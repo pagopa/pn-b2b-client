@@ -13,11 +13,14 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
-import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
+import it.pagopa.pn.client.b2b.pa.config.*;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
-import it.pagopa.pn.client.b2b.pa.service.*;
+import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
+import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
+import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
+import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
@@ -46,7 +49,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.RestClientException;
 
 import java.io.IOException;
 import java.security.SecureRandom;
@@ -111,7 +113,7 @@ public class SharedSteps {
     private final String gherkinSrltaxId = "12666810299";
 
     @Getter
-    private final String cucumberSpataxId = "20517490320"; //
+    private final String cucumberSpataxId = "20517490320";
 
     @Getter
     private SettableApiKey.ApiKeyType apiKeyTypeSetted = SettableApiKey.ApiKeyType.MVP_1;
@@ -156,52 +158,34 @@ public class SharedSteps {
     private List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.ProgressResponseElement> progressResponseElements = null;
 
     @Getter
-    @Setter
-    @Value("${pn.external.bearer-token-pg1.id}")
-    private String idOrganizationGherkinSrl;
+    private final String idOrganizationGherkinSrl;
 
     @Getter
-    @Setter
-    @Value("${pn.external.bearer-token-pg2.id}")
-    private String idOrganizationCucumberSpa;
+    private final String idOrganizationCucumberSpa;
 
     @Getter
     @Setter
     private List<ProgressResponseElementV23> progressResponseElementsV23 = null;
 
-    @Value("${pn.interop.base-url}")
-    private String interopBaseUrl;
+    private final String interopBaseUrl;
 
-    @Value("${pn.interop.token-oauth2.path}")
-    private String tokenOauth2Path;
+    private final String tokenOauth2Path;
 
-    @Value("${pn.interop.token-oauth2.client-assertion}")
-    private String clientAssertion;
+    private final String clientAssertion;
 
     @Value("${pn.external.utilized.pec:testpagopa3@pec.pagopa.it}")
     private String digitalAddress;
+    private final String senderTaxId;
+    private final String senderTaxIdTwo;
+    private final String senderTaxIdGa;
+    private final String senderTaxIdSON;
 
-    @Value("${pn.external.api-key-taxID}")
-    private String senderTaxId;
-
-    @Value("${pn.external.api-key-2-taxID}")
-    private String senderTaxIdTwo;
-
-    @Value("${pn.external.api-key-GA-taxID}")
-    private String senderTaxIdGa;
-
-    @Value("${pn.external.api-key-SON-taxID}")
-    private String senderTaxIdSON;
-
-    @Value("${pn.external.api-key-ROOT-taxID}")
-    private String senderTaxIdROOT;
+    private final String senderTaxIdROOT;
 
     @Getter
-    @Value("${pn.bearer-token.user1.taxID}")
     private String marioCucumberTaxID;
 
     @Getter
-    @Value("${pn.bearer-token.user2.taxID}")
     private String marioGherkinTaxID;
 
     private final ApplicationContext context;
@@ -290,14 +274,15 @@ public class SharedSteps {
     }
 
     @Autowired
-    public SharedSteps(ApplicationContext context, DataTableTypeUtil dataTableTypeUtil, IPnPaB2bClient b2bClient,
-                       PnPaB2bUtils b2bUtils, PnWebRecipientExternalClientImpl webRecipientClient,
-                       PnExternalServiceClientImpl pnExternalServiceClient,
+    public SharedSteps(ApplicationContext context, DataTableTypeUtil dataTableTypeUtil,
+                       IPnPaB2bClient b2bClient, PnPaB2bUtils b2bUtils,
+                       PnWebRecipientExternalClientImpl webRecipientClient, PnExternalServiceClientImpl pnExternalServiceClient,
                        PnWebUserAttributesExternalClientImpl iPnWebUserAttributesClient, IPnWebPaClient webPaClient,
-                       PnServiceDeskClientImpl serviceDeskClient,
-                       PnGPDClientImpl pnGPDClientImpl,
+                       PnServiceDeskClientImpl serviceDeskClient, PnGPDClientImpl pnGPDClientImpl,
                        PnPaymentInfoClientImpl pnPaymentInfoClientImpl, PnB2bClientTimingConfigs timingConfigs,
-                       PnPollingFactory pollingFactory,IPnTosPrivacyClientImpl iPnTosPrivacyClientImpl) {
+                       PnBearerTokenConfigs pnBearerTokenConfigs, PnBaseUrlConfig pnBaseUrlConfig,
+                       PnInteropConfig pnInteropConfig, PnExternalApiKeyConfig pnExternalApiKeyConfig,
+                       PnPollingFactory pollingFactory, IPnTosPrivacyClientImpl iPnTosPrivacyClientImpl) {
         this.context = context;
         this.dataTableTypeUtil = dataTableTypeUtil;
         this.b2bClient = b2bClient;
@@ -313,6 +298,22 @@ public class SharedSteps {
         this.timingConfigs = timingConfigs;
         this.pollingFactory = pollingFactory;
         this.iPnTosPrivacyClientImpl = iPnTosPrivacyClientImpl;
+        this.idOrganizationGherkinSrl = pnBearerTokenConfigs.getIdOrganizationGherkinSrl();
+        this.idOrganizationCucumberSpa = pnBearerTokenConfigs.getIdOrganizationCucumberSpa();
+        this.marioCucumberTaxID = pnBearerTokenConfigs.getUser1TaxID();
+        this.marioGherkinTaxID = pnBearerTokenConfigs.getUser2TaxID();
+        this.interopBaseUrl = pnBaseUrlConfig.getInteropBaseUrl();
+        this.tokenOauth2Path = pnInteropConfig.getTokenOauth2Path();
+        this.clientAssertion = pnInteropConfig.getClientAssertion();
+        this.senderTaxId = pnExternalApiKeyConfig.getSenderTaxId1();
+        this.senderTaxIdTwo = pnExternalApiKeyConfig.getSenderTaxId2();
+        this.senderTaxIdGa = pnExternalApiKeyConfig.getApiKeyTaxIdGA();
+        this.senderTaxIdSON = pnExternalApiKeyConfig.getApiKeyTaxIdSON();
+        this.senderTaxIdROOT = pnExternalApiKeyConfig.getApiKeyTaxIdROOT();
+
+        //TODO MATTEO consiglio inutile di chatGPT
+//        this.marioCucumberTaxID = pnBearerTokenConfigs.getUsers().get("user1").getTaxID();
+//        this.marioGherkinTaxID = pnBearerTokenConfigs.getUsers().get("user2").getTaxID();
     }
 
     @BeforeAll
@@ -1093,7 +1094,6 @@ public class SharedSteps {
     }
 
 
-
     @And("viene verificata la presenza di pec inserite per l'utente {string}")
     public void viewedPecDiPiattaformaDi(String user) {
         selectUser(user);
@@ -1663,7 +1663,6 @@ public class SharedSteps {
             case "v21" -> this.notificationRequestV21.setSenderTaxId(getSenderTaxIdFromProperties(settedPa));
             case "v23" -> this.notificationRequest.setSenderTaxId(getSenderTaxIdFromProperties(settedPa));
             case "v24" -> this.notificationRequestV24.setSenderTaxId(getSenderTaxIdFromProperties(settedPa));
-
         }
     }
 
@@ -2125,7 +2124,7 @@ public class SharedSteps {
             return getSentNotification().getIun();
         } else if (getSentNotificationV25() != null) {
             return getSentNotificationV25().getIun();
-        }else {
+        } else {
             return null;
         }
     }

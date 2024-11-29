@@ -4,6 +4,7 @@ package it.pagopa.pn.client.b2b.pa.service.impl;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.pagopa.pn.client.b2b.pa.config.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
@@ -11,7 +12,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
@@ -47,81 +48,58 @@ import static it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton.ENE
 public class PnExternalServiceClientImpl {
 
     private final RestTemplate restTemplate;
-
     private final String apiKeyMvp1;
     private final String apiKeyMvp2;
     private final String apiKeyGa;
     private final String apiKeySON;
     private final String apiKeyROOT;
-
     private final String safeStorageBasePath;
     private final String gruopInfoBasePath;
     private final String extChannelsBasePath;
-
     private final String deliveryBasePath;
     private final String dataVaultBasePath;
-
-
     private final String enableInterop;
     private final String gherkinSrlBearerToken;
     private final String cucumberSpaBearerToken;
-
     private final String openSearchBaseUrl;
     private final String openSearchUsername;
     private final String openSearchPassword;
-
     private final String basePathWebApi;
-
     private final InteropTokenSingleton interopTokenSingleton;
-
     private final String consolidatoreApiKey;
 
-    public PnExternalServiceClientImpl(
-            RestTemplate restTemplate,
-            InteropTokenSingleton interopTokenSingleton,
-            @Value("${pn.safeStorage.base-url}") String safeStorageBasePath,
-            @Value("${pn.external.base-url}") String gruopInfoBasePath,
-            @Value("${pn.external.api-key}") String apiKeyMvp1,
-            @Value("${pn.external.api-key-2}") String apiKeyMvp2,
-            @Value("${pn.external.api-key-GA}") String apiKeyGa,
-            @Value("${pn.external.api-key-SON}") String apiKeySON,
-            @Value("${pn.external.api-key-ROOT}") String apiKeyROOT,
-            @Value("${pn.interop.enable}") String enableInterop,
-            @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
-            @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken,
-            @Value("${pn.webapi.external.base-url}") String basePathWebApi,
-            @Value("${pn.externalChannels.base-url}") String extChannelsBasePath,
-            @Value("${pn.delivery.base-url}") String deliveryBasePath,
-            @Value("${pn.dataVault.base-url}") String dataVaultBasePath,
-            @Value("${pn.OpenSearch.base-url}") String openSearchBaseUrl,
-            @Value("${pn.OpenSearch.username}") String openSearchUsername,
-            @Value("${pn.OpenSearch.password}") String openSearchPassword,
-            @Value("${pn.consolidatore.api.key}") String consolidatoreApiKey
-    ) {
+    @Autowired
+    public PnExternalServiceClientImpl(RestTemplate restTemplate,
+                                       InteropTokenSingleton interopTokenSingleton,
+                                       PnBearerTokenConfigs pnBearerTokenConfigs,
+                                       PnBaseUrlConfig pnBaseUrlConfig,
+                                       PnOpenSearchConfig pnOpenSearchConfig,
+                                       PnExternalApiKeyConfig pnExternalApiKeyConfig,
+                                       PnInteropConfig pnInteropConfig) {
         this.restTemplate = restTemplate;
-        this.safeStorageBasePath = safeStorageBasePath;
-        this.extChannelsBasePath = extChannelsBasePath;
-        this.deliveryBasePath = deliveryBasePath;
-        this.dataVaultBasePath = dataVaultBasePath;
-        this.gruopInfoBasePath = gruopInfoBasePath;
-        this.basePathWebApi = basePathWebApi;
-        this.apiKeyMvp1 = apiKeyMvp1;
-        this.apiKeyMvp2 = apiKeyMvp2;
-        this.apiKeyGa = apiKeyGa;
-        this.apiKeySON = apiKeySON;
-        this.apiKeyROOT = apiKeyROOT;
+        this.safeStorageBasePath = pnBaseUrlConfig.getSafeStorageBaseUrl();
+        this.extChannelsBasePath = pnBaseUrlConfig.getExternalChannelsBaseUrl();
+        this.deliveryBasePath = pnBaseUrlConfig.getDeliveryBaseUrl();
+        this.dataVaultBasePath = pnBaseUrlConfig.getDataVaultBaseUrl();
+        this.gruopInfoBasePath = pnBaseUrlConfig.getExternalBaseUrl();
+        this.basePathWebApi = pnBaseUrlConfig.getWebApiExternalBaseUrl();
+        this.apiKeyMvp1 = pnExternalApiKeyConfig.getApiKeyMvp1();
+        this.apiKeyMvp2 = pnExternalApiKeyConfig.getApiKeyMvp2();
+        this.apiKeyGa = pnExternalApiKeyConfig.getApiKeyGa();
+        this.apiKeySON = pnExternalApiKeyConfig.getApiKeySON();
+        this.apiKeyROOT = pnExternalApiKeyConfig.getApiKeyROOT();
 
-        this.enableInterop = enableInterop;
+        this.enableInterop = pnInteropConfig.getEnableInterop();
 
         this.interopTokenSingleton = interopTokenSingleton;
 
-        this.gherkinSrlBearerToken = gherkinSrlBearerToken;
-        this.cucumberSpaBearerToken = cucumberSpaBearerToken;
+        this.gherkinSrlBearerToken = pnBearerTokenConfigs.getPg1();
+        this.cucumberSpaBearerToken = pnBearerTokenConfigs.getPg2();
 
-        this.openSearchBaseUrl = openSearchBaseUrl;
-        this.openSearchUsername = openSearchUsername;
-        this.openSearchPassword = openSearchPassword;
-        this.consolidatoreApiKey = consolidatoreApiKey;
+        this.openSearchBaseUrl = pnBaseUrlConfig.getOpenSearchBaseUrl();
+        this.openSearchUsername = pnOpenSearchConfig.getUsername();
+        this.openSearchPassword = pnOpenSearchConfig.getPassword();
+        this.consolidatoreApiKey = pnExternalApiKeyConfig.getConsolidatoreApiKey();
 
     }
 
@@ -159,10 +137,11 @@ public class PnExternalServiceClientImpl {
         this.restTemplate.setRequestFactory(requestFactory);
     }
 
-    public OpenSearchResponse openSearchGetAudit(String audRetentionType,String auditLogType, int numberOfResult){
+    public OpenSearchResponse openSearchGetAudit(String audRetentionType, String auditLogType, int numberOfResult) {
         return openSearchGetAuditWithHttpInfo(audRetentionType, auditLogType, numberOfResult).getBody();
     }
-    private ResponseEntity<OpenSearchResponse> openSearchGetAuditWithHttpInfo(String audRetentionType,String auditLogType, int numberOfResult) throws RestClientException {
+
+    private ResponseEntity<OpenSearchResponse> openSearchGetAuditWithHttpInfo(String audRetentionType, String auditLogType, int numberOfResult) throws RestClientException {
 
         try {
             restTemplateAvoidSSlCertificate();
@@ -170,7 +149,7 @@ public class PnExternalServiceClientImpl {
             throw new RuntimeException(e);
         }
 
-        String postBody = "{\"query\":{\"bool\":{\"must\":{\"match\":{\"aud_type\":\""+auditLogType+"\"}}}},\"size\":"+numberOfResult+",\"sort\":[{\"@timestamp\": \"desc\"}]}";
+        String postBody = "{\"query\":{\"bool\":{\"must\":{\"match\":{\"aud_type\":\"" + auditLogType + "\"}}}},\"size\":" + numberOfResult + ",\"sort\":[{\"@timestamp\": \"desc\"}]}";
 
         final Map<String, Object> uriVariables = new HashMap<>();
 
@@ -179,8 +158,8 @@ public class PnExternalServiceClientImpl {
 
         final HttpHeaders headerParams = new HttpHeaders();
 
-        String usernamePassword = openSearchUsername+":"+openSearchPassword;
-        headerParams.add("Authorization","Basic "+Base64.getEncoder().encodeToString(usernamePassword.getBytes()));
+        String usernamePassword = openSearchUsername + ":" + openSearchPassword;
+        headerParams.add("Authorization", "Basic " + Base64.getEncoder().encodeToString(usernamePassword.getBytes()));
 
         final String[] localVarAccepts = {
                 "application/json", "application/problem+json"
@@ -188,8 +167,9 @@ public class PnExternalServiceClientImpl {
         final List<MediaType> localVarAccept = MediaType.parseMediaTypes(StringUtils.arrayToCommaDelimitedString(localVarAccepts));
         final MediaType localVarContentType = MediaType.APPLICATION_JSON;
 
-        ParameterizedTypeReference<OpenSearchResponse> returnType = new ParameterizedTypeReference<>() {};
-        return invokeAPI(openSearchBaseUrl, "/pn-logs"+audRetentionType+"/_search", HttpMethod.POST, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
+        ParameterizedTypeReference<OpenSearchResponse> returnType = new ParameterizedTypeReference<>() {
+        };
+        return invokeAPI(openSearchBaseUrl, "/pn-logs" + audRetentionType + "/_search", HttpMethod.POST, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
     }
 
 
@@ -220,31 +200,21 @@ public class PnExternalServiceClientImpl {
     }
 
     public List<HashMap<String, String>> paGroupInfo(SettableApiKey.ApiKeyType apiKeyType) throws RestClientException {
-        switch (apiKeyType) {
-            case MVP_1:
-                return paGroupInfoWithHttpInfo(apiKeyMvp1).getBody();
-            case MVP_2:
-                return paGroupInfoWithHttpInfo(apiKeyMvp2).getBody();
-            case GA:
-                return paGroupInfoWithHttpInfo(apiKeyGa).getBody();
-            case SON:
-                return paGroupInfoWithHttpInfo(apiKeySON).getBody();
-            case ROOT:
-                return paGroupInfoWithHttpInfo(apiKeyROOT).getBody();
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (apiKeyType) {
+            case MVP_1 -> paGroupInfoWithHttpInfo(apiKeyMvp1).getBody();
+            case MVP_2 -> paGroupInfoWithHttpInfo(apiKeyMvp2).getBody();
+            case GA -> paGroupInfoWithHttpInfo(apiKeyGa).getBody();
+            case SON -> paGroupInfoWithHttpInfo(apiKeySON).getBody();
+            case ROOT -> paGroupInfoWithHttpInfo(apiKeyROOT).getBody();
+        };
     }
 
     public List<HashMap<String, String>> pgGroupInfo(SettableBearerToken.BearerTokenType settableBearerToken) throws RestClientException {
-        switch (settableBearerToken) {
-            case PG_1:
-                return pgGroupInfoWithHttpInfo(gherkinSrlBearerToken).getBody();
-            case PG_2:
-                return pgGroupInfoWithHttpInfo(cucumberSpaBearerToken).getBody();
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (settableBearerToken) {
+            case PG_1 -> pgGroupInfoWithHttpInfo(gherkinSrlBearerToken).getBody();
+            case PG_2 -> pgGroupInfoWithHttpInfo(cucumberSpaBearerToken).getBody();
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     public String getVerificationCode(String digitalAddress) {
@@ -265,7 +235,7 @@ public class PnExternalServiceClientImpl {
 
         final HttpHeaders headerParams = new HttpHeaders();
 
-        headerParams.add("Authorization","Bearer "+bearerToken);
+        headerParams.add("Authorization", "Bearer " + bearerToken);
 
         final String[] localVarAccepts = {
                 "application/json", "application/problem+json"
@@ -294,7 +264,7 @@ public class PnExternalServiceClientImpl {
         headerParams.add("x-api-key", apiKey);
 
         if (ENEBLED_INTEROP.equalsIgnoreCase(enableInterop)) {
-            headerParams.add("Authorization","Bearer "+ interopTokenSingleton.getTokenInterop());
+            headerParams.add("Authorization", "Bearer " + interopTokenSingleton.getTokenInterop());
         }
 
         final String[] localVarAccepts = {
@@ -331,7 +301,6 @@ public class PnExternalServiceClientImpl {
     }
 
     private ResponseEntity<String> getInternalIdFromTaxIdWithHttpInfo(String recipientType, String taxId) {
-        String postBody = taxId;
 
         final Map<String, Object> uriVariables = new HashMap<>();
         uriVariables.put("recipientType", recipientType);
@@ -350,22 +319,23 @@ public class PnExternalServiceClientImpl {
         ParameterizedTypeReference<String> returnType = new ParameterizedTypeReference<>() {
         };
 
-        return invokeAPI(dataVaultBasePath, "/datavault-private/v1/recipients/external/{recipientType}", HttpMethod.POST, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
+        return invokeAPI(dataVaultBasePath, "/datavault-private/v1/recipients/external/{recipientType}", HttpMethod.POST, uriVariables, queryParams, taxId, headerParams, localVarAccept, localVarContentType, returnType);
     }
 
-    public static class SafeStorageResponse{
+    public static class SafeStorageResponse {
 
-            String key;
-            String versionId;
-            String documentType;
-            String documentStatus;
-            String contentType;
-            Integer contentLength;
-            String checksum;
-           String retentionUntil;
-           Download download;
+        String key;
+        String versionId;
+        String documentType;
+        String documentStatus;
+        String contentType;
+        Integer contentLength;
+        String checksum;
+        String retentionUntil;
+        Download download;
 
-           public SafeStorageResponse(){}
+        public SafeStorageResponse() {
+        }
 
         public String getKey() {
             return key;
@@ -454,9 +424,9 @@ public class PnExternalServiceClientImpl {
                     '}';
         }
 
-        public static class Download{
-               String url;
-               String retryAfter;
+        public static class Download {
+            String url;
+            String retryAfter;
 
             @Override
             public String toString() {
@@ -466,7 +436,8 @@ public class PnExternalServiceClientImpl {
                         '}';
             }
 
-            public Download(){}
+            public Download() {
+            }
 
             public String getUrl() {
                 return url;
@@ -505,7 +476,7 @@ public class PnExternalServiceClientImpl {
 
 
         final String[] localVarAccepts = {
-                "application/json", "application/problem+json","*/*"
+                "application/json", "application/problem+json", "*/*"
         };
         final List<MediaType> localVarAccept = MediaType.parseMediaTypes(StringUtils.arrayToCommaDelimitedString(localVarAccepts));
         final MediaType localVarContentType = MediaType.APPLICATION_JSON;
@@ -534,7 +505,7 @@ public class PnExternalServiceClientImpl {
 
 
         final String[] localVarAccepts = {
-                "application/json", "application/problem+json","*/*"
+                "application/json", "application/problem+json", "*/*"
         };
         final List<MediaType> localVarAccept = MediaType.parseMediaTypes(StringUtils.arrayToCommaDelimitedString(localVarAccepts));
         final MediaType localVarContentType = MediaType.APPLICATION_JSON;
@@ -547,8 +518,7 @@ public class PnExternalServiceClientImpl {
 
     private <T> ResponseEntity<T> invokeAPI(String basePath, String path, HttpMethod method, Map<String, Object> pathParams, MultiValueMap<String, String> queryParams, Object body, HttpHeaders headerParams, List<MediaType> accept, MediaType contentType, ParameterizedTypeReference<T> returnType) throws RestClientException {
 
-        Map<String, Object> uriParams = new HashMap<>();
-        uriParams.putAll(pathParams);
+        Map<String, Object> uriParams = new HashMap<>(pathParams);
 
         String finalUri = path;
 
@@ -602,7 +572,7 @@ public class PnExternalServiceClientImpl {
         StringBuilder queryBuilder = new StringBuilder();
         queryParams.forEach((name, values) -> {
             try {
-                final String encodedName = URLEncoder.encode(name.toString(), "UTF-8");
+                final String encodedName = URLEncoder.encode(name, "UTF-8");
                 if (CollectionUtils.isEmpty(values)) {
                     if (queryBuilder.length() != 0) {
                         queryBuilder.append('&');
@@ -684,8 +654,10 @@ public class PnExternalServiceClientImpl {
     @Getter
     @Setter
     @ToString
-    public static class Shards{
-        public Shards() {}
+    public static class Shards {
+        public Shards() {
+        }
+
         private Integer total;
         private Integer successful;
         private Integer skipped;
@@ -697,7 +669,7 @@ public class PnExternalServiceClientImpl {
     @Getter
     @Setter
     @ToString
-    public static class OuterHits{
+    public static class OuterHits {
         public OuterHits() {
         }
 
@@ -710,7 +682,7 @@ public class PnExternalServiceClientImpl {
     @Getter
     @Setter
     @ToString
-    public static class InnerHits{
+    public static class InnerHits {
         public InnerHits() {
         }
 
@@ -721,8 +693,7 @@ public class PnExternalServiceClientImpl {
         private Source _source;
 
 
-
-        public class Source{
+        public class Source {
             @Override
             public String toString() {
                 return "Source{" +
@@ -933,9 +904,10 @@ public class PnExternalServiceClientImpl {
     @Getter
     @Setter
     @ToString
-    public static class Total{
+    public static class Total {
         public Total() {
         }
+
         private Integer value;
         private String relation;
 
