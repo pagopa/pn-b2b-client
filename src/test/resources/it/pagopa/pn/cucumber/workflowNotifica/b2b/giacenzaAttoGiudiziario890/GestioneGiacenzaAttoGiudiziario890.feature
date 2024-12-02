@@ -105,7 +105,8 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | details_recIndex | 0 |
       | details_deliveryDetailCode | RECAG005C |
       | details_sentAttemptMade | 0 |
-    And viene verificato soltanto che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+    And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+      | | |
     #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.60s-RECAG012.5s-RECAG011B[DOC:ARCAD;DOC:23L].60s-RECAG005A.5s-RECAG005C"
 
 
@@ -165,7 +166,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
 
   #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.60s-RECAG012.5s-RECAG011B[DOC:ARCAD].5s-RECAG005A.5s-RECAG005B[DOC:23L].5s-RECAG005C"
 
-  @giacenza890Simplified @con020 @con020success
+  @giacenza890Simplified @con020 @con020success @con020ToCheck
   Scenario: [B2B_GIACENZA_890_WI1.1_4] Consegnato a persona delegata in Giacenza prima dei 10 giorni.
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -217,12 +218,13 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | details_recIndex | 0 |
       | details_deliveryDetailCode | RECAG006C |
       | details_sentAttemptMade | 0 |
-    And viene verificato soltanto che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+    And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+      | | |
 
   #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.30s-RECAG012.5s-RECAG006A.5s-RECAG006B[DOC:ARCAD;DOC:23L].5s-RECAG006C"
 
 
-  @giacenza890Simplified @con020 @con020success
+  @giacenza890Simplified @con020 @con020success @con020ToCheck
   Scenario: [B2B_GIACENZA_890_WI1.1_5] Consegnato a persona delegata in Giacenza dopo dei 10 giorni. In questo scenario viene simulato il perfezionamento dell’atto al 10° giorno
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -274,11 +276,12 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | details_recIndex | 0 |
       | details_deliveryDetailCode | RECAG006C |
       | details_sentAttemptMade | 0 |
-    And viene verificato soltanto che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+    And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+      | | |
     #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.60s-RECAG012.5s-RECAG011B[DOC:ARCAD;DOC:23L].60s-RECAG006A.5s-RECAG006C"
 
 
-  @giacenza890Simplified @con020 @con020success
+  @giacenza890Simplified @con020 @con020success @con020ToCheck
   Scenario: [B2B_GIACENZA_890_WI1.1_6] Consegnato a persona delegata in Giacenza dopo dei 10 giorni. In questo scenario viene simulato il perfezionamento dell’atto al 10° giorno
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -330,7 +333,8 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | details_recIndex | 0 |
       | details_deliveryDetailCode | RECAG006C |
       | details_sentAttemptMade | 0 |
-    And viene verificato soltanto che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+    And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+      | | |
   #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.60s-RECAG012.5s-RECAG011B[DOC:ARCAD].5s-RECAG006A.5s-RECAG006B[DOC:23L].5s-RECAG006C"
 
 
@@ -355,7 +359,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
 
   #"@sequence.5s-CON080.5s-RECAG010.5s-RECAG011A.30s-RECAG012.5s-RECAG007A.5s-RECAG007B[DOC:ARCAD;DOC:Plico].5s-RECAG007C"
 
-  @giacenza890Simplified @con020 @con020success
+  @giacenza890Simplified @con020 @con020success @con020ToCheck
   Scenario: [B2B_GIACENZA_890_WI1.1_8] Mancata Consegna in Giacenza dopo i 10 giorni. In questo scenario viene simulato il perfezionamento dell’atto al 10° giorno.
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -413,7 +417,8 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | details_recIndex | 0 |
       | details_deliveryDetailCode | RECAG007C |
       | details_sentAttemptMade | 0 |
-    And viene verificato soltanto che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+    And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+      | | |
     #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.60s-RECAG012.5s-RECAG011B[DOC:ARCAD;DOC:23L].60s-RECAG007A.5s-RECAG007B[DOC:Plico].5s-RECAG007C"
 
   @giacenza890Simplified
@@ -439,7 +444,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
   #"@sequence.5s-CON080.5s-RECAG010.5s-RECAG011A.60s-RECAG012.5s-RECAG011B[DOC:ARCAD].5s-RECAG007A.5s-RECAG007B[DOC:23L;DOC:Plico].5s-RECAG007C"
 
 
-  @giacenza890Simplified @con020 @con020success
+  @giacenza890Simplified @con020 @con020success @con020ToCheck
   Scenario: [B2B_GIACENZA_890_WI1.1_10] Compiuta Giacenza. In questo scenario viene simulato il perfezionamento dell’atto al 10° giorno
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -497,7 +502,8 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | details_recIndex | 0 |
       | details_deliveryDetailCode | RECAG008C |
       | details_sentAttemptMade | 0 |
-    And viene verificato soltanto che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+    And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+      | | |
     #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.60s-RECAG012.5s-RECAG011B[DOC:ARCAD;DOC:23L].60s-RECAG008A.5s-RECAG008B[DOC:Plico].5s-RECAG008C"
 
 
@@ -516,7 +522,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     #"@sequence.5s-RECAG011B[DOC:ARCAD].5s-RECAG011B[DOC:23L].5m-RECAG012"
 
-  @giacenza890Simplified @con020 @con020success
+  @giacenza890Simplified @con020 @con020success @con020ToCheck
   Scenario: [B2B_GIACENZA_890_WI1.1_12]  Invio notifica con percorso analogico (OK-GiacenzaDelegato-lte10_890_redrive)  per verificare evento fuori sequenza che produce un redrive automatico di paper channel
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -565,11 +571,12 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | details_sentAttemptMade | 0 |
       | details_physicalAddress    | {"at": "Presso", "address": "@OK-GIACENZADELEGATO-LTE10_890_REDRIVE", "addressDetails": "SCALA B", "zip": "87100", "municipality": "COSENZA", "municipalityDetails": "", "province": "CS", "foreignState": "ITALIA"} |
       | details_responseStatus | OK |
-    And viene verificato soltanto che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+    And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+      | | |
     #"sequenceName": "OK-GiacenzaDelegato-lte10_890_redrive", "sequence": "@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.30s-RECAG006A.5s-RECAG006B[DOC:ARCAD;DOC:23L].60s-RECAG006C.60s-RECAG012"
     #Risultato atteso: l’evento fuori ordine viene inserito nella tabella degli errori e recuperato automaticamente da paper channel all’arrivo dell’evento RECAG012
 
-  @giacenza890Simplified @con020 @con020success
+  @giacenza890Simplified @con020 @con020success @con020ToCheck
   Scenario: [B2B_GIACENZA_890_WI1.1_13]  Invio notifica con percorso analogico (FAIL-Giacenza-gt10_890_no_recag012)  per verificare che paper channel calcoli la data di perfezionamento e invii il PNAG012 come feedback poichè oltre i 10 giorni
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -625,7 +632,8 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | details_recIndex | 0 |
       | details_deliveryDetailCode | RECAG007C |
       | details_sentAttemptMade | 0 |
-    And viene verificato soltanto che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+    And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+      | | |
     #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.60s-RECAG011B[DOC:ARCAD;DOC:23L].60s-RECAG007A.5s-RECAG007B[DOC:Plico].5s-RECAG007C"
     #PNAG012 come evento di feedback con data: RECAG011A + refinementDuration (1 minuto in DEV)
 

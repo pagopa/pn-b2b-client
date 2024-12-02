@@ -2609,11 +2609,6 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
-    @Then("viene verificato soltanto che l'elemento di timeline {string} esista")
-    public void vieneVerificatoSoloElementoTimeline(String timelineEventCategory) {
-        vieneVerificatoElementoTimeline(timelineEventCategory, null);
-    }
-
     /** Checks that a certain timeline element has a field with a text value compatible with the specified regular expression.
      * @param timelineEventCategory the category of the timeline element, e.g. "SEND_ANALOG_PROGRESS"
      * @param eventId the event id of the timeline element, e.g. "CON020"
