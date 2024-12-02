@@ -15,7 +15,6 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationProcessCostResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
@@ -42,9 +41,8 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
 
     @Autowired
     public PnPaB2bInternalClientImpl(RestTemplate restTemplate,
-                                     PnBaseUrlConfig pnBaseUrlConfig,
-                                     @Value("${pn.internal.pa-id}") String paId) {
-        this.paId = paId;
+                                     PnBaseUrlConfig pnBaseUrlConfig) {
+        this.paId = pnBaseUrlConfig.getPaId();
         this.operatorId = "TestMv";
         this.groups = Collections.emptyList();
 

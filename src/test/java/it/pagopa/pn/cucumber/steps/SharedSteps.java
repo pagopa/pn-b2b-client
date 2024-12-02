@@ -42,7 +42,6 @@ import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.convert.DurationStyle;
 import org.springframework.context.ApplicationContext;
@@ -173,8 +172,7 @@ public class SharedSteps {
 
     private final String clientAssertion;
 
-    @Value("${pn.external.utilized.pec:testpagopa3@pec.pagopa.it}")
-    private String digitalAddress;
+    private final String digitalAddress;
     private final String senderTaxId;
     private final String senderTaxIdTwo;
     private final String senderTaxIdGa;
@@ -310,10 +308,7 @@ public class SharedSteps {
         this.senderTaxIdGa = pnExternalApiKeyConfig.getApiKeyTaxIdGA();
         this.senderTaxIdSON = pnExternalApiKeyConfig.getApiKeyTaxIdSON();
         this.senderTaxIdROOT = pnExternalApiKeyConfig.getApiKeyTaxIdROOT();
-
-        //TODO MATTEO consiglio inutile di chatGPT
-//        this.marioCucumberTaxID = pnBearerTokenConfigs.getUsers().get("user1").getTaxID();
-//        this.marioGherkinTaxID = pnBearerTokenConfigs.getUsers().get("user2").getTaxID();
+        this.digitalAddress = pnBaseUrlConfig.getDigitalAddress();
     }
 
     @BeforeAll

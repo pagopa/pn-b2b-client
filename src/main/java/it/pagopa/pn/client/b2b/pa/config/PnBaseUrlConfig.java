@@ -40,4 +40,9 @@ public class PnBaseUrlConfig {
     private String raddAltExternalBaseUrl;
     @Value("${pn.OpenSearch.base-url}")
     private String openSearchBaseUrl;
+
+    @Value("${pn.internal.pa-id}")
+    private String paId;
+    @Value("${pn.external.utilized.pec:testpagopa3@pec.pagopa.it}")
+    private String digitalAddress;
 }

@@ -9,6 +9,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.PaperEngageRequestAttachments;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.ReceivedMessage;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
+import it.pagopa.pn.client.b2b.pa.config.PnInvioNotificheConfig;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
@@ -25,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.util.Base64Utils;
@@ -45,12 +45,9 @@ import static org.awaitility.Awaitility.await;
 
 @Slf4j
 public class InvioNotificheB2bSteps {
-    @Value("${pn.retention.time.preload}")
-    private Integer retentionTimePreLoad;
-    @Value("${pn.retention.time.load}")
-    private Integer retentionTimeLoad;
-    @Value("${b2b.sender.mail}")
-    private String senderEmail;
+    private final Integer retentionTimePreLoad;
+    private final Integer retentionTimeLoad;
+    private final String senderEmail;
     private final PnPaB2bUtils b2bUtils;
     private final IPnWebPaClient webPaClient;
     private final IPnPaB2bClient b2bClient;
@@ -75,6 +72,7 @@ public class InvioNotificheB2bSteps {
             PnExternalServiceClientImpl safeStorageClient,
             SharedSteps sharedSteps,
             PnExternalChannelsServiceClientImpl pnExternalChannelsServiceClientImpl,
+            PnInvioNotificheConfig pnInvioNotificheConfig,
             JavaMailSender emailSender) {
         this.safeStorageClient = safeStorageClient;
         this.sharedSteps = sharedSteps;
@@ -84,6 +82,9 @@ public class InvioNotificheB2bSteps {
         this.pnPaymentInfoClientImpl = sharedSteps.getPnPaymentInfoClientImpl();
         this.pnExternalChannelsServiceClientImpl = pnExternalChannelsServiceClientImpl;
         this.emailSender = emailSender;
+        this.retentionTimePreLoad = pnInvioNotificheConfig.getRetentionTimePreload();
+        this.retentionTimeLoad = pnInvioNotificheConfig.getRetentionTimeLoad();
+        this.senderEmail = pnInvioNotificheConfig.getSenderMail();
     }
 
     @And("la notifica può essere correttamente recuperata dal sistema tramite codice IUN")

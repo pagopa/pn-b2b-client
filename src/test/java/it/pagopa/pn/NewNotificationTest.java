@@ -60,6 +60,10 @@ import static org.awaitility.Awaitility.await;
         PnExternalApiKeyConfig.class,
         PnInteropConfig.class,
         PnExternalSenderConfig.class,
+        PnInvioNotificheConfig.class,
+        PnAvanzamentoNotificheConfig.class,
+        PnRaddAltConfig.class,
+        PnSafeStorageConfig.class,
         PnPollingFactory.class
 })
 

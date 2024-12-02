@@ -31,11 +31,4 @@ public class PnBearerTokenConfigs {
     private String user1TaxID;
     @Value("${pn.bearer-token.user2.taxID}")
     private String user2TaxID;
-
-    //TODO MATTEO consiglio inutile di chatGPT
-//    private Map<String, UserDetails> users;
-//    @Data
-//    public static class UserDetails {
-//        private String taxID;   // Tax ID dell'utente
-//    }
 }
