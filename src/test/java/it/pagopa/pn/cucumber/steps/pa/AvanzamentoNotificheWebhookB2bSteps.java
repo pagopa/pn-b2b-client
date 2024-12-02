@@ -2256,7 +2256,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     public void checkTimelineElementVersionB2B(String version) {
         if (version.equalsIgnoreCase("V24")) {
             Assertions.assertNotNull(this.sharedSteps.getNotificationResponseComplete());
-            checkTimelineElement(this.sharedSteps.getNotificationResponseComplete());
+            checkTimelineElement(this.sharedSteps.getNotificationResponseCompleteV24());
         } else if (version.equalsIgnoreCase("V23")) {
             Assertions.assertNotNull(this.sharedSteps.getNotificationResponseCompleteV23());
             this.sharedSteps.getNotificationResponseCompleteV23().getTimeline().forEach(te -> checkTimelineElement(te));
@@ -2318,11 +2318,11 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 log.info("Field presence checked for " + TimelineElementV25.getCategory().getValue());
                 checkValues(TimelineElementV25, FullSentNotificationV25.getTimeline());
             });
-        } else if (timeline instanceof TimelineElementV25 TimelineElementV25) {
-            Assertions.assertNotNull(TimelineElementV25.getIngestionTimestamp());
-            Assertions.assertNotNull(TimelineElementV25.getNotificationSentAt());
-            Assertions.assertNotNull(TimelineElementV25.getEventTimestamp());
-            log.info("Field presence checked for " + TimelineElementV25.getCategory().getValue());
+        } else if (timeline instanceof TimelineElementV24 TimelineElementV24) {
+            Assertions.assertNotNull(TimelineElementV24.getIngestionTimestamp());
+            Assertions.assertNotNull(TimelineElementV24.getNotificationSentAt());
+            Assertions.assertNotNull(TimelineElementV24.getEventTimestamp());
+            log.info("Field presence checked for " + TimelineElementV24.getCategory().getValue());
         } else if (timeline instanceof TimelineElementV23 timelineElementV23) {
             Map timelineElementMap = JsonMapper.builder().addModule(new JavaTimeModule()).build().convertValue(timelineElementV23, Map.class);
             Assertions.assertFalse(timelineElementMap.containsKey("ingestionTimeStamp"));
