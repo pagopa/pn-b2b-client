@@ -8,9 +8,14 @@ Feature: Resa al mittente di una notifica
       | physicalCommunication | REGISTERED_LETTER_890       |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
+      | digitalDomicile         | NULL                   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
-    And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
+
+
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V26"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V26"
+
+
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "RETURNED_TO_SENDER"
     And esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost ugauale a "NotNull" per l'utente 0
     #And viene effettuato un controllo sulla durata della retention di " "
@@ -23,7 +28,8 @@ Feature: Resa al mittente di una notifica
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Mario Cucumber e:
-      | physicalAddress_address | @FAIL_DECEDUTO_SLOW_AR  |
+      | physicalAddress_address | @FAIL_DECEDUTO_SLOW_AR |
+      | digitalDomicile         | NULL                   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And "Mario Cucumber" legge la notifica
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
@@ -43,6 +49,7 @@ Feature: Resa al mittente di una notifica
       | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_SLOW_AR |
+      | digitalDomicile         | NULL                   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
@@ -62,6 +69,7 @@ Feature: Resa al mittente di una notifica
       | physicalCommunication | REGISTERED_LETTER_890       |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
+      | digitalDomicile         | NULL                   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
@@ -74,7 +82,6 @@ Feature: Resa al mittente di una notifica
       | details_recIndex | 0        |
 
 
-
   @returnedToSender @webhook1 @cleanWebhook
   Scenario: [RETURNED-TO-SENDER_5] Invio notifica AR mono-destinatario verso PF cancellata e susccessivamente arrivo notifica di deceduto con controllo costo e macro stato mostrato CANCELLED
     Given viene generata una nuova notifica
@@ -83,6 +90,7 @@ Feature: Resa al mittente di una notifica
       | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_SLOW_AR |
+      | digitalDomicile         | NULL                   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED e successivamente annullata
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
@@ -102,6 +110,7 @@ Feature: Resa al mittente di una notifica
       | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
+      | digitalDomicile         | NULL                   |
     And destinatario
       | denomination            | Test AR Fail 2           |
       | taxId                   | NNTNRZ80A01H501D         |
@@ -124,6 +133,7 @@ Feature: Resa al mittente di una notifica
       | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
+      | digitalDomicile         | NULL                   |
     And destinatario
       | denomination            | Test AR Fail 2           |
       | taxId                   | NNTNRZ80A01H501D         |
@@ -143,8 +153,10 @@ Feature: Resa al mittente di una notifica
       | physicalCommunication | REGISTERED_LETTER_890       |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
+      | digitalDomicile         | NULL                   |
     And destinatario CucumberSpa e:
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
+      | digitalDomicile         | NULL                   |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
@@ -158,11 +170,13 @@ Feature: Resa al mittente di una notifica
       | physicalCommunication | REGISTERED_LETTER_890       |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
+      | digitalDomicile         | NULL                   |
     And destinatario
       | denomination            | Leonardo da Vinci |
       | taxId                   | DVNLRD52D15M059P  |
       | digitalDomicile         | NULL              |
       | physicalAddress_address | Via@OK_890        |
+      | digitalDomicile         | NULL                   |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
@@ -184,6 +198,7 @@ Feature: Resa al mittente di una notifica
       | taxId                   | NNTNRZ80A01H501D         |
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
+      | digitalDomicile         | NULL                   |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
@@ -197,6 +212,7 @@ Feature: Resa al mittente di una notifica
       | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_SLOW_AR |
+      | digitalDomicile         | NULL                   |
     And destinatario GherkinSrl
     And "GherkinSrl" legge la notifica
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -241,6 +257,7 @@ Feature: Resa al mittente di una notifica
       | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_SLOW_AR |
+      | digitalDomicile         | NULL                   |
     And destinatario Cucumber Analogic e:
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
@@ -263,6 +280,7 @@ Feature: Resa al mittente di una notifica
       | taxId                   | DVNLRD52D15M059P  |
       | digitalDomicile         | NULL              |
       | physicalAddress_address | Via@OK_890        |
+      | digitalDomicile         | NULL                   |
     And destinatario
       | denomination            | Test AR Fail 2           |
       | taxId                   | NNTNRZ80A01H501D         |
@@ -286,6 +304,7 @@ Feature: Resa al mittente di una notifica
       | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_SLOW_AR |
+      | digitalDomicile         | NULL                   |
     And destinatario
       | denomination            | Test AR Fail 2           |
       | taxId                   | NNTNRZ80A01H501D         |
@@ -310,6 +329,7 @@ Feature: Resa al mittente di una notifica
       | physicalAddress_address | Via@FAIL-Irreperibile_890 |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
+      | digitalDomicile         | NULL                   |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino allo stato della notifica "UNREACHABLE"
     When la notifica può essere annullata dal sistema tramite codice IUN
@@ -326,13 +346,14 @@ Feature: Resa al mittente di una notifica
     And destinatario Cucumber Analogic e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
+      | digitalDomicile         | NULL                   |
     And destinatario
       | denomination            | Test AR Fail 2            |
       | taxId                   | NNTNRZ80A01H501D          |
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | Via@FAIL-Irreperibile_890 |
     And destinatario Mario Cucumber e:
-      | physicalAddress_address | @FAIL_DECEDUTO_890|
+      | physicalAddress_address | @FAIL_DECEDUTO_890 |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And "Mario Cucumber" legge la notifica
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
@@ -349,8 +370,10 @@ Feature: Resa al mittente di una notifica
       | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
+      | digitalDomicile         | NULL                   |
     And destinatario CucumberSpa e:
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
+      | digitalDomicile         | NULL                   |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" per l'utente 0
     And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost ugauale a "NotNull" per l'utente 0
@@ -367,8 +390,10 @@ Feature: Resa al mittente di una notifica
       | physicalCommunication | REGISTERED_LETTER_890       |
     And destinatario CucumberSpa e:
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
+      | digitalDomicile         | NULL                   |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_SLOW_890 |
+      | digitalDomicile         | NULL                   |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And "Mario Cucumber" legge la notifica
     And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost ugauale a "null" per l'utente 1
@@ -387,7 +412,17 @@ Feature: Resa al mittente di una notifica
       | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
+      | digitalDomicile         | NULL                   |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "<timeline_element>"
+    When si invoca l'api B2B versione "<version>" per ottenere gli elementi di timeline di tale notifica
+    Then gli elementi di timeline restituiti da B2B contengono i campi attesi in accordo alla versione "<version>"
+   # Examples:
+      | timeline_element        | version |
+      | ANALOG_SUCCESS_WORKFLOW | V24     |
+      | ANALOG_SUCCESS_WORKFLOW | V23     |
+
 
   @returnedToSender
   Scenario: [RETURNED-TO-SENDER_21] Invio notifica AR multi-destinatario di cui un Deceduto con VersioningModeFlag=true, atteso stato DELIVERING
@@ -401,6 +436,7 @@ Feature: Resa al mittente di una notifica
       | physicalAddress_address | Via@ok_AR |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
+      | digitalDomicile         | NULL                   |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
 
   @returnedToSender
@@ -410,8 +446,10 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | REGISTERED_LETTER_890       |
+      | digitalDomicile         | NULL                   |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
+      | digitalDomicile         | NULL                   |
     When la notifica viene inviata dal "Comune_Multi"
     #When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'operazione ha prodotto un errore con status code "400"
@@ -426,6 +464,7 @@ Feature: Resa al mittente di una notifica
       | physicalCommunication | REGISTERED_LETTER_890       |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
+      | digitalDomicile         | NULL                   |
     And destinatario Cucumber Analogic e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
@@ -442,6 +481,7 @@ Feature: Resa al mittente di una notifica
       | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
+      | digitalDomicile         | NULL                   |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
       | details                      | NOT_NULL |
@@ -452,7 +492,6 @@ Feature: Resa al mittente di una notifica
       | details_sentAttemptMade | 0        |
 
 
-
   @cleanWebhook
   Scenario: [RETURNED-TO-SENDER_25] Invio notifica 890 multi-destinatario con stato Inviato e Deceduto con activationDeceasedWorfklowDate=false
     Given viene generata una nuova notifica
@@ -461,9 +500,11 @@ Feature: Resa al mittente di una notifica
       | physicalCommunication | REGISTERED_LETTER_890       |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
+      | digitalDomicile         | NULL                   |
     And destinatario Cucumber Analogic e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
+
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
@@ -480,6 +521,7 @@ Feature: Resa al mittente di una notifica
       | physicalCommunication | REGISTERED_LETTER_890       |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
+      | digitalDomicile         | NULL                   |
     And destinatario Cucumber Analogic e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
@@ -504,6 +546,7 @@ Feature: Resa al mittente di una notifica
       | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
+      | digitalDomicile         | NULL                   |
     And destinatario
       | denomination            | Test AR Fail 2           |
       | taxId                   | 05722930657              |
@@ -517,7 +560,23 @@ Feature: Resa al mittente di una notifica
     And esiste l'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" per l'utente 0
     And esiste l'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
 
-# timeline destinatario--------
+
+
+  # timeline destinatario--------
+  @returnedToSend
+  Scenario: [RETURNED-TO-SENDER_MONO] Invio notifica AR mono-destinatario che Visualizza e poi dichiarato Deceduto con stato atteso RETURNED_TO_SENDER e corretta visualizzazione della timeline del destinatario
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_SLOW_AR |
+      | digitalDomicile         | NULL                   |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
+    And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost ugauale a "NotNull" per l'utente 0
+
+
   @returnedToSend
   Scenario: [RETURNED-TO-SENDER_28] Invio notifica AR mono-destinatario che Visualizza e poi dichiarato Deceduto con stato atteso RETURNED_TO_SENDER e corretta visualizzazione della timeline del destinatario
     Given viene generata una nuova notifica
@@ -526,6 +585,7 @@ Feature: Resa al mittente di una notifica
       | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_SLOW_AR |
+      | digitalDomicile         | NULL                   |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And "Mario Cucumber" legge la notifica
     And vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
@@ -538,6 +598,7 @@ Feature: Resa al mittente di una notifica
       | physicalCommunication | REGISTERED_LETTER_890       |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
+      | digitalDomicile         | NULL                   |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And esiste l'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" per l'utente 0
     And "Mario Cucumber" legge la notifica
@@ -545,9 +606,6 @@ Feature: Resa al mittente di una notifica
       | details                      | NOT_NULL |
       | details_deliveryFailureCause | M020     |
     And vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
-
-
-
 
 
   @returnedToSend
@@ -558,6 +616,7 @@ Feature: Resa al mittente di una notifica
       | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
+      | digitalDomicile         | NULL                   |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" e successivamente annullata
     When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
@@ -570,6 +629,7 @@ Feature: Resa al mittente di una notifica
       | physicalCommunication | REGISTERED_LETTER_890       |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_SLOW_890 |
+      | digitalDomicile         | NULL                   |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED e successivamente annullata
     When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
@@ -587,6 +647,7 @@ Feature: Resa al mittente di una notifica
       | physicalCommunication | REGISTERED_LETTER_890       |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_SLOW_890 |
+      | digitalDomicile         | NULL                   |
     And destinatario Cucumber Analogic e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
@@ -605,6 +666,7 @@ Feature: Resa al mittente di una notifica
       | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_SLOW_AR |
+      | digitalDomicile         | NULL                   |
     And destinatario Cucumber Analogic e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
@@ -621,6 +683,7 @@ Feature: Resa al mittente di una notifica
       | physicalCommunication | REGISTERED_LETTER_890       |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
+      | digitalDomicile         | NULL                   |
     And destinatario Cucumber Analogic e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
@@ -639,11 +702,12 @@ Feature: Resa al mittente di una notifica
       | physicalCommunication | ***RS***                    |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_RS |
+      | digitalDomicile         | NULL                   |
     And destinatario
-      | denomination | Test AR Fail 2 |
-      | taxId | NNTNRZ80A01H501D |
-      | digitalDomicile | NULL |
-      | physicalAddress_address      | Via@ok_RS            |
+      | denomination            | Test AR Fail 2   |
+      | taxId                   | NNTNRZ80A01H501D |
+      | digitalDomicile         | NULL             |
+      | physicalAddress_address | Via@ok_RS        |
 
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"

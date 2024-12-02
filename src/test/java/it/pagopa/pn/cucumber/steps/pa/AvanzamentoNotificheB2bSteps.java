@@ -3464,7 +3464,7 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
     @Then("esiste l'elemento di timeline della notifica {string} abbia notificationCost ugauale a {string} per l'utente {int}")
-    public void TimelineElementOfNotification2(String timelineEventCategory, String cost, Integer destinatario) {
+    public void TimelineElementOfNotificationUserCost(String timelineEventCategory, String cost, Integer destinatario) {
         TimelineElementV26 event = readingEventUpToTheTimelineElementOfNotificationForCategoryUser(timelineEventCategory, destinatario);
         Long notificationCost = event.getDetails().getNotificationCost();
 
@@ -3478,9 +3478,10 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
     public TimelineElementV26 readingEventUpToTheTimelineElementOfNotificationForCategoryUser(String timelineEventCategory, Integer destinatario) {
-        PnPollingServiceTimelineSlowV26 timelineSlowV26 = (PnPollingServiceTimelineSlowV26) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_RAPID_V26);
+        PnPollingServiceTimelineRapidV26 timelineRapidV26 = (PnPollingServiceTimelineRapidV26) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_RAPID_V26);
+        //PnPollingServiceTimelineSlowV26 timelineSlowV26 = (PnPollingServiceTimelineSlowV26) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_SLOW_V26);
 
-        PnPollingResponseV26 pnPollingResponseV26 = timelineSlowV26.waitForEvent(sharedSteps.getIunVersionamento(),
+        PnPollingResponseV26 pnPollingResponseV26 = timelineRapidV26.waitForEvent(sharedSteps.getIunVersionamento(),
                 PnPollingParameter.builder()
                         .value(timelineEventCategory)
                         .pnPollingPredicate(getPnPollingPredicateForTimelineV26(timelineEventCategory, destinatario))

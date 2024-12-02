@@ -133,7 +133,11 @@ public class TimingForPolling {
         WEBHOOK(150000, 500),
 
         //TIMING FOR TRACING
-        INTEROP_TRACING(3, 1);
+        INTEROP_TRACING(3, 1),
+
+        RETURNED_TO_SENDER(12,1),
+        ANALOG_WORKFLOW_RECIPIENT_DECEASED(12,1);
+
 
         private final int numCheck;
         private final int waitingMultiplier;
