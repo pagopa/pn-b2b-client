@@ -1,9 +1,9 @@
 package it.pagopa.pn.cucumber.steps.templateEngine.data;
 
-import it.pagopa.pn.client.b2b.generated.openapi.clients.templates_engine.model.Delegate;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.templates_engine.model.Delivery;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.templates_engine.model.Notification;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.templates_engine.model.Recipient;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.Delegate;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.Delivery;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.Notification;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.Recipient;
 import lombok.Data;
 
 import java.util.List;

@@ -1,8 +1,8 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
-import it.pagopa.pn.client.b2b.generated.openapi.clients.templates_engine.ApiClient;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.templates_engine.api.TemplateApi;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.templates_engine.model.*;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.ApiClient;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.api.TemplateApi;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.*;
 import it.pagopa.pn.client.b2b.pa.service.ITemplateEngineClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -53,33 +53,33 @@ public class TemplateEngineClientImpl implements ITemplateEngineClient {
     }
 
     @Override
-    public File notificationAAR(LanguageEnum xLanguage, NotificationAAR notificationAAR) throws RestClientException {
-        return templateApi.notificationAAR(xLanguage, notificationAAR);
+    public File notificationAAR(LanguageEnum xLanguage, NotificationAar notificationAAR) throws RestClientException {
+        return templateApi.notificationAar(xLanguage, notificationAAR);
     }
 
     @Override
-    public String notificationAARForEMAIL(LanguageEnum xLanguage, NotificationAARForEMAIL notificationAARForEMAIL) throws RestClientException {
-        return templateApi.notificationAARForEMAIL(xLanguage, notificationAARForEMAIL);
+    public String notificationAARForEMAIL(LanguageEnum xLanguage, NotificationAarForEmail notificationAARForEMAIL) throws RestClientException {
+        return templateApi.notificationAarForEmail(xLanguage, notificationAARForEMAIL);
     }
 
     @Override
-    public String notificationAARForPEC(LanguageEnum xLanguage, NotificationAARForPEC notificationAARForPEC) throws RestClientException {
-        return templateApi.notificationAARForPEC(xLanguage, notificationAARForPEC);
+    public String notificationAARForPEC(LanguageEnum xLanguage, NotificationAarForPec notificationAARForPEC) throws RestClientException {
+        return templateApi.notificationAarForPec(xLanguage, notificationAARForPEC);
     }
 
     @Override
-    public String notificationAARForSMS(LanguageEnum xLanguage, NotificationAARForSMS notificationAARForSMS) throws RestClientException {
-        return templateApi.notificationAARForSMS(xLanguage, notificationAARForSMS);
+    public String notificationAARForSMS(LanguageEnum xLanguage, NotificationAarForSms notificationAARForSMS) throws RestClientException {
+        return templateApi.notificationAarForSms(xLanguage, notificationAARForSMS);
     }
 
     @Override
-    public File notificationAARRADDalt(LanguageEnum xLanguage, NotificationAARRADDalt notificationAARRADDalt) throws RestClientException {
-        return templateApi.notificationAARRADDalt(xLanguage, notificationAARRADDalt);
+    public File notificationAARRADDalt(LanguageEnum xLanguage, NotificationAarRaddAlt notificationAARRADDalt) throws RestClientException {
+        return templateApi.notificationAarRaddAlt(xLanguage, notificationAARRADDalt);
     }
 
     @Override
-    public String notificationAARSubject(LanguageEnum xLanguage, NotificationAARForSubject notificationAARSubject) throws RestClientException {
-        return templateApi.notificationAARForSubject(xLanguage, notificationAARSubject);
+    public String notificationAARSubject(LanguageEnum xLanguage, NotificationAarForSubject notificationAARSubject) throws RestClientException {
+        return templateApi.notificationAarForSubject(xLanguage, notificationAARSubject);
     }
 
     @Override
@@ -88,7 +88,7 @@ public class TemplateEngineClientImpl implements ITemplateEngineClient {
     }
 
     @Override
-    public File notificationReceivedLegalFact(LanguageEnum xLanguage, NotificationReceiverLegalFact notificationReceiverLegalFact) throws RestClientException {
+    public File notificationReceivedLegalFact(LanguageEnum xLanguage, NotificationReceivedLegalFact notificationReceiverLegalFact) throws RestClientException {
         return templateApi.notificationReceivedLegalFact(xLanguage, notificationReceiverLegalFact);
     }
 
@@ -108,8 +108,8 @@ public class TemplateEngineClientImpl implements ITemplateEngineClient {
     }
 
     @Override
-    public String pecbodyconfirm(LanguageEnum xLanguage, PecValidationContactsSuccessBody pecbody) throws RestClientException {
-        return templateApi.pecValidationContactsSuccessBody(xLanguage, pecbody);
+    public String pecbodyconfirm(LanguageEnum xLanguage) throws RestClientException {
+        return templateApi.pecValidationContactsSuccessBody(xLanguage);
     }
 
     @Override

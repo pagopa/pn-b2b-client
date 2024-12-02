@@ -46,22 +46,21 @@ public class TemplateConfiguration {
 
     @Bean
     public List<String> notificationReceiverLegalFactFields() {
-        return List.of("context_senddate", "context_subject", "notification_iun", "notification_subject", "notification_recipient_recipientType",
-            "notification_recipient_recipientType", "notification_recipient_denomination", "notification_recipient_taxId", "notification_recipient_physicalAddress",
-                "notification_sender_paDenomination", "notification_sender_paId", "notification_sender_paTaxId", "context_digest");
-        /*"context_physicalAddressAndDenomination"*/
+        return List.of("context_senddate", "context_subject", "notification_iun", "notification_subject", "context_digest", "notification",
+                "notification_sender", "notification_recipient", "notification_sender_paDenomination", "notification_sender_paTaxId",
+                 "notification_recipient_denomination", "notification_recipient_taxId", "notification_recipient_digitalDomicile_address");
     }
 
     @Bean
     public List<String> pecDeliveryWorkflowLegalFactFields() {
-        return List.of("context_iun", "context_endWorkflowDate", "context_endWorkflowStatus", "delivery_ok", "delivery_type",
+        return List.of("context_iun", "context_endWorkflowStatus", "context_delivery", "delivery_ok",
                 "delivery_addressSource", "delivery_responseDate", "delivery_denomination");
     }
 
     @Bean
     public List<String> notificationViewedLegalFactFields() {
-        return List.of("context_iun", "context_when", "delegate_denomination", "delegate_taxId", "recipient_recipientType", "recipient_denomination",
-                "recipient_taxId", "recipient_physicalAddress", "recipient_digitalDomicile_address");
+        return List.of("context_iun", "context_when", "recipient", "delegate_denomination", "delegate_taxId",
+                 "recipient_denomination", "recipient_taxId");
     }
 
     @Bean
@@ -71,53 +70,41 @@ public class TemplateConfiguration {
 
     @Bean
     public List<String> notificationCancelledLegalFactFields() {
-        return List.of("notification_iun", "notification_subject", "notification_recipient_recipientType",
-                "notification_recipient_recipientType", "notification_recipient_denomination", "notification_recipient_taxId", "notification_recipient_physicalAddress",
-                "notification_sender_paDenomination", "notification_sender_paId", "notification_sender_paTaxId", "recipient_recipientType",
-                "recipient_recipientType", "recipient_denomination", "recipient_taxId", "recipient_physicalAddress", "context_NotificationCancelledDate");
+        return List.of("notification", "notification_iun", "recipient_denomination", "recipient_taxId",
+                "notification_sender_paDenomination", "context_NotificationCancelledDate");
     }
 
     @Bean
     public List<String> analogDeliveryWorkflowFailureLegalFactFields() {
-        return List.of("context_iun", "recipient_recipientType", "recipient_denomination", "recipient_taxId", "recipient_physicalAddress",
-                "recipient_digitalDomicile_address", "context_endWorkflowDate", "context_endWorkflowStatus");
+        return List.of("recipient", "recipient_denomination", "recipient_taxId", "context_endWorkflowDate", "context_endWorkflowStatus");
+        /*"recipient_recipientType" "recipient_physicalAddress", "recipient_digitalDomicile_address",*/
     }
 
     @Bean
     public List<String> notificationAARFields() {
-        return List.of("recipient_recipientType", "recipient_denomination", "recipient_taxId", "recipient_physicalAddress",
-                "recipient_digitalDomicile_address", "notification_iun", "notification_subject", "notification_recipient_recipientType",
-                "notification_recipient_recipientType", "notification_recipient_denomination", "notification_recipient_taxId", "notification_recipient_physicalAddress",
-                "notification_sender_paDenomination", "notification_sender_paId", "notification_sender_paTaxId", "context_qrCodeQuickAccessLink",
-                "context_piattaformaNotificheURLLabel", "context_piattaformaNotificheURL", "context_perfezionamentoURLLabel", "context_perfezionamentoURL",
-                "context_sendURL", "context_sendURLLAbel");
+        return List.of("recipient", "recipient_taxId", "notification", "notification_iun", "notification_subject", "notification_sender",
+                "notification_sender_paDenomination", "context_qrCodeQuickAccessLink", "context_piattaformaNotificheURLLabel", "context_piattaformaNotificheURL",
+                "context_perfezionamentoURLLabel", "context_perfezionamentoURL");
     }
 
     @Bean
     public List<String> notificationAARRADDaltFields() {
-        return List.of("recipient_recipientType", "recipient_denomination", "recipient_taxId", "recipient_physicalAddress",
-                "recipient_digitalDomicile_address", "notification_iun", "notification_subject", "notification_recipient_recipientType",
-                "notification_recipient_recipientType", "notification_recipient_denomination", "notification_recipient_taxId", "notification_recipient_physicalAddress",
-                "notification_sender_paDenomination", "notification_sender_paId", "notification_sender_paTaxId", "context_qrCodeQuickAccessLink",
-                "context_piattaformaNotificheURLLabel", "context_piattaformaNotificheURL", "context_perfezionamentoURLLabel", "context_perfezionamentoURL",
-                "context_sendURL", "context_sendURLLAbel", "context_raddPhoneNumber");
+        return List.of("recipient", "recipient_taxId", "notification", "notification_iun", "notification_subject", "notification_sender",
+                "notification_sender_paDenomination", "context_qrCodeQuickAccessLink", "context_piattaformaNotificheURLLabel", "context_piattaformaNotificheURL",
+                "context_perfezionamentoURLLabel", "context_perfezionamentoURL", "context_sendURL", "context_sendURLLAbel", "context_raddPhoneNumber");
     }
 
     @Bean
     public List<String> notificationAARForEMAILFields() {
-        return List.of("notification_iun", "notification_subject", "notification_recipient_recipientType",
-                "notification_recipient_recipientType", "notification_recipient_denomination", "notification_recipient_taxId", "notification_recipient_physicalAddress",
-                "notification_sender_paDenomination", "notification_sender_paId", "notification_sender_paTaxId", "context_qrCodeQuickAccessLink",
-                "context_piattaformaNotificheURL", "context_perfezionamentoURL", "context_sendLogoLink", "context_pnFaqSendURL");
+        return List.of("notification", "notification_iun", "notification_sender", "notification_sender_paDenomination", "context_qrCodeQuickAccessLink",
+                "context_piattaformaNotificheURL", "context_perfezionamentoURL", "context_pnFaqSendURL");
     }
 
     @Bean
     public List<String> notificationAARForPECFields() {
-        return List.of("notification_iun", "notification_subject", "notification_recipient_recipientType",
-                "notification_recipient_recipientType", "notification_recipient_denomination", "notification_recipient_taxId", "notification_recipient_physicalAddress",
-                "notification_sender_paDenomination", "notification_sender_paId", "notification_sender_paTaxId", "context_qrCodeQuickAccessLink",
-                "context_piattaformaNotificheURL", "context_perfezionamentoURL", "context_pnFaqSendURL", "recipient_recipientType", "recipient_denomination", "recipient_taxId", "recipient_physicalAddress",
-                "recipient_digitalDomicile_address", "context_recipientType");
+        return List.of("notification", "recipient", "notification_iun", "notification_subject", "notification_sender",
+                "notification_sender_paDenomination", "context_qrCodeQuickAccessLink", "context_recipientType",
+                "context_piattaformaNotificheURL", "context_perfezionamentoURL", "context_pnFaqSendURL", "recipient_taxId");
     }
 
     @Bean
@@ -127,16 +114,12 @@ public class TemplateConfiguration {
 
     @Bean
     public List<String> notificationAARForSMSFields() {
-        return List.of("notification_iun", "notification_subject", "notification_recipient_recipientType",
-                "notification_recipient_recipientType", "notification_recipient_denomination", "notification_recipient_taxId", "notification_recipient_physicalAddress",
-                "notification_sender_paDenomination", "notification_sender_paId", "notification_sender_paTaxId");
+        return List.of("notification", "notification_iun", "notification_sender", "notification_sender_paDenomination");
     }
 
     @Bean
     public List<String> notificationAARSubjectFields() {
-        return List.of("notification_iun", "notification_subject", "notification_recipient_recipientType",
-                "notification_recipient_recipientType", "notification_recipient_denomination", "notification_recipient_taxId", "notification_recipient_physicalAddress",
-                "notification_sender_paDenomination", "notification_sender_paId", "notification_sender_paTaxId");
+        return List.of("notification", "notification_sender", "notification_sender_paDenomination");
     }
 
     @Bean
@@ -160,7 +143,7 @@ public class TemplateConfiguration {
         map.put(TemplateType.AVVISO_CORTESIA_SMS, notificationAARForSMSFields);
         map.put(TemplateType.AVVISO_CORTESIA_SMS_OBJECT, notificationAARSubjectFields);
         map.put(TemplateType.OTP_CONFERMA_PEC, confirmBodyFields);
-        map.put(TemplateType.PEC_VALIDA, confirmBodyFields);
+        //map.put(TemplateType.PEC_VALIDA, confirmBodyFields);
 
         return map;
     }

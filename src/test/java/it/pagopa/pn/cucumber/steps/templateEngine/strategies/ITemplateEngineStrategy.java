@@ -1,6 +1,6 @@
 package it.pagopa.pn.cucumber.steps.templateEngine.strategies;
 
-import it.pagopa.pn.client.b2b.generated.openapi.clients.templates_engine.model.LanguageEnum;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.LanguageEnum;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateEngineResult;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateRequestContext;
 
