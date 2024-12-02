@@ -4,6 +4,7 @@ import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV24;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV25;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV26;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchResponse;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
@@ -34,7 +35,7 @@ public class InvioNotificheB2bMultiPaSteps {
     @Then("la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA {string}")
     public void notificationCanBeRetrievedWithIUNByPA(String paType) {
         sharedSteps.selectPA(paType);
-        AtomicReference<FullSentNotificationV25> notificationByIun = new AtomicReference<>();
+        AtomicReference<FullSentNotificationV26> notificationByIun = new AtomicReference<>();
         try {
             Assertions.assertDoesNotThrow(() ->
                     notificationByIun.set(b2bUtils.getNotificationByIun(sharedSteps.getSentNotification().getIun()))

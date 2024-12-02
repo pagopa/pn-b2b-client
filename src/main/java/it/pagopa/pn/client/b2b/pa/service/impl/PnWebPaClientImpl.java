@@ -4,7 +4,7 @@ import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.webPa.ApiClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.webPa.api.SenderReadWebApi;
 import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchResponse;
-import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatus;
+import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatusV26;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
@@ -54,7 +54,7 @@ public class PnWebPaClientImpl implements IPnWebPaClient {
     }
 
     @Override
-    public NotificationSearchResponse searchSentNotification(OffsetDateTime startDate, OffsetDateTime endDate, String recipientId, NotificationStatus status, String subjectRegExp, String iunMatch, Integer size, String nextPagesKey) throws RestClientException {
+    public NotificationSearchResponse searchSentNotification(OffsetDateTime startDate, OffsetDateTime endDate, String recipientId, NotificationStatusV26 status, String subjectRegExp, String iunMatch, Integer size, String nextPagesKey) throws RestClientException {
         return senderReadWebApi.searchSentNotification(startDate, endDate, recipientId, status, subjectRegExp, iunMatch, size, nextPagesKey);
     }
 
