@@ -695,7 +695,7 @@ public class ApiServiceDeskSteps {
     }
 
     @Given("come operatore devo accedere ai dati del profilo di un utente \\(PF e PG) di Piattaforma Notifiche con taxId {string} e recipientType  {string}")
-    public void comeOperatoreDevoAccedereAiDatiDelProfiloDiUnUtentePFEPGDiPiattaformaNotifiche(String taxId, String recipientType) throws InterruptedException {
+    public void comeOperatoreDevoAccedereAiDatiDelProfiloDiUnUtentePFEPGDiPiattaformaNotifiche(String taxId, String recipientType) {
         try {
             profileRequest = new ProfileRequest();
             if ("NULL".equalsIgnoreCase(taxId)) {
@@ -773,14 +773,6 @@ public class ApiServiceDeskSteps {
             profileRequest = new ProfileRequest();
             String iunParameter = iun.equals("NULL") ? null : iun.equals("VUOTO") ? "" : iun;
             notificationDetailResponse = ipServiceDeskClient.getNotificationFromIUN(iunParameter);
-
-            /*if ("NULL".equalsIgnoreCase(iun)) {
-                notificationDetailResponse = ipServiceDeskClient.getNotificationFromIUN(null);
-            } else if ("VUOTO".equalsIgnoreCase(iun)) {
-                notificationDetailResponse = ipServiceDeskClient.getNotificationFromIUN("");
-            } else {
-                notificationDetailResponse = ipServiceDeskClient.getNotificationFromIUN(iun);
-            }*/
         } catch (HttpStatusCodeException exception) {
             this.notificationError = exception;
         }

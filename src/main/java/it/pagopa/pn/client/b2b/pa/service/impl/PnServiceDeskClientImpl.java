@@ -116,7 +116,7 @@ public class PnServiceDeskClientImpl implements IPServiceDeskClientImpl {
         return profileApi.getProfileFromTaxId(operatorId, profileRequest);
     }
 
-    @Override // xPagopaPnUid, da chiedere la verifica
+    @Override
     public NotificationRecipientDetailResponse getNotificationRecipientDetail(String xPagopaPnUid, String iun, NotificationRecipientDetailRequest notificationRecipientDetailRequest) throws RestClientException {
         return notificationAndMessageApi.getNotificationRecipientDetail(xPagopaPnUid, iun, notificationRecipientDetailRequest);
     }
