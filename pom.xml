@@ -14,8 +14,12 @@
     <groupId>it.pagopa.pn</groupId>
     <artifactId>pn-b2bclient</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
     <name>pn-b2bclient</name>
     <description>Esempio utilizzo API</description>
+    <modules>
+        <module>interop-qa-tests</module>
+    </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -221,6 +225,7 @@
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
                 <version>5.4.0</version>
+                <inherited>false</inherited>
                 <executions>
                     <execution>
                         <id>generate-internal-client-radd</id>
