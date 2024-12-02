@@ -25,7 +25,7 @@
         <spring.boot-version>2.5.2</spring.boot-version>
         <cucumber.version>7.8.1</cucumber.version>
         <open.api.version>develop</open.api.version>
-        <open.api.version.delivery>ad07f1c39ae78486e601b95a0a00abe3fc402c4e</open.api.version.delivery>
+        <open.api.version.delivery>develop</open.api.version.delivery>
         <open.api.version.delivery.push>1f9bafc946a7712e4a1e0fd38ce9314464c1b374</open.api.version.delivery.push>
         <open.api.version.delivery_v1>v2.0.2</open.api.version.delivery_v1>
         <open.api.version.delivery.push_v1>v2.0.3</open.api.version.delivery.push_v1>
@@ -148,6 +148,11 @@
             <groupId>com.opencsv</groupId>
             <artifactId>opencsv</artifactId>
             <version>5.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>3.0.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
