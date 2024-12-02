@@ -27,6 +27,9 @@ import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebh
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamCreationRequest;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamMetadataResponse;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.TimelineElementCategoryV20;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.ProgressResponseElementV26;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.StreamCreationRequestV26;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.StreamMetadataResponseV26;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.NotificationStatus;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.ProgressResponseElementV23;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamCreationRequestV23;
@@ -65,9 +68,11 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     private List<StreamCreationRequestV23> streamCreationRequestListV23;
     private List<StreamCreationRequestV24> streamCreationRequestListV24;
     private List<StreamCreationRequestV25> streamCreationRequestListV25;
+    private List<StreamCreationRequestV26> streamCreationRequestListV26;
     private List<StreamMetadataResponseV23> eventStreamListV23;
     private List<StreamMetadataResponseV24> eventStreamListV24;
     private List<StreamMetadataResponseV25> eventStreamListV25;
+    private List<StreamMetadataResponseV26> eventStreamListV26;
     private StreamRequestV23 streamRequestV23;
     private StreamCreationRequest streamCreationRequest;
     private Integer requestNumber;
@@ -78,6 +83,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     private List<ProgressResponseElementV23> progressResponseElementsV23;
     private List<ProgressResponseElementV24> progressResponseElementsV24;
     private List<ProgressResponseElementV25> progressResponseElementsV25;
+    private List<ProgressResponseElementV26> progressResponseElementsV26;
 
     @And("viene verificato che il campo legalfactIds sia valorizzato nel EventStream")
     public void vieneVerificatoCheIlCampoLegalfactIdsSiaValorizzato() {
@@ -88,7 +94,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
     //private final WebhookSynchronizer webhookSynchronizer;
 
-    public enum StreamVersion {V23, V10, V10_V23, V24, V25}
+    public enum StreamVersion {V23, V10, V10_V23, V24, V25, V26}
 
     private final Set<String> paStreamOwner = new HashSet<>();
 
@@ -333,6 +339,11 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                     deleteStreamWrapper(V25, pa, eventStream.getStreamId());
                 }
             }
+            case V26 -> {
+                for (StreamMetadataResponseV26 eventStream : eventStreamListV26) {
+                    deleteStreamWrapper(V26, pa, eventStream.getStreamId());
+                }
+            }
             default -> throw new IllegalArgumentException();
         }
     }
@@ -566,6 +577,13 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                     Assertions.assertNull(streamListElementV25);
                 }
                 break;
+            case "V26":
+                List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.StreamListElement> streamListElementsV26 = webhookB2bClient.listEventStreamsV26();
+                for (StreamMetadataResponseV26 eventStream : eventStreamListV26) {
+                    it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.StreamListElement streamListElementV26 = streamListElementsV26.stream().filter(elem -> elem.getStreamId() == eventStream.getStreamId()).findAny().orElse(null);
+                    Assertions.assertNull(streamListElementV26);
+                }
+                break;
             default:
                 throw new IllegalArgumentException();
         }
@@ -601,6 +619,14 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 Assertions.assertNotNull(eventStreamV25.getStreamId());
                 log.info("EVENTSTREAM: {}", eventStreamV25);
             }
+            case V26 -> {
+                StreamMetadataResponseV26 eventStreamV26 = Assertions.assertDoesNotThrow(() ->
+                        webhookB2bClient.retrieveEventStreamV26(this.eventStreamListV25.get(0).getStreamId()));
+                sharedSteps.setEventStreamV26(eventStreamV26);
+                Assertions.assertNotNull(eventStreamV26);
+                Assertions.assertNotNull(eventStreamV26.getStreamId());
+                log.info("EVENTSTREAM: {}", eventStreamV26);
+            }
         }
     }
 
@@ -617,7 +643,9 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             switch (streamVersion) {
                 case V10 -> webhookB2bClient.getEventStream(this.eventStreamList.get(0).getStreamId());
                 case V23 -> webhookB2bClient.getEventStreamV23(this.eventStreamListV23.get(0).getStreamId());
+                case V24 -> webhookB2bClient.retrieveEventStreamV24(this.eventStreamListV24.get(0).getStreamId());
                 case V25 -> webhookB2bClient.retrieveEventStreamV25(this.eventStreamListV25.get(0).getStreamId());
+                case V26 -> webhookB2bClient.retrieveEventStreamV26(this.eventStreamListV26.get(0).getStreamId());
             }
         } catch (HttpStatusCodeException e) {
             this.notificationError = e;
@@ -1516,6 +1544,13 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                     deleteStreamWrapper(V25, pa, elem.getStreamId());
                 }
                 break;
+            case "V26":
+                List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.StreamListElement> streamListElementsV26 = webhookB2bClient.listEventStreamsV26();
+                for (it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.StreamListElement elem : streamListElementsV26) {
+                    System.out.println(elem);
+                    deleteStreamWrapper(V25, pa, elem.getStreamId());
+                }
+                break;
             default:
                 throw new IllegalArgumentException();
         }
@@ -1987,6 +2022,41 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
                     }
                 }
+                case V26 -> {
+                    if (this.eventStreamListV26 == null) this.eventStreamListV26 = new LinkedList<>();
+                    for (StreamCreationRequestV26 request : streamCreationRequestListV26) {
+                        if (filteredValues != null && !filteredValues.isEmpty()) {
+                            request.setFilterValues(filteredValues);
+                        }
+                        if (listGroups != null) {
+                            request.setGroups(listGroups);
+                        }
+                        if (replaceId) {
+                            request.setReplacedStreamId(sharedSteps.getEventStreamV25().getStreamId());
+                        }
+                        try {
+                            StreamMetadataResponseV26 eventStream = webhookB2bClient.createEventStreamV26(request);
+                            if (replaceId) {
+                                StreamMetadataResponseV26 eventStreamV26 =
+                                        webhookB2bClient.retrieveEventStreamV26(this.eventStreamListV25.get(0).getStreamId());
+                                sharedSteps.setEventStreamV26(eventStreamV26);
+                                Assertions.assertNotNull(eventStreamV26);
+                                Assertions.assertNotNull(eventStreamV26.getStreamId());
+                                Assertions.assertNotNull(eventStreamV26.getDisabledDate());
+                                log.info("EVENTSTREAM REPLACED: {}", eventStreamV26);
+
+                                this.eventStreamListV26 = new LinkedList<>();
+                            }
+                            this.eventStreamListV26.add(eventStream);
+                            addStreamId(pa, eventStream.getStreamId(), streamVersion);
+
+                        } catch (HttpStatusCodeException e) {
+                            this.notificationError = e;
+                            sharedSteps.setNotificationError(e);
+                        }
+
+                    }
+                }
                 case V10_V23 -> {
                     if (this.eventStreamListV23 == null) this.eventStreamListV23 = new LinkedList<>();
 
@@ -2068,6 +2138,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 case V23 -> webhookB2bClient.deleteEventStreamV23(streamID);
                 case V24 -> webhookB2bClient.deleteEventStreamV24(streamID);
                 case V25 -> webhookB2bClient.deleteEventStreamV25(streamID);
+                case V26 -> webhookB2bClient.deleteEventStreamV26(streamID);
             }
             return true;
         }catch (HttpStatusCodeException e){
@@ -2082,6 +2153,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 case V23 -> webhookB2bClient.getEventStreamV23(streamID);
                 case V24 -> webhookB2bClient.retrieveEventStreamV24(streamID);
                 case V25 -> webhookB2bClient.retrieveEventStreamV25(streamID);
+                case V26 -> webhookB2bClient.retrieveEventStreamV26(streamID);
             }
             this.notificationError = e;
             sharedSteps.setNotificationError(e);
@@ -2215,6 +2287,11 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 uuid = this.eventStreamListV25.get(0).getStreamId();
                 List<ProgressResponseElementV25> progressResponseElementV25List = webhookB2bClient.consumeEventStreamV25(uuid, null);
                 this.progressResponseElementsV25 = progressResponseElementV25List;
+            }
+            case "V26" -> {
+                uuid = this.eventStreamListV26.get(0).getStreamId();
+                List<ProgressResponseElementV26> progressResponseElementV26List = webhookB2bClient.consumeEventStreamV26(uuid, null);
+                this.progressResponseElementsV26 = progressResponseElementV26List;
             }
         }
     }
