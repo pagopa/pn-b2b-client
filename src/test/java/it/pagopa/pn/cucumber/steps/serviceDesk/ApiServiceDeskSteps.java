@@ -46,7 +46,7 @@ import static org.awaitility.Awaitility.await;
 
 @Slf4j
 public class ApiServiceDeskSteps {
-    @Value("${pn.iun.withf24Payment.colombo.pagopa}")
+    @Value("${pn.iun.withf24Payment.colombo}")
     private String iunWithF24Payment;
 
     @Value("${pn.iun.withPagoPaPayment.colombo}")
