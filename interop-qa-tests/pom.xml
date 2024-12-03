@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>it.pagopa.pn</groupId>
+        <artifactId>pn-b2bclient</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <groupId>it.pagopa.interop</groupId>
+    <artifactId>interop-qa-tests</artifactId>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-bff-client</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <typeMappings>
+                                <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
+                            </typeMappings>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/main/packages/api-clients/open-api/bffApi.yml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <configOptions>
+                                <apiPackage>it.pagopa.interop.generated.openapi.clients.bff.api</apiPackage>
+                                <modelPackage>it.pagopa.interop.generated.openapi.clients.bff.model</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+                            <apiPackage>it.pagopa.interop.generated.openapi.clients.bff.api</apiPackage>
+                            <modelPackage>it.pagopa.interop.generated.openapi.clients.bff.model</modelPackage>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
