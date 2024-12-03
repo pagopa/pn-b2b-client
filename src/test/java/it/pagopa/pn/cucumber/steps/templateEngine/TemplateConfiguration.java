@@ -46,20 +46,20 @@ public class TemplateConfiguration {
 
     @Bean
     public List<String> notificationReceiverLegalFactFields() {
-        return List.of("context_senddate", "context_subject", "notification_iun", "notification_subject", "context_digest", "notification",
+        return List.of("context_senddate", "context_subject", "context_digest", "notification_iun", "context_notification",
                 "notification_sender", "notification_recipient", "notification_sender_paDenomination", "notification_sender_paTaxId",
-                 "notification_recipient_denomination", "notification_recipient_taxId", "notification_recipient_digitalDomicile_address");
+                 "notification_recipient_denomination", "notification_recipient_taxId", "notification_recipient_digitalDomicile");
     }
 
     @Bean
     public List<String> pecDeliveryWorkflowLegalFactFields() {
-        return List.of("context_iun", "context_endWorkflowStatus", "context_delivery", "delivery_ok",
+        return List.of("context_iun", "context_endWorkflowStatus", "context_endWorkflowDate", "context_delivery", "delivery_ok",
                 "delivery_addressSource", "delivery_responseDate", "delivery_denomination");
     }
 
     @Bean
     public List<String> notificationViewedLegalFactFields() {
-        return List.of("context_iun", "context_when", "recipient", "delegate_denomination", "delegate_taxId",
+        return List.of("context_iun", "context_when", "context_recipient", "delegate_denomination", "delegate_taxId",
                  "recipient_denomination", "recipient_taxId");
     }
 
@@ -70,39 +70,38 @@ public class TemplateConfiguration {
 
     @Bean
     public List<String> notificationCancelledLegalFactFields() {
-        return List.of("notification", "notification_iun", "recipient_denomination", "recipient_taxId",
+        return List.of("context_notification", "notification_iun", "notification_recipient_denomination", "notification_recipient_taxId", "notification_sender",
                 "notification_sender_paDenomination", "context_NotificationCancelledDate");
     }
 
     @Bean
     public List<String> analogDeliveryWorkflowFailureLegalFactFields() {
-        return List.of("recipient", "recipient_denomination", "recipient_taxId", "context_endWorkflowDate", "context_endWorkflowStatus");
-        /*"recipient_recipientType" "recipient_physicalAddress", "recipient_digitalDomicile_address",*/
+        return List.of("context_recipient", "recipient_denomination", "recipient_taxId", "context_endWorkflowDate", "context_endWorkflowTime");
     }
 
     @Bean
     public List<String> notificationAARFields() {
-        return List.of("recipient", "recipient_taxId", "notification", "notification_iun", "notification_subject", "notification_sender",
+        return List.of("context_recipient", "recipient_taxId", "recipient_recipientType", "context_notification", "notification_iun", "notification_subject", "notification_sender",
                 "notification_sender_paDenomination", "context_qrCodeQuickAccessLink", "context_piattaformaNotificheURLLabel", "context_piattaformaNotificheURL",
                 "context_perfezionamentoURLLabel", "context_perfezionamentoURL");
     }
 
     @Bean
     public List<String> notificationAARRADDaltFields() {
-        return List.of("recipient", "recipient_taxId", "notification", "notification_iun", "notification_subject", "notification_sender",
+        return List.of("context_recipient", "recipient_taxId", "recipient_recipientType", "recipient_denomination", "context_notification", "notification_iun", "notification_subject", "notification_sender",
                 "notification_sender_paDenomination", "context_qrCodeQuickAccessLink", "context_piattaformaNotificheURLLabel", "context_piattaformaNotificheURL",
                 "context_perfezionamentoURLLabel", "context_perfezionamentoURL", "context_sendURL", "context_sendURLLAbel", "context_raddPhoneNumber");
     }
 
     @Bean
     public List<String> notificationAARForEMAILFields() {
-        return List.of("notification", "notification_iun", "notification_sender", "notification_sender_paDenomination", "context_qrCodeQuickAccessLink",
+        return List.of("context_notification", "notification_iun", "notification_sender", "notification_sender_paDenomination", "context_qrCodeQuickAccessLink",
                 "context_piattaformaNotificheURL", "context_perfezionamentoURL", "context_pnFaqSendURL");
     }
 
     @Bean
     public List<String> notificationAARForPECFields() {
-        return List.of("notification", "recipient", "notification_iun", "notification_subject", "notification_sender",
+        return List.of("context_notification", "context_recipient", "notification_iun", "notification_subject", "notification_sender",
                 "notification_sender_paDenomination", "context_qrCodeQuickAccessLink", "context_recipientType",
                 "context_piattaformaNotificheURL", "context_perfezionamentoURL", "context_pnFaqSendURL", "recipient_taxId");
     }
@@ -114,12 +113,12 @@ public class TemplateConfiguration {
 
     @Bean
     public List<String> notificationAARForSMSFields() {
-        return List.of("notification", "notification_iun", "notification_sender", "notification_sender_paDenomination");
+        return List.of("context_notification", "notification_iun", "notification_sender", "notification_sender_paDenomination");
     }
 
     @Bean
     public List<String> notificationAARSubjectFields() {
-        return List.of("notification", "notification_sender", "notification_sender_paDenomination");
+        return List.of("context_notification", "notification_sender", "notification_sender_paDenomination");
     }
 
     @Bean
@@ -143,7 +142,6 @@ public class TemplateConfiguration {
         map.put(TemplateType.AVVISO_CORTESIA_SMS, notificationAARForSMSFields);
         map.put(TemplateType.AVVISO_CORTESIA_SMS_OBJECT, notificationAARSubjectFields);
         map.put(TemplateType.OTP_CONFERMA_PEC, confirmBodyFields);
-        //map.put(TemplateType.PEC_VALIDA, confirmBodyFields);
 
         return map;
     }

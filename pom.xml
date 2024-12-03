@@ -1895,6 +1895,7 @@
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
                             <generateModelTests>false</generateModelTests>
+                            <skipValidateSpec>true</skipValidateSpec>
                             <configOptions>
                                 <apiPackage>it.pagopa.interop.client.b2b.generated.openapi.clients.interop.api</apiPackage>
                                 <modelPackage>it.pagopa.interop.client.b2b.generated.openapi.clients.interop.model</modelPackage>
@@ -1941,8 +1942,6 @@
                                     @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
                                 </additionalModelTypeAnnotations>
                             </configOptions>
-                            <apiPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.api</apiPackage>
-                            <modelPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model</modelPackage>
                         </configuration>
                     </execution>
 

@@ -1,9 +1,9 @@
 package it.pagopa.pn.cucumber.steps.templateEngine.data;
 
-import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.Delegate;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.Delivery;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.Notification;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.Recipient;
+import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateDelegate;
+import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateDelivery;
+import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateNotification;
+import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateRecipient;
 import lombok.Data;
 
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 public class TemplateRequestContext {
     private String sendDate;
-    private Notification notification;
+    private TemplateNotification notification;
     private String subject;
     private String iun;
     private String physicalAddressAndDenomination;
@@ -19,10 +19,10 @@ public class TemplateRequestContext {
     private String endWorkflowDate;
     private String endWorkflowStatus;
     private String endWorkflowTime;
-    private List<Delivery> deliveries;
+    private List<TemplateDelivery> deliveries;
     private String when;
-    private Recipient recipient;
-    private Delegate delegate;
+    private TemplateRecipient recipient;
+    private TemplateDelegate delegate;
     private String startDate;
     private String timeReferenceStartDate;
     private String endDate;
@@ -41,5 +41,5 @@ public class TemplateRequestContext {
     private String logoBase64;
     private String recipientType;
     private String verificationCode;
-
+    private String recipients;
 }

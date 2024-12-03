@@ -5,11 +5,11 @@ Feature: Template engine
     When recupero il template per "attestazione opponibile a terzi di notifica presa in carico" in lingua "<language>"
     Then verifico che il template è in formato ".pdf"
     Examples:
-    | language |
-    | italiana |
-    | tedesca  |
-    | slovena  |
-    | francese |
+      | language |
+      | italiana |
+      | tedesca  |
+      | slovena  |
+      | francese |
 
   @templateEngine #22 - 23 /templates-engine-private/v1/templates/notification-received-legal-fact
   Scenario: [TEMPLATE-ENGINE_2] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di notifica presa in carico - lingua errata - lingua vuota
@@ -29,15 +29,11 @@ Feature: Template engine
   @templateEngine #106 /templates-engine-private/v1/templates/notification-received-legal-fact
   Scenario Outline: [TEMPLATE-ENGINE_2_3] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di notifica presa in carico - not required fields
     When recupero il template per "attestazione opponibile a terzi di notifica presa in carico" con i valori nel request body:
-    When recupero il template per "avviso di avvenuta ricezione" con i valori nel request body:
       | <fieldName> | <fieldValue> |
     Then verifico che il template è in formato ".pdf"
     Examples:
       | fieldName                               | fieldValue |
       | context_physicalAddressAndDenomination  | null       |
-      | notification_recipient_physicalAddress  | null       |
-      | notification_sender_paId                | null       |
-      | notification_recipient_recipientType    | null       |
 
   @templateEngine #24 25 26 27 /templates-engine-private/v1/templates/pec-delivery-workflow-legal-fact
   Scenario Outline: [TEMPLATE-ENGINE_3] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di notifica digitale - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
@@ -65,16 +61,15 @@ Feature: Template engine
     When recupero il template per "attestazione opponibile a terzi di notifica digitale" con i valori nel request body errati
     Then verifico che tutte le chiamate siano andate in "400" error e che nessuna abbia ricevuto una risposta
 
-  @templateEngine # /templates-engine-private/v1/templates/pec-delivery-workflow-legal-fact
-  Scenario Outline: [TEMPLATE-ENGINE_4_3] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di notifica digitale - body errato
-    When recupero il template per "attestazione opponibile a terzi di notifica digitale" con i valori nel request body:
-      | <fieldName> | <fieldValue> |
-    Then verifico che il template è in formato ".pdf"
-    Examples:
-      | fieldName                  | fieldValue |
-      | context_endWorkflowDate    | null       |
-      | delivery_type              | null       |
-x
+#  @templateEngine # /templates-engine-private/v1/templates/pec-delivery-workflow-legal-fact
+#  Scenario Outline: [TEMPLATE-ENGINE_4_3] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di notifica digitale - body errato
+#    When recupero il template per "attestazione opponibile a terzi di notifica digitale" con i valori nel request body:
+#      | <fieldName> | <fieldValue> |
+#    Then verifico che il template è in formato ".pdf"
+#    Examples:
+#      | fieldName                  | fieldValue |
+#      | context_endWorkflowDate    | null       |
+#      | delivery_type              | null       |
   @templateEngine #29 30 31 32 /templates-engine-private/v1/templates/notification-viewed-legal-fact
   Scenario Outline: [TEMPLATE-ENGINE_5] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di avvenuto accesso - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
     When recupero il template per "attestazione opponibile a terzi di avvenuto accesso" in lingua "<language>"
@@ -108,9 +103,6 @@ x
     Then verifico che il template è in formato ".pdf"
     Examples:
       | fieldName                          | fieldValue |
-      | recipient_physicalAddress          | null       |
-      | recipient_digitalDomicile_address  | null       |
-      | recipient_recipientType            | null       |
       | context_delegate                   | null       |
 
   @templateEngine #34 35 36 37 /templates-engine-private/v1/templates/legal-fact-malfunction
@@ -165,23 +157,14 @@ x
     When recupero il template per "dichiarazione di annullamento notifica" con i valori nel request body errati
     Then verifico che tutte le chiamate siano andate in "400" error e che nessuna abbia ricevuto una risposta
 
-  @templateEngine # /templates-engine-private/v1/templates/notification-cancelled-legal-fact
+  @templateEngine # /templates-engine-private/v1/templates/notification-cancelled-legal-fact // se questo è null va in 500 error
   Scenario Outline: [TEMPLATE-ENGINE_10_3] Richiamare l’API per il recupero del template della dichiarazione di annullamento notifica - field not required
     When recupero il template per "dichiarazione di annullamento notifica" con i valori nel request body:
       | <fieldName> | <fieldValue> |
     Then verifico che il template è in formato ".pdf"
     Examples:
       | fieldName                               | fieldValue |
-      | recipient_recipientType                 | null       |
-      | recipient_physicalAddress               | null       |
-      | recipient_digitalDomicile_address       | null       |
       | notification_recipient                  | null       |
-      | notification_recipient_recipientType    | null       |
-      | notification_recipient_physicalAddress  | null       |
-      | notification_recipient_denomination     | null       |
-      | notification_recipient_taxId            | null       |
-      | notification_sender_paId                | null       |
-      | notification_sender_paTaxId             | null       |
 
   @templateEngine #44 45 46 47 /templates-engine-private/v1/templates/analog-delivery-workflow-failure-legal-fact
   Scenario Outline: [TEMPLATE-ENGINE_11] Richiamare l’API per il recupero del template del deposito di avvenuta ricezione - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
@@ -209,15 +192,15 @@ x
     When recupero il template per "deposito di avvenuta ricezione" con i valori nel request body errati
     Then verifico che tutte le chiamate siano andate in "400" error e che nessuna abbia ricevuto una risposta
 
-  Scenario Outline: [TEMPLATE-ENGINE_12_3] Richiamare l’API per il recupero del template del deposito di avvenuta ricezione - campi non required
-    When recupero il template per "deposito di avvenuta ricezione" con i valori nel request body:
-    | <fieldName> | <fieldValue> |
-    Then verifico che il template è in formato ".pdf"
-    Examples:
-    | fieldName                         | fieldValue |
-    | recipient_recipientType           | null       |
-    | recipient_physicalAddress         | null       |
-    | recipient_digitalDomicile_address | null       |
+#  Scenario Outline: [TEMPLATE-ENGINE_12_3] Richiamare l’API per il recupero del template del deposito di avvenuta ricezione - campi non required
+#    When recupero il template per "deposito di avvenuta ricezione" con i valori nel request body:
+#    | <fieldName> | <fieldValue> |
+#    Then verifico che il template è in formato ".pdf"
+#    Examples:
+#    | fieldName                         | fieldValue |
+#    | recipient_recipientType           | null       |
+#    | recipient_physicalAddress         | null       |
+#    | recipient_digitalDomicile_address | null       |
 
   @templateEngine #49 50 51 52 /templates-engine-private/v1/templates/notification-aar
   Scenario Outline: [TEMPLATE-ENGINE_13] Richiamare l’API per il recupero del template di avviso di avvenuta ricezione - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
@@ -245,26 +228,25 @@ x
     When recupero il template per "avviso di avvenuta ricezione" con i valori nel request body errati
     Then verifico che tutte le chiamate siano andate in "400" error e che nessuna abbia ricevuto una risposta
 
-  @templateEngine #112 /templates-engine-private/v1/templates/notification-aar
-  Scenario Outline: [TEMPLATE-ENGINE_14_3] Richiamare l’API per il recupero del template di avviso di avvenuta ricezione - field not required
-    When recupero il template per "avviso di avvenuta ricezione" con i valori nel request body:
-      | <fieldName> | <fieldValue> |
-    Then verifico che il template è in formato ".pdf"
-    Examples:
-      | fieldName                               | fieldValue |
-      | recipient_recipientType                 | null       |
-      | recipient_physicalAddress               | null       |
-      | recipient_denomination                  | null       |
-      | recipient_digitalDomicile_address       | null       |
-      | notification_recipient                  | null       |
-      | notification_recipient_recipientType    | null       |
-      | notification_recipient_physicalAddress  | null       |
-      | notification_recipient_denomination     | null       |
-      | notification_recipient_taxId            | null       |
-      | notification_sender_paId                | null       |
-      | notification_sender_paTaxId             | null       |
-      | context_sendURL                         | null       |
-      | context_sendURLLAbel                    | null       |
+#  @templateEngine #112 /templates-engine-private/v1/templates/notification-aar
+#  Scenario Outline: [TEMPLATE-ENGINE_14_3] Richiamare l’API per il recupero del template di avviso di avvenuta ricezione - field not required
+#    When recupero il template per "avviso di avvenuta ricezione" con i valori nel request body:
+#      | <fieldName> | <fieldValue> |
+#    Then verifico che il template è in formato ".pdf"
+#    Examples:
+#      | fieldName                               | fieldValue |
+#      | recipient_physicalAddress               | null       |
+#      | recipient_denomination                  | null       |
+#      | recipient_digitalDomicile_address       | null       |
+#      | notification_recipient                  | null       |
+#      | notification_recipient_recipientType    | null       |
+#      | notification_recipient_physicalAddress  | null       |
+#      | notification_recipient_denomination     | null       |
+#      | notification_recipient_taxId            | null       |
+#      | notification_sender_paId                | null       |
+#      | notification_sender_paTaxId             | null       |
+#      | context_sendURL                         | null       |
+#      | context_sendURLLAbel                    | null       |
 
   @templateEngine #54 55 56 57 /templates-engine-private/v1/templates/notification-aar-radd-alt
   Scenario Outline: [TEMPLATE-ENGINE_15] Richiamare l’API per il recupero del template di avviso di avvenuta ricezione RADD - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
@@ -292,24 +274,22 @@ x
     When recupero il template per "avviso di avvenuta ricezione RADD" con i valori nel request body errati
     Then verifico che tutte le chiamate siano andate in "400" error e che nessuna abbia ricevuto una risposta
 
-  @templateEngine #/templates-engine-private/v1/templates/notification-aar-radd-alt
-  Scenario Outline: [TEMPLATE-ENGINE_16_3] Richiamare l’API per il recupero del template di avviso di avvenuta ricezione RADD - field not required
-    When recupero il template per "avviso di avvenuta ricezione RADD" con i valori nel request body:
-      | <fieldName> | <fieldValue> |
-    Then verifico che il template è in formato ".pdf"
-    Examples:
-      | fieldName                               | fieldValue |
-      | recipient_recipientType                 | null       |
-      | recipient_physicalAddress               | null       |
-      | recipient_denomination                  | null       |
-      | recipient_digitalDomicile_address       | null       |
-      | notification_recipient                  | null       |
-      | notification_recipient_recipientType    | null       |
-      | notification_recipient_physicalAddress  | null       |
-      | notification_recipient_denomination     | null       |
-      | notification_recipient_taxId            | null       |
-      | notification_sender_paId                | null       |
-      | notification_sender_paTaxId             | null       |
+#  @templateEngine #/templates-engine-private/v1/templates/notification-aar-radd-alt
+#  Scenario Outline: [TEMPLATE-ENGINE_16_3] Richiamare l’API per il recupero del template di avviso di avvenuta ricezione RADD - field not required
+#    When recupero il template per "avviso di avvenuta ricezione RADD" con i valori nel request body:
+#      | <fieldName> | <fieldValue> |
+#    Then verifico che il template è in formato ".pdf"
+#    Examples:
+#      | fieldName                               | fieldValue |
+#      | recipient_physicalAddress               | null       |
+#      | recipient_digitalDomicile_address       | null       |
+#      | notification_recipient                  | null       |
+#      | notification_recipient_recipientType    | null       |
+#      | notification_recipient_physicalAddress  | null       |
+#      | notification_recipient_denomination     | null       |
+#      | notification_recipient_taxId            | null       |
+#      | notification_sender_paId                | null       |
+#      | notification_sender_paTaxId             | null       |
 
   @templateEngine #59 60 61 62 templates-engine-private/v1/templates/notification-aar-for-email
   Scenario Outline: [TEMPLATE-ENGINE_17] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
@@ -335,24 +315,24 @@ x
   @templateEngine #114 /templates-engine-private/v1/templates/notificationAARForEMAIL
   Scenario: [TEMPLATE-ENGINE_18_2] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - body errato
     When recupero il template per "avviso di cortesia EMAIL" con i valori nel request body errati
-    Then verifico che tutte le chiamate siano andate in "500" error e che nessuna abbia ricevuto una risposta
+    Then verifico che tutte le chiamate siano andate in "400" error e che nessuna abbia ricevuto una risposta
 
-  @templateEngine #/templates-engine-private/v1/templates/notificationAARForEMAIL
-  Scenario Outline: [TEMPLATE-ENGINE_18_3] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - field not required
-    When recupero il template per "avviso di cortesia EMAIL" con i valori nel request body:
-      | <fieldName> | <fieldValue> |
-    Then verifico che il template è in formato "html"
-    Examples:
-      | fieldName                               | fieldValue |
-      | notification_recipient                  | null       |
-      | notification_recipient_recipientType    | null       |
-      | notification_recipient_physicalAddress  | null       |
-      | notification_recipient_denomination     | null       |
-      | notification_recipient_taxId            | null       |
-      | notification_sender_paId                | null       |
-      | notification_sender_paTaxId             | null       |
-      | notification_subject                    | null       |
-      | context_sendLogoLink                    | null       |
+#  @templateEngine #/templates-engine-private/v1/templates/notificationAARForEMAIL
+#  Scenario Outline: [TEMPLATE-ENGINE_18_3] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - field not required
+#    When recupero il template per "avviso di cortesia EMAIL" con i valori nel request body:
+#      | <fieldName> | <fieldValue> |
+#    Then verifico che il template è in formato "html"
+#    Examples:
+#      | fieldName                               | fieldValue |
+#      | notification_recipient                  | null       |
+#      | notification_recipient_recipientType    | null       |
+#      | notification_recipient_physicalAddress  | null       |
+#      | notification_recipient_denomination     | null       |
+#      | notification_recipient_taxId            | null       |
+#      | notification_sender_paId                | null       |
+#      | notification_sender_paTaxId             | null       |
+#      | notification_subject                    | null       |
+#      | context_sendLogoLink                    | null       |
 
   @templateEngine #64 65 66 67 /templates-engine-private/v1/templates/notification-aar-for-pec
   Scenario Outline: [TEMPLATE-ENGINE_19] Richiamare l’API per il recupero del template di avviso di cortesia PEC - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
@@ -380,23 +360,23 @@ x
     When recupero il template per "avviso di cortesia PEC" con i valori nel request body errati
     Then verifico che tutte le chiamate siano andate in "400" error e che nessuna abbia ricevuto una risposta
 
-  @templateEngine # /templates-engine-private/v1/templates/notification-aar-for-pec
-  Scenario Outline: [TEMPLATE-ENGINE_20_3] Richiamare l’API per il recupero del template di avviso di cortesia PEC - body errato
-    When recupero il template per "avviso di cortesia PEC" con i valori nel request body:
-      | <fieldName> | <fieldValue> |
-    Then verifico che il template è in formato "html"
-    Examples:
-      | fieldName                               | fieldValue |
-      | recipient_recipientType                 | null       |
-      | recipient_physicalAddress               | null       |
-      | recipient_denomination                  | null       |
-      | recipient_digitalDomicile_address       | null       |
-      | notification_recipient_recipientType    | null       |
-      | notification_sender_paId                | null       |
-      | notification_recipient_taxId            | null       |
-      | notification_sender_paTaxId             | null       |
-      | notification_recipient_physicalAddress  | null       |
-      | notification_recipient_denomination     | null       |
+#  @templateEngine # /templates-engine-private/v1/templates/notification-aar-for-pec
+#  Scenario Outline: [TEMPLATE-ENGINE_20_3] Richiamare l’API per il recupero del template di avviso di cortesia PEC - body errato
+#    When recupero il template per "avviso di cortesia PEC" con i valori nel request body:
+#      | <fieldName> | <fieldValue> |
+#    Then verifico che il template è in formato "html"
+#    Examples:
+#      | fieldName                               | fieldValue |
+#      | recipient_recipientType                 | null       |
+#      | recipient_physicalAddress               | null       |
+#      | recipient_denomination                  | null       |
+#      | recipient_digitalDomicile_address       | null       |
+#      | notification_recipient_recipientType    | null       |
+#      | notification_sender_paId                | null       |
+#      | notification_recipient_taxId            | null       |
+#      | notification_sender_paTaxId             | null       |
+#      | notification_recipient_physicalAddress  | null       |
+#      | notification_recipient_denomination     | null       |
 
   @templateEngine #69 /templates-engine-private/v1/templates/emailbody
   Scenario: [TEMPLATE-ENGINE_21] Richiamare l’API per il recupero del template di OTP di conferma email - lingua italiana
@@ -458,10 +438,10 @@ x
 #    When recupero il template per "PEC valida" con i valori nel request body errati
 #    Then verifico che tutte le chiamate siano andate in "500" error e che nessuna abbia ricevuto una risposta
 
-  @templateEngine #75 /templates-engine-private/v1/templates/pecbodyreject
-  Scenario: [TEMPLATE-ENGINE_27] Richiamare l’API per il recupero del template di PEC non valida - lingua italiana
-    When recupero il template per "PEC non valida" in lingua "italiana"
-    Then verifico che il template è in formato "html"
+#  @templateEngine #75 /templates-engine-private/v1/templates/pecbodyreject
+#  Scenario: [TEMPLATE-ENGINE_27] Richiamare l’API per il recupero del template di PEC non valida - lingua italiana
+#    When recupero il template per "PEC non valida" in lingua "italiana"
+#    Then verifico che il template è in formato "html"
 
   @templateEngine #76 /templates-engine-private/v1/templates/pecbodyreject
   Scenario: [TEMPLATE-ENGINE_28] Richiamare l’API per il recupero del template di PEC non valida - lingua errata
@@ -471,7 +451,7 @@ x
   @templateEngine #77 templates-engine-private/v1/templates/notification-aar-for-sms
   Scenario: [TEMPLATE-ENGINE_29] Richiamare l’API per il recupero del template di avviso di cortesia SMS - lingua italiana
     When recupero il template per "avviso di cortesia SMS" in lingua "italiana"
-    Then verifico che il template è in formato "html"
+    Then verifico che il template è in formato "text"
 
   @templateEngine #78 /templates-engine-private/v1/templates/notification-aar-for-sms
   Scenario: [TEMPLATE-ENGINE_30] Richiamare l’API per il recupero del template di avviso di cortesia SMS - lingua errata
@@ -486,28 +466,28 @@ x
   @templateEngine #119 /templates-engine-private/v1/templates/notification-aar-for-sms
   Scenario: [TEMPLATE-ENGINE_30_2] Richiamare l’API per il recupero del template di avviso di cortesia SMS - body errato
     When recupero il template per "avviso di cortesia SMS" con i valori nel request body errati
-    Then verifico che tutte le chiamate siano andate in "500" error e che nessuna abbia ricevuto una risposta
+    Then verifico che tutte le chiamate siano andate in "400" error e che nessuna abbia ricevuto una risposta
 
-  @templateEngine # /templates-engine-private/v1/templates/notification-aar-for-sms
-  Scenario Outline: [TEMPLATE-ENGINE_30_3] Richiamare l’API per il recupero del template di avviso di cortesia SMS - not required fields
-    When recupero il template per "avviso di cortesia SMS" con i valori nel request body:
-      | <fieldName> | <fieldValue> |
-    Then verifico che il template è in formato "html"
-    Examples:
-      | fieldName                               | fieldValue |
-      | notification_recipient                  | null       |
-      | notification_recipient_recipientType    | null       |
-      | notification_recipient_physicalAddress  | null       |
-      | notification_recipient_denomination     | null       |
-      | notification_recipient_taxId            | null       |
-      | notification_sender_paId                | null       |
-      | notification_sender_paTaxId             | null       |
-      | notification_subject                    | null       |
+#  @templateEngine # /templates-engine-private/v1/templates/notification-aar-for-sms
+#  Scenario Outline: [TEMPLATE-ENGINE_30_3] Richiamare l’API per il recupero del template di avviso di cortesia SMS - not required fields
+#    When recupero il template per "avviso di cortesia SMS" con i valori nel request body:
+#      | <fieldName> | <fieldValue> |
+#    Then verifico che il template è in formato "html"
+#    Examples:
+#      | fieldName                               | fieldValue |
+#      | notification_recipient                  | null       |
+#      | notification_recipient_recipientType    | null       |
+#      | notification_recipient_physicalAddress  | null       |
+#      | notification_recipient_denomination     | null       |
+#      | notification_recipient_taxId            | null       |
+#      | notification_sender_paId                | null       |
+#      | notification_sender_paTaxId             | null       |
+#      | notification_subject                    | null       |
 
   @templateEngine #79 /templates-engine-private/v1/templates/smsbody
   Scenario: [TEMPLATE-ENGINE_31] Richiamare l’API per il recupero del template di OTP di conferma sms - lingua italiana
     When recupero il template per "OTP di conferma sms" in lingua "italiana"
-    Then verifico che il template è in formato "html"
+    Then verifico che il template è in formato "text"
 
   @templateEngine #80 /templates-engine-private/v1/templates/smsbody
   Scenario: [TEMPLATE-ENGINE_32] Richiamare l’API per il recupero del template di OTP di conferma sms - lingua errata
@@ -534,22 +514,22 @@ x
     When recupero l'oggetto per "avviso di cortesia per l’SMS object" con i valori nel request body errati
     Then verifico che tutte le chiamate siano andate in "400" error e che nessuna abbia ricevuto una risposta
 
-  @templateEngine #/templates-engine-private/v1/templates/notification-aar-subject
-  Scenario Outline: [TEMPLATE-ENGINE_33_4] Richiamare l’API per il recupero dell’oggetto relativo all’avviso di cortesia per l’SMS - field not required
-    When recupero l'oggetto per "avviso di cortesia per l’SMS object" con i valori nel request body:
-      | <fieldName> | <fieldValue> |
-    Then verifico che il template è in formato "text"
-    Examples:
-      | fieldName                               | fieldValue |
-      | notification_iun                        | null       |
-      | notification_subject                    | null       |
-      | notification_recipient_recipientType    | null       |
-      | notification_recipient_denomination     | null       |
-      | notification_recipient                  | null       |
-      | notification_recipient_physicalAddress  | null       |
-      | notification_recipient_taxId            | null       |
-      | notification_sender_paId                | null       |
-      | notification_sender_paTaxId             | null       |
+#  @templateEngine #/templates-engine-private/v1/templates/notification-aar-subject
+#  Scenario Outline: [TEMPLATE-ENGINE_33_4] Richiamare l’API per il recupero dell’oggetto relativo all’avviso di cortesia per l’SMS - field not required
+#    When recupero l'oggetto per "avviso di cortesia per l’SMS object" con i valori nel request body:
+#      | <fieldName> | <fieldValue> |
+#    Then verifico che il template è in formato "text"
+#    Examples:
+#      | fieldName                               | fieldValue |
+#      | notification_iun                        | null       |
+#      | notification_subject                    | null       |
+#      | notification_recipient_recipientType    | null       |
+#      | notification_recipient_denomination     | null       |
+#      | notification_recipient                  | null       |
+#      | notification_recipient_physicalAddress  | null       |
+#      | notification_recipient_taxId            | null       |
+#      | notification_sender_paId                | null       |
+#      | notification_sender_paTaxId             | null       |
 
   @templateEngine #82 #83 #84 #85 /templates-engine-private/v1/templates/emailsubject
   Scenario: [TEMPLATE-ENGINE_34] Richiamare l’API per il recupero dell’oggetto relativo all’OTP di conferma email

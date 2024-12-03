@@ -14,10 +14,10 @@ import java.util.Map;
 public class TemplateEngineContextFactory {
 
     public TemplateRequestContext createContext(Map<String, String> parameters) {
-        String deliveryValue = parameters.get("delivery");
-        String notificationValue = parameters.get("notification");
-        String delegateValue = parameters.get("delegate");
-        String recipientValue = parameters.get("recipient");
+        String deliveryValue = parameters.get("context_delivery");
+        String notificationValue = parameters.get("context_notification");
+        String delegateValue = parameters.get("context_delegate");
+        String recipientValue = parameters.get("context_recipient");
         TemplateRequestContext context = new TemplateRequestContext();
         String digest = getParameter(parameters, "context_digest");
         context.setNotification(notificationValue != null ? notificationValue.equals("null") ? null : getNotification(parameters) : getNotification(parameters));
@@ -51,44 +51,46 @@ public class TemplateEngineContextFactory {
         context.setRecipientType(getParameter(parameters, "context_recipientType"));
         context.setVerificationCode(getParameter(parameters, "context_verificationCode"));
         context.setRaddPhoneNumber(getParameter(parameters, "context_raddPhoneNumber"));
+        context.setRecipients(getParameter(parameters, "context_recipients"));
 
         return context;
     }
 
-    private Notification getNotification(Map<String, String> parameters) {
+    private TemplateNotification getNotification(Map<String, String> parameters) {
         String recipientsValue = parameters.get("notification_recipient");
-        String senderValue = parameters.get("sender");
-        return new Notification()
+        String senderValue = parameters.get("notification_sender");
+        return new TemplateNotification()
                 .iun(getParameter(parameters, "notification_iun"))
                 .subject(getParameter(parameters, "notification_subject"))
                 .recipients(recipientsValue != null ? recipientsValue.equals("null") ? null : List.of(getRecipients(parameters, "notification_")) : List.of(getRecipients(parameters, "notification_")))
                 .sender(senderValue != null ? senderValue.equals("null") ? null : getNotificationSender(parameters) : getNotificationSender(parameters));
     }
 
-    private Recipient getRecipients(Map<String, String> parameters, String suffix) {
-        return new Recipient()
+    private TemplateRecipient getRecipients(Map<String, String> parameters, String suffix) {
+        String digitalDomicile = parameters.get("notification_recipient_digitalDomicile");
+        return new TemplateRecipient()
                 .recipientType(getParameter(parameters, suffix + "recipient_recipientType"))
                 .denomination(getParameter(parameters, suffix + "recipient_denomination"))
                 .taxId(getParameter(parameters, suffix + "recipient_taxId"))
-                .physicalAddress(getParameter(parameters, suffix + "recipient_physicalAddress"))
-                .digitalDomicile(getDigitalDomicile(parameters));
+                .physicalAddressAndDenomination(getParameter(parameters, suffix + "recipient_physicalAddress"))
+                .digitalDomicile(digitalDomicile != null ? digitalDomicile.equals("null") ? null : getDigitalDomicile(parameters) : getDigitalDomicile(parameters));
     }
 
-    private DigitalDomicile getDigitalDomicile(Map<String, String> parameters) {
-        return new DigitalDomicile()
+    private TemplateDigitalDomicile getDigitalDomicile(Map<String, String> parameters) {
+        return new TemplateDigitalDomicile()
                 .address(getParameter(parameters, "notification_recipient_digitalDomicile_address"));
     }
 
-    private NotificationSender getNotificationSender(Map<String, String> parameters) {
-        return new NotificationSender()
+    private TemplateSender getNotificationSender(Map<String, String> parameters) {
+        return new TemplateSender()
                 .paDenomination(getParameter(parameters, "notification_sender_paDenomination"))
-                .paId(getParameter(parameters, "notification_sender_paId"))
+                //.paId(getParameter(parameters, "notification_sender_paId"))
                 .paTaxId(getParameter(parameters, "notification_sender_paTaxId"));
     }
 
-    private Delivery getDelivery(Map<String, String> parameters) {
+    private TemplateDelivery getDelivery(Map<String, String> parameters) {
         String okValue = parameters.get("delivery_ok");
-        Delivery delivery =  new Delivery()
+        TemplateDelivery delivery =  new TemplateDelivery()
                 .address(getParameter(parameters, "delivery_address"))
                 .taxId(getParameter(parameters, "delivery_taxId"))
                 .type(getParameter(parameters, "delivery_type"))
@@ -100,8 +102,8 @@ public class TemplateEngineContextFactory {
         return delivery;
     }
 
-    private Delegate getDelegate(Map<String, String> parameters) {
-        return new Delegate()
+    private TemplateDelegate getDelegate(Map<String, String> parameters) {
+        return new TemplateDelegate()
                 .denomination(getParameter(parameters, "delegate_denomination"))
                 .taxId(getParameter(parameters, "delegate_taxId"));
     }

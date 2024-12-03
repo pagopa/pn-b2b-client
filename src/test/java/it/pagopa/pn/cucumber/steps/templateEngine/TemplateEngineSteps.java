@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ public class TemplateEngineSteps {
     private TemplateEngineResult result;
 
     private HttpClientErrorException templateFileException;
+    private List<HttpClientErrorException> templateFileExceptions = new ArrayList<>();
 
     public TemplateEngineSteps(Map<TemplateType, ITemplateEngineStrategy> templateEngineStrategy,
                                TemplateEngineContextFactory contextFactory, Map<TemplateType, List<String>> templateEngineObjectFields) {
@@ -70,6 +72,7 @@ public class TemplateEngineSteps {
             result = templateEngineStrategy.get(templateType).retrieveTemplate(language, body.equals(BODY_CORRETTO), context);
         } catch (HttpClientErrorException e) {
             templateFileException = e;
+            templateFileExceptions.add(e);
         }
     }
 
@@ -92,6 +95,8 @@ public class TemplateEngineSteps {
     public void verificoCheLaChiamataSiaAndataInError(String errorCode) {
         Assertions.assertNull(result);
         Assertions.assertNotNull(templateFileException);
+        Assertions.assertNotNull(templateFileExceptions);
         Assertions.assertEquals(errorCode, String.valueOf(templateFileException.getRawStatusCode()));
+        templateFileExceptions.forEach(data -> Assertions.assertEquals(errorCode, String.valueOf(data.getRawStatusCode())));
     }
 }

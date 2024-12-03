@@ -1,12 +1,15 @@
 package it.pagopa.pn.cucumber.steps.templateEngine.strategies;
 
-import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.NotificationCancelledLegalFact;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.*;
 import it.pagopa.pn.client.b2b.pa.service.ITemplateEngineClient;
+import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateNotification;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateEngineResult;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateRequestContext;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.util.List;
+import java.util.Optional;
 
 @Component
 public class NotificationCancelledLegalFactStrategy implements ITemplateEngineStrategy {
@@ -29,8 +32,33 @@ public class NotificationCancelledLegalFactStrategy implements ITemplateEngineSt
             return null;
 
         return new NotificationCancelledLegalFact()
-                .notification(context.getNotification())
-                .recipient(context.getRecipient())
+                .notification(createNotification(context))
                 .notificationCancelledDate(context.getNotificationCancelledDate());
+    }
+
+    private NotificationCancelledNotification createNotification(TemplateRequestContext context) {
+        return Optional.ofNullable(context.getNotification())
+                .map(data -> new NotificationCancelledNotification()
+                        .iun(data.getIun())
+                        .sender(createSender(data))
+                        .recipients(createRecipients(data)))
+                .orElse(null);
+    }
+
+    private NotificationCancelledSender createSender(TemplateNotification notification) {
+        return Optional.ofNullable(notification.getSender())
+                .map(data -> new NotificationCancelledSender()
+                        .paDenomination(data.getPaDenomination()))
+                .orElse(null);
+    }
+
+    private List<NotificationCancelledRecipient> createRecipients(TemplateNotification notification) {
+        return Optional.ofNullable(notification.getRecipients())
+                .map(data -> data.stream()
+                        .map(d -> new NotificationCancelledRecipient()
+                                .denomination(d.getDenomination())
+                                .taxId(d.getTaxId()))
+                        .toList())
+                .orElse(null);
     }
 }

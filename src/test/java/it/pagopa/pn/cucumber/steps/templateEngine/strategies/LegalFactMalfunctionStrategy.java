@@ -16,6 +16,7 @@ public class LegalFactMalfunctionStrategy implements ITemplateEngineStrategy {
     public LegalFactMalfunctionStrategy(ITemplateEngineClient templateEngineClient) {
         this.templateEngineClient = templateEngineClient;
     }
+
     @Override
     public TemplateEngineResult retrieveTemplate(String language, boolean body, TemplateRequestContext context) {
         MalfunctionLegalFact legalFact = createRequest(body, context);

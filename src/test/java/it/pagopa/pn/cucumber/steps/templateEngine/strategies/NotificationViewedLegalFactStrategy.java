@@ -1,12 +1,13 @@
 package it.pagopa.pn.cucumber.steps.templateEngine.strategies;
 
-import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.NotificationViewedLegalFact;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.*;
 import it.pagopa.pn.client.b2b.pa.service.ITemplateEngineClient;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateEngineResult;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateRequestContext;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.util.Optional;
 
 @Component
 public class NotificationViewedLegalFactStrategy  implements ITemplateEngineStrategy{
@@ -29,8 +30,25 @@ public class NotificationViewedLegalFactStrategy  implements ITemplateEngineStra
 
         return new NotificationViewedLegalFact()
                 .iun(context.getIun())
-                .delegate(context.getDelegate())
+                .delegate(createDelegate(context))
                 .when(context.getWhen())
-                .recipient(context.getRecipient());
+                .recipient(createRecipient(context));
+    }
+
+    private NotificationViewedDelegate createDelegate(TemplateRequestContext context) {
+        return Optional.ofNullable(context.getDelegate())
+                .map(data -> new NotificationViewedDelegate()
+                        .denomination(data.getDenomination())
+                        .taxId(data.getTaxId())
+                )
+                .orElse(null);
+    }
+
+    private NotificationViewedRecipient createRecipient(TemplateRequestContext context) {
+        return Optional.ofNullable(context.getRecipient())
+                .map(data -> new NotificationViewedRecipient()
+                        .denomination(data.getDenomination())
+                        .taxId(data.getTaxId()))
+                .orElse(null);
     }
 }
