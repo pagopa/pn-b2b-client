@@ -1,15 +1,16 @@
 package it.pagopa.pn.cucumber.steps.templateEngine.data;
 
 import lombok.Data;
+import org.springframework.core.io.Resource;
 
 import java.io.File;
 
 @Data
 public class TemplateEngineResult {
-    private File templateFileReturned;
+    private Resource templateFileReturned;
     private String templateHtmlReturned;
 
-    public TemplateEngineResult(File templateFileReturned) {
+    public TemplateEngineResult(Resource templateFileReturned) {
         this.templateFileReturned = templateFileReturned;
     }
 

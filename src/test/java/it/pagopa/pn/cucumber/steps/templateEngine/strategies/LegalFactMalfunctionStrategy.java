@@ -4,6 +4,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.M
 import it.pagopa.pn.client.b2b.pa.service.ITemplateEngineClient;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateEngineResult;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateRequestContext;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -20,7 +21,7 @@ public class LegalFactMalfunctionStrategy implements ITemplateEngineStrategy {
     @Override
     public TemplateEngineResult retrieveTemplate(String language, boolean body, TemplateRequestContext context) {
         MalfunctionLegalFact legalFact = createRequest(body, context);
-        File file = templateEngineClient.legalFactMalfunction(selectLanguage(language), legalFact);
+        Resource file = templateEngineClient.legalFactMalfunction(selectLanguage(language), legalFact);
         return new  TemplateEngineResult(file);
     }
 

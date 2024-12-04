@@ -8,10 +8,16 @@ import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateRequestContext;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateType;
 import it.pagopa.pn.cucumber.steps.templateEngine.strategies.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.pdfbox.io.RandomAccessReadBuffer;
+import org.apache.pdfbox.pdfparser.PDFParser;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.junit.jupiter.api.Assertions;
-import org.opentest4j.AssertionFailedError;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -81,13 +87,28 @@ public class TemplateEngineSteps {
         Assertions.assertNotNull(result);
         if(extentionFile.equals(".pdf")) {
             Assertions.assertNotNull(result.getTemplateFileReturned());
-            Assertions.assertTrue(result.getTemplateFileReturned().getName().endsWith(extentionFile));
+            Assertions.assertTrue(isValidPdf(result.getTemplateFileReturned()));
+            //Assertions.assertTrue(result.getTemplateFileReturned().getName().endsWith(extentionFile));
         } else if (extentionFile.equals("html")){
             Assertions.assertNotNull(result.getTemplateHtmlReturned());
             Assertions.assertTrue(result.getTemplateHtmlReturned().contains("html>"));
         } else if (extentionFile.equals("text")) {
             Assertions.assertNotNull(result.getTemplateHtmlReturned());
             Assertions.assertFalse(result.getTemplateHtmlReturned().contains("html>"));
+        }
+    }
+
+    public boolean isValidPdf(Resource resource) {
+        try {
+            byte[] input = ((ByteArrayResource) resource).getByteArray();
+            RandomAccessReadBuffer buffer = new RandomAccessReadBuffer(input);
+            PDFParser parser = new PDFParser(buffer);
+            PDDocument doc = parser.parse();
+            try (PDDocument document = new PDDocument(doc.getDocument())) {
+                return true;
+            }
+        } catch (IOException | ClassCastException e) {
+            return false;
         }
     }
 

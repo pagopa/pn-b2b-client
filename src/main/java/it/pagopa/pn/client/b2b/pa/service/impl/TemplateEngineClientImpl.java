@@ -7,11 +7,10 @@ import it.pagopa.pn.client.b2b.pa.service.ITemplateEngineClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-
-import java.io.File;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -33,7 +32,7 @@ public class TemplateEngineClientImpl implements ITemplateEngineClient {
     }
 
     @Override
-    public File analogDeliveryWorkflowFailureLegalFact(LanguageEnum xLanguage, AnalogDeliveryWorkflowFailureLegalFact analogDeliveryWorkflowFailureLegalFact) throws RestClientException {
+    public Resource analogDeliveryWorkflowFailureLegalFact(LanguageEnum xLanguage, AnalogDeliveryWorkflowFailureLegalFact analogDeliveryWorkflowFailureLegalFact) throws RestClientException {
         return templateApi.analogDeliveryWorkflowFailureLegalFact(xLanguage, analogDeliveryWorkflowFailureLegalFact);
     }
 
@@ -48,12 +47,12 @@ public class TemplateEngineClientImpl implements ITemplateEngineClient {
     }
 
     @Override
-    public File legalFactMalfunction(LanguageEnum xLanguage, MalfunctionLegalFact legalFactMalfunction) throws RestClientException {
+    public Resource legalFactMalfunction(LanguageEnum xLanguage, MalfunctionLegalFact legalFactMalfunction) throws RestClientException {
         return templateApi.malfunctionLegalFact(xLanguage, legalFactMalfunction);
     }
 
     @Override
-    public File notificationAAR(LanguageEnum xLanguage, NotificationAar notificationAAR) throws RestClientException {
+    public Resource notificationAAR(LanguageEnum xLanguage, NotificationAar notificationAAR) throws RestClientException {
         return templateApi.notificationAar(xLanguage, notificationAAR);
     }
 
@@ -73,7 +72,7 @@ public class TemplateEngineClientImpl implements ITemplateEngineClient {
     }
 
     @Override
-    public File notificationAARRADDalt(LanguageEnum xLanguage, NotificationAarRaddAlt notificationAARRADDalt) throws RestClientException {
+    public Resource notificationAARRADDalt(LanguageEnum xLanguage, NotificationAarRaddAlt notificationAARRADDalt) throws RestClientException {
         return templateApi.notificationAarRaddAlt(xLanguage, notificationAARRADDalt);
     }
 
@@ -83,22 +82,22 @@ public class TemplateEngineClientImpl implements ITemplateEngineClient {
     }
 
     @Override
-    public File notificationCancelledLegalFact(LanguageEnum xLanguage, NotificationCancelledLegalFact notificationCancelledLegalFact) throws RestClientException {
+    public Resource notificationCancelledLegalFact(LanguageEnum xLanguage, NotificationCancelledLegalFact notificationCancelledLegalFact) throws RestClientException {
         return templateApi.notificationCancelledLegalFact(xLanguage, notificationCancelledLegalFact);
     }
 
     @Override
-    public File notificationReceivedLegalFact(LanguageEnum xLanguage, NotificationReceivedLegalFact notificationReceiverLegalFact) throws RestClientException {
+    public Resource notificationReceivedLegalFact(LanguageEnum xLanguage, NotificationReceivedLegalFact notificationReceiverLegalFact) throws RestClientException {
         return templateApi.notificationReceivedLegalFact(xLanguage, notificationReceiverLegalFact);
     }
 
     @Override
-    public File notificationViewedLegalFact(LanguageEnum xLanguage, NotificationViewedLegalFact notificationViewedLegalFact) throws RestClientException {
+    public Resource notificationViewedLegalFact(LanguageEnum xLanguage, NotificationViewedLegalFact notificationViewedLegalFact) throws RestClientException {
         return templateApi.notificationViewedLegalFact(xLanguage, notificationViewedLegalFact);
     }
 
     @Override
-    public File pecDeliveryWorkflowLegalFact(LanguageEnum xLanguage, PecDeliveryWorkflowLegalFact pecDeliveryWorkflowLegalFact) throws RestClientException {
+    public Resource pecDeliveryWorkflowLegalFact(LanguageEnum xLanguage, PecDeliveryWorkflowLegalFact pecDeliveryWorkflowLegalFact) throws RestClientException {
         return templateApi.pecDeliveryWorkflowLegalFact(xLanguage, pecDeliveryWorkflowLegalFact);
     }
 

@@ -6,6 +6,7 @@ import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateNotification;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateRecipient;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateEngineResult;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateRequestContext;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -24,7 +25,7 @@ public class NotificationReceiverLegalFactStrategy implements ITemplateEngineStr
     @Override
     public TemplateEngineResult retrieveTemplate(String language, boolean body, TemplateRequestContext context) {
         NotificationReceivedLegalFact legalFact = createRequest(body, context);
-        File file = templateEngineClient.notificationReceivedLegalFact(selectLanguage(language), legalFact);
+        Resource file = templateEngineClient.notificationReceivedLegalFact(selectLanguage(language), legalFact);
         return new TemplateEngineResult(file);
     }
 

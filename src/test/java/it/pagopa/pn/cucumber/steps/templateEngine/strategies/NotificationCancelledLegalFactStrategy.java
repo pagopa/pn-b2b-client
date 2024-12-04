@@ -5,6 +5,7 @@ import it.pagopa.pn.client.b2b.pa.service.ITemplateEngineClient;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateNotification;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateEngineResult;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateRequestContext;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -23,7 +24,7 @@ public class NotificationCancelledLegalFactStrategy implements ITemplateEngineSt
     @Override
     public TemplateEngineResult retrieveTemplate(String language, boolean body, TemplateRequestContext context) {
         NotificationCancelledLegalFact legalFact = createRequest(body, context);
-        File file = templateEngineClient.notificationCancelledLegalFact(selectLanguage(language), legalFact);
+        Resource file = templateEngineClient.notificationCancelledLegalFact(selectLanguage(language), legalFact);
         return new TemplateEngineResult(file);
     }
 

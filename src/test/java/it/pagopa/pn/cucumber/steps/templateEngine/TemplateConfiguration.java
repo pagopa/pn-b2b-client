@@ -53,8 +53,8 @@ public class TemplateConfiguration {
 
     @Bean
     public List<String> pecDeliveryWorkflowLegalFactFields() {
-        return List.of("context_iun", "context_endWorkflowStatus", "context_endWorkflowDate", "context_delivery", "delivery_ok",
-                "delivery_addressSource", "delivery_responseDate", "delivery_denomination");
+        return List.of("context_iun", "context_endWorkflowStatus", "context_delivery", "delivery_ok", "delivery_taxId",
+                 "delivery_responseDate", "delivery_denomination", "context_endWorkflowDate", "delivery_type");
     }
 
     @Bean
@@ -71,12 +71,12 @@ public class TemplateConfiguration {
     @Bean
     public List<String> notificationCancelledLegalFactFields() {
         return List.of("context_notification", "notification_iun", "notification_recipient_denomination", "notification_recipient_taxId", "notification_sender",
-                "notification_sender_paDenomination", "context_NotificationCancelledDate");
+                "notification_sender_paDenomination", "context_NotificationCancelledDate", "notification_recipient");
     }
 
     @Bean
     public List<String> analogDeliveryWorkflowFailureLegalFactFields() {
-        return List.of("context_recipient", "recipient_denomination", "recipient_taxId", "context_endWorkflowDate", "context_endWorkflowTime");
+        return List.of("context_recipient", "context_iun", "recipient_denomination", "recipient_taxId", "context_endWorkflowDate", "context_endWorkflowTime");
     }
 
     @Bean

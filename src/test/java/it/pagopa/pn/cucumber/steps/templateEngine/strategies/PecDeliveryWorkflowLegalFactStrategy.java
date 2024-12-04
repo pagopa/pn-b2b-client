@@ -5,6 +5,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.P
 import it.pagopa.pn.client.b2b.pa.service.ITemplateEngineClient;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateEngineResult;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateRequestContext;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -23,7 +24,7 @@ public class PecDeliveryWorkflowLegalFactStrategy implements ITemplateEngineStra
     @Override
     public TemplateEngineResult retrieveTemplate(String language, boolean body, TemplateRequestContext context) {
         PecDeliveryWorkflowLegalFact legalFact = createRequest(body, context);
-        File file = templateEngineClient.pecDeliveryWorkflowLegalFact(selectLanguage(language), legalFact);
+        Resource file = templateEngineClient.pecDeliveryWorkflowLegalFact(selectLanguage(language), legalFact);
         return new TemplateEngineResult(file);
     }
 
@@ -45,6 +46,9 @@ public class PecDeliveryWorkflowLegalFactStrategy implements ITemplateEngineStra
                                 .address(d.getAddress())
                                 .denomination(d.getDenomination())
                                 .addressSource(d.getAddressSource())
+                                .taxId(d.getTaxId())
+                                .type(d.getType())
+                                .responseDate(d.getResponseDate())
                                 .ok(d.getOk()))
                         .toList())
                 .orElse(null);

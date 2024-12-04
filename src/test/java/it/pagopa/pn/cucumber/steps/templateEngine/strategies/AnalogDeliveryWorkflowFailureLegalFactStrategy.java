@@ -5,6 +5,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.A
 import it.pagopa.pn.client.b2b.pa.service.ITemplateEngineClient;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateEngineResult;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateRequestContext;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -22,7 +23,7 @@ public class AnalogDeliveryWorkflowFailureLegalFactStrategy implements ITemplate
     @Override
     public TemplateEngineResult retrieveTemplate(String language, boolean body, TemplateRequestContext context) {
         AnalogDeliveryWorkflowFailureLegalFact legalFact = createRequest(body, context);
-        File file = templateEngineClient.analogDeliveryWorkflowFailureLegalFact(selectLanguage(language), legalFact);
+        Resource file = templateEngineClient.analogDeliveryWorkflowFailureLegalFact(selectLanguage(language), legalFact);
         return new TemplateEngineResult(file);
     }
 
