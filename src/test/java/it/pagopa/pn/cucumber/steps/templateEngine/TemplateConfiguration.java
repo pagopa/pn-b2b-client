@@ -54,7 +54,7 @@ public class TemplateConfiguration {
     @Bean
     public List<String> pecDeliveryWorkflowLegalFactFields() {
         return List.of("context_iun", "context_endWorkflowStatus", "context_delivery", "delivery_ok", "delivery_taxId",
-                 "delivery_responseDate", "delivery_denomination", "context_endWorkflowDate", "delivery_type");
+                 "delivery_responseDate", "delivery_denomination");
     }
 
     @Bean

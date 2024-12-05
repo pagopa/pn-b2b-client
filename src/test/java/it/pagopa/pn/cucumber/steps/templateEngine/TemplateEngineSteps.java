@@ -15,9 +15,10 @@ import org.junit.jupiter.api.Assertions;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +35,8 @@ public class TemplateEngineSteps {
     private TemplateEngineResult result;
 
     private HttpClientErrorException templateFileException;
-    private List<HttpClientErrorException> templateFileExceptions = new ArrayList<>();
+    private HttpServerErrorException templateServerException;
+    private List<HttpStatusCodeException> templateFileExceptions = new ArrayList<>();
 
     public TemplateEngineSteps(Map<TemplateType, ITemplateEngineStrategy> templateEngineStrategy,
                                TemplateEngineContextFactory contextFactory, Map<TemplateType, List<String>> templateEngineObjectFields) {
@@ -76,8 +78,11 @@ public class TemplateEngineSteps {
         try {
             TemplateRequestContext context = contextFactory.createContext(parameters);
             result = templateEngineStrategy.get(templateType).retrieveTemplate(language, body.equals(BODY_CORRETTO), context);
-        } catch (HttpClientErrorException e) {
+        } catch ( HttpClientErrorException e) {
             templateFileException = e;
+            templateFileExceptions.add(e);
+        } catch (HttpServerErrorException e) {
+            templateServerException = e;
             templateFileExceptions.add(e);
         }
     }
@@ -88,13 +93,12 @@ public class TemplateEngineSteps {
         if(extentionFile.equals(".pdf")) {
             Assertions.assertNotNull(result.getTemplateFileReturned());
             Assertions.assertTrue(isValidPdf(result.getTemplateFileReturned()));
-            //Assertions.assertTrue(result.getTemplateFileReturned().getName().endsWith(extentionFile));
         } else if (extentionFile.equals("html")){
             Assertions.assertNotNull(result.getTemplateHtmlReturned());
-            Assertions.assertTrue(result.getTemplateHtmlReturned().contains("html>"));
+            Assertions.assertTrue(result.getTemplateHtmlReturned().contains("<html"));
         } else if (extentionFile.equals("text")) {
             Assertions.assertNotNull(result.getTemplateHtmlReturned());
-            Assertions.assertFalse(result.getTemplateHtmlReturned().contains("html>"));
+            Assertions.assertFalse(result.getTemplateHtmlReturned().contains("<html"));
         }
     }
 
@@ -115,9 +119,13 @@ public class TemplateEngineSteps {
     @Then("verifico che (tutte le chiamate)(la chiamata) (sia)(siano) (andata)(andate) in {string} error(.)( e che nessuna abbia ricevuto una risposta)")
     public void verificoCheLaChiamataSiaAndataInError(String errorCode) {
         Assertions.assertNull(result);
-        Assertions.assertNotNull(templateFileException);
-        Assertions.assertNotNull(templateFileExceptions);
-        Assertions.assertEquals(errorCode, String.valueOf(templateFileException.getRawStatusCode()));
+        if (errorCode.equals("400")) {
+            Assertions.assertNotNull(templateFileException);
+            Assertions.assertNotNull(templateFileExceptions);
+            Assertions.assertEquals(errorCode, String.valueOf(templateFileException.getRawStatusCode()));
+        } else if (errorCode.equals("500")) {
+            Assertions.assertNotNull(templateServerException);
+        } else throw new IllegalArgumentException("no error map on the test system.");
         templateFileExceptions.forEach(data -> Assertions.assertEquals(errorCode, String.valueOf(data.getRawStatusCode())));
     }
 }

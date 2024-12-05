@@ -63,16 +63,46 @@ Feature: Template engine
     Then verifico che tutte le chiamate siano andate in "400" error e che nessuna abbia ricevuto una risposta
 
   @templateEngine # /templates-engine-private/v1/templates/pec-delivery-workflow-legal-fact
-  Scenario Outline: [TEMPLATE-ENGINE_4_3] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di notifica digitale - body errato
+  Scenario Outline: [TEMPLATE-ENGINE_4_3] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di notifica digitale - not required fields
     When recupero il template per "attestazione opponibile a terzi di notifica digitale" con i valori nel request body:
       | <fieldName> | <fieldValue> |
     Then verifico che il template è in formato ".pdf"
     Examples:
       | fieldName                  | fieldValue |
-      #| context_endWorkflowDate    | null       |
       | delivery_addressSource     | null       |
       | delivery_address           | null       |
-      #| delivery_type              | null       |
+
+  @templateEngine # /templates-engine-private/v1/templates/pec-delivery-workflow-legal-fact
+  Scenario Outline: [TEMPLATE-ENGINE_4_4] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di notifica digitale - required fields
+    When recupero il template per "attestazione opponibile a terzi di notifica digitale" con i valori nel request body:
+      | <fieldName> | <fieldValue> |
+    Then verifico che la chiamata sia andata in "500" error
+    Examples:
+      | fieldName                  | fieldValue |
+      | context_endWorkflowDate    | null       |
+      | delivery_type              | null       |
+
+  @templateEngine # /templates-engine-private/v1/templates/pec-delivery-workflow-legal-fact
+  Scenario Outline: [TEMPLATE-ENGINE_4_5] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di notifica digitale - if context_endWorkflowStatus = SUCCESS
+    When recupero il template per "attestazione opponibile a terzi di notifica digitale" con i valori nel request body:
+      | context_endWorkflowStatus    | SUCCESS            |
+      | context_endWorkflowDate      | <endWorkflowDate>  |
+    Then verifico che il template è in formato ".pdf"
+    Examples:
+      | endWorkflowDate  |
+      | null             |
+      | string           |
+
+  @templateEngine # /templates-engine-private/v1/templates/pec-delivery-workflow-legal-fact
+  Scenario Outline: [TEMPLATE-ENGINE_4_6] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di notifica digitale - if delivery_address = null
+    When recupero il template per "attestazione opponibile a terzi di notifica digitale" con i valori nel request body:
+      | delivery_address | null      |
+      | delivery_type    | <type>    |
+    Then verifico che il template è in formato ".pdf"
+    Examples:
+      | type          |
+      | null          |
+      | string        |
 
   @templateEngine #29 30 31 32 /templates-engine-private/v1/templates/notification-viewed-legal-fact
   Scenario Outline: [TEMPLATE-ENGINE_5] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di avvenuto accesso - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
@@ -160,15 +190,6 @@ Feature: Template engine
   Scenario: [TEMPLATE-ENGINE_10_2] Richiamare l’API per il recupero del template della dichiarazione di annullamento notifica - body errato
     When recupero il template per "dichiarazione di annullamento notifica" con i valori nel request body errati
     Then verifico che tutte le chiamate siano andate in "400" error e che nessuna abbia ricevuto una risposta
-
-  @templateEngine # da eliminare quando avranno aggiunto la versione
-  Scenario Outline: [TEMPLATE-ENGINE_10_3] Richiamare l’API per il recupero del template della dichiarazione di annullamento notifica - field not required
-    When recupero il template per "dichiarazione di annullamento notifica" con i valori nel request body:
-      | <fieldName> | <fieldValue> |
-    Then verifico che il template è in formato ".pdf"
-    Examples:
-      | fieldName                               | fieldValue |
-      | notification_recipient                  | null       |
 
   @templateEngine #44 45 46 47 /templates-engine-private/v1/templates/analog-delivery-workflow-failure-legal-fact
   Scenario Outline: [TEMPLATE-ENGINE_11] Richiamare l’API per il recupero del template del deposito di avvenuta ricezione - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
@@ -349,17 +370,6 @@ Feature: Template engine
   Scenario: [TEMPLATE-ENGINE_26] Richiamare l’API per il recupero del template di PEC valida - lingua errata
     When recupero il template per "PEC valida" in lingua "tedesca"
     Then verifico che la chiamata sia andata in "400" error
-
-#  sono stati eliminati perchè non piu presente il body nel end-point
-#  @templateEngine #98 /templates-engine-private/v1/templates/pecbodyconfirm
-#  Scenario: [TEMPLATE-ENGINE_26_1] Richiamare l’API per il recupero del template di PEC valida - body vuoto
-#    When recupero il template per "PEC valida" in lingua "italiana" con il body "null"
-#    Then verifico che la chiamata sia andata in "400" error
-
-#  @templateEngine #118 /templates-engine-private/v1/templates/pecbodyconfirm
-#  Scenario: [TEMPLATE-ENGINE_26_2] Richiamare l’API per il recupero del template di PEC valida - body errato
-#    When recupero il template per "PEC valida" con i valori nel request body errati
-#    Then verifico che tutte le chiamate siano andate in "500" error e che nessuna abbia ricevuto una risposta
 
   @templateEngine #75 /templates-engine-private/v1/templates/pecbodyreject
   Scenario: [TEMPLATE-ENGINE_27] Richiamare l’API per il recupero del template di PEC non valida - lingua italiana
