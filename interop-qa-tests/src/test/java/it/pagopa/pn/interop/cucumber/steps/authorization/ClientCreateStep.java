@@ -1,61 +1,51 @@
 package it.pagopa.pn.interop.cucumber.steps.authorization;
 
 import io.cucumber.java.en.Given;
-import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.service.IAuthorizationClientCreate;
-import it.pagopa.interop.service.utils.SettableBearerToken;
-import it.pagopa.pn.interop.cucumber.steps.authorization.factory.SessionTokenFactory;
-import it.pagopa.pn.interop.cucumber.steps.authorization.resolver.TokenResolver;
-import it.pagopa.pn.interop.cucumber.steps.authorization.utils.CommonSteps;
-import org.junit.jupiter.api.Assertions;
+import it.pagopa.interop.service.IAuthorizationClient;
+import it.pagopa.interop.service.factory.SessionTokenFactory;
+import it.pagopa.interop.resolver.TokenResolver;
+import it.pagopa.interop.service.utils.CommonUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
 import java.util.Random;
 
 public class ClientCreateStep {
-    private final IAuthorizationClientCreate authorizationClientCreate;
+    private final IAuthorizationClient authorizationClientCreate;
     private final TokenResolver tokenResolver;
     private final SessionTokenFactory sessionTokenFactory;
-    private final CommonSteps commonSteps;
-    private ResponseEntity<CreatedResource> createClientResponse;
+    private final CommonUtils commonUtils;
+    private final ClientCommonSteps clientCommonSteps;
+    private ResponseEntity<HttpStatus> createClientResponse;
 
-    public ClientCreateStep(IAuthorizationClientCreate authorizationClientCreate,
+    public ClientCreateStep(IAuthorizationClient authorizationClientCreate,
                             TokenResolver tokenResolver,
                             SessionTokenFactory sessionTokenFactory,
-                            CommonSteps commonSteps) {
+                            CommonUtils commonUtils,
+                            ClientCommonSteps clientCommonSteps) {
         this.authorizationClientCreate = authorizationClientCreate;
         this.tokenResolver = tokenResolver;
         this.sessionTokenFactory = sessionTokenFactory;
-        this.commonSteps = commonSteps;
+        this.commonUtils = commonUtils;
+        this.clientCommonSteps = clientCommonSteps;
     }
 
     @Given("l'utente è un {string} di {string}")
     public void setRole(String role, String institution) {
-        String token = commonSteps.getToken(institution, role);
+        String token = commonUtils.getToken(institution, role);
         authorizationClientCreate.setBearerToken(token);
     }
 
     @When("l'utente richiede la creazione di un client {string}")
     public void createClient(String clientKind) {
-        try {
-            CreatedResource createdResource = (clientKind == "CONSUMER")
-                    ? authorizationClientCreate.createConsumerClient("", createClientSeed())
-                    : authorizationClientCreate.createApiClient("", createClientSeed());
-            createClientResponse = new ResponseEntity<>(HttpStatus.OK);
-        } catch (HttpClientErrorException e) {
-            createClientResponse = new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        if ((clientKind == "CONSUMER")) {
+            clientCommonSteps.performCall(() -> authorizationClientCreate.createConsumerClient("", createClientSeed()));
+        } else {
+            clientCommonSteps.performCall(() -> authorizationClientCreate.createApiClient("", createClientSeed()));
         }
-    }
-
-    @Then("si ottiene status code {string}")
-    public void verifyStatusCode(String statusCode) {
-        Assertions.assertEquals(statusCode, createClientResponse.getStatusCode().toString());
     }
 
     private ClientSeed createClientSeed() {

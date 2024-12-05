@@ -1,8 +1,7 @@
-package it.pagopa.pn.interop.cucumber.steps.authorization.domain;
+package it.pagopa.interop.domain;
 
 import lombok.Data;
 
-import java.util.List;
 import java.util.Map;
 
 @Data

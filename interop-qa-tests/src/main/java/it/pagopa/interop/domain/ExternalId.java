@@ -1,4 +1,4 @@
-package it.pagopa.pn.interop.cucumber.steps.authorization.domain;
+package it.pagopa.interop.domain;
 
 import lombok.Data;
 

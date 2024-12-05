@@ -1,14 +1,13 @@
-package it.pagopa.pn.interop.cucumber.steps.authorization.factory;
+package it.pagopa.interop.service.factory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import it.pagopa.pn.interop.cucumber.steps.authorization.domain.Ente;
-import it.pagopa.pn.interop.cucumber.steps.authorization.domain.ExternalId;
-import it.pagopa.pn.interop.cucumber.steps.authorization.resolver.TokenResolver;
+import com.google.gson.reflect.TypeToken;
+import it.pagopa.interop.domain.Ente;
+import it.pagopa.interop.domain.ExternalId;
+import it.pagopa.interop.resolver.TokenResolver;
 import lombok.extern.slf4j.Slf4j;
-import org.json.JSONObject;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.kms.KmsClient;
 import software.amazon.awssdk.services.kms.endpoints.internal.Value;
@@ -69,11 +68,10 @@ public class SessionTokenFactory {
         this.tokenResolver = tokenResolver;
     }
 
-    public Map<String, Map<String, String>> generateSessionToken() throws Exception {
+    public Map<String, Map<String, String>> generateSessionToken(List<Ente> configFile) throws Exception {
         // Step 1. Read session token payload values file
         log.info("##Step 1. Read session token payload values file ##");
         ObjectMapper objectMapper = new ObjectMapper();
-        List<Ente> ente = tokenResolver.readProperty();
 
         // Step 2. Parse well known
         log.info("##Step 2. Parse well known ##");
@@ -83,9 +81,13 @@ public class SessionTokenFactory {
         if (!wellKnownData.containsKey("kid") || !wellKnownData.containsKey("alg")) {
             throw new IllegalStateException("Kid or alg not found.");
         }
+//        CONFIG.put("kms", Map.of(
+//                "kid", wellKnownData.get("kid"),
+//                "alg", wellKnownData.get("alg")
+//        ));
         CONFIG.put("kms", Map.of(
                 "kid", wellKnownData.get("kid"),
-                "alg", wellKnownData.get("alg")
+                "alg", "RSASSA_PKCS1_V1_5_SHA_256"
         ));
         log.info("Got kid " + wellKnownData.get("kid") + " and alg " + wellKnownData.get("alg"));
 
@@ -121,7 +123,7 @@ public class SessionTokenFactory {
 
         log.info("## Step 5. Generate unsigned STs ##");
         // Map<String, Map<String, String>> unsignedSTs = unsignedStsGeneration(stHeaderCompiled, stPayloadCompiled, sessionTokenPayloadValues, environment);
-        Map<String, Map<String, String>> unsignedSTs = unsignedStsGeneration(stHeaderCompiled, stPayloadCompiled, ente, environment);
+        Map<String, Map<String, String>> unsignedSTs = unsignedStsGeneration(stHeaderCompiled, stPayloadCompiled, configFile, environment);
         log.info("Unsigned STs: " + unsignedSTs);
 
         log.info("## Step 6. Generate signed STs ##");
