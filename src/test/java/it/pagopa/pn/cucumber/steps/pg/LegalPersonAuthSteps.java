@@ -9,6 +9,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pg.BffPublicKeysResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pg.PublicKeyRow;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.generate.model.externalregistry.privateapi.PgUser;
+import it.pagopa.pn.client.b2b.pa.config.PnAuthenticationConfig;
 import it.pagopa.pn.client.b2b.pa.service.IPnExternalRegistryPrivateUserApi;
 import it.pagopa.pn.client.b2b.pa.service.IPnLegalPersonAuthClient;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
@@ -16,7 +17,7 @@ import it.pagopa.pn.cucumber.utils.LegalPersonAuthExpectedResponseWithStatus;
 import it.pagopa.pn.cucumber.utils.LegalPersonsAuthStepsPojo;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.client.RestClientResponseException;
@@ -31,46 +32,46 @@ public class LegalPersonAuthSteps {
     private final LegalPersonsAuthStepsPojo pojo;
     private final IPnLegalPersonAuthClient pnLegalPersonAuthClient;
     private final IPnExternalRegistryPrivateUserApi privateUserApi;
-
-    @Value("${pn.authentication.pg.public.key}")
-    private String publicKey;
-
-    @Value("${pn.authentication.pg.public.key.rotation}")
+    private final String publicKey;
     private String publicKeyRotation;
-
-    @Value("${pn.authentication.pg.admin.uid}")
-    private String adminUid;
-
-    @Value("${pn.authentication.pg.admin.group.uid}")
-    private String adminGroupUid;
-
-    @Value("${pn.authentication.pg.operator.uid}")
-    private String operatorUid;
-
-    @Value("${pn.authentication.pg.organization.id}")
-    private String organizationId;
-
+    private final String adminUid;
+    private final String adminGroupUid;
+    private final String operatorUid;
+    private final String organizationId;
     private final String UNKNOWN_KID = "4004309b-1bf6-789a-9582-721fe23653b6";
 
-    public LegalPersonAuthSteps(IPnLegalPersonAuthClient pnLegalPersonAuthClient, IPnExternalRegistryPrivateUserApi privateUserApi) {
+    @Autowired
+    public LegalPersonAuthSteps(IPnLegalPersonAuthClient pnLegalPersonAuthClient,
+                                IPnExternalRegistryPrivateUserApi privateUserApi,
+                                PnAuthenticationConfig pnAuthenticationConfig) {
         this.pnLegalPersonAuthClient = pnLegalPersonAuthClient;
         this.privateUserApi = privateUserApi;
         this.pojo = new LegalPersonsAuthStepsPojo();
+        this.publicKey = pnAuthenticationConfig.getPublicKey();
+        this.publicKeyRotation = pnAuthenticationConfig.getPublicKeyRotation();
+        this.adminUid = pnAuthenticationConfig.getAdminUid();
+        this.adminGroupUid = pnAuthenticationConfig.getAdminGroupUid();
+        this.operatorUid = pnAuthenticationConfig.getOperatorUid();
+        this.organizationId = pnAuthenticationConfig.getOrganizationId();
     }
 
     public void selectAdmin(String utente) {
         switch (utente.toUpperCase()) {
             case "AMMINISTRATORE" -> pnLegalPersonAuthClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_3);
-            case "AMMINISTRATORE CON GRUPPO ASSOCIATO" -> pnLegalPersonAuthClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_4);
-            case "NON AMMINISTRATORE" -> pnLegalPersonAuthClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_5);
-            case "DI UNA PG DIVERSA" -> pnLegalPersonAuthClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+            case "AMMINISTRATORE CON GRUPPO ASSOCIATO" ->
+                    pnLegalPersonAuthClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_4);
+            case "NON AMMINISTRATORE" ->
+                    pnLegalPersonAuthClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_5);
+            case "DI UNA PG DIVERSA" ->
+                    pnLegalPersonAuthClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
         }
     }
 
     public void selectAdminForGetUser(String utente) {
         switch (utente.toUpperCase()) {
             case "AMMINISTRATORE" -> privateUserApi.setBearerToken(SettableBearerToken.BearerTokenType.PG_3);
-            case "AMMINISTRATORE CON GRUPPO ASSOCIATO" -> privateUserApi.setBearerToken(SettableBearerToken.BearerTokenType.PG_4);
+            case "AMMINISTRATORE CON GRUPPO ASSOCIATO" ->
+                    privateUserApi.setBearerToken(SettableBearerToken.BearerTokenType.PG_4);
             case "NON AMMINISTRATORE" -> privateUserApi.setBearerToken(SettableBearerToken.BearerTokenType.PG_5);
         }
     }
@@ -202,7 +203,7 @@ public class LegalPersonAuthSteps {
     }
 
     @When("un utente tenta di recuperare i dati dell'utente {string} della pg {string}")
-    public void recuperaDatiUtente( String userToSearch, String pg) {
+    public void recuperaDatiUtente(String userToSearch, String pg) {
         try {
             String uid = retrieveUID(userToSearch);
             String pgId = pg.equals("corretta") ? organizationId : null;
@@ -345,9 +346,7 @@ public class LegalPersonAuthSteps {
             case "vuoto" -> {
                 return null;
             }
-            default -> {
-                throw new IllegalArgumentException("user not allowed");
-            }
+            default -> throw new IllegalArgumentException("user not allowed");
         }
     }
 

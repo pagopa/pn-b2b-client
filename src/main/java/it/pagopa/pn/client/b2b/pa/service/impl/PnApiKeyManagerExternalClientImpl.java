@@ -1,5 +1,8 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
+import it.pagopa.pn.client.b2b.pa.config.PnBaseUrlConfig;
+import it.pagopa.pn.client.b2b.pa.config.PnBearerTokenExternalConfig;
+import it.pagopa.pn.client.b2b.pa.config.PnExternalApiKeyConfig;
 import it.pagopa.pn.client.b2b.pa.service.IPnApiKeyManagerClient;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.ApiClient;
@@ -8,7 +11,7 @@ import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.m
 import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model.RequestApiKeyStatus;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model.RequestNewApiKey;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model.ResponseNewApiKey;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -31,34 +34,31 @@ public class PnApiKeyManagerExternalClientImpl implements IPnApiKeyManagerClient
     private ApiKeyType apiKeySetted;
 
 
+    @Autowired
     public PnApiKeyManagerExternalClientImpl(RestTemplate restTemplate,
-                                             @Value("${pn.webapi.external.base-url}") String basePath,
-                                             @Value("${pn.external.bearer-token-pa-1}") String bearerTokenCom1,
-                                             @Value("${pn.external.bearer-token-pa-2}") String bearerTokenCom2,
-                                             @Value("${pn.external.bearer-token-pa-SON}") String bearerTokenSON,
-                                             @Value("${pn.external.bearer-token-pa-ROOT}") String bearerTokenROOT,
-                                             @Value("${pn.external.bearer-token-pa-GA}") String bearerTokenGA,
-                                             @Value("${pn.webapi.external.user-agent}")String userAgent) {
+                                             PnBaseUrlConfig pnBaseUrlConfig,
+                                             PnBearerTokenExternalConfig pnBearerTokenExternalConfig,
+                                             PnExternalApiKeyConfig pnExternalApiKeyConfig) {
         this.restTemplate = restTemplate;
-        this.basePath = basePath;
-        this.bearerTokenCom1 = bearerTokenCom1;
-        this.bearerTokenCom2 = bearerTokenCom2;
-        this.bearerTokenSON = bearerTokenSON;
-        this.bearerTokenROOT = bearerTokenROOT;
-        this.bearerTokenGA = bearerTokenGA;
-        this.userAgent = userAgent;
-        this.apiKeysApi = new ApiKeysApi( newApiClient( restTemplate, basePath, bearerTokenCom1, userAgent) );
+        this.basePath = pnBaseUrlConfig.getWebApiExternalBaseUrl();
+        this.bearerTokenCom1 = pnBearerTokenExternalConfig.getPa1();
+        this.bearerTokenCom2 = pnBearerTokenExternalConfig.getPa2();
+        this.bearerTokenSON = pnBearerTokenExternalConfig.getPaSON();
+        this.bearerTokenROOT = pnBearerTokenExternalConfig.getPaROOT();
+        this.bearerTokenGA = pnBearerTokenExternalConfig.getPaGA();
+        this.userAgent = pnExternalApiKeyConfig.getUserAgent();
+        this.apiKeysApi = new ApiKeysApi(newApiClient(restTemplate, basePath, bearerTokenCom1, userAgent));
         this.apiKeySetted = SettableApiKey.ApiKeyType.MVP_1;
     }
 
     public void setApiKey(String bearerToken) {
-        this.apiKeysApi.setApiClient(newApiClient( restTemplate, basePath, bearerToken, userAgent));
+        this.apiKeysApi.setApiClient(newApiClient(restTemplate, basePath, bearerToken, userAgent));
     }
 
-    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken,String userAgent ) {
-        ApiClient newApiClient = new ApiClient( restTemplate );
-        newApiClient.setBasePath( basePath );
-        newApiClient.addDefaultHeader("user-agent",userAgent);
+    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken, String userAgent) {
+        ApiClient newApiClient = new ApiClient(restTemplate);
+        newApiClient.setBasePath(basePath);
+        newApiClient.addDefaultHeader("user-agent", userAgent);
         newApiClient.setBearerToken(bearerToken);
         return newApiClient;
     }
@@ -123,5 +123,7 @@ public class PnApiKeyManagerExternalClientImpl implements IPnApiKeyManagerClient
     }
 
     @Override
-    public ApiKeyType getApiKeySetted() {return this.apiKeySetted; }
+    public ApiKeyType getApiKeySetted() {
+        return this.apiKeySetted;
+    }
 }

@@ -5,6 +5,7 @@ import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
+import it.pagopa.pn.client.b2b.pa.config.PnAvanzamentoNotificheConfig;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.mapper.impl.PnTimelineAndLegalFactV23;
 import it.pagopa.pn.client.b2b.pa.mapper.model.PnTimelineLegalFactV23;
@@ -29,7 +30,6 @@ import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.HttpStatusCodeException;
 
@@ -60,21 +60,19 @@ public class AvanzamentoNotificheB2bSteps {
     private final PnExternalServiceClientImpl externalClient;
     private final IPnPrivateDeliveryPushExternalClient pnPrivateDeliveryPushExternalClient;
     private HttpStatusCodeException notificationError;
-    @Value("${pn.external.costo_base_notifica}")
-    private Integer costoBaseNotifica;
+    private final Integer costoBaseNotifica;
     private final PnTimelineAndLegalFactV23 pnTimelineAndLegalFactV23;
     private final PnPollingFactory pnPollingFactory;
     private final TimingForPolling timingForPolling;
     private final LegalFactContentVerifySteps legalFactContentVerifySteps;
-    @Value("${pn.external.allowed.future.offset.duration}")
-    private String pnEcConsAllowedFutureOffsetDuration;
-    @Value("${pn.consolidatore.requestId}")
-    private String requestIdConsolidator;
+    private final String pnEcConsAllowedFutureOffsetDuration;
+    private final String consolidatoreRequestId;
 
     @Autowired
     public AvanzamentoNotificheB2bSteps(SharedSteps sharedSteps,
                                         TimingForPolling timingForPolling,
                                         IPnPrivateDeliveryPushExternalClient pnPrivateDeliveryPushExternalClient,
+                                        PnAvanzamentoNotificheConfig pnAvanzamentoNotificheConfig,
                                         LegalFactContentVerifySteps legalFactContentVerifySteps) {
         this.sharedSteps = sharedSteps;
         this.pnPrivateDeliveryPushExternalClient = pnPrivateDeliveryPushExternalClient;
@@ -85,6 +83,9 @@ public class AvanzamentoNotificheB2bSteps {
         this.pnPollingFactory = sharedSteps.getPollingFactory();
         this.timingForPolling = timingForPolling;
         this.legalFactContentVerifySteps = legalFactContentVerifySteps;
+        this.costoBaseNotifica = pnAvanzamentoNotificheConfig.getCostoBaseNotifica();
+        this.pnEcConsAllowedFutureOffsetDuration = pnAvanzamentoNotificheConfig.getOffsetDuration();
+        this.consolidatoreRequestId = pnAvanzamentoNotificheConfig.getConsolidatoreRequestId();
     }
 
     @Then("vengono letti gli eventi fino allo stato della notifica {string} dalla PA {string}")
@@ -255,7 +256,7 @@ public class AvanzamentoNotificheB2bSteps {
                     if (Objects.nonNull(detailsFromTest.getPhysicalAddress()))
                         Assertions.assertEquals(detailsFromNotification.getPhysicalAddress(), detailsFromTest.getPhysicalAddress());
                     if (Objects.nonNull(detailsFromTest.getResponseStatus()))
-                    Assertions.assertEquals(detailsFromNotification.getResponseStatus().getValue(), detailsFromTest.getResponseStatus().getValue());
+                        Assertions.assertEquals(detailsFromNotification.getResponseStatus().getValue(), detailsFromTest.getResponseStatus().getValue());
                     if (Objects.nonNull(detailsFromTest.getDeliveryFailureCause())) {
                         List<String> failureCauses = Arrays.asList(detailsFromTest.getDeliveryFailureCause().split(" "));
                         Assertions.assertTrue(failureCauses.contains(elementFromNotification.getDetails().getDeliveryFailureCause()));
@@ -3402,7 +3403,7 @@ public class AvanzamentoNotificheB2bSteps {
     private Map<String, String> populateConsolidatoreMap(Instant date) {
         String iun = sharedSteps.getSentNotification().getIun();
         Map<String, String> mapInfo = new HashMap<>();
-        mapInfo.put("requestId", requestIdConsolidator);
+        mapInfo.put("requestId", consolidatoreRequestId);
         mapInfo.put("attachments", null);
         mapInfo.put("clientRequestTimeStamp", utils.getOffsetDateTimeFromDate(date));
         mapInfo.put("deliveryFailureCause", null);

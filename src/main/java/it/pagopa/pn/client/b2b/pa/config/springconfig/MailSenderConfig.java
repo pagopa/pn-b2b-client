@@ -1,32 +1,31 @@
 package it.pagopa.pn.client.b2b.pa.config.springconfig;
 
-import org.springframework.beans.factory.annotation.Value;
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import java.util.Properties;
 
-@Configuration
+@ConfigurationProperties(prefix = "b2b.mail", ignoreUnknownFields = false)
+@Data
 public class MailSenderConfig {
 
-    @Value("${b2b.mail.username}")
-    private String mailUsername;
+    private String username;
 
-    @Value("${b2b.mail.password}")
-    private String mailPassowrd;
+    private String password;
 
     @Bean
-    public JavaMailSender javaMailSender(){
-        System.out.println("MAIL PASSWORD: "+mailPassowrd+" MAIL Username: "+mailUsername);
+    public JavaMailSender javaMailSender() {
+        System.out.println("MAIL PASSWORD: " + password + " MAIL Username: " + username);
 
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost("smtp.gmail.com");
         mailSender.setPort(587);
 
-        mailSender.setUsername(mailUsername);
-        mailSender.setPassword(mailPassowrd);
+        mailSender.setUsername(username);
+        mailSender.setPassword(password);
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");

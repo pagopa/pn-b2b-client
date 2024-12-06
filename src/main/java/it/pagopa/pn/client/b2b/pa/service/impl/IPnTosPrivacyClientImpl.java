@@ -5,9 +5,11 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.e
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffConsent;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffTosPrivacyActionBody;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.ConsentType;
+import it.pagopa.pn.client.b2b.pa.config.PnBaseUrlConfig;
+import it.pagopa.pn.client.b2b.pa.config.PnBearerTokenConfigs;
 import it.pagopa.pn.client.b2b.pa.service.IPnTosPrivacyClient;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -29,15 +31,14 @@ public class IPnTosPrivacyClientImpl implements IPnTosPrivacyClient {
 
     private final UserConsentsApi userConsentsApi;
 
+    @Autowired
     public IPnTosPrivacyClientImpl(RestTemplate restTemplate,
-                                   @Value("${pn.webapi.external.base-url}") String basePath,
-                                   @Value("${pn.bearer-token.pg3}") String aldameriniPGBearerToken,
-                                   @Value("${pn.bearer-token.pg4}") String mariaMontessoriPGBearerToken,
-                                   @Value("${pn.bearer-token.pg5}") String nildeIottiPGBearerToken) {
-        this.aldameriniPGBearerToken = aldameriniPGBearerToken;
-        this.mariaMontessoriPGBearerToken = mariaMontessoriPGBearerToken;
-        this.nildeIottiPGBearerToken = nildeIottiPGBearerToken;
-        this.basePath = basePath;
+                                   PnBearerTokenConfigs pnBearerTokenConfigs,
+                                   PnBaseUrlConfig pnBaseUrlConfig) {
+        this.aldameriniPGBearerToken = pnBearerTokenConfigs.getPg3();
+        this.mariaMontessoriPGBearerToken = pnBearerTokenConfigs.getPg4();
+        this.nildeIottiPGBearerToken = pnBearerTokenConfigs.getPg5();
+        this.basePath = pnBaseUrlConfig.getWebApiExternalBaseUrl();
         this.restTemplate = restTemplate;
         this.userConsentsApi = new UserConsentsApi(newApiClient(aldameriniPGBearerToken));
     }
@@ -45,7 +46,7 @@ public class IPnTosPrivacyClientImpl implements IPnTosPrivacyClient {
     private ApiClient newApiClient(String bearerToken) {
         ApiClient newApiClient = new ApiClient(this.restTemplate);
         newApiClient.setBasePath(basePath);
-        newApiClient.addDefaultHeader("Authorization","Bearer " + bearerToken);
+        newApiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
         return newApiClient;
     }
 
@@ -81,7 +82,7 @@ public class IPnTosPrivacyClientImpl implements IPnTosPrivacyClient {
             case PG_5 -> {
                 this.userConsentsApi.setApiClient(newApiClient(nildeIottiPGBearerToken));
             }
-            default ->  {
+            default -> {
                 this.userConsentsApi.setApiClient(newApiClient(aldameriniPGBearerToken));
             }
         }

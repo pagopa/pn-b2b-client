@@ -7,6 +7,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.api.AllApi;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.api.CourtesyApi;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.api.LegalApi;
+import it.pagopa.pn.client.b2b.pa.config.PnBaseUrlConfig;
+import it.pagopa.pn.client.b2b.pa.config.PnBearerTokenConfigs;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.*;
@@ -14,7 +16,7 @@ import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.Consent;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.ConsentAction;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.ConsentType;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -44,26 +46,20 @@ public class B2BUserAttributesExternalClientImpl implements IPnWebUserAttributes
     private final String basePath;
 
 
+    @Autowired
     public B2BUserAttributesExternalClientImpl(RestTemplate restTemplate,
-                                               @Value("${pn.external.dest.base-url}") String basePath,
-                                               @Value("${pn.bearer-token.user1}") String marioCucumberBearerToken,
-                                               @Value("${pn.bearer-token.user2}") String marioGherkinBearerToken,
-                                               @Value("${pn.bearer-token.user3}") String leonardoBearerToken,
-                                               @Value("${pn.bearer-token.user4}") String galileoBearerToken,
-                                               @Value("${pn.bearer-token.user5}") String dinoBearerToken,
-                                               @Value("${pn.bearer-token.scaduto}") String userBearerTokenScaduto,
-                                               @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
-                                               @Value("${pn.bearer-token-b2b.pg2}") String cucumberSpaBearerToken) {
+                                               PnBearerTokenConfigs pnBearerTokenConfigs,
+                                               PnBaseUrlConfig pnBaseUrlConfig) {
         this.restTemplate = restTemplate;
-        this.marioCucumberBearerToken = marioCucumberBearerToken;
-        this.marioGherkinBearerToken = marioGherkinBearerToken;
-        this.leonardoBearerToken = leonardoBearerToken;
-        this.galileoBearerToken = galileoBearerToken;
-        this.dinoBearerToken = dinoBearerToken;
-        this.userBearerTokenScaduto= userBearerTokenScaduto;
-        this.gherkinSrlBearerToken = gherkinSrlBearerToken;
-        this.cucumberSpaBearerToken = cucumberSpaBearerToken;
-        this.basePath = basePath;
+        this.marioCucumberBearerToken = pnBearerTokenConfigs.getUser1();
+        this.marioGherkinBearerToken = pnBearerTokenConfigs.getUser2();
+        this.leonardoBearerToken = pnBearerTokenConfigs.getUser3();
+        this.galileoBearerToken = pnBearerTokenConfigs.getUser4();
+        this.dinoBearerToken = pnBearerTokenConfigs.getUser5();
+        this.userBearerTokenScaduto = pnBearerTokenConfigs.getScaduto();
+        this.gherkinSrlBearerToken = pnBearerTokenConfigs.getPg1();
+        this.cucumberSpaBearerToken = pnBearerTokenConfigs.getB2bPg2();
+        this.basePath = pnBaseUrlConfig.getExternalDestBaseUrl();
         this.consentsApi = new ConsentsApi(newConsentsApiClient(restTemplate, basePath, marioCucumberBearerToken));
         this.legalApi = new LegalApi(newAddressBookApiClient(restTemplate, basePath, marioCucumberBearerToken));
         this.allApi = new AllApi(newAddressBookApiClient(restTemplate, basePath, marioCucumberBearerToken));
@@ -82,7 +78,7 @@ public class B2BUserAttributesExternalClientImpl implements IPnWebUserAttributes
         it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.ApiClient newApiClient =
                 new it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.ApiClient(restTemplate);
         newApiClient.setBasePath(basePath);
-        newApiClient.addDefaultHeader("Authorization","Bearer " + bearerToken);
+        newApiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
         return newApiClient;
     }
 
@@ -166,7 +162,7 @@ public class B2BUserAttributesExternalClientImpl implements IPnWebUserAttributes
     }
 
     public UserAddresses getAddressesByRecipient() throws RestClientException {
-        return deepCopy(allApi.getAddressesByRecipient(), UserAddresses.class) ;
+        return deepCopy(allApi.getAddressesByRecipient(), UserAddresses.class);
     }
 
 
@@ -205,13 +201,13 @@ public class B2BUserAttributesExternalClientImpl implements IPnWebUserAttributes
         courtesyApiAddressBook.postRecipientCourtesyAddress(senderId, courtesyChannelType, address);
     }
 
-    private <T> T deepCopy( Object obj, Class<T> toClass) {
+    private <T> T deepCopy(Object obj, Class<T> toClass) {
         ObjectMapper objMapper = JsonMapper.builder()
                 .addModule(new JavaTimeModule())
                 .build();
         try {
-            String json = objMapper.writeValueAsString( obj );
-            return objMapper.readValue( json, toClass );
+            String json = objMapper.writeValueAsString(obj);
+            return objMapper.readValue(json, toClass);
         } catch (JsonProcessingException exc) {
             throw new PnB2bException(exc.getMessage());
         }

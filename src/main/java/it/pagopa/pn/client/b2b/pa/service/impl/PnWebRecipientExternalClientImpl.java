@@ -1,5 +1,8 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
+import it.pagopa.pn.client.b2b.pa.config.PnBaseUrlConfig;
+import it.pagopa.pn.client.b2b.pa.config.PnBearerTokenConfigs;
+import it.pagopa.pn.client.b2b.pa.config.PnExternalApiKeyConfig;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.ApiClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.api.RecipientReadApi;
@@ -10,6 +13,11 @@ import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.mo
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model_v1.FullReceivedNotification;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.api.DocumentsWebApi;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.api.LegalFactsApi;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.DocumentCategory;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.DocumentDownloadMetadataResponse;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactCategory;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactDownloadMetadataResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -45,27 +53,21 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
     private final String basePath;
     private final String userAgent;
 
-
+    @Autowired
     public PnWebRecipientExternalClientImpl(RestTemplate restTemplate,
-                                            @Value("${pn.webapi.external.base-url}") String basePath,
-                                            @Value("${pn.bearer-token.user1}") String marioCucumberBearerToken,
-                                            @Value("${pn.bearer-token.user2}") String marioGherkinBearerToken,
-                                            @Value("${pn.bearer-token.user3}") String leonardoBearerToken,
-                                            @Value("${pn.bearer-token.user5}") String dinoBearerToken,
-                                            @Value("${pn.bearer-token.scaduto}") String userBearerTokenScaduto,
-                                            @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
-                                            @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken,
-                                            @Value("${pn.webapi.external.user-agent}") String userAgent) {
+                                            PnBearerTokenConfigs pnBearerTokenConfigs,
+                                            PnBaseUrlConfig pnBaseUrlConfig,
+                                            PnExternalApiKeyConfig pnExternalApiKeyConfig) {
         this.restTemplate = restTemplate;
-        this.marioCucumberBearerToken = marioCucumberBearerToken;
-        this.marioGherkinBearerToken = marioGherkinBearerToken;
-        this.leonardoBearerToken = leonardoBearerToken;
-        this.dinoBearerToken = dinoBearerToken;
-        this.userBearerTokenScaduto = userBearerTokenScaduto;
-        this.gherkinSrlBearerToken = gherkinSrlBearerToken;
-        this.cucumberSpaBearerToken = cucumberSpaBearerToken;
-        this.basePath = basePath;
-        this.userAgent = userAgent;
+        this.marioCucumberBearerToken = pnBearerTokenConfigs.getUser1();
+        this.marioGherkinBearerToken = pnBearerTokenConfigs.getUser2();
+        this.leonardoBearerToken = pnBearerTokenConfigs.getUser3();
+        this.dinoBearerToken = pnBearerTokenConfigs.getUser5();
+        this.userBearerTokenScaduto = pnBearerTokenConfigs.getScaduto();
+        this.gherkinSrlBearerToken = pnBearerTokenConfigs.getPg1();
+        this.cucumberSpaBearerToken = pnBearerTokenConfigs.getPg2();
+        this.basePath = pnBaseUrlConfig.getWebApiExternalBaseUrl();
+        this.userAgent = pnExternalApiKeyConfig.getUserAgent();
         this.recipientReadApi = new RecipientReadApi(newApiClient(restTemplate, basePath, marioGherkinBearerToken, userAgent));
         this.recipientReadApiV1 = new it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.api_v1.RecipientReadApi(newApiClient(restTemplate, basePath, marioGherkinBearerToken, userAgent));
         this.recipientReadApiV2 = new it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.api_v2.RecipientReadApi(newApiClient(restTemplate, basePath, marioGherkinBearerToken, userAgent));

@@ -6,8 +6,10 @@ import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.api
 import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.api.AppIoPnPaymentsApi;
 import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.NotificationAttachmentDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.ThirdPartyMessage;
+import it.pagopa.pn.client.b2b.pa.config.PnBaseUrlConfig;
+import it.pagopa.pn.client.b2b.pa.config.PnExternalApiKeyConfig;
 import it.pagopa.pn.client.b2b.pa.service.IPnAppIOB2bClient;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -19,6 +21,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,33 +29,38 @@ import java.util.Map;
 
 @Component
 public class PnAppIOB2bExternalClientImpl implements IPnAppIOB2bClient {
+
+    private final String basePath;
     private final AppIoPnDocumentsApi appIoPnDocumentsApi;
     private final AppIoPnNotificationApi appIoPnNotificationApi;
     private final AppIoPnPaymentsApi appIoPnPaymentsApi;
+    private final String appIoApiKey;
 
-
+    @Autowired
     public PnAppIOB2bExternalClientImpl(RestTemplate restTemplate,
-                                        @Value("${pn.appio.externa.base-url}") String devBasePath,
-                                        @Value("${pn.external.appio.api-key}") String devApiKey) {
-        this.appIoPnDocumentsApi = new AppIoPnDocumentsApi( newApiClient( restTemplate, devBasePath, devApiKey) );
-        this.appIoPnNotificationApi = new AppIoPnNotificationApi( newApiClient( restTemplate, devBasePath, devApiKey) );
-        this.appIoPnPaymentsApi = new AppIoPnPaymentsApi( newApiClient( restTemplate, devBasePath, devApiKey) );
+                                        PnBaseUrlConfig pnBaseUrlConfig,
+                                        PnExternalApiKeyConfig pnExternalApiKeyConfig) {
+        this.basePath = pnBaseUrlConfig.getAppIoExternalBaseUrl();
+        this.appIoApiKey = pnExternalApiKeyConfig.getAppIoApiKey();
+        this.appIoPnDocumentsApi = new AppIoPnDocumentsApi(newApiClient(restTemplate, basePath, appIoApiKey));
+        this.appIoPnNotificationApi = new AppIoPnNotificationApi(newApiClient(restTemplate, basePath, appIoApiKey));
+        this.appIoPnPaymentsApi = new AppIoPnPaymentsApi(newApiClient(restTemplate, basePath, appIoApiKey));
     }
 
-    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String apikey ) {
-        ApiClient newApiClient = new ApiClient( restTemplate );
-        newApiClient.addDefaultHeader("Accept", "application/io+json" );
-        newApiClient.setBasePath( basePath );
-        newApiClient.addDefaultHeader("x-api-key", apikey );
+    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String apikey) {
+        ApiClient newApiClient = new ApiClient(restTemplate);
+        newApiClient.addDefaultHeader("Accept", "application/io+json");
+        newApiClient.setBasePath(basePath);
+        newApiClient.addDefaultHeader("x-api-key", apikey);
         return newApiClient;
     }
 
     public NotificationAttachmentDownloadMetadataResponse getSentNotificationDocument(String iun, Integer docIdx, String xPagopaCxTaxid) throws RestClientException {
-        return this.appIoPnDocumentsApi.getReceivedNotificationDocument(iun, docIdx, xPagopaCxTaxid,null,null,null,null,null,null,null,null,null);
+        return this.appIoPnDocumentsApi.getReceivedNotificationDocument(iun, docIdx, xPagopaCxTaxid, null, null, null, null, null, null, null, null, null);
     }
 
     public ThirdPartyMessage getReceivedNotification(String iun, String xPagopaCxTaxid) throws RestClientException {
-        return this.appIoPnNotificationApi.getReceivedNotification(iun, xPagopaCxTaxid,null,null,null,null,null,null,null,null,null);
+        return this.appIoPnNotificationApi.getReceivedNotification(iun, xPagopaCxTaxid, null, null, null, null, null, null, null, null, null);
     }
 
     public NotificationAttachmentDownloadMetadataResponse getReceivedNotificationAttachment(String iun, String attachmentName, String xPagopaCxTaxid, Integer attachmentIdx) throws RestClientException {
@@ -79,12 +87,13 @@ public class PnAppIOB2bExternalClientImpl implements IPnAppIOB2bClient {
         headerParams.add("x-pagopa-cx-taxid", appIoPnPaymentsApi.getApiClient().parameterToString(xPagopaCxTaxid));
 
         final List<MediaType> localVarAccept = appIoPnPaymentsApi.getApiClient().selectHeaderAccept(localVarAccepts);
-        final String[] contentTypes = {  };
+        final String[] contentTypes = {};
         final MediaType localVarContentType = appIoPnPaymentsApi.getApiClient().selectHeaderContentType(contentTypes);
 
-        String[] authNames = new String[] { "ApiKeyAuth" };
+        String[] authNames = new String[]{"ApiKeyAuth"};
 
-        ParameterizedTypeReference<NotificationAttachmentDownloadMetadataResponse> returnType = new ParameterizedTypeReference<>() {};
+        ParameterizedTypeReference<NotificationAttachmentDownloadMetadataResponse> returnType = new ParameterizedTypeReference<>() {
+        };
         return appIoPnPaymentsApi.getApiClient().invokeAPI(url, HttpMethod.GET, uriVariables, queryParams, postBody, headerParams, cookieParams, formParams, localVarAccept, localVarContentType, authNames, returnType).getBody();
-     }
+    }
 }

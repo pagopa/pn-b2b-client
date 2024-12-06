@@ -11,17 +11,18 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffNotificationDetailTimeline;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffConsent;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffTosPrivacyActionBody;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.Consent;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.ConsentType;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV23;
+import it.pagopa.pn.client.b2b.pa.config.PnExternalSenderConfig;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV25;
 import it.pagopa.pn.client.b2b.pa.service.*;
-import it.pagopa.pn.client.b2b.pa.service.impl.*;
+import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.*;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.ConsentAction;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.*;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.DocumentCategory;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
@@ -30,9 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.ByteArrayInputStream;
@@ -60,25 +59,17 @@ public class RicezioneNotificheWebSteps {
     private final IPnTosPrivacyClient iPnTosPrivacyClient;
     private final PnB2bClientTimingConfigs timingConfigs;
     private static final Integer waitDefault = 10000;
-
     private HttpStatusCodeException notificationError;
     private FullReceivedNotificationV24 fullNotification;
     private BffFullNotificationV1 bffFullNotificationV1Recipient;
     private it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffFullNotificationV1 bffFullNotificationV1Sender;
-
     private static final String TOS_VERSION = "2";
     private static final String ACCEPT_TOS = "ACCETTA";
-
-    @Value("${pn.external.senderId}")
-    private String senderId;
-    @Value("${pn.external.senderId-2}")
-    private String senderId2;
-    @Value("${pn.external.senderId-GA}")
-    private String senderIdGA;
-    @Value("${pn.external.senderId-SON}")
-    private String senderIdSON;
-    @Value("${pn.external.senderId-ROOT}")
-    private String senderIdROOT;
+    private final String senderId1;
+    private final String senderId2;
+    private final String senderIdGA;
+    private final String senderIdSON;
+    private final String senderIdROOT;
 
     @Before("@useB2B")
     public void beforeMethod() {
@@ -90,8 +81,13 @@ public class RicezioneNotificheWebSteps {
     }
 
     @Autowired
-    public RicezioneNotificheWebSteps(ApplicationContext context, SharedSteps sharedSteps, PnWebUserAttributesExternalClientImpl iPnWebUserAttributesClient,
-                                      IPnBFFRecipientNotificationClient bffRecipientNotificationClient, IPnTosPrivacyClient iPnTosPrivacyClient, PnB2bClientTimingConfigs timingConfigs) {
+    public RicezioneNotificheWebSteps(ApplicationContext context,
+                                      SharedSteps sharedSteps,
+                                      PnWebUserAttributesExternalClientImpl iPnWebUserAttributesClient,
+                                      IPnBFFRecipientNotificationClient bffRecipientNotificationClient,
+                                      IPnTosPrivacyClient iPnTosPrivacyClient,
+                                      PnB2bClientTimingConfigs timingConfigs,
+                                      PnExternalSenderConfig pnExternalSenderConfig) {
         this.context = context;
         this.sharedSteps = sharedSteps;
         this.webRecipientClient = sharedSteps.getWebRecipientClient();
@@ -103,6 +99,11 @@ public class RicezioneNotificheWebSteps {
         this.bffRecipientNotificationClient = bffRecipientNotificationClient;
         this.iPnTosPrivacyClient = iPnTosPrivacyClient;
         this.timingConfigs = timingConfigs;
+        this.senderId1 = pnExternalSenderConfig.getSenderId1();
+        this.senderId2 = pnExternalSenderConfig.getSenderId2();
+        this.senderIdGA = pnExternalSenderConfig.getSenderIdGA();
+        this.senderIdSON = pnExternalSenderConfig.getSenderIdSON();
+        this.senderIdROOT = pnExternalSenderConfig.getSenderIdROOT();
     }
 
     @Then("la notifica può essere correttamente recuperata da {string}")
@@ -626,7 +627,7 @@ public class RicezioneNotificheWebSteps {
 
     private void postRecipientCourtesyAddress(String senderId, String addressVerification, CourtesyChannelType type, String verificationCode, boolean inserimento) {
         try {
-            if(inserimento){
+            if (inserimento) {
                 this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderId, CourtesyChannelType.EMAIL, (new AddressVerification().value(addressVerification)));
                 verificationCode = this.externalClient.getVerificationCode(addressVerification);
             }
@@ -638,7 +639,7 @@ public class RicezioneNotificheWebSteps {
 
     private void postRecipientLegalAddress(String senderIdPa, String addressVerification, String verificationCode, boolean inserimento) {
         try {
-            if (inserimento){
+            if (inserimento) {
                 this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.PEC, (new AddressVerification().value(addressVerification)));
                 verificationCode = this.externalClient.getVerificationCode(addressVerification);
             }
@@ -668,7 +669,7 @@ public class RicezioneNotificheWebSteps {
 
     private String getSenderIdPa(String pa) {
         return switch (pa) {
-            case "Comune_1" -> senderId;
+            case "Comune_1" -> senderId1;
             case "Comune_2" -> senderId2;
             case "Comune_Multi" -> senderIdGA;
             case "Comune_Son" -> senderIdSON;
@@ -802,7 +803,6 @@ public class RicezioneNotificheWebSteps {
             }
         });
     }
-
 
 
     @And("viene verificata l' assenza di pec inserite per l'utente")

@@ -1,7 +1,13 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
+import it.pagopa.pn.client.b2b.pa.config.PnBaseUrlConfig;
+import it.pagopa.pn.client.b2b.pa.config.PnBearerTokenExternalConfig;
 import it.pagopa.pn.client.b2b.pa.service.IPnRaddAlternativeClient;
-import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.api.*;
+import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.api.ActOperationsApi;
+import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.api.AorOperationsApi;
+import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.api.DocumentOperationsApi;
+import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.api_AnagraficaCRUD.RegistryApi;
+import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.api_AnagraficaCsv.ImportApi;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model.*;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD.CreateRegistryRequest;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD.CreateRegistryResponse;
@@ -12,11 +18,9 @@ import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCsv.RequestResponse;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCsv.VerifyRequestResponse;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.privateb2braddalt.ApiClient;
-import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.privateb2braddalt.api.*;
+import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.privateb2braddalt.api.NotificationInquiryApi;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.privateb2braddalt.model.*;
-import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.api_AnagraficaCsv.*;
-import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.api_AnagraficaCRUD.*;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -45,53 +49,46 @@ public class PnRaddAlternativeClientImpl implements IPnRaddAlternativeClient {
     private static final String BEARER = "Bearer ";
     private final ImportApi apiCaricamentoCsv;
     private final RegistryApi apiAnagraficaCRUD;
+    private final String baseUrl;
 
+    @Autowired
     public PnRaddAlternativeClientImpl(RestTemplate restTemplate,
-                                       @Value("${pn.radd.alt.external.base-url}") String basePath,
-                                       @Value("${pn.external.bearer-token-radd-1}") String raddista1,
-                                       @Value("${pn.external.bearer-token-radd-2}") String raddista2,
-                                       @Value("${pn.external.bearer-token-radd-non-censito}") String raddistaNonCensito,
-                                       @Value("${pn.external.bearer-token-radd-dati-errati}") String raddistaDatiErrati,
-                                       @Value("${pn.external.bearer-token-radd-3}") String raddista3,
-                                       @Value("${pn.external.bearer-token-radd-jwt-scaduto}") String raddistaJwtScaduto,
-                                       @Value("${pn.external.bearer-token-radd-aud-erratto}") String raddistaAudErrato,
-                                       @Value("${pn.external.bearer-token-radd-kid-diverso}") String raddistaJwtKidDiverso,
-                                       @Value("${pn.external.bearer-token-radd-privateKey-diverso}") String raddistaJwtPrivateDiverso,
-                                       @Value("${pn.external.bearer-token-radd-over-50KB}") String raddistaJwksOver50Kb
-                                       ) {
-        this.raddista1 = raddista1;
-        this.raddista2 = raddista2;
-        this.raddistaNonCensito = raddistaNonCensito;
-        this.raddistaDatiErrati = raddistaDatiErrati;
-        this.raddistaJwtScaduto = raddistaJwtScaduto;
-        this.raddistaAudErrato = raddistaAudErrato;
-        this.raddistaJwtKidDiverso = raddistaJwtKidDiverso;
-        this.raddistaJwtPrivateDiverso = raddistaJwtPrivateDiverso;
-        this.raddistaJwksOver50Kb = raddistaJwksOver50Kb;
-        this.raddista3 = raddista3;
-        this.actOperationsApi = new ActOperationsApi(newApiClientExternal(restTemplate,basePath, raddista1));
-        this.aorOperationsApi = new AorOperationsApi(newApiClientExternal(restTemplate,basePath, raddista1));
-        this.documentOperationsApi = new DocumentOperationsApi(newApiClientExternal(restTemplate,basePath, raddista1));
-        this.notificationInquiryApi = new NotificationInquiryApi(newApiClient(restTemplate,basePath));
-        this.apiCaricamentoCsv = new ImportApi(newApiClientExternal(restTemplate,basePath, raddista1));
-        this.apiAnagraficaCRUD = new RegistryApi(newApiClientExternal(restTemplate,basePath, raddista1));
+                                       PnBearerTokenExternalConfig pnBearerTokenExternalConfig,
+                                       PnBaseUrlConfig pnBaseUrlConfig) {
+        this.raddista1 = pnBearerTokenExternalConfig.getRadd1();
+        this.raddista2 = pnBearerTokenExternalConfig.getRadd2();
+        this.raddista3 = pnBearerTokenExternalConfig.getRadd3();
+        this.raddistaNonCensito = pnBearerTokenExternalConfig.getNonCensito();
+        this.raddistaDatiErrati = pnBearerTokenExternalConfig.getDatiErrati();
+        this.raddistaJwtScaduto = pnBearerTokenExternalConfig.getJwtScaduto();
+        this.raddistaAudErrato = pnBearerTokenExternalConfig.getAudErratto();
+        this.raddistaJwtKidDiverso = pnBearerTokenExternalConfig.getKidDiverso();
+        this.raddistaJwtPrivateDiverso = pnBearerTokenExternalConfig.getPrivateKeyDiverso();
+        this.raddistaJwksOver50Kb = pnBearerTokenExternalConfig.getOver50KB();
+        this.baseUrl = pnBaseUrlConfig.getRaddAltExternalBaseUrl();
+        this.actOperationsApi = new ActOperationsApi(newApiClientExternal(restTemplate, baseUrl, raddista1));
+        this.aorOperationsApi = new AorOperationsApi(newApiClientExternal(restTemplate, baseUrl, raddista1));
+        this.documentOperationsApi = new DocumentOperationsApi(newApiClientExternal(restTemplate, baseUrl, raddista1));
+        this.notificationInquiryApi = new NotificationInquiryApi(newApiClient(restTemplate, baseUrl));
+        this.apiCaricamentoCsv = new ImportApi(newApiClientExternal(restTemplate, baseUrl, raddista1));
+        this.apiAnagraficaCRUD = new RegistryApi(newApiClientExternal(restTemplate, baseUrl, raddista1));
         this.issuerTokenSetted = AuthTokenRaddType.ISSUER_1;
     }
 
-    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath ) {
-        ApiClient newApiClient = new ApiClient( restTemplate );
-        newApiClient.setBasePath( basePath );
+    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath) {
+        ApiClient newApiClient = new ApiClient(restTemplate);
+        newApiClient.setBasePath(basePath);
         return newApiClient;
     }
 
-    private static it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.ApiClient newApiClientExternal(RestTemplate restTemplate, String basePath,String token ) {
-        it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.ApiClient newApiClient = new it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.ApiClient( restTemplate );
-        newApiClient.setBasePath( basePath );
+    private static it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.ApiClient newApiClientExternal(RestTemplate restTemplate, String basePath, String token) {
+        it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.ApiClient newApiClient = new it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.ApiClient(restTemplate);
+        newApiClient.setBasePath(basePath);
         newApiClient.addDefaultHeader(AUTHORIZATION, BEARER + token);
         return newApiClient;
     }
 
-    public void selectRaddista(String token){
+    public void selectRaddista(String token) {
         this.actOperationsApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + token);
         this.aorOperationsApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + token);
         this.documentOperationsApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + token);
@@ -102,13 +99,13 @@ public class PnRaddAlternativeClientImpl implements IPnRaddAlternativeClient {
         this.documentOperationsApi.getApiClient().addDefaultHeader(AUTHORIZATION, BEARER + token);
     }
 
-    public void selectRaddistaHeaderErrato(String token){
+    public void selectRaddistaHeaderErrato(String token) {
         this.actOperationsApi.getApiClient().addDefaultHeader("Authorization", "Bearer: " + token);
         this.aorOperationsApi.getApiClient().addDefaultHeader("Authorization", "Bearer: " + token);
         this.documentOperationsApi.getApiClient().addDefaultHeader("Authorization", "Bearer: " + token);
     }
 
-    public ActInquiryResponse actInquiry( String uid, String recipientTaxId, String recipientType, String qrCode, String iun) throws RestClientException {
+    public ActInquiryResponse actInquiry(String uid, String recipientTaxId, String recipientType, String qrCode, String iun) throws RestClientException {
         return this.actOperationsApi.actInquiryWithHttpInfo(uid, recipientTaxId, recipientType, qrCode, iun).getBody();
     }
 
@@ -124,8 +121,8 @@ public class PnRaddAlternativeClientImpl implements IPnRaddAlternativeClient {
         return this.actOperationsApi.startActTransactionWithHttpInfo(uid, actStartTransactionRequest).getBody();
     }
 
-    public AORInquiryResponse aorInquiry( String uid, String recipientTaxId, String recipientType) throws RestClientException {
-        return this.aorOperationsApi.aorInquiryWithHttpInfo( uid, recipientTaxId, recipientType).getBody();
+    public AORInquiryResponse aorInquiry(String uid, String recipientTaxId, String recipientType) throws RestClientException {
+        return this.aorOperationsApi.aorInquiryWithHttpInfo(uid, recipientTaxId, recipientType).getBody();
     }
 
     public AbortTransactionResponse abortAorTransaction(String uid, AbortTransactionRequest abortTransactionRequest) throws RestClientException {
@@ -140,8 +137,8 @@ public class PnRaddAlternativeClientImpl implements IPnRaddAlternativeClient {
         return this.aorOperationsApi.startAorTransactionWithHttpInfo(uid, aorStartTransactionRequest).getBody();
     }
 
-    public DocumentUploadResponse documentUpload( String uid, DocumentUploadRequest documentUploadRequest) throws RestClientException {
-        return this.documentOperationsApi.documentUploadWithHttpInfo( uid, documentUploadRequest).getBody();
+    public DocumentUploadResponse documentUpload(String uid, DocumentUploadRequest documentUploadRequest) throws RestClientException {
+        return this.documentOperationsApi.documentUploadWithHttpInfo(uid, documentUploadRequest).getBody();
     }
 
     public OperationsActDetailsResponse getActPracticesByInternalId(String internalId, FilterRequest filterRequest) throws RestClientException {
@@ -170,7 +167,7 @@ public class PnRaddAlternativeClientImpl implements IPnRaddAlternativeClient {
 
     @Override
     public byte[] documentDownload(String operationType, String operationId, String attchamentId) throws RestClientException {
-        return this.documentOperationsApi.documentDownload(operationType,operationId, attchamentId);
+        return this.documentOperationsApi.documentDownload(operationType, operationId, attchamentId);
     }
 
     @Override
@@ -212,50 +209,50 @@ public class PnRaddAlternativeClientImpl implements IPnRaddAlternativeClient {
     @Override
     public boolean setAuthTokenRadd(AuthTokenRaddType issuerToken) {
         boolean beenSet = false;
-        switch (issuerToken){
+        switch (issuerToken) {
             case ISSUER_1 -> {
                 selectRaddista(this.raddista1);
-                beenSet=true;
+                beenSet = true;
             }
             case ISSUER_2 -> {
                 selectRaddista(this.raddista2);
-                beenSet=true;
+                beenSet = true;
             }
             case ISSUER_3 -> {
                 selectRaddista(this.raddista3);
-                beenSet=true;
+                beenSet = true;
             }
             case ISSUER_NON_CENSITO -> {
                 selectRaddista(this.raddistaNonCensito);
-                beenSet=true;
+                beenSet = true;
             }
             case DATI_ERRATI -> {
                 selectRaddista(this.raddistaDatiErrati);
-                beenSet=true;
+                beenSet = true;
             }
             case ISSUER_SCADUTO -> {
                 selectRaddista(this.raddistaJwtScaduto);
-                beenSet=true;
+                beenSet = true;
             }
             case AUD_ERRATA -> {
                 selectRaddista(this.raddistaAudErrato);
-                beenSet=true;
+                beenSet = true;
             }
             case KID_DIVERSO -> {
                 selectRaddista(this.raddistaJwtKidDiverso);
-                beenSet=true;
+                beenSet = true;
             }
             case PRIVATE_DIVERSO -> {
                 selectRaddista(this.raddistaJwtPrivateDiverso);
-                beenSet=true;
+                beenSet = true;
             }
             case HEADER_ERRATO -> {
                 selectRaddistaHeaderErrato(this.raddista1);
-                beenSet=true;
+                beenSet = true;
             }
             case OVER_50KB -> {
                 selectRaddista(this.raddistaJwksOver50Kb);
-                beenSet=true;
+                beenSet = true;
             }
         }
         return beenSet;

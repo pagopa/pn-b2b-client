@@ -3,8 +3,10 @@ package it.pagopa.pn.client.b2b.pa.service.impl;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.ApiClient;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.api.MandateReverseServiceApi;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.MandateDtoRequest;
+import it.pagopa.pn.client.b2b.pa.config.PnBaseUrlConfig;
+import it.pagopa.pn.client.b2b.pa.config.PnBearerTokenConfigs;
 import it.pagopa.pn.client.b2b.pa.service.IMandateReverseServiceClient;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -21,13 +23,13 @@ public class MandateReverseServiceClientImpl implements IMandateReverseServiceCl
     private final RestTemplate restTemplate;
     private BearerTokenType bearerTokenSetted;
 
+    @Autowired
     public MandateReverseServiceClientImpl(RestTemplate restTemplate,
-                                           @Value("${pn.external.dest.base-url}") String basePath,
-                                           @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
-                                           @Value("${pn.bearer-token-b2b.pg2}") String cucumberSpaBearerToken) {
-        this.gherkinSrlBearerToken = gherkinSrlBearerToken;
-        this.cucumberSpaBearerToken = cucumberSpaBearerToken;
-        this.basePath = basePath;
+                                           PnBearerTokenConfigs pnBearerTokenConfigs,
+                                           PnBaseUrlConfig pnBaseUrlConfig) {
+        this.gherkinSrlBearerToken = pnBearerTokenConfigs.getPg1();
+        this.cucumberSpaBearerToken = pnBearerTokenConfigs.getB2bPg2();
+        this.basePath = pnBaseUrlConfig.getExternalDestBaseUrl();
         this.restTemplate = restTemplate;
         this.bearerTokenSetted = BearerTokenType.PG_2;
         this.mandateReverseServiceApi = new MandateReverseServiceApi(newApiClient(cucumberSpaBearerToken));

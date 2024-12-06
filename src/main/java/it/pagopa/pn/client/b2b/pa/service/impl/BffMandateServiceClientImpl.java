@@ -1,10 +1,12 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
+import it.pagopa.pn.client.b2b.pa.config.PnBaseUrlConfig;
+import it.pagopa.pn.client.b2b.pa.config.PnBearerTokenConfigs;
 import it.pagopa.pn.client.b2b.pa.service.IBffMandateServiceApi;
 import it.pagopa.pn.client.web.generated.openapi.clients.bff.recipientmandate.ApiClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.bff.recipientmandate.api.MandateApi;
 import it.pagopa.pn.client.web.generated.openapi.clients.bff.recipientmandate.model.BffMandate;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -23,14 +25,14 @@ public class BffMandateServiceClientImpl implements IBffMandateServiceApi {
     private final MandateApi mandateApi;
     private BearerTokenType bearerTokenSetted;
 
+    @Autowired
     public BffMandateServiceClientImpl(RestTemplate restTemplate,
-                                       @Value("${pn.webapi.external.base-url}") String basePath,
-                                       @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
-                                       @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken) {
+                                       PnBearerTokenConfigs pnBearerTokenConfigs,
+                                       PnBaseUrlConfig pnBaseUrlConfig) {
         this.restTemplate = restTemplate;
-        this.gherkinSrlBearerToken = gherkinSrlBearerToken;
-        this.cucumberSpaBearerToken = cucumberSpaBearerToken;
-        this.basePath = basePath;
+        this.gherkinSrlBearerToken = pnBearerTokenConfigs.getPg1();
+        this.cucumberSpaBearerToken = pnBearerTokenConfigs.getPg2();
+        this.basePath = pnBaseUrlConfig.getWebApiExternalBaseUrl();
         this.bearerTokenSetted = BearerTokenType.PG_1;
         this.mandateApi = new MandateApi(newApiClient(restTemplate, basePath, gherkinSrlBearerToken));
     }
@@ -38,7 +40,7 @@ public class BffMandateServiceClientImpl implements IBffMandateServiceApi {
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken) {
         ApiClient newApiClient = new ApiClient(restTemplate);
         newApiClient.setBasePath(basePath);
-        newApiClient.addDefaultHeader("Authorization","Bearer " + bearerToken);
+        newApiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
         return newApiClient;
     }
 

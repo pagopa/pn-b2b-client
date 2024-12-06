@@ -1,13 +1,15 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
 
+import it.pagopa.pn.client.b2b.pa.config.PnBaseUrlConfig;
+import it.pagopa.pn.client.b2b.pa.config.PnSafeStorageConfig;
 import it.pagopa.pn.client.b2b.pa.service.IPnSafeStoragePrivateClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.ApiClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.api.AdditionalFileTagsApi;
 import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.api.FileDownloadApi;
 import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.api.FileUploadApi;
 import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.model.*;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
@@ -20,21 +22,24 @@ import java.util.Map;
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PnSafeStoragePrivateClientImpl implements IPnSafeStoragePrivateClient {
+
+    private final String apiKeySafeStorage;
     private final String clientIdSafeStorage;
     private final FileUploadApi fileUploadApi;
     private final FileDownloadApi fileDownloadApi;
     private final AdditionalFileTagsApi additionalFileTagsApi;
+    private final String baseUrl;
 
+    @Autowired
     public PnSafeStoragePrivateClientImpl(RestTemplate restTemplate,
-                                          @Value("${pn.safeStorage.base-url}") String safeStorageBaseUrl,
-                                          @Value("${pn.safeStorage.apikey}") String apiKeySafeStorage,
-                                          @Value("${pn.safeStorage.clientId}") String clientIdSafeStorage) {
-
-        this.clientIdSafeStorage = clientIdSafeStorage;
-
-        fileUploadApi = new FileUploadApi(newApiClient(restTemplate, safeStorageBaseUrl, apiKeySafeStorage));
-        fileDownloadApi = new FileDownloadApi(newApiClient(restTemplate, safeStorageBaseUrl, apiKeySafeStorage));
-        additionalFileTagsApi = new AdditionalFileTagsApi(newApiClient(restTemplate, safeStorageBaseUrl, apiKeySafeStorage));
+                                          PnBaseUrlConfig pnBaseUrlConfig,
+                                          PnSafeStorageConfig pnSafeStorageConfig) {
+        this.apiKeySafeStorage = pnSafeStorageConfig.getApiKeySafeStorage();
+        this.clientIdSafeStorage = pnSafeStorageConfig.getClientIdSafeStorage();
+        this.baseUrl = pnBaseUrlConfig.getSafeStorageBaseUrl();
+        fileUploadApi = new FileUploadApi(newApiClient(restTemplate, baseUrl, apiKeySafeStorage));
+        fileDownloadApi = new FileDownloadApi(newApiClient(restTemplate, baseUrl, apiKeySafeStorage));
+        additionalFileTagsApi = new AdditionalFileTagsApi(newApiClient(restTemplate, baseUrl, apiKeySafeStorage));
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String apiKey) {
