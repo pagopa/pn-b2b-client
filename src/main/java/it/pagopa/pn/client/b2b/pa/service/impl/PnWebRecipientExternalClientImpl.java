@@ -18,6 +18,8 @@ import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v2
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactCategory;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactDownloadMetadataResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -25,6 +27,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -200,6 +203,16 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
     @Override
     public LegalFactDownloadMetadataResponse getLegalFact(String iun, LegalFactCategory legalFactType, String legalFactId) throws RestClientException {
         return this.legalFactsApi.retrieveLegalFact(iun, legalFactType, legalFactId, null);
+    }
+
+    @Override
+    public List<LegalFactListElementV20> getLegalFactsV20(String iun, UUID mandateId) throws RestClientException {
+        return this.legalFactsApi.retrieveNotificationLegalFactsV20(iun, mandateId);
+    }
+
+    @Override
+    public LegalFactDownloadMetadataResponse downloadLegalFactById(String iun, String legalFactId, UUID mandateId) throws RestClientException {
+        return this.legalFactsApi.downloadLegalFactById(iun, legalFactId, mandateId);
     }
 
     public DocumentDownloadMetadataResponse getDocumentsWeb(String iun, DocumentCategory documentType, String documentId, String mandateId) throws RestClientException {

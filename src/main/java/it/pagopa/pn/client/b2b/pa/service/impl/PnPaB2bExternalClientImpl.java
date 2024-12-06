@@ -312,6 +312,11 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     }
 
     @Override
+    public FullSentNotificationV24 getSentNotificationV24(String iun) {
+        return senderReadB2BApi.retrieveSentNotificationV24(iun);
+    }
+
+    @Override
     public FullSentNotificationV23 getSentNotificationV23(String iun) {
         return senderReadB2BApi.retrieveSentNotificationV23(iun);
     }

@@ -154,6 +154,10 @@ public class SharedSteps {
 
     @Getter
     @Setter
+    private StreamMetadataResponseV25 eventStreamV25;
+
+    @Getter
+    @Setter
     private List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.ProgressResponseElement> progressResponseElements = null;
 
     @Getter
@@ -165,6 +169,10 @@ public class SharedSteps {
     @Getter
     @Setter
     private List<ProgressResponseElementV23> progressResponseElementsV23 = null;
+
+    @Getter
+    @Setter
+    private List<ProgressResponseElementV24> progressResponseElementsV24 = null;
 
     private final String interopBaseUrl;
 
@@ -190,24 +198,45 @@ public class SharedSteps {
     private final DataTableTypeUtil dataTableTypeUtil;
     private final List<String> iuvGPD;
     private IPnWebUserAttributesClient iPnWebUserAttributesClient;
+
+    //V1
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationResponse newNotificationResponseV1;
-    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationResponse newNotificationResponseV2;
-    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationResponse newNotificationResponseV21;
-    private NewNotificationResponse newNotificationResponseV24;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequest notificationRequestV1;
-    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationRequest notificationRequestV2;
-    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationRequestV21 notificationRequestV21;
-    private NewNotificationRequestV24 notificationRequestV24;
     @Getter
     @Setter
-    private FullSentNotificationV25 notificationResponseComplete;
+    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification notificationResponseCompleteV1;
+
+    //V20
+    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationResponse newNotificationResponseV2;
+    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationRequest notificationRequestV2;
+    @Getter
+    @Setter
+    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.FullSentNotificationV20 notificationResponseCompleteV2;
+
+    //V21
+    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationResponse newNotificationResponseV21;
+    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationRequestV21 notificationRequestV21;
+    @Getter
+    @Setter
+    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.FullSentNotificationV21 notificationResponseCompleteV21;
+
+    //V23
     @Getter
     @Setter
     private FullSentNotificationV23 notificationResponseCompleteV23;
-    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification notificationResponseCompleteV1;
-    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.FullSentNotificationV20 notificationResponseCompleteV2;
-    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.FullSentNotificationV21 notificationResponseCompleteV21;
-    private FullSentNotificationV25 notificationResponseCompleteV25;
+
+    //V24
+    @Getter
+    @Setter
+    private FullSentNotificationV24 notificationResponseCompleteV24;
+    private NewNotificationRequestV24 notificationRequestV24;
+
+    //V25
+    @Getter
+    @Setter
+    private FullSentNotificationV25 notificationResponseComplete;
+
+
     private String settedPa = "Comune_1";
     private boolean groupToSet = true;
     private String errorCode = null;
@@ -330,6 +359,12 @@ public class SharedSteps {
 
     @Given("viene generata una nuova notifica")
     public void vieneGenerataUnaNotifica(@Transpose NewNotificationRequestV24 notificationRequest) {
+        this.notificationRequest = notificationRequest;
+    }
+
+    @Given("viene generata una nuova notifica con la versione più recente")
+    //TODO al rilascio di una nuova versione, aggiornare il metodo sottostante con l'ultima versione
+    public void vieneGenerataUnaNotificaMostRecentVersion(@Transpose NewNotificationRequestV24 notificationRequest) {
         this.notificationRequest = notificationRequest;
     }
 
@@ -1734,7 +1769,7 @@ public class SharedSteps {
     }
 
     public FullSentNotificationV25 getSentNotificationV25() {
-        return notificationResponseCompleteV25;
+        return notificationResponseComplete;
     }
 
     public void setSentNotification(FullSentNotificationV25 notificationResponseComplete) {
@@ -2157,7 +2192,7 @@ public class SharedSteps {
             case "v1" -> sendNotificationV1();
             case "v2" -> sendNotificationV2();
             case "v21" -> sendNotificationV21();
-            //case "v24" -> sendNotificationV24();
+            case "v25" -> sendNotification();
         }
     }
 

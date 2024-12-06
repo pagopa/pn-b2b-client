@@ -181,7 +181,7 @@ public class AvanzamentoNotificheB2bSteps {
 
     private void checkTimelineElementEquality(String timelineEventCategory, TimelineElementV25 elementFromNotification, DataTest dataFromTest) {
         TimelineElementV23 elementFromTest = dataFromTest.getTimelineElement();
-        TimelineElementDetailsV23 detailsFromNotification = elementFromNotification.getDetails();
+        TimelineElementDetailsV25 detailsFromNotification = elementFromNotification.getDetails();
         TimelineElementDetailsV23 detailsFromTest = elementFromTest.getDetails();
         DelegateInfo delegateInfoFromTest = detailsFromTest != null ? detailsFromTest.getDelegateInfo() : null;
         DelegateInfo delegateInfoFromNotification = detailsFromNotification != null ? detailsFromNotification.getDelegateInfo() : null;
@@ -1420,6 +1420,8 @@ public class AvanzamentoNotificheB2bSteps {
                 keySearch = key.substring(key.indexOf("PN_NOTIFICATION_ATTACHMENTS"));
             } else if (key.contains("PN_EXTERNAL_LEGAL_FACTS")) {
                 keySearch = key.substring(key.indexOf("PN_EXTERNAL_LEGAL_FACTS"));
+            } else if (key.contains("PN_PRINTED")) {
+                keySearch = key.substring(key.indexOf("PN_PRINTED"));
             } else if (key.contains("PN_F24")) {
                 keySearch = key.substring(key.indexOf("PN_F24"));
             }
@@ -3293,6 +3295,8 @@ public class AvanzamentoNotificheB2bSteps {
             return key.substring(key.indexOf("PN_NOTIFICATION_ATTACHMENTS"));
         } else if (key.contains("PN_EXTERNAL_LEGAL_FACTS")) {
             return key.substring(key.indexOf("PN_EXTERNAL_LEGAL_FACTS"));
+        } else if (key.contains("PN_PRINTED")) {
+            return key.substring(key.indexOf("PN_PRINTED"));
         } else if (key.contains("PN_F24")) {
             return key.substring(key.indexOf("PN_F24"));
         }
@@ -3464,4 +3468,146 @@ public class AvanzamentoNotificheB2bSteps {
         Assertions.assertTrue(diffMillis <= delta);
     }
 
+    @And("vengono letti gli eventi fino all'elemento di timeline della notifica {string} con deliveryDetailCode {string} per l'utente {int}")
+    public void readingEventUpToTheTimelineElementOfNotificationWithDeliveryDetailCodeAndDestinatario(String timelineEventCategory, String deliveryDetailCode, int destinatario) {
+        PnPollingServiceTimelineRapidV25 timelineRapidV25 = (PnPollingServiceTimelineRapidV25) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_RAPID_V25);
+
+        PnPollingResponseV25 pnPollingResponseV25 = timelineRapidV25.waitForEvent(sharedSteps.getSentNotification().getIun(),
+                PnPollingParameter.builder()
+                        .value(timelineEventCategory)
+                        .pnPollingPredicate(getPnPollingPredicateForTimelineV25(timelineEventCategory, destinatario, deliveryDetailCode, null, null, null, false, false, null, false, null))
+                        .build());
+        log.info("NOTIFICATION_TIMELINE: " + pnPollingResponseV25.getNotification().getTimeline());
+        try {
+            Assertions.assertTrue(pnPollingResponseV25.getResult());
+            Assertions.assertNotNull(pnPollingResponseV25.getTimelineElement());
+            sharedSteps.setSentNotification(pnPollingResponseV25.getNotification());
+            TimelineElementV25 timelineElementV25 = pnPollingResponseV25.getTimelineElement();
+            log.info("TIMELINE_ELEMENT: " + timelineElementV25);
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
+
+    @And("ricerca ed effettua download del legalFact con la categoria {string} con DetailCode {string}")
+    public void ricercaEdEffettuaDownloadDelLegalFactConLaCategoria(String legalFactCategory, String deliveryDetailCode) {
+        String legalFactUrl = downloadLegalFact(legalFactCategory, false, false, true, deliveryDetailCode);
+        legalFactContentVerifySteps.setLegalFactUrl(legalFactUrl);
+    }
+
+
+
+    @Then("viene verificata la presenza dell'elemento di timeline {string} introdotto con la versione {int} in tutte le versioni")
+    public void checkTimelineElementVersionB2B(String timelineElement, Integer introducingVersion) {
+        int readingVersion;
+
+        //V1
+        PnPollingServiceTimelineSlowV1 timelineSlowV1 = (PnPollingServiceTimelineSlowV1) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_SLOW_V1);
+        PnPollingResponseV1 pnPollingResponseV1 = timelineSlowV1.waitForEvent(sharedSteps.getIunVersionamento(),
+                PnPollingParameter.builder()
+                        .value(timelineElement)
+                        .build());
+        List<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.TimelineElement> timelineElementV1List =
+                pnPollingResponseV1.getNotification().getTimeline();
+        log.info("NOTIFICATION_TIMELINE: " + timelineElementV1List);
+        readingVersion = 1;
+        if (readingVersion < introducingVersion) {
+            Assertions.assertTrue(timelineElementV1List.stream().filter(x -> x.getCategory().getValue().equals(timelineElement)).toList().isEmpty());
+        } else {
+            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.TimelineElement target =
+                    timelineElementV1List.stream().filter(x -> x.getCategory().getValue().equals(timelineElement)).findFirst().orElse(null);
+            Assertions.assertNotNull(target);
+            log.info("TIMELINE ELEMENT FOUND: " + target);
+        }
+
+        //V20
+        PnPollingServiceTimelineSlowV20 timelineSlowV20 = (PnPollingServiceTimelineSlowV20) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_SLOW_V20);
+        PnPollingResponseV20 pnPollingResponseV20 = timelineSlowV20.waitForEvent(sharedSteps.getIunVersionamento(),
+                PnPollingParameter.builder()
+                        .value(timelineElement)
+                        .build());
+        List<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.TimelineElementV20> timelineElementV20List =
+                pnPollingResponseV20.getNotification().getTimeline();
+        log.info("NOTIFICATION_TIMELINE: " + timelineElementV1List);
+        readingVersion = 20;
+        if (readingVersion < introducingVersion) {
+            Assertions.assertTrue(timelineElementV1List.stream().filter(x -> x.getCategory().getValue().equals(timelineElement)).toList().isEmpty());
+        } else {
+            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.TimelineElementV20 target =
+                    timelineElementV20List.stream().filter(x -> x.getCategory().getValue().equals(timelineElement)).findFirst().orElse(null);
+            Assertions.assertNotNull(target);
+            log.info("TIMELINE ELEMENT FOUND: " + target);
+        }
+
+        //V21
+        PnPollingServiceTimelineSlowV21 timelineSlowV21 = (PnPollingServiceTimelineSlowV21) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_SLOW_V21);
+        PnPollingResponseV21 pnPollingResponseV21 = timelineSlowV21.waitForEvent(sharedSteps.getIunVersionamento(),
+                PnPollingParameter.builder()
+                        .value(timelineElement)
+                        .build());
+        List<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.TimelineElementV20> timelineElementV21List =
+                pnPollingResponseV21.getNotification().getTimeline();
+        log.info("NOTIFICATION_TIMELINE: " + timelineElementV1List);
+        readingVersion = 21;
+        if (readingVersion < introducingVersion) {
+            Assertions.assertTrue(timelineElementV1List.stream().filter(x -> x.getCategory().getValue().equals(timelineElement)).toList().isEmpty());
+        } else {
+            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.TimelineElementV20 target =
+                    timelineElementV21List.stream().filter(x -> x.getCategory().getValue().equals(timelineElement)).findFirst().orElse(null);
+            Assertions.assertNotNull(target);
+            log.info("TIMELINE ELEMENT FOUND: " + target);
+        }
+
+        //V23
+        PnPollingServiceTimelineSlowV23 timelineSlowV23 = (PnPollingServiceTimelineSlowV23) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_SLOW_V23);
+        PnPollingResponseV23 pnPollingResponseV23 = timelineSlowV23.waitForEvent(sharedSteps.getIunVersionamento(),
+                PnPollingParameter.builder()
+                        .value(timelineElement)
+                        .build());
+        List<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23> timelineElementV23List =
+                pnPollingResponseV23.getNotification().getTimeline();
+        log.info("NOTIFICATION_TIMELINE: " + timelineElementV23List);
+        readingVersion = 23;
+        if (readingVersion < introducingVersion) {
+            Assertions.assertTrue(timelineElementV23List.stream().filter(x -> x.getCategory().getValue().equals(timelineElement)).toList().isEmpty());
+        } else {
+            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23 target =
+                    timelineElementV23List.stream().filter(x -> x.getCategory().getValue().equals(timelineElement)).findFirst().orElse(null);
+            Assertions.assertNotNull(target);
+            log.info("TIMELINE ELEMENT FOUND: " + target);
+        }
+
+        //V25
+        PnPollingServiceTimelineSlowV25 timelineSlowV25 = (PnPollingServiceTimelineSlowV25) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_SLOW_V25);
+        PnPollingResponseV25 pnPollingResponseV25 = timelineSlowV25.waitForEvent(sharedSteps.getIunVersionamento(),
+                PnPollingParameter.builder()
+                        .value(timelineElement)
+                        .build());
+        List<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV25> timelineElementV25List =
+                pnPollingResponseV25.getNotification().getTimeline();
+        log.info("NOTIFICATION_TIMELINE: " + timelineElementV25List);
+        readingVersion = 25;
+        if (readingVersion < introducingVersion) {
+            Assertions.assertTrue(timelineElementV25List.stream().filter(x -> x.getCategory().getValue().equals(timelineElement)).toList().isEmpty());
+        } else {
+            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV25 target =
+                    timelineElementV25List.stream().filter(x -> x.getCategory().getValue().equals(timelineElement)).findFirst().orElse(null);
+            Assertions.assertNotNull(target);
+            log.info("TIMELINE ELEMENT FOUND: " + target);
+        }
+    }
+
+    @Then("tra gli elementi di timeline con categoria {string} è presente un legalFact con categoria {string}")
+    public void checkLegalFactAllVersions(String timelineElementCategory, String legalFactCategory) {
+        List<LegalFactsIdV20> legalFactsList = this.sharedSteps.getSentNotification().getTimeline().stream().filter(
+                x -> x.getCategory().getValue().equals(timelineElementCategory)).findFirst().orElse(null).getLegalFactsIds();
+        Assertions.assertFalse(legalFactsList.isEmpty());
+        LegalFactsIdV20 legalFact = legalFactsList.stream().filter(x -> x.getCategory().equals(legalFactCategory)).findFirst().orElse(null);
+        Assertions.assertNotNull(legalFact);
+        this.legalFactContentVerifySteps.setLegalFactType(legalFactCategory);
+        this.legalFactContentVerifySteps.setLegalFactUrl(legalFact.getKey());
+        log.info("LEGAL FACT CATEGORY = " + legalFact.getCategory());
+        log.info("LEGAL FACT URL: " + legalFact.getKey());
+    }
 }

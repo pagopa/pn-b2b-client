@@ -16,16 +16,19 @@ import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.mo
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationStatus;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model_v1.FullReceivedNotification;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model_v1.NotificationAttachmentDownloadMetadataResponse;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.DocumentCategory;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.DocumentDownloadMetadataResponse;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactCategory;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactDownloadMetadataResponse;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import java.time.OffsetDateTime;
 import java.util.Optional;
@@ -129,7 +132,17 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
 
     @Override
     public DocumentDownloadMetadataResponse getDocumentsWeb(String iun, DocumentCategory documentType, String documentId, String mandateId) throws RestClientException {
-        throw new UnsupportedOperationException();
+        return null;
+    }
+
+    @Override
+    public List<LegalFactListElementV20> getLegalFactsV20(String iun, UUID mandateId) throws RestClientException {
+        return null;
+    }
+
+    @Override
+    public LegalFactDownloadMetadataResponse downloadLegalFactById(String iun, String legalFactId, UUID mandateId) throws RestClientException {
+        return null;
     }
 
     @Override

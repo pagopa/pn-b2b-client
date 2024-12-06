@@ -234,6 +234,11 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
     }
 
     @Override
+    public FullSentNotificationV24 getSentNotificationV24(String iun) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public FullSentNotificationV23 getSentNotificationV23(String iun) {
         throw new UnsupportedOperationException();
     }
