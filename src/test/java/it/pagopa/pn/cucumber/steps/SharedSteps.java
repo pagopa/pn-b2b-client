@@ -25,6 +25,7 @@ import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.ProgressResponseElement;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.ProgressResponseElementV26;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.StreamMetadataResponseV26;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.ProgressResponseElementV23;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamMetadataResponseV23;
@@ -144,6 +145,10 @@ public class SharedSteps {
 
     @Getter
     @Setter
+    private ProgressResponseElementV26 progressResponseElementV26;
+
+    @Getter
+    @Setter
     private it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamMetadataResponse eventStream;
 
     @Getter
@@ -183,6 +188,10 @@ public class SharedSteps {
     @Getter
     @Setter
     private List<ProgressResponseElementV24> progressResponseElementsV24 = null;
+
+    @Getter
+    @Setter
+    private List<ProgressResponseElementV26> progressResponseElementsV26 = null;
 
     @Value("${pn.interop.base-url}")
     private String interopBaseUrl;

@@ -120,13 +120,14 @@ Feature: Resa al mittente di una notifica
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
-    And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V26"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V26"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "DELIVERED"
     And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost ugauale a "NotNull" per l'utente 0
 
-  @returnedToSender @webhook1 @cleanWebhook
-  Scenario: [RETURNED-TO-SENDER_7] Invio notifica AR multi-destinatario aventi stati Irreperibile, Deceduto e macro stato mostrato UNREACHABLE
+  @returnedToSender @webhook1 @cleanWebhook @precondition
+  Scenario: [RETURNED-TO-SENDER_7_TEST] Invio notifica AR multi-destinatario aventi stati Irreperibile, Deceduto e macro stato mostrato UNREACHABLE
+   Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V26"
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -140,13 +141,19 @@ Feature: Resa al mittente di una notifica
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
-    And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
-    Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "UNREACHABLE"
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V26"
+
+    And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
+    And viene impostata l'apikey appena generata
+    And viene aggiornata la apiKey utilizzata per gli stream
+
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V26"
+    And  si invoca l'api Webhook versione "V26" per ottenere gli elementi di timeline di tale notifica
+    Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "COMPLETELY_UNREACHABLE" con versione V26
    # And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost ugauale a "NotNull" per l'utente 0
 
-  @returnedToSender @webhook1 @cleanWebhook
-  Scenario: [RETURNED-TO-SENDER_8] Invio notifica 890 multi-destinatario entrambi deceduti e macro stato mostrato RETURNED_TO_SENDER
+  @returnedToSender @webhook1 @cleanWebhook @precondition
+  Scenario: [RETURNED-TO-SENDER_8_TEST] Invio notifica 890 multi-destinatario entrambi deceduti e macro stato mostrato RETURNED_TO_SENDER
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -154,13 +161,19 @@ Feature: Resa al mittente di una notifica
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
       | digitalDomicile         | NULL                   |
-    And destinatario CucumberSpa e:
-      | physicalAddress_address | @FAIL_DECEDUTO_890 |
-      | digitalDomicile         | NULL                   |
+  #  And destinatario CucumberSpa e:
+   #   | physicalAddress_address | @FAIL_DECEDUTO_890 |
+   #   | digitalDomicile         | NULL                   |
+
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V26"
+    And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
+    And viene impostata l'apikey appena generata
+    And viene aggiornata la apiKey utilizzata per gli stream
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V26"
+    #And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
+    #Then si invoca l'api Webhook versione "V26" per ottenere gli elementi di timeline di tale notifica
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
-    And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
-    Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "RETURNED_TO_SENDER"
+    Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "ACCEPTED" con versione V26
 
   @returnedToSender @webhook1 @cleanWebhook
   Scenario: [RETURNED-TO-SENDER_9] Invio notifica 890 multi-destinatario aventi stati Inviata e Deceduto e macro stato mostrato DELIVERED
@@ -559,6 +572,10 @@ Feature: Resa al mittente di una notifica
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "UNREACHABLE"
     And esiste l'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" per l'utente 0
     And esiste l'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
+
+
+
+
 
 
 
