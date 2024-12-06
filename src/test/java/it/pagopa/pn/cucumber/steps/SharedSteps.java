@@ -4,10 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import io.cucumber.java.Before;
-import io.cucumber.java.BeforeAll;
-import io.cucumber.java.Scenario;
-import io.cucumber.java.Transpose;
+import io.cucumber.java.*;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -50,7 +47,9 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpStatusCodeException;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -362,6 +361,7 @@ public class SharedSteps {
     public void doSomethingAfter() {
         this.groupToSet = false;
     }
+
 
     @Given("viene generata una nuova notifica")
     public void vieneGenerataUnaNotifica(@Transpose NewNotificationRequestV24 notificationRequest) {

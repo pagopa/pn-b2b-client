@@ -1,5 +1,6 @@
 package it.pagopa.pn.cucumber.steps.recipient;
 
+import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.Transpose;
@@ -69,6 +70,9 @@ public class RicezioneNotificheWebSteps {
     private static final String TOS_VERSION = "2";
     private static final String ACCEPT_TOS = "ACCETTA";
 
+    List<CourtesyDigitalAddress> courtesySavedAddressList;
+    List<LegalAndUnverifiedDigitalAddress> legalSavedAddressList;
+
     @Value("${pn.external.senderId}")
     private String senderId;
     @Value("${pn.external.senderId-2}")
@@ -88,6 +92,17 @@ public class RicezioneNotificheWebSteps {
             sharedSteps.setWebRecipientClient(webRecipientClient);
         }
     }
+
+    @Before("@sercq")
+    public void saveAddress() {
+        saveUser4Address();
+    }
+
+    @After("@sercq")
+    public void restoreAddress() {
+        restoreUser4Address();
+    }
+
 
     @Autowired
     public RicezioneNotificheWebSteps(ApplicationContext context, SharedSteps sharedSteps, PnWebUserAttributesExternalClientImpl iPnWebUserAttributesClient,
@@ -626,7 +641,7 @@ public class RicezioneNotificheWebSteps {
 
     private void postRecipientCourtesyAddress(String senderId, String addressVerification, CourtesyChannelType type, String verificationCode, boolean inserimento) {
         try {
-            if(inserimento){
+            if (inserimento) {
                 this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderId, CourtesyChannelType.EMAIL, (new AddressVerification().value(addressVerification)));
                 verificationCode = this.externalClient.getVerificationCode(addressVerification);
             }
@@ -638,7 +653,7 @@ public class RicezioneNotificheWebSteps {
 
     private void postRecipientLegalAddress(String senderIdPa, String addressVerification, String verificationCode, boolean inserimento) {
         try {
-            if (inserimento){
+            if (inserimento) {
                 this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.PEC, (new AddressVerification().value(addressVerification)));
                 verificationCode = this.externalClient.getVerificationCode(addressVerification);
             }
@@ -802,7 +817,6 @@ public class RicezioneNotificheWebSteps {
             }
         });
     }
-
 
 
     @And("viene verificata l' assenza di pec inserite per l'utente")
@@ -994,6 +1008,44 @@ public class RicezioneNotificheWebSteps {
             Assertions.assertNotNull(data.getConsentType().equals(ConsentType.TOS_SERCQ));
             Assertions.assertEquals(data.getAccepted(), tosStatus.equalsIgnoreCase("positiva"));
         });
+    }
+
+
+    public void saveUser4Address() {
+
+        this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_4);
+        UserAddresses addressesByRecipient = this.iPnWebUserAttributesClient.getAddressesByRecipient();
+
+        if (addressesByRecipient.getCourtesy() != null && !addressesByRecipient.getCourtesy().isEmpty()) {
+            courtesySavedAddressList = addressesByRecipient.getCourtesy();
+        }
+        if (addressesByRecipient.getLegal() != null && !addressesByRecipient.getLegal().isEmpty()) {
+            legalSavedAddressList = addressesByRecipient.getLegal();
+        }
+    }
+
+    public void restoreUser4Address() {
+
+        this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_4);
+
+        cleanLegalAddressForUser();
+
+        if (legalSavedAddressList != null && !legalSavedAddressList.isEmpty()) {
+            for (LegalAndUnverifiedDigitalAddress legalSavedAddress : legalSavedAddressList) {
+
+                if (LegalChannelType.PEC.equals(legalSavedAddress.getChannelType())) {
+                    postRecipientLegalAddress(legalSavedAddress.getSenderId(), legalSavedAddress.getValue(), null, true);
+                }
+            }
+        }
+        if (courtesySavedAddressList != null && !courtesySavedAddressList.isEmpty()) {
+            for (CourtesyDigitalAddress courtesySavedAddress : courtesySavedAddressList) {
+
+                if (CourtesyChannelType.EMAIL.equals(courtesySavedAddress.getChannelType())) {
+                    postRecipientCourtesyAddress(courtesySavedAddress.getSenderId(), courtesySavedAddress.getValue(), courtesySavedAddress.getChannelType(), null, true);
+                }
+            }
+        }
     }
 }
 
