@@ -1,6 +1,6 @@
 package it.pagopa.interop.resolver;
 
-import it.pagopa.interop.domain.Ente;
+import it.pagopa.interop.authorization.domain.Ente;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 

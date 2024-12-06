@@ -2,11 +2,11 @@ package it.pagopa.pn.interop.cucumber.steps.authorization;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
-import it.pagopa.interop.domain.KeyPairPEM;
+import it.pagopa.interop.authorization.domain.KeyPairPEM;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeyUse;
-import it.pagopa.interop.service.IAuthorizationClient;
-import it.pagopa.interop.service.utils.CommonUtils;
-import it.pagopa.interop.service.utils.KeyPairGeneratorUtil;
+import it.pagopa.interop.authorization.service.IAuthorizationClient;
+import it.pagopa.interop.authorization.service.utils.CommonUtils;
+import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
 import it.pagopa.pn.interop.cucumber.steps.utils.HttpCallExecutor;
 import org.springframework.http.HttpStatus;
 

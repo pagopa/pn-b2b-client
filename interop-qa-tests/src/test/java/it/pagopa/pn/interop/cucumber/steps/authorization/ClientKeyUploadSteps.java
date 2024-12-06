@@ -2,8 +2,8 @@ package it.pagopa.pn.interop.cucumber.steps.authorization;
 
 import io.cucumber.java.en.When;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeyUse;
-import it.pagopa.interop.service.IAuthorizationClient;
-import it.pagopa.interop.service.utils.KeyPairGeneratorUtil;
+import it.pagopa.interop.authorization.service.IAuthorizationClient;
+import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
 import it.pagopa.pn.interop.cucumber.steps.utils.HttpCallExecutor;
 
 public class ClientKeyUploadSteps {

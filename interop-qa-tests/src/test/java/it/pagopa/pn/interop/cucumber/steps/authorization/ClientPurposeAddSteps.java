@@ -1,7 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.authorization;
 
 import io.cucumber.java.en.When;
-import it.pagopa.interop.service.IAuthorizationClient;
+import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.pn.interop.cucumber.steps.utils.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.utils.HttpCallExecutor;
 

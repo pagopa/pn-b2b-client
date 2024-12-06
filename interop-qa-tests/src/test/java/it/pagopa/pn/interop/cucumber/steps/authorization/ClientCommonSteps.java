@@ -6,8 +6,8 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactClients;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeyUse;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeAdditionDetailsSeed;
-import it.pagopa.interop.service.utils.CommonUtils;
-import it.pagopa.interop.service.utils.KeyPairGeneratorUtil;
+import it.pagopa.interop.authorization.service.utils.CommonUtils;
+import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
 import it.pagopa.pn.interop.cucumber.steps.utils.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.utils.HttpCallExecutor;
 import lombok.Getter;
@@ -65,9 +65,9 @@ public class ClientCommonSteps {
                 KeyPairGeneratorUtil.createBase64PublicKey("RSA", 2048)).get(0));
     }
 
-    @Then("si ottiene status code {string}")
-    public void verifyStatusCode(String statusCode) {
-        Assertions.assertEquals(statusCode, httpCallExecutor.getClientResponse().toString());
+    @Then("si ottiene status code {int}")
+    public void verifyStatusCode(int statusCode) {
+        Assertions.assertEquals(statusCode, httpCallExecutor.getClientResponse().value());
     }
 
 
