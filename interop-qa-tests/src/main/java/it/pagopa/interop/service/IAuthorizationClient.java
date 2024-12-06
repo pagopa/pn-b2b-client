@@ -19,5 +19,8 @@ public interface IAuthorizationClient extends SettableBearerToken {
     void createKeys(String xCorrelationId, UUID clientId, List<KeySeed> keySeed);
     PublicKeys getClientKeys(String xCorrelationId, UUID clientId, List<UUID> userIds);
     void addClientPurpose(String xCorrelationId, UUID clientId, PurposeAdditionDetailsSeed purposeAdditionDetailsSeed);
+    CompactClients getClients(String xCorrelationId, Integer offset, Integer limit, String q, List<UUID> userIds, ClientKind kind);
+    Client getClient(String xCorrelationId, UUID clientId);
+    CreatedResource addUsersToClient(String xCorrelationId, UUID clientId, InlineObject2 inlineObject2);
 
 }

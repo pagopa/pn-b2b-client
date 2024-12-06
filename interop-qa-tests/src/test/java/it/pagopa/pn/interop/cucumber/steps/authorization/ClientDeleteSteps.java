@@ -2,19 +2,21 @@ package it.pagopa.pn.interop.cucumber.steps.authorization;
 
 import io.cucumber.java.en.When;
 import it.pagopa.interop.service.IAuthorizationClient;
-import org.springframework.http.HttpStatus;
+import it.pagopa.pn.interop.cucumber.steps.utils.HttpCallExecutor;
 
 public class ClientDeleteSteps {
     private final IAuthorizationClient authorizationClientCreate;
     private final ClientCommonSteps clientCommonSteps;
+    private final HttpCallExecutor httpCallExecutor;
 
-    public ClientDeleteSteps(IAuthorizationClient authorizationClientCreate, ClientCommonSteps clientCommonSteps) {
+    public ClientDeleteSteps(IAuthorizationClient authorizationClientCreate, ClientCommonSteps clientCommonSteps, HttpCallExecutor httpCallExecutor) {
         this.authorizationClientCreate = authorizationClientCreate;
         this.clientCommonSteps = clientCommonSteps;
+        this.httpCallExecutor = httpCallExecutor;
     }
 
     @When("l'utente richiede una operazione di cancellazione di quel client")
     public void deleteClient() {
-        clientCommonSteps.performCall(() -> authorizationClientCreate.deleteClient("", clientCommonSteps.getClients().get(0)));
+        httpCallExecutor.performCall(() -> authorizationClientCreate.deleteClient("", clientCommonSteps.getClients().get(0)));
     }
 }

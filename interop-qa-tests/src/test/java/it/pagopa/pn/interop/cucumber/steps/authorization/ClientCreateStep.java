@@ -4,9 +4,9 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.service.IAuthorizationClient;
-import it.pagopa.interop.service.factory.SessionTokenFactory;
 import it.pagopa.interop.resolver.TokenResolver;
 import it.pagopa.interop.service.utils.CommonUtils;
+import it.pagopa.pn.interop.cucumber.steps.utils.HttpCallExecutor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -15,22 +15,18 @@ import java.util.Random;
 
 public class ClientCreateStep {
     private final IAuthorizationClient authorizationClientCreate;
-    private final TokenResolver tokenResolver;
-    private final SessionTokenFactory sessionTokenFactory;
     private final CommonUtils commonUtils;
-    private final ClientCommonSteps clientCommonSteps;
+    private final HttpCallExecutor httpCallExecutor;
+
     private ResponseEntity<HttpStatus> createClientResponse;
 
     public ClientCreateStep(IAuthorizationClient authorizationClientCreate,
                             TokenResolver tokenResolver,
-                            SessionTokenFactory sessionTokenFactory,
                             CommonUtils commonUtils,
-                            ClientCommonSteps clientCommonSteps) {
+                            HttpCallExecutor httpCallExecutor) {
         this.authorizationClientCreate = authorizationClientCreate;
-        this.tokenResolver = tokenResolver;
-        this.sessionTokenFactory = sessionTokenFactory;
         this.commonUtils = commonUtils;
-        this.clientCommonSteps = clientCommonSteps;
+        this.httpCallExecutor = httpCallExecutor;
     }
 
     @Given("l'utente è un {string} di {string}")
@@ -42,9 +38,9 @@ public class ClientCreateStep {
     @When("l'utente richiede la creazione di un client {string}")
     public void createClient(String clientKind) {
         if ((clientKind == "CONSUMER")) {
-            clientCommonSteps.performCall(() -> authorizationClientCreate.createConsumerClient("", createClientSeed()));
+            httpCallExecutor.performCall(() -> authorizationClientCreate.createConsumerClient("", createClientSeed()));
         } else {
-            clientCommonSteps.performCall(() -> authorizationClientCreate.createApiClient("", createClientSeed()));
+            httpCallExecutor.performCall(() -> authorizationClientCreate.createApiClient("", createClientSeed()));
         }
     }
 

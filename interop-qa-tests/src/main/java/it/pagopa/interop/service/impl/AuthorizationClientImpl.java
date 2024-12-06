@@ -87,6 +87,21 @@ public class AuthorizationClientImpl implements IAuthorizationClient {
     }
 
     @Override
+    public CompactClients getClients(String xCorrelationId, Integer offset, Integer limit, String q, List<UUID> userIds, ClientKind kind) {
+        return clientsApi.getClients(xCorrelationId, offset, limit, q, userIds, kind);
+    }
+
+    @Override
+    public Client getClient(String xCorrelationId, UUID clientId) {
+        return clientsApi.getClient(xCorrelationId, clientId);
+    }
+
+    @Override
+    public CreatedResource addUsersToClient(String xCorrelationId, UUID clientId, InlineObject2 inlineObject2) {
+        return clientsApi.addUsersToClient(xCorrelationId, clientId, inlineObject2);
+    }
+
+    @Override
     public void setBearerToken(String bearerToken) {
         this.clientsApi.setApiClient(createApiClient(bearerToken));
     }

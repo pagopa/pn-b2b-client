@@ -9,6 +9,9 @@ import it.pagopa.interop.resolver.TokenResolver;
 import it.pagopa.interop.service.impl.ProducerClientImpl;
 import it.pagopa.interop.service.utils.CommonUtils;
 import it.pagopa.interop.service.utils.KeyPairGeneratorUtil;
+import it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps;
+import it.pagopa.pn.interop.cucumber.steps.utils.DataPreparationService;
+import it.pagopa.pn.interop.cucumber.steps.utils.HttpCallExecutor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -23,8 +26,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         SessionTokenFactory.class,
         TokenResolver.class,
         ProducerClientImpl.class,
-        CommonUtils.class,
+        ClientCommonSteps.class,
         KeyPairGeneratorUtil.class,
+        DataPreparationService.class,
+        HttpCallExecutor.class
 
 })
 @EnableScheduling

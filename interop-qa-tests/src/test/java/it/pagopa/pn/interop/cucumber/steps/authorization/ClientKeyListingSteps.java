@@ -5,6 +5,7 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKeys;
 import it.pagopa.interop.service.IAuthorizationClient;
 import it.pagopa.interop.service.utils.CommonUtils;
+import it.pagopa.pn.interop.cucumber.steps.utils.HttpCallExecutor;
 import org.junit.jupiter.api.Assertions;
 
 import java.util.List;
@@ -13,27 +14,32 @@ public class ClientKeyListingSteps {
     private final IAuthorizationClient authorizationClient;
     private final ClientCommonSteps clientCommonSteps;
     private final CommonUtils commonUtils;
+    private final HttpCallExecutor httpCallExecutor;
 
-    public ClientKeyListingSteps(IAuthorizationClient authorizationClient, ClientCommonSteps clientCommonSteps, CommonUtils commonUtils) {
+    public ClientKeyListingSteps(IAuthorizationClient authorizationClient,
+                                 ClientCommonSteps clientCommonSteps,
+                                 CommonUtils commonUtils,
+                                 HttpCallExecutor httpCallExecutor) {
         this.authorizationClient = authorizationClient;
         this.clientCommonSteps = clientCommonSteps;
         this.commonUtils = commonUtils;
+        this.httpCallExecutor = httpCallExecutor;
     }
 
     @When("l'utente richiede una operazione di listing delle chiavi di quel client")
     public void userAskClientKeyLists() {
-        clientCommonSteps.performCall(() -> authorizationClient.getClientKeys("", clientCommonSteps.getClients().get(0), null));
+        httpCallExecutor.performCall(() -> authorizationClient.getClientKeys("", clientCommonSteps.getClients().get(0), null));
     }
 
     @Then("si ottiene status code {int} e la lista di {int} chiavi")
     public void verifyStatusCodeAndListLength(int statusCode, int keyListSize) {
-        Assertions.assertEquals(statusCode, clientCommonSteps.getClientResponse().value());
-        Assertions.assertEquals(keyListSize, ((PublicKeys) clientCommonSteps.getResponse()).getKeys().size());
+        Assertions.assertEquals(statusCode, httpCallExecutor.getClientResponse().value());
+        Assertions.assertEquals(keyListSize, ((PublicKeys) httpCallExecutor.getResponse()).getKeys().size());
     }
 
     @When("l'utente richiede una operazione di listing delle chiavi di quel client create dall'utente {string}")
     public void retrieveKeysCreatedByUser(String tenantType, String role) {
-        clientCommonSteps.performCall(() -> authorizationClient.getClientKeys("", clientCommonSteps.getClients().get(0),
+        httpCallExecutor.performCall(() -> authorizationClient.getClientKeys("", clientCommonSteps.getClients().get(0),
                 List.of(commonUtils.getUserId(tenantType, role))));
     }
 }

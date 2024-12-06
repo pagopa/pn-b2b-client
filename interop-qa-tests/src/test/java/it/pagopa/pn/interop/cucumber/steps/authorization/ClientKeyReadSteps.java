@@ -3,15 +3,12 @@ package it.pagopa.pn.interop.cucumber.steps.authorization;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.domain.KeyPairPEM;
-import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeyUse;
 import it.pagopa.interop.service.IAuthorizationClient;
 import it.pagopa.interop.service.utils.CommonUtils;
 import it.pagopa.interop.service.utils.KeyPairGeneratorUtil;
+import it.pagopa.pn.interop.cucumber.steps.utils.HttpCallExecutor;
 import org.springframework.http.HttpStatus;
-
-import java.util.List;
-import java.util.Random;
 
 public class ClientKeyReadSteps {
     private static final long MAX_SAFE_INTEGER = 9007199254740991L;
@@ -19,13 +16,16 @@ public class ClientKeyReadSteps {
     private final IAuthorizationClient authorizationClient;
     private final ClientCommonSteps clientCommonSteps;
     private final CommonUtils commonUtils;
+    private final HttpCallExecutor httpCallExecutor;
 
     public ClientKeyReadSteps(IAuthorizationClient authorizationClient,
                               ClientCommonSteps clientCommonSteps,
-                              CommonUtils commonUtils) {
+                              CommonUtils commonUtils,
+                              HttpCallExecutor httpCallExecutor) {
         this.authorizationClient = authorizationClient;
         this.clientCommonSteps = clientCommonSteps;
         this.commonUtils = commonUtils;
+        this.httpCallExecutor = httpCallExecutor;
     }
 
     @Given("un {string} di {string} ha caricato una chiave pubblica nel client")
@@ -34,7 +34,7 @@ public class ClientKeyReadSteps {
         String key = KeyPairGeneratorUtil.keyToBase64(keyPairPEM.getPublicKey(), true);
 
         commonUtils.makePolling(
-                () -> (clientCommonSteps.performCall(() -> authorizationClient.createKeys("", clientCommonSteps.getClients().get(0),
+                () -> (httpCallExecutor.performCall(() -> authorizationClient.createKeys("", clientCommonSteps.getClients().get(0),
                         KeyPairGeneratorUtil.createKeySeed(KeyUse.SIG, "RS256", key)))),
                 status -> status != HttpStatus.INTERNAL_SERVER_ERROR,
                 "Failed to create public key"
@@ -43,7 +43,7 @@ public class ClientKeyReadSteps {
 
     @When("l'utente richiede la lettura della chiave pubblica")
     public void userReadPublicKey() {
-        clientCommonSteps.performCall(() ->
+        httpCallExecutor.performCall(() ->
                 authorizationClient.getClientKeyById("", clientCommonSteps.getClients().get(0), clientCommonSteps.getClientPublicKey()));
     }
 
