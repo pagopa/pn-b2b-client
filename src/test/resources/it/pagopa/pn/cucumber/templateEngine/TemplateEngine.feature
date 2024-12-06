@@ -26,7 +26,7 @@ Feature: Template engine
     When recupero il template per "attestazione opponibile a terzi di notifica presa in carico" con i valori nel request body errati
     Then verifico che tutte le chiamate siano andate in "400" error e che nessuna abbia ricevuto una risposta
 
-  @templateEngine #106 /templates-engine-private/v1/templates/notification-received-legal-fact
+  @templateEngine #119 /templates-engine-private/v1/templates/notification-received-legal-fact
   Scenario Outline: [TEMPLATE-ENGINE_2_3] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di notifica presa in carico - not required fields
     When recupero il template per "attestazione opponibile a terzi di notifica presa in carico" con i valori nel request body:
       | <fieldName> | <fieldValue> |
@@ -62,7 +62,7 @@ Feature: Template engine
     When recupero il template per "attestazione opponibile a terzi di notifica digitale" con i valori nel request body errati
     Then verifico che tutte le chiamate siano andate in "400" error e che nessuna abbia ricevuto una risposta
 
-  @templateEngine # /templates-engine-private/v1/templates/pec-delivery-workflow-legal-fact
+  @templateEngine #120 /templates-engine-private/v1/templates/pec-delivery-workflow-legal-fact
   Scenario Outline: [TEMPLATE-ENGINE_4_3] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di notifica digitale - not required fields
     When recupero il template per "attestazione opponibile a terzi di notifica digitale" con i valori nel request body:
       | <fieldName> | <fieldValue> |
@@ -72,7 +72,7 @@ Feature: Template engine
       | delivery_addressSource     | null       |
       | delivery_address           | null       |
 
-  @templateEngine # /templates-engine-private/v1/templates/pec-delivery-workflow-legal-fact
+  @templateEngine #121 /templates-engine-private/v1/templates/pec-delivery-workflow-legal-fact
   Scenario Outline: [TEMPLATE-ENGINE_4_4] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di notifica digitale - required fields
     When recupero il template per "attestazione opponibile a terzi di notifica digitale" con i valori nel request body:
       | <fieldName> | <fieldValue> |
@@ -82,7 +82,7 @@ Feature: Template engine
       | context_endWorkflowDate    | null       |
       | delivery_type              | null       |
 
-  @templateEngine # /templates-engine-private/v1/templates/pec-delivery-workflow-legal-fact
+  @templateEngine #122 /templates-engine-private/v1/templates/pec-delivery-workflow-legal-fact
   Scenario Outline: [TEMPLATE-ENGINE_4_5] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di notifica digitale - if context_endWorkflowStatus = SUCCESS
     When recupero il template per "attestazione opponibile a terzi di notifica digitale" con i valori nel request body:
       | context_endWorkflowStatus    | SUCCESS            |
@@ -93,7 +93,7 @@ Feature: Template engine
       | null             |
       | string           |
 
-  @templateEngine # /templates-engine-private/v1/templates/pec-delivery-workflow-legal-fact
+  @templateEngine #123 /templates-engine-private/v1/templates/pec-delivery-workflow-legal-fact
   Scenario Outline: [TEMPLATE-ENGINE_4_6] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di notifica digitale - if delivery_address = null
     When recupero il template per "attestazione opponibile a terzi di notifica digitale" con i valori nel request body:
       | delivery_address | null      |
@@ -130,7 +130,7 @@ Feature: Template engine
     When recupero il template per "attestazione opponibile a terzi di avvenuto accesso" con i valori nel request body errati
     Then verifico che tutte le chiamate siano andate in "400" error e che nessuna abbia ricevuto una risposta
 
-  @templateEngine # /templates-engine-private/v1/templates/notification-viewed-legal-fact
+  @templateEngine #124 /templates-engine-private/v1/templates/notification-viewed-legal-fact
   Scenario Outline: [TEMPLATE-ENGINE_6_3] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di avvenuto accesso - field not required
     When recupero il template per "attestazione opponibile a terzi di avvenuto accesso" con i valori nel request body:
       | <fieldName> | <fieldValue> |
