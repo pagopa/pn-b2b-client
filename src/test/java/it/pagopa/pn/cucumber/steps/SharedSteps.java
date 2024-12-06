@@ -214,6 +214,10 @@ public class SharedSteps {
     @Value("${pn.bearer-token.user2.taxID}")
     private String marioGherkinTaxID;
 
+    @Getter
+    @Value("${pn.bearer-token.user4.taxID}")
+    private String galileoGalileiTaxID;
+
     private final ApplicationContext context;
     private final DataTableTypeUtil dataTableTypeUtil;
     private final List<String> iuvGPD;
