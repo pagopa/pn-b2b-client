@@ -63,12 +63,12 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
     Examples:
-      | taxonomyCode | error                |
+      | taxonomyCode | error                         |
       | 000000X      | INVALIDPARAMETER_TAXONOMYCODE |
-      | NULL         | instance type (null) |
-      | 6_CHAR       | too short            |
-      | 8_CHAR       | too long             |
-      | ĄŁŚŠŻą˛łľś   | ECMA 262 regex       |
+      | NULL         | instance type (null)          |
+      | 6_CHAR       | too short                     |
+      | 8_CHAR       | too long                      |
+      | ĄŁŚŠŻą˛łľś   | ECMA 262 regex                |
 
   @syncValidation
   Scenario: [B2B-PA-SYNC_VALIDATION_5] Invio notifica digitale mono destinatario e controllo paProtocolNumber con diverse pa_scenario positivo
@@ -1145,53 +1145,56 @@ Feature: verifica validazione sincrona
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Examples:
       | taxonomyCode |
-      |100105P|
-      |080102N|
-      |010702N|
-      |030801N|
-      |030202N|
-      |100102N|
-      |010401N|
-      |010104N|
-      |030701N|
-      |010601N|
-      |070302P|
-      |010202N|
-      |010102P|
-      |010901N|
-      |080201N|
-      |100106N|
-      |020101P|
-      |010501N|
-      |030102N|
-      |030501N|
-      |030901N|
-      |070202N|
-      |060201P|
-      |030101P|
-      |011001N|
-      |010401P|
-      |010201P|
-      |010301P|
-      |100103P|
-      |010302N|
-      |030401N|
-      |020402N|
-      |030601P|
-      |030201P|
-      |070101P|
-      |100104N|
-      |100101P|
-      |010801N|
-      |030301P|
-      |020401P|
-      |070201P|
-      |060101P|
-      |080101N|
-      |010103N|
-      |010101P|
-      |070301N|
-      |100107N|
-      |090101P|
-      |030602N|
-      |030301N|
+      | 100105P      |
+      | 080102N      |
+      | 010702N      |
+      | 030801N      |
+      | 030202N      |
+      | 100102N      |
+      | 010401N      |
+      | 010104N      |
+      | 030701N      |
+      | 010601N      |
+      | 070302P      |
+      | 010202N      |
+      | 010102P      |
+      | 010901N      |
+      | 080201N      |
+      | 100106N      |
+      | 020101P      |
+      | 010501N      |
+      | 030102N      |
+      | 030501N      |
+      | 030901N      |
+      | 070202N      |
+      | 060201P      |
+      | 030101P      |
+      | 011001N      |
+      | 010401P      |
+      | 010201P      |
+      | 010301P      |
+      | 100103P      |
+      | 010302N      |
+      | 030401N      |
+      | 020402N      |
+      | 030601P      |
+      | 030201P      |
+      | 070101P      |
+      | 100104N      |
+      | 100101P      |
+      | 010801N      |
+      | 030301P      |
+      | 020401P      |
+      | 070201P      |
+      | 060101P      |
+      | 080101N      |
+      | 010103N      |
+      | 010101P      |
+      | 070301N      |
+      | 100107N      |
+      | 090101P      |
+      | 030602N      |
+      | 030301N      |
+      | 120101P      |
+      | 120102P      |
+      | 120103P      |
