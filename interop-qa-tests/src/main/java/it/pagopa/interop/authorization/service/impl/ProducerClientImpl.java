@@ -3,6 +3,7 @@ package it.pagopa.interop.authorization.service.impl;
 import it.pagopa.interop.authorization.service.IProducerClient;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EservicesApi;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.UUID;
@@ -28,8 +29,8 @@ public class ProducerClientImpl implements IProducerClient {
     }
 
     @Override
-    public void getProducerEServiceDescriptor(String xCorrelationId, UUID eserviceId, UUID descriptorId) {
-        eservicesApi.getProducerEServiceDescriptor(xCorrelationId, eserviceId, descriptorId);
+    public ProducerEServiceDescriptor getProducerEServiceDescriptor(String xCorrelationId, UUID eserviceId, UUID descriptorId) {
+        return eservicesApi.getProducerEServiceDescriptor(xCorrelationId, eserviceId, descriptorId);
     }
 
     @Override
