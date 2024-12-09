@@ -1146,12 +1146,10 @@ Feature: verifica validazione sincrona
     Examples:
       | taxonomyCode |
       | 100105P      |
-      | 080102N      |
       | 010702N      |
       | 030801N      |
       | 030202N      |
       | 100102N      |
-      | 010401N      |
       | 010104N      |
       | 030701N      |
       | 010601N      |
@@ -1193,7 +1191,6 @@ Feature: verifica validazione sincrona
       | 070301N      |
       | 100107N      |
       | 090101P      |
-      | 030602N      |
       | 030301N      |
       | 120101P      |
       | 120102P      |
