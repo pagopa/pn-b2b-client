@@ -50,8 +50,8 @@ public class PurposeCommonStep {
         List<String> currentVersionIds = purposeCommonContext.getCurrentVersionIds();
         List<String> waitingForApprovalVersionIds = purposeCommonContext.getWaitingForApprovalVersionIds();
         purposeCommonContext.setPurposeId((purposesIds.isEmpty()) ? null : purposesIds.get(purposesIds.size() - 1));
-        purposeCommonContext.setPurposeId((currentVersionIds.isEmpty()) ? null : currentVersionIds.get(currentVersionIds.size() - 1));
-        purposeCommonContext.setPurposeId((waitingForApprovalVersionIds.isEmpty()) ? null : waitingForApprovalVersionIds.get(waitingForApprovalVersionIds.size() - 1));
+        purposeCommonContext.setVersionId((currentVersionIds.isEmpty()) ? null : currentVersionIds.get(currentVersionIds.size() - 1));
+        purposeCommonContext.setWaitingForApprovalVersionId((waitingForApprovalVersionIds.isEmpty()) ? null : waitingForApprovalVersionIds.get(waitingForApprovalVersionIds.size() - 1));
 
 
 
