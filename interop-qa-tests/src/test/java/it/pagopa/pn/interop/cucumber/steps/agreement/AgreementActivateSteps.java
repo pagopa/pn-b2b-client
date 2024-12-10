@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.agreement;
 
 import io.cucumber.java.en.Given;
+import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.pn.interop.cucumber.steps.utils.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.utils.EServicesCommonDomain;
@@ -30,7 +31,7 @@ public class AgreementActivateSteps {
 
         //TODO da completare
 
-        Map<String, UUID> result = dataPreparationService.createEServiceAndDraftDescriptor(
+        EServiceDescriptor result = dataPreparationService.createEServiceAndDraftDescriptor(
                 new EServiceSeed(),
                 new UpdateEServiceDescriptorSeed().attributes(new DescriptorAttributesSeed()
                                 .addVerifiedItem(List.of())
@@ -38,8 +39,8 @@ public class AgreementActivateSteps {
                                 .addCertifiedItem(List.of()))
                         .agreementApprovalPolicy(AgreementApprovalPolicy.valueOf(approvalAgreementPolicy))
         );
-        UUID eserviceId = result.get("eserviceId");
-        UUID descriptorId = result.get("descriptorId");
+        UUID eserviceId = result.getEServiceId();
+        UUID descriptorId = result.getDescriptorId();
         dataPreparationService.bringDescriptorToGivenState(eserviceId, descriptorId, EServiceDescriptorState.valueOf(descriptorState), false);
         eServicesCommonDomain.setEserviceId(eserviceId);
         eServicesCommonDomain.setDescriptorId(descriptorId);

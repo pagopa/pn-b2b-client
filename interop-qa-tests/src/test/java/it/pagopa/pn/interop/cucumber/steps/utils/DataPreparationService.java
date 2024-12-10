@@ -1,7 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.utils;
 
-import io.cucumber.java.it.Ma;
 import it.pagopa.interop.agreement.domain.ClientType;
+import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.agreement.service.IAgreementClient;
 import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.attribute.service.IAttributeApiClient;
@@ -10,7 +10,11 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.utils.CommonUtils;
 import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
+import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
+import it.pagopa.interop.purpose.domain.*;
+import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.tenant.service.ITenantsApi;
+import it.pagopa.pn.interop.cucumber.steps.purpose.domain.PurposeCommonContext;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -25,6 +29,8 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode.RECEIVE;
+
 public class DataPreparationService {
     private static final ClientSeed DEFAULT_CLIENT_SEED = new ClientSeed();
     private IAuthorizationClient authorizationClient;
@@ -33,8 +39,11 @@ public class DataPreparationService {
     private ITenantsApi tenantsApi;
     private IEServiceClient eServiceClient;
     private IProducerClient producerClient;
+    private IPurposeApiClient purposeApiClient;
     private CommonUtils commonUtils;
     private HttpCallExecutor httpCallExecutor;
+    private RiskAnalysisDataInitializer riskAnalysisDataInitializer;
+    private PurposeCommonContext purposeCommonContext;
 
     static {
         DEFAULT_CLIENT_SEED.setName(String.format("client %d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)));
@@ -48,16 +57,22 @@ public class DataPreparationService {
                                   ITenantsApi tenantsApi,
                                   IEServiceClient eServiceClient,
                                   IProducerClient producerClient,
+                                  IPurposeApiClient purposeApiClient,
                                   HttpCallExecutor httpCallExecutor,
-                                  CommonUtils commonUtils) {
+                                  CommonUtils commonUtils,
+                                  RiskAnalysisDataInitializer riskAnalysisDataInitializer,
+                                  PurposeCommonContext purposeCommonContext) {
         this.authorizationClient = authorizationClient;
         this.agreementClient = agreementClient;
         this.attributeApiClient = attributeApiClient;
         this.tenantsApi = tenantsApi;
         this.eServiceClient = eServiceClient;
         this.producerClient = producerClient;
+        this.purposeApiClient = purposeApiClient;
         this.httpCallExecutor = httpCallExecutor;
         this.commonUtils = commonUtils;
+        this.riskAnalysisDataInitializer = riskAnalysisDataInitializer;
+        this.purposeCommonContext = purposeCommonContext;
     }
 
     public UUID createClient(String clientKind, UUID clientId, ClientSeed partialClientSeed) {
@@ -252,7 +267,7 @@ public class DataPreparationService {
         );
     }
 
-    public Map<String, UUID> createEServiceAndDraftDescriptor(EServiceSeed partialEserviceSeed, UpdateEServiceDescriptorSeed partialDescriptorSeed) {
+    public EServiceDescriptor createEServiceAndDraftDescriptor(EServiceSeed partialEserviceSeed, UpdateEServiceDescriptorSeed partialDescriptorSeed) {
         EServiceSeed DEFAULT_ESERVICE_SEED = new EServiceSeed()
                 .name(String.format("e-service %d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)))
                 .description("Descrizione e-service")
@@ -272,7 +287,7 @@ public class DataPreparationService {
         );
 
         updateDraftDescriptor(eserviceId, descriptorId, partialDescriptorSeed);
-        return Map.of("eserviceId", eserviceId, "descriptorId", descriptorId);
+        return new EServiceDescriptor(eserviceId, descriptorId);
     }
 
     public void updateDraftDescriptor(UUID eServiceId, UUID descriptorId, UpdateEServiceDescriptorSeed partialDescriptorSeed) {
@@ -403,6 +418,154 @@ public class DataPreparationService {
                 "There was an error while retrieving the producer e-service descriptor"
         );
         return descriptorId;
+    }
+
+    public RiskAnalysis getRiskAnalysis(String tenantType, boolean completed) {
+        String templateType = (tenantType.equals("PA1") || tenantType.equals("PA2")) ? "PA" : "Privato/GSP";
+        String templateStatus = (completed) ? "completed" : "uncompleted";
+        RiskAnalysisDataFromJson.RiskAnalysisTemplate riskAnalysisTemplate = riskAnalysisDataInitializer.getRiskAnalysisData().get(templateType);
+        RiskAnalysisDataFromJson.RiskAnalysisAttributes riskAnalysisAttributes = (completed) ? riskAnalysisTemplate.getCompleted() : riskAnalysisTemplate.getUncompleted();
+        httpCallExecutor.performCall(() -> purposeApiClient.retrieveLatestRiskAnalysisConfiguration(""));
+        assertValidResponse();
+        String version = ((RiskAnalysisFormConfig) httpCallExecutor.getResponse()).getVersion();
+        return new RiskAnalysis("finalità test", new RiskAnalysisForm().version(version).answers(riskAnalysisAttributes.toMap()));
+    }
+
+    public void createPurposeWithGivenState(int testSeed, EServiceMode eServiceMode, PurposeVersionState purposeState, TEServiceMode teServiceMode) {
+        // 1. Definisci i valori predefiniti
+        String title = String.format("purpose title - QA - %d - %d", testSeed, ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE));
+        String description = "description of the purpose - QA";
+        boolean isFreeOfCharge = true;
+        String freeOfChargeReason = "free of charge - QA";
+        int dailyCalls = purposeState == PurposeVersionState.WAITING_FOR_APPROVAL ? 51 : 1;
+
+        // 1. Check which mode the eservice is and call the correct endpoint
+        if (eServiceMode == RECEIVE) {
+            // Per modalità RECEIVE, costruisci un PurposeEServiceSeed
+            PurposeEServiceSeed purposeEServiceSeed = new PurposeEServiceSeed();
+            purposeEServiceSeed.setTitle(title);
+            purposeEServiceSeed.setDescription(description);
+            purposeEServiceSeed.setIsFreeOfCharge(isFreeOfCharge);
+            purposeEServiceSeed.setFreeOfChargeReason(freeOfChargeReason);
+            purposeEServiceSeed.setDailyCalls(dailyCalls);
+
+            // Aggiungi i dati dal payload
+            PartialPurposeEServiceSeed partialPurposeEServiceSeed = (PartialPurposeEServiceSeed) teServiceMode;
+            purposeEServiceSeed.setEserviceId(partialPurposeEServiceSeed.getEserviceId());
+            purposeEServiceSeed.setConsumerId(partialPurposeEServiceSeed.getConsumerId());
+            purposeEServiceSeed.setRiskAnalysisId(partialPurposeEServiceSeed.getRiskAnalysisId());
+
+            httpCallExecutor.performCall(() -> purposeApiClient.createPurposeForReceiveEservice("", purposeEServiceSeed));
+        }
+        else {
+            // Per modalità diverse da RECEIVE, costruisci un PurposeSeed
+            PurposeSeed purposeSeed = new PurposeSeed();
+            purposeSeed.setTitle(title);
+            purposeSeed.setDescription(description);
+            purposeSeed.setIsFreeOfCharge(isFreeOfCharge);
+            purposeSeed.setFreeOfChargeReason(freeOfChargeReason);
+            purposeSeed.setDailyCalls(dailyCalls);
+
+            // Aggiungi i dati dal payload
+            PartialPurposeSeed partialPurposeSeed = (PartialPurposeSeed) teServiceMode;
+            purposeSeed.setEserviceId(partialPurposeSeed.getEserviceId());
+            purposeSeed.setConsumerId(partialPurposeSeed.getConsumerId());
+            httpCallExecutor.performCall(() -> purposeApiClient.createPurpose("", purposeSeed));
+        }
+        assertValidResponse();
+        UUID purposeId = ((CreatedResource) httpCallExecutor.getResponse()).getId();
+        AtomicReference<UUID> currentVersion = new AtomicReference<>();
+        AtomicReference<UUID> waitingForApprovalVersionId = new AtomicReference<>();
+
+        commonUtils.makePolling(
+                () -> httpCallExecutor.performCall(() -> purposeApiClient.getPurpose("", purposeId)),
+                res -> {
+                    UUID id = Optional.ofNullable((Purpose) httpCallExecutor.getResponse())
+                            .map(Purpose::getCurrentVersion)
+                            .map(PurposeVersion::getId)
+                            .orElse(null);
+                    currentVersion.set(id);
+                    return res != HttpStatus.NOT_FOUND;
+                },
+                "There was an error while retrieving the purpose!"
+        );
+
+        if (purposeState == PurposeVersionState.DRAFT) {
+            purposeCommonContext.setPurposeId(String.valueOf(purposeId));
+            purposeCommonContext.setVersionId(String.valueOf(currentVersion));
+            return;
+        }
+        // 2. Activate the purpose version
+        httpCallExecutor.performCall(() -> purposeApiClient.activatePurposeVersion("", purposeId, currentVersion.get()));
+        assertValidResponse();
+        PurposeVersionResource activatePurposeResponse = ((PurposeVersionResource) httpCallExecutor.getResponse());
+
+        // 3. If the state required is WAITING_FOR_APPROVAL, we need to wait until the purpose version is in that state and return the purposeId
+        if (purposeState == PurposeVersionState.WAITING_FOR_APPROVAL) {
+            commonUtils.makePolling(
+                    () -> purposeApiClient.getPurpose("", purposeId),
+                    res -> {
+                        if (Optional.ofNullable(res.getWaitingForApprovalVersion()).map(PurposeVersion::getId).isPresent()) {
+                            waitingForApprovalVersionId.set(res.getWaitingForApprovalVersion().getId());
+                        }
+                        return PurposeVersionState.WAITING_FOR_APPROVAL == Optional.ofNullable(res.getWaitingForApprovalVersion())
+                                .map(PurposeVersion::getState).orElse(null);
+                    },
+                    "There was an error while retrieving the purpose!"
+            );
+            purposeCommonContext.setPurposeId(String.valueOf(purposeId));
+            purposeCommonContext.setWaitingForApprovalVersionId(String.valueOf(waitingForApprovalVersionId.get()));
+        }
+
+        commonUtils.makePolling(
+                () -> purposeApiClient.getPurpose("", purposeId),
+                res -> {
+                    if (PurposeVersionState.ACTIVE == Optional.ofNullable(res.getCurrentVersion()).map(PurposeVersion::getState).orElse(null)) {
+                        currentVersion.set(res.getCurrentVersion().getId());
+                        return true;
+                    }
+                    return false;
+                },
+                "There was an error while retrieving the purpose!"
+        );
+
+        // 4. If the state required is SUSPENDED call the endpoint to suspend the purpose version
+        if (purposeState == PurposeVersionState.SUSPENDED) {
+            httpCallExecutor.performCall(() -> purposeApiClient.suspendPurposeVersion("", purposeId, currentVersion.get()));
+            assertValidResponse();
+            PurposeVersionResource suspendPurposeResponse = ((PurposeVersionResource) httpCallExecutor.getResponse());
+            commonUtils.makePolling(
+                    () -> purposeApiClient.getPurpose("", purposeId),
+                    res -> {
+                        if (PurposeVersionState.SUSPENDED == Optional.ofNullable(res.getCurrentVersion()).map(PurposeVersion::getState).orElse(null)) {
+                            currentVersion.set(res.getCurrentVersion().getId());
+                            return true;
+                        }
+                        return false;
+                    },
+                    "There was an error while suspending the purpose!"
+            );
+        }
+        // 5. If the state required is ARCHIVED call the endpoint to archive the purpose version
+        if (purposeState == PurposeVersionState.ARCHIVED) {
+            httpCallExecutor.performCall(() -> purposeApiClient.archivePurposeVersion("", purposeId, currentVersion.get()));
+            assertValidResponse();
+            PurposeVersionResource suspendPurposeResponse = ((PurposeVersionResource) httpCallExecutor.getResponse());
+            commonUtils.makePolling(
+                    () -> purposeApiClient.getPurpose("", purposeId),
+                    res -> {
+                        if (PurposeVersionState.ARCHIVED == Optional.ofNullable(res.getCurrentVersion()).map(PurposeVersion::getState).orElse(null)) {
+                            currentVersion.set(res.getCurrentVersion().getId());
+                            return true;
+                        }
+                        return false;
+                    },
+                    "There was an error while archiving the purpose!"
+            );
+        }
+        purposeCommonContext.setPurposeId(String.valueOf(purposeId));
+        purposeCommonContext.setVersionId(String.valueOf(currentVersion.get()));
+        return;
     }
 
     private Resource createBlobFile(String filePathToRead, String fileNameToCreate) {
