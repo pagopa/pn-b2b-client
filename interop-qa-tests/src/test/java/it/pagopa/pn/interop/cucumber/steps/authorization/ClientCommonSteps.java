@@ -27,6 +27,7 @@ public class ClientCommonSteps {
     private final HttpCallExecutor httpCallExecutor;
 
     private List<UUID> clients;
+    private List<UUID> users;
     private String clientPublicKey;
     private PurposeAdditionDetailsSeed purposeId;
 
@@ -51,6 +52,7 @@ public class ClientCommonSteps {
     public void tenantHasAlreadyAddUsersWithRole(String tenantType, String roleOfMemberToAdd) {
         UUID clientMemberUserId = commonUtils.getUserId(tenantType, roleOfMemberToAdd);
         dataPreparationService.addMemberToClient(clients.get(0), clientMemberUserId);
+        setUsers(List.of(clientMemberUserId));
     }
 
     @Then("si ottiene status code {int} e la lista di {int} client(s)")
