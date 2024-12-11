@@ -1,5 +1,8 @@
 package it.pagopa.interop.authorization.domain;
 
+import lombok.Getter;
+
+@Getter
 public enum Role {
     ADMIN("admin"),
     API("api"),
@@ -7,5 +10,10 @@ public enum Role {
     SUPPORT("support"),
     API_SECURITY("api,security");
 
-    Role(String admin) {}
+    private String value;
+
+    Role(String value) {
+        this.value = value;
+    }
+
 }

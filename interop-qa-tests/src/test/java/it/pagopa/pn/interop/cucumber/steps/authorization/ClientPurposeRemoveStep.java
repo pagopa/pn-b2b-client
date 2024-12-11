@@ -8,6 +8,8 @@ import it.pagopa.pn.interop.cucumber.steps.purpose.domain.PurposeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.utils.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.utils.HttpCallExecutor;
 
+import java.util.UUID;
+
 public class ClientPurposeRemoveStep {
 
     private final IAuthorizationClient authorizationClient;
@@ -39,7 +41,7 @@ public class ClientPurposeRemoveStep {
     public void archivePurpose(String tenantType) {
         httpCallExecutor
                 .performCall(() -> dataPreparationService.archivePurpose(clientCommonSteps.getClients().get(0),
-                        purposeCommonContext.getVersionId()));
+                        UUID.fromString(purposeCommonContext.getVersionId())));
     }
 
     @When("l'utente richiede la disassociazione della finalità dal client")
