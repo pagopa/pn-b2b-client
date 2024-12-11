@@ -1631,7 +1631,7 @@ public class AvanzamentoNotificheB2bSteps {
                         Assertions.assertEquals(notificationPrice.getIun(), sharedSteps.getSentNotification().getIun());
                         if (price != null) {
                             log.info("Costo notifica: {} destinatario: {}", notificationPrice.getAmount(), destinatario);
-                            Assertions.assertEquals(notificationPrice.getAmount(), Integer.parseInt(price));
+                            Assertions.assertEquals(Integer.parseInt(price), notificationPrice.getAmount());
                         }
                         if (notificationPrice.getRefinementDate() != null) {
                             Assertions.assertEquals(OffsetDateTime.now().toLocalDate(), notificationPrice.getRefinementDate().toLocalDate());
@@ -1656,7 +1656,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertEquals(notificationPrice.getIun(), sharedSteps.getIunVersionamento());
             if (price != null) {
                 log.info("Costo notifica: {} destinatario: {}", notificationPrice.getAmount(), destinatario);
-                Assertions.assertEquals(notificationPrice.getAmount(), Integer.parseInt(price));
+                Assertions.assertEquals(Integer.parseInt(price), notificationPrice.getAmount());
             }
             if (date != null) {
                 Assertions.assertNotNull(notificationPrice.getRefinementDate());
