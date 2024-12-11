@@ -1,27 +1,27 @@
 package it.pagopa.interop.agreement.service.impl;
 
-import it.pagopa.interop.agreement.service.IAgreementClient;
 import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
+import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
-import it.pagopa.interop.generated.openapi.clients.bff.api.AgreementsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EservicesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.File;
 import java.util.UUID;
 
 public class EServiceApiClientImpl implements IEServiceClient {
     private final EservicesApi eservicesApi;
     private final RestTemplate restTemplate;
+    private final InteropClientConfigs interopClientConfigs;
     private final String basePath;
     private final String bearerToken;
     private SettableBearerToken.BearerTokenType bearerTokenSetted;
 
-    public EServiceApiClientImpl(RestTemplate restTemplate) {
+    public EServiceApiClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
-        this.basePath = "basePath";
+        this.interopClientConfigs = interopClientConfigs;
+        this.basePath = interopClientConfigs.getBaseUrl();
         this.bearerToken = "bearerToken";
         this.eservicesApi = new EservicesApi(createApiClient(bearerToken));
     }

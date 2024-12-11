@@ -147,29 +147,25 @@ public class DataPreparationService {
         if (doc != null) {
             addConsumerDocumentToAgreement(agreementId, doc);
         }
-        if ("DRAFT".equals(agreementState)) {
-            return agreementId;
-        }
-        submitAgreement(agreementId, agreementState == AgreementState.PENDING ? agreementState : AgreementState.ACTIVE);
-
-        // agreement in state ACTIVE o PENDING
-        if (AgreementState.ACTIVE.equals(agreementState) || AgreementState.PENDING.equals(agreementState)) {
-            return agreementId;
-        }
-
-        // agreement in state SUSPENDED
-        suspendAgreement(agreementId, ClientType.CONSUMER);
-
-        if(agreementState.equals(AgreementState.SUSPENDED)) {
-            return agreementId;
-        }
-
-        // agreement in state ARCHIVED
-        if(agreementState.equals(AgreementState.ARCHIVED)) {
-            archiveAgreement(agreementId);
-        }
-        //TODO da verificare
-        return agreementId;
+        return switch (agreementState) {
+            case DRAFT -> agreementId;
+            case PENDING, ACTIVE -> {
+                submitAgreement(agreementId, agreementState);
+                yield agreementId;
+            }
+            case SUSPENDED -> {
+                submitAgreement(agreementId, AgreementState.ACTIVE);
+                suspendAgreement(agreementId, ClientType.CONSUMER);
+                yield agreementId;
+            }
+            case ARCHIVED -> {
+                submitAgreement(agreementId, AgreementState.ACTIVE);
+                suspendAgreement(agreementId, ClientType.CONSUMER);
+                archiveAgreement(agreementId);
+                yield agreementId;
+            }
+            default -> throw new IllegalArgumentException("Unsupported AgreementState: " + agreementState);
+        };
     }
 
     public UUID createAgreement(UUID eServiceID, UUID descriptorId) {
@@ -566,6 +562,22 @@ public class DataPreparationService {
         purposeCommonContext.setPurposeId(String.valueOf(purposeId));
         purposeCommonContext.setVersionId(String.valueOf(currentVersion.get()));
         return;
+    }
+
+    public void rejectPurposeVersion(UUID purposeId, UUID versionId) {
+        httpCallExecutor.performCall(() -> purposeApiClient.rejectPurposeVersion("", purposeId, versionId, new RejectPurposeVersionPayload().rejectionReason("Testing QA purposes")));
+        assertValidResponse();
+
+        commonUtils.makePolling(
+                () -> purposeApiClient.getPurpose("", purposeId),
+                res -> {
+                    Optional<PurposeVersionState> versionState = res.getVersions().stream().filter(v -> v.getId().equals(versionId)).map(PurposeVersion::getState).findFirst();
+                    return versionState.isPresent() && versionState.get().equals(PurposeVersionState.REJECTED);
+                },
+                "There was an error while retrieving the purpose!"
+        );
+
+
     }
 
     private Resource createBlobFile(String filePathToRead, String fileNameToCreate) {

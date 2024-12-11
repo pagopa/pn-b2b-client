@@ -52,11 +52,11 @@ public class PurposeCommonStep {
         purposeCommonContext.setPurposeId((purposesIds.isEmpty()) ? null : purposesIds.get(purposesIds.size() - 1));
         purposeCommonContext.setVersionId((currentVersionIds.isEmpty()) ? null : currentVersionIds.get(currentVersionIds.size() - 1));
         purposeCommonContext.setWaitingForApprovalVersionId((waitingForApprovalVersionIds.isEmpty()) ? null : waitingForApprovalVersionIds.get(waitingForApprovalVersionIds.size() - 1));
+    }
 
+    @Given("{string} ha già rifiutato l'aggiornamento della stima di carico per quella finalità")
+    public void tenantHasAlreadyRejectedLoadEstimateUpdateForPurpose(String tenantType) {
+        dataPreparationService.rejectPurposeVersion(UUID.fromString(purposeCommonContext.getPurposeId()), UUID.fromString(purposeCommonContext.getWaitingForApprovalVersionId()));
+    }
 
-
-
-
-
-        }
 }

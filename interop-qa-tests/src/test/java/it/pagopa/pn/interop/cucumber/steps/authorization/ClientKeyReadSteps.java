@@ -32,6 +32,7 @@ public class ClientKeyReadSteps {
     public void clientPublicKeyUpload(String role, String tenantType) {
         KeyPairPEM keyPairPEM = KeyPairGeneratorUtil.createKeyPairPEM("RSA", 2048);
         String key = KeyPairGeneratorUtil.keyToBase64(keyPairPEM.getPublicKey(), true);
+        clientCommonSteps.setClientPublicKey(key);
 
         commonUtils.makePolling(
                 () -> (httpCallExecutor.performCall(() -> authorizationClient.createKeys("", clientCommonSteps.getClients().get(0),

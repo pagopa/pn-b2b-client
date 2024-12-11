@@ -1,6 +1,7 @@
 package it.pagopa.interop.tenant.service.impl;
 
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
+import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.TenantsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedAttributesResponse;
@@ -15,13 +16,15 @@ import java.util.UUID;
 public class TenantsApiClientImpl implements ITenantsApi {
     private final TenantsApi tenantsApi;
     private final RestTemplate restTemplate;
+    private final InteropClientConfigs interopClientConfigs;
     private final String basePath;
     private final String bearerToken;
     private SettableBearerToken.BearerTokenType bearerTokenSetted;
 
-    public TenantsApiClientImpl(RestTemplate restTemplate) {
+    public TenantsApiClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
-        this.basePath = "basePath";
+        this.interopClientConfigs = interopClientConfigs;
+        this.basePath = interopClientConfigs.getBaseUrl();
         this.bearerToken = "bearerToken";
         this.tenantsApi = new TenantsApi(createApiClient(bearerToken));
     }

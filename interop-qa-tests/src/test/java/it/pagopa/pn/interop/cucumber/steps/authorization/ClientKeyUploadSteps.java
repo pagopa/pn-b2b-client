@@ -31,6 +31,12 @@ public class ClientKeyUploadSteps {
                 KeyPairGeneratorUtil.createKeySeed(KeyUse.SIG, "RS256", KeyPairGeneratorUtil.createBase64PublicKey(keyType, keyLength))));
     }
 
+    @When("l'utente richiede il caricamento di una chiave pubblica di tipo {string} di lunghezza {int} senza i delimitatori di inizio e fine")
+    public void userLoadsPulicKeyWithoutDelimitators (String keyType, int keyLength) {
+        httpCallExecutor.performCall(() -> authorizationClient.createKeys("", clientCommonSteps.getClients().get(0),
+                KeyPairGeneratorUtil.createKeySeed(KeyUse.SIG, "RS256", KeyPairGeneratorUtil.createBase64PublicKey(keyType, keyLength, false))));
+    }
+
     @When("l'utente richiede il caricamento di una chiave pubblica di tipo {string} di lunghezza {int} con lo stesso kid")
     public void userLoadsPublicKeyWithTypeAndSizeAndSameKid(String keyType, int keyLength) {
         httpCallExecutor.performCall(() -> authorizationClient.createKeys("", clientCommonSteps.getClients().get(0),

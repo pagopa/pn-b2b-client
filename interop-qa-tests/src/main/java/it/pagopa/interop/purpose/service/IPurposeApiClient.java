@@ -12,5 +12,6 @@ public interface IPurposeApiClient {
     PurposeVersionResource activatePurposeVersion(String xCorrelationId, UUID purposeId, UUID versionId);
     PurposeVersionResource suspendPurposeVersion(String xCorrelationId, UUID purposeId, UUID versionId);
     PurposeVersionResource archivePurposeVersion(String xCorrelationId, UUID purposeId, UUID versionId);
+    void rejectPurposeVersion(String xCorrelationId, UUID purposeId, UUID versionId, RejectPurposeVersionPayload rejectPurposeVersionPayload);
 
 }

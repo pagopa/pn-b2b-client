@@ -2,6 +2,7 @@ package it.pagopa.interop.attribute.service.impl;
 
 import it.pagopa.interop.attribute.service.IAttributeApiClient;
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
+import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.AttributesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
@@ -12,13 +13,15 @@ import java.util.List;
 public class AttributeApiClientImpl implements IAttributeApiClient {
     private final AttributesApi attributesApi;
     private final RestTemplate restTemplate;
+    private final InteropClientConfigs interopClientConfigs;
     private final String basePath;
     private final String bearerToken;
     private SettableBearerToken.BearerTokenType bearerTokenSetted;
 
-    public AttributeApiClientImpl(RestTemplate restTemplate) {
+    public AttributeApiClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
-        this.basePath = "basePath";
+        this.interopClientConfigs = interopClientConfigs;
+        this.basePath = interopClientConfigs.getBaseUrl();
         this.bearerToken = "bearerToken";
         this.attributesApi = new AttributesApi(createApiClient(bearerToken));
     }

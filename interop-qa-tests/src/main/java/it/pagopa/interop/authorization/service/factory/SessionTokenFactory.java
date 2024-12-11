@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import it.pagopa.interop.authorization.domain.Ente;
 import it.pagopa.interop.authorization.domain.ExternalId;
+import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
 import it.pagopa.interop.resolver.TokenResolver;
 import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.core.SdkBytes;
@@ -61,9 +62,11 @@ public class SessionTokenFactory {
     }
 
     private final TokenResolver tokenResolver;
+    private final InteropClientConfigs interopClientConfigs;
 
-    public SessionTokenFactory(TokenResolver tokenResolver) {
+    public SessionTokenFactory(TokenResolver tokenResolver, InteropClientConfigs interopClientConfigs) {
         this.tokenResolver = tokenResolver;
+        this.interopClientConfigs = interopClientConfigs;
     }
 
     public Map<String, Map<String, String>> generateSessionToken(List<Ente> configFile) throws Exception {
@@ -73,7 +76,7 @@ public class SessionTokenFactory {
 
         // Step 2. Parse well known
         log.info("##Step 2. Parse well known ##");
-        URL wellKnownUrl = new URL("https://www.dev.interop.pagopa.it/.well-known/jwks.json");
+        URL wellKnownUrl = new URL(interopClientConfigs.getRemoteWellknownUrl());
         boolean isSecure = wellKnownUrl.getProtocol().equalsIgnoreCase("https");
         Map<String, String> wellKnownData = fetchWellKnown(isSecure, wellKnownUrl.toString());
         if (!wellKnownData.containsKey("kid") || !wellKnownData.containsKey("alg")) {
@@ -101,7 +104,7 @@ public class SessionTokenFactory {
         long epochTimeSeconds = Instant.now().getEpochSecond();
         log.info("Time in seconds since epoch: " + epochTimeSeconds);
 
-        long epochTimeExpSeconds = epochTimeSeconds + Long.parseLong("3000");
+        long epochTimeExpSeconds = epochTimeSeconds + interopClientConfigs.getSessionTokenDurationSec();
         log.info("Expiration Time in seconds: " + epochTimeExpSeconds);
 
         String randomUUID = UUID.randomUUID().toString();
@@ -113,7 +116,7 @@ public class SessionTokenFactory {
         stPayloadCompiled.put("exp", epochTimeExpSeconds);
         stPayloadCompiled.put("jti", randomUUID);
 
-        String environment = "dev";
+        String environment = interopClientConfigs.getEnvironment();
         String stPayloadJson = objectMapper.writeValueAsString(stPayloadCompiled).replace("{{ENVIRONMENT}}", environment);
         stPayloadCompiled = objectMapper.readValue(stPayloadJson, new TypeReference<>() {});
 

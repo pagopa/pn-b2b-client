@@ -1,8 +1,8 @@
 package it.pagopa.interop.purpose.service.impl;
 
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
+import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
-import it.pagopa.interop.generated.openapi.clients.bff.api.AgreementsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.api.PurposesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
@@ -16,10 +16,12 @@ public class PurposeApiClientImpl implements IPurposeApiClient {
     private final String basePath;
     private final String bearerToken;
     private SettableBearerToken.BearerTokenType bearerTokenSetted;
+    private final InteropClientConfigs interopClientConfigs;
 
-    public PurposeApiClientImpl(RestTemplate restTemplate) {
+    public PurposeApiClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
-        this.basePath = "basePath";
+        this.interopClientConfigs = interopClientConfigs;
+        this.basePath = interopClientConfigs.getBaseUrl();
         this.bearerToken = "bearerToken";
         this.purposesApi = new PurposesApi(createApiClient(bearerToken));
     }
@@ -64,5 +66,10 @@ public class PurposeApiClientImpl implements IPurposeApiClient {
     @Override
     public PurposeVersionResource archivePurposeVersion(String xCorrelationId, UUID purposeId, UUID versionId) {
         return purposesApi.archivePurposeVersion(xCorrelationId, purposeId, versionId);
+    }
+
+    @Override
+    public void rejectPurposeVersion(String xCorrelationId, UUID purposeId, UUID versionId, RejectPurposeVersionPayload rejectPurposeVersionPayload) {
+        purposesApi.rejectPurposeVersion(xCorrelationId, purposeId, versionId, rejectPurposeVersionPayload);
     }
 }

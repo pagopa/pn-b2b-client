@@ -15,8 +15,12 @@ import java.util.concurrent.ThreadLocalRandom;
 public class KeyPairGeneratorUtil {
 
     public static String createBase64PublicKey(String keyType, int keyLength) {
+        return createBase64PublicKey(keyType, keyLength, true);
+    }
+
+    public static String createBase64PublicKey(String keyType, int keyLength, boolean withDelimitators) {
         KeyPairPEM keyPairPEM = createKeyPairPEM(keyType, keyLength);
-        return keyToBase64(keyPairPEM.getPublicKey(), true);
+        return keyToBase64(keyPairPEM.getPublicKey(), withDelimitators);
     }
 
     public static KeyPairPEM createKeyPairPEM(String keyType, int modulusLength) {

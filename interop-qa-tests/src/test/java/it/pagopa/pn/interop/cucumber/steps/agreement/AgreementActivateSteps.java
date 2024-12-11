@@ -12,10 +12,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class AgreementActivateSteps {
-    private String eServiceId;
-    private String descriptorId;
-    private EServicesCommonDomain eServicesCommonDomain;
-
+    private final EServicesCommonDomain eServicesCommonDomain;
     private final DataPreparationService dataPreparationService;
 
     public AgreementActivateSteps(DataPreparationService dataPreparationService, EServicesCommonDomain eServicesCommonDomain) {
@@ -25,11 +22,11 @@ public class AgreementActivateSteps {
 
     @Given("{string} ha già creato un e-service in stato {string} che richiede quegli attributi con approvazione {string}")
     public void tenantHasAlreadyCreateEservice(String tenantType, String descriptorState, String approvalAgreementPolicy) {
+
+        //TODO salvare questa lista in un contesto comune e fare riferimento a quella
         List<List<String>> requiredCertifiedAttributes = new ArrayList<>();
         List<List<String>> requiredDeclaredAttributes = new ArrayList<>();
         List<List<String>> requiredVerifiedAttributes = new ArrayList<>();
-
-        //TODO da completare
 
         EServiceDescriptor result = dataPreparationService.createEServiceAndDraftDescriptor(
                 new EServiceSeed(),

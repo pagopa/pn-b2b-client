@@ -2,6 +2,7 @@ package it.pagopa.interop.agreement.service.impl;
 
 import it.pagopa.interop.agreement.service.IAgreementClient;
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
+import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.AgreementsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Agreement;
@@ -16,13 +17,15 @@ import java.util.UUID;
 public class AgreementClientImpl implements IAgreementClient {
     private final AgreementsApi agreementsApi;
     private final RestTemplate restTemplate;
+    private final InteropClientConfigs interopClientConfigs;
     private final String basePath;
     private final String bearerToken;
     private SettableBearerToken.BearerTokenType bearerTokenSetted;
 
-    public AgreementClientImpl(RestTemplate restTemplate) {
+    public AgreementClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
-        this.basePath = "basePath";
+        this.interopClientConfigs = interopClientConfigs;
+        this.basePath = interopClientConfigs.getBaseUrl();
         this.bearerToken = "bearerToken";
         this.agreementsApi = new AgreementsApi(createApiClient(bearerToken));
     }

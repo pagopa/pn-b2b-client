@@ -11,10 +11,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
-import org.springframework.http.client.ClientHttpRequestExecution;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
-import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.client.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -26,7 +23,7 @@ public class InteropRestTemplateConfiguration {
 
     public static final String CUCUMBER_SCENARIO_NAME_MDC_ENTRY = "cucumber_scenario_name";
 
-    @Bean(name = "customRestTemplate")
+    @Bean
     @Primary
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public RestTemplate customRestTemplate() {
@@ -39,60 +36,48 @@ public class InteropRestTemplateConfiguration {
         restTemplate.setRequestFactory(requestFactory);
 
         List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
-        interceptors.add(new RequestAndTraceIdInterceptor());
+        interceptors.add(new RequestResponseLoggingInterceptor());
 
         return restTemplate;
     }
 
-    @Bean(name = "defaultRestTemplate")
-    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    public RestTemplate defaultRestTemplate() {
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.getInterceptors().add(new RequestAndTraceIdInterceptor());
-
-        return restTemplate;
-    }
-
-    private static class RequestAndTraceIdInterceptor implements ClientHttpRequestInterceptor {
+    private static class RequestResponseLoggingInterceptor implements ClientHttpRequestInterceptor {
 
         public static final String TRACE_ID_RESPONSE_HEADER_NAME = "x-amzn-trace-Id";
 
-        public final Logger log = LoggerFactory.getLogger( RequestAndTraceIdInterceptor.class );
+        private static final Logger logger = LoggerFactory.getLogger(RequestResponseLoggingInterceptor.class.getName());
 
         @Override
         public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
-
-            ClientHttpResponse response = execution.execute( request, body );
-
-            doLog( request, response );
-
+            // Logs HTTP request
+            logRequest(request, body);
+            // Performs request and get the response
+            ClientHttpResponse response = execution.execute(request, body);
+            // Logs HTTP response
+            //logResponse(response);
             return response;
         }
 
-        private void doLog(HttpRequest request, ClientHttpResponse response) {
-            String httpMethod = request.getMethodValue();
-            String requestUrl = request.getURI().toString();
-            String traceId = getTraceIdFromHttpResponse( response );
-
-            String scenarioName = MDC.get( CUCUMBER_SCENARIO_NAME_MDC_ENTRY );
-            log.info("Request TraceId, method, url, scenario: [{}, {}, {}, {}]", traceId, httpMethod, requestUrl, scenarioName);
+        private void logRequest(HttpRequest request, byte[] body) throws IOException {
+            logger.info("Request Method: " + request.getMethod());
+            logger.info("Request URI: " + request.getURI());
+            // Logs header request
+            request.getHeaders().forEach((key, value) -> logger.info("Request Header: " + key + " = " + value));
+            // Logs request body
+            if (body.length > 0) {
+                logger.info("Request Body: " + new String(body));
+            }
         }
 
-        private String getTraceIdFromHttpResponse(ClientHttpResponse response) {
-            HttpHeaders responseHeaders = response.getHeaders();
-            List<String> traceIdHeaderValues = responseHeaders.get(TRACE_ID_RESPONSE_HEADER_NAME);
-            return getFirstOrNull( traceIdHeaderValues );
-        }
-
-        private String getFirstOrNull( List<String> list ) {
-            String result;
-            if( list != null && !list.isEmpty() ) {
-                result = list.get( 0 );
-            }
-            else {
-                result = null;
-            }
-            return result;
+        private void logResponse(ClientHttpResponse response) throws IOException {
+            logger.info("Response Status Code: " + response.getStatusCode());
+            logger.info("Response Status Text: " + response.getStatusText());
+            // Logs header response
+            response.getHeaders().forEach((key, value) -> logger.info("Response Header: " + key + " = " + value));
+            // Logs response body
+            String responseBody = new String(response.getBody().readAllBytes());
+            logger.info("Response Body: " + responseBody);
         }
     }
+
 }

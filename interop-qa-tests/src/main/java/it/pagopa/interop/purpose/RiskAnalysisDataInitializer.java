@@ -22,7 +22,7 @@ public class RiskAnalysisDataInitializer {
         Map<String, RiskAnalysisDataFromJson.RiskAnalysisTemplate> result = null;
         try {
             Map<String, RiskAnalysisDataFromJson.RiskAnalysisTemplate> riskAnalysisData = objectMapper.readValue(
-                    new File("risk_analysis_data.json"),
+                    new File("src/main/resources/risk_analysis_data.json"),
                     new TypeReference<Map<String, RiskAnalysisDataFromJson.RiskAnalysisTemplate>>() {}
             );
 

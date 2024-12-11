@@ -2,6 +2,7 @@ package it.pagopa.interop.authorization.service.impl;
 
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
+import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.ClientsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
@@ -13,13 +14,15 @@ import java.util.UUID;
 public class AuthorizationClientImpl implements IAuthorizationClient {
     private final ClientsApi clientsApi;
     private final RestTemplate restTemplate;
+    private final InteropClientConfigs interopClientConfigs;
     private final String basePath;
     private final String bearerToken;
     private SettableBearerToken.BearerTokenType bearerTokenSetted;
 
-    public AuthorizationClientImpl(RestTemplate restTemplate) {
+    public AuthorizationClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
-        this.basePath = "basePath";
+        this.interopClientConfigs = interopClientConfigs;
+        this.basePath = interopClientConfigs.getBaseUrl();
         this.bearerToken = "apiBearerToken";
         this.clientsApi = new ClientsApi(createApiClient(bearerToken));
         this.bearerTokenSetted = SettableBearerToken.BearerTokenType.CONSUMER;
