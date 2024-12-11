@@ -19,19 +19,16 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
+@Getter
+@Setter
 public class ClientCommonSteps {
     private final DataPreparationService dataPreparationService;
     private final CommonUtils commonUtils;
     private final HttpCallExecutor httpCallExecutor;
 
-    @Getter
-    @Setter
     private List<UUID> clients;
-    @Getter
-    @Setter
+    private List<UUID> users;
     private String clientPublicKey;
-    @Getter
-    @Setter
     private PurposeAdditionDetailsSeed purposeId;
 
     public ClientCommonSteps(DataPreparationService dataPreparationService, CommonUtils commonUtils, HttpCallExecutor httpCallExecutor) {
@@ -55,6 +52,7 @@ public class ClientCommonSteps {
     public void tenantHasAlreadyAddUsersWithRole(String tenantType, String roleOfMemberToAdd) {
         UUID clientMemberUserId = commonUtils.getUserId(tenantType, roleOfMemberToAdd);
         dataPreparationService.addMemberToClient(clients.get(0), clientMemberUserId);
+        setUsers(List.of(clientMemberUserId));
     }
 
     @Then("si ottiene status code {int} e la lista di {int} client(s)")

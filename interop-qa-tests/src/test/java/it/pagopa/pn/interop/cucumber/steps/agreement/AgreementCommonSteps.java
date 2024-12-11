@@ -19,8 +19,8 @@ public class AgreementCommonSteps {
     private EServicesCommonDomain eServicesCommonDomain;
 
     public AgreementCommonSteps(DataPreparationService dataPreparationService,
-                                CommonUtils commonUtils,
-                                EServicesCommonDomain eServicesCommonDomain) {
+            CommonUtils commonUtils,
+            EServicesCommonDomain eServicesCommonDomain) {
         this.dataPreparationService = dataPreparationService;
         this.commonUtils = commonUtils;
         this.eServicesCommonDomain = eServicesCommonDomain;
@@ -51,9 +51,11 @@ public class AgreementCommonSteps {
             int randomInt = ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE);
             int TEST_SEED = ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE);
             String eserviceName = String.format("eservice-%d-%d-%d", i, TEST_SEED, randomInt);
-            EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(new EServiceSeed().name(eserviceName), new UpdateEServiceDescriptorSeed());
+            EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(
+                    new EServiceSeed().name(eserviceName), new UpdateEServiceDescriptorSeed());
             // Porta il descrittore allo stato "PUBLISHED"
-            dataPreparationService.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(), eServiceDescriptor.getDescriptorId(), EServiceDescriptorState.PUBLISHED, false);
+            dataPreparationService.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(),
+                    eServiceDescriptor.getDescriptorId(), EServiceDescriptorState.PUBLISHED, false);
             // Aggiungi l'e-service alla lista dei pubblicati
             eServicesCommonDomain.getPublishedEservicesIds().add(eServiceDescriptor);
         }

@@ -117,6 +117,22 @@ public class DataPreparationService {
                 "Failed to add a purpose to the client!"
         );
     }
+
+    public void archivePurpose(UUID purposeId, UUID versionId) {
+        httpCallExecutor.performCall(() ->
+                authorizationClient.archivePurposeVersion("", purposeId, versionId)
+        );
+        assertValidResponse();
+        commonUtils.makePolling(
+                () -> httpCallExecutor.performCall(
+                        () -> authorizationClient.getPurpose("", purposeId)),
+                res -> ((Purpose) httpCallExecutor.getResponse()).getCurrentVersion() != null
+                        ? ((Purpose) httpCallExecutor.getResponse()).getCurrentVersion().getState().getValue().equals(PurposeVersionState.ARCHIVED.getValue())
+                        : Boolean.FALSE,
+                "There was an error while retrieving the purpose!"
+        );
+    }
+
     public String addPublicKeyToClient(UUID clientId, KeySeed keySeed) {
         commonUtils.makePolling(
                 () -> httpCallExecutor.performCall(

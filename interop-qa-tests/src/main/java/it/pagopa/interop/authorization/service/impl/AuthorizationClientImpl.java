@@ -1,18 +1,33 @@
 package it.pagopa.interop.authorization.service.impl;
 
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.web.client.RestTemplate;
+
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
 import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.ClientsApi;
-import it.pagopa.interop.generated.openapi.clients.bff.model.*;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.List;
-import java.util.UUID;
+import it.pagopa.interop.generated.openapi.clients.bff.api.PurposesApi;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Client;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ClientKind;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CompactClients;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CompactUser;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject2;
+import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKey;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKeys;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Purpose;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeAdditionDetailsSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionResource;
 
 public class AuthorizationClientImpl implements IAuthorizationClient {
     private final ClientsApi clientsApi;
+    private final PurposesApi purposesApi;
     private final RestTemplate restTemplate;
     private final InteropClientConfigs interopClientConfigs;
     private final String basePath;
@@ -24,7 +39,9 @@ public class AuthorizationClientImpl implements IAuthorizationClient {
         this.interopClientConfigs = interopClientConfigs;
         this.basePath = interopClientConfigs.getBaseUrl();
         this.bearerToken = "apiBearerToken";
-        this.clientsApi = new ClientsApi(createApiClient(bearerToken));
+        ApiClient apiClient = createApiClient(bearerToken);
+        this.clientsApi = new ClientsApi(apiClient);
+        this.purposesApi = new PurposesApi(apiClient);
         this.bearerTokenSetted = SettableBearerToken.BearerTokenType.CONSUMER;
     }
 
@@ -86,18 +103,35 @@ public class AuthorizationClientImpl implements IAuthorizationClient {
     }
 
     @Override
-    public void addClientPurpose(String xCorrelationId, UUID clientId, PurposeAdditionDetailsSeed purposeAdditionDetailsSeed) {
+    public void addClientPurpose(String xCorrelationId, UUID clientId,
+            PurposeAdditionDetailsSeed purposeAdditionDetailsSeed) {
         clientsApi.addClientPurpose(xCorrelationId, clientId, purposeAdditionDetailsSeed);
     }
 
     @Override
-    public CompactClients getClients(String xCorrelationId, Integer offset, Integer limit, String q, List<UUID> userIds, ClientKind kind) {
+    public PurposeVersionResource archivePurposeVersion(String xCorrelationId, UUID purposeId, UUID versionId) {
+        return purposesApi.archivePurposeVersion(xCorrelationId, purposeId, versionId);
+    }
+
+    @Override
+    public Purpose getPurpose(String xCorrelationId, UUID purposeId) {
+        return purposesApi.getPurpose(xCorrelationId, purposeId);
+    }
+
+    @Override
+    public CompactClients getClients(String xCorrelationId, Integer offset, Integer limit, String q, List<UUID> userIds,
+            ClientKind kind) {
         return clientsApi.getClients(xCorrelationId, offset, limit, q, userIds, kind);
     }
 
     @Override
     public Client getClient(String xCorrelationId, UUID clientId) {
         return clientsApi.getClient(xCorrelationId, clientId);
+    }
+
+    @Override
+    public void removeClientPurpose(String xCorrelationId, UUID clientId, UUID purposeId) {
+        clientsApi.removeClientPurpose(xCorrelationId, clientId, purposeId);
     }
 
     @Override
@@ -114,4 +148,5 @@ public class AuthorizationClientImpl implements IAuthorizationClient {
     public SettableBearerToken.BearerTokenType getBearerTokenSetted() {
         return bearerTokenSetted;
     }
+
 }
