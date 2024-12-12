@@ -1,10 +1,11 @@
 package it.pagopa.interop.purpose.service;
 
+import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 
 import java.util.UUID;
 
-public interface IPurposeApiClient {
+public interface IPurposeApiClient extends SettableBearerToken {
     RiskAnalysisFormConfig retrieveLatestRiskAnalysisConfiguration(String xCorrelationId);
     CreatedResource createPurpose(String xCorrelationId, PurposeSeed purposeSeed);
     CreatedResource createPurposeForReceiveEservice(String xCorrelationId, PurposeEServiceSeed purposeEServiceSeed);

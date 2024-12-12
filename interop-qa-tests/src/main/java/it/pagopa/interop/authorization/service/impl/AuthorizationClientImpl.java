@@ -32,7 +32,6 @@ public class AuthorizationClientImpl implements IAuthorizationClient {
     private final InteropClientConfigs interopClientConfigs;
     private final String basePath;
     private final String bearerToken;
-    private SettableBearerToken.BearerTokenType bearerTokenSetted;
 
     public AuthorizationClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
@@ -42,7 +41,6 @@ public class AuthorizationClientImpl implements IAuthorizationClient {
         ApiClient apiClient = createApiClient(bearerToken);
         this.clientsApi = new ClientsApi(apiClient);
         this.purposesApi = new PurposesApi(apiClient);
-        this.bearerTokenSetted = SettableBearerToken.BearerTokenType.CONSUMER;
     }
 
     private ApiClient createApiClient(String bearerToken) {
@@ -142,11 +140,6 @@ public class AuthorizationClientImpl implements IAuthorizationClient {
     @Override
     public void setBearerToken(String bearerToken) {
         this.clientsApi.setApiClient(createApiClient(bearerToken));
-    }
-
-    @Override
-    public SettableBearerToken.BearerTokenType getBearerTokenSetted() {
-        return bearerTokenSetted;
     }
 
 }

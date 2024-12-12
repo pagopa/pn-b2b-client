@@ -31,8 +31,9 @@ public class ClientKeyDeleteSteps {
 
     @When("l'utente richiede una operazione di cancellazione della chiave di quel client")
     public void deleteClientKeyById() {
+        commonUtils.setBearerToken(commonUtils.getUserToken());
         httpCallExecutor.performCall(() -> authorizationClient.deleteClientKeyById("",
-                clientCommonSteps.getClients().get(0), clientCommonSteps.getClientPublicKey()));
+                clientCommonSteps.getClients().get(0), clientCommonSteps.getKeyId()));
     }
 
     public void removeMemberFromClient(UUID clientId, UUID userId) {

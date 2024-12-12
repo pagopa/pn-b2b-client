@@ -38,8 +38,8 @@ public class ClientKeyListingSteps {
     }
 
     @When("l'utente richiede una operazione di listing delle chiavi di quel client create dall'utente {string}")
-    public void retrieveKeysCreatedByUser(String tenantType, String role) {
+    public void retrieveKeysCreatedByUser(String role) {
         httpCallExecutor.performCall(() -> authorizationClient.getClientKeys("", clientCommonSteps.getClients().get(0),
-                List.of(commonUtils.getUserId(tenantType, role))));
+                List.of(commonUtils.getUserId(commonUtils.getTenantType(), role))));
     }
 }

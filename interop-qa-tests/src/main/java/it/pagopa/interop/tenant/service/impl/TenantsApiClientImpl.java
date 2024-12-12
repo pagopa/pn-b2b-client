@@ -19,7 +19,6 @@ public class TenantsApiClientImpl implements ITenantsApi {
     private final InteropClientConfigs interopClientConfigs;
     private final String basePath;
     private final String bearerToken;
-    private SettableBearerToken.BearerTokenType bearerTokenSetted;
 
     public TenantsApiClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
@@ -54,6 +53,11 @@ public class TenantsApiClientImpl implements ITenantsApi {
     @Override
     public DeclaredAttributesResponse getDeclaredAttributes(String xCorrelationId, UUID tenantId) {
         return tenantsApi.getDeclaredAttributes(xCorrelationId, tenantId);
+    }
+
+    @Override
+    public void setBearerToken(String bearerToken) {
+        this.tenantsApi.setApiClient(createApiClient(bearerToken));
     }
 
 }

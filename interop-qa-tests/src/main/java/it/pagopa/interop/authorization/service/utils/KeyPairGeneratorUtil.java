@@ -24,24 +24,21 @@ public class KeyPairGeneratorUtil {
     }
 
     public static KeyPairPEM createKeyPairPEM(String keyType, int modulusLength) {
-        KeyPair keyPair;
-        KeyPairPEM keyPairPEM;
         try {
-            if ("RSA".equalsIgnoreCase(keyType)) {
-                // Generazione chiave RSA
-                KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+            KeyPairGenerator keyPairGenerator;
+            if ("RSA".equals(keyType)) {
+                keyPairGenerator = KeyPairGenerator.getInstance("RSA");
                 keyPairGenerator.initialize(modulusLength);
-                keyPair = keyPairGenerator.generateKeyPair();
             } else {
-                // Generazione chiave NON-RSA (es. Ed25519)
-                KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("Ed25519");
-                keyPair = keyPairGenerator.generateKeyPair();
+                keyPairGenerator = KeyPairGenerator.getInstance("Ed25519");
             }
-            keyPairPEM = new KeyPairPEM(keyToPEM(keyPair.getPrivate(), keyType), keyToPEM(keyPair.getPublic(), keyType));
+            KeyPair keyPair = keyPairGenerator.generateKeyPair();
+
+            return new KeyPairPEM(keyToPEM(keyPair.getPrivate(), "RSA"), keyToPEM(keyPair.getPublic(), "RSA"));
+
         } catch (Exception e) {
             throw new IllegalArgumentException("There was an error while crating the KeyPairPEM: " + e.getMessage(), e);
         }
-        return keyPairPEM;
     }
 
     private static String keyToPEM(Key key, String keyType) {
@@ -50,11 +47,11 @@ public class KeyPairGeneratorUtil {
 
         if ("RSA".equalsIgnoreCase(keyType)) {
             header = key instanceof PrivateKey
-                    ? "-----BEGIN RSA PRIVATE KEY-----"
-                    : "-----BEGIN RSA PUBLIC KEY-----";
+                    ? "-----BEGIN PRIVATE KEY-----"
+                    : "-----BEGIN PUBLIC KEY-----";
             footer = key instanceof PrivateKey
-                    ? "-----END RSA PRIVATE KEY-----"
-                    : "-----END RSA PUBLIC KEY-----";
+                    ? "-----END PRIVATE KEY-----"
+                    : "-----END PUBLIC KEY-----";
         } else {
             header = key instanceof PrivateKey
                     ? "-----BEGIN PRIVATE KEY-----"
@@ -72,14 +69,12 @@ public class KeyPairGeneratorUtil {
     }
 
     public static String keyToBase64(String key, boolean withDelimitators) {
-        // Se includere i delimitatori
         if (withDelimitators) {
             return Base64.getEncoder().encodeToString(key.getBytes());
         } else {
-            // Rimuovi i delimitatori e poi codifica in Base64
             String cleanedKey = key
-                    .replace("-----BEGIN RSA PUBLIC KEY-----", "")
-                    .replace("-----END RSA PUBLIC KEY-----", "")
+                    .replace("-----BEGIN PUBLIC KEY-----", "")
+                    .replace("-----END PUBLIC KEY-----", "")
                     .trim();
 
             return Base64.getEncoder().encodeToString(cleanedKey.getBytes());
@@ -90,7 +85,7 @@ public class KeyPairGeneratorUtil {
         KeySeed keySeed = new KeySeed();
         keySeed.setUse(KeyUse.SIG);
         keySeed.setAlg("RS256");
-        keySeed.setName("key-" + getRandomInt());
+        keySeed.setName(String.format("key-%d-%d", getRandomInt(), getRandomInt()));
         keySeed.setKey(key);
         return List.of(keySeed);
     }

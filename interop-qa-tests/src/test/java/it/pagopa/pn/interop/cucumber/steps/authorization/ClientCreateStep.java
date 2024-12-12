@@ -30,14 +30,16 @@ public class ClientCreateStep {
     }
 
     @Given("l'utente è un {string} di {string}")
-    public void setRole(String role, String institution) {
-        String token = commonUtils.getToken(institution, role);
-        authorizationClientCreate.setBearerToken(token);
+    public void setRole(String role, String tenantType) {
+        String token = commonUtils.getToken(tenantType, role);
+        commonUtils.setBearerToken(token);
+        commonUtils.setUserToken(token);
+        commonUtils.setTenantType(tenantType);
     }
 
     @When("l'utente richiede la creazione di un client {string}")
     public void createClient(String clientKind) {
-        if ((clientKind == "CONSUMER")) {
+        if ("CONSUMER".equals(clientKind)) {
             httpCallExecutor.performCall(() -> authorizationClientCreate.createConsumerClient("", createClientSeed()));
         } else {
             httpCallExecutor.performCall(() -> authorizationClientCreate.createApiClient("", createClientSeed()));

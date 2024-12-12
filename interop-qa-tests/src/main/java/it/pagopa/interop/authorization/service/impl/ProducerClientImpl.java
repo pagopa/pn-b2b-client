@@ -41,8 +41,4 @@ public class ProducerClientImpl implements IProducerClient {
         this.eservicesApi.setApiClient(createApiClient(bearerToken));
     }
 
-    @Override
-    public BearerTokenType getBearerTokenSetted() {
-        return null;
-    }
 }

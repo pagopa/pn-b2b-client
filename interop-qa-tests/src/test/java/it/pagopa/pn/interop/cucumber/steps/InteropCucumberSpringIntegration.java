@@ -8,6 +8,7 @@ import it.pagopa.interop.agreement.service.impl.EServiceApiClientImpl;
 import it.pagopa.interop.attribute.service.IAttributeApiClient;
 import it.pagopa.interop.attribute.service.impl.AttributeApiClientImpl;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
+import it.pagopa.interop.authorization.service.utils.ClientTokenConfigurator;
 import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
 import it.pagopa.interop.config.springconfig.springconfig.InteropRestTemplateConfiguration;
 import it.pagopa.interop.authorization.service.impl.AuthorizationClientImpl;
@@ -22,7 +23,9 @@ import it.pagopa.interop.tenant.service.ITenantsApi;
 import it.pagopa.interop.tenant.service.impl.TenantsApiClientImpl;
 import it.pagopa.pn.interop.cucumber.steps.purpose.domain.PurposeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.utils.DataPreparationService;
+import it.pagopa.pn.interop.cucumber.steps.utils.EServicesCommonDomain;
 import it.pagopa.pn.interop.cucumber.steps.utils.HttpCallExecutor;
+import it.pagopa.pn.interop.cucumber.steps.utils.SharedStepsContext;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -52,10 +55,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         EServiceApiClientImpl.class,
         RiskAnalysisDataInitializer.class,
         PurposeCommonContext.class,
+        ClientTokenConfigurator.class,
+        EServicesCommonDomain.class
 
 
 })
 @EnableScheduling
 @EnableConfigurationProperties
-public class CucumberSpringIntegration2 {
+public class InteropCucumberSpringIntegration {
 }

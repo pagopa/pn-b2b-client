@@ -20,7 +20,6 @@ public class AgreementClientImpl implements IAgreementClient {
     private final InteropClientConfigs interopClientConfigs;
     private final String basePath;
     private final String bearerToken;
-    private SettableBearerToken.BearerTokenType bearerTokenSetted;
 
     public AgreementClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
@@ -65,6 +64,11 @@ public class AgreementClientImpl implements IAgreementClient {
     @Override
     public File addAgreementConsumerDocument(String xCorrelationId, UUID agreementId, String name, String prettyName, org.springframework.core.io.Resource doc) {
         return agreementsApi.addAgreementConsumerDocument(xCorrelationId, agreementId, name, prettyName, doc);
+    }
+
+    @Override
+    public void setBearerToken(String bearerToken) {
+        this.agreementsApi.setApiClient(createApiClient(bearerToken));
     }
 
 }

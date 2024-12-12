@@ -1,5 +1,6 @@
 package it.pagopa.interop.agreement.service;
 
+import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
@@ -7,7 +8,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescr
 
 import java.util.UUID;
 
-public interface IEServiceClient {
+public interface IEServiceClient extends SettableBearerToken {
 
     CreatedEServiceDescriptor createEService(String xCorrelationId, EServiceSeed eserviceSeed);
     CreatedResource updateDraftDescriptor(String xCorrelationId, UUID eServiceId, UUID descriptorId, UpdateEServiceDescriptorSeed updateEServiceDescriptorSeed);

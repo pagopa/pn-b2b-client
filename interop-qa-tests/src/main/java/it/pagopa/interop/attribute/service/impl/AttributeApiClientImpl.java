@@ -16,7 +16,6 @@ public class AttributeApiClientImpl implements IAttributeApiClient {
     private final InteropClientConfigs interopClientConfigs;
     private final String basePath;
     private final String bearerToken;
-    private SettableBearerToken.BearerTokenType bearerTokenSetted;
 
     public AttributeApiClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
@@ -51,5 +50,10 @@ public class AttributeApiClientImpl implements IAttributeApiClient {
     @Override
     public Attributes getAttributes(String xCorrelationId, Integer limit, Integer offset, List<AttributeKind> kinds, String q, String origin) {
         return attributesApi.getAttributes(xCorrelationId, limit, offset, kinds, q, origin);
+    }
+
+    @Override
+    public void setBearerToken(String bearerToken) {
+        this.attributesApi.setApiClient(createApiClient(bearerToken));
     }
 }

@@ -75,14 +75,15 @@ public class DataPreparationService {
         this.purposeCommonContext = purposeCommonContext;
     }
 
-    public UUID createClient(String clientKind, UUID clientId, ClientSeed partialClientSeed) {
+    public UUID createClient(String clientKind, ClientSeed partialClientSeed) {
         ClientSeed mergedClientSeed = merge(DEFAULT_CLIENT_SEED, partialClientSeed);
-        if ((clientKind == "CONSUMER")) {
+        if ("CONSUMER".equals(clientKind)) {
             httpCallExecutor.performCall(() -> authorizationClient.createConsumerClient("", mergedClientSeed));
         } else {
             httpCallExecutor.performCall(() -> authorizationClient.createApiClient("", mergedClientSeed));
         }
         assertValidResponse();
+        UUID clientId = ((CreatedResource) httpCallExecutor.getResponse()).getId();
         commonUtils.makePolling(
                 () -> httpCallExecutor.performCall(() -> authorizationClient.getClient("", clientId)),
                 res -> res != HttpStatus.NOT_FOUND,
@@ -101,7 +102,7 @@ public class DataPreparationService {
         assertValidResponse();
         commonUtils.makePolling(
                 () -> httpCallExecutor.performCall(() -> authorizationClient.getClientUsers("", clientId)),
-                res -> ((List<CompactUser>) httpCallExecutor.getResponse()).stream().anyMatch(user -> user.getUserId() == userId),
+                res -> ((List<CompactUser>) httpCallExecutor.getResponse()).stream().anyMatch(user -> user.getUserId().equals(userId)),
                 "Failed to retrieve the client users list!"
         );
     }
@@ -136,7 +137,7 @@ public class DataPreparationService {
     public String addPublicKeyToClient(UUID clientId, KeySeed keySeed) {
         commonUtils.makePolling(
                 () -> httpCallExecutor.performCall(
-                        () -> authorizationClient.createKeys("", clientId, KeyPairGeneratorUtil.createKeySeed(KeyUse.SIG, "RS256", KeyPairGeneratorUtil.createBase64PublicKey("RSA", 2048)))),
+                        () -> authorizationClient.createKeys("", clientId, List.of(keySeed))),
                 res -> res != HttpStatus.INTERNAL_SERVER_ERROR,
                 "Failed to create a new key!"
         );
@@ -330,7 +331,9 @@ public class DataPreparationService {
         UUID documentId = null;
         Map<String, Object> result = new HashMap<>();
         if (withDocument) documentId = addDocumentToDescriptor(eServiceId, descriptorId);
-        result = Map.of("descriptorId", descriptorId, "documentId", documentId);
+        result.put("descriptorId", descriptorId);
+        result.put("documentId", documentId);
+
         if (descriptorState == EServiceDescriptorState.DRAFT) return result;
 
         // 2. Add interface to descriptor
@@ -597,7 +600,7 @@ public class DataPreparationService {
     }
 
     private Resource createBlobFile(String filePathToRead, String fileNameToCreate) {
-        Path filePath = Paths.get(String.format("classpath:%s", filePathToRead));
+        Path filePath = Paths.get("src/main/resources/interface.yaml");
         byte[] fileContent = null;
         File file = null;
         try {

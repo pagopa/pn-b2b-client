@@ -2,6 +2,8 @@ package it.pagopa.interop.authorization.service.utils;
 
 import it.pagopa.interop.authorization.domain.Ente;
 import it.pagopa.interop.authorization.service.factory.SessionTokenFactory;
+import lombok.Getter;
+import lombok.Setter;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
@@ -13,14 +15,23 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class CommonUtils {
-    private static Map<String, Map<String, String>> cachedTokens = null;
     private final SessionTokenFactory sessionTokenFactory;
     private final KeyPairGeneratorUtil keyPairGeneratorUtil;
+    private final ClientTokenConfigurator clientTokenConfigurator;
     private final List<Ente> configFile;
 
-    public CommonUtils(SessionTokenFactory sessionTokenFactory, KeyPairGeneratorUtil keyPairGeneratorUtil) {
+    private Map<String, Map<String, String>> cachedTokens = null;
+    @Getter @Setter
+    private String userToken;
+    @Getter @Setter
+    private String tenantType;
+
+    public CommonUtils(SessionTokenFactory sessionTokenFactory,
+                       KeyPairGeneratorUtil keyPairGeneratorUtil,
+                       ClientTokenConfigurator clientTokenConfigurator) {
         this.sessionTokenFactory = sessionTokenFactory;
         this.keyPairGeneratorUtil = keyPairGeneratorUtil;
+        this.clientTokenConfigurator = clientTokenConfigurator;
         this.configFile = readProperty();
     }
 
@@ -37,7 +48,7 @@ public class CommonUtils {
         String token = Optional.ofNullable(cachedTokens)
                 .map(m -> m.get(tenantType))
                 .filter(Objects::nonNull)
-                .map(m -> m.get(role))
+                .map(m -> (role == null) ? m.get("admin") : m.get(role))
                 .filter(Objects::nonNull)
                 .orElse(null);
 
@@ -45,6 +56,10 @@ public class CommonUtils {
             throw new IllegalArgumentException("Token not found for tenant: " + tenantType + " and role: " + role);
         }
         return token;
+    }
+
+    public void setBearerToken(String token) {
+        clientTokenConfigurator.setBearerToken(token);
     }
 
     public UUID getUserId(String tenantType, String role) {

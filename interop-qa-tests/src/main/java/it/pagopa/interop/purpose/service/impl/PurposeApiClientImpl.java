@@ -15,7 +15,6 @@ public class PurposeApiClientImpl implements IPurposeApiClient {
     private final RestTemplate restTemplate;
     private final String basePath;
     private final String bearerToken;
-    private SettableBearerToken.BearerTokenType bearerTokenSetted;
     private final InteropClientConfigs interopClientConfigs;
 
     public PurposeApiClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
@@ -71,5 +70,10 @@ public class PurposeApiClientImpl implements IPurposeApiClient {
     @Override
     public void rejectPurposeVersion(String xCorrelationId, UUID purposeId, UUID versionId, RejectPurposeVersionPayload rejectPurposeVersionPayload) {
         purposesApi.rejectPurposeVersion(xCorrelationId, purposeId, versionId, rejectPurposeVersionPayload);
+    }
+
+    @Override
+    public void setBearerToken(String bearerToken) {
+        this.purposesApi.setApiClient(createApiClient(bearerToken));
     }
 }

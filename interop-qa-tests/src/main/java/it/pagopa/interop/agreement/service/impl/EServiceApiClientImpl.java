@@ -16,7 +16,6 @@ public class EServiceApiClientImpl implements IEServiceClient {
     private final InteropClientConfigs interopClientConfigs;
     private final String basePath;
     private final String bearerToken;
-    private SettableBearerToken.BearerTokenType bearerTokenSetted;
 
     public EServiceApiClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
@@ -63,5 +62,9 @@ public class EServiceApiClientImpl implements IEServiceClient {
         return eservicesApi.createDescriptor(xCorrelationId, eServiceId);
     }
 
+    @Override
+    public void setBearerToken(String bearerToken) {
+        this.eservicesApi.setApiClient(createApiClient(bearerToken));
+    }
 
 }
