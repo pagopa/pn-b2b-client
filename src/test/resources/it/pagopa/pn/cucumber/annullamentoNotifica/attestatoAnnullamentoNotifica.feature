@@ -2,7 +2,7 @@ Feature: produzione del documento di annullamento notifica
 
   @attestatoAnnullamentoNotifica
   Scenario: [ATTESTATO_ANNULLAMENTO_LEGAL_FACT] Verifica della presenza del nuovo legalFact avente categoria NOTIFICATION_CANCELLED in seguito all'annullamento di una notifica
-    Given viene generata una nuova notifica con la versione più recente
+    Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune_Multi                    |
     And destinatario Mario Cucumber e:
@@ -17,7 +17,7 @@ Feature: produzione del documento di annullamento notifica
 
   @attestatoAnnullamentoNotifica
   Scenario: [ATTESTATO_ANNULLAMENTO_VERSIONE_PRECEDENTE] Recuperando la timeline con versioni anteriori alla V25, in seguito all'annullamento di una notifica non devono esserci elementi aventi legalFacts con categoria "NOTIFICATION_CANCELLED"
-    Given viene generata una nuova notifica con la versione più recente
+    Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune_Multi                    |
     And destinatario Mario Cucumber e:

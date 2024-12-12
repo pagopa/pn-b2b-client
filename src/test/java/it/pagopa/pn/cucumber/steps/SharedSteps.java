@@ -25,6 +25,7 @@ import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.ProgressResponseElement;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.StreamMetadataResponseV26;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.ProgressResponseElementV23;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamMetadataResponseV23;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model.RequestNewApiKey;
@@ -135,7 +136,7 @@ public class SharedSteps {
 
     @Getter
     @Setter
-    private TimelineElementV25 timelineElement;
+    private TimelineElementV26 timelineElement;
 
     @Getter
     @Setter
@@ -156,6 +157,10 @@ public class SharedSteps {
     @Getter
     @Setter
     private StreamMetadataResponseV25 eventStreamV25;
+
+    @Getter
+    @Setter
+    private StreamMetadataResponseV26 eventStreamV26;
 
     @Getter
     @Setter
@@ -254,7 +259,11 @@ public class SharedSteps {
     //V25
     @Getter
     @Setter
-    private FullSentNotificationV25 notificationResponseComplete;
+    private FullSentNotificationV25 notificationResponseCompleteV25;
+
+    @Getter
+    @Setter
+    private FullSentNotificationV26 notificationResponseComplete;
 
 
     private String settedPa = "Comune_1";
@@ -368,12 +377,6 @@ public class SharedSteps {
         this.notificationRequest = notificationRequest;
     }
 
-    @Given("viene generata una nuova notifica con la versione più recente")
-    //TODO al rilascio di una nuova versione, aggiornare il metodo sottostante con l'ultima versione
-    public void vieneGenerataUnaNotificaMostRecentVersion(@Transpose NewNotificationRequestV24 notificationRequest) {
-        this.notificationRequest = notificationRequest;
-    }
-
     @Given("viene generata una nuova notifica V1")
     public void vieneGenerataUnaNotificaV1(@Transpose it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequest notificationRequestV1) {
         this.notificationRequestV1 = notificationRequestV1;
@@ -444,29 +447,29 @@ public class SharedSteps {
         }
 
         List<Thread> threadList = new LinkedList<>();
-        ConcurrentLinkedQueue<FullSentNotificationV25> sentNotifications = new ConcurrentLinkedQueue<>();
+        ConcurrentLinkedQueue<FullSentNotificationV26> sentNotifications = new ConcurrentLinkedQueue<>();
 
         for (NewNotificationRequestV24 notification : notificationRequests) {
             Thread t = new Thread(() -> {
                 //INVIO NOTIFICA ED ATTESA ACCEPTED
                 NewNotificationResponse internalNotificationResponse = Assertions.assertDoesNotThrow(() -> b2bUtils.uploadNotification(notification));
                 threadWait(getWait());
-                FullSentNotificationV25 fullSentNotificationV23 = b2bUtils.waitForRequestAcceptation(internalNotificationResponse);
-                Assertions.assertNotNull(fullSentNotificationV23);
+                FullSentNotificationV26 fullSentNotificationV26 = b2bUtils.waitForRequestAcceptation(internalNotificationResponse);
+                Assertions.assertNotNull(fullSentNotificationV26);
 
                 //ATTESA ELEMENTO DI TIMELINE
-                TimelineElementV25 timelineElement = null;
+                TimelineElementV26 timelineElement = null;
                 for (int i = 0; i < 33; i++) {
                     threadWait(getWorkFlowWait());
-                    fullSentNotificationV23 = b2bClient.getSentNotification(fullSentNotificationV23.getIun());
-                    log.info("NOTIFICATION_TIMELINE: " + fullSentNotificationV23.getTimeline());
-                    timelineElement = fullSentNotificationV23.getTimeline().stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(TimelineElementCategoryV23.COMPLETELY_UNREACHABLE)).findAny().orElse(null);
+                    fullSentNotificationV26 = b2bClient.getSentNotification(fullSentNotificationV26.getIun());
+                    log.info("NOTIFICATION_TIMELINE: " + fullSentNotificationV26.getTimeline());
+                    timelineElement = fullSentNotificationV26.getTimeline().stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(TimelineElementCategoryV23.COMPLETELY_UNREACHABLE)).findAny().orElse(null);
                     if (timelineElement != null) {
                         break;
                     }
                 }
                 Assertions.assertNotNull(timelineElement);
-                sentNotifications.add(fullSentNotificationV23);
+                sentNotifications.add(fullSentNotificationV26);
             });
 
             threadList.add(t);
@@ -493,7 +496,7 @@ public class SharedSteps {
         Assertions.assertEquals(sentNotifications.size(), numberOfNotification);
         log.debug("NOTIFICATION LIST: {}", sentNotifications);
         log.debug("IUN: ");
-        for (FullSentNotificationV25 fullSentNotification : sentNotifications) {
+        for (FullSentNotificationV26 fullSentNotification : sentNotifications) {
             log.info(fullSentNotification.getIun());
         }
         log.debug("End IUN list");
@@ -1314,7 +1317,7 @@ public class SharedSteps {
                 Assertions.assertFalse(resp.getDetails().isEmpty());
                 Assertions.assertTrue("NOTIFICATION_CANCELLATION_ACCEPTED".equalsIgnoreCase(resp.getDetails().get(0).getCode()));
             });
-            rifiutata = b2bUtils.waitForRequestNotRefused(newNotificationResponse);
+            rifiutata = b2bUtils.waitForRequestNotRefusedV25(newNotificationResponse);
 
             threadWait(wait);
 
@@ -1398,6 +1401,27 @@ public class SharedSteps {
         }
     }
 
+    private void sendNotificationV25() {
+        try {
+            Assertions.assertDoesNotThrow(() -> {
+                notificationCreationDate = OffsetDateTime.now();
+                newNotificationResponseV21 = b2bUtils.uploadNotificationV21(notificationRequestV21);
+
+                threadWait(getWorkFlowWait());
+
+                notificationResponseCompleteV21 = b2bUtils.waitForRequestAcceptationV21(newNotificationResponseV21);
+            });
+
+            threadWait(getWorkFlowWait());
+
+            Assertions.assertNotNull(notificationResponseCompleteV21);
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() +
+                    "{RequestID: " + (newNotificationResponseV21 == null ? "NULL" : newNotificationResponseV21.getNotificationRequestId()) + " }";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+    }
+
     private void sendNotificationAndCancelPreRefused() {
         sendNotificationRapidCancellPreRefused();
     }
@@ -1457,7 +1481,7 @@ public class SharedSteps {
             Assertions.assertDoesNotThrow(() -> {
                 notificationCreationDate = OffsetDateTime.now();
                 newNotificationResponse = b2bUtils.uploadNotificationNotFindAllegato(notificationRequest, noUpload);
-                errorCode = b2bUtils.waitForRequestRefused(newNotificationResponse);
+                errorCode = b2bUtils.waitForRequestRefusedV25(newNotificationResponse);
             });
 
             threadWait(getWorkFlowWait());
@@ -1475,7 +1499,7 @@ public class SharedSteps {
             Assertions.assertDoesNotThrow(() -> {
                 notificationCreationDate = OffsetDateTime.now();
                 newNotificationResponse = b2bUtils.uploadNotificationNotFindAllegatoJson(notificationRequest, true);
-                errorCode = b2bUtils.waitForRequestRefused(newNotificationResponse);
+                errorCode = b2bUtils.waitForRequestRefusedV25(newNotificationResponse);
             });
 
             threadWait(getWorkFlowWait());
@@ -1493,7 +1517,7 @@ public class SharedSteps {
             Assertions.assertDoesNotThrow(() -> {
                 notificationCreationDate = OffsetDateTime.now();
                 newNotificationResponse = b2bUtils.uploadNotificationNotEqualSha(notificationRequest);
-                errorCode = b2bUtils.waitForRequestRefused(newNotificationResponse);
+                errorCode = b2bUtils.waitForRequestRefusedV25(newNotificationResponse);
             });
 
             threadWait(getWorkFlowWait());
@@ -1521,7 +1545,7 @@ public class SharedSteps {
             Assertions.assertDoesNotThrow(() -> {
                 notificationCreationDate = OffsetDateTime.now();
                 newNotificationResponse = b2bUtils.uploadNotificationNotEqualShaJson(notificationRequest);
-                errorCode = b2bUtils.waitForRequestRefused(newNotificationResponse);
+                errorCode = b2bUtils.waitForRequestRefusedV25(newNotificationResponse);
             });
 
             threadWait(getWorkFlowWait());
@@ -1541,7 +1565,7 @@ public class SharedSteps {
                 notificationCreationDate = OffsetDateTime.now();
                 newNotificationResponse = b2bUtils.uploadNotificationWrongExtension(notificationRequest);
 
-                errorCode = b2bUtils.waitForRequestRefused(newNotificationResponse);
+                errorCode = b2bUtils.waitForRequestRefusedV25(newNotificationResponse);
             });
 
             threadWait(getWorkFlowWait());
@@ -1560,7 +1584,7 @@ public class SharedSteps {
             Assertions.assertDoesNotThrow(() -> {
                 notificationCreationDate = OffsetDateTime.now();
                 newNotificationResponse = b2bUtils.uploadNotification(notificationRequest);
-                errorCode = b2bUtils.waitForRequestRefused(newNotificationResponse);
+                errorCode = b2bUtils.waitForRequestRefusedV25(newNotificationResponse);
             });
 
             threadWait(getWorkFlowWait());
@@ -1577,7 +1601,7 @@ public class SharedSteps {
         try {
             Assertions.assertDoesNotThrow(() -> {
                 newNotificationResponse = b2bUtils.uploadNotificationOverSizeAllegato(notificationRequest);
-                errorCode = b2bUtils.waitForRequestRefused(newNotificationResponse);
+                errorCode = b2bUtils.waitForRequestRefusedV25(newNotificationResponse);
             });
 
             threadWait(getWorkFlowWait());
@@ -1595,7 +1619,7 @@ public class SharedSteps {
         try {
             Assertions.assertDoesNotThrow(() -> {
                 newNotificationResponse = b2bUtils.uploadNotificationInjectionAllegato(notificationRequest);
-                errorCode = b2bUtils.waitForRequestRefused(newNotificationResponse);
+                errorCode = b2bUtils.waitForRequestRefusedV25(newNotificationResponse);
             });
 
             threadWait(getWorkFlowWait());
@@ -1613,7 +1637,7 @@ public class SharedSteps {
         try {
             Assertions.assertDoesNotThrow(() -> {
                 newNotificationResponse = b2bUtils.uploadNotificationOver15Allegato(notificationRequest);
-                errorCode = b2bUtils.waitForRequestRefused(newNotificationResponse);
+                errorCode = b2bUtils.waitForRequestRefusedV25(newNotificationResponse);
             });
 
             threadWait(getWorkFlowWait());
@@ -1759,7 +1783,7 @@ public class SharedSteps {
         }
     }
 
-    public FullSentNotificationV25 getSentNotification() {
+    public FullSentNotificationV26 getSentNotification() {
         return notificationResponseComplete;
     }
 
@@ -1776,10 +1800,10 @@ public class SharedSteps {
     }
 
     public FullSentNotificationV25 getSentNotificationV25() {
-        return notificationResponseComplete;
+        return notificationResponseCompleteV25;
     }
 
-    public void setSentNotification(FullSentNotificationV25 notificationResponseComplete) {
+    public void setSentNotification(FullSentNotificationV26 notificationResponseComplete) {
         this.notificationResponseComplete = notificationResponseComplete;
     }
 
@@ -1793,6 +1817,10 @@ public class SharedSteps {
 
     public void setSentNotificationV21(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.FullSentNotificationV21 notificationResponseCompleteV21) {
         this.notificationResponseCompleteV21 = notificationResponseCompleteV21;
+    }
+
+    public void setSentNotificationV25(FullSentNotificationV25 notificationResponseCompleteV25) {
+        this.notificationResponseCompleteV25 = notificationResponseCompleteV25;
     }
 
     public void selectPA(String apiKey) {
@@ -2113,10 +2141,10 @@ public class SharedSteps {
         };
     }
 
-    public TimelineElementV25 getTimelineElementByEventId(String timelineEventCategory, DataTest dataFromTest) {
-        List<TimelineElementV25> timelineElementList = notificationResponseComplete.getTimeline();
+    public TimelineElementV26 getTimelineElementByEventId(String timelineEventCategory, DataTest dataFromTest) {
+        List<TimelineElementV26> timelineElementList = notificationResponseComplete.getTimeline();
         String iun;
-        if (timelineEventCategory.equals(TimelineElementCategoryV23.REQUEST_REFUSED.getValue())) {
+        if (timelineEventCategory.equals(TimelineElementCategoryV26.REQUEST_REFUSED.getValue())) {
             String requestId = newNotificationResponse.getNotificationRequestId();
             byte[] decodedBytes = Base64.getDecoder().decode(requestId);
             iun = new String(decodedBytes);
@@ -2127,7 +2155,7 @@ public class SharedSteps {
         if (dataFromTest != null && dataFromTest.getTimelineElement() != null) {
             // get timeline event id
             String timelineEventId = getTimelineEventId(timelineEventCategory, iun, dataFromTest);
-            if (timelineEventCategory.equals(TimelineElementCategoryV23.SEND_ANALOG_PROGRESS.getValue()) || timelineEventCategory.equals(TimelineElementCategoryV23.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS.getValue())) {
+            if (timelineEventCategory.equals(TimelineElementCategoryV26.SEND_ANALOG_PROGRESS.getValue()) || timelineEventCategory.equals(TimelineElementCategoryV26.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS.getValue())) {
                 TimelineElementV23 timelineElementFromTest = dataFromTest.getTimelineElement();
                 TimelineElementDetailsV23 timelineElementDetails = timelineElementFromTest.getDetails();
                 return timelineElementList.stream().filter(elem -> Objects.requireNonNull(elem.getElementId()).startsWith(timelineEventId) && Objects.equals(Objects.requireNonNull(elem.getDetails()).getDeliveryDetailCode(), Objects.requireNonNull(timelineElementDetails).getDeliveryDetailCode())).findAny().orElse(null);
@@ -2199,7 +2227,7 @@ public class SharedSteps {
             case "v1" -> sendNotificationV1();
             case "v2" -> sendNotificationV2();
             case "v21" -> sendNotificationV21();
-            case "v25" -> sendNotification();
+            case "v25" -> sendNotificationV25();
         }
     }
 

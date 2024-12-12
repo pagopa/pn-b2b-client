@@ -8,7 +8,8 @@ import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV25;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV25;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebMandateClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
@@ -16,7 +17,7 @@ import it.pagopa.pn.client.b2b.pa.service.impl.B2bMandateServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebMandateExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.*;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.FullReceivedNotificationV24;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.FullReceivedNotificationV25;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationAttachmentDownloadMetadataResponse;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationSearchResponse;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
@@ -520,9 +521,9 @@ public class RicezioneNotificheWebDelegheSteps {
         sharedSteps.selectUser(recipient);
 
         try {
-            it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV23 timelineElementCategoryV23 =
-                    it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV23.NOTIFICATION_RADD_RETRIEVED;
-            it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementV25 timelineElement = getTimelineElementV23WebRecipient(timelineElementCategoryV23);
+            it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV26 timelineElementCategoryV23 =
+                    it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV26.NOTIFICATION_RADD_RETRIEVED;
+            it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementV26 timelineElement = getTimelineElementV23WebRecipient(timelineElementCategoryV23);
 
             Assertions.assertNotNull(timelineElement);
         } catch (AssertionFailedError assertionFailedError) {
@@ -537,9 +538,9 @@ public class RicezioneNotificheWebDelegheSteps {
         sharedSteps.selectUser(recipient);
 
         try {
-            it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV23 timelineElementCategoryV23 =
-                    it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV23.NOTIFICATION_VIEWED;
-            it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementV25 timelineElement = getTimelineElementV23WebRecipient(timelineElementCategoryV23);
+            it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV26 timelineElementCategoryV23 =
+                    it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV26.NOTIFICATION_VIEWED;
+            it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementV26 timelineElement = getTimelineElementV23WebRecipient(timelineElementCategoryV23);
 
             Assertions.assertNull(timelineElement);
         } catch (AssertionFailedError assertionFailedError) {
@@ -548,9 +549,9 @@ public class RicezioneNotificheWebDelegheSteps {
         webRecipientClient.setBearerToken(baseUser);
     }
 
-    private it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementV25 getTimelineElementV23WebRecipient(it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV23 timelineElementCategoryV23) {
+    private it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementV26 getTimelineElementV23WebRecipient(it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV26 timelineElementCategoryV23) {
 
-        FullReceivedNotificationV24 result = webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
+        FullReceivedNotificationV25 result = webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
         log.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
 
         return result
@@ -620,7 +621,7 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @And("si verifica che l'elemento di timeline della lettura riporti i dati di {string}")
     public void siVerificaCheLElementoDiTimelineDellaLetturaRiportiIDatiDi(String user) {
-        TimelineElementV25 timelineElement = getTimelineElementV23();
+        TimelineElementV26 timelineElement = getTimelineElementV23();
 
         String userTaxId = getTaxIdByUser(user);
         System.out.println("TIMELINE ELEMENT: " + timelineElement);
@@ -632,7 +633,7 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @And("si verifica che l'elemento di timeline della lettura non riporti i dati del delegato")
     public void siVerificaCheLElementoDiTimelineDellaLetturaNonRiportiIDatiDi() {
-        TimelineElementV25 timelineElement = getTimelineElementV23();
+        TimelineElementV26 timelineElement = getTimelineElementV23();
 
         System.out.println("TIMELINE ELEMENT: " + timelineElement);
         Assertions.assertNotNull(timelineElement);
@@ -640,7 +641,7 @@ public class RicezioneNotificheWebDelegheSteps {
         Assertions.assertNull(timelineElement.getDetails().getDelegateInfo());
     }
 
-    private TimelineElementV25 getTimelineElementV23() {
+    private TimelineElementV26 getTimelineElementV23() {
         try {
             await().atMost(sharedSteps.getWorkFlowWait() * 2, TimeUnit.MILLISECONDS);
         } catch (RuntimeException exception) {

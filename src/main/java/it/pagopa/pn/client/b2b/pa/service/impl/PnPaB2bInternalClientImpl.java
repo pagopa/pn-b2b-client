@@ -229,10 +229,15 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
     }
 
     @Override
-    public FullSentNotificationV25 getSentNotification(String iun) {
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.FullSentNotificationV25 resp;
-        resp = senderReadB2BApi.getSentNotificationV25(operatorId, CxTypeAuthFleet.PA, paId, iun, groups);
-        return deepCopy(resp, FullSentNotificationV25.class);
+    public FullSentNotificationV25 getSentNotificationV25(String iun) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public FullSentNotificationV26 getSentNotification(String iun) {
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.FullSentNotificationV26 resp;
+        resp = senderReadB2BApi.getSentNotificationV26(operatorId, CxTypeAuthFleet.PA, paId, iun, groups);
+        return deepCopy(resp, FullSentNotificationV26.class);
     }
 
     @Override
@@ -262,7 +267,7 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
 
 
     @Override
-    public NewNotificationRequestStatusResponseV23 getNotificationRequestStatus(String notificationRequestId) {
+    public NewNotificationRequestStatusResponseV23 getNotificationRequestStatusV23(String notificationRequestId) {
 
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NewNotificationRequestStatusResponseV24 resp;
         resp = senderReadB2BApi.getNotificationRequestStatusV24(
@@ -275,6 +280,22 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
                 null
         );
         return deepCopy(resp, NewNotificationRequestStatusResponseV23.class);
+    }
+
+    @Override
+    public NewNotificationRequestStatusResponseV24 getNotificationRequestStatus(String notificationRequestId) {
+
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NewNotificationRequestStatusResponseV24 resp;
+        resp = senderReadB2BApi.getNotificationRequestStatusV24(
+                operatorId,
+                CxTypeAuthFleet.PA,
+                paId,
+                groups,
+                notificationRequestId,
+                null,
+                null
+        );
+        return deepCopy( resp, NewNotificationRequestStatusResponseV24.class );
     }
 
     @Override
