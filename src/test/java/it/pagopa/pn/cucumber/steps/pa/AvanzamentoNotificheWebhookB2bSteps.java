@@ -1464,8 +1464,8 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 PnPollingParameter.builder()
                         .value("WEBHOOK")
                         .pnPollingWebhook(pnPollingWebhook)
-                        //.deepCount(deepCount)
-                        //.lastEventId(lastEventId)
+                        .deepCount(deepCount)
+                        .lastEventId(lastEventId)
                         .streamId(eventStreamListV26.get(position).getStreamId())
                         .build());
 

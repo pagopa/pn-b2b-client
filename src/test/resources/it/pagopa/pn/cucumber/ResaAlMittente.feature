@@ -165,7 +165,7 @@ Feature: Resa al mittente di una notifica
    #   | physicalAddress_address | @FAIL_DECEDUTO_890 |
    #   | digitalDomicile         | NULL                   |
 
-    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V26"
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V26"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -173,7 +173,7 @@ Feature: Resa al mittente di una notifica
     #And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
     #Then si invoca l'api Webhook versione "V26" per ottenere gli elementi di timeline di tale notifica
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "ACCEPTED" con versione V26
+    Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "RETURNED_TO_SENDER" con versione V26
 
   @returnedToSender @webhook1 @cleanWebhook
   Scenario: [RETURNED-TO-SENDER_9] Invio notifica 890 multi-destinatario aventi stati Inviata e Deceduto e macro stato mostrato DELIVERED
