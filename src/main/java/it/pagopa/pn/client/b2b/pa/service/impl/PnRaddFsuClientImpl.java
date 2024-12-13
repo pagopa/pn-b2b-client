@@ -1,10 +1,10 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
+import it.pagopa.pn.client.b2b.pa.config.PnBaseUrlConfig;
 import it.pagopa.pn.client.b2b.pa.service.IPnRaddFsuClient;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.ApiClient;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.api.*;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.*;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -12,6 +12,8 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 public class PnRaddFsuClientImpl implements IPnRaddFsuClient {
+
+    private final String baseUrl;
     private final ActDocumentInquiryApi actDocumentInquiryApi;
     private final ActTransactionManagementApi actTransactionManagementApi;
     private final AorDocumentInquiryApi aorDocumentInquiryApi;
@@ -20,19 +22,19 @@ public class PnRaddFsuClientImpl implements IPnRaddFsuClient {
     private final NotificationInquiryApi notificationInquiryApi;
 
 
-    public PnRaddFsuClientImpl(RestTemplate restTemplate,
-                               @Value("${pn.radd.base-url}") String basePath) {
-        this.actDocumentInquiryApi = new ActDocumentInquiryApi(newApiClient(restTemplate,basePath));
-        this.actTransactionManagementApi = new ActTransactionManagementApi(newApiClient(restTemplate,basePath));
-        this.aorDocumentInquiryApi = new AorDocumentInquiryApi(newApiClient(restTemplate,basePath));
-        this.aorTransactionManagementApi = new AorTransactionManagementApi(newApiClient(restTemplate,basePath));
-        this.documentUploadApi = new DocumentUploadApi(newApiClient(restTemplate,basePath));
-        this.notificationInquiryApi = new NotificationInquiryApi(newApiClient(restTemplate,basePath));
+    public PnRaddFsuClientImpl(RestTemplate restTemplate, PnBaseUrlConfig pnBaseUrlConfig) {
+        this.baseUrl = pnBaseUrlConfig.getRaddBaseUrl();
+        this.actDocumentInquiryApi = new ActDocumentInquiryApi(newApiClient(restTemplate, baseUrl));
+        this.actTransactionManagementApi = new ActTransactionManagementApi(newApiClient(restTemplate, baseUrl));
+        this.aorDocumentInquiryApi = new AorDocumentInquiryApi(newApiClient(restTemplate, baseUrl));
+        this.aorTransactionManagementApi = new AorTransactionManagementApi(newApiClient(restTemplate, baseUrl));
+        this.documentUploadApi = new DocumentUploadApi(newApiClient(restTemplate, baseUrl));
+        this.notificationInquiryApi = new NotificationInquiryApi(newApiClient(restTemplate, baseUrl));
     }
 
-    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath ) {
-        ApiClient newApiClient = new ApiClient( restTemplate );
-        newApiClient.setBasePath( basePath );
+    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath) {
+        ApiClient newApiClient = new ApiClient(restTemplate);
+        newApiClient.setBasePath(basePath);
         return newApiClient;
     }
 

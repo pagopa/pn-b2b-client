@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import it.pagopa.pn.client.b2b.pa.config.PnBaseUrlConfig;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.ApiClient;
@@ -13,7 +14,7 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api.Se
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.CxTypeAuthFleet;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationProcessCostResponse;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
@@ -38,19 +39,16 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
             .build();
     private final List<String> groups;
 
-    public PnPaB2bInternalClientImpl(
-            RestTemplate restTemplate,
-            @Value("${pn.internal.delivery-base-url}") String deliveryBasePath,
-            @Value("${pn.internal.delivery-push-base-url}") String deliveryPushBasePath,
-            @Value("${pn.internal.pa-id}") String paId
-    ) {
-        this.paId = paId;
+    @Autowired
+    public PnPaB2bInternalClientImpl(RestTemplate restTemplate,
+                                     PnBaseUrlConfig pnBaseUrlConfig) {
+        this.paId = pnBaseUrlConfig.getPaId();
         this.operatorId = "TestMv";
         this.groups = Collections.emptyList();
 
-        this.newNotificationApi = new NewNotificationApi(newApiClient(restTemplate, deliveryBasePath));
-        this.senderReadB2BApi = new SenderReadB2BApi(newApiClient(restTemplate, deliveryBasePath));
-        this.notificationPriceV23Api = new NotificationPriceV23Api(newApiClient(restTemplate, deliveryPushBasePath));
+        this.newNotificationApi = new NewNotificationApi(newApiClient(restTemplate, pnBaseUrlConfig.getInternalDeliveryBaseUrl()));
+        this.senderReadB2BApi = new SenderReadB2BApi(newApiClient(restTemplate, pnBaseUrlConfig.getInternalDeliveryBaseUrl()));
+        this.notificationPriceV23Api = new NotificationPriceV23Api(newApiClient(restTemplate, pnBaseUrlConfig.getInternalDeliveryPushBaseUrl()));
     }
 
     private static it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaldeliveryPushb2bpa.ApiClient

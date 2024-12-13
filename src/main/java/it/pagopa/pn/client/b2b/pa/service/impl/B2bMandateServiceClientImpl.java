@@ -6,10 +6,12 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.ApiClient;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.api.MandateServiceApi;
+import it.pagopa.pn.client.b2b.pa.config.PnBaseUrlConfig;
+import it.pagopa.pn.client.b2b.pa.config.PnBearerTokenConfigs;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebMandateClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.*;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -31,19 +33,17 @@ public class B2bMandateServiceClientImpl implements IPnWebMandateClient {
     private BearerTokenType bearerTokenSetted;
 
 
+    @Autowired
     public B2bMandateServiceClientImpl(RestTemplate restTemplate,
-                                       @Value("${pn.external.dest.base-url}") String b2bBasePath,
-                                       @Value("${pn.webapi.external.base-url}") String webBasePath,
-                                       @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
-                                       @Value("${pn.bearer-token-b2b.pg2}") String cucumberSpaBearerToken,
-                                       @Value("${pn.bearer-token.user2}") String marioGherkinBearerToken) {
+                                       PnBearerTokenConfigs pnBearerTokenConfigs,
+                                       PnBaseUrlConfig pnBaseUrlConfig) {
         this.restTemplate = restTemplate;
-        this.gherkinSrlBearerToken = gherkinSrlBearerToken;
-        this.cucumberSpaBearerToken = cucumberSpaBearerToken;
-        this.b2bBasePath = b2bBasePath;
-        this.webBasePath = webBasePath;
+        this.gherkinSrlBearerToken = pnBearerTokenConfigs.getPg1();
+        this.cucumberSpaBearerToken = pnBearerTokenConfigs.getPg2();
+        this.b2bBasePath = pnBaseUrlConfig.getExternalDestBaseUrl();
+        this.webBasePath = pnBaseUrlConfig.getWebApiExternalBaseUrl();
         this.bearerTokenSetted = BearerTokenType.PG_1;
-        this.marioGherkinBearerToken = marioGherkinBearerToken;
+        this.marioGherkinBearerToken = pnBearerTokenConfigs.getUser2();
         this.mandateServiceApi = new MandateServiceApi(newApiClient(restTemplate, b2bBasePath, gherkinSrlBearerToken));
     }
 
@@ -73,12 +73,12 @@ public class B2bMandateServiceClientImpl implements IPnWebMandateClient {
 
     @Override
     public void updateMandate(String mandateId, UpdateRequestDto updateRequestDto) throws RestClientException {
-        this.mandateServiceApi.updateMandate(mandateId,deepCopy(updateRequestDto,it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.UpdateRequestDto.class));
+        this.mandateServiceApi.updateMandate(mandateId, deepCopy(updateRequestDto, it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.UpdateRequestDto.class));
     }
 
     @Override
     public void updateMandate(String xPagopaPnCxId, CxTypeAuthFleet xPagopaPnCxType, String mandateId, List<String> xPagopaPnCxGroups, String xPagopaPnCxRole, UpdateRequestDto updateRequestDto) throws RestClientException {
-        this.mandateServiceApi.updateMandate(mandateId,deepCopy(updateRequestDto,it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.UpdateRequestDto.class));
+        this.mandateServiceApi.updateMandate(mandateId, deepCopy(updateRequestDto, it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.UpdateRequestDto.class));
     }
 
     @Override
@@ -113,7 +113,7 @@ public class B2bMandateServiceClientImpl implements IPnWebMandateClient {
         it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.SearchMandateRequestDto searchMandateRequestDto = new it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.SearchMandateRequestDto();
         searchMandateRequestDto.setTaxId(taxId);
         searchMandateRequestDto.setGroups(groups);
-        it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.SearchMandateResponseDto responseDto= mandateServiceApi.searchMandatesByDelegate(10, null, searchMandateRequestDto);
+        it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.SearchMandateResponseDto responseDto = mandateServiceApi.searchMandatesByDelegate(10, null, searchMandateRequestDto);
         return (responseDto != null && responseDto.getResultsPage() != null)
                 ? responseDto.getResultsPage().stream().map(x -> deepCopy(x, MandateDto.class)).toList() : null;
     }
@@ -157,13 +157,13 @@ public class B2bMandateServiceClientImpl implements IPnWebMandateClient {
         return bearerTokenSetted;
     }
 
-    private <T> T deepCopy( Object obj, Class<T> toClass) {
+    private <T> T deepCopy(Object obj, Class<T> toClass) {
         ObjectMapper objMapper = JsonMapper.builder()
                 .addModule(new JavaTimeModule())
                 .build();
         try {
-            String json = objMapper.writeValueAsString( obj );
-            return objMapper.readValue( json, toClass );
+            String json = objMapper.writeValueAsString(obj);
+            return objMapper.readValue(json, toClass);
         } catch (JsonProcessingException exc) {
             throw new PnB2bException(exc.getMessage());
         }

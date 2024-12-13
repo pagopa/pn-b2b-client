@@ -6,9 +6,11 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pg.BffNewVirtualKeyResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pg.BffVirtualKeyStatusRequest;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pg.BffVirtualKeysResponse;
+import it.pagopa.pn.client.b2b.pa.config.PnBaseUrlConfig;
+import it.pagopa.pn.client.b2b.pa.config.PnBearerTokenConfigs;
 import it.pagopa.pn.client.b2b.pa.service.IPnLegalPersonVirtualKeyServiceClient;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -30,17 +32,15 @@ public class IPnLegalPersonVirtualKeyServiceClientImpl implements IPnLegalPerson
 
     private final VirtualKeysApi virtualKeysApi;
 
+    @Autowired
     public IPnLegalPersonVirtualKeyServiceClientImpl(RestTemplate restTemplate,
-                     @Value("${pn.webapi.external.base-url}") String basePath,
-                     @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken,
-                     @Value("${pn.bearer-token.pg3}") String aldameriniPGBearerToken,
-                     @Value("${pn.bearer-token.pg4}") String mariaMontessoriPGBearerToken,
-                     @Value("${pn.bearer-token.pg5}") String nildeIottiPGBearerToken) {
-        this.aldameriniPGBearerToken = aldameriniPGBearerToken;
-        this.mariaMontessoriPGBearerToken = mariaMontessoriPGBearerToken;
-        this.nildeIottiPGBearerToken = nildeIottiPGBearerToken;
-        this.cucumberSpaBearerToken = cucumberSpaBearerToken;
-        this.basePath = basePath;
+                                                     PnBearerTokenConfigs pnBearerTokenConfigs,
+                                                     PnBaseUrlConfig pnBaseUrlConfig) {
+        this.aldameriniPGBearerToken = pnBearerTokenConfigs.getPg3();
+        this.mariaMontessoriPGBearerToken = pnBearerTokenConfigs.getPg4();
+        this.nildeIottiPGBearerToken = pnBearerTokenConfigs.getPg5();
+        this.cucumberSpaBearerToken = pnBearerTokenConfigs.getPg2();
+        this.basePath = pnBaseUrlConfig.getWebApiExternalBaseUrl();
         this.restTemplate = restTemplate;
         this.virtualKeysApi = new VirtualKeysApi(newApiClient(aldameriniPGBearerToken));
     }
@@ -48,7 +48,7 @@ public class IPnLegalPersonVirtualKeyServiceClientImpl implements IPnLegalPerson
     private ApiClient newApiClient(String bearerToken) {
         ApiClient newApiClient = new ApiClient(this.restTemplate);
         newApiClient.setBasePath(basePath);
-        newApiClient.addDefaultHeader("Authorization","Bearer " + bearerToken);
+        newApiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
         return newApiClient;
     }
 
@@ -87,7 +87,7 @@ public class IPnLegalPersonVirtualKeyServiceClientImpl implements IPnLegalPerson
             case PG_2 -> {
                 this.virtualKeysApi.setApiClient(newApiClient(cucumberSpaBearerToken));
             }
-            default ->  {
+            default -> {
                 throw new IllegalArgumentException("User not found");
             }
         }

@@ -1,5 +1,8 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
+import it.pagopa.pn.client.b2b.pa.config.PnBaseUrlConfig;
+import it.pagopa.pn.client.b2b.pa.config.PnBearerTokenConfigs;
+import it.pagopa.pn.client.b2b.pa.config.PnExternalApiKeyConfig;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.api.AllApi;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.api.CourtesyApi;
@@ -9,12 +12,13 @@ import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.Consent;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.ConsentAction;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.ConsentType;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
 import java.util.List;
 
 
@@ -35,39 +39,29 @@ public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttribut
     private final String userBearerTokenScaduto;
     private final String gherkinSrlBearerToken;
     private final String cucumberSpaBearerToken;
-
     private final String aldaMeriniBearerToken;
     private final String mariaMontessoriBearerToken;
     private final String userAgent;
     private final String basePath;
 
-
+    @Autowired
     public PnWebUserAttributesExternalClientImpl(RestTemplate restTemplate,
-                                                 @Value("${pn.webapi.external.base-url}") String basePath,
-                                                 @Value("${pn.bearer-token.user1}") String marioCucumberBearerToken,
-                                                 @Value("${pn.bearer-token.user2}") String marioGherkinBearerToken,
-                                                 @Value("${pn.bearer-token.user3}") String leonardoBearerToken,
-                                                 @Value("${pn.bearer-token.user4}") String galileoBearerToken,
-                                                 @Value("${pn.bearer-token.user5}") String dinoBearerToken,
-                                                 @Value("${pn.bearer-token.scaduto}") String userBearerTokenScaduto,
-                                                 @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
-                                                 @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken,
-                                                 @Value("${pn.bearer-token.pg3}") String aldaMeriniBearerToken,
-                                                 @Value("${pn.bearer-token.pg4}") String mariaMontessoriBearerToken,
-                                                 @Value("${pn.webapi.external.user-agent}") String userAgent) {
+                                                 PnBearerTokenConfigs pnBearerTokenConfigs,
+                                                 PnBaseUrlConfig pnBaseUrlConfig,
+                                                 PnExternalApiKeyConfig pnExternalApiKeyConfig) {
         this.restTemplate = restTemplate;
-        this.marioCucumberBearerToken = marioCucumberBearerToken;
-        this.marioGherkinBearerToken = marioGherkinBearerToken;
-        this.leonardoBearerToken = leonardoBearerToken;
-        this.galileoBearerToken = galileoBearerToken;
-        this.dinoBearerToken = dinoBearerToken;
-        this.userBearerTokenScaduto= userBearerTokenScaduto;
-        this.gherkinSrlBearerToken = gherkinSrlBearerToken;
-        this.cucumberSpaBearerToken = cucumberSpaBearerToken;
-        this.aldaMeriniBearerToken = aldaMeriniBearerToken;
-        this.mariaMontessoriBearerToken = mariaMontessoriBearerToken;
-        this.basePath = basePath;
-        this.userAgent = userAgent;
+        this.marioCucumberBearerToken = pnBearerTokenConfigs.getUser1();
+        this.marioGherkinBearerToken = pnBearerTokenConfigs.getUser2();
+        this.leonardoBearerToken = pnBearerTokenConfigs.getUser3();
+        this.galileoBearerToken = pnBearerTokenConfigs.getUser4();
+        this.dinoBearerToken = pnBearerTokenConfigs.getUser5();
+        this.userBearerTokenScaduto = pnBearerTokenConfigs.getScaduto();
+        this.gherkinSrlBearerToken = pnBearerTokenConfigs.getPg1();
+        this.cucumberSpaBearerToken = pnBearerTokenConfigs.getPg2();
+        this.aldaMeriniBearerToken = pnBearerTokenConfigs.getPg3();
+        this.mariaMontessoriBearerToken = pnBearerTokenConfigs.getPg4();
+        this.basePath = pnBaseUrlConfig.getWebApiExternalBaseUrl();
+        this.userAgent = pnExternalApiKeyConfig.getUserAgent();
         this.consentsApi = new ConsentsApi(newConsentsApiClient(restTemplate, basePath, marioCucumberBearerToken, userAgent));
         this.legalApi = new LegalApi(newAddressBookApiClient(restTemplate, basePath, marioCucumberBearerToken, userAgent));
         this.allApi = new AllApi(newAddressBookApiClient(restTemplate, basePath, marioCucumberBearerToken, userAgent));

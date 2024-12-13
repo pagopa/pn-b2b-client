@@ -1,5 +1,8 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
+import it.pagopa.pn.client.b2b.pa.config.PnBaseUrlConfig;
+import it.pagopa.pn.client.b2b.pa.config.PnExternalApiKeyConfig;
+import it.pagopa.pn.client.b2b.pa.config.PnInteropConfig;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.ApiClient;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api.*;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
@@ -8,7 +11,7 @@ import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.api.NotificationProcessCostApi;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationProcessCostResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Scope;
@@ -48,8 +51,8 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     private final String apiKeyMvp1;
     private final String apiKeyMvp2;
     private final String apiKeyGa;
-    private final String apiKeySon;
-    private final String apiKeyRoot;
+    private final String apiKeySON;
+    private final String apiKeyROOT;
     private ApiKeyType apiKeySetted = ApiKeyType.MVP_1;
     private String bearerTokenInterop;
     private final String enableInterop;
@@ -58,24 +61,20 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     private static final String BEARER = "Bearer ";
 
 
+    @Autowired
     public PnPaB2bExternalClientImpl(RestTemplate restTemplate,
                                      InteropTokenSingleton interopTokenSingleton,
-                                     @Value("${pn.external.base-url}") String basePath,
-                                     @Value("${pn.external.api-key}") String apiKeyMvp1,
-                                     @Value("${pn.external.api-key-2}") String apiKeyMvp2,
-                                     @Value("${pn.external.api-key-GA}") String apiKeyGa,
-                                     @Value("${pn.external.api-key-SON}") String apiKeySon,
-                                     @Value("${pn.external.api-key-ROOT}") String apiKeyRoot,
-                                     @Value("${pn.interop.enable}") String enableInterop
-    ) {
+                                     PnBaseUrlConfig pnBaseUrlConfig,
+                                     PnExternalApiKeyConfig pnExternalApiKeyConfig,
+                                     PnInteropConfig pnInteropConfig) {
         this.restTemplate = restTemplate;
-        this.basePath = basePath;
-        this.apiKeyMvp1 = apiKeyMvp1;
-        this.apiKeyMvp2 = apiKeyMvp2;
-        this.apiKeyGa = apiKeyGa;
-        this.apiKeySon = apiKeySon;
-        this.apiKeyRoot = apiKeyRoot;
-        this.enableInterop = enableInterop;
+        this.basePath = pnBaseUrlConfig.getExternalBaseUrl();
+        this.apiKeyMvp1 = pnExternalApiKeyConfig.getApiKeyMvp1();
+        this.apiKeyMvp2 = pnExternalApiKeyConfig.getApiKeyMvp2();
+        this.apiKeyGa = pnExternalApiKeyConfig.getApiKeyGa();
+        this.apiKeySON = pnExternalApiKeyConfig.getApiKeySON();
+        this.apiKeyROOT = pnExternalApiKeyConfig.getApiKeyROOT();
+        this.enableInterop = pnInteropConfig.getEnableInterop();
         if (ENEBLED_INTEROP.equalsIgnoreCase(enableInterop)) {
             this.bearerTokenInterop = interopTokenSingleton.getTokenInterop();
         }
@@ -174,14 +173,14 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
                 break;
             case SON:
                 if (this.apiKeySetted != ApiKeyType.SON) {
-                    setApiKey(apiKeySon);
+                    setApiKey(apiKeySON);
                     this.apiKeySetted = ApiKeyType.SON;
                 }
                 beenSet = true;
                 break;
             case ROOT:
                 if (this.apiKeySetted != ApiKeyType.ROOT) {
-                    setApiKey(apiKeyRoot);
+                    setApiKey(apiKeyROOT);
                     this.apiKeySetted = ApiKeyType.ROOT;
                 }
                 beenSet = true;

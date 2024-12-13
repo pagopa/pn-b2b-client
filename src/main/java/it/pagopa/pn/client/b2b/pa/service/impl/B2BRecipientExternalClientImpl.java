@@ -7,6 +7,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.ApiClient;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.api.RecipientReadB2BApi;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.api.LegalFactsApi;
+import it.pagopa.pn.client.b2b.pa.config.PnBaseUrlConfig;
+import it.pagopa.pn.client.b2b.pa.config.PnBearerTokenConfigs;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.FullReceivedNotificationV24;
@@ -15,6 +17,7 @@ import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.mo
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model_v1.FullReceivedNotification;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model_v1.NotificationAttachmentDownloadMetadataResponse;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -27,6 +30,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import java.time.OffsetDateTime;
+import java.util.Optional;
+import java.util.UUID;
+
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
@@ -36,7 +43,6 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
     private final String leonardoBearerToken;
     private final String gherkinSrlBearerToken;
     private final String cucumberSpaBearerToken;
-
     private final RestTemplate restTemplate;
     private final String webBasePath;
     private final String b2bBasePath;
@@ -44,22 +50,18 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
     private final LegalFactsApi legalFactsApi;
     private BearerTokenType bearerTokenSetted;
 
+    @Autowired
     public B2BRecipientExternalClientImpl(RestTemplate restTemplate,
-                                          @Value("${pn.webapi.external.base-url}") String webBasePath,
-                                          @Value("${pn.external.dest.base-url}") String b2bBasePath,
-                                          @Value("${pn.bearer-token.user1}") String marioCucumberBearerToken,
-                                          @Value("${pn.bearer-token.user2}") String marioGherkinBearerToken,
-                                          @Value("${pn.bearer-token.user3}") String leonardoBearerToken,
-                                          @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
-                                          @Value("${pn.bearer-token-b2b.pg2}") String cucumberSpaBearerToken) {
-        this.marioCucumberBearerToken = marioCucumberBearerToken;
-        this.marioGherkinBearerToken = marioGherkinBearerToken;
-        this.leonardoBearerToken = leonardoBearerToken;
-        this.gherkinSrlBearerToken = gherkinSrlBearerToken;
-        this.cucumberSpaBearerToken = cucumberSpaBearerToken;
+                                          PnBearerTokenConfigs pnBearerTokenConfigs,
+                                          PnBaseUrlConfig pnBaseUrlConfig) {
+        this.marioCucumberBearerToken = pnBearerTokenConfigs.getUser1();
+        this.marioGherkinBearerToken = pnBearerTokenConfigs.getUser2();
+        this.leonardoBearerToken = pnBearerTokenConfigs.getUser3();
+        this.gherkinSrlBearerToken = pnBearerTokenConfigs.getPg1();
+        this.cucumberSpaBearerToken = pnBearerTokenConfigs.getPg2();
         this.restTemplate = restTemplate;
-        this.webBasePath = webBasePath;
-        this.b2bBasePath = b2bBasePath;
+        this.webBasePath = pnBaseUrlConfig.getWebApiExternalBaseUrl();
+        this.b2bBasePath = pnBaseUrlConfig.getExternalDestBaseUrl();
         this.bearerTokenSetted = BearerTokenType.PG_1;
         this.recipientReadB2BApi = new RecipientReadB2BApi(newApiClient(restTemplate, webBasePath, gherkinSrlBearerToken));
         this.legalFactsApi = new LegalFactsApi(newLegalFactApiClient(restTemplate, webBasePath, gherkinSrlBearerToken));

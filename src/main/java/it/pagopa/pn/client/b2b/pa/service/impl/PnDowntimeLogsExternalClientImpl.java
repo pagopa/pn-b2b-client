@@ -1,41 +1,44 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
+import it.pagopa.pn.client.b2b.pa.config.PnBaseUrlConfig;
+import it.pagopa.pn.client.b2b.pa.config.PnExternalApiKeyConfig;
 import it.pagopa.pn.client.b2b.pa.service.IPnDowntimeLogsClient;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.ApiClient;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.api.DowntimeApi;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.api.DowntimeInternalApi;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.api.StatusApi;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.LegalFactDownloadMetadataResponse;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.PnDowntimeHistoryResponse;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.PnFunctionality;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.PnStatusResponse;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.PnStatusUpdateEvent;
-import java.time.OffsetDateTime;
-import java.util.List;
-import org.springframework.beans.factory.annotation.Value;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.OffsetDateTime;
+import java.util.List;
+
 
 @Component
 public class PnDowntimeLogsExternalClientImpl implements IPnDowntimeLogsClient {
+    private final String basePath;
     private final DowntimeApi downtimeApi;
     private final DowntimeInternalApi internalApi;
     private final StatusApi statusApi;
+    private final String userAgent;
 
 
+    @Autowired
     public PnDowntimeLogsExternalClientImpl(RestTemplate restTemplate,
-                                            @Value("${pn.delivery.base-url}") String basePath,
-                                            @Value("${pn.external.bearer-token-pa-1}") String bearerToken,
-                                            @Value("${pn.webapi.external.user-agent}")String userAgent) {
-        this.statusApi = new StatusApi( newApiClient(restTemplate, basePath, userAgent));
+                                            PnBaseUrlConfig pnBaseUrlConfig,
+                                            PnExternalApiKeyConfig pnExternalApiKeyConfig) {
+        this.basePath = pnBaseUrlConfig.getDeliveryBaseUrl();
+        this.userAgent = pnExternalApiKeyConfig.getUserAgent();
+        this.statusApi = new StatusApi(newApiClient(restTemplate, basePath, userAgent));
         this.internalApi = new DowntimeInternalApi(newApiClient(restTemplate, basePath, userAgent));
         this.downtimeApi = new DowntimeApi(newApiClient(restTemplate, basePath, userAgent));
     }
 
-    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String userAgent ) {
-        ApiClient newApiClient = new ApiClient( restTemplate );
+    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String userAgent) {
+        ApiClient newApiClient = new ApiClient(restTemplate);
         newApiClient.setBasePath(basePath);
         newApiClient.addDefaultHeader("user-agent", userAgent);
         return newApiClient;
