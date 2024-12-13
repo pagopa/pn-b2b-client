@@ -1,17 +1,61 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
+import static java.time.OffsetDateTime.now;
+import static java.time.temporal.ChronoUnit.MINUTES;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.within;
+import static org.awaitility.Awaitility.await;
+
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.AttachmentDetails;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.DelegateInfo;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV25;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactCategory;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactDownloadMetadataResponse;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactsIdV20;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NewNotificationRequestV24;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationFeePolicy;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationPaymentItem;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationPriceResponseV23;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryElement;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PaymentEventPagoPa;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PaymentEventsRequestPagoPa;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.RequestStatus;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.ServiceLevel;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementDetailsV23;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementDetailsV25;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV25;
 import it.pagopa.pn.client.b2b.pa.mapper.impl.PnTimelineAndLegalFactV23;
 import it.pagopa.pn.client.b2b.pa.mapper.model.PnTimelineLegalFactV23;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
-import it.pagopa.pn.client.b2b.pa.polling.dto.*;
-import it.pagopa.pn.client.b2b.pa.polling.impl.*;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingPredicate;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV1;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV20;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV21;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV23;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV25;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceStatusRapidV1;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceStatusRapidV25;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineExtraRapidV25;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineRapidV1;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineRapidV20;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineRapidV21;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineRapidV25;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineSlowV1;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineSlowV20;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineSlowV21;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineSlowV23;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineSlowV25;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnPrivateDeliveryPushExternalClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
@@ -22,7 +66,28 @@ import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.ResponsePaperNotificationFailedDto;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.utils.DataTest;
+import java.lang.reflect.InvocationTargetException;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -32,23 +97,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.HttpStatusCodeException;
-
-import java.time.Duration;
-import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Predicate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static java.time.OffsetDateTime.now;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static org.awaitility.Awaitility.await;
-
 
 @Slf4j
 public class AvanzamentoNotificheB2bSteps {
@@ -70,6 +118,8 @@ public class AvanzamentoNotificheB2bSteps {
     private String pnEcConsAllowedFutureOffsetDuration;
     @Value("${pn.consolidatore.requestId}")
     private String requestIdConsolidator;
+
+    private TimelineElementV25 lastTimelineElement;
 
     @Autowired
     public AvanzamentoNotificheB2bSteps(SharedSteps sharedSteps,
@@ -251,14 +301,14 @@ public class AvanzamentoNotificheB2bSteps {
             case "SEND_ANALOG_FEEDBACK":
                 if (detailsFromTest != null) {
                     if (Objects.nonNull(detailsFromTest.getDeliveryDetailCode()))
-                        Assertions.assertEquals(detailsFromNotification.getDeliveryDetailCode(), detailsFromTest.getDeliveryDetailCode());
+                        Assertions.assertEquals(detailsFromTest.getDeliveryDetailCode(), detailsFromNotification.getDeliveryDetailCode());
                     if (Objects.nonNull(detailsFromTest.getPhysicalAddress()))
-                        Assertions.assertEquals(detailsFromNotification.getPhysicalAddress(), detailsFromTest.getPhysicalAddress());
+                        Assertions.assertEquals(detailsFromTest.getPhysicalAddress(), detailsFromNotification.getPhysicalAddress());
                     if (Objects.nonNull(detailsFromTest.getResponseStatus()))
-                    Assertions.assertEquals(detailsFromNotification.getResponseStatus().getValue(), detailsFromTest.getResponseStatus().getValue());
+                        Assertions.assertEquals(detailsFromTest.getResponseStatus().getValue(), detailsFromNotification.getResponseStatus().getValue());
                     if (Objects.nonNull(detailsFromTest.getDeliveryFailureCause())) {
                         List<String> failureCauses = Arrays.asList(detailsFromTest.getDeliveryFailureCause().split(" "));
-                        Assertions.assertTrue(failureCauses.contains(elementFromNotification.getDetails().getDeliveryFailureCause()));
+                        Assertions.assertTrue(failureCauses.contains(elementFromNotification.getDetails().getDeliveryFailureCause()), "DeliveryFailureCause not match. IUN: " + sharedSteps.getSentNotification().getIun());
                     }
                 }
                 break;
@@ -281,7 +331,13 @@ public class AvanzamentoNotificheB2bSteps {
 
                         for (int i = 0; i < detailsFromNotification.getAttachments().size(); i++) {
                             List<String> documentTypes = Arrays.asList(detailsFromTest.getAttachments().get(i).getDocumentType().split(" "));
-                            Assertions.assertTrue(documentTypes.contains(detailsFromNotification.getAttachments().get(i).getDocumentType()));
+                            Assertions.assertTrue(
+                                documentTypes.contains(detailsFromNotification.getAttachments().get(i).getDocumentType()),
+                                "DocumentType not match. Actual document types: %s, Expected document types: %s. IUN: %s".formatted(
+                                    detailsFromNotification.getAttachments().stream().map(AttachmentDetails::getDocumentType).toList(),
+                                    detailsFromTest.getAttachments().stream().map(AttachmentDetails::getDocumentType).toList(),
+                                    sharedSteps.getSentNotification().getIun()
+                                ));
                         }
                     }
 
@@ -294,7 +350,7 @@ public class AvanzamentoNotificheB2bSteps {
             case "ANALOG_SUCCESS_WORKFLOW":
             case "PREPARE_SIMPLE_REGISTERED_LETTER":
                 if (detailsFromTest != null && detailsFromTest.getPhysicalAddress() != null) {
-                    Assertions.assertEquals(detailsFromNotification.getPhysicalAddress(), detailsFromTest.getPhysicalAddress());
+                    Assertions.assertEquals(detailsFromTest.getPhysicalAddress(), detailsFromNotification.getPhysicalAddress());
                 }
                 break;
             case "SEND_SIMPLE_REGISTERED_LETTER":
@@ -440,12 +496,13 @@ public class AvanzamentoNotificheB2bSteps {
             List<TimelineElementV25> timelineElementList = sharedSteps.getSentNotification().getTimeline();
 
             log.info("NOTIFICATION_TIMELINE: " + timelineElementList);
-            Assertions.assertNotNull(timelineElementList);
-            Assertions.assertNotEquals(0, timelineElementList.size());
+            String iun = sharedSteps.getSentNotification().getIun();
+            Assertions.assertNotNull(timelineElementList, "timelineElementList is null. IUN: " + iun);
+            Assertions.assertNotEquals(0, timelineElementList.size(), "timelineElementList is empty. IUN: " + iun);
             if (existCheck) {
-                Assertions.assertNotNull(timelineElement);
+                Assertions.assertNotNull(timelineElement, "timelineElement is null. IUN: " + iun);
             } else {
-                Assertions.assertNull(timelineElement);
+                Assertions.assertNull(timelineElement, "timelineElement is not null. IUN: " + iun);
             }
         } else {
             //GESTIONE LOAD TIMELINE E RECUPERO NOTIFICA CON CLIENT DI DELIVERY PUSH
@@ -842,8 +899,8 @@ public class AvanzamentoNotificheB2bSteps {
 
         log.info("NOTIFICATION_TIMELINE: " + pnPollingResponseV25.getNotification().getTimeline());
         try {
-            Assertions.assertTrue(pnPollingResponseV25.getResult());
-            Assertions.assertNotNull(pnPollingResponseV25.getTimelineElement());
+            Assertions.assertTrue(pnPollingResponseV25.getResult(), "Polling failed. IUN: " + sharedSteps.getSentNotification().getIun());
+            Assertions.assertNotNull(pnPollingResponseV25.getTimelineElement(), "The timeline element was not found. IUN: " + sharedSteps.getSentNotification().getIun());
             sharedSteps.setSentNotification(pnPollingResponseV25.getNotification());
             log.info("TIMELINE_ELEMENT: " + pnPollingResponseV25.getTimelineElement());
         } catch (AssertionFailedError assertionFailedError) {
@@ -874,8 +931,9 @@ public class AvanzamentoNotificheB2bSteps {
                         .build());
         log.info("NOTIFICATION_TIMELINE: " + pnPollingResponseV25.getNotification().getTimeline());
         try {
-            Assertions.assertTrue(pnPollingResponseV25.getResult());
-            Assertions.assertNotNull(pnPollingResponseV25.getTimelineElement());
+            String iun = sharedSteps.getSentNotification().getIun();
+            Assertions.assertTrue(pnPollingResponseV25.getResult(), "Polling failed. IUN: " + iun);
+            Assertions.assertNotNull(pnPollingResponseV25.getTimelineElement(), "Timeline element not found. IUN: " + iun);
             sharedSteps.setSentNotification(pnPollingResponseV25.getNotification());
             log.info("TIMELINE_ELEMENT: " + pnPollingResponseV25.getTimelineElement());
         } catch (AssertionFailedError assertionFailedError) {
@@ -2515,18 +2573,113 @@ public class AvanzamentoNotificheB2bSteps {
             loadTimeline(timelineEventCategory, true, dataFromTest);
         }
         try {
+            List<TimelineElementV25> timelineElements = sharedSteps.getTimelineElementsByEventId(timelineEventCategory, dataFromTest);
+            assertThat(timelineElements)
+                .withFailMessage("Not found a time element '%s'. IUN: %s".formatted(timelineEventCategory, sharedSteps.getSentNotification().getIun()))
+                .isNotEmpty();
 
-            TimelineElementV25 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
-
-            log.info("TIMELINE_ELEMENT: " + timelineElement);
-            Assertions.assertNotNull(timelineElement);
             if (dataFromTest != null && dataFromTest.getTimelineElement() != null) {
-                checkTimelineElementEquality(timelineEventCategory, timelineElement, dataFromTest);
+                boolean atLeastOneSuccessful = false;
+                AssertionFailedError assertionFailedError = null;
+                for(TimelineElementV25 timelineElement : timelineElements) {
+                    try {
+
+                        this.lastTimelineElement = timelineElement;
+                        log.info("TIMELINE_ELEMENT: " + timelineElement);
+                        checkTimelineElementEquality(timelineEventCategory, timelineElement, dataFromTest);
+
+                        // se si arriva a questo punto, allora l'ultimo check ha avuto successo e non è necessario continuare
+                        atLeastOneSuccessful = true;
+                        break;
+                    } catch (AssertionFailedError e) {
+                        // se si arriva a questo punto allora l'ultimo check ha fallito e ci si prepara al prossimo
+                        assertionFailedError = e;
+                    }
+                }
+
+                // se nessun confronto ha avuto successo allora di certo sarà stata lanciata un'eccezione
+                if(!atLeastOneSuccessful) {
+                    // si rilancia l'ultima eccezione catturata
+                    throw assertionFailedError;
+                }
             }
+
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
     }
+
+    /** Checks that a certain timeline element has a field with a text value compatible with the specified regular expression.
+     * @param timelineEventCategory the category of the timeline element, e.g. "SEND_ANALOG_PROGRESS"
+     * @param eventId the event id of the timeline element, e.g. "CON020"
+     * @param fieldPath the field path of the timeline element object. Each nested field is separated
+     *                  by an underscore, e.g. "details_deliveryDetailCode".
+     *                  If a field is a sequence of element - like a List - the index of the element must be
+     *                  specified with square brackets, e.g. "details_attachments[0]_url"
+     * @param regex the regular expression that the field value must match
+     */
+    @And("viene verificato che l'elemento di timeline {string} con evento {string} abbia un valore per il campo {string} compatibile con l'espressione regolare {string}")
+    public void vieneVerificatoCheElementoTimelineAbbiaUnValoreDiCampoCompatibileConRegex(String timelineEventCategory, String eventId, String fieldPath, String regex) {
+        DataTest dataTest = new DataTest();
+        TimelineElementV23 testTimelineElement = new TimelineElementV23();
+        TimelineElementDetailsV23 timelineElementDetails = new TimelineElementDetailsV23();
+
+        timelineElementDetails.deliveryDetailCode(eventId);
+        testTimelineElement.details(timelineElementDetails);
+        dataTest.setTimelineElement(testTimelineElement);
+
+        TimelineElementV25 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataTest);
+        try {
+            Assertions.assertNotNull(timelineElement, "Not found the time element (%s,%s)".formatted(timelineEventCategory, eventId));
+
+            String fieldValue = getProperty(fieldPath, timelineElement);
+            Assertions.assertNotNull(fieldValue, "Field %s has NULL value in timeline element".formatted(fieldPath));
+
+            Assertions.assertTrue(fieldValue.matches(regex), "Field %s with value %s does not match regex %s".formatted(fieldPath, fieldValue, regex));
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            sharedSteps.throwAssertFailerWithIUN(new AssertionFailedError("Error accessing field %s".formatted(fieldPath)));
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
+    /** Very similar to {@link #vieneVerificatoCheElementoTimelineAbbiaUnValoreDiCampoCompatibileConRegex(String, String, String, String)},
+     * but it uses the last timeline element loaded.
+     * @param fieldPath the field path of the timeline element object. Each nested field is separated
+     *                  by an underscore, e.g. "details_deliveryDetailCode".
+     *                  If a field is a sequence of element - like a List - the index of the element must be
+     *                  specified with square brackets, e.g. "details_attachments[0]_url"
+     * @param regex the regular expression that the field value must match
+     */
+    @And("abbia anche un valore per il campo {string} compatibile con l'espressione regolare {string}")
+    public void vieneVerificatoCheElementoTimelineAbbiaUnValoreDiCampoCompatibileConRegex(String fieldPath, String regex) {
+        try {
+            Assertions.assertNotNull(lastTimelineElement,
+                "There is no time element to analyze. Remember that this proposition is made "
+                    + "to be called after another that get a timeline event, such as "
+                    + "'it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheB2bSteps.vieneVerificatoElementoTimeline'");
+
+            String fieldValue = getProperty(fieldPath, lastTimelineElement);
+            Assertions.assertNotNull(fieldValue,
+                "Field %s has NULL value in timeline element".formatted(fieldPath));
+
+            Assertions.assertTrue(fieldValue.matches(regex),
+                "Field %s with value %s does not match regex %s".formatted(fieldPath, fieldValue,
+                    regex));
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            sharedSteps.throwAssertFailerWithIUN(
+                new AssertionFailedError("Error accessing field %s".formatted(fieldPath)));
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
+    private String getProperty(String fieldPath, TimelineElementV25 lastTimelineElement)
+        throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        String sanitizedFieldPath = fieldPath.replace("_", ".");
+        return BeanUtils.getProperty(lastTimelineElement, sanitizedFieldPath);
+    }
+
 
     @Then("viene verificato che la data della timeline REFINEMENT sia ricezione della raccomandata + 10gg")
     public void verificationDateScheduleRefinementWithRefinementPlus10Days() {
@@ -2605,7 +2758,10 @@ public class AvanzamentoNotificheB2bSteps {
 
         System.out.println(timelineElement.getDetails().getSchedulingDate().format(fmt1));
         System.out.println(schedulingDate.format(fmt1));
-        Assertions.assertEquals(timelineElement.getDetails().getSchedulingDate().format(fmt1), schedulingDate.format(fmt1));
+
+        OffsetDateTime expectedDate = timelineElement.getDetails().getSchedulingDate();
+        assertThat(expectedDate).isCloseTo(schedulingDate, within(5, MINUTES));
+
         //Assertions.assertEquals(timelineElement.getDetails().getSchedulingDate(), schedulingDate);
     }
 

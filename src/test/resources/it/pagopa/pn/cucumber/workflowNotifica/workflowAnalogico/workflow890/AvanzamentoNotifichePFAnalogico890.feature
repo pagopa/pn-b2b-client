@@ -16,7 +16,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
 
-  @workflowAnalogico
+  @workflowAnalogico @con020 @con020success
   Scenario: [B2B_TIMELINE_ANALOG_890_2] Attesa elemento di timeline SEND_ANALOG_FEEDBACK_fail_890_scenario negativo
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -26,6 +26,12 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
       | physicalAddress_address | Via@fail_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con responseStatus "OK"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_deliveryDetailCode | CON020 |
+    And abbia anche un valore per il campo "details_attachments[0]_url" compatibile con l'espressione regolare ".+PN_PRINTED.+\.pdf"
 
 
   @workflowAnalogico
@@ -195,7 +201,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
 
 
-  @workflowAnalogico
+  @workflowAnalogico @con020 @con020success
   Scenario: [B2B_TIMELINE_ANALOG_890_12] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK con deliveryDetailCode RECRN015 890 momentaneamente non rendicontabile positivo PN-6079
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -205,14 +211,33 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
       | digitalDomicile | NULL |
       | physicalAddress_address | via@OK-CausaForzaMaggiore_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON080"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG015"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG001B" e verifica tipo DOC "23L"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG001C"
-    #"@sequence.5s-CON080.5s-RECAG015.5s-RECAG001A.5s-RECAG001B[DOC:23L].5s-RECAG001C"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG001C"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_deliveryDetailCode | CON080 |
+      | details_sentAttemptMade | 0 |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_deliveryDetailCode | CON020 |
+      | details_sentAttemptMade | 0 |
+    And abbia anche un valore per il campo "details_attachments[0]_url" compatibile con l'espressione regolare ".+PN_PRINTED.+\.pdf"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_deliveryDetailCode | RECAG015 |
+      | details_sentAttemptMade | 0 |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_deliveryDetailCode | RECAG001B |
+      | details_sentAttemptMade | 0 |
+      | details_attachments | [{"documentType": "23L"}] |
+    #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG015[FAILCAUSE:C01].5s-RECAG001A.5s-RECAG001B[DOC:23L].5s-RECAG001C"
 
 
-  @workflowAnalogico
+  @workflowAnalogico @con020 @con020success
   Scenario: [B2B_TIMELINE_ANALOG_890_13] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK con deliveryDetailCode RECRN013 890 momentaneamente non rendicontabile positivo PN-6079
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -222,14 +247,33 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
       | digitalDomicile | NULL |
       | physicalAddress_address | via@OK-NonRendicontabile_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON080"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG013"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG001B" e verifica tipo DOC "23L"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG001C"
-    #"@sequence.5s-CON080.5s-RECAG013@retry.5s-CON080.5s-RECAG001A.5s-RECAG001B[DOC:23L].5s-RECAG001C"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG001C"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_deliveryDetailCode | CON080 |
+      | details_sentAttemptMade | 0 |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_deliveryDetailCode | CON020 |
+      | details_sentAttemptMade | 0 |
+    And abbia anche un valore per il campo "details_attachments[0]_url" compatibile con l'espressione regolare ".+PN_PRINTED.+\.pdf"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_deliveryDetailCode | RECAG013 |
+      | details_sentAttemptMade | 0 |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_deliveryDetailCode | RECAG001B |
+      | details_sentAttemptMade | 0 |
+      | details_attachments | [{"documentType": "23L"}] |
+    #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG013@retry.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG001A.5s-RECAG001B[DOC:23L].5s-RECAG001C"
 
 
-  @workflowAnalogico
+  @workflowAnalogico @con020 @con020success
   Scenario: [B2B_TIMELINE_ANALOG_890_14] Attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_FAIL-DiscoveryIrreperibile_890_scenario positivo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -238,16 +282,64 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@FAIL-DiscoveryIrreperibile_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON080" tentativo "ATTEMPT_0"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG003E" e verifica tipo DOC "Plico" tentativo "ATTEMPT_0"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG003E" e verifica tipo DOC "Indagine" tentativo "ATTEMPT_0"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG003F" e deliveryFailureCause "M03" tentativo "ATTEMPT_0"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON080" tentativo "ATTEMPT_1"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG003E" e verifica tipo DOC "Plico" tentativo "ATTEMPT_1"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG003F" e deliveryFailureCause "M03" tentativo "ATTEMPT_1"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    #"@sequence.5s-CON080.5s-RECAG003D[DISCOVERY;FAILCAUSE:M03].5s-RECAG003E[DOC:Plico;DOC:Indagine].5s-RECAG003F@discovered.5s-CON080.5s-RECAG003D[FAILCAUSE:M03].5s-RECAG003E[DOC:Plico].5s-RECAG003F"
-
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_deliveryDetailCode | CON080 |
+      | details_sentAttemptMade | 0 |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_deliveryDetailCode | CON020 |
+      | details_sentAttemptMade | 0 |
+    And abbia anche un valore per il campo "details_attachments[0]_url" compatibile con l'espressione regolare ".+PN_PRINTED.+\.pdf"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_deliveryDetailCode | RECAG003E |
+      | details_sentAttemptMade | 0 |
+      | details_attachments | [{"documentType": "Plico"}] |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_deliveryDetailCode | RECAG003E |
+      | details_sentAttemptMade | 0 |
+      | details_attachments | [{"documentType": "Indagine"}] |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_deliveryDetailCode | RECAG003F |
+      | details_sentAttemptMade | 0 |
+      | details_deliveryFailureCause | M03 |
+      | details_physicalAddress | {"address": "VIA@FAIL-DISCOVERYIRREPERIBILE_890", "municipality": "COSENZA", "municipalityDetails": "", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
+      | details_responseStatus | KO |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_deliveryDetailCode | CON080 |
+      | details_sentAttemptMade | 1 |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_deliveryDetailCode | CON020 |
+      | details_sentAttemptMade | 1 |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_deliveryDetailCode | RECAG003E |
+      | details_sentAttemptMade | 1 |
+      | details_attachments | [{"documentType": "Plico"}] |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_deliveryDetailCode | RECAG003F |
+      | details_sentAttemptMade | 1 |
+      | details_deliveryFailureCause | M03 |
+      | details_physicalAddress | {"address": "via@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG003D[FAILCAUSE:M03].5s-RECAG003E[DOC:Plico].5s-RECAG003F", "municipality": "Milano", "municipalityDetails": null, "at": null, "addressDetails": null, "province": "MI", "zip": "20121", "foreignState": "Italia"} |
+      | details_responseStatus | KO |
+    # TODO 21/11/2024 questo è il physicalAddress restituito dalla pittaforma; verificare che sia effettivamente il risultato atteso
+    #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG003D[DISCOVERY;FAILCAUSE:M03].5s-RECAG003E[DOC:Plico;DOC:Indagine].5s-RECAG003F@discovered.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG003D[FAILCAUSE:M03].5s-RECAG003E[DOC:Plico].5s-RECAG003F"
 
   @workflowAnalogico
   Scenario: [B2B_TIMELINE_ANALOG_890_15] Attesa elemento di timeline REFINEMENT con physicalAddress OK-WO-011B
@@ -262,7 +354,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
 
-  @workflowAnalogico
+  @workflowAnalogico @con020 @con020success
   Scenario: [B2B_TIMELINE_ANALOG_890_16] Attesa elemento di timeline REFINEMENT con physicalAddress OK-REC008_890 - PN-9929
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -271,13 +363,32 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
       | digitalDomicile         | NULL              |
       | physicalAddress_address | Via@OK-REC008_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG011A"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG008B" e verifica tipo DOC "23L"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG008C"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_deliveryDetailCode | CON020 |
+      | details_sentAttemptMade | 0 |
+    And abbia anche un valore per il campo "details_attachments[0]_url" compatibile con l'espressione regolare ".+PN_PRINTED.+\.pdf"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_deliveryDetailCode | RECAG011A |
+      | details_sentAttemptMade | 0 |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_deliveryDetailCode | RECAG008B |
+      | details_sentAttemptMade | 0 |
+      | details_attachments | [{"documentType": "23L"}] |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_deliveryDetailCode | RECAG008C |
+      | details_sentAttemptMade | 0 |
+    # "@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.5s-RECAG008A.5s-RECAG008B[DOC:ARCAD;DOC:23L].5s-RECAG012.5s-RECAG008C"
 
-
-  @workflowAnalogico @uatEnvCondition
+  @workflowAnalogico @uatEnvCondition @con020 @con020success
   Scenario: [B2B_TIMELINE_ANALOG_890_17]  PA mittente: invio notifica analogica FAIL-DiscoveryIrreperibileBadCAP_890 - PN-10146
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -287,9 +398,41 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
       | digitalDomicile         | NULL                                     |
       | physicalAddress_address | Via@FAIL-DiscoveryIrreperibileBadCAP_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG003E" e verifica tipo DOC "Indagine" tentativo "ATTEMPT_0"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG003E" e verifica tipo DOC "Plico" tentativo "ATTEMPT_0"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG003F" e deliveryFailureCause "M03" tentativo "ATTEMPT_0"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG001B" e verifica tipo DOC "23L" tentativo "ATTEMPT_1"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG001C" tentativo "ATTEMPT_1"
-
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_deliveryDetailCode | CON080 |
+      | details_sentAttemptMade | 0 |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_deliveryDetailCode | CON020 |
+      | details_sentAttemptMade | 0 |
+    And abbia anche un valore per il campo "details_attachments[0]_url" compatibile con l'espressione regolare ".+PN_PRINTED.+\.pdf"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_deliveryDetailCode | RECAG003E |
+      | details_sentAttemptMade | 0 |
+      | details_attachments | [{"documentType": "Indagine"}] |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_deliveryDetailCode | RECAG003E |
+      | details_sentAttemptMade | 0 |
+      | details_attachments | [{"documentType": "Plico"}] |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_deliveryDetailCode | RECAG003F |
+      | details_sentAttemptMade | 0 |
+      | details_deliveryFailureCause | M03 |
+      | details_physicalAddress | {"address": "VIA@FAIL-DISCOVERYIRREPERIBILEBADCAP_890", "municipality": "COSENZA", "municipalityDetails": "", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
+      | details_responseStatus | KO |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_deliveryDetailCode | RECAG001B |
+      | details_sentAttemptMade | 1 |
+      | details_attachments | [{"documentType": "23L"}] |

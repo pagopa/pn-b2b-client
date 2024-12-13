@@ -2117,8 +2117,37 @@ public class SharedSteps {
         };
     }
 
-    public TimelineElementV25 getTimelineElementByEventId(String timelineEventCategory, DataTest dataFromTest) {
+    /** Get all timeline elements that match the given event category and data from test
+     * @param timelineEventCategory the category of the timeline event
+     * @param dataFromTest the data filters
+     * @return a list of timeline elements that match the given event category and data from test */
+    public List<TimelineElementV25> getTimelineElementsByEventId(String timelineEventCategory, DataTest dataFromTest) {
         List<TimelineElementV25> timelineElementList = notificationResponseComplete.getTimeline();
+        String iun = getIun(timelineEventCategory);
+        if (dataFromTest != null && dataFromTest.getTimelineElement() != null) {
+            // get timeline event id
+            String timelineEventId = getTimelineEventId(timelineEventCategory, iun, dataFromTest);
+            if (timelineEventCategory.equals(TimelineElementCategoryV23.SEND_ANALOG_PROGRESS.getValue()) || timelineEventCategory.equals(TimelineElementCategoryV23.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS.getValue())) {
+                TimelineElementV23 timelineElementFromTest = dataFromTest.getTimelineElement();
+                TimelineElementDetailsV23 timelineElementDetails = timelineElementFromTest.getDetails();
+                return timelineElementList.stream()
+                    .filter(
+                        elem -> Objects.requireNonNull(elem.getElementId()).startsWith(timelineEventId)
+                            && Objects.equals(Objects.requireNonNull(elem.getDetails()).getDeliveryDetailCode(), Objects.requireNonNull(timelineElementDetails).getDeliveryDetailCode()))
+                    .toList();
+            }
+            return timelineElementList.stream().filter(elem -> Objects.requireNonNull(elem.getElementId()).equals(timelineEventId)).toList();
+        }
+        return timelineElementList.stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).getValue().equals(timelineEventCategory)).toList();
+    }
+
+    public TimelineElementV25 getTimelineElementByEventId(String timelineEventCategory, DataTest dataFromTest) {
+        return getTimelineElementsByEventId(timelineEventCategory, dataFromTest).stream()
+            .findAny()
+            .orElse(null);
+    }
+
+    private String getIun(String timelineEventCategory) {
         String iun;
         if (timelineEventCategory.equals(TimelineElementCategoryV23.REQUEST_REFUSED.getValue())) {
             String requestId = newNotificationResponse.getNotificationRequestId();
@@ -2128,17 +2157,7 @@ public class SharedSteps {
             // proceed with default flux
             iun = notificationResponseComplete.getIun();
         }
-        if (dataFromTest != null && dataFromTest.getTimelineElement() != null) {
-            // get timeline event id
-            String timelineEventId = getTimelineEventId(timelineEventCategory, iun, dataFromTest);
-            if (timelineEventCategory.equals(TimelineElementCategoryV23.SEND_ANALOG_PROGRESS.getValue()) || timelineEventCategory.equals(TimelineElementCategoryV23.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS.getValue())) {
-                TimelineElementV23 timelineElementFromTest = dataFromTest.getTimelineElement();
-                TimelineElementDetailsV23 timelineElementDetails = timelineElementFromTest.getDetails();
-                return timelineElementList.stream().filter(elem -> Objects.requireNonNull(elem.getElementId()).startsWith(timelineEventId) && Objects.equals(Objects.requireNonNull(elem.getDetails()).getDeliveryDetailCode(), Objects.requireNonNull(timelineElementDetails).getDeliveryDetailCode())).findAny().orElse(null);
-            }
-            return timelineElementList.stream().filter(elem -> Objects.requireNonNull(elem.getElementId()).equals(timelineEventId)).findAny().orElse(null);
-        }
-        return timelineElementList.stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).getValue().equals(timelineEventCategory)).findAny().orElse(null);
+        return iun;
     }
 
     public String getSchedulingDelta() {
