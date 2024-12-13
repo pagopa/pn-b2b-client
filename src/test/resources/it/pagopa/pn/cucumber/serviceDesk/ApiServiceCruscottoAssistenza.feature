@@ -7,167 +7,55 @@ Feature: Api Service Cruscotto Assitenza
     Then Il servizio risponde con esito positivo con la lista delle PA
 
   #CE02.2 Come operatore devo accedere all’elenco di tutti i messaggi di cortesia inviati...
+  #API-SERVICE-CA_CE02.2_3 API-SERVICE-CA_CE02.2_6 API-SERVICE-CA_CE02.2_4 API-SERVICE-CA_CE02.2_7, API-SERVICE-CA_CE02.2_10, API-SERVICE-CA_CE02.2_11, API-SERVICE-CA_CE02.2_13, API-SERVICE-CA_CE02.2_13
+  #API-SERVICE-CA_CE02.2_15 API-SERVICE-CA_CE02.2_16
   @cruscottoAssistenza
-  Scenario Outline: [API-SERVICE-CA_CE02.2_2] Invocazione del servizio con taxId vuoto
+  Scenario Outline: [API-SERVICE-CA_CE02.2_2] Invocazione del servizio con taxId vuoto - non formalmente corretto - ma senza endDate - senza startDate - con recipientType vuoto -senza recipientType - recipientType valorizzato correttamente ma senza taxId - searchPageSize = 0 - searchPageSize = 51 - con endDate < startDate - searchNextPagesKey = 51
     Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
-    Then il servizio risponde con errore "400"
-
+    Then il servizio risponde con errore "<ERROR>"
     Examples:
-      | TAXIID | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | VUOTO  | PF             | NULL             | NULL                 | 2023-01-01 | 2023-12-01 |
-    #errors":[{"code":"PN_GENERIC_INVALIDPARAMETER","element":"taxId","detail":"size must be between 11 and 32"}]
-
-  @cruscottoAssistenza
-  Scenario Outline: [API-SERVICE-CA_CE02.2_3] Invocazione del servizio con taxId non formalmente corretto
-    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
-    Then il servizio risponde con errore "400"
-
-    Examples:
-      | TAXIID | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | ERRATO | PF             | NULL             | NULL                 | 2023-01-01 | 2023-12-01 |
-    #errors":[{"code":"PN_GENERIC_INVALIDPARAMETER","element":"taxId","detail":"size must be between 11 and 32"}]
-
-  @cruscottoAssistenza
-  Scenario Outline: [API-SERVICE-CA_CE02.2_4] Invocazione del servizio con recipientType vuoto
-    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
-    Then il servizio risponde con errore "400"
-
-    Examples:
-      | TAXIID        | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | Mario Gherkin | NULL           | NULL             | NULL                 | 2023-01-01 | 2023-12-01 |
+      | TAXIID        | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   | ERROR |
+      | VUOTO         | PF             | NULL             | NULL                 | 2023-01-01 | 2023-12-01 | 400   |
+      | ERRATO        | PF             | NULL             | NULL                 | 2023-01-01 | 2023-12-01 | 400   |
+      | Mario Gherkin | NULL           | NULL             | NULL                 | 2023-01-01 | 2023-12-01 | 400   |
+      | Mario Gherkin | NULL           | NULL             | NULL                 | 2023-01-01 | 2023-12-01 | 400   |
+      | NULL          | PF             | NULL             | NULL                 | 2023-01-01 | 2023-12-01 | 400   |
+      | Mario Gherkin | PF             | 0                | NULL                 | 2023-10-01 | 2023-12-01 | 400   |
+      | Mario Gherkin | PF             | 51               | NULL                 | 2023-01-01 | 2023-12-01 | 400   |
+      | Mario Gherkin | PF             | 50               | 51                   | 2023-01-01 | 2023-12-01 | 500   |
+      | Mario Gherkin | PF             | 50               | 51                   | 2023-01-01 | 2023-12-01 | 500   |
+      | Mario Gherkin | PF             | 50               | NULL                 | NULL       | 2023-12-01 | 400   |
+      | Mario Gherkin | PF             | 50               | NULL                 | 2023-01-01 | NULL       | 400   |
+    #errors":[{"code":"PN_GENERIC_INVALIDPARAMETER","element":"taxId","detail":"size must be between 11 and 32"}]|
     #errors":[{"code":"PN_GENERIC_INVALIDPARAMETER","element":"recipientType","detail":"must not be null"}]
-
-  @cruscottoAssistenza
-  Scenario Outline: [API-SERVICE-CA_CE02.2_6] Invocazione del servizio con taxId valorizzato correttamente ma senza recipientType
-    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
-    Then il servizio risponde con errore "400"
-
-    Examples:
-      | TAXIID        | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | Mario Gherkin | NULL           | NULL             | NULL                 | 2023-01-01 | 2023-12-01 |
     #errors":[{"code":"PN_GENERIC_INVALIDPARAMETER","element":"recipientType","detail":"must not be null"}]
-
-  @cruscottoAssistenza
-  Scenario Outline: [API-SERVICE-CA_CE02.2_7] Invocazione del servizio con recipientType valorizzato correttamente ma senza taxId
-    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
-    Then il servizio risponde con errore "400"
-
-    Examples:
-      | TAXIID | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | NULL   | PF             | NULL             | NULL                 | 2023-01-01 | 2023-12-01 |
     #errors":[{"code":"PN_GENERIC_INVALIDPARAMETER","element":"taxId","detail":"must not be null"}]
+    #errors":[{"code":"PN_GENERIC_INVALIDPARAMETER_MIN","element":"_searchNotificationsFromTaxId.size","detail":"must be greater than or equal to 1"}]}
+    #errors":[{"code":"PN_GENERIC_INVALIDPARAMETER_MAX","element":"_searchNotificationsFromTaxId.size","detail":"must be less than or equal to 50"}]}
+   #Errore: 400 BAD_REQUEST 400 Missing the required parameter 'startDate' when calling searchNotificationsFromTaxId null
+    #Errore: 400 BAD_REQUEST 400 Missing the required parameter 'endDate' when calling searchNotificationsFromTaxId null
 
+  #API-SERVICE-PG-CA_CE02.2_8, API-SERVICE-PG-CA_CE02.2_8, API-SERVICE-CA_CE02.2_9, API-SERVICE-CA_CE02.2_12
   @cruscottoAssistenza
-  Scenario Outline: [API-SERVICE-CA_CE02.2_8] Invocazione del servizio solo con taxId e recipientType corretti e verifica risposta
+  Scenario Outline: [API-SERVICE-CA_CE02.2_8] PG - PF Invocazione del servizio solo con taxId e recipientType corretti e verifica risposta - 1 <searchPageSize> 50 - searchNextPagesKey = 50
     Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then Il servizio risponde correttamente
-
     Examples:
       | TAXIID         | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
       | Mario Cucumber | PF             | 10               | NULL                 | 2024-01-01 | 2024-08-30 |
-    #Response 200 OK
-
-  @cruscottoAssistenza
-  Scenario Outline: [API-SERVICE-PG-CA_CE02.2_8] Invocazione del servizio solo con taxId e recipientType corretti e verifica risposta
-    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
-    Then Il servizio risponde correttamente
-
-    Examples:
-      | TAXIID      | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | CucumberSpa | PG             | 10               | NULL                 | 2024-01-01 | 2024-08-30 |
-
-  @cruscottoAssistenza
-  Scenario Outline: [API-SERVICE-CA_CE02.2_9] Invocazione del servizio con taxId e recipientType corretti e  1 <searchPageSize> 50
-    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
-    Then Il servizio risponde correttamente
-
-    Examples:
-      | TAXIID         | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
+      | CucumberSpa    | PG             | 10               | NULL                 | 2024-01-01 | 2024-08-30 |
       | Mario Cucumber | PF             | 1                | NULL                 | 2024-01-01 | 2024-08-30 |
+      | Mario Cucumber | PF             | 50               | NULL                 | 2024-01-01 | 2024-08-30 |
     #Response 200 OK
 
-
-  @cruscottoAssistenza
-  Scenario Outline: [API-SERVICE-CA_CE02.2_10] Invocazione del servizio con taxId e recipientType corretti e  searchPageSize = 0
-    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
-    Then il servizio risponde con errore "400"
-
-    Examples:
-      | TAXIID        | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | Mario Gherkin | PF             | 0                | NULL                 | 2023-10-01 | 2023-12-01 |
-    #errors":[{"code":"PN_GENERIC_INVALIDPARAMETER_MIN","element":"_searchNotificationsFromTaxId.size","detail":"must be greater than or equal to 1"}]}
-
-  @cruscottoAssistenza
-  Scenario Outline: [API-SERVICE-CA_CE02.2_11] Invocazione del servizio con taxId e recipientType corretti e  searchPageSize = 51
-    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
-    Then il servizio risponde con errore "400"
-
-    Examples:
-      | TAXIID        | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | Mario Gherkin | PF             | 51               | NULL                 | 2023-01-01 | 2023-12-01 |
-    #errors":[{"code":"PN_GENERIC_INVALIDPARAMETER_MAX","element":"_searchNotificationsFromTaxId.size","detail":"must be less than or equal to 50"}]}
-
-  @cruscottoAssistenza
-  Scenario Outline: [API-SERVICE-CA_CE02.2_12] Invocazione del servizio con taxId e recipientType corretti e  searchNextPagesKey = 50
-    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
-    Then Il servizio risponde correttamente
-
-    Examples:
-      | TAXIID         | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | Mario Cucumber | PF             | 50               | NULL                 | 2024-01-01 | 2024-08-30 |
-      #Response 200 OK
-
-  @cruscottoAssistenza
-  Scenario Outline: [API-SERVICE-CA_CE02.2_13] Invocazione del servizio con taxId e recipientType corretti e  searchNextPagesKey = 51
-    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
-    Then il servizio risponde con errore "500"
-
-    Examples:
-      | TAXIID        | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | Mario Gherkin | PF             | 50               | 51                   | 2023-01-01 | 2023-12-01 |
-
-
-  @cruscottoAssistenza
-  Scenario Outline: [API-SERVICE-CA_CE02.2_14] Invocazione del servizio con taxId e recipientType corretti ma con endDate < startDate
-    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
-    Then il servizio risponde con errore "500"
-
-    Examples:
-      | TAXIID        | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | Mario Gherkin | PF             | 50               | NULL                 | 2023-12-01 | 2023-01-01 |
-
-
-  @cruscottoAssistenza
-  Scenario Outline: [API-SERVICE-CA_CE02.2_15] Invocazione del servizio con taxId e recipientType corretti, con endDate valorizzata ma senza startDate
-    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
-    Then il servizio risponde con errore "400"
-
-    Examples:
-      | TAXIID        | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | Mario Gherkin | PF             | 50               | NULL                 | NULL       | 2023-12-01 |
-
-     #Errore: 400 BAD_REQUEST 400 Missing the required parameter 'startDate' when calling searchNotificationsFromTaxId null
-
-  @cruscottoAssistenza
-  Scenario Outline: [API-SERVICE-CA_CE02.2_16] Invocazione del servizio con taxId e recipientType corretti, con startDate valorizzata ma senza endDate
-    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
-    Then il servizio risponde con errore "400"
-
-    Examples:
-      | TAXIID        | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE |
-      | Mario Gherkin | PF             | 50               | NULL                 | 2023-01-01 | NULL     |
-    #Errore: 400 BAD_REQUEST 400 Missing the required parameter 'endDate' when calling searchNotificationsFromTaxId null
-
-
+#quanto senso ha fare lo stesso check?
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.2_16_1] Invocazione del servizio con taxId e recipientType corretti, con startDate  ed endDate  valorizzati correttamente
     Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then Il servizio risponde correttamente
-
     Examples:
       | TAXIID        | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
       | Mario Cucumber | PF             | 1                | NULL                 |  2024-01-01 | 2024-08-30 |
-
 
    #CE02.3 Come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche
 
@@ -175,7 +63,6 @@ Feature: Api Service Cruscotto Assitenza
   Scenario Outline: [API-SERVICE-CA_CE02.3_17] Invocazione del servizio con taxId vuoto
     Given come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "<TAXIID>" e recipientType  "<RECIPIENT_TYPE>"
     Then il servizio risponde con errore "400"
-
     Examples:
       | TAXIID | RECIPIENT_TYPE |
       | VUOTO  | PF             |
@@ -185,7 +72,6 @@ Feature: Api Service Cruscotto Assitenza
   Scenario Outline: [API-SERVICE-CA_CE02.3_17_1] Invocazione del servizio con taxId vuoto
     Given come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "<TAXIID>" e recipientType  "<RECIPIENT_TYPE>"
     Then il servizio risponde con errore "400"
-
     Examples:
       | TAXIID | RECIPIENT_TYPE |
       | NULL   | PF             |
@@ -195,7 +81,6 @@ Feature: Api Service Cruscotto Assitenza
   Scenario Outline: [API-SERVICE-CA_CE02.3_18] Invocazione del servizio con taxId non formalmente corretto
     Given come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "<TAXIID>" e recipientType  "<RECIPIENT_TYPE>"
     Then il servizio risponde con errore "400"
-
     Examples:
       | TAXIID | RECIPIENT_TYPE |
       | ERRATO | PF             |
@@ -931,7 +816,6 @@ Feature: Api Service Cruscotto Assitenza
 
 #026e8c72-7944-4dcd-8668-f596447fec6d MILANO
 
-
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE03.01_101] Impostare nuova tipologia di Audit Log
     Then viene verificato che esiste un audit log "<audit-log>" in "2y"
@@ -950,9 +834,6 @@ Feature: Api Service Cruscotto Assitenza
   # AUD_CA_VIEW_AK (visualizzazione lista api key)
   # AUD_CA_VIEW_ONBOARDING (visualizzazione lista delle PA onboardate)
   # AUD_CA_DOC_AVAILABLE (disponibilità documenti della notifica)
-
-
-
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE03.01_102] Impostare nuova tipologia di Audit Log
@@ -983,3 +864,87 @@ Feature: Api Service Cruscotto Assitenza
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And viene chiamato service desk e si controlla la presenza dell'elemento "REFINEMENT" nella response
 
+  @evolutiveCruscottoAssistenza @addressBook1
+  Scenario: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_1] Recupero del profilo destinatario che ha effettuato modifiche solo al recapito email
+    Given si predispone addressbook per l'utente "Galileo Galilei"
+    And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    And viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
+    And viene inserita l'email di cortesia "provaemail2@test.it" per il comune "default"
+    And viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
+    When come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Galileo Galilei" e recipientType  "PF"
+    Then controllo che i timestamp di creazione e modifica del recapito "cortesia" "email" siano "diversi" tra di loro
+
+  @evolutiveCruscottoAssistenza @addressBook1
+  Scenario: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_2] Recupero del profilo destinatario che non ha effettuato modifiche al recapito email
+    Given si predispone addressbook per l'utente "Galileo Galilei"
+    And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    And viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
+    When come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Galileo Galilei" e recipientType  "PF"
+    Then controllo che i timestamp di creazione e modifica del recapito "cortesia" "email" siano "uguali" tra di loro
+
+  @evolutiveCruscottoAssistenza @addressBook1
+  Scenario: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_3] Recupero del profilo destinatario che non ha effettuato modifiche al recapito legale PEC
+    Given si predispone addressbook per l'utente "Galileo Galilei"
+    And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserito un recapito legale "example3@pecSuccess.it"
+    And viene controllato che siano presenti pec verificate inserite per il comune "default"
+    When come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Galileo Galilei" e recipientType  "PF"
+    Then controllo che i timestamp di creazione e modifica del recapito "legale" "PEC" siano "uguali" tra di loro
+
+  @evolutiveCruscottoAssistenza @addressBook1
+  Scenario: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_4] Recupero del profilo destinatario che ha effettuato modifiche al recapito legale PEC
+    Given si predispone addressbook per l'utente "Galileo Galilei"
+    And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserito un recapito legale "example3@pecSuccess.it"
+    And viene controllato che siano presenti pec verificate inserite per il comune "default"
+    And viene inserito un recapito legale "example2@pecSuccess.it"
+    And viene controllato che siano presenti pec verificate inserite per il comune "default"
+    When come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Galileo Galilei" e recipientType  "PF"
+    Then controllo che i timestamp di creazione e modifica del recapito "legale" "PEC" siano "diverse" tra di loro
+
+  @evolutiveCruscottoAssistenza @addressBook1
+  Scenario: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_5] Recupero del profilo destinatario che ha selezionato il Domicilio Digitale come recapito legale
+    Given si predispone addressbook per l'utente "Galileo Galilei"
+    And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene attivato il servizio SERCQ SEND per il comune "default"
+    And viene verificato che Sercq sia "abilitato" per il comune "default"
+    #Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq
+    When come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Galileo Galilei" e recipientType  "PF"
+    Then controllo che i timestamp di creazione e modifica del recapito "legale" "SERCQ" siano "uguali" tra di loro
+
+  @evolutiveCruscottoAssistenza @addressBook1
+  Scenario: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_6] Recupero del profilo destinatario che ha rimosso il Domicilio Digitale come recapito legale
+    Given si predispone addressbook per l'utente "Galileo Galilei"
+    And vengono rimossi eventuali recapiti presenti per l'utente
+    Then viene attivato il servizio SERCQ SEND per recapito principale
+    And viene verificato che Sercq sia "abilitato" per il comune "default"
+    Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq
+    And viene disabilitato il servizio SERCQ SEND per il comune di "default"
+    When come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Galileo Galilei" e recipientType  "PF"
+    Then controllo che i timestamp di creazione e modifica del recapito "legale" "SERCQ" siano "vuoti" .
+
+  @evolutiveCruscottoAssistenza
+  Scenario Outline: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_7] Recupero del dettaglio della notifica con i pagamenti associati con l’utilizzo di uno IUN vuoto - IUN inesistente - IUN non associato allo User
+    When come operatore devo accedere ai dettagli dei pagamenti di una notifica con uno iun "<IUN>" associata all' utente "<USER>" con uid "<UID>"
+    Then il servizio risponde con errore "<ERROR>"
+    Examples:
+    | USER            |  IUN                        | UID      | ERROR |
+    | Mario Gherkin   | VUOTO                       | corretto | 400   |
+    | Mario Gherkin   | INESISTENTE                 | corretto | 404   |
+    |                 | NOTIFICA SENZA PAGAMENTI    | corretto | 400   |
+    | ERRATO          | NOTIFICA SENZA PAGAMENTI    | corretto | 400   |
+    | Mario Cucumber  | NOTIFICA SENZA PAGAMENTI    | corretto | 400   |
+    | Mario Gherkin   | NOTIFICA SENZA PAGAMENTI    | vuoto    | 400   |
+
+  @evolutiveCruscottoAssistenza
+  Scenario Outline: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_8] Recupero del dettaglio della notifica con i pagamenti associati con l’utilizzo di uno IUN associato ad una notifica di pagamento pagoPA - f24 - notifica semplice
+   #IUN delle notifiche specifiche
+    When come operatore devo accedere ai dettagli dei pagamenti di una notifica con uno iun "<IUN>" associata all' utente "<USER>" con uid "corretto"
+    Then controllo che la risposta del servizio contenta una lista "<LIST_TYPE>"
+    Examples:
+    | USER          | IUN                           | LIST_TYPE |
+    | Mario Gherkin | ASSOCIATO A PAGAMENTO PAGOPA  | COMPILATA |
+    | Mario Gherkin | NOTIFICA SENZA PAGAMENTI      | VUOTA      |
+    | Mario Gherkin | ASSOCIATO A PAGAMENTO F24     | VUOTA      |
