@@ -4,7 +4,6 @@ import io.cucumber.java.en.Given;
 import it.pagopa.interop.authorization.service.utils.CommonUtils;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
-import it.pagopa.interop.purpose.domain.PartialPurposeEServiceSeed;
 import it.pagopa.interop.purpose.domain.RiskAnalysis;
 import it.pagopa.interop.purpose.domain.TEServiceMode;
 import it.pagopa.pn.interop.cucumber.steps.purpose.domain.PurposeCommonContext;
@@ -33,13 +32,18 @@ public class PurposeCommonStep {
 
     @Given("{string} ha già creato {int} finalità in stato {string} per quell'eservice")
     public void tenantHasAlreadyCreateFinalizationWithStatus(String tenantType, int n, String purposeVersionState) {
+        commonUtils.setBearerToken(commonUtils.getToken(tenantType, null));
         UUID consumerId = commonUtils.getOrganizationId(tenantType);
         RiskAnalysis riskAnalysis = dataPreparationService.getRiskAnalysis(tenantType, true);
         for (int index = 0; index < n; index++) {
             dataPreparationService.createPurposeWithGivenState(ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE),
                     EServiceMode.DELIVER, PurposeVersionState.fromValue(purposeVersionState),
-                    new PartialPurposeEServiceSeed(eServicesCommonDomain.getEserviceId(), consumerId, riskAnalysis.getRiskAnalysisForm().getRiskAnalysisId())
-            );
+                    TEServiceMode.builder()
+                            .eserviceId(eServicesCommonDomain.getEserviceId())
+                            .consumerId(consumerId)
+                            .riskAnalysisFormSeed(riskAnalysis.getRiskAnalysisForm())
+                            .build());
+
             purposeCommonContext.getPurposesIds().add(purposeCommonContext.getPurposeId());
             purposeCommonContext.getCurrentVersionIds().add(purposeCommonContext.getVersionId());
             purposeCommonContext.getWaitingForApprovalVersionIds().add(purposeCommonContext.getWaitingForApprovalVersionId());
@@ -56,6 +60,7 @@ public class PurposeCommonStep {
 
     @Given("{string} ha già rifiutato l'aggiornamento della stima di carico per quella finalità")
     public void tenantHasAlreadyRejectedLoadEstimateUpdateForPurpose(String tenantType) {
+        commonUtils.setBearerToken(commonUtils.getToken(tenantType, null));
         dataPreparationService.rejectPurposeVersion(UUID.fromString(purposeCommonContext.getPurposeId()), UUID.fromString(purposeCommonContext.getWaitingForApprovalVersionId()));
     }
 

@@ -15,7 +15,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.junit.jupiter.api.Assertions;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
@@ -35,7 +34,7 @@ public class ClientCommonSteps {
     private List<UUID> users;
     private String clientPublicKey;
     private String keyId;
-    private PurposeAdditionDetailsSeed purposeId;
+    private PurposeAdditionDetailsSeed purposeAdditionDetailsSeed;
 
     public ClientCommonSteps(DataPreparationService dataPreparationService,
                              CommonUtils commonUtils,

@@ -114,19 +114,19 @@ public class DataPreparationService {
 
         commonUtils.makePolling(
                 () -> authorizationClient.getClient("", clientId),
-                res -> ((Client) httpCallExecutor.getResponse()).getPurposes().stream().anyMatch(purp -> purp.getPurposeId() == purposeId),
+                res -> res.getPurposes().stream().anyMatch(purp -> purp.getPurposeId().equals(purposeId)),
                 "Failed to add a purpose to the client!"
         );
     }
 
     public void archivePurpose(UUID purposeId, UUID versionId) {
         httpCallExecutor.performCall(() ->
-                authorizationClient.archivePurposeVersion("", purposeId, versionId)
+                purposeApiClient.archivePurposeVersion("", purposeId, versionId)
         );
         assertValidResponse();
         commonUtils.makePolling(
                 () -> httpCallExecutor.performCall(
-                        () -> authorizationClient.getPurpose("", purposeId)),
+                        () -> purposeApiClient.getPurpose("", purposeId)),
                 res -> ((Purpose) httpCallExecutor.getResponse()).getCurrentVersion() != null
                         ? ((Purpose) httpCallExecutor.getResponse()).getCurrentVersion().getState().getValue().equals(PurposeVersionState.ARCHIVED.getValue())
                         : Boolean.FALSE,
@@ -161,9 +161,7 @@ public class DataPreparationService {
     public UUID createAgreementWithGivenState(AgreementState agreementState, UUID eServiceID, UUID descriptorId, File doc) {
         // agreement in state DRAFT
         UUID agreementId = createAgreement(eServiceID, descriptorId);
-        if (doc != null) {
-            addConsumerDocumentToAgreement(agreementId, doc);
-        }
+        if (doc != null) addConsumerDocumentToAgreement(agreementId, doc);
         return switch (agreementState) {
             case DRAFT -> agreementId;
             case PENDING, ACTIVE -> {
@@ -186,11 +184,9 @@ public class DataPreparationService {
     }
 
     public UUID createAgreement(UUID eServiceID, UUID descriptorId) {
-        httpCallExecutor.performCall(
-                () -> agreementClient.createAgreement("", new AgreementPayload().eserviceId(eServiceID).descriptorId(descriptorId)));
+        httpCallExecutor.performCall(() -> agreementClient.createAgreement("", new AgreementPayload().eserviceId(eServiceID).descriptorId(descriptorId)));
         assertValidResponse();
         UUID agreementId = ((CreatedResource) httpCallExecutor.getResponse()).getId();
-
         commonUtils.makePolling(
                 () ->  httpCallExecutor.performCall(() -> agreementClient.getAgreementById("", agreementId)),
                 res -> res != HttpStatus.NOT_FOUND,
@@ -200,11 +196,8 @@ public class DataPreparationService {
     }
 
     public void submitAgreement(UUID agreementId, AgreementState expectedState) {
-        httpCallExecutor.performCall(
-                () -> agreementClient.submitAgreement("", agreementId, new AgreementSubmissionPayload())
-        );
+        httpCallExecutor.performCall(() -> agreementClient.submitAgreement("", agreementId, new AgreementSubmissionPayload()));
         assertValidResponse();
-
         commonUtils.makePolling(
                 () -> agreementClient.getAgreementById("", agreementId),
                 res -> res.getState() == expectedState,
@@ -213,10 +206,8 @@ public class DataPreparationService {
     }
 
     public void suspendAgreement(UUID agreementId, ClientType suspendedBy) {
-        httpCallExecutor.performCall(
-                () -> agreementClient.suspendAgreement("", agreementId));
+        httpCallExecutor.performCall(() -> agreementClient.suspendAgreement("", agreementId));
         assertValidResponse();
-
         commonUtils.makePolling(
                 () -> agreementClient.getAgreementById("", agreementId),
                 res -> res.getState().equals(AgreementState.SUSPENDED)
@@ -227,10 +218,8 @@ public class DataPreparationService {
     }
 
     public void archiveAgreement(UUID agreementId) {
-        httpCallExecutor.performCall(
-                () -> agreementClient.archiveAgreement("", agreementId));
+        httpCallExecutor.performCall(() -> agreementClient.archiveAgreement("", agreementId));
         assertValidResponse();
-
         commonUtils.makePolling(
                 () -> agreementClient.getAgreementById("", agreementId),
                 res -> res.getState() == AgreementState.ARCHIVED,
@@ -241,7 +230,6 @@ public class DataPreparationService {
     public void addConsumerDocumentToAgreement(UUID agreementId, File doc) {
         httpCallExecutor.performCall(
                 () -> agreementClient.addAgreementConsumerDocument("", agreementId, "documento-test-qa.pdf", "documento-test-qa", new FileSystemResource(doc)));
-
         commonUtils.makePolling(
                 () -> agreementClient.getAgreementById("", agreementId),
                 res -> res.getConsumerDocuments().size() > 0,
@@ -264,7 +252,6 @@ public class DataPreparationService {
                 res -> res.getResults().size() > 0,
                 "There was an error while retrieving the attributes"
         );
-
         return ((Attribute) httpCallExecutor.getResponse()).getId();
     }
 
@@ -305,7 +292,6 @@ public class DataPreparationService {
 
     public void updateDraftDescriptor(UUID eServiceId, UUID descriptorId, UpdateEServiceDescriptorSeed partialDescriptorSeed) {
         ProducerEServiceDescriptor descriptor = producerClient.getProducerEServiceDescriptor("", eServiceId, descriptorId);
-
         UpdateEServiceDescriptorSeed currentDescriptorSeed = new UpdateEServiceDescriptorSeed()
                 .agreementApprovalPolicy(descriptor.getAgreementApprovalPolicy())
                 .attributes(new DescriptorAttributesSeed().addCertifiedItem(List.of()).addDeclaredItem(List.of()).addVerifiedItem(List.of()))
@@ -443,11 +429,11 @@ public class DataPreparationService {
         httpCallExecutor.performCall(() -> purposeApiClient.retrieveLatestRiskAnalysisConfiguration(""));
         assertValidResponse();
         String version = ((RiskAnalysisFormConfig) httpCallExecutor.getResponse()).getVersion();
-        return new RiskAnalysis("finalità test", new RiskAnalysisForm().version(version).answers(riskAnalysisAttributes.toMap()));
+        return new RiskAnalysis("finalità test", new RiskAnalysisFormSeed().version(version).answers(riskAnalysisAttributes.toMap()));
     }
 
     public void createPurposeWithGivenState(int testSeed, EServiceMode eServiceMode, PurposeVersionState purposeState, TEServiceMode teServiceMode) {
-        // 1. Definisci i valori predefiniti
+        // 1. Define default values
         String title = String.format("purpose title - QA - %d - %d", testSeed, ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE));
         String description = "description of the purpose - QA";
         boolean isFreeOfCharge = true;
@@ -456,7 +442,7 @@ public class DataPreparationService {
 
         // 1. Check which mode the eservice is and call the correct endpoint
         if (eServiceMode == RECEIVE) {
-            // Per modalità RECEIVE, costruisci un PurposeEServiceSeed
+            // For RECEIVE mode, build a PurposeEServiceSeed
             PurposeEServiceSeed purposeEServiceSeed = new PurposeEServiceSeed();
             purposeEServiceSeed.setTitle(title);
             purposeEServiceSeed.setDescription(description);
@@ -464,16 +450,14 @@ public class DataPreparationService {
             purposeEServiceSeed.setFreeOfChargeReason(freeOfChargeReason);
             purposeEServiceSeed.setDailyCalls(dailyCalls);
 
-            // Aggiungi i dati dal payload
-            PartialPurposeEServiceSeed partialPurposeEServiceSeed = (PartialPurposeEServiceSeed) teServiceMode;
-            purposeEServiceSeed.setEserviceId(partialPurposeEServiceSeed.getEserviceId());
-            purposeEServiceSeed.setConsumerId(partialPurposeEServiceSeed.getConsumerId());
-            purposeEServiceSeed.setRiskAnalysisId(partialPurposeEServiceSeed.getRiskAnalysisId());
-
+            // Add data from the payload
+            purposeEServiceSeed.setEserviceId(teServiceMode.getEserviceId());
+            purposeEServiceSeed.setConsumerId(teServiceMode.getConsumerId());
+            purposeEServiceSeed.setRiskAnalysisId(teServiceMode.getRiskAnalysisId());
             httpCallExecutor.performCall(() -> purposeApiClient.createPurposeForReceiveEservice("", purposeEServiceSeed));
         }
         else {
-            // Per modalità diverse da RECEIVE, costruisci un PurposeSeed
+            // For modes other than RECEIVE, build a PurposeSeed
             PurposeSeed purposeSeed = new PurposeSeed();
             purposeSeed.setTitle(title);
             purposeSeed.setDescription(description);
@@ -481,10 +465,10 @@ public class DataPreparationService {
             purposeSeed.setFreeOfChargeReason(freeOfChargeReason);
             purposeSeed.setDailyCalls(dailyCalls);
 
-            // Aggiungi i dati dal payload
-            PartialPurposeSeed partialPurposeSeed = (PartialPurposeSeed) teServiceMode;
-            purposeSeed.setEserviceId(partialPurposeSeed.getEserviceId());
-            purposeSeed.setConsumerId(partialPurposeSeed.getConsumerId());
+            // Add data from the payload
+            purposeSeed.setEserviceId(teServiceMode.getEserviceId());
+            purposeSeed.setConsumerId(teServiceMode.getConsumerId());
+            purposeSeed.setRiskAnalysisForm(teServiceMode.getRiskAnalysisFormSeed());
             httpCallExecutor.performCall(() -> purposeApiClient.createPurpose("", purposeSeed));
         }
         assertValidResponse();
@@ -495,12 +479,15 @@ public class DataPreparationService {
         commonUtils.makePolling(
                 () -> httpCallExecutor.performCall(() -> purposeApiClient.getPurpose("", purposeId)),
                 res -> {
-                    UUID id = Optional.ofNullable((Purpose) httpCallExecutor.getResponse())
-                            .map(Purpose::getCurrentVersion)
-                            .map(PurposeVersion::getId)
-                            .orElse(null);
-                    currentVersion.set(id);
-                    return res != HttpStatus.NOT_FOUND;
+                    if (res == HttpStatus.OK) {
+                        UUID id = Optional.ofNullable((Purpose) httpCallExecutor.getResponse())
+                                .map(Purpose::getCurrentVersion)
+                                .map(PurposeVersion::getId)
+                                .orElse(null);
+                        currentVersion.set(id);
+                        return true;
+                    }
+                    return false;
                 },
                 "There was an error while retrieving the purpose!"
         );
@@ -530,6 +517,7 @@ public class DataPreparationService {
             );
             purposeCommonContext.setPurposeId(String.valueOf(purposeId));
             purposeCommonContext.setWaitingForApprovalVersionId(String.valueOf(waitingForApprovalVersionId.get()));
+            return;
         }
 
         commonUtils.makePolling(

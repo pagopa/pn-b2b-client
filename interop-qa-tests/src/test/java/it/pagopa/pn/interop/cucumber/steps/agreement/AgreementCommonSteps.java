@@ -27,7 +27,8 @@ public class AgreementCommonSteps {
     }
 
     @Given("{string} ha una richiesta di fruizione in stato {string} per quell'e-service")
-    public void tenantAlreadyHasFruitionRequestWithState(String consumer, String agreementState) {
+    public void tenantAlreadyHasFruitionRequestWithState(String tenant, String agreementState) {
+        commonUtils.setBearerToken(commonUtils.getToken(tenant, null));
         dataPreparationService.createAgreementWithGivenState(
                 AgreementState.fromValue(agreementState),
                 eServicesCommonDomain.getEserviceId(),
@@ -45,9 +46,10 @@ public class AgreementCommonSteps {
 
     @Given("{string} ha già creato e pubblicato {int} e-service(s)")
     public void tenantHasAlreadyCreatedAndPublishedEService(String tenantType, int totalEservices) {
-        // Crea gli e-service e pubblica i descrittori
+        commonUtils.setBearerToken(commonUtils.getToken(tenantType, null));
+        // Create e-services and publish descriptors
         for (int i = 0; i < totalEservices; i++) {
-            // Crea e-service e descrittore
+            // Create e-service and descriptor
             int randomInt = ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE);
             int TEST_SEED = ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE);
             String eserviceName = String.format("eservice-%d-%d-%d", i, TEST_SEED, randomInt);

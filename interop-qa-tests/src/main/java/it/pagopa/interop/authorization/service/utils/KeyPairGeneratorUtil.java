@@ -42,29 +42,14 @@ public class KeyPairGeneratorUtil {
     }
 
     private static String keyToPEM(Key key, String keyType) {
-        String header, footer;
-        byte[] encoded = key.getEncoded();
+        String header = key instanceof PrivateKey
+                ? "-----BEGIN PRIVATE KEY-----"
+                : "-----BEGIN PUBLIC KEY-----";
+        String footer = key instanceof PrivateKey
+                ? "-----END PRIVATE KEY-----"
+                : "-----END PUBLIC KEY-----";
 
-        if ("RSA".equalsIgnoreCase(keyType)) {
-            header = key instanceof PrivateKey
-                    ? "-----BEGIN PRIVATE KEY-----"
-                    : "-----BEGIN PUBLIC KEY-----";
-            footer = key instanceof PrivateKey
-                    ? "-----END PRIVATE KEY-----"
-                    : "-----END PUBLIC KEY-----";
-        } else {
-            header = key instanceof PrivateKey
-                    ? "-----BEGIN PRIVATE KEY-----"
-                    : "-----BEGIN PUBLIC KEY-----";
-            footer = key instanceof PrivateKey
-                    ? "-----END PRIVATE KEY-----"
-                    : "-----END PUBLIC KEY-----";
-        }
-
-        // Codifica in Base64
-        String encodedKey = Base64.getEncoder().encodeToString(encoded);
-
-        // Formatta in PEM
+        String encodedKey = Base64.getEncoder().encodeToString(key.getEncoded());
         return String.format("%s\n%s\n%s", header, encodedKey, footer);
     }
 

@@ -19,16 +19,14 @@ public class RiskAnalysisDataInitializer {
 
     private Map<String, RiskAnalysisDataFromJson.RiskAnalysisTemplate> initializeMap() {
         ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, RiskAnalysisDataFromJson.RiskAnalysisTemplate> result = null;
+        Map<String, RiskAnalysisDataFromJson.RiskAnalysisTemplate> riskAnalysisData = null;
         try {
-            Map<String, RiskAnalysisDataFromJson.RiskAnalysisTemplate> riskAnalysisData = objectMapper.readValue(
-                    new File("src/main/resources/risk_analysis_data.json"),
+            riskAnalysisData = objectMapper.readValue(new File("src/main/resources/risk_analysis_data.json"),
                     new TypeReference<Map<String, RiskAnalysisDataFromJson.RiskAnalysisTemplate>>() {}
             );
-
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-        return result;
+        return riskAnalysisData;
     }
 }

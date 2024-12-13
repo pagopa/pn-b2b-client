@@ -27,6 +27,7 @@ public class ClientUserAddStep {
 
     @When("l'utente richiede l'aggiunta di un admin di {string} al client")
     public void addUsersToClient(String tenantType) {
+        commonUtils.setBearerToken(commonUtils.getUserToken());
         UUID userId = commonUtils.getUserId(tenantType, "admin");
         InlineObject2 inlineObject = new InlineObject2().addUserIdsItem(userId);
         httpCallExecutor.performCall(

@@ -3,7 +3,6 @@
 Feature: Lettura di una chiave pubblica contenuta in un client
   Tutti gli utenti autenticati possono recuperare le informazioni di una chiave pubblica contenuta in un client 
 
-  @client_key_content_read1
   Scenario Outline: Un utente con sufficienti permessi (admin); appartenente all'ente che ha creato il client; il quale utente è membro del client; nel quale client c'è una chiave pubblica; richiede la lettura del contenuto della chiave. L'operazione va a buon fine
     Given l'utente è un "admin" di "<ente>"
     Given "<ente>" ha già creato 1 client "CONSUMER"
@@ -18,7 +17,7 @@ Feature: Lettura di una chiave pubblica contenuta in un client
       | PA1     |
       | Privato |
 
-  @client_key_content_read2 @wait_for_fix @PIN-5007
+  @wait_for_fix
   Scenario Outline: Un utente di qualsiasi ruolo; appartenente all'ente che ha creato il client; il quale utente non è membro del client; nel quale client c'è una chiave pubblica; richiede la lettura del contenuto della chiave. L'operazione va a buon fine solo per admin e support
     Given l'utente è un "<ruolo>" di "PA1"
     Given "PA1" ha già creato 1 client "CONSUMER"
@@ -35,7 +34,6 @@ Feature: Lettura di una chiave pubblica contenuta in un client
       | security     | admin           |        403 |
       | api,security | admin           |        403 |
 
-  @client_key_content_read3
   Scenario Outline: Un utente con permessi security; appartenente all'ente che ha creato il client; il quale utente è membro del client; nel quale client c'è una chiave pubblica; la quale chiave è stata caricata dall’utente stesso; richiede la lettura del contenuto della chiave. L'operazione va a buon fine
     Given l'utente è un "security" di "PA1"
     Given "PA1" ha già creato 1 client "CONSUMER"
@@ -44,7 +42,6 @@ Feature: Lettura di una chiave pubblica contenuta in un client
     When l'utente richiede la lettura del contenuto della chiave pubblica
     Then si ottiene status code 200
 
-  @client_key_content_read4
   Scenario Outline: Un utente con permessi security; appartenente all'ente che ha creato il client; il quale utente è membro del client; nel quale client c'è una chiave pubblica; la quale chiave non è stata caricata dall’utente stesso; richiede la lettura del contenuto della chiave. L'operazione va a buon fine
     Given l'utente è un "security" di "PA1"
     Given "PA1" ha già creato 1 client "CONSUMER"

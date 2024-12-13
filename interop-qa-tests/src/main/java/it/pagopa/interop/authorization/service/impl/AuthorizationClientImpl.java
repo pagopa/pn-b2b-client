@@ -27,7 +27,6 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionResou
 
 public class AuthorizationClientImpl implements IAuthorizationClient {
     private final ClientsApi clientsApi;
-    private final PurposesApi purposesApi;
     private final RestTemplate restTemplate;
     private final InteropClientConfigs interopClientConfigs;
     private final String basePath;
@@ -38,9 +37,7 @@ public class AuthorizationClientImpl implements IAuthorizationClient {
         this.interopClientConfigs = interopClientConfigs;
         this.basePath = interopClientConfigs.getBaseUrl();
         this.bearerToken = "apiBearerToken";
-        ApiClient apiClient = createApiClient(bearerToken);
-        this.clientsApi = new ClientsApi(apiClient);
-        this.purposesApi = new PurposesApi(apiClient);
+        this.clientsApi = new ClientsApi(createApiClient(bearerToken));
     }
 
     private ApiClient createApiClient(String bearerToken) {
@@ -104,16 +101,6 @@ public class AuthorizationClientImpl implements IAuthorizationClient {
     public void addClientPurpose(String xCorrelationId, UUID clientId,
             PurposeAdditionDetailsSeed purposeAdditionDetailsSeed) {
         clientsApi.addClientPurpose(xCorrelationId, clientId, purposeAdditionDetailsSeed);
-    }
-
-    @Override
-    public PurposeVersionResource archivePurposeVersion(String xCorrelationId, UUID purposeId, UUID versionId) {
-        return purposesApi.archivePurposeVersion(xCorrelationId, purposeId, versionId);
-    }
-
-    @Override
-    public Purpose getPurpose(String xCorrelationId, UUID purposeId) {
-        return purposesApi.getPurpose(xCorrelationId, purposeId);
     }
 
     @Override

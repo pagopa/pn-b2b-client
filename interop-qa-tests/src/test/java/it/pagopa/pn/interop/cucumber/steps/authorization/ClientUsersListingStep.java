@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.authorization;
 
 import java.util.List;
 
+import it.pagopa.interop.authorization.service.utils.CommonUtils;
 import org.junit.jupiter.api.Assertions;
 
 import io.cucumber.java.en.Then;
@@ -15,17 +16,21 @@ public class ClientUsersListingStep {
     private final IAuthorizationClient authorizationClient;
     private final ClientCommonSteps clientCommonSteps;
     private final HttpCallExecutor httpCallExecutor;
+    private final CommonUtils commonUtils;
 
     public ClientUsersListingStep(IAuthorizationClient authorizationClient,
             ClientCommonSteps clientCommonSteps,
-            HttpCallExecutor httpCallExecutor) {
+            HttpCallExecutor httpCallExecutor,
+            CommonUtils commonUtils) {
         this.authorizationClient = authorizationClient;
         this.clientCommonSteps = clientCommonSteps;
         this.httpCallExecutor = httpCallExecutor;
+        this.commonUtils = commonUtils;
     }
 
     @When("l'utente richiede una operazione di listing dei membri di quel client")
     public void getClientUsers() {
+        commonUtils.setBearerToken(commonUtils.getUserToken());
         httpCallExecutor
                 .performCall(() -> authorizationClient.getClientUsers("", clientCommonSteps.getClients().get(0)));
     }
