@@ -166,9 +166,7 @@ Feature: Resa al mittente di una notifica
    #   | digitalDomicile         | NULL                   |
 
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V26"
-    And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
-    And viene impostata l'apikey appena generata
-    And viene aggiornata la apiKey utilizzata per gli stream
+
     And si crea il nuovo stream per il "Comune_Multi" con versione "V26"
     #And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
     #Then si invoca l'api Webhook versione "V26" per ottenere gli elementi di timeline di tale notifica
@@ -191,7 +189,7 @@ Feature: Resa al mittente di una notifica
       | physicalAddress_address | Via@OK_890        |
       | digitalDomicile         | NULL              |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "DELIVERED"
 

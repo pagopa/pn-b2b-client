@@ -772,10 +772,10 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     public void readStreamEventsStatev26(String pa, String status) {
         setPaWebhook(pa);
 
-        StatusElementSearchResult<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.NotificationStatus>
+        StatusElementSearchResult<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.NotificationStatusV26>
                 statusEventForStream = getStatusEventForStream(V26, status);
 
-        it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.NotificationStatus
+        it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.NotificationStatusV26
                 notificationStatus = statusEventForStream.getNotificationStatus();
 
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusV26 notificationInternalStatus =
@@ -1364,10 +1364,12 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
     private <T> PnPollingWebhook getPnPollingWebhook(T timeLineOrStatus) {
         PnPollingWebhook pnPollingWebhook = new PnPollingWebhook();
+
         if (timeLineOrStatus instanceof TimelineElementCategoryV20) {
             pnPollingWebhook.setTimelineElementCategoryV20((TimelineElementCategoryV20) timeLineOrStatus);
             progressResponseElementList.clear();
             pnPollingWebhook.setProgressResponseElementListV20(progressResponseElementList);
+
         } else if (timeLineOrStatus instanceof it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.NotificationStatus) {
             pnPollingWebhook.setNotificationStatusV20((it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.NotificationStatus) timeLineOrStatus);
             progressResponseElementList.clear();
@@ -1377,6 +1379,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             pnPollingWebhook.setTimelineElementCategoryV23((TimelineElementCategoryV23) timeLineOrStatus);
             progressResponseElementListV23.clear();
             pnPollingWebhook.setProgressResponseElementListV23(progressResponseElementListV23);
+
         } else if (timeLineOrStatus instanceof it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.NotificationStatus) {
             pnPollingWebhook.setNotificationStatusV23((NotificationStatus) timeLineOrStatus);
             progressResponseElementListV23.clear();
@@ -1386,12 +1389,20 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             pnPollingWebhook.setTimelineElementCategoryV26((TimelineElementCategoryV26) timeLineOrStatus);
             progressResponseElementListV26.clear();
             pnPollingWebhook.setProgressResponseElementListV26(progressResponseElementListV26);
+
         } else if (timeLineOrStatus instanceof it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.NotificationStatus) {
-            pnPollingWebhook.setNotificationStatusV26((it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.NotificationStatus) timeLineOrStatus);
+            pnPollingWebhook.setNotificationStatus((it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.NotificationStatus) timeLineOrStatus);
             progressResponseElementListV26.clear();
             pnPollingWebhook.setProgressResponseElementListV26(progressResponseElementListV26);
 
-        } else {
+        }else if (timeLineOrStatus instanceof it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.NotificationStatusV26) {
+            pnPollingWebhook.setNotificationStatusV26((it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.NotificationStatusV26) timeLineOrStatus);
+            progressResponseElementListV26.clear();
+            pnPollingWebhook.setProgressResponseElementListV26(progressResponseElementListV26);
+
+        }
+
+        else {
             throw new IllegalArgumentException();
         }
         return pnPollingWebhook;
@@ -1464,8 +1475,8 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 PnPollingParameter.builder()
                         .value("WEBHOOK")
                         .pnPollingWebhook(pnPollingWebhook)
-                        //.deepCount(deepCount)
-                        //.lastEventId(lastEventId)
+                        .deepCount(deepCount)
+                        .lastEventId(lastEventId)
                         .streamId(eventStreamListV26.get(position).getStreamId())
                         .build());
 
@@ -1952,9 +1963,9 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
                 }
                 case V26 -> {
-                    StatusElementSearchResult<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.NotificationStatus> result = new StatusElementSearchResult<>();
+                    StatusElementSearchResult<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.NotificationStatusV26> result = new StatusElementSearchResult<>();
 
-                    result.setNotificationStatus(it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.NotificationStatus.valueOf(notificationStatusName));
+                    result.setNotificationStatus(it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.NotificationStatusV26.valueOf(notificationStatusName));
                     result.setWaiting(timingForElement.waiting());
                     result.setNumCheck(timingForElement.numCheck());
                     return (StatusElementSearchResult<T>) result;
