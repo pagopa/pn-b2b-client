@@ -165,7 +165,7 @@ Feature: Resa al mittente di una notifica
    #   | physicalAddress_address | @FAIL_DECEDUTO_890 |
    #   | digitalDomicile         | NULL                   |
 
-    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V26"
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V26"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
