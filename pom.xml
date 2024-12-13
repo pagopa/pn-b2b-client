@@ -1413,7 +1413,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-service-desk/v1.7.0-RC.1/docs/openapi/api-cruscotto-assistenza-pn-service-desk-v1.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-service-desk/d6d7a563c21e3c74de93097702b7dba3c812c9ce/docs/openapi/api-cruscotto-assistenza-pn-service-desk-v1.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
