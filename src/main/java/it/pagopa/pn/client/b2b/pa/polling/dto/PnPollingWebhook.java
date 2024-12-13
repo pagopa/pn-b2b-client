@@ -1,6 +1,7 @@
 package it.pagopa.pn.client.b2b.pa.polling.dto;
 
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.ProgressResponseElement;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.ProgressResponseElementV26;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.ProgressResponseElementV23;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.ProgressResponseElementV24;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.ProgressResponseElementV25;
@@ -21,4 +22,5 @@ public class PnPollingWebhook {
     private LinkedList<ProgressResponseElementV23> progressResponseElementListV23;
     private LinkedList<ProgressResponseElementV24> progressResponseElementListV24;
     private LinkedList<ProgressResponseElementV25> progressResponseElementListV25;
+    private LinkedList<ProgressResponseElementV26> progressResponseElementListV26;
 }

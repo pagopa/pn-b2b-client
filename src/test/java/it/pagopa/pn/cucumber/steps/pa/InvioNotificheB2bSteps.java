@@ -85,7 +85,7 @@ public class InvioNotificheB2bSteps {
 
     @And("la notifica può essere correttamente recuperata dal sistema tramite codice IUN")
     public void notificationCanBeRetrievedWithIUN() {
-        AtomicReference<FullSentNotificationV25> notificationByIun = new AtomicReference<>();
+        AtomicReference<FullSentNotificationV26> notificationByIun = new AtomicReference<>();
         notificationCanBeRetrievedWithIUN(notificationByIun, b2bUtils::getNotificationByIun);
     }
 
@@ -163,7 +163,7 @@ public class InvioNotificheB2bSteps {
 
         List<NotificationSearchRow> serarchedNotification = searchNotificationWebFromADate(OffsetDateTime.now().minusDays(120));
 
-        FullSentNotificationV25 notifica120 = null;
+        FullSentNotificationV26 notifica120 = null;
 
             for(NotificationSearchRow notifiche :serarchedNotification){
 
@@ -211,7 +211,7 @@ public class InvioNotificheB2bSteps {
         OffsetDateTime offsetDateTime = date.atStartOfDay(ZoneOffset.UTC).toOffsetDateTime();
 
         List<NotificationSearchRow> serarchedNotification = searchNotificationWebFromADate(offsetDateTime);
-        FullSentNotificationV25 notifica = null;
+        FullSentNotificationV26 notifica = null;
 
             for(NotificationSearchRow notifiche :serarchedNotification){
 
@@ -260,19 +260,19 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
     public void notificationCanBeRetrievedWithStatusByWebPA(String status, String paType) {
         sharedSteps.selectPA(paType);
 
-        it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatus notificationInternalStatus = switch (status) {
+        it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatusV26 notificationInternalStatus = switch (status) {
             case "ACCEPTED" ->
-                    it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatus.ACCEPTED;
+                    it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatusV26.ACCEPTED;
             case "DELIVERING" ->
-                    it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatus.DELIVERING;
+                    it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatusV26.DELIVERING;
             case "DELIVERED" ->
-                    it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatus.DELIVERED;
+                    it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatusV26.DELIVERED;
             case "CANCELLED" ->
-                    it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatus.CANCELLED;
+                    it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatusV26.CANCELLED;
             case "EFFECTIVE_DATE" ->
-                    it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatus.EFFECTIVE_DATE;
+                    it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatusV26.EFFECTIVE_DATE;
             case "REFUSED" ->
-                    it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatus.REFUSED;
+                    it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatusV26.REFUSED;
             default -> throw new IllegalArgumentException();
         };
 
@@ -290,9 +290,9 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
 
     @Then("la notifica viene recuperata dal sistema tramite codice IUN")
     public void laNotificaVieneRecuperataDalSistemaTramiteCodiceIUN() {
-        AtomicReference<FullSentNotificationV25> notificationByIun = new AtomicReference<>();
+        AtomicReference<FullSentNotificationV26> notificationByIun = new AtomicReference<>();
         try {
-            FullSentNotificationV25 notificationResponseComplete = b2bUtils.getNotificationByIun(sharedSteps.getSentNotification().getIun());
+            FullSentNotificationV26 notificationResponseComplete = b2bUtils.getNotificationByIun(sharedSteps.getSentNotification().getIun());
             notificationByIun.set(notificationResponseComplete);
             sharedSteps.setSentNotification(notificationResponseComplete);
         } catch (HttpStatusCodeException e) {
@@ -360,7 +360,7 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
 
     @And("viene effettuato un controllo sulla durata della retention di {string} per l'elemento di timeline {string}")
     public void retentionCheckLoadForTimelineElement(String documentType, String timelineEventCategory, @Transpose DataTest dataFromTest) throws RuntimeException {
-        TimelineElementV25 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
+        TimelineElementV26 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         if (documentType.equals("ATTACHMENTS")) {
             for (int i = 0; i < sharedSteps.getSentNotification().getDocuments().size(); i++) {
                 String key = sharedSteps.getSentNotification().getDocuments().get(i).getRef().getKey();
@@ -373,7 +373,7 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
 
     @And("viene effettuato un controllo sulla durata della retention del F24 di {string} per l'elemento di timeline {string}")
     public void retentionCheckLoadForTimelineElementF24(String documentType, String timelineEventCategory, @Transpose DataTest dataFromTest) throws RuntimeException {
-        TimelineElementV25 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
+        TimelineElementV26 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         if (documentType.equals("ATTACHMENTS")) {
             for (int i = 0; i < sharedSteps.getSentNotification().getRecipients().get(0).getPayments().size(); i++) {
                 String key = sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(i).getF24().getMetadataAttachment().getRef().getKey();
@@ -386,7 +386,7 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
 
     @And("viene effettuato un controllo sul type zip attachment di {string} per l'elemento di timeline {string} con DOC {string}")
     public void attachmentCheckLoadForTimelineElementF24(String documentType, String timelineEventCategory, String doc, @Transpose DataTest dataFromTest) throws RuntimeException {
-        TimelineElementV25 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
+        TimelineElementV26 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         if (documentType.equals("ATTACHMENTS")) {
             Assertions.assertNotNull(timelineElement.getDetails().getAttachments());
             Assertions.assertTrue(doc.equalsIgnoreCase(timelineElement.getDetails().getAttachments().get(0).getDocumentType()));
@@ -398,7 +398,7 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
 
     @And("viene effettuato un controllo sulla durata della retention del PAGOPA di {string} per l'elemento di timeline {string}")
     public void retentionCheckLoadForTimelineElementPAGOPA(String documentType, String timelineEventCategory, @Transpose DataTest dataFromTest) throws RuntimeException {
-        TimelineElementV25 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
+        TimelineElementV26 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         if (documentType.equals("ATTACHMENTS")) {
             for (int i = 0; i < sharedSteps.getSentNotification().getRecipients().get(0).getPayments().size(); i++) {
                 String key = sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(i).getPagoPa().getAttachment().getRef().getKey();
@@ -414,7 +414,7 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
     @Given("viene letta la notifica {string} dal {string}")
     public void vieneLettaLaNotificaDal(String IUN, String pa) {
         sharedSteps.selectPA(pa);
-        FullSentNotificationV25 notificationByIun = b2bUtils.getNotificationByIun(IUN);
+        FullSentNotificationV26 notificationByIun = b2bUtils.getNotificationByIun(IUN);
         sharedSteps.setSentNotification(notificationByIun);
     }
 
@@ -911,9 +911,9 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
         String regex= "[{}-~¡-ÿ^]";
         String regexCaratteriA= "[æ]";
 
-        FullSentNotificationV25 timeline = sharedSteps.getSentNotification();
+        FullSentNotificationV26 timeline = sharedSteps.getSentNotification();
 
-        TimelineElementV25 timelineNormalizer = timeline.getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV23.NORMALIZED_ADDRESS)).findAny().orElse(null);
+        TimelineElementV26 timelineNormalizer = timeline.getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV23.NORMALIZED_ADDRESS)).findAny().orElse(null);
         PhysicalAddress oldAddress = timelineNormalizer.getDetails().getOldAddress();
         PhysicalAddress normalizedAddress= timelineNormalizer.getDetails().getNormalizedAddress();
 
@@ -1212,9 +1212,9 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
         }
 
         TimelineElementCategoryV23 timelineElementInternalCategory = TimelineElementCategoryV23.AAR_GENERATION;
-        TimelineElementV25 timelineElement = null;
+        TimelineElementV26 timelineElement = null;
 
-        for (TimelineElementV25 element : sharedSteps.getSentNotification().getTimeline()) {
+        for (TimelineElementV26 element : sharedSteps.getSentNotification().getTimeline()) {
 
             if (Objects.requireNonNull(element.getCategory()).equals(timelineElementInternalCategory)) {
                 timelineElement = element;
