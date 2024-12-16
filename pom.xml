@@ -14,12 +14,8 @@
     <groupId>it.pagopa.pn</groupId>
     <artifactId>pn-b2bclient</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>pom</packaging>
     <name>pn-b2bclient</name>
     <description>Esempio utilizzo API</description>
-    <modules>
-        <module>interop-qa-tests</module>
-    </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
