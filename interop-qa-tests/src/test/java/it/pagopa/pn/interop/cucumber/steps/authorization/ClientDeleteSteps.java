@@ -25,6 +25,6 @@ public class ClientDeleteSteps {
     @When("l'utente richiede una operazione di cancellazione di quel client")
     public void deleteClient() {
         commonUtils.setBearerToken(sharedStepsContext.getUserToken());
-        httpCallExecutor.performCall(() -> authorizationClientCreate.deleteClient("", sharedStepsContext.getClientCommonContext().getFirstClient()));
+        httpCallExecutor.performCall(() -> authorizationClientCreate.deleteClient(sharedStepsContext.getXCorrelationId(), sharedStepsContext.getClientCommonContext().getFirstClient()));
     }
 }

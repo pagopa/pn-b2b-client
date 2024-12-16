@@ -1,9 +1,7 @@
 package it.pagopa.interop.authorization.service.utils;
 
-import it.pagopa.interop.authorization.domain.Ente;
+import it.pagopa.interop.authorization.domain.Tenant;
 import it.pagopa.interop.authorization.service.factory.SessionTokenFactory;
-import lombok.Getter;
-import lombok.Setter;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
@@ -18,7 +16,7 @@ public class CommonUtils {
     private final SessionTokenFactory sessionTokenFactory;
     private final KeyPairGeneratorUtil keyPairGeneratorUtil;
     private final ClientTokenConfigurator clientTokenConfigurator;
-    private final List<Ente> configFile;
+    private final List<Tenant> configFile;
 
     private Map<String, Map<String, String>> cachedTokens = null;
 
@@ -60,8 +58,8 @@ public class CommonUtils {
 
     public UUID getUserId(String tenantType, String role) {
         return configFile.stream()
-                .filter(ente -> tenantType.equals(ente.getName()))
-                .map(Ente::getUserRoles)
+                .filter(tenant -> tenantType.equals(tenant.getName()))
+                .map(Tenant::getUserRoles)
                 .map(userRole -> userRole.get(role))
                 .findFirst()
                 .map(UUID::fromString)
@@ -70,8 +68,8 @@ public class CommonUtils {
 
     public UUID getOrganizationId(String tenantType) {
         return configFile.stream()
-                .filter(ente -> tenantType.equals(ente.getName()))
-                .map(ente -> ente.getOrganizationId())
+                .filter(tenant -> tenantType.equals(tenant.getName()))
+                .map(tenant -> tenant.getOrganizationId())
                 .map(o -> o.get("dev"))
                 .findAny()
                 .map(UUID::fromString)
@@ -83,7 +81,7 @@ public class CommonUtils {
             for (int i = 0; i < 30; i++) {
                 Thread.sleep(30);
 
-                // Esegui la funzione fornita e ottieni il risultato
+                // Execute the provided function and obtain the result
                 T response = promise.get();
 
                 boolean shouldStopPolling = shouldStop.test(response);
@@ -98,18 +96,17 @@ public class CommonUtils {
         throw new IllegalArgumentException("Eventual consistency error: " + errorMessage);
     }
 
-
-    private List<Ente> readProperty() {
+    private List<Tenant> readProperty() {
         InputStream inputStream = null;
-        List<Ente> enteList = new ArrayList<>();
+        List<Tenant> tenantList = new ArrayList<>();
         try {
-            inputStream = new FileInputStream(new File("config/token-2.yaml"));
-            Yaml yaml = new Yaml(new Constructor(Ente.class));
-            yaml.loadAll(inputStream).forEach(i -> enteList.add((Ente) i));
+            inputStream = new FileInputStream(new File("config/tenants-ids.yaml"));
+            Yaml yaml = new Yaml(new Constructor(Tenant.class));
+            yaml.loadAll(inputStream).forEach(i -> tenantList.add((Tenant) i));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return enteList;
+        return tenantList;
     }
 
 

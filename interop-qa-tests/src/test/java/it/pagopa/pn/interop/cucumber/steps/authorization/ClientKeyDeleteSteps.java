@@ -33,16 +33,16 @@ public class ClientKeyDeleteSteps {
     @When("l'utente richiede una operazione di cancellazione della chiave di quel client")
     public void deleteClientKeyById() {
         commonUtils.setBearerToken(sharedStepsContext.getUserToken());
-        httpCallExecutor.performCall(() -> authorizationClient.deleteClientKeyById("",
+        httpCallExecutor.performCall(() -> authorizationClient.deleteClientKeyById(sharedStepsContext.getXCorrelationId(),
                 sharedStepsContext.getClientCommonContext().getFirstClient(), sharedStepsContext.getClientCommonContext().getKeyId()));
     }
 
     public void removeMemberFromClient(UUID clientId, UUID userId) {
-        authorizationClient.removeUserFromClient("", clientId, userId);
+        authorizationClient.removeUserFromClient(sharedStepsContext.getXCorrelationId(), clientId, userId);
         commonUtils.makePolling(
-                () -> authorizationClient.getClientUsers("", clientId),
+                () -> authorizationClient.getClientUsers(sharedStepsContext.getXCorrelationId(), clientId),
                 res -> res.stream().noneMatch(user -> user.getUserId().equals(userId)),
-                ""
+                "There was an error while retrieving the client user!"
         );
     }
 

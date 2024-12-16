@@ -5,7 +5,7 @@ import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.authorization.service.utils.CommonUtils;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
-import it.pagopa.pn.interop.cucumber.steps.utils.EServicesCommonContext;
+import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 
 import java.util.UUID;
@@ -54,13 +54,13 @@ public class AgreementCommonSteps {
             String eserviceName = String.format("eservice-%d-%d-%d", i, TEST_SEED, randomInt);
             EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(
                     new EServiceSeed().name(eserviceName), new UpdateEServiceDescriptorSeed());
-            // Porta il descrittore allo stato "PUBLISHED"
+            // Set the descriptor to "PUBLISHED" state
             dataPreparationService.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(),
                     eServiceDescriptor.getDescriptorId(), EServiceDescriptorState.PUBLISHED, false);
-            // Aggiungi l'e-service alla lista dei pubblicati
+            // Add the e-service to the list of published ones
             eServicesCommonContext.getPublishedEservicesIds().add(eServiceDescriptor);
         }
-        // Imposta il primo e-service e descrittore
+        // Set the first e-service and descriptor
         if (!eServicesCommonContext.getPublishedEservicesIds().isEmpty()) {
             EServiceDescriptor firstDescriptor = eServicesCommonContext.getPublishedEservicesIds().get(0);
             eServicesCommonContext.setEserviceId(firstDescriptor.getEServiceId());

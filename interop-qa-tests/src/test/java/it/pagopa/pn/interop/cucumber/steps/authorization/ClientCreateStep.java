@@ -4,7 +4,6 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
-import it.pagopa.interop.resolver.TokenResolver;
 import it.pagopa.interop.authorization.service.utils.CommonUtils;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -26,7 +25,6 @@ public class ClientCreateStep {
     private ResponseEntity<HttpStatus> createClientResponse;
 
     public ClientCreateStep(IAuthorizationClient authorizationClientCreate,
-                            TokenResolver tokenResolver,
                             CommonUtils commonUtils,
                             HttpCallExecutor httpCallExecutor,
                             SharedStepsContext sharedStepsContext) {
@@ -47,9 +45,9 @@ public class ClientCreateStep {
     @When("l'utente richiede la creazione di un client {string}")
     public void createClient(String clientKind) {
         if ("CONSUMER".equals(clientKind)) {
-            httpCallExecutor.performCall(() -> authorizationClientCreate.createConsumerClient("", createClientSeed()));
+            httpCallExecutor.performCall(() -> authorizationClientCreate.createConsumerClient(sharedStepsContext.getXCorrelationId(), createClientSeed()));
         } else {
-            httpCallExecutor.performCall(() -> authorizationClientCreate.createApiClient("", createClientSeed()));
+            httpCallExecutor.performCall(() -> authorizationClientCreate.createApiClient(sharedStepsContext.getXCorrelationId(), createClientSeed()));
         }
     }
 

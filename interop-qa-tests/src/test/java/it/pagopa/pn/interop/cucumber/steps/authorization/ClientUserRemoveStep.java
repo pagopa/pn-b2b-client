@@ -26,7 +26,7 @@ public class ClientUserRemoveStep {
     @When("l'utente richiede la rimozione di quel membro dal client")
     public void removeUserFromClient() {
         commonUtils.setBearerToken(sharedStepsContext.getUserToken());
-        httpCallExecutor.performCall(() -> authorizationClient.removeUserFromClient("",
+        httpCallExecutor.performCall(() -> authorizationClient.removeUserFromClient(sharedStepsContext.getXCorrelationId(),
                 sharedStepsContext.getClientCommonContext().getFirstClient(), sharedStepsContext.getClientCommonContext().getFirstUser()));
     }
 

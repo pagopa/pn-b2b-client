@@ -15,7 +15,6 @@ import it.pagopa.interop.authorization.service.impl.AuthorizationClientImpl;
 import it.pagopa.interop.authorization.service.factory.SessionTokenFactory;
 import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
 import it.pagopa.interop.purpose.service.impl.PurposeApiClientImpl;
-import it.pagopa.interop.resolver.TokenResolver;
 import it.pagopa.interop.authorization.service.impl.ProducerClientImpl;
 import it.pagopa.interop.authorization.service.utils.CommonUtils;
 import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
@@ -27,16 +26,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-@ComponentScan(basePackages = {"it.pagopa.pn.interop.cucumber"})
+//@ComponentScan(basePackages = {"it.pagopa.pn.interop.cucumber"})
 @CucumberContextConfiguration
 @SpringBootTest(classes = {
-        TokenResolver.class,
         IAuthorizationClient.class,
         AuthorizationClientImpl.class,
         InteropRestTemplateConfiguration.class,
         CommonUtils.class,
         SessionTokenFactory.class,
-        TokenResolver.class,
         ProducerClientImpl.class,
         KeyPairGeneratorUtil.class,
         DataPreparationService.class,

@@ -4,10 +4,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import it.pagopa.interop.authorization.domain.Ente;
+import it.pagopa.interop.authorization.domain.Tenant;
 import it.pagopa.interop.authorization.domain.ExternalId;
 import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
-import it.pagopa.interop.resolver.TokenResolver;
 import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.kms.KmsClient;
@@ -61,15 +60,13 @@ public class SessionTokenFactory {
         SESSION_TOKEN_PAYLOAD_TEMPLATE.put("jti", "uuid");
     }
 
-    private final TokenResolver tokenResolver;
     private final InteropClientConfigs interopClientConfigs;
 
-    public SessionTokenFactory(TokenResolver tokenResolver, InteropClientConfigs interopClientConfigs) {
-        this.tokenResolver = tokenResolver;
+    public SessionTokenFactory(InteropClientConfigs interopClientConfigs) {
         this.interopClientConfigs = interopClientConfigs;
     }
 
-    public Map<String, Map<String, String>> generateSessionToken(List<Ente> configFile) throws Exception {
+    public Map<String, Map<String, String>> generateSessionToken(List<Tenant> configFile) throws Exception {
         // Step 1. Read session token payload values file
         log.info("##Step 1. Read session token payload values file ##");
         ObjectMapper objectMapper = new ObjectMapper();
@@ -82,10 +79,6 @@ public class SessionTokenFactory {
         if (!wellKnownData.containsKey("kid") || !wellKnownData.containsKey("alg")) {
             throw new IllegalStateException("Kid or alg not found.");
         }
-//        CONFIG.put("kms", Map.of(
-//                "kid", wellKnownData.get("kid"),
-//                "alg", wellKnownData.get("alg")
-//        ));
         CONFIG.put("kms", Map.of(
                 "kid", wellKnownData.get("kid"),
                 "alg", "RSASSA_PKCS1_V1_5_SHA_256"
@@ -164,14 +157,13 @@ public class SessionTokenFactory {
 
 
     public  Map<String, Map<String, String>> unsignedStsGeneration(
-            Map<String, String> stHeaderCompiled, HashMap<String, Object> stPayloadCompiled, List<Ente> stPayloadValues, String environment) throws IOException {
+            Map<String, String> stHeaderCompiled, HashMap<String, Object> stPayloadCompiled, List<Tenant> stPayloadValues, String environment) throws IOException {
 
         try {
             log.info("unsignedStsGeneration::Phase1:START: Build roles dynamic substitutions");
             Map<String, Object> stsSubOutput = new HashMap<>();
 
-            // Itera sui tenants
-            for (Ente tenant : stPayloadValues) {
+            for (Tenant tenant : stPayloadValues) {
                String organizationId = tenant.getOrganizationId().get(environment);
                String selfcareId = tenant.getSelfcareId();
                ExternalId externalId = tenant.getExternalId();
@@ -202,7 +194,7 @@ public class SessionTokenFactory {
             }
             log.info("unsignedStsGeneration::Phase1:END: Build roles dynamic substitutions");
 
-            // Fase 2: Creazione dei JWT parziali per ogni tenant/ruolo
+            // Phase 2: Creation of partial JWTs for each tenant/role
             log.info("unsignedStsGeneration::Phase2:START: Build base64 header and body for each tenant/role");
 
             String base64Header = b64UrlEncode(new ObjectMapper().writeValueAsString(stHeaderCompiled));
@@ -262,7 +254,7 @@ public class SessionTokenFactory {
         return signedTokens;
     }
 
-    // Funzione di codifica Base64 URL-safe (senza padding)
+    // Base64 URL-safe encoding function (without padding)
     public static String b64UrlEncode(String str) {
         return Base64.getUrlEncoder().withoutPadding().encodeToString(str.getBytes());
     }

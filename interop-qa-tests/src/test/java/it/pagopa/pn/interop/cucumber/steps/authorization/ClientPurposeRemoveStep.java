@@ -4,7 +4,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.utils.CommonUtils;
-import it.pagopa.pn.interop.cucumber.steps.utils.PurposeCommonContext;
+import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -50,7 +50,7 @@ public class ClientPurposeRemoveStep {
     @When("l'utente richiede la disassociazione della finalità dal client")
     public void getClientUsers() {
         commonUtils.setBearerToken(sharedStepsContext.getUserToken());
-        httpCallExecutor.performCall(() -> authorizationClient.removeClientPurpose("",
+        httpCallExecutor.performCall(() -> authorizationClient.removeClientPurpose(sharedStepsContext.getXCorrelationId(),
                 sharedStepsContext.getClientCommonContext().getFirstClient(), UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId())));
     }
 

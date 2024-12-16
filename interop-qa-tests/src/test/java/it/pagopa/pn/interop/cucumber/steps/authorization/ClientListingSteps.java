@@ -48,39 +48,39 @@ public class ClientListingSteps {
     @When("l'utente richiede una operazione di listing dei client con offset {int}")
     public void retrieveClientsListWithOffset(int offset) {
         httpCallExecutor.performCall(() ->
-                authorizationClient.getClients("", offset, 12, String.valueOf(sharedStepsContext.getTestSeed()), null, null));
+                authorizationClient.getClients(sharedStepsContext.getXCorrelationId(), offset, 12, String.valueOf(sharedStepsContext.getTestSeed()), null, null));
     }
 
     @When("l'utente richiede una operazione di listing dei client con filtro \"CONSUMER\"")
     public void retrieveClientsListWithFilter() {
         httpCallExecutor.performCall(() ->
-                authorizationClient.getClients("", 0, 12, String.valueOf(sharedStepsContext.getTestSeed()), null, ClientKind.CONSUMER));
+                authorizationClient.getClients(sharedStepsContext.getXCorrelationId(), 0, 12, String.valueOf(sharedStepsContext.getTestSeed()), null, ClientKind.CONSUMER));
     }
 
     @When("l'utente richiede una operazione di listing dei client filtrando per la keyword {string}")
     public void retrieveClientsListByFilterForKeyword(String keyword) {
         httpCallExecutor.performCall(() ->
-                authorizationClient.getClients("", 0, 12, String.format("%d-%s", sharedStepsContext.getTestSeed(), keyword), null, null));
+                authorizationClient.getClients(sharedStepsContext.getXCorrelationId(), 0, 12, String.format("%d-%s", sharedStepsContext.getTestSeed(), keyword), null, null));
     }
 
     @When("l'utente richiede una operazione di listing dei client filtrando per membro utente con ruolo {string}")
     public void retrieveClientsListByFilterForUserAndRole(String role) {
         UUID userId = commonUtils.getUserId(sharedStepsContext.getTenantType(), role);
         httpCallExecutor.performCall(() ->
-                authorizationClient.getClients("", 0, 12, String.valueOf(sharedStepsContext.getTestSeed()), List.of(userId), null));
+                authorizationClient.getClients(sharedStepsContext.getXCorrelationId(), 0, 12, String.valueOf(sharedStepsContext.getTestSeed()), List.of(userId), null));
     }
 
     @When("l'utente richiede una operazione di listing dei client")
     public void retrieveClientsList() {
         commonUtils.setBearerToken(commonUtils.getToken(sharedStepsContext.getTenantType(), null));
         httpCallExecutor.performCall(() ->
-                authorizationClient.getClients("", 0, 12, String.valueOf(sharedStepsContext.getTestSeed()), null, null));
+                authorizationClient.getClients(sharedStepsContext.getXCorrelationId(), 0, 12, String.valueOf(sharedStepsContext.getTestSeed()), null, null));
     }
 
     @When("l'utente richiede una operazione di listing dei client limitata a {int} risultati")
     public void retrieveTruncateClientsList(int limit) {
         httpCallExecutor.performCall(() ->
-                authorizationClient.getClients("", 0, limit, String.valueOf(sharedStepsContext.getTestSeed()), null, null));
+                authorizationClient.getClients(sharedStepsContext.getXCorrelationId(), 0, limit, String.valueOf(sharedStepsContext.getTestSeed()), null, null));
     }
 
     private int getRandomInt() {

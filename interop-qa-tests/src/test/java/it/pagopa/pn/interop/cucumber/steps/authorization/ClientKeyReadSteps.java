@@ -46,7 +46,7 @@ public class ClientKeyReadSteps {
     public void userReadPublicKey() {
         commonUtils.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(() ->
-                authorizationClient.getClientKeyById("",
+                authorizationClient.getClientKeyById(sharedStepsContext.getXCorrelationId(),
                         sharedStepsContext.getClientCommonContext().getFirstClient(),
                         sharedStepsContext.getClientCommonContext().getKeyId()));
     }

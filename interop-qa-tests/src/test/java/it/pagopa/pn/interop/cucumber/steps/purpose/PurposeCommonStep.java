@@ -6,7 +6,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
 import it.pagopa.interop.purpose.domain.RiskAnalysis;
 import it.pagopa.interop.purpose.domain.TEServiceMode;
-import it.pagopa.pn.interop.cucumber.steps.utils.PurposeCommonContext;
+import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 
@@ -47,7 +47,7 @@ public class PurposeCommonStep {
             purposeCommonContext.getWaitingForApprovalVersionIds().add(purposeCommonContext.getWaitingForApprovalVersionId());
         }
 
-        // Ottieni l'ultimo elemento dagli elenchi
+        // Get the last element from the lists
         List<String> purposesIds = purposeCommonContext.getPurposesIds();
         List<String> currentVersionIds = purposeCommonContext.getCurrentVersionIds();
         List<String> waitingForApprovalVersionIds = purposeCommonContext.getWaitingForApprovalVersionIds();

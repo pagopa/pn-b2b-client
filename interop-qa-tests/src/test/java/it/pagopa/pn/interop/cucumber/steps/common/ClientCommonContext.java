@@ -1,4 +1,4 @@
-package it.pagopa.pn.interop.cucumber.steps.utils;
+package it.pagopa.pn.interop.cucumber.steps.common;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.Map;
 
 @Data
-public class Ente {
+public class Tenant {
     private String name;
     private ExternalId externalId;
     private String selfcareId;
