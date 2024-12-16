@@ -1,4 +1,4 @@
-package it.pagopa.pn.interop.cucumber.steps.utils;
+package it.pagopa.pn.interop.cucumber.steps;
 
 import it.pagopa.interop.agreement.domain.ClientType;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
@@ -9,13 +9,14 @@ import it.pagopa.interop.authorization.service.IProducerClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.utils.CommonUtils;
-import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
 import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
 import it.pagopa.interop.purpose.domain.*;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.tenant.service.ITenantsApi;
-import it.pagopa.pn.interop.cucumber.steps.purpose.domain.PurposeCommonContext;
+import it.pagopa.interop.utils.HttpCallExecutor;
 import org.junit.jupiter.api.Assertions;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -31,19 +32,21 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode.RECEIVE;
 
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+
 public class DataPreparationService {
     private static final ClientSeed DEFAULT_CLIENT_SEED = new ClientSeed();
-    private IAuthorizationClient authorizationClient;
-    private IAgreementClient agreementClient;
-    private IAttributeApiClient attributeApiClient;
-    private ITenantsApi tenantsApi;
-    private IEServiceClient eServiceClient;
-    private IProducerClient producerClient;
-    private IPurposeApiClient purposeApiClient;
-    private CommonUtils commonUtils;
-    private HttpCallExecutor httpCallExecutor;
-    private RiskAnalysisDataInitializer riskAnalysisDataInitializer;
-    private PurposeCommonContext purposeCommonContext;
+    private final IAuthorizationClient authorizationClient;
+    private final IAgreementClient agreementClient;
+    private final IAttributeApiClient attributeApiClient;
+    private final ITenantsApi tenantsApi;
+    private final IEServiceClient eServiceClient;
+    private final IProducerClient producerClient;
+    private final IPurposeApiClient purposeApiClient;
+    private final CommonUtils commonUtils;
+    private final HttpCallExecutor httpCallExecutor;
+    private final RiskAnalysisDataInitializer riskAnalysisDataInitializer;
+    private final SharedStepsContext sharedStepsContext;
 
     static {
         DEFAULT_CLIENT_SEED.setName(String.format("client %d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)));
@@ -61,7 +64,7 @@ public class DataPreparationService {
                                   HttpCallExecutor httpCallExecutor,
                                   CommonUtils commonUtils,
                                   RiskAnalysisDataInitializer riskAnalysisDataInitializer,
-                                  PurposeCommonContext purposeCommonContext) {
+                                  SharedStepsContext sharedStepsContext) {
         this.authorizationClient = authorizationClient;
         this.agreementClient = agreementClient;
         this.attributeApiClient = attributeApiClient;
@@ -72,7 +75,7 @@ public class DataPreparationService {
         this.httpCallExecutor = httpCallExecutor;
         this.commonUtils = commonUtils;
         this.riskAnalysisDataInitializer = riskAnalysisDataInitializer;
-        this.purposeCommonContext = purposeCommonContext;
+        this.sharedStepsContext = sharedStepsContext;
     }
 
     public UUID createClient(String clientKind, ClientSeed partialClientSeed) {
@@ -493,8 +496,8 @@ public class DataPreparationService {
         );
 
         if (purposeState == PurposeVersionState.DRAFT) {
-            purposeCommonContext.setPurposeId(String.valueOf(purposeId));
-            purposeCommonContext.setVersionId(String.valueOf(currentVersion));
+            sharedStepsContext.getPurposeCommonContext().setPurposeId(String.valueOf(purposeId));
+            sharedStepsContext.getPurposeCommonContext().setVersionId(String.valueOf(currentVersion));
             return;
         }
         // 2. Activate the purpose version
@@ -515,8 +518,8 @@ public class DataPreparationService {
                     },
                     "There was an error while retrieving the purpose!"
             );
-            purposeCommonContext.setPurposeId(String.valueOf(purposeId));
-            purposeCommonContext.setWaitingForApprovalVersionId(String.valueOf(waitingForApprovalVersionId.get()));
+            sharedStepsContext.getPurposeCommonContext().setPurposeId(String.valueOf(purposeId));
+            sharedStepsContext.getPurposeCommonContext().setWaitingForApprovalVersionId(String.valueOf(waitingForApprovalVersionId.get()));
             return;
         }
 
@@ -566,8 +569,8 @@ public class DataPreparationService {
                     "There was an error while archiving the purpose!"
             );
         }
-        purposeCommonContext.setPurposeId(String.valueOf(purposeId));
-        purposeCommonContext.setVersionId(String.valueOf(currentVersion.get()));
+        sharedStepsContext.getPurposeCommonContext().setPurposeId(String.valueOf(purposeId));
+        sharedStepsContext.getPurposeCommonContext().setVersionId(String.valueOf(currentVersion.get()));
         return;
     }
 

@@ -6,9 +6,9 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.ClientKind;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.utils.CommonUtils;
-import it.pagopa.pn.interop.cucumber.steps.utils.DataPreparationService;
-import it.pagopa.pn.interop.cucumber.steps.utils.HttpCallExecutor;
-import it.pagopa.pn.interop.cucumber.steps.utils.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
+import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,20 +17,17 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class ClientListingSteps {
     private final IAuthorizationClient authorizationClient;
-    private final ClientCommonSteps clientCommonSteps;
     private final CommonUtils commonUtils;
     private final DataPreparationService dataPreparationService;
     private final HttpCallExecutor httpCallExecutor;
     private final SharedStepsContext sharedStepsContext;
 
     public ClientListingSteps(IAuthorizationClient authorizationClient,
-                              ClientCommonSteps clientCommonSteps,
                               CommonUtils commonUtils,
                               DataPreparationService dataPreparationService,
                               HttpCallExecutor httpCallExecutor,
                               SharedStepsContext sharedStepsContext) {
         this.authorizationClient = authorizationClient;
-        this.clientCommonSteps = clientCommonSteps;
         this.commonUtils = commonUtils;
         this.dataPreparationService = dataPreparationService;
         this.httpCallExecutor = httpCallExecutor;
@@ -45,9 +42,8 @@ public class ClientListingSteps {
             clientSeed.setName(String.format("client-%d-%d-%s", i, sharedStepsContext.getTestSeed(), keyword));
             result.add(dataPreparationService.createClient(clientKind, clientSeed));
         }
-        clientCommonSteps.setClients(List.of(result.get(0)));
+        sharedStepsContext.getClientCommonContext().setClients(List.of(result.get(0)));
     }
-
 
     @When("l'utente richiede una operazione di listing dei client con offset {int}")
     public void retrieveClientsListWithOffset(int offset) {
@@ -69,14 +65,14 @@ public class ClientListingSteps {
 
     @When("l'utente richiede una operazione di listing dei client filtrando per membro utente con ruolo {string}")
     public void retrieveClientsListByFilterForUserAndRole(String role) {
-        UUID userId = commonUtils.getUserId(commonUtils.getTenantType(), role);
+        UUID userId = commonUtils.getUserId(sharedStepsContext.getTenantType(), role);
         httpCallExecutor.performCall(() ->
                 authorizationClient.getClients("", 0, 12, String.valueOf(sharedStepsContext.getTestSeed()), List.of(userId), null));
     }
 
     @When("l'utente richiede una operazione di listing dei client")
     public void retrieveClientsList() {
-        commonUtils.setBearerToken(commonUtils.getToken(commonUtils.getTenantType(), null));
+        commonUtils.setBearerToken(commonUtils.getToken(sharedStepsContext.getTenantType(), null));
         httpCallExecutor.performCall(() ->
                 authorizationClient.getClients("", 0, 12, String.valueOf(sharedStepsContext.getTestSeed()), null, null));
     }

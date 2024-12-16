@@ -1,10 +1,9 @@
-package it.pagopa.pn.interop.cucumber.steps.utils;
+package it.pagopa.interop.utils;
 
 import lombok.Data;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.util.function.Supplier;

@@ -21,13 +21,13 @@ import it.pagopa.interop.authorization.service.utils.CommonUtils;
 import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import it.pagopa.interop.tenant.service.impl.TenantsApiClientImpl;
-import it.pagopa.pn.interop.cucumber.steps.purpose.domain.PurposeCommonContext;
-import it.pagopa.pn.interop.cucumber.steps.utils.DataPreparationService;
-import it.pagopa.pn.interop.cucumber.steps.utils.HttpCallExecutor;
+import it.pagopa.interop.utils.HttpCallExecutor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+@ComponentScan(basePackages = {"it.pagopa.pn.interop.cucumber"})
 @CucumberContextConfiguration
 @SpringBootTest(classes = {
         TokenResolver.class,
@@ -52,7 +52,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         IEServiceClient.class,
         EServiceApiClientImpl.class,
         RiskAnalysisDataInitializer.class,
-        PurposeCommonContext.class,
         ClientTokenConfigurator.class,
 
 })

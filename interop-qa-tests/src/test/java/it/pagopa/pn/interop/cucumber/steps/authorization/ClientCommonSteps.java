@@ -8,12 +8,13 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.KeyUse;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeAdditionDetailsSeed;
 import it.pagopa.interop.authorization.service.utils.CommonUtils;
 import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
-import it.pagopa.pn.interop.cucumber.steps.utils.DataPreparationService;
-import it.pagopa.pn.interop.cucumber.steps.utils.HttpCallExecutor;
-import it.pagopa.pn.interop.cucumber.steps.utils.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
+import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import lombok.Getter;
 import lombok.Setter;
 import org.junit.jupiter.api.Assertions;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.UUID;
@@ -29,13 +30,9 @@ public class ClientCommonSteps {
     private final HttpCallExecutor httpCallExecutor;
     private final SharedStepsContext sharedStepsContext;
 
-    private List<UUID> clients;
-    private UUID clientId;
-    private List<UUID> users;
-    private String clientPublicKey;
-    private String keyId;
     private PurposeAdditionDetailsSeed purposeAdditionDetailsSeed;
 
+    @Autowired
     public ClientCommonSteps(DataPreparationService dataPreparationService,
                              CommonUtils commonUtils,
                              HttpCallExecutor httpCallExecutor,
@@ -53,16 +50,15 @@ public class ClientCommonSteps {
         List<UUID> clientIds = IntStream.range(0, numClient)
                 .mapToObj(i -> dataPreparationService.createClient(clientKind, createClientSeed(i)))
                 .collect(Collectors.toList());
-        setClients(clientIds);
-        setClientId(clientIds.get(0));
+        sharedStepsContext.getClientCommonContext().setClients(clientIds);
     }
 
     @Given("{string} ha già inserito l'utente con ruolo {string} come membro di quel client")
     public void tenantHasAlreadyAddUsersWithRole(String tenantType, String roleOfMemberToAdd) {
         commonUtils.setBearerToken(commonUtils.getToken(tenantType, null));
         UUID clientMemberUserId = commonUtils.getUserId(tenantType, roleOfMemberToAdd);
-        dataPreparationService.addMemberToClient(clients.get(0), clientMemberUserId);
-        setUsers(List.of(clientMemberUserId));
+        dataPreparationService.addMemberToClient(sharedStepsContext.getClientCommonContext().getFirstClient(), clientMemberUserId);
+        sharedStepsContext.getClientCommonContext().setUsers(List.of(clientMemberUserId));
     }
 
     @Then("si ottiene status code {int} e la lista di {int} client(s)")
@@ -75,8 +71,9 @@ public class ClientCommonSteps {
     public void roleOfTenantHasAlreadyUploadClientPublicKey(String role, String tenantType) {
         commonUtils.setBearerToken(commonUtils.getToken(tenantType, role));
         String userPublicKey = KeyPairGeneratorUtil.createBase64PublicKey("RSA", 2048);
-        setClientPublicKey(userPublicKey);
-        keyId = dataPreparationService.addPublicKeyToClient(clients.get(0), KeyPairGeneratorUtil.createKeySeed(KeyUse.SIG, "RS256", userPublicKey).get(0));
+        sharedStepsContext.getClientCommonContext().setClientPublicKey(userPublicKey);
+        String keyId = dataPreparationService.addPublicKeyToClient(sharedStepsContext.getClientCommonContext().getFirstClient(), KeyPairGeneratorUtil.createKeySeed(KeyUse.SIG, "RS256", userPublicKey).get(0));
+        sharedStepsContext.getClientCommonContext().setKeyId(keyId);
     }
 
     @Then("si ottiene status code {int}")

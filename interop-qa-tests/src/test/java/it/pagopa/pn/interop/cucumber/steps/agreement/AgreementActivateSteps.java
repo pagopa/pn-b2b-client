@@ -3,21 +3,20 @@ package it.pagopa.pn.interop.cucumber.steps.agreement;
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
-import it.pagopa.pn.interop.cucumber.steps.utils.DataPreparationService;
-import it.pagopa.pn.interop.cucumber.steps.utils.EServicesCommonDomain;
+import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
+import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 public class AgreementActivateSteps {
-    private final EServicesCommonDomain eServicesCommonDomain;
     private final DataPreparationService dataPreparationService;
+    private final SharedStepsContext sharedStepsContext;
 
-    public AgreementActivateSteps(DataPreparationService dataPreparationService, EServicesCommonDomain eServicesCommonDomain) {
+    public AgreementActivateSteps(DataPreparationService dataPreparationService, SharedStepsContext sharedStepsContext) {
         this.dataPreparationService = dataPreparationService;
-        this.eServicesCommonDomain = eServicesCommonDomain;
+        this.sharedStepsContext = sharedStepsContext;
     }
 
     @Given("{string} ha già creato un e-service in stato {string} che richiede quegli attributi con approvazione {string}")
@@ -39,7 +38,7 @@ public class AgreementActivateSteps {
         UUID eserviceId = result.getEServiceId();
         UUID descriptorId = result.getDescriptorId();
         dataPreparationService.bringDescriptorToGivenState(eserviceId, descriptorId, EServiceDescriptorState.valueOf(descriptorState), false);
-        eServicesCommonDomain.setEserviceId(eserviceId);
-        eServicesCommonDomain.setDescriptorId(descriptorId);
+        sharedStepsContext.getEServicesCommonContext().setEserviceId(eserviceId);
+        sharedStepsContext.getEServicesCommonContext().setDescriptorId(descriptorId);
     }
 }

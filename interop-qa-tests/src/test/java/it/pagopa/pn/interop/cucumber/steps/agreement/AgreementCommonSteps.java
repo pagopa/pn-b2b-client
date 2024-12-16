@@ -4,26 +4,24 @@ import io.cucumber.java.en.Given;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.authorization.service.utils.CommonUtils;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
-import it.pagopa.pn.interop.cucumber.steps.utils.DataPreparationService;
-import it.pagopa.pn.interop.cucumber.steps.utils.EServicesCommonDomain;
-import org.junit.jupiter.api.Assertions;
+import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
+import it.pagopa.pn.interop.cucumber.steps.utils.EServicesCommonContext;
+import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 
-import java.util.Map;
-import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class AgreementCommonSteps {
     private DataPreparationService dataPreparationService;
     private CommonUtils commonUtils;
-    private EServicesCommonDomain eServicesCommonDomain;
+    private SharedStepsContext sharedStepsContext;
 
     public AgreementCommonSteps(DataPreparationService dataPreparationService,
             CommonUtils commonUtils,
-            EServicesCommonDomain eServicesCommonDomain) {
+            SharedStepsContext sharedStepsContext) {
         this.dataPreparationService = dataPreparationService;
         this.commonUtils = commonUtils;
-        this.eServicesCommonDomain = eServicesCommonDomain;
+        this.sharedStepsContext = sharedStepsContext;
     }
 
     @Given("{string} ha una richiesta di fruizione in stato {string} per quell'e-service")
@@ -31,8 +29,8 @@ public class AgreementCommonSteps {
         commonUtils.setBearerToken(commonUtils.getToken(tenant, null));
         dataPreparationService.createAgreementWithGivenState(
                 AgreementState.fromValue(agreementState),
-                eServicesCommonDomain.getEserviceId(),
-                eServicesCommonDomain.getDescriptorId(),
+                sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                sharedStepsContext.getEServicesCommonContext().getDescriptorId(),
                 null);
     }
 
@@ -48,6 +46,7 @@ public class AgreementCommonSteps {
     public void tenantHasAlreadyCreatedAndPublishedEService(String tenantType, int totalEservices) {
         commonUtils.setBearerToken(commonUtils.getToken(tenantType, null));
         // Create e-services and publish descriptors
+        EServicesCommonContext eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
         for (int i = 0; i < totalEservices; i++) {
             // Create e-service and descriptor
             int randomInt = ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE);
@@ -59,13 +58,13 @@ public class AgreementCommonSteps {
             dataPreparationService.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(),
                     eServiceDescriptor.getDescriptorId(), EServiceDescriptorState.PUBLISHED, false);
             // Aggiungi l'e-service alla lista dei pubblicati
-            eServicesCommonDomain.getPublishedEservicesIds().add(eServiceDescriptor);
+            eServicesCommonContext.getPublishedEservicesIds().add(eServiceDescriptor);
         }
         // Imposta il primo e-service e descrittore
-        if (!eServicesCommonDomain.getPublishedEservicesIds().isEmpty()) {
-            EServiceDescriptor firstDescriptor = eServicesCommonDomain.getPublishedEservicesIds().get(0);
-            eServicesCommonDomain.setEserviceId(firstDescriptor.getEServiceId());
-            eServicesCommonDomain.setDescriptorId(firstDescriptor.getDescriptorId());
+        if (!eServicesCommonContext.getPublishedEservicesIds().isEmpty()) {
+            EServiceDescriptor firstDescriptor = eServicesCommonContext.getPublishedEservicesIds().get(0);
+            eServicesCommonContext.setEserviceId(firstDescriptor.getEServiceId());
+            eServicesCommonContext.setDescriptorId(firstDescriptor.getDescriptorId());
         }
 
     }

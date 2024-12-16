@@ -7,28 +7,26 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.KeyUse;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.utils.CommonUtils;
 import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
-import it.pagopa.pn.interop.cucumber.steps.utils.DataPreparationService;
-import it.pagopa.pn.interop.cucumber.steps.utils.HttpCallExecutor;
-import org.springframework.http.HttpStatus;
-
-import java.security.KeyPair;
+import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
+import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 
 public class ClientKeyReadSteps {
     private static final long MAX_SAFE_INTEGER = 9007199254740991L;
 
     private final IAuthorizationClient authorizationClient;
-    private final ClientCommonSteps clientCommonSteps;
+    private final SharedStepsContext sharedStepsContext;
     private final CommonUtils commonUtils;
     private final HttpCallExecutor httpCallExecutor;
     private final DataPreparationService dataPreparationService;
 
     public ClientKeyReadSteps(IAuthorizationClient authorizationClient,
-                              ClientCommonSteps clientCommonSteps,
+                              SharedStepsContext sharedStepsContext,
                               CommonUtils commonUtils,
                               HttpCallExecutor httpCallExecutor,
                               DataPreparationService dataPreparationService) {
         this.authorizationClient = authorizationClient;
-        this.clientCommonSteps = clientCommonSteps;
+        this.sharedStepsContext = sharedStepsContext;
         this.commonUtils = commonUtils;
         this.httpCallExecutor = httpCallExecutor;
         this.dataPreparationService = dataPreparationService;
@@ -39,16 +37,18 @@ public class ClientKeyReadSteps {
         commonUtils.setBearerToken(commonUtils.getToken(tenantType, role));
         KeyPairPEM keyPairPEM = KeyPairGeneratorUtil.createKeyPairPEM("RSA", 2048);
         String key = KeyPairGeneratorUtil.keyToBase64(keyPairPEM.getPublicKey(), true);
-        clientCommonSteps.setClientPublicKey(key);
-        String keyId = dataPreparationService.addPublicKeyToClient(clientCommonSteps.getClients().get(0), KeyPairGeneratorUtil.createKeySeed(KeyUse.SIG, "RS256", key).get(0));
-        clientCommonSteps.setKeyId(keyId);
+        sharedStepsContext.getClientCommonContext().setClientPublicKey(key);
+        String keyId = dataPreparationService.addPublicKeyToClient(sharedStepsContext.getClientCommonContext().getFirstClient(), KeyPairGeneratorUtil.createKeySeed(KeyUse.SIG, "RS256", key).get(0));
+        sharedStepsContext.getClientCommonContext().setKeyId(keyId);
     }
 
     @When("l'utente richiede la lettura della chiave pubblica")
     public void userReadPublicKey() {
-        commonUtils.setBearerToken(commonUtils.getUserToken());
+        commonUtils.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(() ->
-                authorizationClient.getClientKeyById("", clientCommonSteps.getClients().get(0), clientCommonSteps.getKeyId()));
+                authorizationClient.getClientKeyById("",
+                        sharedStepsContext.getClientCommonContext().getFirstClient(),
+                        sharedStepsContext.getClientCommonContext().getKeyId()));
     }
 
 

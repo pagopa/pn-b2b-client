@@ -3,36 +3,37 @@ package it.pagopa.pn.interop.cucumber.steps.authorization;
 import java.util.List;
 
 import it.pagopa.interop.authorization.service.utils.CommonUtils;
+import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import org.junit.jupiter.api.Assertions;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactUser;
-import it.pagopa.pn.interop.cucumber.steps.utils.HttpCallExecutor;
+import it.pagopa.interop.utils.HttpCallExecutor;
 
 public class ClientUsersListingStep {
 
     private final IAuthorizationClient authorizationClient;
-    private final ClientCommonSteps clientCommonSteps;
+    private final SharedStepsContext sharedStepsContext;
     private final HttpCallExecutor httpCallExecutor;
     private final CommonUtils commonUtils;
 
     public ClientUsersListingStep(IAuthorizationClient authorizationClient,
-            ClientCommonSteps clientCommonSteps,
+            SharedStepsContext sharedStepsContext,
             HttpCallExecutor httpCallExecutor,
             CommonUtils commonUtils) {
         this.authorizationClient = authorizationClient;
-        this.clientCommonSteps = clientCommonSteps;
+        this.sharedStepsContext = sharedStepsContext;
         this.httpCallExecutor = httpCallExecutor;
         this.commonUtils = commonUtils;
     }
 
     @When("l'utente richiede una operazione di listing dei membri di quel client")
     public void getClientUsers() {
-        commonUtils.setBearerToken(commonUtils.getUserToken());
+        commonUtils.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor
-                .performCall(() -> authorizationClient.getClientUsers("", clientCommonSteps.getClients().get(0)));
+                .performCall(() -> authorizationClient.getClientUsers("", sharedStepsContext.getClientCommonContext().getFirstClient()));
     }
 
     @Then("si ottiene status code 200 e la lista di {int} utenti")

@@ -1,11 +1,19 @@
-package it.pagopa.pn.interop.cucumber.steps.purpose.domain;
+package it.pagopa.pn.interop.cucumber.steps.utils;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Getter
+@Setter
+@Component
 public class PurposeCommonContext {
     private List<String> purposesIds = new ArrayList<>();
     private List<String> currentVersionIds = new ArrayList<>();

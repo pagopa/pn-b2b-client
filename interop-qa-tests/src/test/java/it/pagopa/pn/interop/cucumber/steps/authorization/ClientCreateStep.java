@@ -6,7 +6,11 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.resolver.TokenResolver;
 import it.pagopa.interop.authorization.service.utils.CommonUtils;
-import it.pagopa.pn.interop.cucumber.steps.utils.HttpCallExecutor;
+import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
+import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.interop.utils.HttpCallExecutor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -17,24 +21,27 @@ public class ClientCreateStep {
     private final IAuthorizationClient authorizationClientCreate;
     private final CommonUtils commonUtils;
     private final HttpCallExecutor httpCallExecutor;
+    private final SharedStepsContext sharedStepsContext;
 
     private ResponseEntity<HttpStatus> createClientResponse;
 
     public ClientCreateStep(IAuthorizationClient authorizationClientCreate,
                             TokenResolver tokenResolver,
                             CommonUtils commonUtils,
-                            HttpCallExecutor httpCallExecutor) {
+                            HttpCallExecutor httpCallExecutor,
+                            SharedStepsContext sharedStepsContext) {
         this.authorizationClientCreate = authorizationClientCreate;
         this.commonUtils = commonUtils;
         this.httpCallExecutor = httpCallExecutor;
+        this.sharedStepsContext = sharedStepsContext;
     }
 
     @Given("l'utente è un {string} di {string}")
     public void setRole(String role, String tenantType) {
         String token = commonUtils.getToken(tenantType, role);
         commonUtils.setBearerToken(token);
-        commonUtils.setUserToken(token);
-        commonUtils.setTenantType(tenantType);
+        sharedStepsContext.setUserToken(token);
+        sharedStepsContext.setTenantType(tenantType);
     }
 
     @When("l'utente richiede la creazione di un client {string}")

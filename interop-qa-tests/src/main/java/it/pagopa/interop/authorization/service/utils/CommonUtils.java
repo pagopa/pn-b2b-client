@@ -21,10 +21,6 @@ public class CommonUtils {
     private final List<Ente> configFile;
 
     private Map<String, Map<String, String>> cachedTokens = null;
-    @Getter @Setter
-    private String userToken;
-    @Getter @Setter
-    private String tenantType;
 
     public CommonUtils(SessionTokenFactory sessionTokenFactory,
                        KeyPairGeneratorUtil keyPairGeneratorUtil,
