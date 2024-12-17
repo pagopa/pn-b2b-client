@@ -20,7 +20,7 @@ public interface IPServiceDeskClientImpl {
     SearchNotificationsResponse searchNotificationsAsDelegateFromInternalId(String mandateId, String delegateInternalId,String recipientType, Integer size, String nextPagesKey, OffsetDateTime startDate, OffsetDateTime endDate) throws RestClientException ;
     SearchNotificationsResponse searchNotificationsFromTaxId(Integer size, String nextPagesKey, OffsetDateTime startDate, OffsetDateTime endDate, SearchNotificationsRequest searchNotificationsRequest) throws RestClientException ;
     TimelineResponse getTimelineOfIUNAndTaxId(String iun, SearchNotificationsRequest searchNotificationsRequest) throws RestClientException;
-    List<PaSummary> getListOfOnboardedPA() throws RestClientException ;
+    List<PaSummary> getListOfOnboardedPA(String operatorId, String paNameFilter) throws RestClientException ;
     SearchNotificationsResponse searchNotificationsFromSenderId(Integer size, String nextPagesKey, PaNotificationsRequest paNotificationsRequest) throws RestClientException ;
     ProfileResponse getProfileFromTaxId(ProfileRequest profileRequest) throws RestClientException ;
     NotificationRecipientDetailResponse getNotificationRecipientDetail(String xPagopaPnUid, String iun, NotificationRecipientDetailRequest notificationRecipientDetailRequest) throws RestClientException;

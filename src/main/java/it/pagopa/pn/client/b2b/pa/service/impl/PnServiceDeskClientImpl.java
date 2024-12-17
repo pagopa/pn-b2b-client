@@ -104,8 +104,8 @@ public class PnServiceDeskClientImpl implements IPServiceDeskClientImpl {
         return notificationAndMessageApi.getTimelineOfIUNAndTaxId(operatorId, iun, searchNotificationsRequest);
     }
 
-    public List<PaSummary> getListOfOnboardedPA() throws RestClientException {
-        return paApi.getListOfOnboardedPA(operatorId);
+    public List<PaSummary> getListOfOnboardedPA(String operatorId, String paNameFilter) throws RestClientException {
+        return paApi.getListOfOnboardedPA(operatorId, paNameFilter);
     }
 
     public SearchNotificationsResponse searchNotificationsFromSenderId(Integer size, String nextPagesKey, PaNotificationsRequest paNotificationsRequest) throws RestClientException {

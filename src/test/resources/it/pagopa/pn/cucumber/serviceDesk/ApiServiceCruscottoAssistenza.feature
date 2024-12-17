@@ -3,8 +3,23 @@ Feature: Api Service Cruscotto Assitenza
   #CE02.1 Come operatore devo accedere all’elenco di tutte le PA che hanno effettuato on boarding
   @cruscottoAssistenza
   Scenario: [API-SERVICE-CA_CE02.1_1] Invocazione del servizio e verifica restituzione array di oggetti con nome e id della PA
-    Given l'operatore richiede l'elenco di tutte le PA che hanno effettuato on boarding
+    Given l'operatore "corretto" richiede l'elenco di tutte le PA che hanno effettuato on boarding con filtro "vuoto"
     Then Il servizio risponde con esito positivo con la lista delle PA
+
+  @cruscottoAssistenza
+  Scenario: [API-SERVICE-CA_CE02.1_2] Invocazione del servizio e verifica restituzione array di oggetti con il filtro della ricerca attivo
+    Given l'operatore "corretto" richiede l'elenco di tutte le PA che hanno effettuato on boarding con filtro "Palermo"
+    Then Il servizio risponde con esito positivo con la lista delle PA
+    And La lista delle PA trovate corrispondono al filtro "Palermo"
+
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.1_3] Invocazione del servizio e verifica restituzione array di oggetti con operatore id errato o filtro errato
+    Given l'operatore "<OPERATOR_ID>" richiede l'elenco di tutte le PA che hanno effettuato on boarding con filtro "<FILTER>"
+    Then il servizio risponde con errore "400"
+    Examples:
+    | OPERATOR_ID | FILTER |
+    | corretto    | pa     |
+    | errato      | vuoto  |
 
   #CE02.2 Come operatore devo accedere all’elenco di tutti i messaggi di cortesia inviati...
   #API-SERVICE-CA_CE02.2_3 API-SERVICE-CA_CE02.2_6 API-SERVICE-CA_CE02.2_4 API-SERVICE-CA_CE02.2_7, API-SERVICE-CA_CE02.2_10, API-SERVICE-CA_CE02.2_11, API-SERVICE-CA_CE02.2_13, API-SERVICE-CA_CE02.2_13
@@ -660,7 +675,7 @@ Feature: Api Service Cruscotto Assitenza
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.11_84] Invocazione del servizio con paId correttamente valorizzato e verifica risposta
-    Given l'operatore richiede l'elenco di tutte le PA che hanno effettuato on boarding
+    Given l'operatore "corretto" richiede l'elenco di tutte le PA che hanno effettuato on boarding con filtro "vuoto"
     And Il servizio risponde con esito positivo con la lista delle PA
     When  come operatore devo accedere alla lista di tutte le notifiche depositate da un ente (mittente) su Piattaforma Notifiche in un range temporale con paId "<paID>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then Il servizio risponde correttamente
@@ -804,7 +819,7 @@ Feature: Api Service Cruscotto Assitenza
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.14_100] Invocazione del servizio con paId correttamente valorizzato e verifica risposta
-    Given l'operatore richiede l'elenco di tutte le PA che hanno effettuato on boarding
+    Given l'operatore "corretto" richiede l'elenco di tutte le PA che hanno effettuato on boarding con filtro "vuoto"
     And Il servizio risponde con esito positivo con la lista delle PA
     When  come operatore devo accedere alle informazioni relative alle richieste di API Key avanzate da un Ente mittente di notifiche sulla Piattaforma "<paID>"
     Then Il servizio risponde correttamente con presenza delle apiKey

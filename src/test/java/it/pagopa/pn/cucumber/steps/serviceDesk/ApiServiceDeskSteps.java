@@ -83,6 +83,7 @@ public class ApiServiceDeskSteps {
     private final String ticketoperationid_vuoto = null;
     private static final Integer delay = 420000;
     private static final Integer workFlowWaitDefault = 31000;
+    private final String OPERATOR_ID = "AutomationMv";
     private List<PaSummary> listPa = null;
     private HttpStatusCodeException notificationError;
     private SearchNotificationsResponse searchNotificationsResponse;
@@ -608,16 +609,15 @@ public class ApiServiceDeskSteps {
         operationProducedAnErrorSteps(statusCode);
     }
 
-    @And("l'operatore richiede l'elenco di tutte le PA che hanno effettuato on boarding")
-    public void elencoPaOnboarding() {
+    @And("l'operatore {string} richiede l'elenco di tutte le PA che hanno effettuato on boarding con filtro {string}")
+    public void elencoPaOnboarding(String operator, String filter) {
         try {
-            Assertions.assertDoesNotThrow(() -> {
-                listPa = ipServiceDeskClient.getListOfOnboardedPA();
-            });
-        } catch (AssertionFailedError assertionFailedError) {
-            String message = assertionFailedError.getMessage() +
+            listPa = ipServiceDeskClient.getListOfOnboardedPA(operator.equalsIgnoreCase("errato") ? null : OPERATOR_ID, filter.equalsIgnoreCase("vuoto") ? null : filter);
+        } catch (HttpStatusCodeException e) {
+            String message = e.getMessage() +
                     "{Elenco delle PA onbordate " + (listPa == null ? "NULL" : listPa.size()) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+            log.info(message);
+            notificationError = e;
         }
     }
 
@@ -625,6 +625,13 @@ public class ApiServiceDeskSteps {
     public void verifyServiceResponse() {
         Assertions.assertNotNull(listPa);
         Assertions.assertFalse(listPa.isEmpty());
+        Assertions.assertTrue(listPa.size() <= 10);
+    }
+
+    @And("La lista delle PA trovate corrispondono al filtro {string}")
+    public void laListaDellePATrovateCorrispondonoAlFiltro(String filter) {
+        Assertions.assertTrue(listPa.stream()
+                .allMatch(data -> data.getName().contains(filter)));
     }
 
     @Given("l'operatore richiede l'elenco di tutti i messaggi di cortesia inviati con cf vuoto")
