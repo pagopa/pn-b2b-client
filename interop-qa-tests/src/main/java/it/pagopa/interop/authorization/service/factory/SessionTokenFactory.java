@@ -122,7 +122,7 @@ public class SessionTokenFactory {
 
         log.info("## Step 6. Generate signed STs ##");
         Map<String, Map<String, String>> signedSTs = signedStsGeneration(unsignedSTs);
-        log.info("Session Token generation completed: " + signedSTs);
+        log.info("Session Token generation completed successfully.");
 
         return signedSTs;
     }
