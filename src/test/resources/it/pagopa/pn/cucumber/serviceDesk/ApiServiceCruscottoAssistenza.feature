@@ -675,7 +675,7 @@ Feature: Api Service Cruscotto Assitenza
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.11_84] Invocazione del servizio con paId correttamente valorizzato e verifica risposta
-    Given l'operatore "corretto" richiede l'elenco di tutte le PA che hanno effettuato on boarding "senza" filtro
+    Given l'operatore "corretto" richiede l'elenco di tutte le PA che hanno effettuato on boarding con filtro "vuoto"
     And Il servizio risponde con esito positivo con la lista delle PA
     When  come operatore devo accedere alla lista di tutte le notifiche depositate da un ente (mittente) su Piattaforma Notifiche in un range temporale con paId "<paID>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then Il servizio risponde correttamente
@@ -819,7 +819,7 @@ Feature: Api Service Cruscotto Assitenza
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.14_100] Invocazione del servizio con paId correttamente valorizzato e verifica risposta
-    Given l'operatore "corretto" richiede l'elenco di tutte le PA che hanno effettuato on boarding "senza" filtro
+    Given l'operatore "corretto" richiede l'elenco di tutte le PA che hanno effettuato on boarding con filtro "vuoto"
     And Il servizio risponde con esito positivo con la lista delle PA
     When  come operatore devo accedere alle informazioni relative alle richieste di API Key avanzate da un Ente mittente di notifiche sulla Piattaforma "<paID>"
     Then Il servizio risponde correttamente con presenza delle apiKey
