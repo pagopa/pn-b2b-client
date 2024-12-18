@@ -4,7 +4,9 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.authorization.service.utils.CommonUtils;
 import it.pagopa.interop.delegate.service.IDelegationsApiClient;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RejectDelegationPayload;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -58,18 +60,29 @@ public class DelegateCreateStep {
         httpCallExecutor.performCall(
                 () -> delegationsApiClient.createProducerDelegation(sharedStepsContext.getXCorrelationId(),
                         new DelegationSeed().eserviceId(sharedStepsContext.getEServicesCommonContext().getEserviceId()).delegateId(organizationId)));
+        sharedStepsContext.getDelegationCommonContext().setDelegationId(((CreatedResource) httpCallExecutor.getResponse()).getId());
     }
 
     @And("l'ente {string} accetta la delega")
     public void delegationIsAcceptedByTenant(String tenantType) {
+        httpCallExecutor.performCall(
+                () -> delegationsApiClient.approveDelegation(sharedStepsContext.getXCorrelationId(),
+                        sharedStepsContext.getDelegationCommonContext().getDelegationId()));
     }
 
     @And("l'ente {string} rifiuta la delega")
     public void delegationIsRejectedByTenant(String tenantType) {
+        httpCallExecutor.performCall(
+                () -> delegationsApiClient.rejectDelegation(sharedStepsContext.getXCorrelationId(),
+                        sharedStepsContext.getDelegationCommonContext().getDelegationId(),
+                        new RejectDelegationPayload().rejectionReason("Missing all required data!")));
     }
 
     @And("l'ente {string} revoca la delega")
     public void delegationIsRevokedByTenant(String tenantType) {
+        httpCallExecutor.performCall(
+                () -> delegationsApiClient.revokeProducerDelegation(sharedStepsContext.getXCorrelationId(),
+                        String.valueOf(sharedStepsContext.getDelegationCommonContext().getDelegationId())));
     }
 
 

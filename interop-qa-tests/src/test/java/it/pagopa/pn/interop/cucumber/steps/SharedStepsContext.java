@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps;
 
 import io.cucumber.java.Before;
 import it.pagopa.pn.interop.cucumber.steps.common.ClientCommonContext;
+import it.pagopa.pn.interop.cucumber.steps.common.DelegationCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
 import lombok.Getter;
@@ -21,6 +22,7 @@ public class SharedStepsContext {
     private ClientCommonContext clientCommonContext;
     private PurposeCommonContext purposeCommonContext;
     private EServicesCommonContext eServicesCommonContext;
+    private DelegationCommonContext delegationCommonContext;
 
     @Before
     public void resetSharedStepsContext() {
@@ -28,6 +30,7 @@ public class SharedStepsContext {
         clientCommonContext = new ClientCommonContext();
         purposeCommonContext = new PurposeCommonContext();
         eServicesCommonContext = new EServicesCommonContext();
+        delegationCommonContext = new DelegationCommonContext();
     }
 
     public String getXCorrelationId() {
