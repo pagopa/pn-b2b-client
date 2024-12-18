@@ -13,7 +13,7 @@ Feature: Creazione di una delega
     Examples:
       | ruolo        | statusCode |
       | admin        |        200 |
-#      | api          |        403 |
-#      | security     |        403 |
-#      | api,security |        403 |
-#      | support      |        403 |
+      | api          |        403 |
+      | security     |        403 |
+      | api,security |        403 |
+      | support      |        403 |

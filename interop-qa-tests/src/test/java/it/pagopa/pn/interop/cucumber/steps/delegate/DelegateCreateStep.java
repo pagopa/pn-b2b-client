@@ -100,13 +100,6 @@ public class DelegateCreateStep {
                 new DelegationSeed().eserviceId(sharedStepsContext.getEServicesCommonContext().getEserviceId()).delegateId(organizationId)));
         sharedStepsContext.getDelegationCommonContext().setDelegationId(((CreatedResource) httpCallExecutor.getResponse()).getId());
 
-        commonUtils.makePolling(
-                () -> httpCallExecutor.performCall(() -> delegationApiClient.getDelegation(sharedStepsContext.getXCorrelationId(),
-                        String.valueOf(sharedStepsContext.getDelegationCommonContext().getDelegationId()))),
-                res -> res != HttpStatus.NOT_FOUND,
-                "There was an error while creating the delegation!"
-        );
-
     }
 
 
