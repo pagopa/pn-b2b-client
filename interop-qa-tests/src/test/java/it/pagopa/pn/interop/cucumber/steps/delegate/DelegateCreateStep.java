@@ -94,6 +94,16 @@ public class DelegateCreateStep {
                         String.valueOf(sharedStepsContext.getDelegationCommonContext().getDelegationId())));
     }
 
+    @And("la delega è stata correttamente creata")
+    public void delegationIsPresent() {
+        commonUtils.makePolling(
+                () -> httpCallExecutor.performCall(() -> delegationApiClient.getDelegation(sharedStepsContext.getXCorrelationId(),
+                        String.valueOf(sharedStepsContext.getDelegationCommonContext().getDelegationId()))),
+                res -> res != HttpStatus.NOT_FOUND,
+                "There was an error while creating the delegation!"
+        );
+    }
+
     private void createDelegate(String tenantType) {
         UUID organizationId = commonUtils.getOrganizationId(tenantType);
         httpCallExecutor.performCall(() -> producerDelegationsApiClient.createProducerDelegation(sharedStepsContext.getXCorrelationId(),
