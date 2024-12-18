@@ -56,6 +56,16 @@ public class TenantsApiClientImpl implements ITenantsApi {
     }
 
     @Override
+    public void assignTenantDelegatedProducerFeature() {
+        tenantsApi.assignTenantDelegatedProducerFeature();
+    }
+
+    @Override
+    public void deleteTenantDelegatedProducerFeature() {
+        tenantsApi.deleteTenantDelegatedProducerFeature();
+    }
+
+    @Override
     public void setBearerToken(String bearerToken) {
         this.tenantsApi.setApiClient(createApiClient(bearerToken));
     }

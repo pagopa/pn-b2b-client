@@ -96,7 +96,7 @@ public class DataPreparationService {
     }
 
     public void addMemberToClient(UUID clientId, UUID userId) {
-        InlineObject2 inlineObject = new InlineObject2().addUserIdsItem(userId);
+        InlineObject3 inlineObject = new InlineObject3().addUserIdsItem(userId);
         commonUtils.makePolling(
                 () -> httpCallExecutor.performCall(() -> authorizationClient.addUsersToClient(sharedStepsContext.getXCorrelationId(), clientId, inlineObject)),
                 res -> !res.is5xxServerError(),

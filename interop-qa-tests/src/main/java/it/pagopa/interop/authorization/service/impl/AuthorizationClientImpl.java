@@ -3,6 +3,7 @@ package it.pagopa.interop.authorization.service.impl;
 import java.util.List;
 import java.util.UUID;
 
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import org.springframework.web.client.RestTemplate;
 
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
@@ -11,30 +12,15 @@ import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.ClientsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.api.PurposesApi;
-import it.pagopa.interop.generated.openapi.clients.bff.model.Client;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ClientKind;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CompactClients;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CompactUser;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject2;
-import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKey;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKeys;
-import it.pagopa.interop.generated.openapi.clients.bff.model.Purpose;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeAdditionDetailsSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionResource;
 
 public class AuthorizationClientImpl implements IAuthorizationClient {
     private final ClientsApi clientsApi;
     private final RestTemplate restTemplate;
-    private final InteropClientConfigs interopClientConfigs;
     private final String basePath;
     private final String bearerToken;
 
     public AuthorizationClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
-        this.interopClientConfigs = interopClientConfigs;
         this.basePath = interopClientConfigs.getBaseUrl();
         this.bearerToken = "apiBearerToken";
         this.clientsApi = new ClientsApi(createApiClient(bearerToken));
@@ -120,8 +106,8 @@ public class AuthorizationClientImpl implements IAuthorizationClient {
     }
 
     @Override
-    public CreatedResource addUsersToClient(String xCorrelationId, UUID clientId, InlineObject2 inlineObject2) {
-        return clientsApi.addUsersToClient(xCorrelationId, clientId, inlineObject2);
+    public CreatedResource addUsersToClient(String xCorrelationId, UUID clientId, InlineObject3 inlineObject3) {
+        return clientsApi.addUsersToClient(xCorrelationId, clientId, inlineObject3);
     }
 
     @Override

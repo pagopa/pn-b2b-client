@@ -13,4 +13,6 @@ public interface ITenantsApi extends SettableBearerToken {
     CertifiedAttributesResponse getCertifiedAttributes(UUID tenantId);
     void addDeclaredAttribute(DeclaredTenantAttributeSeed declaredTenantAttributeSeed);
     DeclaredAttributesResponse getDeclaredAttributes(String xCorrelationId, UUID tenantId);
+    void assignTenantDelegatedProducerFeature();
+    void deleteTenantDelegatedProducerFeature();
 }
