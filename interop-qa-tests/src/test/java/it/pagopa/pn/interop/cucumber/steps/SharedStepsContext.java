@@ -10,6 +10,7 @@ import lombok.Setter;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Getter
@@ -19,6 +20,7 @@ public class SharedStepsContext {
     private int testSeed;
     private String tenantType;
     private String userToken;
+    private UUID agreementId;
     private ClientCommonContext clientCommonContext;
     private PurposeCommonContext purposeCommonContext;
     private EServicesCommonContext eServicesCommonContext;

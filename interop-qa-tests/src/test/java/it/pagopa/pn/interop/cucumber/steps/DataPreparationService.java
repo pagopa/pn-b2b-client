@@ -586,8 +586,35 @@ public class DataPreparationService {
                 },
                 "There was an error while retrieving the purpose!"
         );
+    }
 
+    public void rejectAgreement(UUID agreementId) {
+        httpCallExecutor.performCall(() -> agreementClient.rejectAgreement(sharedStepsContext.getXCorrelationId(), agreementId,
+                new AgreementRejectionPayload().reason("Agreement rejected during QA")));
+        assertValidResponse();
 
+        commonUtils.makePolling(
+                () -> agreementClient.getAgreementById(sharedStepsContext.getXCorrelationId(), agreementId),
+                res -> res.getState().equals(AgreementState.REJECTED),
+                "There was an error while rejecting the agreement"
+        );
+    }
+
+    public void activateAgreement(UUID agreementId, ClientType reactivatedBy) {
+        httpCallExecutor.performCall(() -> agreementClient.activateAgreement(sharedStepsContext.getXCorrelationId(), agreementId));
+        assertValidResponse();
+        commonUtils.makePolling(
+                () -> agreementClient.getAgreementById(sharedStepsContext.getXCorrelationId(), agreementId),
+                res -> {
+                    AgreementState state = res.getState();
+                    boolean isActive = (state == AgreementState.ACTIVE);
+                    if (reactivatedBy != null) {
+                        isActive = (reactivatedBy == ClientType.CONSUMER) ? !res.getSuspendedByConsumer() : !res.getSuspendedByProducer();
+                    }
+                    return isActive;
+                },
+                "There was an error while rejecting the agreement"
+        );
     }
 
     private Resource createBlobFile(String filePathToRead, String fileNameToCreate) {
