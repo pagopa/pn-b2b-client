@@ -37,39 +37,39 @@ Feature: Creazione di una delega
       | admin        | delegato  | 200         |
 
       # Scenario: 6
-      # Esito: incoerente, si ottiene 200
+      # Esito: coerente
       | api          | delegato  | 403         |
 
       # Scenario: 6
-      # Esito: incoerente, si ottiene 200
+      # Esito: coerente
       | security     | delegato  | 403         |
 
       # Scenario: 6
-      # Esito: incoerente, si ottiene 200
+      # Esito: coerente
       | api,security | delegato  | 403         |
 
       # Scenario: 6
-      # Esito: incoerente, si ottiene 200
+      # Esito: coerente
       | support      | delegato  | 403         |
 
       # Scenario: 28
-      # Esito: incoerente, 403, "Operation restricted to delegate"
-      | admin        | delegante | 200         |
+      # Esito: incoerente, 403, "Unauthorized"
+      | admin        | delegante | 403         |
 
       # Scenario: <mancante>
-      # Esito: si ottiene 403 "Operation restricted to delegate"
+      # Esito: si ottiene 403 "Unauthorized"
       | api          | delegante | 403         |
 
       # Scenario: <mancante>
-      # Esito: si ottiene 403 "Operation restricted to delegate"
+      # Esito: si ottiene 403 "Unauthorized"
       | security     | delegante | 403         |
 
       # Scenario: <mancante>
-      # Esito: si ottiene 403 "Operation restricted to delegate"
+      # Esito: si ottiene 403 "Unauthorized"
       | api,security | delegante | 403         |
 
       # Scenario: <mancante>
-      # Esito: si ottiene 403 "Operation restricted to delegate"
+      # Esito: si ottiene 403 "Unauthorized"
       | support      | delegante | 403         |
 
   Scenario Outline: Il rifiuto di una delega già accettata non possa essere compiuto da nessun utente indipentendemente dal ruolo
@@ -87,23 +87,23 @@ Feature: Creazione di una delega
       | ruolo        | funzione  | statusCode  |
 
       # Scenario: 29
-      # Esito: incoerente, si ottiene 500
-      | admin        | delegato  | 403         |
+      # Esito: coerente
+      | admin        | delegato  | 409         |
 
       # Scenario: <mancante>
-      # Esito: si ottiene 500
+      # Esito: si ottiene 403
       | api          | delegato  | 403         |
 
       # Scenario: <mancante>
-      # Esito: si ottiene 500
+      # Esito: si ottiene 403
       | security     | delegato  | 403         |
 
       # Scenario: <mancante>
-      # Esito: si ottiene 500
+      # Esito: si ottiene 403
       | api,security | delegato  | 403         |
 
       # Scenario: <mancante>
-      # Esito: si ottiene 500
+      # Esito: si ottiene 403
       | support      | delegato  | 403         |
 
       # Scenario: <mancante>
@@ -111,17 +111,17 @@ Feature: Creazione di una delega
       | admin        | delegante | 403         |
 
       # Scenario: <mancante>
-      # Esito: si ottiene 403 "Operation restricted to delegate"
+      # Esito: si ottiene 403 "Unauthorized"
       | api          | delegante | 403         |
 
       # Scenario: <mancante>
-      # Esito: si ottiene 403 "Operation restricted to delegate"
+      # Esito: si ottiene 403 "Unauthorized"
       | security     | delegante | 403         |
 
       # Scenario: <mancante>
-      # Esito: si ottiene 403 "Operation restricted to delegate"
+      # Esito: si ottiene 403 "Unauthorized"
       | api,security | delegante | 403         |
 
       # Scenario: <mancante>
-      # Esito: si ottiene 403 "Operation restricted to delegate"
+      # Esito: si ottiene 403 "Unauthorized"
       | support      | delegante | 403         |

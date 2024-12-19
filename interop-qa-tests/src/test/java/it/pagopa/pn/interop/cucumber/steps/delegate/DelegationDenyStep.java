@@ -13,6 +13,7 @@ import it.pagopa.interop.delegate.service.IDelegationApiClient;
 import it.pagopa.interop.delegate.service.IDelegationsApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RejectDelegationPayload;
@@ -76,6 +77,7 @@ public class DelegationDenyStep {
     public void givenUserWithRole(DelegationRole delegationRole, String iamRole) {
         this.userDelegationRole = delegationRole;
         String tenantType = tenants.get(delegationRole);
+
         String token = commonUtils.getToken(tenantType, iamRole);
         commonUtils.setBearerToken(token);
         sharedStepsContext.setUserToken(token);
@@ -137,16 +139,25 @@ public class DelegationDenyStep {
     @Given("l'ente delegato ha accettato la delega")
     public void givenDelegateTenantHasAcceptedDelegation() {
         String tenantType = tenants.get(DELEGATE);
+
         commonUtils.setBearerToken(commonUtils.getToken(tenantType, null));
         httpCallExecutor.performCall(
             () -> producerDelegationsApiClient.approveDelegation(sharedStepsContext.getXCorrelationId(),
                 sharedStepsContext.getDelegationCommonContext().getDelegationId()));
+
+        // wait until delegation is correctly approved
+        commonUtils.makePolling(
+            () -> delegationApiClient.getDelegation(sharedStepsContext.getXCorrelationId(),
+                String.valueOf(sharedStepsContext.getDelegationCommonContext().getDelegationId())),
+            res ->  res.getState().equals(DelegationState.ACTIVE),
+            "There was an error while accepting the delegation!"
+        );
     }
 
     @When("l'utente rifiuta la delega")
     public void whenUserRejectsDelegation() {
-        String tenantType = tenants.get(userDelegationRole);
-        commonUtils.setBearerToken(commonUtils.getToken(tenantType, null));
+        String authToken = sharedStepsContext.getUserToken();
+        commonUtils.setBearerToken(authToken);
         httpCallExecutor.performCall(
             () -> producerDelegationsApiClient.rejectDelegation(sharedStepsContext.getXCorrelationId(),
                 sharedStepsContext.getDelegationCommonContext().getDelegationId(),
