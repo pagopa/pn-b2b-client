@@ -17,3 +17,111 @@ Feature: Creazione di una delega
       | security     |        403 |
       | api,security |        403 |
       | support      |        403 |
+
+
+  Scenario Outline: Il rifiuto di una delega in stato di pending possa essere compiuto solo da un utente con ruolo admin
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And un utente dell'ente <funzione> con ruolo "<ruolo>"
+    And l'ente delegante ha già creato e pubblicato 1 e-service
+    And l'ente delegato concede la disponibilità a ricevere deleghe
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato
+    And la delega è stata creata correttamente
+    When l'utente rifiuta la delega
+    Then si ottiene status code <statusCode>
+    Examples:
+      | ruolo        | funzione  | statusCode  |
+
+      # Scenario: 26
+      # Esito: coerente
+      | admin        | delegato  | 200         |
+
+      # Scenario: 6
+      # Esito: incoerente, si ottiene 200
+      | api          | delegato  | 403         |
+
+      # Scenario: 6
+      # Esito: incoerente, si ottiene 200
+      | security     | delegato  | 403         |
+
+      # Scenario: 6
+      # Esito: incoerente, si ottiene 200
+      | api,security | delegato  | 403         |
+
+      # Scenario: 6
+      # Esito: incoerente, si ottiene 200
+      | support      | delegato  | 403         |
+
+      # Scenario: 28
+      # Esito: incoerente, 403, "Operation restricted to delegate"
+      | admin        | delegante | 200         |
+
+      # Scenario: <mancante>
+      # Esito: si ottiene 403 "Operation restricted to delegate"
+      | api          | delegante | 403         |
+
+      # Scenario: <mancante>
+      # Esito: si ottiene 403 "Operation restricted to delegate"
+      | security     | delegante | 403         |
+
+      # Scenario: <mancante>
+      # Esito: si ottiene 403 "Operation restricted to delegate"
+      | api,security | delegante | 403         |
+
+      # Scenario: <mancante>
+      # Esito: si ottiene 403 "Operation restricted to delegate"
+      | support      | delegante | 403         |
+
+  Scenario Outline: Il rifiuto di una delega già accettata non possa essere compiuto da nessun utente indipentendemente dal ruolo
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And un utente dell'ente <funzione> con ruolo "<ruolo>"
+    And l'ente delegante ha già creato e pubblicato 1 e-service
+    And l'ente delegato concede la disponibilità a ricevere deleghe
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato
+    And la delega è stata creata correttamente
+    And l'ente delegato ha accettato la delega
+    When l'utente rifiuta la delega
+    Then si ottiene lo status code <statusCode>
+    Examples:
+      | ruolo        | funzione  | statusCode  |
+
+      # Scenario: 29
+      # Esito: incoerente, si ottiene 500
+      | admin        | delegato  | 403         |
+
+      # Scenario: <mancante>
+      # Esito: si ottiene 500
+      | api          | delegato  | 403         |
+
+      # Scenario: <mancante>
+      # Esito: si ottiene 500
+      | security     | delegato  | 403         |
+
+      # Scenario: <mancante>
+      # Esito: si ottiene 500
+      | api,security | delegato  | 403         |
+
+      # Scenario: <mancante>
+      # Esito: si ottiene 500
+      | support      | delegato  | 403         |
+
+      # Scenario: <mancante>
+      # Esito: si ottiene 403 "Operation restricted to delegate"
+      | admin        | delegante | 403         |
+
+      # Scenario: <mancante>
+      # Esito: si ottiene 403 "Operation restricted to delegate"
+      | api          | delegante | 403         |
+
+      # Scenario: <mancante>
+      # Esito: si ottiene 403 "Operation restricted to delegate"
+      | security     | delegante | 403         |
+
+      # Scenario: <mancante>
+      # Esito: si ottiene 403 "Operation restricted to delegate"
+      | api,security | delegante | 403         |
+
+      # Scenario: <mancante>
+      # Esito: si ottiene 403 "Operation restricted to delegate"
+      | support      | delegante | 403         |
