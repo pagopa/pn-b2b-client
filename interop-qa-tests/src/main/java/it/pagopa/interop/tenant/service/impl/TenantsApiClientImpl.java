@@ -4,10 +4,7 @@ import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
 import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.TenantsApi;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedAttributesResponse;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedTenantAttributeSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredAttributesResponse;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredTenantAttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import org.springframework.web.client.RestTemplate;
 
@@ -63,6 +60,11 @@ public class TenantsApiClientImpl implements ITenantsApi {
     @Override
     public void deleteTenantDelegatedProducerFeature() {
         tenantsApi.deleteTenantDelegatedProducerFeature();
+    }
+
+    @Override
+    public Tenant getTenant(String xCorrelationId, UUID tenantId) {
+        return tenantsApi.getTenant(xCorrelationId, tenantId);
     }
 
     @Override

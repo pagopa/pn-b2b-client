@@ -124,16 +124,6 @@ public class DelegationDenyStep {
         createDelegate(tenants.get(DELEGATE));
     }
 
-    @Given("la delega è stata creata correttamente")
-    public void delegationIsPresent() {
-        commonUtils.makePolling(
-            () -> httpCallExecutor.performCall(() -> delegationApiClient.getDelegation(sharedStepsContext.getXCorrelationId(),
-                String.valueOf(sharedStepsContext.getDelegationCommonContext().getDelegationId()))),
-            res -> res != HttpStatus.NOT_FOUND,
-            "There was an error while creating the delegation!"
-        );
-    }
-
     @Given("l'ente delegato ha accettato la delega")
     public void givenDelegateTenantHasAcceptedDelegation() {
         String tenantType = tenants.get(DELEGATE);
