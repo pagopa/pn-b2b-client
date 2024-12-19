@@ -6,6 +6,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -13,16 +14,16 @@ import java.util.Map;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class TemplateEngineContextFactory {
 
-    public TemplateRequestContext createContext(Map<String, String> parameters) {
+    public TemplateRequestContext createContext(Map<String, String> parameters, String notificationTpe) {
         String deliveryValue = parameters.get("context_delivery");
         String notificationValue = parameters.get("context_notification");
         String delegateValue = parameters.get("context_delegate");
         String recipientValue = parameters.get("context_recipient");
         TemplateRequestContext context = new TemplateRequestContext();
         String digest = getParameter(parameters, "context_digest");
-        context.setNotification(notificationValue != null ? notificationValue.equals("null") ? null : getNotification(parameters) : getNotification(parameters));
+        context.setNotification(notificationValue != null ? notificationValue.equals("null") ? null : getNotification(parameters, notificationTpe) : getNotification(parameters, notificationTpe));
         context.setSendDate(getParameter(parameters, "context_senddate"));
-        context.setDigests(digest != null ? List.of(digest) : null);
+        context.setDigests(createDigest(digest, notificationTpe));
         context.setSubject(getParameter(parameters, "context_subject"));
         context.setEndWorkflowDate(getParameter(parameters, "context_endWorkflowDate"));
         context.setEndWorkflowStatus(getParameter(parameters, "context_endWorkflowStatus"));
@@ -56,14 +57,40 @@ public class TemplateEngineContextFactory {
         return context;
     }
 
-    private TemplateNotification getNotification(Map<String, String> parameters) {
+    private static List<String> createDigest(String digest, String notificationTpe) {
+        if (digest == null) return null;
+        else {
+            if (notificationTpe.equals("piu allegati")) {
+                return List.of("TEST_digest_allegato", "TEST_digest_allegato");
+            } else return List.of("TEST_digest_allegato");
+        }
+    }
+
+    private TemplateNotification getNotification(Map<String, String> parameters, String notificationTpe) {
         String recipientsValue = parameters.get("notification_recipient");
         String senderValue = parameters.get("notification_sender");
         return new TemplateNotification()
                 .iun(getParameter(parameters, "notification_iun"))
                 .subject(getParameter(parameters, "notification_subject"))
-                .recipients(recipientsValue != null ? recipientsValue.equals("null") ? null : List.of(getRecipients(parameters, "notification_")) : List.of(getRecipients(parameters, "notification_")))
+                .recipients(getRecipientList(parameters, recipientsValue, notificationTpe))
                 .sender(senderValue != null ? senderValue.equals("null") ? null : getNotificationSender(parameters) : getNotificationSender(parameters));
+    }
+
+    private List<TemplateRecipient> getRecipientList(Map<String, String> parameters, String recipientsValue, String notificationTpe) {
+        List<TemplateRecipient> recipients;
+        if (recipientsValue != null && recipientsValue.equals("null")) {
+            return null;
+        } else {
+            if (notificationTpe.equals("multidestinatario")) {
+                recipients = List.of(getRecipients(parameters, "notification_"), getRecipients(parameters, "notification_"));
+            } else recipients = List.of(getRecipients(parameters, "notification_"));
+        }
+        /*if (recipientsValue != null) {
+            if (recipientsValue.equals("null")) {
+                recipients = null;
+            } else recipients = List.of(getRecipients(parameters, "notification_"));
+        } else recipients = List.of(getRecipients(parameters, "notification_"));*/
+        return recipients;
     }
 
     private TemplateRecipient getRecipients(Map<String, String> parameters, String suffix) {

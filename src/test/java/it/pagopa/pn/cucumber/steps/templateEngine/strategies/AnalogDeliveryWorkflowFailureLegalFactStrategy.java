@@ -27,6 +27,25 @@ public class AnalogDeliveryWorkflowFailureLegalFactStrategy implements ITemplate
         return new TemplateEngineResult(file);
     }
 
+    @Override
+    public String getTextToCheckLanguage(String language) {
+        return switch (language.toUpperCase()) {
+            case  "ITALIANA" -> {
+                yield "Deposito di avvenuta ricezione Con riferimento alla notifica avente IUN string, ai sensi dell’art. 26, comma 7, del D.L. 76/2020, essendo risultato il destinatario string CF";
+            }
+            case "TEDESCA" -> {
+                yield "Deposito di avvenuta ricezione Unter Bezugnahme auf die Zustellung mit IUN string, gemäß Art. 26, Absatz 7, des DgV 76/2020, da der Empfänger string STEUERNUMMER";
+            }
+            case "SLOVENA" -> {
+                yield "Deposito di avvenuta ricezione V zvezi z obvestilom, ki vsebuje IUN string, v skladu s členom 26, sedmi odstavek, zakonodajnega odloka št. 76/2020, je prejemnik string DŠ";
+            }
+            case "FRANCESE" -> {
+                yield "Deposito di avvenuta ricezione En ce qui concerne la notification comportant IUN string, conformément à l'article 26, alinéa 7, du décret législatif 76 /2020, le destinataire étant string Code fiscale";
+            }
+            default -> throw new IllegalArgumentException("NO VALID LANGUANGE");
+        };
+    }
+
     private AnalogDeliveryWorkflowFailureLegalFact createRequest(boolean body, TemplateRequestContext context) {
         if (!body)
             return null;

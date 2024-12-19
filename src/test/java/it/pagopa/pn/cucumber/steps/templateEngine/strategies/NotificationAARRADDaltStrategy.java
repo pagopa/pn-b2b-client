@@ -26,6 +26,25 @@ public class NotificationAARRADDaltStrategy implements ITemplateEngineStrategy {
         return new TemplateEngineResult(file);
     }
 
+    @Override
+    public String getTextToCheckLanguage(String language) {
+        return switch (language.toUpperCase()) {
+            case  "ITALIANA" -> {
+                yield "AVVISO DI AVVENUTA RICEZIONE 1. 2. 3. RITIRA UNA COPIA SUL TERRITORIO - A PAGAMENTO Richiedi i documenti notificati anche senza SPID o CIE presso i Punti di ritiro SEND (CAF e altri esercenti convenzionati).";
+            }
+            case "TEDESCA" -> {
+                yield "AVVISO DI AVVENUTA RICEZIONE Empfangsbestätigung Feststellungs • Avviso di Avvenuta Ricezione (AAR): string Du hast eine rechtsgültige Mitteilung von string: . Wenn sie nicht in diesem siehe die zugestellten Dokumente Bescheid enthalten sind,";
+            }
+            case "SLOVENA" -> {
+                yield "AVVISO DI AVVENUTA RICEZIONE Obvestilo o prejemu: • Avviso di Avvenuta Ricezione (AAR): string Prejeli ste uradno sporočilo od string: . Če niso vključeni v to obvestilo, Prejeli ste uradno sporočilo od do dokumentov .";
+            }
+            case "FRANCESE" -> {
+                yield "AVVISO DI AVVENUTA RICEZIONE Accusé de réception • Avviso di Avvenuta Ricezione (AAR): string Vous avez reçu une communication ayant une valeur juridique de string: . S'ils ne figurent voir les documents notifiés.";
+            }
+            default -> throw new IllegalArgumentException("NO VALID LANGUANGE");
+        };
+    }
+
     private NotificationAarRaddAlt createRequest(boolean body, TemplateRequestContext context) {
         if (!body)
             return null;

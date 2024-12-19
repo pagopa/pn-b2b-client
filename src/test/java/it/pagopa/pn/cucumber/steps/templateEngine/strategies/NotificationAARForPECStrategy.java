@@ -24,6 +24,25 @@ public class NotificationAARForPECStrategy implements ITemplateEngineStrategy {
         return new TemplateEngineResult(file);
     }
 
+    @Override
+    public String getTextToCheckLanguage(String language) {
+        return switch (language.toUpperCase()) {
+            case  "ITALIANA" -> {
+                yield "fa parte di uno dei registri previsti dal Codice Amministrazione Digitale";
+            }
+            case "TEDESCA" -> {
+                yield "Du erhältst diese Empfangsbestätigung als string mit der Steuernummer string. SEND ist ein Tool, das den Versand von Zustellungen durch die öffentliche Verwaltung sicherer, effizienter und kostengünstiger macht.";
+            }
+            case "SLOVENA" -> {
+                yield "To obvestilo prejemate kot string z dav&#269;no &#353;tevilko string. SEND je orodje, ki omogo&#269;a varnej&#353;e, bolj u&#269;inkovito in gospodarno po&#353;iljanje obvestil javne uprave.";
+            }
+            case "FRANCESE" -> {
+                yield "Ricevi questo avviso di avvenuta ricezione in qualità di persona string con Codice Fiscale string. SEND è uno strumento che rende l'invio di notifiche da parte della Pubblica Amministrazione più sicuro, efficiente ed economico.";
+            }
+            default -> throw new IllegalArgumentException("NO VALID LANGUANGE");
+        };
+    }
+
     private NotificationAarForPec createRequest(boolean body, TemplateRequestContext context) {
         if (!body)
             return null;

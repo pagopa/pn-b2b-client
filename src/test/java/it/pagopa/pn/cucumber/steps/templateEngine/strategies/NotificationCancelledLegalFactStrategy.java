@@ -27,6 +27,25 @@ public class NotificationCancelledLegalFactStrategy implements ITemplateEngineSt
         return new TemplateEngineResult(file);
     }
 
+    @Override
+    public String getTextToCheckLanguage(String language) {
+        return switch (language.toUpperCase()) {
+            case  "ITALIANA" -> {
+                yield "Dichiarazione annullamento notifica sulla piattaforma SEND Con il presente documento, reso disponibile al destinatario esclusivamente sulla Piattaforma SEND, si dichiara che la notifica avente IUN , eseguita nei confronti di:";
+            }
+            case "TEDESCA" -> {
+                yield "Dichiarazione annullamento notifica sulla piattaforma SEND Mit diesem Dokument, das dem Empfänger ausschließlich auf der Plattform SEND zur Verfügung steht, wird erklärt, dass die Zustellung mit IUN an den Empfänger:";
+            }
+            case "SLOVENA" -> {
+                yield "Dichiarazione annullamento notifica sulla piattaforma SEND S tem dokumentom, ki je prejemniku na voljo izključno na platformi SEND, se izjavlja, da je obvestilo z IUN za string prejemnik:";
+            }
+            case "FRANCESE" -> {
+                yield "Dichiarazione annullamento notifica sulla piattaforma SEND Il est déclaré par la présente, mise à la disposition du destinataire exclusivement sur la plate-forme SEND, que la notification comportant IUN , exécutée à l'encontre de:";
+            }
+            default -> throw new IllegalArgumentException("NO VALID LANGUANGE");
+        };
+    }
+
     private NotificationCancelledLegalFact createRequest(boolean body, TemplateRequestContext context) {
         if (!body)
             return null;

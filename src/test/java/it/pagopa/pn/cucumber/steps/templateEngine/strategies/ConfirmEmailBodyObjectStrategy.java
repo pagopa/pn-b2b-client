@@ -18,4 +18,9 @@ public class ConfirmEmailBodyObjectStrategy implements ITemplateEngineStrategy{
         String file = templateEngineClient.emailsubject(selectLanguage(language));
         return new TemplateEngineResult(file);
     }
+
+    @Override
+    public String getTextToCheckLanguage(String language) {
+        return "SEND - Conferma la tua e-mail";
+    }
 }

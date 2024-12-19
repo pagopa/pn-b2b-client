@@ -8,6 +8,8 @@ public interface ITemplateEngineStrategy {
 
     public TemplateEngineResult retrieveTemplate(String language, boolean body, TemplateRequestContext context);
 
+    public String getTextToCheckLanguage(String language);
+
     default LanguageEnum selectLanguage(String language) {
         return switch (language.toUpperCase()) {
             case "ITALIANA" -> LanguageEnum.IT;

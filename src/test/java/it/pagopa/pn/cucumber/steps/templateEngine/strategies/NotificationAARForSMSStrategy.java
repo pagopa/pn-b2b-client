@@ -24,6 +24,11 @@ public class NotificationAARForSMSStrategy implements ITemplateEngineStrategy {
         return new TemplateEngineResult(file);
     }
 
+    @Override
+    public String getTextToCheckLanguage(String language) {
+        return "Hai ricevuto una notifica da string con Codice IUN string. Per leggerla, accedi con SPID o CIE al sito di SEND - Servizio Notifiche Digitali.";
+    }
+
     private NotificationAarForSms createRequest(boolean body, TemplateRequestContext context) {
         if (!body)
             return null;

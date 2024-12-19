@@ -18,4 +18,9 @@ public class ValidPecBodyObjectStrategy implements ITemplateEngineStrategy {
         String file = templateEngineClient.pecsubjectconfirm(selectLanguage(language));
         return new TemplateEngineResult(file);
     }
+
+    @Override
+    public String getTextToCheckLanguage(String language) {
+        return "SEND - Recapito legale PEC confermato";
+    }
 }

@@ -15,16 +15,13 @@ public class ValidPecBodyStrategy implements ITemplateEngineStrategy{
 
     @Override
     public TemplateEngineResult retrieveTemplate(String language, boolean body, TemplateRequestContext context) {
-        //PecValidationContactsSuccessBody pecBody = createRequest(body, context);
         String file = templateEngineClient.pecbodyconfirm(selectLanguage(language));
         return new TemplateEngineResult(file);
     }
 
-   /* private PecValidationContactsSuccessBody createRequest(boolean body, TemplateRequestContext context) {
-        if (!body)
-            return null;
+    @Override
+    public String getTextToCheckLanguage(String language) {
+        return "Ricevi questa comunicazione perch&eacute; hai inserito il tuo indirizzo";
+    }
 
-        return new PecValidationContactsSuccessBody()
-                .verificationCode(context.getVerificationCode());
-    }*/
 }
