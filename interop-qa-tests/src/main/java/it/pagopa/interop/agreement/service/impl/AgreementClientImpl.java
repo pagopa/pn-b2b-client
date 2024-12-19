@@ -5,10 +5,7 @@ import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
 import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.AgreementsApi;
-import it.pagopa.interop.generated.openapi.clients.bff.model.Agreement;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementSubmissionPayload;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
@@ -47,6 +44,11 @@ public class AgreementClientImpl implements IAgreementClient {
     }
 
     @Override
+    public Agreement activateAgreement(String xCorrelationId, UUID agreementId) {
+        return agreementsApi.activateAgreement(xCorrelationId, agreementId);
+    }
+
+    @Override
     public Agreement submitAgreement(String xCorrelationId, UUID agreementId, AgreementSubmissionPayload agreementSubmissionPayload) {
         return agreementsApi.submitAgreement(xCorrelationId, agreementId, agreementSubmissionPayload);
     }
@@ -59,6 +61,11 @@ public class AgreementClientImpl implements IAgreementClient {
     @Override
     public void archiveAgreement(String xCorrelationId, UUID agreementId) {
         agreementsApi.archiveAgreement(xCorrelationId, agreementId);
+    }
+
+    @Override
+    public Agreement rejectAgreement(String xCorrelationId, UUID agreementId, AgreementRejectionPayload agreementRejectionPayload) {
+        return agreementsApi.rejectAgreement(xCorrelationId, agreementId, agreementRejectionPayload);
     }
 
     @Override

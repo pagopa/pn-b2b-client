@@ -6,6 +6,7 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.utils.CommonUtils;
 import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject2;
+import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject3;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 
@@ -28,7 +29,7 @@ public class ClientUserAddStep {
     public void addUsersToClient(String tenantType) {
         commonUtils.setBearerToken(sharedStepsContext.getUserToken());
         UUID userId = commonUtils.getUserId(tenantType, "admin");
-        InlineObject2 inlineObject = new InlineObject2().addUserIdsItem(userId);
+        InlineObject3 inlineObject = new InlineObject3().addUserIdsItem(userId);
         httpCallExecutor.performCall(
                 () -> authorizationClient.addUsersToClient(sharedStepsContext.getXCorrelationId(), sharedStepsContext.getClientCommonContext().getFirstClient(), inlineObject));
     }

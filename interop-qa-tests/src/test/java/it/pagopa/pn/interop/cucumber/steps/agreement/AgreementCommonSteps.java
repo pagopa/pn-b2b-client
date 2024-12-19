@@ -27,11 +27,12 @@ public class AgreementCommonSteps {
     @Given("{string} ha una richiesta di fruizione in stato {string} per quell'e-service")
     public void tenantAlreadyHasFruitionRequestWithState(String tenant, String agreementState) {
         commonUtils.setBearerToken(commonUtils.getToken(tenant, null));
-        dataPreparationService.createAgreementWithGivenState(
+        UUID agreementId = dataPreparationService.createAgreementWithGivenState(
                 AgreementState.fromValue(agreementState),
                 sharedStepsContext.getEServicesCommonContext().getEserviceId(),
                 sharedStepsContext.getEServicesCommonContext().getDescriptorId(),
                 null);
+        sharedStepsContext.setAgreementId(agreementId);
     }
 
     @Given("{string} ha creato un attributo certificato e lo ha assegnato a {string}")
@@ -67,5 +68,17 @@ public class AgreementCommonSteps {
             eServicesCommonContext.setDescriptorId(firstDescriptor.getDescriptorId());
         }
 
+    }
+
+    @Given("{string} ha già creato un e-service in stato {string} con approvazione {string}")
+    public void tenantHasAlreadyCreatedEServiceWithStatusAndApproval(String tenantType, String descriptorState, String agreementApprovalPolicy) {
+        commonUtils.setBearerToken(commonUtils.getToken(tenantType, null));
+        EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(new EServiceSeed(),
+                new UpdateEServiceDescriptorSeed().agreementApprovalPolicy(AgreementApprovalPolicy.valueOf(agreementApprovalPolicy)));
+
+        dataPreparationService.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(),
+                eServiceDescriptor.getDescriptorId(), EServiceDescriptorState.valueOf(descriptorState), false);
+        sharedStepsContext.getEServicesCommonContext().setEserviceId(eServiceDescriptor.getEServiceId());
+        sharedStepsContext.getEServicesCommonContext().setDescriptorId(eServiceDescriptor.getDescriptorId());
     }
 }
