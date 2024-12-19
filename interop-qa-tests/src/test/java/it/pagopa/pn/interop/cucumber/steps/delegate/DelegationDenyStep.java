@@ -41,14 +41,13 @@ public class DelegationDenyStep {
     private final SharedStepsContext sharedStepsContext;
     private final HttpCallExecutor httpCallExecutor;
 
-    private DataPreparationService dataPreparationService;
+    private final DataPreparationService dataPreparationService;
 
     public enum DelegationRole {
         DELEGATE,
         DELEGATING
     }
 
-    private DelegationRole userDelegationRole;
     private final Map<DelegationRole, String> tenants = new EnumMap<>(DelegationRole.class);
 
     public DelegationDenyStep(IDelegationsApiClient producerDelegationsApiClient,
@@ -75,7 +74,6 @@ public class DelegationDenyStep {
 
     @Given("un utente dell'ente {delegationRole} con ruolo {string}")
     public void givenUserWithRole(DelegationRole delegationRole, String iamRole) {
-        this.userDelegationRole = delegationRole;
         String tenantType = tenants.get(delegationRole);
 
         String token = commonUtils.getToken(tenantType, iamRole);
