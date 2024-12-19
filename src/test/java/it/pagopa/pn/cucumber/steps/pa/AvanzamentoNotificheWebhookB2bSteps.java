@@ -15,10 +15,7 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.*;
-import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceWebhookV20;
-import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceWebhookV23;
-import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceWebhookV24;
-import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceWebhookV26;
+import it.pagopa.pn.client.b2b.pa.polling.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebhookB2bClient;
@@ -1159,7 +1156,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             if (progressResponseElement != null) {
                 break;
             }
-            sleepTest();
+            //sleepTest();
         }
         try {
             Assertions.assertNotNull(progressResponseElement);
@@ -2718,19 +2715,19 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     public void readStreamEventsStateV25(String pa, String status) {
         setPaWebhook(pa);
 
-        StatusElementSearchResult<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.NotificationStatus>
-                statusEventForStream = getStatusEventForStream(V10, status);
+        StatusElementSearchResult<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.NotificationStatusV26>
+                statusEventForStream = getStatusEventForStream(V25, status);
 
-        it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.NotificationStatus
+        it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.NotificationStatusV26
                 notificationStatus = statusEventForStream.getNotificationStatus();
 
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus notificationInternalStatus =
-                it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus.valueOf(statusEventForStream.notificationStatus.name());
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusV26 notificationInternalStatus =
+                it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusV26.valueOf(statusEventForStream.notificationStatus.name());
 
         int numCheck = statusEventForStream.getNumCheck();
         int waiting = statusEventForStream.getWaiting();
 
-       ProgressResponseElement progressResponseElement = null;
+        ProgressResponseElementV24 progressResponseElement = null;
         boolean finded = false;
         for (int i = 0; i < numCheck; i++) {
 
@@ -2747,7 +2744,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
         Assertions.assertTrue(finded);
         for (int i = 0; i < 4; i++) {
-            progressResponseElement = searchInWebhookV20(notificationStatus, null, 0);
+            progressResponseElement = searchInWebhookV24(notificationStatus, null, 0, 0);
             log.debug("PROGRESS-ELEMENT: " + progressResponseElement);
 
             if (progressResponseElement != null) {
@@ -2763,8 +2760,63 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
                     " {IUN: " + sharedSteps.getSentNotification().getIun() + " -WEBHOOK: " + this.eventStreamList.get(0).getStreamId() + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+            throw new AssertionFailedError("message", assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
 
     }
+
+    @And("vengono letti gli eventi dello stream del {string} fino allo stato {string} con versione V23")
+    public void readStreamEventsStatev25(String pa, String status) {
+        setPaWebhook(pa);
+
+        StatusElementSearchResult<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.NotificationStatus>
+                statusEventForStream = getStatusEventForStream(V23, status);
+
+        it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.NotificationStatus
+                notificationStatus = statusEventForStream.getNotificationStatus();
+
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus notificationInternalStatus =
+                it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus.valueOf(statusEventForStream.notificationStatus.name());
+
+        int numCheck = statusEventForStream.getNumCheck();
+        int waiting = statusEventForStream.getWaiting();
+
+        ProgressResponseElementV23 progressResponseElement = null;
+        boolean finded = false;
+        for (int i = 0; i < numCheck; i++) {
+
+            sleepTest(waiting);
+
+            sharedSteps.setSentNotificationV23(b2bClient.getSentNotificationV23(sharedSteps.getSentNotification().getIun()));
+            NotificationStatusHistoryElement notificationStatusHistoryElement = sharedSteps.getSentNotificationV23().getNotificationStatusHistory().stream().filter(elem -> elem.getStatus().equals(notificationInternalStatus)).findAny().orElse(null);
+
+            if (notificationStatusHistoryElement != null) {
+                finded = true;
+                break;
+            }
+        }
+
+        Assertions.assertTrue(finded);
+        for (int i = 0; i < 4; i++) {
+            progressResponseElement = searchInWebhookV23(notificationStatus, null, 0, 0);
+            log.debug("PROGRESS-ELEMENT: " + progressResponseElement);
+
+            if (progressResponseElement != null) {
+                break;
+            }
+
+            sleepTest();
+        }
+
+        try {
+            Assertions.assertNotNull(progressResponseElement);
+            log.info("EventProgress: " + progressResponseElement);
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() +
+                    " {IUN: " + sharedSteps.getSentNotification().getIun() + " -WEBHOOK: " + this.eventStreamList.get(0).getStreamId() + " }";
+            throw new AssertionFailedError("message", assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+
+    }
+
 }

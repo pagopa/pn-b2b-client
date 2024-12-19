@@ -397,6 +397,16 @@ public enum TimelineEventId {
                     .build();
         }
     },
+    DIGITAL_FAILURE_WORKFLOW("DIGITAL_FAILURE_WORKFLOW") {
+        @Override
+        public String buildEventId(EventId eventId) {
+            return new TimelineEventIdBuilder()
+                    .withCategory(this.getValue())
+                    .withIun(eventId.getIun())
+                    .withRecIndex(eventId.getRecIndex())
+                    .build();
+        }
+    },
 
     ANALOG_SUCCESS_WORKFLOW("ANALOG_SUCCESS_WORKFLOW") {
         @Override
@@ -409,7 +419,7 @@ public enum TimelineEventId {
         }
     },
 
-    DIGITAL_FAILURE_WORKFLOW("DIGITAL_FAILURE_WORKFLOW") {
+    ANALOG_WORKFLOW_RECIPIENT_DECEASED("ANALOG_WORKFLOW_RECIPIENT_DECEASED") {
         @Override
         public String buildEventId(EventId eventId) {
             return new TimelineEventIdBuilder()
@@ -419,6 +429,7 @@ public enum TimelineEventId {
                     .build();
         }
     };
+
 
     /*
     NATIONAL_REGISTRY_CALL("NATIONAL_REGISTRY_CALL") {
@@ -495,6 +506,7 @@ public enum TimelineEventId {
             }
             return paymentCode;
         }
+
     };
     */
 

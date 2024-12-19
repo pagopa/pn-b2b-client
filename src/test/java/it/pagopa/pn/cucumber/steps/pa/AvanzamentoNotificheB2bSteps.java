@@ -3543,4 +3543,22 @@ public class AvanzamentoNotificheB2bSteps {
         return pnPollingResponseV26.getTimelineElement();
     }
 
+    @Then("viene controllato che l'elemento di timeline della notifica {string} non esiste con V23")
+    public void readingNotEventUpToTheTimelineElementOfNotificationV23(String timelineEventCategory) {
+        PnPollingServiceTimelineRapidV23 timelineRapidV23 = (PnPollingServiceTimelineRapidV23) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_RAPID_V23);
+
+        PnPollingResponseV23 pnPollingResponseV23 = timelineRapidV23.waitForEvent(sharedSteps.getSentNotification().getIun(),
+                PnPollingParameter.builder()
+                        .value(timelineEventCategory)
+                        .build());
+        log.info("NOTIFICATION_TIMELINE: " + pnPollingResponseV23.getNotification().getTimeline());
+        try {
+            Assertions.assertFalse(pnPollingResponseV23.getResult());
+            Assertions.assertNull(pnPollingResponseV23.getTimelineElement());
+            sharedSteps.setSentNotificationV23(pnPollingResponseV23.getNotification());
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
 }

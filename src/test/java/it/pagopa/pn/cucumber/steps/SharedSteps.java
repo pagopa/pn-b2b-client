@@ -191,6 +191,10 @@ public class SharedSteps {
 
     @Getter
     @Setter
+    private List<ProgressResponseElementV25> progressResponseElementsV25 = null;
+
+    @Getter
+    @Setter
     private List<ProgressResponseElementV26> progressResponseElementsV26 = null;
 
     @Value("${pn.interop.base-url}")
@@ -1812,6 +1816,10 @@ public class SharedSteps {
         return notificationResponseCompleteV25;
     }
 
+    public FullSentNotificationV23 getSentNotificationV23() {
+        return notificationResponseCompleteV23;
+    }
+
     public void setSentNotification(FullSentNotificationV26 notificationResponseComplete) {
         this.notificationResponseComplete = notificationResponseComplete;
     }
@@ -1830,6 +1838,10 @@ public class SharedSteps {
 
     public void setSentNotificationV25(FullSentNotificationV25 notificationResponseCompleteV25) {
         this.notificationResponseCompleteV25 = notificationResponseCompleteV25;
+    }
+
+    public void setSentNotificationV23(FullSentNotificationV23 notificationResponseCompleteV23) {
+        this.notificationResponseCompleteV23 = notificationResponseCompleteV23;
     }
 
     public void selectPA(String apiKey) {
@@ -2146,6 +2158,8 @@ public class SharedSteps {
             case "COMPLETELY_UNREACHABLE" -> TimelineEventId.COMPLETELY_UNREACHABLE.buildEventId(event);
             case "DIGITAL_DELIVERY_CREATION_REQUEST" ->
                     TimelineEventId.DIGITAL_DELIVERY_CREATION_REQUEST.buildEventId(event);
+            case "ANALOG_WORKFLOW_RECIPIENT_DECEASED" ->
+                    TimelineEventId.ANALOG_WORKFLOW_RECIPIENT_DECEASED.buildEventId(event);
             default -> null;
         };
     }
@@ -2169,7 +2183,7 @@ public class SharedSteps {
                 TimelineElementDetailsV23 timelineElementDetails = timelineElementFromTest.getDetails();
                 return timelineElementList.stream().filter(elem -> Objects.requireNonNull(elem.getElementId()).startsWith(timelineEventId) && Objects.equals(Objects.requireNonNull(elem.getDetails()).getDeliveryDetailCode(), Objects.requireNonNull(timelineElementDetails).getDeliveryDetailCode())).findAny().orElse(null);
             }
-            return timelineElementList.stream().filter(elem -> Objects.requireNonNull(elem.getElementId()).equals(timelineEventId)).findAny().orElse(null);
+            return timelineElementList.stream().filter(elem -> Objects.requireNonNull(elem.getElementId()).contains(timelineEventId)).findAny().orElse(null);
         }
         return timelineElementList.stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).getValue().equals(timelineEventCategory)).findAny().orElse(null);
     }
@@ -2198,6 +2212,8 @@ public class SharedSteps {
             return getSentNotification().getIun();
         } else if (getSentNotificationV25() != null) {
             return getSentNotificationV25().getIun();
+        } else if (getSentNotificationV23() != null) {
+            return getSentNotificationV23().getIun();
         } else {
             return null;
         }

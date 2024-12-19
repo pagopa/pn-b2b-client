@@ -1,4 +1,7 @@
-Feature: Resa al mittente di una notifica
+Feature: Resa al mittente di una notific
+ #******************
+  # MONODESTINATARIO
+ #******************
 
 #OK
   #@returnedToSender @webhook1 @cleanWebhook
@@ -11,12 +14,12 @@ Feature: Resa al mittente di una notifica
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
       | digitalDomicile         | NULL               |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V26"
+    Then si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V26"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V26"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "RETURNED_TO_SENDER" con versione V26
     And esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost ugauale a "NotNull" per l'utente 0
-    #And viene effettuato un controllo sulla durata della retention di " "
-
+    Then viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
+      | details | NOT_NULL |
 
   #@returnedToSender @webhook1 @cleanWebhook
   Scenario: [RETURNED-TO-SENDER_2] Invio notifica AR mono-destinatario verso PF visualizzata precedentemente alla notifica di deceduto con controllo costo, retention dei documenti
@@ -28,7 +31,7 @@ Feature: Resa al mittente di una notifica
       | physicalAddress_address | @FAIL_DECEDUTO_SLOW_AR |
       | digitalDomicile         | NULL                   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And "Mario Cucumber" legge la notifica
+    Then "Mario Cucumber" legge la notifica
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V26"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V26"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "RETURNED_TO_SENDER" con versione V26
@@ -50,7 +53,6 @@ Feature: Resa al mittente di una notifica
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V26"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V26"
-    #Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
     And esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" per l'utente 0
     And la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "CANCELLED" con versione V26
@@ -103,9 +105,9 @@ Feature: Resa al mittente di una notifica
 
 
 
-
+ #**************
  #  MULTIDEST
-
+ #*************
 
   #@returnedToSender  @cleanWebhook @webhook1
   Scenario: [RETURNED-TO-SENDER_6] Invio notifica AR multi-destinatario aventi stati Inviata, Irreperibile, Deceduto e macro stato mostrato DELIVERED e controllo costo
@@ -250,9 +252,9 @@ Feature: Resa al mittente di una notifica
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "DELIVERED" con versione V26
 
 
-
-
+#***************
 #----multidest 2
+#**************
 
   #prima visualizza, poi deceduto
   #@returnedToSender  @cleanWebhook @webhook1
@@ -415,10 +417,14 @@ Feature: Resa al mittente di una notifica
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "RETURNED_TO_SENDER"
 
 
+
+#*******************************************
 # ----------VersioningModeFlag-------------
+#********************************************
+
   @returnedToSender
-  Scenario Outline: [RETURNED-TO-SENDER_20] Invio notifica AR mono-destinatario Deceduto con VersioningModeFlag=true, atteso stato DELIVERING
-    #v25
+  Scenario: [RETURNED-TO-SENDER_20] Invio notifica AR mono-destinatario Deceduto con VersioningModeFlag=true, atteso stato DELIVERING
+    #v23
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -427,15 +433,9 @@ Feature: Resa al mittente di una notifica
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
       | digitalDomicile         | NULL              |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "<timeline_element>"
-    When si invoca l'api B2B versione "<version>" per ottenere gli elementi di timeline di tale notifica
-    #Then gli elementi di timeline restituiti da B2B contengono i campi attesi in accordo alla versione "<version>"
-    Examples:
-      | timeline_element | version |
-      | ACCEPTED         | V25     |
-      | ACCEPTED         | V23     |
-      | ACCEPTED         | V24     |
+    Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "DELIVERING" con versione V23
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
+    Then viene controllato che l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" non esiste con V23
 
 
   @returnedToSender  @cleanWebhook @webhook1
@@ -451,13 +451,16 @@ Feature: Resa al mittente di una notifica
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
       | digitalDomicile         | NULL              |
+          And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V23"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V23"
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V10"
-    And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
-    Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "ACCEPTED"
+    Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "ACCEPTED" con versione V23
 
-  @returnedToSender  @cleanWebhook @webhook1
-  Scenario: [RETURNED-TO-SENDER_21-2] Invio notifica AR multi-destinatario di cui un Deceduto con VersioningModeFlag=true, atteso stato DELIVERING
+
+
+    @returnedToSender  @cleanWebhook @webhook1
+  Scenario: [RETURNED-TO-SENDER_21-TEST] Invio notifica AR multi-destinatario di cui un Deceduto con VersioningModeFlag=true, atteso stato DELIVERING
+    And vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V23"
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -465,12 +468,14 @@ Feature: Resa al mittente di una notifica
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
       | digitalDomicile         | NULL              |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V23"
-    And si crea il nuovo stream per il "Comune_Multi" con versione "V23"
-    Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "ACCEPTED" con versione V25
-    #Then vengono letti gli eventi dello stream del "Comune_1" fino allo stato "ACCEPTED" con la versione V23
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V23"
 
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V23"
+
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "DELIVERING" con versione V23
+    #And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "ANALOG_WORKFLOW_RECIPIENT_DECEASED" con la versione V23
+    Then viene controllato che l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" non esiste con V23
 
 
   @returnedToSender
@@ -602,8 +607,10 @@ Feature: Resa al mittente di una notifica
 
 
 
-
+  #***************************
   # timeline destinatario--------
+ #*****************************
+
 
  #OK
  # @returnedToSender
@@ -618,6 +625,8 @@ Feature: Resa al mittente di una notifica
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
     And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost ugauale a "NotNull" per l'utente 0
+    Then viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
+      | details | NOT_NULL |
 
 #OK
  # @returnedToSender
@@ -768,6 +777,7 @@ Feature: Resa al mittente di una notifica
 
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
+
 
 #pregressi
 
