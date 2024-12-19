@@ -25,12 +25,10 @@ public class ClientCreateStep {
     private ResponseEntity<HttpStatus> createClientResponse;
 
     public ClientCreateStep(IAuthorizationClient authorizationClientCreate,
-                            CommonUtils commonUtils,
-                            HttpCallExecutor httpCallExecutor,
                             SharedStepsContext sharedStepsContext) {
         this.authorizationClientCreate = authorizationClientCreate;
-        this.commonUtils = commonUtils;
-        this.httpCallExecutor = httpCallExecutor;
+        this.commonUtils = sharedStepsContext.getCommonUtils();
+        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.sharedStepsContext = sharedStepsContext;
     }
 

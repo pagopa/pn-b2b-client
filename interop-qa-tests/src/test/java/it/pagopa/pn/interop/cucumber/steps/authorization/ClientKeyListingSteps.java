@@ -18,13 +18,11 @@ public class ClientKeyListingSteps {
     private final HttpCallExecutor httpCallExecutor;
 
     public ClientKeyListingSteps(IAuthorizationClient authorizationClient,
-                                 SharedStepsContext sharedStepsContext,
-                                 CommonUtils commonUtils,
-                                 HttpCallExecutor httpCallExecutor) {
+                                 SharedStepsContext sharedStepsContext) {
         this.authorizationClient = authorizationClient;
         this.sharedStepsContext = sharedStepsContext;
-        this.commonUtils = commonUtils;
-        this.httpCallExecutor = httpCallExecutor;
+        this.commonUtils = sharedStepsContext.getCommonUtils();
+        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
     }
 
     @When("l'utente richiede una operazione di listing delle chiavi di quel client")

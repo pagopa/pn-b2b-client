@@ -2,6 +2,9 @@ package it.pagopa.interop.authorization.service.utils;
 
 import it.pagopa.interop.authorization.domain.Tenant;
 import it.pagopa.interop.authorization.service.factory.SessionTokenFactory;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
@@ -12,6 +15,8 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+@Component
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class CommonUtils {
     private final SessionTokenFactory sessionTokenFactory;
     private final KeyPairGeneratorUtil keyPairGeneratorUtil;

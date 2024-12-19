@@ -14,13 +14,11 @@ public class ClientUserRemoveStep {
     private final CommonUtils commonUtils;
 
     public ClientUserRemoveStep(IAuthorizationClient authorizationClient,
-            SharedStepsContext sharedStepsContext,
-            HttpCallExecutor httpCallExecutor,
-            CommonUtils commonUtils) {
+            SharedStepsContext sharedStepsContext) {
         this.authorizationClient = authorizationClient;
         this.sharedStepsContext = sharedStepsContext;
-        this.httpCallExecutor = httpCallExecutor;
-        this.commonUtils = commonUtils;
+        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+        this.commonUtils = sharedStepsContext.getCommonUtils();
     }
 
     @When("l'utente richiede la rimozione di quel membro dal client")
