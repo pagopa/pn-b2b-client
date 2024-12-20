@@ -13,11 +13,10 @@ public class AgreementCreationStep {
     private final SharedStepsContext sharedStepsContext;
     private final DataPreparationService dataPreparationService;
 
-    public AgreementCreationStep(CommonUtils commonUtils,
-                                 SharedStepsContext sharedStepsContext,
+    public AgreementCreationStep(SharedStepsContext sharedStepsContext,
                                  DataPreparationService dataPreparationService) {
-        this.commonUtils = commonUtils;
         this.sharedStepsContext = sharedStepsContext;
+        this.commonUtils = sharedStepsContext.getCommonUtils();
         this.dataPreparationService = dataPreparationService;
     }
 

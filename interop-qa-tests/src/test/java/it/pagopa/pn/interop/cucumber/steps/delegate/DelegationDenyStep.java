@@ -52,17 +52,14 @@ public class DelegationDenyStep {
     public DelegationDenyStep(IProducerDelegationsApiClient producerDelegationsApiClient,
                               IDelegationApiClient delegationApiClient,
                               ITenantsApi tenantsApi,
-                              CommonUtils commonUtils,
                               SharedStepsContext sharedStepsContext,
-                              HttpCallExecutor httpCallExecutor,
                               DataPreparationService dataPreparationService) {
         this.producerDelegationsApiClient = producerDelegationsApiClient;
         this.delegationApiClient = delegationApiClient;
         this.tenantsApi = tenantsApi;
-        this.commonUtils = commonUtils;
         this.sharedStepsContext = sharedStepsContext;
-        this.httpCallExecutor = httpCallExecutor;
-
+        this.commonUtils = sharedStepsContext.getCommonUtils();
+        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.dataPreparationService = dataPreparationService;
     }
 

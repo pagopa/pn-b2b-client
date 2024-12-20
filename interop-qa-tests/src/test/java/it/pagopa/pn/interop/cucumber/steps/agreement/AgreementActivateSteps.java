@@ -17,11 +17,10 @@ public class AgreementActivateSteps {
     private final CommonUtils commonUtils;
 
     public AgreementActivateSteps(DataPreparationService dataPreparationService,
-                                  SharedStepsContext sharedStepsContext,
-                                  CommonUtils commonUtils) {
+                                  SharedStepsContext sharedStepsContext) {
         this.dataPreparationService = dataPreparationService;
         this.sharedStepsContext = sharedStepsContext;
-        this.commonUtils = commonUtils;
+        this.commonUtils = sharedStepsContext.getCommonUtils();
     }
 
     @Given("{string} ha già approvato quella richiesta di fruizione")

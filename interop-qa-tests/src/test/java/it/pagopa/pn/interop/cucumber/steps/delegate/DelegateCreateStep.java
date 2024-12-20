@@ -32,16 +32,14 @@ public class DelegateCreateStep {
                               IProducerDelegationsApiClient producerDelegationsApiClient,
                               IDelegationApiClient delegationApiClient,
                               ITenantsApi tenantsApi,
-                              CommonUtils commonUtils,
-                              SharedStepsContext sharedStepsContext,
-                              HttpCallExecutor httpCallExecutor) {
+                              SharedStepsContext sharedStepsContext) {
         this.delegateCommonStep = delegateCommonStep;
         this.producerDelegationsApiClient = producerDelegationsApiClient;
         this.delegationApiClient = delegationApiClient;
         this.tenantsApi = tenantsApi;
-        this.commonUtils = commonUtils;
         this.sharedStepsContext = sharedStepsContext;
-        this.httpCallExecutor = httpCallExecutor;
+        this.commonUtils = sharedStepsContext.getCommonUtils();
+        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
     }
 
     @Given("l'ente {string} rimuove la disponibilità a ricevere deleghe")

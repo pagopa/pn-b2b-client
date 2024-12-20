@@ -18,13 +18,11 @@ public class PurposeActivationStep {
     private final HttpCallExecutor httpCallExecutor;
 
     public PurposeActivationStep(IPurposeApiClient purposeApiClient,
-                                 CommonUtils commonUtils,
-                                 SharedStepsContext sharedStepsContext,
-                                 HttpCallExecutor httpCallExecutor) {
+                                 SharedStepsContext sharedStepsContext) {
         this.purposeApiClient = purposeApiClient;
-        this.commonUtils = commonUtils;
         this.sharedStepsContext = sharedStepsContext;
-        this.httpCallExecutor = httpCallExecutor;
+        this.commonUtils = sharedStepsContext.getCommonUtils();
+        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
     }
 
     @When("l'utente (ri)attiva la finalità in stato {string} per quell'e-service")

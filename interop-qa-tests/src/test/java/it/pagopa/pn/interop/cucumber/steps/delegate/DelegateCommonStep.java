@@ -14,19 +14,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 public class DelegateCommonStep {
-    private final CommonUtils commonUtils;
-    private final IDelegationApiClient delegationApiClient;
     private final SharedStepsContext sharedStepsContext;
+    private final IDelegationApiClient delegationApiClient;
+    private final CommonUtils commonUtils;
     private final HttpCallExecutor httpCallExecutor;
 
-    public DelegateCommonStep(CommonUtils commonUtils,
-                              IDelegationApiClient delegationApiClient,
-                              SharedStepsContext sharedStepsContext,
-                              HttpCallExecutor httpCallExecutor) {
-        this.commonUtils = commonUtils;
-        this.delegationApiClient = delegationApiClient;
+    public DelegateCommonStep(SharedStepsContext sharedStepsContext,
+                              IDelegationApiClient delegationApiClient) {
         this.sharedStepsContext = sharedStepsContext;
-        this.httpCallExecutor = httpCallExecutor;
+        this.delegationApiClient = delegationApiClient;
+        this.commonUtils = sharedStepsContext.getCommonUtils();
+        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
     }
 
     @And("la delega è stata creata correttamente")

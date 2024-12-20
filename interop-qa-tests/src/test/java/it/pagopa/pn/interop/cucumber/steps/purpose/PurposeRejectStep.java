@@ -17,13 +17,11 @@ public class PurposeRejectStep {
     private final HttpCallExecutor httpCallExecutor;
     private final IPurposeApiClient purposeApiClient;
 
-    public PurposeRejectStep(CommonUtils commonUtils,
-                             SharedStepsContext sharedStepsContext,
-                             HttpCallExecutor httpCallExecutor,
+    public PurposeRejectStep(SharedStepsContext sharedStepsContext,
                              IPurposeApiClient purposeApiClient) {
-        this.commonUtils = commonUtils;
         this.sharedStepsContext = sharedStepsContext;
-        this.httpCallExecutor = httpCallExecutor;
+        this.commonUtils = sharedStepsContext.getCommonUtils();
+        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.purposeApiClient = purposeApiClient;
     }
 

@@ -15,14 +15,12 @@ public class PurposeSuspendStep {
     private final IPurposeApiClient purposeApiClient;
     private final HttpCallExecutor httpCallExecutor;
 
-    public PurposeSuspendStep(CommonUtils commonUtils,
-                              SharedStepsContext sharedStepsContext,
-                              IPurposeApiClient purposeApiClient,
-                              HttpCallExecutor httpCallExecutor) {
-        this.commonUtils = commonUtils;
+    public PurposeSuspendStep(SharedStepsContext sharedStepsContext,
+                              IPurposeApiClient purposeApiClient) {
         this.sharedStepsContext = sharedStepsContext;
         this.purposeApiClient = purposeApiClient;
-        this.httpCallExecutor = httpCallExecutor;
+        this.commonUtils = sharedStepsContext.getCommonUtils();
+        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
     }
 
     @When("l'utente sospende quella finalità in stato {string}")
