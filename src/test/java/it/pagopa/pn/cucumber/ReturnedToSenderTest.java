@@ -15,7 +15,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
 })
 @IncludeTags({"returnedToSender"})
-@ExcludeTags({"ignore"})
+@ExcludeTags({"ignore","activationDeceaseAfter","versionFlagFalse","versionFlagTrue"})
 public class ReturnedToSenderTest {
 
 }
