@@ -34,7 +34,7 @@ public class PurposeApiClientImpl implements IPurposeApiClient {
 
     @Override
     public RiskAnalysisFormConfig retrieveLatestRiskAnalysisConfiguration(String xCorrelationId) {
-        return purposesApi.retrieveLatestRiskAnalysisConfiguration(xCorrelationId);
+        return purposesApi.retrieveLatestRiskAnalysisConfiguration(xCorrelationId, null);
     }
 
     @Override

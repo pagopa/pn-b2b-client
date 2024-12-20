@@ -5,6 +5,7 @@ import it.pagopa.interop.authorization.service.factory.SessionTokenFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
@@ -21,16 +22,19 @@ public class CommonUtils {
     private final SessionTokenFactory sessionTokenFactory;
     private final KeyPairGeneratorUtil keyPairGeneratorUtil;
     private final ClientTokenConfigurator clientTokenConfigurator;
+    private final InteropClientConfigs interopClientConfigs;
     private final List<Tenant> configFile;
 
     private Map<String, Map<String, String>> cachedTokens = null;
 
     public CommonUtils(SessionTokenFactory sessionTokenFactory,
                        KeyPairGeneratorUtil keyPairGeneratorUtil,
-                       ClientTokenConfigurator clientTokenConfigurator) {
+                       ClientTokenConfigurator clientTokenConfigurator,
+                       InteropClientConfigs interopClientConfigs) {
         this.sessionTokenFactory = sessionTokenFactory;
         this.keyPairGeneratorUtil = keyPairGeneratorUtil;
         this.clientTokenConfigurator = clientTokenConfigurator;
+        this.interopClientConfigs = interopClientConfigs;
         this.configFile = readProperty();
     }
 
@@ -83,8 +87,8 @@ public class CommonUtils {
 
     public <T> void makePolling(Supplier<T> promise, Predicate<T> shouldStop, String errorMessage) {
         try {
-            for (int i = 0; i < 30; i++) {
-                Thread.sleep(30);
+            for (int i = 0; i < interopClientConfigs.getMaxPollingTry(); i++) {
+                Thread.sleep(interopClientConfigs.getMaxPollingSleep());
 
                 // Execute the provided function and obtain the result
                 T response = promise.get();

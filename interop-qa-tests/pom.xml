@@ -21,6 +21,7 @@
         <junit.platform.version>1.9.1</junit.platform.version>
         <lombok.version>1.18.30</lombok.version>
         <cucumber.reporting.version>5.7.2</cucumber.reporting.version>
+        <junit-jupiter.version>5.9.1</junit-jupiter.version>
     </properties>
 
     <dependencies>
@@ -92,6 +93,12 @@
             <scope>test</scope>
             <version>${junit.platform.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+            <version>${junit-jupiter.version}</version>
+        </dependency>
 
         <!-- Lombok -->
         <dependency>
@@ -127,7 +134,7 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/main/packages/api-clients/open-api/bffApi.yml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/develop/packages/api-clients/open-api/bffApi.yml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>

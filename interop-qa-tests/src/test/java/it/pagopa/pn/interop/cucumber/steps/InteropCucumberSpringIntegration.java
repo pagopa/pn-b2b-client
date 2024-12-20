@@ -13,6 +13,8 @@ import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
 import it.pagopa.interop.config.springconfig.springconfig.InteropRestTemplateConfiguration;
 import it.pagopa.interop.authorization.service.impl.AuthorizationClientImpl;
 import it.pagopa.interop.authorization.service.factory.SessionTokenFactory;
+import it.pagopa.interop.delegate.service.impl.DelegationApiClientImpl;
+import it.pagopa.interop.delegate.service.impl.ProducerDelegationsApiClientImpl;
 import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
 import it.pagopa.interop.purpose.service.impl.PurposeApiClientImpl;
 import it.pagopa.interop.authorization.service.impl.ProducerClientImpl;
@@ -23,7 +25,6 @@ import it.pagopa.interop.tenant.service.impl.TenantsApiClientImpl;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 //@ComponentScan(basePackages = {"it.pagopa.pn.interop.cucumber"})
@@ -50,6 +51,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         EServiceApiClientImpl.class,
         RiskAnalysisDataInitializer.class,
         ClientTokenConfigurator.class,
+        ProducerDelegationsApiClientImpl.class,
+        DelegationApiClientImpl.class
 
 })
 @EnableScheduling

@@ -19,4 +19,8 @@ public class InteropClientConfigs {
     private Long sessionTokenDurationSec;
     @Value("${interop-env}")
     private String environment;
+    @Value("${max-polling-try-ms}")
+    private int maxPollingTry;
+    @Value("${max-polling-sleep-ms}")
+    private int maxPollingSleep;
 }
