@@ -151,3 +151,16 @@ Feature: Creazione di una delega in erogazione
     And l'ente delegato concede la disponibilità a ricevere deleghe
     Then si ottiene lo status code 403
 
+  #TC-11: La revoca di una delega può essere fatta da un utente con ruolo ADMIN
+  Scenario Outline: [TC_CAPOFILA_DISPONIBILITA_DELEGHE] L'accettazione e la revoca di una delega non può essere effettuata da un utente diverso da admin
+    Given l'utente è un "<ruolo>" di "PA2"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And l'utente concede la disponibilità a ricevere le deleghe
+    Then si ottiene lo status code <statusCode>
+    Examples:
+      | ruolo        | statusCode |
+      | admin        |        200 |
+      | api          |        403 |
+      | security     |        403 |
+      | api,security |        403 |
+      | support      |        403 |

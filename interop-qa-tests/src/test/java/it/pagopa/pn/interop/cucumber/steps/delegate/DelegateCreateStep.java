@@ -54,11 +54,22 @@ public class DelegateCreateStep {
         }
     }
 
+    @And("l'utente concede la disponibilità a ricevere le deleghe")
+    public void userGrantsDelegationAvailability() {
+        commonUtils.setBearerToken(sharedStepsContext.getUserToken());
+        setDelegationAvailability(sharedStepsContext.getTenantType());
+    }
+
     @And("l'ente {string} concede la disponibilità a ricevere deleghe")
-    public void tenantGrantsDelegationAvailability(String tenantType) throws InterruptedException {
+    public void tenantGrantsDelegationAvailability(String tenantType) {
         commonUtils.setBearerToken(commonUtils.getToken(tenantType, null));
+        setDelegationAvailability(sharedStepsContext.getTenantType());
+    }
+
+    private void setDelegationAvailability(String tenantType) {
         httpCallExecutor.performCall(() -> tenantsApi.assignTenantDelegatedProducerFeature());
-        commonUtils.makePolling(() -> tenantsApi.getTenant(sharedStepsContext.getXCorrelationId(), commonUtils.getOrganizationId(tenantType)),
+        if (httpCallExecutor.getClientResponse() == HttpStatus.OK)
+            commonUtils.makePolling(() -> tenantsApi.getTenant(sharedStepsContext.getXCorrelationId(), commonUtils.getOrganizationId(tenantType)),
                 res -> Optional.ofNullable(res.getFeatures())
                         .orElse(List.of())
                         .stream()
