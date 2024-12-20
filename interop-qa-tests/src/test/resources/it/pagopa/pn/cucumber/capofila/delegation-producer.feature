@@ -12,7 +12,7 @@ Feature: Creazione di una delega in erogazione
     And "PA1" ha già creato e pubblicato 1 e-service
     And l'ente "PA2" concede la disponibilità a ricevere deleghe
     When l'utente richiede la creazione di una delega per l'ente "PA2"
-    Then si ottiene status code <statusCode>
+    Then si ottiene lo status code <statusCode>
 
     Examples:
       | ruolo        | statusCode |
@@ -27,12 +27,11 @@ Feature: Creazione di una delega in erogazione
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
     And un utente dell'ente <funzione> con ruolo "<ruolo>"
-    And l'ente delegante ha già creato e pubblicato 1 e-service
-    And l'ente delegato concede la disponibilità a ricevere deleghe
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato
-    And la delega è stata creata correttamente
     When l'utente rifiuta la delega
-    Then si ottiene status code <statusCode>
+    Then si ottiene lo status code <statusCode>
     Examples:
       | ruolo        | funzione  | statusCode  |
       # Scenario: 26
@@ -70,11 +69,10 @@ Feature: Creazione di una delega in erogazione
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
     And un utente dell'ente <funzione> con ruolo "<ruolo>"
-    And l'ente delegante ha già creato e pubblicato 1 e-service
-    And l'ente delegato concede la disponibilità a ricevere deleghe
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato
-    And la delega è stata creata correttamente
-    And l'ente delegato ha accettato la delega
+    And l'ente "PA2" accetta la delega
     When l'utente rifiuta la delega
     Then si ottiene lo status code <statusCode>
     Examples:
@@ -119,12 +117,10 @@ Feature: Creazione di una delega in erogazione
     And "PA1" ha già creato e pubblicato 1 e-service
     And l'ente "PA2" concede la disponibilità a ricevere deleghe
     When l'ente "PA1" richiede la creazione di una delega per l'ente "PA2"
-    And la delega è stata creata correttamente
     And l'utente accetta la delega
-    Then si ottiene status code <statusCode>
-    # Revoca della delega accettata
+    Then si ottiene lo status code <statusCode>
     When l'ente "PA1" con ruolo "<ruolo>" revoca la delega
-    Then si ottiene status code <statusCode>
+    Then si ottiene lo status code <statusCode>
     Examples:
       | ruolo        | statusCode |
       | admin        |        200 |
@@ -137,10 +133,9 @@ Feature: Creazione di una delega in erogazione
   Scenario: [TC_CAPOFILA_DELEGATO_REVOCA] La revoca di una delega in stato PENDING non può essere effettuata da un delegato con ruolo admin
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
-    And l'ente delegante ha già creato e pubblicato 1 e-service
-    And l'ente delegato concede la disponibilità a ricevere deleghe
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato
-    And la delega è stata creata correttamente
     And un utente dell'ente delegato con ruolo "admin"
     When l'ente "PA2" con ruolo "admin" revoca la delega
     Then si ottiene lo status code 403
@@ -149,8 +144,8 @@ Feature: Creazione di una delega in erogazione
   Scenario: [TC_CAPOFILA_PRIVATO] La revoca di una delega in stato PENDING non può essere effettuata da un delegato con ruolo admin
     Given l'ente delegante "PA1"
     And l'ente delegato "Privato"
-    And l'ente delegante ha già creato e pubblicato 1 e-service
-    And l'ente delegato concede la disponibilità a ricevere deleghe
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And l'ente "Privato" concede la disponibilità a ricevere deleghe
     Then si ottiene lo status code 403
 
   #TC-11: La disponibilità di una delega può essere fatta soltanto da un utente con ruolo ADMIN
@@ -173,11 +168,10 @@ Feature: Creazione di una delega in erogazione
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
     And l'ente "PA2" concede la disponibilità a ricevere deleghe
     When l'utente richiede la creazione di una delega per l'ente "PA2"
-    And la delega è stata creata correttamente
     And l'ente "PA2" accetta la delega
     And l'ente "GSP" concede la disponibilità a ricevere deleghe
     When l'utente richiede la creazione di una delega per l'ente "GSP"
-    Then si ottiene status code 409
+    Then si ottiene lo status code 409
 
   Scenario: [TC_CAPOFILA_LISTA_DELEGHE_1] Viene recuperata la lista delle deleghe di un ente
     Given l'utente è un "admin" di "PA2"

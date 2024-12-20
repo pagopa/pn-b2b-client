@@ -20,15 +20,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class DelegateListingStep {
+public class DelegationListingStep {
     private final SharedStepsContext sharedStepsContext;
     private final IDelegationApiClient delegationApiClient;
     private final CommonUtils commonUtils;
     private final HttpCallExecutor httpCallExecutor;
     private final List<CompactDelegations> delegationList;
 
-    public DelegateListingStep(SharedStepsContext sharedStepsContext,
-                              IDelegationApiClient delegationApiClient) {
+    public DelegationListingStep(SharedStepsContext sharedStepsContext,
+                                 IDelegationApiClient delegationApiClient) {
         this.sharedStepsContext = sharedStepsContext;
         this.delegationApiClient = delegationApiClient;
         this.commonUtils = sharedStepsContext.getCommonUtils();

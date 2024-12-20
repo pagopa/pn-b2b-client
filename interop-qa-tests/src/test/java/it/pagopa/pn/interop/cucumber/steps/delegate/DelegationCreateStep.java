@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.delegate;
 
+import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.authorization.service.utils.CommonUtils;
@@ -11,16 +12,14 @@ import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.client.HttpClientErrorException;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+
+import static it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.DelegationRole.DELEGATE;
+import static it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.DelegationRole.DELEGATING;
 
 @Slf4j
-public class DelegateCreateStep {
-    private final DelegateCommonStep delegateCommonStep;
+public class DelegationCreateStep {
     private final IProducerDelegationsApiClient producerDelegationsApiClient;
     private final IDelegationApiClient delegationApiClient;
     private final ITenantsApi tenantsApi;
@@ -28,12 +27,17 @@ public class DelegateCreateStep {
     private final SharedStepsContext sharedStepsContext;
     private final HttpCallExecutor httpCallExecutor;
 
-    public DelegateCreateStep(DelegateCommonStep delegateCommonStep,
-                              IProducerDelegationsApiClient producerDelegationsApiClient,
-                              IDelegationApiClient delegationApiClient,
-                              ITenantsApi tenantsApi,
-                              SharedStepsContext sharedStepsContext) {
-        this.delegateCommonStep = delegateCommonStep;
+    public enum DelegationRole {
+        DELEGATE,
+        DELEGATING
+    }
+
+    private final Map<DelegationCreateStep.DelegationRole, String> tenants = new EnumMap<>(DelegationCreateStep.DelegationRole.class);
+
+    public DelegationCreateStep(IProducerDelegationsApiClient producerDelegationsApiClient,
+                                IDelegationApiClient delegationApiClient,
+                                ITenantsApi tenantsApi,
+                                SharedStepsContext sharedStepsContext) {
         this.producerDelegationsApiClient = producerDelegationsApiClient;
         this.delegationApiClient = delegationApiClient;
         this.tenantsApi = tenantsApi;
@@ -42,14 +46,25 @@ public class DelegateCreateStep {
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
     }
 
-    @Given("l'ente {string} rimuove la disponibilità a ricevere deleghe")
-    public void tenantRemoveDelegationAvailability(String tenantType) {
-        commonUtils.setBearerToken(commonUtils.getToken(tenantType, null));
-        try {
-            tenantsApi.deleteTenantDelegatedProducerFeature();
-        } catch (HttpClientErrorException.Conflict e) {
-            log.info("No delegation availability defined for the given tenant!");
-        }
+    @Given("l'ente {delegationRole} {string}")
+    public void givenDelegatingTenant(DelegationCreateStep.DelegationRole delegationRole, String tenant) {
+        this.tenants.put(delegationRole, tenant);
+    }
+
+    @Given("un utente dell'ente {delegationRole} con ruolo {string}")
+    public void givenUserWithRole(DelegationCreateStep.DelegationRole delegationRole, String iamRole) {
+        String tenantType = tenants.get(delegationRole);
+        String token = commonUtils.getToken(tenantType, iamRole);
+        commonUtils.setBearerToken(token);
+        sharedStepsContext.setUserToken(token);
+        sharedStepsContext.setTenantType(tenantType);
+    }
+
+    @Given("l'ente delegante ha inoltrato una richiesta di delega all'ente delegato")
+    public void givenDelegatingTenantHasRequestedDelegation() {
+        String delegatingTenantToken = commonUtils.getToken(tenants.get(DELEGATING), null);
+        commonUtils.setBearerToken(delegatingTenantToken);
+        createDelegate(tenants.get(DELEGATE));
     }
 
     @And("l'utente concede la disponibilità a ricevere le deleghe")
@@ -88,51 +103,39 @@ public class DelegateCreateStep {
         createDelegate(tenantType);
     }
 
-    @And("l'utente accetta la delega")
-    public void userAcceptTheDelegation() {
-        commonUtils.setBearerToken(sharedStepsContext.getUserToken());
-        approveDelegation();
-        if (httpCallExecutor.getClientResponse() == HttpStatus.OK) delegateCommonStep.waitUntilDelegationIsApprove();
-    }
-
-    @And("l'ente {string} accetta la delega")
-    public void delegationIsAcceptedByTenant(String tenantType) {
-        commonUtils.setBearerToken(commonUtils.getToken(tenantType, null));
-        approveDelegation();
-        if (httpCallExecutor.getClientResponse() == HttpStatus.OK) delegateCommonStep.waitUntilDelegationIsApprove();
-    }
-
-    private void approveDelegation() {
-        httpCallExecutor.performCall(
-                () -> producerDelegationsApiClient.approveDelegation(sharedStepsContext.getXCorrelationId(),
-                        sharedStepsContext.getDelegationCommonContext().getDelegationId()));
-    }
-
-    @And("l'ente {string} rifiuta la delega")
-    public void delegationIsRejectedByTenant(String tenantType) {
-        commonUtils.setBearerToken(commonUtils.getToken(tenantType, null));
-        httpCallExecutor.performCall(
-                () -> producerDelegationsApiClient.rejectDelegation(sharedStepsContext.getXCorrelationId(),
-                        sharedStepsContext.getDelegationCommonContext().getDelegationId(),
-                        new RejectDelegationPayload().rejectionReason("Missing all required data!")));
-    }
-
-    @And("l'ente {string} con ruolo {string} revoca la delega")
-    public void delegationIsRevokedByTenantWithRole(String tenantType, String role) {
-        commonUtils.setBearerToken(commonUtils.getToken(tenantType, role));
-        httpCallExecutor.performCall(
-                () -> producerDelegationsApiClient.revokeProducerDelegation(sharedStepsContext.getXCorrelationId(),
-                        String.valueOf(sharedStepsContext.getDelegationCommonContext().getDelegationId())));
+    @And("la delega è stata creata correttamente")
+    public void delegationIsPresent() {
+        commonUtils.makePolling(
+                () -> httpCallExecutor.performCall(() -> delegationApiClient.getDelegation(sharedStepsContext.getXCorrelationId(),
+                        String.valueOf(sharedStepsContext.getDelegationCommonContext().getDelegationId()))),
+                res -> res != HttpStatus.NOT_FOUND,
+                "There was an error while creating the delegation!"
+        );
     }
 
     private void createDelegate(String tenantType) {
         UUID organizationId = commonUtils.getOrganizationId(tenantType);
         httpCallExecutor.performCall(() -> producerDelegationsApiClient.createProducerDelegation(sharedStepsContext.getXCorrelationId(),
                 new DelegationSeed().eserviceId(sharedStepsContext.getEServicesCommonContext().getEserviceId()).delegateId(organizationId)));
-        if (httpCallExecutor.getClientResponse() == HttpStatus.OK)
+        if (httpCallExecutor.getClientResponse() == HttpStatus.OK) {
             sharedStepsContext.getDelegationCommonContext().setDelegationId(((CreatedResource) httpCallExecutor.getResponse()).getId());
-
+            commonUtils.makePolling(
+                    () -> httpCallExecutor.performCall(() -> delegationApiClient.getDelegation(sharedStepsContext.getXCorrelationId(),
+                            String.valueOf(sharedStepsContext.getDelegationCommonContext().getDelegationId()))),
+                    res -> res != HttpStatus.NOT_FOUND,
+                    "There was an error while creating the delegation!"
+            );
+        }
     }
 
+    @ParameterType("delegato|delegante")
+    public DelegationCreateStep.DelegationRole delegationRole(String delegationRole) {
+        return switch (delegationRole) {
+            case "delegato" -> DELEGATE;
+            case "delegante" -> DELEGATING;
+            default ->
+                    throw new IllegalArgumentException("Invalid delegation role: " + delegationRole);
+        };
+    }
 
 }
