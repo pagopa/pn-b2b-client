@@ -92,6 +92,12 @@
             <scope>test</scope>
             <version>${junit.platform.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+            <version>5.9.1</version>
+        </dependency>
 
         <!-- Lombok -->
         <dependency>

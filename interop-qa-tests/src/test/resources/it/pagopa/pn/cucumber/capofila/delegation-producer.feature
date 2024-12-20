@@ -178,3 +178,13 @@ Feature: Creazione di una delega in erogazione
     And l'ente "GSP" concede la disponibilità a ricevere deleghe
     When l'utente richiede la creazione di una delega per l'ente "GSP"
     Then si ottiene status code 409
+
+  Scenario: [TC_CAPOFILA_LISTA_DELEGHE_1] Viene recuperata la lista delle deleghe di un ente
+    Given l'utente è un "admin" di "PA2"
+    Given l'utente recupera le prime 5 pagine con la lista delle deleghe
+    Then viene verificato che sono state ritornate le prime 5 pagine
+
+  Scenario: [TC_CAPOFILA_LISTA_DELEGHE_2] Viene recuperata la lista delle deleghe di un ente
+    Given l'utente è un "admin" di "PA2"
+    Given l'utente recupera la lista delle deleghe in stato ACTIVE e WAITING_FOR_APPROVAL
+    Then viene verificato che le deleghe ritornate sono soltanto quelle in stato ACTIVE e WAITING_FOR_APPROVAL
