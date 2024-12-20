@@ -1,3 +1,4 @@
+@capofila
 Feature: Creazione di una delega in erogazione
 
   Background:
@@ -5,6 +6,7 @@ Feature: Creazione di una delega in erogazione
 
   #TC-4: Un utente con ruolo admin può creare una delega
   #TC-5: Un utente con ruolo diverso da admin NON può creare una delega
+  #TC-31: Una delega può essere creata dal delegante se delegato da la disponibilità a ricevere la delega
   Scenario Outline: [TC_CAPOFILA_4_5] Il richiamo dell’API di creazione di una delega possa essere compiuto da un utente di livello operatore amministrativo (admin)
     Given l'utente è un "<ruolo>" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -64,7 +66,7 @@ Feature: Creazione di una delega in erogazione
       # Esito: si ottiene 403 "Unauthorized"
       | support      | delegante | 403         |
 
-  Scenario Outline: Il rifiuto di una delega già accettata non possa essere compiuto da nessun utente indipentendemente dal ruolo
+  Scenario Outline: [TC_CAPOFILA_RIFIUTO_DELEGA_ACCETTATA] Il rifiuto di una delega già accettata non possa essere compiuto da nessun utente indipentendemente dal ruolo
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
     And un utente dell'ente <funzione> con ruolo "<ruolo>"
@@ -151,7 +153,7 @@ Feature: Creazione di una delega in erogazione
     And l'ente delegato concede la disponibilità a ricevere deleghe
     Then si ottiene lo status code 403
 
-  #TC-11: La revoca di una delega può essere fatta da un utente con ruolo ADMIN
+  #TC-11: La disponibilità di una delega può essere fatta soltanto da un utente con ruolo ADMIN
   Scenario Outline: [TC_CAPOFILA_DISPONIBILITA_DELEGHE] L'accettazione e la revoca di una delega non può essere effettuata da un utente diverso da admin
     Given l'utente è un "<ruolo>" di "PA2"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -164,3 +166,15 @@ Feature: Creazione di una delega in erogazione
       | security     |        403 |
       | api,security |        403 |
       | support      |        403 |
+
+  Scenario: [TC_CAPOFILA_35] Un delegante può delegare un solo ente per volta per un e-service
+    Given l'utente è un "admin" di "PA1"
+    Given l'ente "GSP" rimuove la disponibilità a ricevere deleghe
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe
+    When l'utente richiede la creazione di una delega per l'ente "PA2"
+    And la delega è stata creata correttamente
+    And l'ente "PA2" accetta la delega
+    And l'ente "GSP" concede la disponibilità a ricevere deleghe
+    When l'utente richiede la creazione di una delega per l'ente "GSP"
+    Then si ottiene status code 409

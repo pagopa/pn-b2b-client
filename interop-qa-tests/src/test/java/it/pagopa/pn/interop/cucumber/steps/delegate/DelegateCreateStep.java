@@ -63,7 +63,7 @@ public class DelegateCreateStep {
     @And("l'ente {string} concede la disponibilità a ricevere deleghe")
     public void tenantGrantsDelegationAvailability(String tenantType) {
         commonUtils.setBearerToken(commonUtils.getToken(tenantType, null));
-        setDelegationAvailability(sharedStepsContext.getTenantType());
+        setDelegationAvailability(tenantType);
     }
 
     private void setDelegationAvailability(String tenantType) {
@@ -131,7 +131,8 @@ public class DelegateCreateStep {
         UUID organizationId = commonUtils.getOrganizationId(tenantType);
         httpCallExecutor.performCall(() -> producerDelegationsApiClient.createProducerDelegation(sharedStepsContext.getXCorrelationId(),
                 new DelegationSeed().eserviceId(sharedStepsContext.getEServicesCommonContext().getEserviceId()).delegateId(organizationId)));
-        sharedStepsContext.getDelegationCommonContext().setDelegationId(((CreatedResource) httpCallExecutor.getResponse()).getId());
+        if (httpCallExecutor.getClientResponse() == HttpStatus.OK)
+            sharedStepsContext.getDelegationCommonContext().setDelegationId(((CreatedResource) httpCallExecutor.getResponse()).getId());
 
     }
 

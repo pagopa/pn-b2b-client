@@ -1,3 +1,4 @@
+@capofila
 Feature: Creazione di una delega e gestione delle richieste di fruizione
 
   Background:
