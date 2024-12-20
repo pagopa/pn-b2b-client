@@ -23,14 +23,12 @@ public class ClientListingSteps {
     private final SharedStepsContext sharedStepsContext;
 
     public ClientListingSteps(IAuthorizationClient authorizationClient,
-                              CommonUtils commonUtils,
                               DataPreparationService dataPreparationService,
-                              HttpCallExecutor httpCallExecutor,
                               SharedStepsContext sharedStepsContext) {
         this.authorizationClient = authorizationClient;
-        this.commonUtils = commonUtils;
+        this.commonUtils = sharedStepsContext.getCommonUtils();
         this.dataPreparationService = dataPreparationService;
-        this.httpCallExecutor = httpCallExecutor;
+        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.sharedStepsContext = sharedStepsContext;
     }
 

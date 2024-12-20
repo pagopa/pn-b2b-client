@@ -18,13 +18,11 @@ public class ClientUserAddStep {
     private final HttpCallExecutor httpCallExecutor;
 
     public ClientUserAddStep(IAuthorizationClient authorizationClient,
-            SharedStepsContext sharedStepsContext,
-            CommonUtils commonUtils,
-            HttpCallExecutor httpCallExecutor) {
+            SharedStepsContext sharedStepsContext) {
         this.authorizationClient = authorizationClient;
         this.sharedStepsContext = sharedStepsContext;
-        this.commonUtils = commonUtils;
-        this.httpCallExecutor = httpCallExecutor;
+        this.commonUtils = sharedStepsContext.getCommonUtils();
+        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
     }
 
     @When("l'utente richiede l'aggiunta di un admin di {string} al client")

@@ -21,14 +21,12 @@ public class ClientPurposeRemoveStep {
 
     public ClientPurposeRemoveStep(IAuthorizationClient authorizationClient,
             SharedStepsContext sharedStepsContext,
-            DataPreparationService dataPreparationService,
-            HttpCallExecutor httpCallExecutor,
-            CommonUtils commonUtils) {
+            DataPreparationService dataPreparationService) {
         this.authorizationClient = authorizationClient;
         this.sharedStepsContext = sharedStepsContext;
         this.dataPreparationService = dataPreparationService;
-        this.httpCallExecutor = httpCallExecutor;
-        this.commonUtils = commonUtils;
+        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+        this.commonUtils = sharedStepsContext.getCommonUtils();
     }
 
     @Given("{string} ha già associato la finalità a quel client")

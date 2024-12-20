@@ -4,12 +4,14 @@ import lombok.Data;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.util.function.Supplier;
 
 @Data
-@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+@Component
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class HttpCallExecutor {
     private HttpStatus clientResponse;
     private Object response;

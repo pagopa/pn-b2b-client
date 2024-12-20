@@ -13,13 +13,11 @@ public class ClientDeleteSteps {
     private final CommonUtils commonUtils;
 
     public ClientDeleteSteps(IAuthorizationClient authorizationClientCreate,
-                             SharedStepsContext sharedStepsContext,
-                             HttpCallExecutor httpCallExecutor,
-                             CommonUtils commonUtils) {
+                             SharedStepsContext sharedStepsContext) {
         this.authorizationClientCreate = authorizationClientCreate;
         this.sharedStepsContext = sharedStepsContext;
-        this.httpCallExecutor = httpCallExecutor;
-        this.commonUtils = commonUtils;
+        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+        this.commonUtils = sharedStepsContext.getCommonUtils();
     }
 
     @When("l'utente richiede una operazione di cancellazione di quel client")

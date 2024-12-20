@@ -34,12 +34,10 @@ public class ClientCommonSteps {
 
     @Autowired
     public ClientCommonSteps(DataPreparationService dataPreparationService,
-                             CommonUtils commonUtils,
-                             HttpCallExecutor httpCallExecutor,
                              SharedStepsContext sharedStepsContext) {
         this.dataPreparationService = dataPreparationService;
-        this.commonUtils = commonUtils;
-        this.httpCallExecutor = httpCallExecutor;
+        this.commonUtils = sharedStepsContext.getCommonUtils();
+        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.sharedStepsContext = sharedStepsContext;
     }
 

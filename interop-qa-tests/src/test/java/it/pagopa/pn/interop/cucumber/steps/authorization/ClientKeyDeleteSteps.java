@@ -16,13 +16,11 @@ public class ClientKeyDeleteSteps {
     private final HttpCallExecutor httpCallExecutor;
 
     public ClientKeyDeleteSteps(IAuthorizationClient authorizationClient,
-                                SharedStepsContext sharedStepsContext,
-                                CommonUtils commonUtils,
-                                HttpCallExecutor httpCallExecutor) {
+                                SharedStepsContext sharedStepsContext) {
         this.authorizationClient = authorizationClient;
         this.sharedStepsContext = sharedStepsContext;
-        this.commonUtils = commonUtils;
-        this.httpCallExecutor = httpCallExecutor;
+        this.commonUtils = sharedStepsContext.getCommonUtils();
+        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
     }
 
     @Given("{string} ha già rimosso l'utente con ruolo {string} dai membri di quel client")

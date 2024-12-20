@@ -68,11 +68,12 @@ public class SessionTokenFactory {
 
     public Map<String, Map<String, String>> generateSessionToken(List<Tenant> configFile) throws Exception {
         // Step 1. Read session token payload values file
-        log.info("##Step 1. Read session token payload values file ##");
+        log.info("##Generating session token... ##");
+        log.debug("##Step 1. Read session token payload values file ##");
         ObjectMapper objectMapper = new ObjectMapper();
 
         // Step 2. Parse well known
-        log.info("##Step 2. Parse well known ##");
+        log.debug("##Step 2. Parse well known ##");
         URL wellKnownUrl = new URL(interopClientConfigs.getRemoteWellknownUrl());
         boolean isSecure = wellKnownUrl.getProtocol().equalsIgnoreCase("https");
         Map<String, String> wellKnownData = fetchWellKnown(isSecure, wellKnownUrl.toString());
@@ -83,25 +84,25 @@ public class SessionTokenFactory {
                 "kid", wellKnownData.get("kid"),
                 "alg", "RSASSA_PKCS1_V1_5_SHA_256"
         ));
-        log.info("Got kid " + wellKnownData.get("kid") + " and alg " + wellKnownData.get("alg"));
+        log.debug("Got kid " + wellKnownData.get("kid") + " and alg " + wellKnownData.get("alg"));
 
         // Step 3. Generate STs header - Populate Session Token header from template
-        log.info("##Step 3. Generate STs header - Populate Session Token header from template ##");
+        log.debug("##Step 3. Generate STs header - Populate Session Token header from template ##");
         Map<String, String> stHeaderCompiled = new HashMap<>(SESSION_TOKEN_HEADER_TEMPLATE);
         stHeaderCompiled.put("kid", wellKnownData.get("kid"));
         stHeaderCompiled.put("alg", wellKnownData.get("alg"));
-        log.info("ST Header Compiled: " + stHeaderCompiled);
+        log.debug("ST Header Compiled: " + stHeaderCompiled);
 
         // Step 4. Generate STs payload
-        log.info("## Step 4. Generate STs payload ##");
+        log.debug("## Step 4. Generate STs payload ##");
         long epochTimeSeconds = Instant.now().getEpochSecond();
-        log.info("Time in seconds since epoch: " + epochTimeSeconds);
+        log.debug("Time in seconds since epoch: " + epochTimeSeconds);
 
         long epochTimeExpSeconds = epochTimeSeconds + interopClientConfigs.getSessionTokenDurationSec();
-        log.info("Expiration Time in seconds: " + epochTimeExpSeconds);
+        log.debug("Expiration Time in seconds: " + epochTimeExpSeconds);
 
         String randomUUID = UUID.randomUUID().toString();
-        log.info("Random UUID: " + randomUUID);
+        log.debug("Random UUID: " + randomUUID);
 
         HashMap<String, Object> stPayloadCompiled = new HashMap<>(SESSION_TOKEN_PAYLOAD_TEMPLATE);
         stPayloadCompiled.put("nbf", epochTimeSeconds);
@@ -113,14 +114,14 @@ public class SessionTokenFactory {
         String stPayloadJson = objectMapper.writeValueAsString(stPayloadCompiled).replace("{{ENVIRONMENT}}", environment);
         stPayloadCompiled = objectMapper.readValue(stPayloadJson, new TypeReference<>() {});
 
-        log.info("ST Payload Compiled: " + stPayloadCompiled);
+        log.debug("ST Payload Compiled: " + stPayloadCompiled);
 
-        log.info("## Step 5. Generate unsigned STs ##");
+        log.debug("## Step 5. Generate unsigned STs ##");
         // Map<String, Map<String, String>> unsignedSTs = unsignedStsGeneration(stHeaderCompiled, stPayloadCompiled, sessionTokenPayloadValues, environment);
         Map<String, Map<String, String>> unsignedSTs = unsignedStsGeneration(stHeaderCompiled, stPayloadCompiled, configFile, environment);
-        log.info("Unsigned STs: " + unsignedSTs);
+        log.debug("Unsigned STs: " + unsignedSTs);
 
-        log.info("## Step 6. Generate signed STs ##");
+        log.debug("## Step 6. Generate signed STs ##");
         Map<String, Map<String, String>> signedSTs = signedStsGeneration(unsignedSTs);
         log.info("Session Token generation completed successfully.");
 
@@ -160,7 +161,7 @@ public class SessionTokenFactory {
             Map<String, String> stHeaderCompiled, HashMap<String, Object> stPayloadCompiled, List<Tenant> stPayloadValues, String environment) throws IOException {
 
         try {
-            log.info("unsignedStsGeneration::Phase1:START: Build roles dynamic substitutions");
+            log.debug("unsignedStsGeneration::Phase1:START: Build roles dynamic substitutions");
             Map<String, Object> stsSubOutput = new HashMap<>();
 
             for (Tenant tenant : stPayloadValues) {
@@ -176,7 +177,7 @@ public class SessionTokenFactory {
                Map<String, Object> stsSubOutput2 = new HashMap<>();
 
                for (String interopRole : userRoles.keySet()) {
-                   log.info("unsignedStsGeneration::Phase1: Start dynamic substition for role {}", interopRole);
+                   log.debug("unsignedStsGeneration::Phase1: Start dynamic substition for role {}", interopRole);
                    String uid = userRoles.get(interopRole);
 
                    Map<String, Object> stsSubOutput3 = deepCopy(stPayloadCompiled);
@@ -192,19 +193,19 @@ public class SessionTokenFactory {
                stsSubOutput.put(tenant.getName(), stsSubOutput2);
 
             }
-            log.info("unsignedStsGeneration::Phase1:END: Build roles dynamic substitutions");
+            log.debug("unsignedStsGeneration::Phase1:END: Build roles dynamic substitutions");
 
             // Phase 2: Creation of partial JWTs for each tenant/role
-            log.info("unsignedStsGeneration::Phase2:START: Build base64 header and body for each tenant/role");
+            log.debug("unsignedStsGeneration::Phase2:START: Build base64 header and body for each tenant/role");
 
             String base64Header = b64UrlEncode(new ObjectMapper().writeValueAsString(stHeaderCompiled));
-            log.info("unsignedStsGeneration::Phase2: Build base64 header done");
+            log.debug("unsignedStsGeneration::Phase2: Build base64 header done");
 
             Map<String, Map<String, String>> stOutputIntermediate = new HashMap<>();
 
 
             for (String tenant : stsSubOutput.keySet()) {
-                log.info(String.format("unsignedStsGeneration::Phase2: Build partial JWT for %s", tenant));
+                log.debug(String.format("unsignedStsGeneration::Phase2: Build partial JWT for %s", tenant));
 
                 stOutputIntermediate.put(tenant, new HashMap<String, String>());
 
@@ -216,7 +217,7 @@ public class SessionTokenFactory {
                 }
 
             }
-            log.info("unsignedStsGeneration::Phase2:END: Build base64 header and body for each tenant/role");
+            log.debug("unsignedStsGeneration::Phase2:END: Build base64 header and body for each tenant/role");
 
             return stOutputIntermediate;
 
@@ -227,16 +228,16 @@ public class SessionTokenFactory {
     }
 
     private Map<String, Map<String, String>> signedStsGeneration(Map<String, Map<String, String>> unsignedStValues) throws Exception {
-        log.info("SignedTokenGeneration::START");
+        log.debug("SignedTokenGeneration::START");
         Map<String, Map<String, String>> signedTokens = new HashMap<>();
 
         for (String tenant : unsignedStValues.keySet()) {
-            log.info("Building token for tenant {}", tenant);
+            log.debug("Building token for tenant {}", tenant);
 
             signedTokens.put(tenant, new HashMap<>());
 
             for (String tenantRole : ((Map<String, String>) unsignedStValues.get(tenant)).keySet()) {
-                log.info("Building token for role {}", tenantRole);
+                log.debug("Building token for role {}", tenantRole);
 
                 String currentUnsignedJwt = ((Map<String, String>) unsignedStValues.get(tenant)).get(tenantRole);
                 Map<String, Object> kmsSignResponse = kmsSign(currentUnsignedJwt);
@@ -250,7 +251,7 @@ public class SessionTokenFactory {
 
             }
         }
-        log.info("SignedTokenGeneration::END");
+        log.debug("SignedTokenGeneration::END");
         return signedTokens;
     }
 

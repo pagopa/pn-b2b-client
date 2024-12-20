@@ -15,13 +15,11 @@ public class ClientKeyUploadSteps {
     private final CommonUtils commonUtils;
 
     public ClientKeyUploadSteps(IAuthorizationClient authorizationClient,
-                                SharedStepsContext sharedStepsContext,
-                                HttpCallExecutor httpCallExecutor,
-                                CommonUtils commonUtils) {
+                                SharedStepsContext sharedStepsContext) {
         this.authorizationClient = authorizationClient;
         this.sharedStepsContext = sharedStepsContext;
-        this.httpCallExecutor = httpCallExecutor;
-        this.commonUtils = commonUtils;
+        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+        this.commonUtils = sharedStepsContext.getCommonUtils();
     }
 
     @When("l'utente richiede il caricamento di una chiave pubblica di tipo {string}")

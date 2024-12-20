@@ -16,13 +16,11 @@ public class ClientPurposeAddSteps {
     private final CommonUtils commonUtils;
 
     public ClientPurposeAddSteps(IAuthorizationClient authorizationClient,
-                                 HttpCallExecutor httpCallExecutor,
-                                 SharedStepsContext sharedStepsContext,
-                                 CommonUtils commonUtils) {
+                                 SharedStepsContext sharedStepsContext) {
         this.authorizationClient = authorizationClient;
-        this.httpCallExecutor = httpCallExecutor;
+        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.sharedStepsContext = sharedStepsContext;
-        this.commonUtils = commonUtils;
+        this.commonUtils = sharedStepsContext.getCommonUtils();
     }
 
     @When("l'utente richiede l'associazione della finalità al client")

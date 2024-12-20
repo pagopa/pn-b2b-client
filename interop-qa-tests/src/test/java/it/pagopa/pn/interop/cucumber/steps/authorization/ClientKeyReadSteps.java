@@ -22,13 +22,11 @@ public class ClientKeyReadSteps {
 
     public ClientKeyReadSteps(IAuthorizationClient authorizationClient,
                               SharedStepsContext sharedStepsContext,
-                              CommonUtils commonUtils,
-                              HttpCallExecutor httpCallExecutor,
                               DataPreparationService dataPreparationService) {
         this.authorizationClient = authorizationClient;
         this.sharedStepsContext = sharedStepsContext;
-        this.commonUtils = commonUtils;
-        this.httpCallExecutor = httpCallExecutor;
+        this.commonUtils = sharedStepsContext.getCommonUtils();
+        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.dataPreparationService = dataPreparationService;
     }
 
