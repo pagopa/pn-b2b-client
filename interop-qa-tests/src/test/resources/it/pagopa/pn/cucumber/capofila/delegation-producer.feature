@@ -142,3 +142,12 @@ Feature: Creazione di una delega in erogazione
     And un utente dell'ente delegato con ruolo "admin"
     When l'ente "PA2" con ruolo "admin" revoca la delega
     Then si ottiene lo status code 403
+
+  #TC-12: L'API di disponibilità NON puà essere invocata da un utente admin di un tenant NON PA
+  Scenario: [TC_CAPOFILA_PRIVATO] La revoca di una delega in stato PENDING non può essere effettuata da un delegato con ruolo admin
+    Given l'ente delegante "PA1"
+    And l'ente delegato "Privato"
+    And l'ente delegante ha già creato e pubblicato 1 e-service
+    And l'ente delegato concede la disponibilità a ricevere deleghe
+    Then si ottiene lo status code 403
+
