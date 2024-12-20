@@ -4,7 +4,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.authorization.service.utils.CommonUtils;
 import it.pagopa.interop.delegate.service.IDelegationApiClient;
-import it.pagopa.interop.delegate.service.IDelegationsApiClient;
+import it.pagopa.interop.delegate.service.IProducerDelegationsApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import it.pagopa.interop.utils.HttpCallExecutor;
@@ -21,7 +21,7 @@ import java.util.UUID;
 @Slf4j
 public class DelegateCreateStep {
     private final DelegateCommonStep delegateCommonStep;
-    private final IDelegationsApiClient producerDelegationsApiClient;
+    private final IProducerDelegationsApiClient producerDelegationsApiClient;
     private final IDelegationApiClient delegationApiClient;
     private final ITenantsApi tenantsApi;
     private final CommonUtils commonUtils;
@@ -29,7 +29,7 @@ public class DelegateCreateStep {
     private final HttpCallExecutor httpCallExecutor;
 
     public DelegateCreateStep(DelegateCommonStep delegateCommonStep,
-                              IDelegationsApiClient producerDelegationsApiClient,
+                              IProducerDelegationsApiClient producerDelegationsApiClient,
                               IDelegationApiClient delegationApiClient,
                               ITenantsApi tenantsApi,
                               CommonUtils commonUtils,

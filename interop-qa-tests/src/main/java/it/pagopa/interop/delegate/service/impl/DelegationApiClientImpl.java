@@ -2,11 +2,8 @@ package it.pagopa.interop.delegate.service.impl;
 
 import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
 import it.pagopa.interop.delegate.service.IDelegationApiClient;
-import it.pagopa.interop.delegate.service.IDelegationsApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.DelegationsApi;
-import it.pagopa.interop.generated.openapi.clients.bff.api.ProducerDelegationsApi;
-import it.pagopa.interop.generated.openapi.clients.bff.api.PurposesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import org.springframework.web.client.RestTemplate;
 

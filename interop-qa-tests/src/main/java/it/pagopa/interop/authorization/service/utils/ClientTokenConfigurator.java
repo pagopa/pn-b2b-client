@@ -6,12 +6,10 @@ import it.pagopa.interop.attribute.service.IAttributeApiClient;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.IProducerClient;
 import it.pagopa.interop.delegate.service.IDelegationApiClient;
-import it.pagopa.interop.delegate.service.IDelegationsApiClient;
-import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
+import it.pagopa.interop.delegate.service.IProducerDelegationsApiClient;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 
 @AllArgsConstructor
 public class ClientTokenConfigurator {
@@ -22,7 +20,7 @@ public class ClientTokenConfigurator {
     private IEServiceClient eServiceClient;
     private IProducerClient producerClient;
     private IPurposeApiClient purposeApiClient;
-    private IDelegationsApiClient delegationsApiClient;
+    private IProducerDelegationsApiClient delegationsApiClient;
     private IDelegationApiClient delegationApiClient;
 
     public void setBearerToken(String token) {

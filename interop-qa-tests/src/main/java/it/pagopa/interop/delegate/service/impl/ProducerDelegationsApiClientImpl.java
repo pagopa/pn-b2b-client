@@ -1,10 +1,9 @@
 package it.pagopa.interop.delegate.service.impl;
 
 import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
-import it.pagopa.interop.delegate.service.IDelegationsApiClient;
+import it.pagopa.interop.delegate.service.IProducerDelegationsApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.ProducerDelegationsApi;
-import it.pagopa.interop.generated.openapi.clients.bff.api.PurposesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RejectDelegationPayload;
@@ -12,13 +11,13 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.UUID;
 
-public class DelegationsApiClientImpl implements IDelegationsApiClient {
+public class ProducerDelegationsApiClientImpl implements IProducerDelegationsApiClient {
     private final ProducerDelegationsApi producerDelegationsApi;
     private final RestTemplate restTemplate;
     private final String basePath;
     private final String bearerToken;
 
-    public DelegationsApiClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
+    public ProducerDelegationsApiClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
         this.basePath = interopClientConfigs.getBaseUrl();
         this.bearerToken = "bearerToken";

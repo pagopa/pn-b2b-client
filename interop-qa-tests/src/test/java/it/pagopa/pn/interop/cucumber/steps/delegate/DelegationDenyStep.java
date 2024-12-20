@@ -10,7 +10,7 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.authorization.service.utils.CommonUtils;
 import it.pagopa.interop.delegate.service.IDelegationApiClient;
-import it.pagopa.interop.delegate.service.IDelegationsApiClient;
+import it.pagopa.interop.delegate.service.IProducerDelegationsApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationState;
@@ -29,12 +29,11 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
-import org.springframework.http.HttpStatus;
 
 // FIXME 19/12/2024: buona parte dell'attuale contenuto della classe sarà riformulato o rimosso per conciliarsi con quanto fornito dalle altre classi *Step.java
 @Slf4j
 public class DelegationDenyStep {
-    private final IDelegationsApiClient producerDelegationsApiClient;
+    private final IProducerDelegationsApiClient producerDelegationsApiClient;
     private final IDelegationApiClient delegationApiClient;
     private final ITenantsApi tenantsApi;
     private final CommonUtils commonUtils;
@@ -50,7 +49,7 @@ public class DelegationDenyStep {
 
     private final Map<DelegationRole, String> tenants = new EnumMap<>(DelegationRole.class);
 
-    public DelegationDenyStep(IDelegationsApiClient producerDelegationsApiClient,
+    public DelegationDenyStep(IProducerDelegationsApiClient producerDelegationsApiClient,
                               IDelegationApiClient delegationApiClient,
                               ITenantsApi tenantsApi,
                               CommonUtils commonUtils,
