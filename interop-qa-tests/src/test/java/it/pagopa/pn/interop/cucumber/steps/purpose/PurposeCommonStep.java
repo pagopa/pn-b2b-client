@@ -6,6 +6,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
 import it.pagopa.interop.purpose.domain.RiskAnalysis;
 import it.pagopa.interop.purpose.domain.TEServiceMode;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -15,13 +16,16 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class PurposeCommonStep {
+    private final ClientTokenConfigurator clientTokenConfigurator;
     private final CommonUtils commonUtils;
     private final DataPreparationService dataPreparationService;
     private final SharedStepsContext sharedStepsContext;
 
-    public PurposeCommonStep(CommonUtils commonUtils,
+    public PurposeCommonStep(ClientTokenConfigurator clientTokenConfigurator,
+                             CommonUtils commonUtils,
                              DataPreparationService dataPreparationService,
                              SharedStepsContext sharedStepsContext) {
+        this.clientTokenConfigurator = clientTokenConfigurator;
         this.commonUtils = commonUtils;
         this.dataPreparationService = dataPreparationService;
         this.sharedStepsContext = sharedStepsContext;
@@ -29,7 +33,7 @@ public class PurposeCommonStep {
 
     @Given("{string} ha già creato {int} finalità in stato {string} per quell'eservice")
     public void tenantHasAlreadyCreateFinalizationWithStatus(String tenantType, int n, String purposeVersionState) {
-        commonUtils.setBearerToken(commonUtils.getToken(tenantType, null));
+        clientTokenConfigurator.setBearerToken(commonUtils.getToken(tenantType, null));
         UUID consumerId = commonUtils.getOrganizationId(tenantType);
         RiskAnalysis riskAnalysis = dataPreparationService.getRiskAnalysis(tenantType, true);
         PurposeCommonContext purposeCommonContext = sharedStepsContext.getPurposeCommonContext();
@@ -58,7 +62,7 @@ public class PurposeCommonStep {
 
     @Given("{string} ha già rifiutato l'aggiornamento della stima di carico per quella finalità")
     public void tenantHasAlreadyRejectedLoadEstimateUpdateForPurpose(String tenantType) {
-        commonUtils.setBearerToken(commonUtils.getToken(tenantType, null));
+        clientTokenConfigurator.setBearerToken(commonUtils.getToken(tenantType, null));
         PurposeCommonContext purposeCommonContext = sharedStepsContext.getPurposeCommonContext();
         dataPreparationService.rejectPurposeVersion(UUID.fromString(purposeCommonContext.getPurposeId()), UUID.fromString(purposeCommonContext.getWaitingForApprovalVersionId()));
     }

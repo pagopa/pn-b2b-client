@@ -6,23 +6,26 @@ import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.TenantsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.tenant.service.ITenantsApi;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.UUID;
 
+@Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class TenantsApiClientImpl implements ITenantsApi {
     private final TenantsApi tenantsApi;
     private final RestTemplate restTemplate;
     private final InteropClientConfigs interopClientConfigs;
     private final String basePath;
-    private final String bearerToken;
 
     public TenantsApiClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
         this.interopClientConfigs = interopClientConfigs;
         this.basePath = interopClientConfigs.getBaseUrl();
-        this.bearerToken = "bearerToken";
-        this.tenantsApi = new TenantsApi(createApiClient(bearerToken));
+        this.tenantsApi = new TenantsApi(createApiClient("dummyBearer"));
     }
 
     private ApiClient createApiClient(String bearerToken) {

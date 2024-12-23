@@ -3,6 +3,7 @@ package it.pagopa.pn.interop.cucumber.steps.delegate;
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.interop.authorization.service.utils.CommonUtils;
 import it.pagopa.interop.delegate.service.IDelegationApiClient;
 import it.pagopa.interop.delegate.service.IProducerDelegationsApiClient;
@@ -20,6 +21,7 @@ import static it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.
 
 @Slf4j
 public class DelegationCreateStep {
+    private final ClientTokenConfigurator clientTokenConfigurator;
     private final IProducerDelegationsApiClient producerDelegationsApiClient;
     private final IDelegationApiClient delegationApiClient;
     private final ITenantsApi tenantsApi;
@@ -34,13 +36,12 @@ public class DelegationCreateStep {
 
     private final Map<DelegationCreateStep.DelegationRole, String> tenants = new EnumMap<>(DelegationCreateStep.DelegationRole.class);
 
-    public DelegationCreateStep(IProducerDelegationsApiClient producerDelegationsApiClient,
-                                IDelegationApiClient delegationApiClient,
-                                ITenantsApi tenantsApi,
+    public DelegationCreateStep(ClientTokenConfigurator clientTokenConfigurator,
                                 SharedStepsContext sharedStepsContext) {
-        this.producerDelegationsApiClient = producerDelegationsApiClient;
-        this.delegationApiClient = delegationApiClient;
-        this.tenantsApi = tenantsApi;
+        this.clientTokenConfigurator = clientTokenConfigurator;
+        this.producerDelegationsApiClient = clientTokenConfigurator.getProducerDelegationsApiClient();
+        this.delegationApiClient = clientTokenConfigurator.getDelegationApiClient();
+        this.tenantsApi = clientTokenConfigurator.getTenantsApi();
         this.sharedStepsContext = sharedStepsContext;
         this.commonUtils = sharedStepsContext.getCommonUtils();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
@@ -55,7 +56,7 @@ public class DelegationCreateStep {
     public void givenUserWithRole(DelegationCreateStep.DelegationRole delegationRole, String iamRole) {
         String tenantType = tenants.get(delegationRole);
         String token = commonUtils.getToken(tenantType, iamRole);
-        commonUtils.setBearerToken(token);
+        clientTokenConfigurator.setBearerToken(token);
         sharedStepsContext.setUserToken(token);
         sharedStepsContext.setTenantType(tenantType);
     }
@@ -63,19 +64,19 @@ public class DelegationCreateStep {
     @Given("l'ente delegante ha inoltrato una richiesta di delega all'ente delegato")
     public void givenDelegatingTenantHasRequestedDelegation() {
         String delegatingTenantToken = commonUtils.getToken(tenants.get(DELEGATING), null);
-        commonUtils.setBearerToken(delegatingTenantToken);
+        clientTokenConfigurator.setBearerToken(delegatingTenantToken);
         createDelegate(tenants.get(DELEGATE));
     }
 
     @And("l'utente concede la disponibilità a ricevere le deleghe")
     public void userGrantsDelegationAvailability() {
-        commonUtils.setBearerToken(sharedStepsContext.getUserToken());
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         setDelegationAvailability(sharedStepsContext.getTenantType());
     }
 
     @And("l'ente {string} concede la disponibilità a ricevere deleghe")
     public void tenantGrantsDelegationAvailability(String tenantType) {
-        commonUtils.setBearerToken(commonUtils.getToken(tenantType, null));
+        clientTokenConfigurator.setBearerToken(commonUtils.getToken(tenantType, null));
         setDelegationAvailability(tenantType);
     }
 
@@ -93,13 +94,13 @@ public class DelegationCreateStep {
 
     @And("l'ente {string} richiede la creazione di una delega per l'ente {string}")
     public void createDelegate(String delegatorTenantType, String tenantType) throws InterruptedException {
-        commonUtils.setBearerToken(commonUtils.getToken(delegatorTenantType, null));
+        clientTokenConfigurator.setBearerToken(commonUtils.getToken(delegatorTenantType, null));
         createDelegate(tenantType);
     }
 
     @And("l'utente richiede la creazione di una delega per l'ente {string}")
     public void userRequestDelegationCreation(String tenantType) {
-        commonUtils.setBearerToken(sharedStepsContext.getUserToken());
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         createDelegate(tenantType);
     }
 

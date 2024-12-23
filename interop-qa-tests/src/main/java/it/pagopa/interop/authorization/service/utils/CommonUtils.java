@@ -2,71 +2,47 @@ package it.pagopa.interop.authorization.service.utils;
 
 import it.pagopa.interop.authorization.domain.Tenant;
 import it.pagopa.interop.authorization.service.factory.SessionTokenFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Slf4j
 public class CommonUtils {
     private final SessionTokenFactory sessionTokenFactory;
-    private final KeyPairGeneratorUtil keyPairGeneratorUtil;
-    private final ClientTokenConfigurator clientTokenConfigurator;
     private final InteropClientConfigs interopClientConfigs;
-    private final List<Tenant> configFile;
-
-    private Map<String, Map<String, String>> cachedTokens = null;
+    private final List<Tenant> tenantList;
 
     public CommonUtils(SessionTokenFactory sessionTokenFactory,
                        KeyPairGeneratorUtil keyPairGeneratorUtil,
-                       ClientTokenConfigurator clientTokenConfigurator,
-                       InteropClientConfigs interopClientConfigs) {
+                       InteropClientConfigs interopClientConfigs,
+                       ConfigFileReader configFileReader) {
         this.sessionTokenFactory = sessionTokenFactory;
-        this.keyPairGeneratorUtil = keyPairGeneratorUtil;
-        this.clientTokenConfigurator = clientTokenConfigurator;
         this.interopClientConfigs = interopClientConfigs;
-        this.configFile = readProperty();
+        this.tenantList = configFileReader.getTenantList();
     }
 
     public String getToken(String tenantType, String role) {
-        try {
-            if (cachedTokens == null) {
-                cachedTokens = sessionTokenFactory.generateSessionToken(configFile);
-            }
-        } catch (Exception ex) {
-            throw new IllegalArgumentException("There was an error while creating the session token: " + ex.getMessage(), ex);
-        }
-        Map<String, String> tenantTokens = cachedTokens.get(tenantType);
-
-        String token = Optional.ofNullable(cachedTokens)
+        String token = Optional.ofNullable(sessionTokenFactory.getCachedTokens())
                 .map(m -> m.get(tenantType))
                 .filter(Objects::nonNull)
                 .map(m -> (role == null) ? m.get("admin") : m.get(role))
                 .filter(Objects::nonNull)
-                .orElse(null);
-
-        if (token == null) {
-            throw new IllegalArgumentException("Token not found for tenant: " + tenantType + " and role: " + role);
-        }
+                .orElseThrow(() -> new IllegalArgumentException("Token not found for tenant: " + tenantType + " and role: " + role));
         return token;
     }
 
-    public void setBearerToken(String token) {
-        clientTokenConfigurator.setBearerToken(token);
-    }
-
     public UUID getUserId(String tenantType, String role) {
-        return configFile.stream()
+        return tenantList.stream()
                 .filter(tenant -> tenantType.equals(tenant.getName()))
                 .map(Tenant::getUserRoles)
                 .map(userRole -> userRole.get(role))
@@ -76,7 +52,7 @@ public class CommonUtils {
     }
 
     public UUID getOrganizationId(String tenantType) {
-        return configFile.stream()
+        return tenantList.stream()
                 .filter(tenant -> tenantType.equals(tenant.getName()))
                 .map(tenant -> tenant.getOrganizationId())
                 .map(o -> o.get("dev"))
@@ -104,19 +80,5 @@ public class CommonUtils {
 
         throw new IllegalArgumentException("Eventual consistency error: " + errorMessage);
     }
-
-    private List<Tenant> readProperty() {
-        InputStream inputStream = null;
-        List<Tenant> tenantList = new ArrayList<>();
-        try {
-            inputStream = new FileInputStream(new File("config/tenants-ids.yaml"));
-            Yaml yaml = new Yaml(new Constructor(Tenant.class));
-            yaml.loadAll(inputStream).forEach(i -> tenantList.add((Tenant) i));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return tenantList;
-    }
-
 
 }

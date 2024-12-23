@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.delegate;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.interop.authorization.service.utils.CommonUtils;
 import it.pagopa.interop.delegate.service.IDelegationApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactDelegation;
@@ -10,6 +11,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Pagination;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -21,16 +23,18 @@ import java.util.stream.Collectors;
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class DelegationListingStep {
+    private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
     private final IDelegationApiClient delegationApiClient;
     private final CommonUtils commonUtils;
     private final HttpCallExecutor httpCallExecutor;
     private final List<CompactDelegations> delegationList;
 
-    public DelegationListingStep(SharedStepsContext sharedStepsContext,
-                                 IDelegationApiClient delegationApiClient) {
+    public DelegationListingStep(ClientTokenConfigurator clientTokenConfigurator,
+                                 SharedStepsContext sharedStepsContext) {
+        this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
-        this.delegationApiClient = delegationApiClient;
+        this.delegationApiClient = clientTokenConfigurator.getDelegationApiClient();
         this.commonUtils = sharedStepsContext.getCommonUtils();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.delegationList = new ArrayList<>();

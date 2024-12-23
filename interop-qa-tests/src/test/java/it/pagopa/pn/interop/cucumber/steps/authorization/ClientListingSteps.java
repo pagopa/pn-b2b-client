@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.authorization;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientKind;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
@@ -16,16 +17,18 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class ClientListingSteps {
+    private final ClientTokenConfigurator clientTokenConfigurator;
     private final IAuthorizationClient authorizationClient;
     private final CommonUtils commonUtils;
     private final DataPreparationService dataPreparationService;
     private final HttpCallExecutor httpCallExecutor;
     private final SharedStepsContext sharedStepsContext;
 
-    public ClientListingSteps(IAuthorizationClient authorizationClient,
+    public ClientListingSteps(ClientTokenConfigurator clientTokenConfigurator,
                               DataPreparationService dataPreparationService,
                               SharedStepsContext sharedStepsContext) {
-        this.authorizationClient = authorizationClient;
+        this.clientTokenConfigurator = clientTokenConfigurator;
+        this.authorizationClient = clientTokenConfigurator.getAuthorizationClient();
         this.commonUtils = sharedStepsContext.getCommonUtils();
         this.dataPreparationService = dataPreparationService;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
@@ -70,7 +73,7 @@ public class ClientListingSteps {
 
     @When("l'utente richiede una operazione di listing dei client")
     public void retrieveClientsList() {
-        commonUtils.setBearerToken(commonUtils.getToken(sharedStepsContext.getTenantType(), null));
+        clientTokenConfigurator.setBearerToken(commonUtils.getToken(sharedStepsContext.getTenantType(), null));
         httpCallExecutor.performCall(() ->
                 authorizationClient.getClients(sharedStepsContext.getXCorrelationId(), 0, 12, String.valueOf(sharedStepsContext.getTestSeed()), null, null));
     }

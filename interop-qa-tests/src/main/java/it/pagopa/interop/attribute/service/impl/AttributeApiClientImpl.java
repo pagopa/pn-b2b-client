@@ -6,23 +6,26 @@ import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.AttributesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
+@Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class AttributeApiClientImpl implements IAttributeApiClient {
     private final AttributesApi attributesApi;
     private final RestTemplate restTemplate;
     private final InteropClientConfigs interopClientConfigs;
     private final String basePath;
-    private final String bearerToken;
 
     public AttributeApiClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
         this.interopClientConfigs = interopClientConfigs;
         this.basePath = interopClientConfigs.getBaseUrl();
-        this.bearerToken = "bearerToken";
-        this.attributesApi = new AttributesApi(createApiClient(bearerToken));
+        this.attributesApi = new AttributesApi(createApiClient("dummyBearer"));
     }
 
     private ApiClient createApiClient(String bearerToken) {

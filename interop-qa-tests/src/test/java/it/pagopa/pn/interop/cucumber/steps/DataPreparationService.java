@@ -33,9 +33,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import static it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode.RECEIVE;
 
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-
 public class DataPreparationService {
     private static final ClientSeed DEFAULT_CLIENT_SEED = new ClientSeed();
+    private final ClientTokenConfigurator clientTokenConfigurator;
     private final IAuthorizationClient authorizationClient;
     private final IAgreementClient agreementClient;
     private final IAttributeApiClient attributeApiClient;
@@ -54,28 +54,22 @@ public class DataPreparationService {
         DEFAULT_CLIENT_SEED.setMembers(List.of());
     }
 
-    public DataPreparationService(IAuthorizationClient authorizationClient,
-                                  IAgreementClient agreementClient,
-                                  IAttributeApiClient attributeApiClient,
-                                  ITenantsApi tenantsApi,
-                                  IEServiceClient eServiceClient,
-                                  IProducerClient producerClient,
-                                  IPurposeApiClient purposeApiClient,
-                                  HttpCallExecutor httpCallExecutor,
+    public DataPreparationService(ClientTokenConfigurator clientTokenConfigurator,
                                   CommonUtils commonUtils,
                                   RiskAnalysisDataInitializer riskAnalysisDataInitializer,
                                   SharedStepsContext sharedStepsContext) {
-        this.authorizationClient = authorizationClient;
-        this.agreementClient = agreementClient;
-        this.attributeApiClient = attributeApiClient;
-        this.tenantsApi = tenantsApi;
-        this.eServiceClient = eServiceClient;
-        this.producerClient = producerClient;
-        this.purposeApiClient = purposeApiClient;
-        this.httpCallExecutor = httpCallExecutor;
-        this.commonUtils = commonUtils;
-        this.riskAnalysisDataInitializer = riskAnalysisDataInitializer;
+        this.clientTokenConfigurator = clientTokenConfigurator;
+        this.authorizationClient = clientTokenConfigurator.getAuthorizationClient();
+        this.agreementClient = clientTokenConfigurator.getAgreementClient();
+        this.attributeApiClient = clientTokenConfigurator.getAttributeApiClient();
+        this.tenantsApi = clientTokenConfigurator.getTenantsApi();
+        this.eServiceClient = clientTokenConfigurator.getEServiceClient();
+        this.producerClient = clientTokenConfigurator.getProducerClient();
+        this.purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
         this.sharedStepsContext = sharedStepsContext;
+        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+        this.commonUtils = sharedStepsContext.getCommonUtils();
+        this.riskAnalysisDataInitializer = riskAnalysisDataInitializer;
     }
 
     public UUID createClient(String clientKind, ClientSeed partialClientSeed) {
@@ -105,7 +99,11 @@ public class DataPreparationService {
         assertValidResponse();
         commonUtils.makePolling(
                 () -> httpCallExecutor.performCall(() -> authorizationClient.getClientUsers(sharedStepsContext.getXCorrelationId(), clientId)),
-                res -> ((List<CompactUser>) httpCallExecutor.getResponse()).stream().anyMatch(user -> user.getUserId().equals(userId)),
+                res -> Optional.ofNullable(httpCallExecutor.getResponse())
+                        .map(obj -> (List<CompactUser>) obj)
+                        .orElse(List.of())
+                        .stream()
+                        .anyMatch(user -> user.getUserId().equals(userId)),
                 "Failed to retrieve the client users list!"
         );
     }

@@ -4,6 +4,7 @@ import io.cucumber.java.en.Given;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.authorization.service.utils.CommonUtils;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -12,21 +13,23 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class AgreementCommonSteps {
+    private ClientTokenConfigurator clientTokenConfigurator;
     private DataPreparationService dataPreparationService;
     private CommonUtils commonUtils;
     private SharedStepsContext sharedStepsContext;
 
-    public AgreementCommonSteps(DataPreparationService dataPreparationService,
-            CommonUtils commonUtils,
-            SharedStepsContext sharedStepsContext) {
+    public AgreementCommonSteps(ClientTokenConfigurator clientTokenConfigurator,
+                                DataPreparationService dataPreparationService,
+                                SharedStepsContext sharedStepsContext) {
+        this.clientTokenConfigurator = clientTokenConfigurator;
         this.dataPreparationService = dataPreparationService;
-        this.commonUtils = commonUtils;
         this.sharedStepsContext = sharedStepsContext;
+        this.commonUtils = sharedStepsContext.getCommonUtils();
     }
 
     @Given("{string} ha una richiesta di fruizione in stato {string} per quell'e-service")
     public void tenantAlreadyHasFruitionRequestWithState(String tenant, String agreementState) {
-        commonUtils.setBearerToken(commonUtils.getToken(tenant, null));
+        clientTokenConfigurator.setBearerToken(commonUtils.getToken(tenant, null));
         UUID agreementId = dataPreparationService.createAgreementWithGivenState(
                 AgreementState.fromValue(agreementState),
                 sharedStepsContext.getEServicesCommonContext().getEserviceId(),
@@ -45,7 +48,7 @@ public class AgreementCommonSteps {
 
     @Given("{string} ha già creato e pubblicato {int} e-service(s)")
     public void tenantHasAlreadyCreatedAndPublishedEService(String tenantType, int totalEservices) {
-        commonUtils.setBearerToken(commonUtils.getToken(tenantType, null));
+        clientTokenConfigurator.setBearerToken(commonUtils.getToken(tenantType, null));
         // Create e-services and publish descriptors
         EServicesCommonContext eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
         for (int i = 0; i < totalEservices; i++) {
@@ -72,7 +75,7 @@ public class AgreementCommonSteps {
 
     @Given("{string} ha già creato un e-service in stato {string} con approvazione {string}")
     public void tenantHasAlreadyCreatedEServiceWithStatusAndApproval(String tenantType, String descriptorState, String agreementApprovalPolicy) {
-        commonUtils.setBearerToken(commonUtils.getToken(tenantType, null));
+        clientTokenConfigurator.setBearerToken(commonUtils.getToken(tenantType, null));
         EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(new EServiceSeed(),
                 new UpdateEServiceDescriptorSeed().agreementApprovalPolicy(AgreementApprovalPolicy.valueOf(agreementApprovalPolicy)));
 

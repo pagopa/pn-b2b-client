@@ -9,6 +9,7 @@ import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -18,12 +19,11 @@ import java.util.concurrent.ThreadLocalRandom;
 
 @Getter
 @Setter
+@Slf4j
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class SharedStepsContext {
     private HttpCallExecutor httpCallExecutor;
     private CommonUtils commonUtils;
-
-
     private int testSeed;
     private String tenantType;
     private String userToken;

@@ -7,21 +7,24 @@ import it.pagopa.interop.generated.openapi.clients.bff.api.ProducerDelegationsAp
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RejectDelegationPayload;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.UUID;
 
+@Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class ProducerDelegationsApiClientImpl implements IProducerDelegationsApiClient {
     private final ProducerDelegationsApi producerDelegationsApi;
     private final RestTemplate restTemplate;
     private final String basePath;
-    private final String bearerToken;
 
     public ProducerDelegationsApiClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
         this.basePath = interopClientConfigs.getBaseUrl();
-        this.bearerToken = "bearerToken";
-        this.producerDelegationsApi = new ProducerDelegationsApi(createApiClient(bearerToken));
+        this.producerDelegationsApi = new ProducerDelegationsApi(createApiClient("dummyBearer"));
     }
 
     private ApiClient createApiClient(String bearerToken) {

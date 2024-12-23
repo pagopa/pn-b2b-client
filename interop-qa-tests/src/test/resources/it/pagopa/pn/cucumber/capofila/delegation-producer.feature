@@ -108,6 +108,12 @@ Feature: Creazione di una delega in erogazione
       # Esito: si ottiene 403 "Unauthorized"
       | support      | delegante | 403         |
 
+  Scenario: [TC_CAPOFILA_33] La creazione di una delega in erogazione NON può essere compiuto da un utente ADMIN se l’aderente non si è reso disponibile ad accettare deleghe
+    Given l'utente è un "admin" di "PA1"
+    Given "PA1" ha già creato e pubblicato 1 e-service
+    When l'utente richiede la creazione di una delega per l'ente "PA2"
+    Then si ottiene lo status code 403
+
   #TC-7: L'accettazione di una delega NON può essere fatta da un utente con ruolo diverso da ADMIN
   #TC-8: La revoca di una delega NON può essere fatta da un utente con ruolo diverso da ADMIN
   #TC-13: L'accettazione di una delega può essere fatta da un utente con ruolo ADMIN

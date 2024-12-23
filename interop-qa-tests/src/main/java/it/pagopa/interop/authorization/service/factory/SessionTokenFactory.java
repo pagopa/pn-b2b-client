@@ -6,8 +6,13 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import it.pagopa.interop.authorization.domain.Tenant;
 import it.pagopa.interop.authorization.domain.ExternalId;
+import it.pagopa.interop.authorization.service.utils.ConfigFileReader;
 import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.kms.KmsClient;
 import software.amazon.awssdk.services.kms.model.*;
@@ -22,6 +27,8 @@ import java.time.Instant;
 import java.util.*;
 
 @Slf4j
+@Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
 public class SessionTokenFactory {
     private static final Map<String, Map<String, String>> CONFIG = new HashMap<>();
     private static final Map<String, Object> SESSION_TOKEN_PAYLOAD_TEMPLATE;
@@ -61,9 +68,26 @@ public class SessionTokenFactory {
     }
 
     private final InteropClientConfigs interopClientConfigs;
+    @Getter
+    private Map<String, Map<String, String>> cachedTokens = null;
+    private ConfigFileReader configFileReader;
 
-    public SessionTokenFactory(InteropClientConfigs interopClientConfigs) {
+
+    public SessionTokenFactory(InteropClientConfigs interopClientConfigs, ConfigFileReader configFileReader) {
         this.interopClientConfigs = interopClientConfigs;
+        this.configFileReader = configFileReader;
+        this.cachedTokens = loadToken();
+    }
+
+    private Map<String, Map<String, String>> loadToken() {
+        try {
+            if (cachedTokens == null) {
+                cachedTokens = generateSessionToken(configFileReader.getTenantList());
+            }
+        } catch (Exception ex) {
+            throw new IllegalArgumentException("There was an error while creating the session token: " + ex.getMessage(), ex);
+        }
+        return cachedTokens;
     }
 
     public Map<String, Map<String, String>> generateSessionToken(List<Tenant> configFile) throws Exception {

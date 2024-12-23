@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.delegate;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.interop.authorization.service.utils.CommonUtils;
 import it.pagopa.interop.delegate.service.IDelegationApiClient;
 import it.pagopa.interop.tenant.service.ITenantsApi;
@@ -13,29 +14,32 @@ import org.springframework.web.client.HttpClientErrorException;
 
 @Slf4j
 public class DelegationCommonStep {
+    private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
     private final IDelegationApiClient delegationApiClient;
     private final CommonUtils commonUtils;
     private final HttpCallExecutor httpCallExecutor;
     private final ITenantsApi tenantsApi;
 
-    public DelegationCommonStep(SharedStepsContext sharedStepsContext,
-                                IDelegationApiClient delegationApiClient,
-                                ITenantsApi tenantsApi) {
+    public DelegationCommonStep(ClientTokenConfigurator clientTokenConfigurator,
+                                SharedStepsContext sharedStepsContext) {
+        this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
-        this.delegationApiClient = delegationApiClient;
+        this.delegationApiClient = clientTokenConfigurator.getDelegationApiClient();
         this.commonUtils = sharedStepsContext.getCommonUtils();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
-        this.tenantsApi = tenantsApi;
+        this.tenantsApi = clientTokenConfigurator.getTenantsApi();
     }
 
     @Given("l'ente {string} rimuove la disponibilità a ricevere deleghe")
     public void tenantRemoveDelegationAvailability(String tenantType) {
-        commonUtils.setBearerToken(commonUtils.getToken(tenantType, null));
+        clientTokenConfigurator.setBearerToken(commonUtils.getToken(tenantType, null));
         try {
             tenantsApi.deleteTenantDelegatedProducerFeature();
         } catch (HttpClientErrorException.Conflict e) {
             log.info("No delegation availability defined for the given tenant!");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
