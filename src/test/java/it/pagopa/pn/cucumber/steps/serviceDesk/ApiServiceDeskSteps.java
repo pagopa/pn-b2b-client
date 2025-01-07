@@ -46,6 +46,16 @@ import static org.awaitility.Awaitility.await;
 
 @Slf4j
 public class ApiServiceDeskSteps {
+    @Value("${pn.iun.withf24Payment.colombo}")
+    private String iunWithF24Payment;
+
+    @Value("${pn.iun.withPagoPaPayment.colombo}")
+    private String iunWithPagoPAPayment;
+
+    @Value("${pn.iun.withoutPayment.colombo}")
+    private String iunWithoutPayment;
+
+    public static final String IUN_ERRATO = "JRDT-XAPH-JQYW-202312-J-1";
     private final PnPaB2bUtils b2bUtils;
     private final SharedSteps sharedSteps;
     private final IPServiceDeskClientImpl ipServiceDeskClient;
@@ -76,6 +86,7 @@ public class ApiServiceDeskSteps {
     private List<PaSummary> listPa = null;
     private HttpStatusCodeException notificationError;
     private SearchNotificationsResponse searchNotificationsResponse;
+    private NotificationRecipientDetailResponse notificationRecipientDetailResponse;
     private SearchNotificationsRequest searchNotificationsRequest;
     private ProfileRequest profileRequest;
     private ProfileResponse profileResponse;
@@ -705,7 +716,6 @@ public class ApiServiceDeskSteps {
             if (!"NULL".equalsIgnoreCase(recipientType)) {
                 setRecipientType(recipientType);
             }
-
             profileResponse = ipServiceDeskClient.getProfileFromTaxId(profileRequest);
             Assertions.assertNotNull(profileResponse);
         } catch (HttpStatusCodeException exception) {
@@ -761,13 +771,8 @@ public class ApiServiceDeskSteps {
     public void comeOperatoreDevoAccedereAiDettagliDiUnaNotificaDiCuiConoscoLIdentificativoIUN(String iun) {
         try {
             profileRequest = new ProfileRequest();
-            if ("NULL".equalsIgnoreCase(iun)) {
-                notificationDetailResponse = ipServiceDeskClient.getNotificationFromIUN(null);
-            } else if ("VUOTO".equalsIgnoreCase(iun)) {
-                notificationDetailResponse = ipServiceDeskClient.getNotificationFromIUN("");
-            } else {
-                notificationDetailResponse = ipServiceDeskClient.getNotificationFromIUN(iun);
-            }
+            String iunParameter = iun.equals("NULL") ? null : iun.equals("VUOTO") ? "" : iun;
+            notificationDetailResponse = ipServiceDeskClient.getNotificationFromIUN(iunParameter);
         } catch (HttpStatusCodeException exception) {
             this.notificationError = exception;
         }
@@ -1382,6 +1387,7 @@ public class ApiServiceDeskSteps {
             case "Mario Cucumber" -> sharedSteps.getMarioCucumberTaxID();
             case "CucumberSpa" -> sharedSteps.getCucumberSpataxId();
             case "GherkinSrl" -> sharedSteps.getGherkinSrltaxId();
+            case "Galileo Galilei" -> sharedSteps.getGalileoGalileiTaxID();
             default -> null;
         };
         return result;
@@ -1482,4 +1488,99 @@ public class ApiServiceDeskSteps {
             throw exception;
         }
     }
+
+    @When("come operatore devo accedere ai dettagli dei pagamenti di una notifica con uno iun {string} associata all' utente {string} con uid {string}")
+    public void comeOperatoreDevoAccedereAiDettagliDeiPagamentiDiUnaNotificaConUnoIun(String iun, String taxId, String xPagopaPnUid) {
+        String taxIdRequest = createTaxId(taxId);
+        try {
+            notificationRecipientDetailResponse = ipServiceDeskClient.getNotificationRecipientDetail(createUid(xPagopaPnUid), createIUN(iun), new NotificationRecipientDetailRequest().taxId(taxIdRequest));
+        } catch (HttpStatusCodeException e) {
+            notificationError = e;
+        }
+    }
+
+    private String createUid(String xPagopaPnUid) {
+        return xPagopaPnUid.equals("vuoto") ? null : "ZenDesk";
+    }
+
+    @Then("controllo che la risposta del servizio contenta una lista {string}")
+    public void controlloCheLaRispostaDelServizioContentaUnaLista(String listType) {
+        Assertions.assertNotNull(notificationRecipientDetailResponse);
+        Assertions.assertNotNull(notificationRecipientDetailResponse.getRecipient());
+        Assertions.assertNotNull(notificationRecipientDetailResponse.getRecipient().getPayments());
+        if (listType.equals("VUOTA")) {
+            Assertions.assertTrue(notificationRecipientDetailResponse.getRecipient().getPayments().isEmpty());
+        } else {
+            Assertions.assertFalse(notificationRecipientDetailResponse.getRecipient().getPayments().isEmpty());
+        }
+    }
+
+    private String createIUN(String iun) {
+        return  switch (iun.toUpperCase()) {
+            case "VUOTO" -> {
+                yield "";
+            }
+            case "INESISTENTE" -> {
+                yield IUN_ERRATO;
+            }
+            case "ASSOCIATO A PAGAMENTO PAGOPA" -> {
+                yield iunWithPagoPAPayment;
+            }
+            case "ASSOCIATO A PAGAMENTO F24" -> {
+                yield iunWithF24Payment;
+            }
+            case "NOTIFICA SENZA PAGAMENTI" -> {
+                yield iunWithoutPayment;
+            }
+            default -> {
+                yield iun;
+            }
+        };
+    }
+
+    private String createTaxId(String user) {
+        return switch (user.toUpperCase()) {
+            case "VUOTO" -> {
+                yield "";
+            }
+            case "ERRATO" -> {
+                yield CF_errato;
+            }
+            default -> {
+                yield setTaxID(user);
+            }
+        };
+    }
+
+
+    @Then("controllo che i timestamp di creazione e modifica del recapito {string} {string} siano {string} (tra di loro)(.)")
+    public void controlloCheITimestampDiCreazioneEModificaDelRecapitoDiSianoDiversiTraDiLoro(String addressType, String addressCategory, String verificationType) {
+        Assertions.assertNotNull(profileResponse);
+        Assertions.assertNotNull(profileResponse.getUserAddresses());
+        List<Address> addressRetrieved = profileResponse.getUserAddresses()
+                .stream()
+                .filter(data -> checkAddressAndChannelType(addressType, addressCategory, data))
+                .toList();
+
+        if (verificationType.equals("vuoti")) {
+            Assertions.assertTrue(addressRetrieved.isEmpty());
+        } else {
+            Assertions.assertFalse(addressRetrieved.isEmpty());
+            Assertions.assertEquals(1, addressRetrieved.size());
+            Address address = addressRetrieved.get(0);
+            Assertions.assertNotNull(address.getCreated());
+            Assertions.assertNotNull(address.getLastModified());
+            Assertions.assertEquals(verificationType.equals("uguali"), address.getCreated().equals(address.getLastModified()), "i timestamp non sono " + verificationType + " come previsto dallo scenario del test");
+
+        }
+    }
+
+    private boolean checkAddressAndChannelType(String addressType, String addressCategory,  Address data) {
+        if (addressType.equals("cortesia")) {
+            return data.getCourtesyValue() != null && data.getCourtesyChannelType().equals(CourtesyChannelType.fromValue(addressCategory.toUpperCase()));
+        } else if (addressType.equals("legale")) {
+            return data.getLegalValue() != null && data.getLegalChannelType().equals(LegalChannelType.fromValue(addressCategory.toUpperCase()));
+        } else throw new IllegalArgumentException("addressType not valid");
+    }
+
 }
