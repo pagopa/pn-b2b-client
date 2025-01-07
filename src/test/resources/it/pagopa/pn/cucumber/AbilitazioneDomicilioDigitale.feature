@@ -10,6 +10,7 @@ Feature: Abilitazione domicilio digitale
     Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq
     Then l'utente "Galileo Galilei" controlla l'accettazione "positiva" dei tos per sercq
     And viene disabilitato il servizio SERCQ SEND per il comune di "default"
+    Then ripristina email di cortesia e pec per Galileo Galilei
 
 
   @sercq @addressBook3
@@ -34,6 +35,7 @@ Feature: Abilitazione domicilio digitale
     Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq
     And l'utente "Galileo Galilei" controlla l'accettazione "positiva" dei tos per sercq
     And viene disabilitato il servizio SERCQ SEND per il comune di "default"
+    Then ripristina email di cortesia e pec per Galileo Galilei
 
   @sercq @addressBook3
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_2] Attivazione del servizio SERCQ SEND per recapito principale e presenza del recapito legale PEC
@@ -56,6 +58,8 @@ Feature: Abilitazione domicilio digitale
     And viene verificato che Sercq sia "abilitato" per il comune "default"
     Then viene disabilitato il servizio SERCQ SEND per il comune di "default"
     And viene verificato che Sercq sia "disabilitato" per il comune "default"
+    Then ripristina email di cortesia e pec per Galileo Galilei
+
 
   @sercq @addressBook3
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_3] Disattivazione del servizio SERCQ SEND per recapito principale
@@ -74,6 +78,7 @@ Feature: Abilitazione domicilio digitale
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
     And viene verificato che Sercq sia "disabilitato" per il comune "default"
+    Then ripristina email di cortesia e pec per Galileo Galilei
 
   @sercq @addressBook3
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_5] Inserimento indirizzo PEC come recapito principale, dopo attivazione del servizio SERCQ
@@ -95,6 +100,7 @@ Feature: Abilitazione domicilio digitale
     And viene verificata l'assenza di indirizzi Pec per il comune "default"
     And viene verificato che Sercq sia "abilitato" per il comune "default"
     And viene disabilitato il servizio SERCQ SEND per il comune di "default"
+    Then ripristina email di cortesia e pec per Galileo Galilei
 
 
   @sercq @addressBook3
@@ -118,6 +124,7 @@ Feature: Abilitazione domicilio digitale
     And viene verificato che Sercq sia "abilitato" per il comune "Comune_Root"
     Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq
     And l'utente "Galileo Galilei" controlla l'accettazione "positiva" dei tos per sercq
+    Then ripristina email di cortesia e pec per Galileo Galilei
 
   @sercq @addressBook3
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_7] Attivazione del servizio SERCQ SEND per recapito specifico per ente  e accettazione dei TOS
@@ -143,6 +150,7 @@ Feature: Abilitazione domicilio digitale
     And viene verificata l'assenza di indirizzi Pec per il comune "Comune_Root"
     Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq
     And l'utente "Galileo Galilei" controlla l'accettazione "positiva" dei tos per sercq
+    Then ripristina email di cortesia e pec per Galileo Galilei
 
 
   @sercq @addressBook3
@@ -174,6 +182,7 @@ Feature: Abilitazione domicilio digitale
     And viene verificato che Sercq sia "abilitato" per il comune "Comune_Root"
     Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq
     And l'utente "Galileo Galilei" controlla l'accettazione "positiva" dei tos per sercq
+    Then ripristina email di cortesia e pec per Galileo Galilei
 
   @sercq @addressBook3
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_9] Attivazione del servizio SERCQ SEND per recapito specifico per ente e presenza del recapito legale PEC specifico per enti differenti
@@ -190,6 +199,7 @@ Feature: Abilitazione domicilio digitale
     Then l'utente "Alda Merini" "ACCETTA" i tos per sercq
     And l'utente "Alda Merini" controlla l'accettazione "positiva" dei tos per sercq
 
+
   @sercq @addressBook1
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_10] Attivazione del servizio SERCQ SEND per recapito principale e inserimento della PEC come recapito specifico per ente
     Given si predispone addressbook per l'utente "Galileo Galilei"
@@ -199,6 +209,7 @@ Feature: Abilitazione domicilio digitale
     And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_1"
     And viene controllato che siano presenti pec verificate inserite per il comune "Comune_1"
     And viene verificato che Sercq sia "abilitato" per il comune "default"
+    Then ripristina email di cortesia e pec per Galileo Galilei
 
   @sercq @addressBook2
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_10] Attivazione del servizio SERCQ SEND per recapito principale e inserimento della PEC come recapito specifico per ente
@@ -220,6 +231,7 @@ Feature: Abilitazione domicilio digitale
     And viene verificato che Sercq sia "abilitato" per il comune "Comune_1"
     And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_1"
     And viene controllato che siano presenti pec verificate inserite per il comune "Comune_1"
+    Then ripristina email di cortesia e pec per Galileo Galilei
 
 
   @sercq @addressBook2
@@ -243,6 +255,7 @@ Feature: Abilitazione domicilio digitale
     And viene controllato che siano presenti pec verificate inserite per il comune "Comune_Root"
     Then viene inserito un recapito legale "example3@pecSuccess.it" per il comune "Comune_Root"
     And viene controllato che siano presenti pec verificate inserite per il comune "Comune_Root"
+    Then ripristina email di cortesia e pec per Galileo Galilei
 
 
   @sercq @addressBook2
@@ -268,6 +281,7 @@ Feature: Abilitazione domicilio digitale
     And viene inserito un recapito legale "example3@pecSuccess.it" per il comune "Comune_Root" con verification code errato "*$%&+/"
     And viene inserito un recapito legale "example3@pecSuccess.it" per il comune "Comune_Root"
     And viene controllato che siano presenti pec verificate inserite per il comune "Comune_Root"
+    Then ripristina email di cortesia e pec per Galileo Galilei
 
 
   @sercq @addressBook2
@@ -293,6 +307,7 @@ Feature: Abilitazione domicilio digitale
     And viene controllato che siano presenti pec verificate inserite per il comune "Comune_1"
     Then viene rimossa se presente la pec per il comune "Comune_1"
     And  viene verificata l'assenza di indirizzi Pec per il comune "Comune_1"
+    Then ripristina email di cortesia e pec per Galileo Galilei
 
   @sercq @addressBook2
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_14] Elimina indirizzo PEC come recapito specifico per ente con la presenza di una PEC già associata
@@ -315,6 +330,7 @@ Feature: Abilitazione domicilio digitale
     And viene verificato che Sercq sia "abilitato" per il comune "Comune_1"
     Then viene disabilitato il servizio SERCQ SEND per il comune di "Comune_1"
     And viene verificato che Sercq sia "disabilitato" per il comune "Comune_1"
+    Then ripristina email di cortesia e pec per Galileo Galilei
 
 
   @sercq @addressBook2
@@ -337,6 +353,7 @@ Feature: Abilitazione domicilio digitale
     And viene verificato che Sercq sia "abilitato" per il comune "default"
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
+    Then ripristina email di cortesia e pec per Galileo Galilei
 
   @sercq @addressBook2
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_16] Attivazione servizio SERCQ e aggiunta recapito di cortesia email
@@ -359,6 +376,7 @@ Feature: Abilitazione domicilio digitale
     And viene verificato che Sercq sia "abilitato" per il comune "Comune_2"
     Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq
     And l'utente "Galileo Galilei" controlla l'accettazione "positiva" dei tos per sercq
+    Then ripristina email di cortesia e pec per Galileo Galilei
 
 
   @sercq @addressBook2
@@ -391,6 +409,7 @@ Feature: Abilitazione domicilio digitale
     Then Viene verificato che non sia arrivato un evento di "SEND_DIGITAL_PROGRESS"
     And viene verificato che il timestamp dell'evento "SEND_DIGITAL_DOMICILE" sia immediatamente successivo a quello dell'evento "AAR_GENERATION" con una differenza massima di 60 secondi
     And viene verificato che il timestamp dell'evento "SEND_DIGITAL_FEEDBACK" sia immediatamente successivo a quello dell'evento "AAR_GENERATION" con una differenza massima di 60 secondi
+    Then ripristina email di cortesia e pec per Galileo Galilei
 
   @sercq @addressBook2 @webhook1 @cleanWebhook
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_WEBHOOK_V10] Creazione di un nuovo stream con versione V10 e controllo che SERCQ non è presente
@@ -414,6 +433,7 @@ Feature: Abilitazione domicilio digitale
     And verifica la non presenza di SERCQ
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
+    Then ripristina email di cortesia e pec per Galileo Galilei
 
   @sercq @addressBook2 @webhookV23 @precondition @cleanWebhook @webhook2
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_WEBHOOK_V23] Creazione di un nuovo stream con versione V23 e controllo che SERCQ è presente
@@ -438,6 +458,7 @@ Feature: Abilitazione domicilio digitale
     And verifica presenza SERCQ
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
+    Then ripristina email di cortesia e pec per Galileo Galilei
 
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_59] Creazione notifica digitale con servizio SERCQ attivo e verifica cambiamento workflow della notifica
     Given si predispone addressbook per l'utente "CucumberSpa"
@@ -472,6 +493,7 @@ Feature: Abilitazione domicilio digitale
     And si verifica la corretta acquisizione della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     Then Viene verificato che non sia arrivato un evento di "SEND_DIGITAL_PROGRESS"
+    Then ripristina email di cortesia e pec per Galileo Galilei
 
 
   @sercq @addressBook2
@@ -515,6 +537,7 @@ Feature: Abilitazione domicilio digitale
       | details_recIndex       | 0                                                  |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     Then Viene verificato che non sia arrivato un evento di "SEND_DIGITAL_PROGRESS"
+    Then ripristina email di cortesia e pec per Galileo Galilei
 
 
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_61] Creazione notifica digitale verso utente che abbia attivato servizio SERCQ
@@ -559,14 +582,14 @@ Feature: Abilitazione domicilio digitale
     And si verifica la corretta acquisizione della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
-      | loadTimeline           | true                                               |
-      | details                | NOT_NULL                                           |
+      | loadTimeline           | true                                                |
+      | details                | NOT_NULL                                            |
       | details_digitalAddress | {"address": "provaemail2@test.it", "type": "EMAIL"} |
-      | details_recIndex       | 0                                                  |
+      | details_recIndex       | 0                                                   |
     Then Viene verificato che non sia arrivato un evento di "SEND_DIGITAL_PROGRESS"
     And viene verificato che il timestamp dell'evento "SEND_DIGITAL_DOMICILE" sia immediatamente successivo a quello dell'evento "AAR_GENERATION" con una differenza massima di 60 secondi
     And viene verificato che il timestamp dell'evento "SEND_DIGITAL_FEEDBACK" sia immediatamente successivo a quello dell'evento "AAR_GENERATION" con una differenza massima di 60 secondi
-
+    Then ripristina email di cortesia e pec per Galileo Galilei
 
   @sercq @addressBook4
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_62] Creazione notifica digitale verso utente che abbia attivato servizio SERCQ
@@ -607,6 +630,7 @@ Feature: Abilitazione domicilio digitale
     When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     Then Viene verificato che non sia arrivato un evento di "SEND_DIGITAL_PROGRESS"
+    Then ripristina email di cortesia e pec per Galileo Galilei
 
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_79] Creazione notifica digitale con servizio SERCQ con Indirizzo speciale settato
     Given si predispone addressbook per l'utente "CucumberSpa"
@@ -642,9 +666,10 @@ Feature: Abilitazione domicilio digitale
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi e verifico che l'utente 0 non abbia associato un evento "SEND_DIGITAL_PROGRESS"
     And esiste l'elemento di timeline della notifica "SEND_DIGITAL_PROGRESS" per l'utente 1
+    Then ripristina email di cortesia e pec per Galileo Galilei
 
   ##TODO Analizzare il comportamento della doppia annotazione
-   @addressBook1 @addressBook2
+  @addressBook1 @addressBook2
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_81] Creazione notifica digitale multi destinatario con servizio SERCQ attivo per il primo destinatario e indirizzo PEC di piattaforma per il secondo destinatario
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -664,6 +689,7 @@ Feature: Abilitazione domicilio digitale
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi e verifico che l'utente 0 non abbia associato un evento "SEND_DIGITAL_PROGRESS"
     And esiste l'elemento di timeline della notifica "SEND_DIGITAL_PROGRESS" per l'utente 1
+    Then ripristina email di cortesia e pec per Galileo Galilei
 
 
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_82] Creazione notifica digitale multi destinatario con servizio SERCQ attivo per il primo destinatario e workflow analogico per il secondo destinatario
@@ -683,3 +709,4 @@ Feature: Abilitazione domicilio digitale
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi e verifico che l'utente 0 non abbia associato un evento "SEND_DIGITAL_PROGRESS"
     And esiste l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" per l'utente 1
+    Then ripristina email di cortesia e pec per Galileo Galilei

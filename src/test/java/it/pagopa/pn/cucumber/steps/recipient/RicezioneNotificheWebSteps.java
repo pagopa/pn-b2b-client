@@ -1,9 +1,6 @@
 package it.pagopa.pn.cucumber.steps.recipient;
 
-import io.cucumber.java.After;
-import io.cucumber.java.Before;
-import io.cucumber.java.DataTableType;
-import io.cucumber.java.Transpose;
+import io.cucumber.java.*;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -70,8 +67,11 @@ public class RicezioneNotificheWebSteps {
     private static final String TOS_VERSION = "2";
     private static final String ACCEPT_TOS = "ACCETTA";
 
-    List<CourtesyDigitalAddress> courtesySavedAddressList;
-    List<LegalAndUnverifiedDigitalAddress> legalSavedAddressList;
+    private List<CourtesyDigitalAddress> courtesySavedAddressList;
+    private List<LegalAndUnverifiedDigitalAddress> legalSavedAddressList;
+
+
+    private static boolean saveUser4AddressDone = false;
 
     @Value("${pn.external.senderId}")
     private String senderId;
@@ -95,13 +95,20 @@ public class RicezioneNotificheWebSteps {
 
     @Before("@sercq")
     public void saveAddress() {
-        saveUser4Address();
+        if (!saveUser4AddressDone) {
+            saveUser4Address();
+            saveUser4AddressDone = true;
+        }
     }
 
-    @After("@sercq")
+    /*@After("@sercq")
     public void restoreAddress() {
-        restoreUser4Address();
-    }
+        if (!restoreUser4AddressDone) {
+            restoreUser4Address();
+            restoreUser4AddressDone = true;
+        }
+    }*/
+
 
 
     @Autowired
@@ -641,7 +648,7 @@ public class RicezioneNotificheWebSteps {
 
     private void postRecipientCourtesyAddress(String senderId, String addressVerification, CourtesyChannelType type, String verificationCode, boolean inserimento) {
         try {
-            if(inserimento){
+            if (inserimento) {
                 this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderId, CourtesyChannelType.EMAIL, (new AddressVerification().value(addressVerification)));
                 verificationCode = this.externalClient.getVerificationCode(addressVerification);
             }
@@ -653,7 +660,7 @@ public class RicezioneNotificheWebSteps {
 
     private void postRecipientLegalAddress(String senderIdPa, String addressVerification, String verificationCode, boolean inserimento) {
         try {
-            if (inserimento){
+            if (inserimento) {
                 this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.PEC, (new AddressVerification().value(addressVerification)));
                 verificationCode = this.externalClient.getVerificationCode(addressVerification);
             }
@@ -817,7 +824,6 @@ public class RicezioneNotificheWebSteps {
             }
         });
     }
-
 
 
     @And("viene verificata l' assenza di pec inserite per l'utente")
@@ -1025,6 +1031,7 @@ public class RicezioneNotificheWebSteps {
         }
     }
 
+    @Then("ripristina email di cortesia e pec per Galileo Galilei")
     public void restoreUser4Address() {
 
         this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_4);
