@@ -15,13 +15,11 @@ public class DelegationApiClientImpl implements IDelegationApiClient {
     private final DelegationsApi delegationsApi;
     private final RestTemplate restTemplate;
     private final String basePath;
-    private final String bearerToken;
 
     public DelegationApiClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
         this.basePath = interopClientConfigs.getBaseUrl();
-        this.bearerToken = "bearerToken";
-        this.delegationsApi = new DelegationsApi(createApiClient(bearerToken));
+        this.delegationsApi = new DelegationsApi(createApiClient("bearerToken"));
     }
 
     private ApiClient createApiClient(String bearerToken) {

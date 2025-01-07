@@ -1,26 +1,30 @@
 package it.pagopa.interop.authorization.service.utils;
 
 import it.pagopa.interop.authorization.domain.Tenant;
+import it.pagopa.interop.authorization.service.exception.TenantsReadException;
 import it.pagopa.interop.authorization.service.factory.SessionTokenFactory;
+import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-
+@Slf4j
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class CommonUtils {
     private final SessionTokenFactory sessionTokenFactory;
-    private final KeyPairGeneratorUtil keyPairGeneratorUtil;
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final InteropClientConfigs interopClientConfigs;
     private final List<Tenant> configFile;
@@ -28,11 +32,9 @@ public class CommonUtils {
     private Map<String, Map<String, String>> cachedTokens = null;
 
     public CommonUtils(SessionTokenFactory sessionTokenFactory,
-                       KeyPairGeneratorUtil keyPairGeneratorUtil,
                        ClientTokenConfigurator clientTokenConfigurator,
                        InteropClientConfigs interopClientConfigs) {
         this.sessionTokenFactory = sessionTokenFactory;
-        this.keyPairGeneratorUtil = keyPairGeneratorUtil;
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.interopClientConfigs = interopClientConfigs;
         this.configFile = readProperty();
@@ -46,13 +48,10 @@ public class CommonUtils {
         } catch (Exception ex) {
             throw new IllegalArgumentException("There was an error while creating the session token: " + ex.getMessage(), ex);
         }
-        Map<String, String> tenantTokens = cachedTokens.get(tenantType);
 
         String token = Optional.ofNullable(cachedTokens)
                 .map(m -> m.get(tenantType))
-                .filter(Objects::nonNull)
                 .map(m -> (role == null) ? m.get("admin") : m.get(role))
-                .filter(Objects::nonNull)
                 .orElse(null);
 
         if (token == null) {
@@ -78,7 +77,7 @@ public class CommonUtils {
     public UUID getOrganizationId(String tenantType) {
         return configFile.stream()
                 .filter(tenant -> tenantType.equals(tenant.getName()))
-                .map(tenant -> tenant.getOrganizationId())
+                .map(Tenant::getOrganizationId)
                 .map(o -> o.get("dev"))
                 .findAny()
                 .map(UUID::fromString)
@@ -98,6 +97,9 @@ public class CommonUtils {
                     return;
                 }
             }
+        } catch (InterruptedException e) {
+            log.error("Unexpected thread interruption  during polling: {}", e.getMessage());
+            Thread.currentThread().interrupt();
         } catch (Exception e) {
             throw new IllegalArgumentException("Error during shouldStop polling logic evaluation: " + e.getMessage());
         }
@@ -109,11 +111,11 @@ public class CommonUtils {
         InputStream inputStream = null;
         List<Tenant> tenantList = new ArrayList<>();
         try {
-            inputStream = new FileInputStream(new File("config/tenants-ids.yaml"));
+            inputStream = new FileInputStream("config/tenants-ids.yaml");
             Yaml yaml = new Yaml(new Constructor(Tenant.class));
             yaml.loadAll(inputStream).forEach(i -> tenantList.add((Tenant) i));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new TenantsReadException(e);
         }
         return tenantList;
     }

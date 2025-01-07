@@ -14,6 +14,10 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class KeyPairGeneratorUtil {
 
+    private KeyPairGeneratorUtil() {
+        throw new AssertionError("This class is an utility class and should not be instantiated");
+    }
+
     public static String createBase64PublicKey(String keyType, int keyLength) {
         return createBase64PublicKey(keyType, keyLength, true);
     }
@@ -34,14 +38,14 @@ public class KeyPairGeneratorUtil {
             }
             KeyPair keyPair = keyPairGenerator.generateKeyPair();
 
-            return new KeyPairPEM(keyToPEM(keyPair.getPrivate(), "RSA"), keyToPEM(keyPair.getPublic(), "RSA"));
+            return new KeyPairPEM(keyToPEM(keyPair.getPrivate()), keyToPEM(keyPair.getPublic()));
 
         } catch (Exception e) {
             throw new IllegalArgumentException("There was an error while crating the KeyPairPEM: " + e.getMessage(), e);
         }
     }
 
-    private static String keyToPEM(Key key, String keyType) {
+    private static String keyToPEM(Key key) {
         String header = key instanceof PrivateKey
                 ? "-----BEGIN PRIVATE KEY-----"
                 : "-----BEGIN PUBLIC KEY-----";
@@ -50,7 +54,7 @@ public class KeyPairGeneratorUtil {
                 : "-----END PUBLIC KEY-----";
 
         String encodedKey = Base64.getEncoder().encodeToString(key.getEncoded());
-        return String.format("%s\n%s\n%s", header, encodedKey, footer);
+        return String.format("%s%n%s%n%s", header, encodedKey, footer);
     }
 
     public static String keyToBase64(String key, boolean withDelimitators) {
@@ -66,7 +70,7 @@ public class KeyPairGeneratorUtil {
         }
     }
 
-    public static List<KeySeed> createKeySeed(KeyUse use, String alg, String key) {
+    public static List<KeySeed> createKeySeed(String key) {
         KeySeed keySeed = new KeySeed();
         keySeed.setUse(KeyUse.SIG);
         keySeed.setAlg("RS256");

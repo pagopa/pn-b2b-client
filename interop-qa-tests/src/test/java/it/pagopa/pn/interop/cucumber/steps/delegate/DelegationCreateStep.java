@@ -1,22 +1,28 @@
 package it.pagopa.pn.interop.cucumber.steps.delegate;
 
+import static it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.DelegationRole.DELEGATE;
+import static it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.DelegationRole.DELEGATING;
+
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.authorization.service.utils.CommonUtils;
 import it.pagopa.interop.delegate.service.IDelegationApiClient;
 import it.pagopa.interop.delegate.service.IProducerDelegationsApiClient;
-import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.TenantFeature;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-
-import java.util.*;
-
-import static it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.DelegationRole.DELEGATE;
-import static it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.DelegationRole.DELEGATING;
 
 @Slf4j
 public class DelegationCreateStep {
@@ -80,7 +86,7 @@ public class DelegationCreateStep {
     }
 
     private void setDelegationAvailability(String tenantType) {
-        httpCallExecutor.performCall(() -> tenantsApi.assignTenantDelegatedProducerFeature());
+        httpCallExecutor.performCall(tenantsApi::assignTenantDelegatedProducerFeature);
         if (httpCallExecutor.getClientResponse() == HttpStatus.OK)
             commonUtils.makePolling(() -> tenantsApi.getTenant(sharedStepsContext.getXCorrelationId(), commonUtils.getOrganizationId(tenantType)),
                 res -> Optional.ofNullable(res.getFeatures())
@@ -92,7 +98,7 @@ public class DelegationCreateStep {
     }
 
     @And("l'ente {string} richiede la creazione di una delega per l'ente {string}")
-    public void createDelegate(String delegatorTenantType, String tenantType) throws InterruptedException {
+    public void createDelegate(String delegatorTenantType, String tenantType) {
         commonUtils.setBearerToken(commonUtils.getToken(delegatorTenantType, null));
         createDelegate(tenantType);
     }

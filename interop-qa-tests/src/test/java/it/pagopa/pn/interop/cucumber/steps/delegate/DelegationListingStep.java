@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import org.springframework.http.HttpStatus;
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class DelegationListingStep {
@@ -52,7 +53,7 @@ public class DelegationListingStep {
         commonUtils.makePolling(
                 () -> httpCallExecutor.performCall(() ->  delegationApiClient.getDelegation(sharedStepsContext.getXCorrelationId(), 0, 50, List.of(DelegationState.ACTIVE, DelegationState.WAITING_FOR_APPROVAL),
                         List.of(), List.of(), null, List.of())),
-                res -> res.is2xxSuccessful(),
+            HttpStatus::is2xxSuccessful,
                 "There was an error while retrieving the delegations!"
         );
         delegationList.add((CompactDelegations) httpCallExecutor.getResponse());
@@ -60,11 +61,13 @@ public class DelegationListingStep {
 
     @Then("viene verificato che sono state ritornate le prime {int} pagine")
     public void verifyPaginationReturned(int pageNumber) {
-        Assertions.assertTrue(delegationList.stream()
+        Assertions.assertEquals(
+            delegationList.stream()
                 .map(CompactDelegations::getPagination)
                 .map(Pagination::getOffset)
                 .collect(Collectors.toSet())
-                .size() == pageNumber);
+                .size(),
+            pageNumber);
     }
 
     @And("viene verificato che le deleghe ritornate sono soltanto quelle in stato ACTIVE e WAITING_FOR_APPROVAL")

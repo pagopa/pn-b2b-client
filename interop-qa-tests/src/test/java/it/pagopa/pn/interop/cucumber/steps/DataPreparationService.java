@@ -1,19 +1,71 @@
 package it.pagopa.pn.interop.cucumber.steps;
 
+import static it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode.RECEIVE;
+import static org.apache.commons.lang3.BooleanUtils.isNotTrue;
+import static org.apache.commons.lang3.BooleanUtils.isTrue;
+
 import it.pagopa.interop.agreement.domain.ClientType;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.agreement.service.IAgreementClient;
 import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.attribute.service.IAttributeApiClient;
-import it.pagopa.interop.authorization.service.IProducerClient;
-import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
+import it.pagopa.interop.authorization.service.IProducerClient;
 import it.pagopa.interop.authorization.service.utils.CommonUtils;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementRejectionPayload;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementSubmissionPayload;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Attribute;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedAttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedTenantAttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CompactUser;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceDescriptor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTechnology;
+import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject3;
+import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKey;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKeys;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Purpose;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeAdditionDetailsSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeEServiceSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersion;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RejectPurposeVersionPayload;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormConfig;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
-import it.pagopa.interop.purpose.domain.*;
+import it.pagopa.interop.purpose.domain.RiskAnalysis;
+import it.pagopa.interop.purpose.domain.RiskAnalysisDataFromJson;
+import it.pagopa.interop.purpose.domain.TEServiceMode;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import it.pagopa.interop.utils.HttpCallExecutor;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicReference;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -21,19 +73,9 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicReference;
-
-import static it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode.RECEIVE;
-
+@Slf4j
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-
+@AllArgsConstructor
 public class DataPreparationService {
     private static final ClientSeed DEFAULT_CLIENT_SEED = new ClientSeed();
     private final IAuthorizationClient authorizationClient;
@@ -52,30 +94,6 @@ public class DataPreparationService {
         DEFAULT_CLIENT_SEED.setName(String.format("client %d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)));
         DEFAULT_CLIENT_SEED.setDescription("Descrizione client");
         DEFAULT_CLIENT_SEED.setMembers(List.of());
-    }
-
-    public DataPreparationService(IAuthorizationClient authorizationClient,
-                                  IAgreementClient agreementClient,
-                                  IAttributeApiClient attributeApiClient,
-                                  ITenantsApi tenantsApi,
-                                  IEServiceClient eServiceClient,
-                                  IProducerClient producerClient,
-                                  IPurposeApiClient purposeApiClient,
-                                  HttpCallExecutor httpCallExecutor,
-                                  CommonUtils commonUtils,
-                                  RiskAnalysisDataInitializer riskAnalysisDataInitializer,
-                                  SharedStepsContext sharedStepsContext) {
-        this.authorizationClient = authorizationClient;
-        this.agreementClient = agreementClient;
-        this.attributeApiClient = attributeApiClient;
-        this.tenantsApi = tenantsApi;
-        this.eServiceClient = eServiceClient;
-        this.producerClient = producerClient;
-        this.purposeApiClient = purposeApiClient;
-        this.httpCallExecutor = httpCallExecutor;
-        this.commonUtils = commonUtils;
-        this.riskAnalysisDataInitializer = riskAnalysisDataInitializer;
-        this.sharedStepsContext = sharedStepsContext;
     }
 
     public UUID createClient(String clientKind, ClientSeed partialClientSeed) {
@@ -213,8 +231,9 @@ public class DataPreparationService {
         assertValidResponse();
         commonUtils.makePolling(
                 () -> agreementClient.getAgreementById(sharedStepsContext.getXCorrelationId(), agreementId),
-                res -> res.getState().equals(AgreementState.SUSPENDED)
-                    && ClientType.PRODUCER.equals(suspendedBy) ? res.getSuspendedByProducer() : res.getSuspendedByConsumer(),
+                res -> isTrue(res.getState().equals(AgreementState.SUSPENDED)
+                    && ClientType.PRODUCER.equals(suspendedBy) ? res.getSuspendedByProducer()
+                    : res.getSuspendedByConsumer()),
                 "There was an error while retrieving the agreement by ID!"
         );
 
@@ -235,7 +254,7 @@ public class DataPreparationService {
                 () -> agreementClient.addAgreementConsumerDocument(sharedStepsContext.getXCorrelationId(), agreementId, "documento-test-qa.pdf", "documento-test-qa", new FileSystemResource(doc)));
         commonUtils.makePolling(
                 () -> agreementClient.getAgreementById(sharedStepsContext.getXCorrelationId(), agreementId),
-                res -> res.getConsumerDocuments().size() > 0,
+                res -> !res.getConsumerDocuments().isEmpty(),
                 "There was an error while retrieving the agreement by ID!"
         );
     }
@@ -252,7 +271,7 @@ public class DataPreparationService {
 
         commonUtils.makePolling(
                 () -> attributeApiClient.getAttributes(sharedStepsContext.getXCorrelationId(), 1, 0, List.of(attributeKind), actualName, null),
-                res -> res.getResults().size() > 0,
+                res -> !res.getResults().isEmpty(),
                 "There was an error while retrieving the attributes"
         );
         return ((Attribute) httpCallExecutor.getResponse()).getId();
@@ -311,8 +330,8 @@ public class DataPreparationService {
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
-            e.printStackTrace();
-        };
+            log.error("Error while sleeping: {}", e.getMessage());
+        }
     }
 
     public Map<String, Object> bringDescriptorToGivenState(UUID eServiceId, UUID descriptorId, EServiceDescriptorState descriptorState, boolean withDocument) {
@@ -364,7 +383,7 @@ public class DataPreparationService {
 
     public UUID addDocumentToDescriptor(UUID eServiceId, UUID descriptorId) {
         String prettyName = String.format("Documento_test_qa-%d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE));
-        Resource resource = createBlobFile("dummy.pdf", "documento-test-qa.pdf");
+        Resource resource = createBlobFile("documento-test-qa.pdf");
 
         httpCallExecutor.performCall(() -> eServiceClient.createEServiceDocument(sharedStepsContext.getXCorrelationId(), eServiceId, descriptorId, "DOCUMENT", prettyName, resource));
         assertValidResponse();
@@ -379,7 +398,7 @@ public class DataPreparationService {
     }
 
     public void addInterfaceToDescriptor(UUID eServiceId, UUID descriptorId) {
-        Resource resource = createBlobFile("interface.yaml", "interface.yaml");
+        Resource resource = createBlobFile("interface.yaml");
         httpCallExecutor.performCall(() -> eServiceClient.createEServiceDocument(sharedStepsContext.getXCorrelationId(), eServiceId, descriptorId, "INTERFACE", "Interfaccia", resource));
         assertValidResponse();
 
@@ -426,7 +445,6 @@ public class DataPreparationService {
 
     public RiskAnalysis getRiskAnalysis(String tenantType, boolean completed) {
         String templateType = (tenantType.equals("PA1") || tenantType.equals("PA2")) ? "PA" : "Privato/GSP";
-        String templateStatus = (completed) ? "completed" : "uncompleted";
         RiskAnalysisDataFromJson.RiskAnalysisTemplate riskAnalysisTemplate = riskAnalysisDataInitializer.getRiskAnalysisData().get(templateType);
         RiskAnalysisDataFromJson.RiskAnalysisAttributes riskAnalysisAttributes = (completed) ? riskAnalysisTemplate.getCompleted() : riskAnalysisTemplate.getUncompleted();
         httpCallExecutor.performCall(() -> purposeApiClient.retrieveLatestRiskAnalysisConfiguration(sharedStepsContext.getXCorrelationId()));
@@ -503,7 +521,6 @@ public class DataPreparationService {
         // 2. Activate the purpose version
         httpCallExecutor.performCall(() -> purposeApiClient.activatePurposeVersion(sharedStepsContext.getXCorrelationId(), purposeId, currentVersion.get()));
         assertValidResponse();
-        PurposeVersionResource activatePurposeResponse = ((PurposeVersionResource) httpCallExecutor.getResponse());
 
         // 3. If the state required is WAITING_FOR_APPROVAL, we need to wait until the purpose version is in that state and return the purposeId
         if (purposeState == PurposeVersionState.WAITING_FOR_APPROVAL) {
@@ -539,7 +556,6 @@ public class DataPreparationService {
         if (purposeState == PurposeVersionState.SUSPENDED) {
             httpCallExecutor.performCall(() -> purposeApiClient.suspendPurposeVersion(sharedStepsContext.getXCorrelationId(), purposeId, currentVersion.get()));
             assertValidResponse();
-            PurposeVersionResource suspendPurposeResponse = ((PurposeVersionResource) httpCallExecutor.getResponse());
             commonUtils.makePolling(
                     () -> purposeApiClient.getPurpose(sharedStepsContext.getXCorrelationId(), purposeId),
                     res -> {
@@ -556,7 +572,6 @@ public class DataPreparationService {
         if (purposeState == PurposeVersionState.ARCHIVED) {
             httpCallExecutor.performCall(() -> purposeApiClient.archivePurposeVersion(sharedStepsContext.getXCorrelationId(), purposeId, currentVersion.get()));
             assertValidResponse();
-            PurposeVersionResource suspendPurposeResponse = ((PurposeVersionResource) httpCallExecutor.getResponse());
             commonUtils.makePolling(
                     () -> purposeApiClient.getPurpose(sharedStepsContext.getXCorrelationId(), purposeId),
                     res -> {
@@ -604,28 +619,28 @@ public class DataPreparationService {
         httpCallExecutor.performCall(() -> agreementClient.activateAgreement(sharedStepsContext.getXCorrelationId(), agreementId));
         assertValidResponse();
         commonUtils.makePolling(
-                () -> agreementClient.getAgreementById(sharedStepsContext.getXCorrelationId(), agreementId),
-                res -> {
-                    AgreementState state = res.getState();
-                    boolean isActive = (state == AgreementState.ACTIVE);
-                    if (reactivatedBy != null) {
-                        isActive = (reactivatedBy == ClientType.CONSUMER) ? !res.getSuspendedByConsumer() : !res.getSuspendedByProducer();
-                    }
-                    return isActive;
-                },
-                "There was an error while rejecting the agreement"
+            () -> agreementClient.getAgreementById(sharedStepsContext.getXCorrelationId(), agreementId),
+            res -> {
+                AgreementState state = res.getState();
+                boolean isActive = (state == AgreementState.ACTIVE);
+                if (reactivatedBy != null) {
+                    isActive = (reactivatedBy == ClientType.CONSUMER)
+                        ? isNotTrue(res.getSuspendedByConsumer())
+                        : isNotTrue(res.getSuspendedByProducer());
+                }
+                return isActive;
+            },
+            "There was an error while rejecting the agreement"
         );
     }
 
-    private Resource createBlobFile(String filePathToRead, String fileNameToCreate) {
+    private Resource createBlobFile(String fileNameToCreate) {
         Path filePath = Paths.get("src/main/resources/interface.yaml");
         byte[] fileContent = null;
-        File file = null;
         try {
             fileContent = Files.readAllBytes(filePath);
             Path newFilePath = Paths.get(fileNameToCreate);
             Files.write(newFilePath, fileContent);
-            file = newFilePath.toFile();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -2,17 +2,11 @@ package it.pagopa.pn.interop.cucumber.steps.authorization;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.utils.CommonUtils;
-import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
-import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.utils.HttpCallExecutor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-
+import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import java.util.List;
 import java.util.Random;
 
@@ -21,8 +15,6 @@ public class ClientCreateStep {
     private final CommonUtils commonUtils;
     private final HttpCallExecutor httpCallExecutor;
     private final SharedStepsContext sharedStepsContext;
-
-    private ResponseEntity<HttpStatus> createClientResponse;
 
     public ClientCreateStep(IAuthorizationClient authorizationClientCreate,
                             SharedStepsContext sharedStepsContext) {

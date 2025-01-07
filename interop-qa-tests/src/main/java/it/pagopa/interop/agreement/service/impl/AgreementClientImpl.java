@@ -1,29 +1,27 @@
 package it.pagopa.interop.agreement.service.impl;
 
 import it.pagopa.interop.agreement.service.IAgreementClient;
-import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
 import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.AgreementsApi;
-import it.pagopa.interop.generated.openapi.clients.bff.model.*;
-import org.springframework.web.client.RestTemplate;
-
+import it.pagopa.interop.generated.openapi.clients.bff.model.Agreement;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementRejectionPayload;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementSubmissionPayload;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import java.io.File;
 import java.util.UUID;
+import org.springframework.web.client.RestTemplate;
 
 public class AgreementClientImpl implements IAgreementClient {
     private final AgreementsApi agreementsApi;
     private final RestTemplate restTemplate;
-    private final InteropClientConfigs interopClientConfigs;
     private final String basePath;
-    private final String bearerToken;
 
     public AgreementClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
-        this.interopClientConfigs = interopClientConfigs;
         this.basePath = interopClientConfigs.getBaseUrl();
-        this.bearerToken = "bearerToken";
-        this.agreementsApi = new AgreementsApi(createApiClient(bearerToken));
+        this.agreementsApi = new AgreementsApi(createApiClient("bearerToken"));
     }
 
     private ApiClient createApiClient(String bearerToken) {

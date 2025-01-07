@@ -10,19 +10,15 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
+@Data
+@AllArgsConstructor
 public class AgreementCommonSteps {
     private DataPreparationService dataPreparationService;
     private CommonUtils commonUtils;
     private SharedStepsContext sharedStepsContext;
-
-    public AgreementCommonSteps(DataPreparationService dataPreparationService,
-            CommonUtils commonUtils,
-            SharedStepsContext sharedStepsContext) {
-        this.dataPreparationService = dataPreparationService;
-        this.commonUtils = commonUtils;
-        this.sharedStepsContext = sharedStepsContext;
-    }
 
     @Given("{string} ha una richiesta di fruizione in stato {string} per quell'e-service")
     public void tenantAlreadyHasFruitionRequestWithState(String tenant, String agreementState) {
@@ -51,8 +47,8 @@ public class AgreementCommonSteps {
         for (int i = 0; i < totalEservices; i++) {
             // Create e-service and descriptor
             int randomInt = ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE);
-            int TEST_SEED = ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE);
-            String eserviceName = String.format("eservice-%d-%d-%d", i, TEST_SEED, randomInt);
+            int testSeed = ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE);
+            String eserviceName = String.format("eservice-%d-%d-%d", i, testSeed, randomInt);
             EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(
                     new EServiceSeed().name(eserviceName), new UpdateEServiceDescriptorSeed());
             // Set the descriptor to "PUBLISHED" state

@@ -2,25 +2,22 @@ package it.pagopa.pn.interop.cucumber.steps.authorization;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CompactClients;
-import it.pagopa.interop.generated.openapi.clients.bff.model.KeyUse;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeAdditionDetailsSeed;
 import it.pagopa.interop.authorization.service.utils.CommonUtils;
 import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
-import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CompactClients;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeAdditionDetailsSeed;
 import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.IntStream;
 import lombok.Getter;
 import lombok.Setter;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Getter
 @Setter
@@ -47,7 +44,7 @@ public class ClientCommonSteps {
 
         List<UUID> clientIds = IntStream.range(0, numClient)
                 .mapToObj(i -> dataPreparationService.createClient(clientKind, createClientSeed(i)))
-                .collect(Collectors.toList());
+                .toList();
         sharedStepsContext.getClientCommonContext().setClients(clientIds);
     }
 
@@ -70,7 +67,8 @@ public class ClientCommonSteps {
         commonUtils.setBearerToken(commonUtils.getToken(tenantType, role));
         String userPublicKey = KeyPairGeneratorUtil.createBase64PublicKey("RSA", 2048);
         sharedStepsContext.getClientCommonContext().setClientPublicKey(userPublicKey);
-        String keyId = dataPreparationService.addPublicKeyToClient(sharedStepsContext.getClientCommonContext().getFirstClient(), KeyPairGeneratorUtil.createKeySeed(KeyUse.SIG, "RS256", userPublicKey).get(0));
+        String keyId = dataPreparationService.addPublicKeyToClient(sharedStepsContext.getClientCommonContext().getFirstClient(), KeyPairGeneratorUtil.createKeySeed(
+            userPublicKey).get(0));
         sharedStepsContext.getClientCommonContext().setKeyId(keyId);
     }
 
