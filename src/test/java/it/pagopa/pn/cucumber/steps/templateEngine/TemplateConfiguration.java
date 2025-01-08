@@ -36,7 +36,7 @@ public class TemplateConfiguration {
         map.put(TemplateType.PEC_NON_VALIDA, new PecBodyRejectStrategy(templateEngineClient));
         map.put(TemplateType.AVVISO_CORTESIA_SMS, new NotificationAARForSMSStrategy(templateEngineClient));
         map.put(TemplateType.OTP_CONFERMA_SMS, new ConfirmSmsBodyStrategy(templateEngineClient));
-        map.put(TemplateType.AVVISO_CORTESIA_SMS_OBJECT, new NotificationAARSubjectStrategy(templateEngineClient));
+        map.put(TemplateType.AVVISO_CORTESIA_EMAIL_OBJECT, new NotificationAARSubjectStrategy(templateEngineClient));
         map.put(TemplateType.OTP_CONFERMA_EMAIL_OBJECT, new ConfirmEmailBodyObjectStrategy(templateEngineClient));
         map.put(TemplateType.OTP_CONFERMA_PEC_OBJECT, new ConfirmPecBodyObjectStrategy(templateEngineClient));
         map.put(TemplateType.PEC_VALIDA_OBJECT, new ValidPecBodyObjectStrategy(templateEngineClient));
@@ -140,7 +140,7 @@ public class TemplateConfiguration {
         map.put(TemplateType.AVVISO_CORTESIA_PEC, notificationAARForPECFields);
         map.put(TemplateType.OTP_CONFERMA_EMAIL, confirmBodyFields);
         map.put(TemplateType.AVVISO_CORTESIA_SMS, notificationAARForSMSFields);
-        map.put(TemplateType.AVVISO_CORTESIA_SMS_OBJECT, notificationAARSubjectFields);
+        map.put(TemplateType.AVVISO_CORTESIA_EMAIL_OBJECT, notificationAARSubjectFields);
         map.put(TemplateType.OTP_CONFERMA_PEC, confirmBodyFields);
 
         return map;

@@ -45,7 +45,7 @@
         <open.api.version.external.registries>v2.4.1</open.api.version.external.registries>
         <open.api.version.paper.channel>develop</open.api.version.paper.channel>
         <open.api.version.external.bff>v1.3.0</open.api.version.external.bff>
-        <open.api.version.delivery_v11>v2.11.2</open.api.version.delivery_v11>
+        <open.api.version.delivery_v11>v2.12.0-RC.3</open.api.version.delivery_v11>
     </properties>
 
     <dependencies>

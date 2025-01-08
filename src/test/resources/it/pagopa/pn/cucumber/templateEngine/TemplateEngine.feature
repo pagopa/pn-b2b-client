@@ -438,23 +438,28 @@ Feature: Template engine
 
   @templateEngine #81 /templates-engine-private/v1/templates/notification-aar-subject
   Scenario: [TEMPLATE-ENGINE_33] Richiamare l’API per il recupero dell’oggetto relativo all’avviso di cortesia per l’SMS
-    When recupero l'oggetto per "avviso di cortesia per l’SMS object" in lingua "italiana"
+    When recupero l'oggetto per "avviso di cortesia per email object" in lingua "italiana"
     Then verifico che il template è in formato "text"
-    And controllo che per il template "avviso di cortesia per l’SMS object" il file "text" sia in lingua "<language>"
+    And controllo che per il template "avviso di cortesia per email object" il file "text" sia in lingua "<language>"
+
+  Scenario: [TEMPLATE-ENGINE_33_0_1]Richiamare l’API per il recupero dell’oggetto relativo all’avviso di cortesia per l’SMS - if iun = null
+    When recupero il template per "avviso di cortesia per email object" con i valori nel request body:
+      | context_iun      | null      |
+    Then verifico che il template è in formato "text"
 
   @templateEngine #100 /templates-engine-private/v1/templates/notification-aar-subject
   Scenario: [TEMPLATE-ENGINE_33_1] Richiamare l’API per il recupero dell’oggetto relativo all’avviso di cortesia per l’SMS - lingua errata
-    When recupero l'oggetto per "avviso di cortesia per l’SMS object" in lingua "francese"
+    When recupero l'oggetto per "avviso di cortesia per email object" in lingua "francese"
     Then verifico che la chiamata sia andata in "400" error
 
   @templateEngine #100 /templates-engine-private/v1/templates/notification-aar-subject
   Scenario: [TEMPLATE-ENGINE_33_2] Richiamare l’API per il recupero dell’oggetto relativo all’avviso di cortesia per l’SMS - body vuoto
-    When recupero l'oggetto per "avviso di cortesia per l’SMS object" in lingua "italiana" con il body "vuoto"
+    When recupero l'oggetto per "avviso di cortesia per email object" in lingua "italiana" con il body "vuoto"
     Then verifico che la chiamata sia andata in "400" error
 
   @templateEngine #120 /templates-engine-private/v1/templates/notification-aar-subject
   Scenario: [TEMPLATE-ENGINE_33_3] Richiamare l’API per il recupero dell’oggetto relativo all’avviso di cortesia per l’SMS - body errato
-    When recupero l'oggetto per "avviso di cortesia per l’SMS object" con i valori nel request body errati
+    When recupero l'oggetto per "avviso di cortesia per email object" con i valori nel request body errati
     Then verifico che tutte le chiamate siano andate in "400" error e che nessuna abbia ricevuto una risposta
 
   @templateEngine #82 /templates-engine-private/v1/templates/emailsubject

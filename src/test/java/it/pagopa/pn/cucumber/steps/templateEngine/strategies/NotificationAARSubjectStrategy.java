@@ -34,6 +34,7 @@ public class NotificationAARSubjectStrategy implements ITemplateEngineStrategy{
             return null;
 
         return new NotificationAarForSubject()
+                .iun(context.getIun())
                 .notification(createNotification(context));
     }
 
