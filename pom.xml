@@ -155,11 +155,6 @@
             <artifactId>pdfbox</artifactId>
             <version>3.0.2</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.pdfbox</groupId>
-            <artifactId>pdfbox</artifactId>
-            <version>3.0.2</version>
-        </dependency>
 
     </dependencies>
 
@@ -222,6 +217,7 @@
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
                 <version>5.4.0</version>
+                <inherited>false</inherited>
                 <executions>
                     <execution>
                         <id>generate-internal-client-radd</id>
