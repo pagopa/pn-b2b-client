@@ -34,13 +34,13 @@ public class NotificationAARSubjectStrategy implements ITemplateEngineStrategy{
             return null;
 
         return new NotificationAarForSubject()
-                .iun(context.getIun())
                 .notification(createNotification(context));
     }
 
     private AarForSubjectNotification createNotification(TemplateRequestContext context) {
         return Optional.ofNullable(context.getNotification())
                 .map(data -> new AarForSubjectNotification()
+                        .iun(context.getIun())
                         .sender(createSender(data)))
                 .orElse(null);
     }

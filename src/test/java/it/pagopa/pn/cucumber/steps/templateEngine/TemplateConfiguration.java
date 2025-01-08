@@ -118,7 +118,7 @@ public class TemplateConfiguration {
 
     @Bean
     public List<String> notificationAARSubjectFields() {
-        return List.of("context_notification", "notification_sender", "notification_sender_paDenomination");
+        return List.of("context_notification", "notification_sender", "notification_sender_paDenomination", "context_iun");
     }
 
     @Bean

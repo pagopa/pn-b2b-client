@@ -97,6 +97,7 @@ public class TemplateEngineSteps {
 
     @Then("verifico che il template è in formato {string}")
     public void verificoCheIlTemplateInFormato(String extentionFile) {
+        Assertions.assertNull(templateFileException);
         Assertions.assertNotNull(result);
         if(extentionFile.equals(".pdf")) {
             Assertions.assertNotNull(result.getTemplateFileReturned());
