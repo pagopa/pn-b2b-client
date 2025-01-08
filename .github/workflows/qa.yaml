@@ -328,7 +328,7 @@ jobs:
         shell: bash
         run: |
           echo "Run test"
-          ( cd cd pn-b2b-client/interop-qa-tests && ./mvnw -Dtest=it.pagopa.pn.interop.cucumber.AuthorizationTest clean verify )
+          ( cd ./pn-b2b-client/interop-qa-tests && ./mvnw -Dtest=it.pagopa.pn.interop.cucumber.AuthorizationTest clean verify )
 
   delete_runner:
     name: Delete Self-Hosted Runner
