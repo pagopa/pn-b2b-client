@@ -141,10 +141,6 @@ public class TemplateEngineSteps {
         templateFileExceptions.forEach(data -> Assertions.assertEquals(errorCode, String.valueOf(data.getRawStatusCode())));
     }
 
-    private void additionalCheck(String notificationType) {
-
-    }
-
     private int countOccurrences(String searchString) {
         return (int) Pattern.compile(Pattern.quote(searchString))
                 .splitAsStream(result.retrieveFormattedText())
@@ -183,26 +179,11 @@ public class TemplateEngineSteps {
         if (fileType.equals("pdf")) {
             Assertions.assertNotNull(result.getFileTextRetrieved());
             Assertions.assertTrue(result.retrieveFormattedText().contains(textToFind));
-            //additionalCheck(notificationType);
         } else {
             Assertions.assertNotNull(result.getTemplateHtmlReturned());
             Assertions.assertTrue(result.getTemplateHtmlReturned().contains(textToFind));
         }
     }
-
-/*    @And("controllo che per il template {string} il file {string} per una notifica {string} il testo sia in lingua {string}")
-    public void controlloChePerIlTemplateIlFilePerUnaNotificaIlTestoSiaInLingua(String templateType, String fileType, String notificationType, String languange) {
-        TemplateType templateTypeObject = TemplateType.fromValue(templateType.toUpperCase());
-        String textToFind = getTextToRetrieve(languange, templateTypeObject);
-        if (fileType.equals("pdf")) {
-            Assertions.assertNotNull(result.getFileTextRetrieved());
-            Assertions.assertTrue(result.retrieveFormattedText().contains(textToFind));
-            //additionalCheck(notificationType);
-        } else {
-            Assertions.assertNotNull(result.getTemplateHtmlReturned());
-            Assertions.assertTrue(result.getTemplateHtmlReturned().contains(textToFind));
-        }
-    }*/
 
     @And("controllo che la notifica {string} abbia i giusti campi valorizzati")
     public void controlloCheLaNotificaAbbiaIGiustiCampiValorizzati(String notificationType) {

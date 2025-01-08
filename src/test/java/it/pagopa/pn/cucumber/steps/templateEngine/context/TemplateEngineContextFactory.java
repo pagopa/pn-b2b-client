@@ -85,11 +85,6 @@ public class TemplateEngineContextFactory {
                 recipients = List.of(getRecipients(parameters, "notification_"), getRecipients(parameters, "notification_"));
             } else recipients = List.of(getRecipients(parameters, "notification_"));
         }
-        /*if (recipientsValue != null) {
-            if (recipientsValue.equals("null")) {
-                recipients = null;
-            } else recipients = List.of(getRecipients(parameters, "notification_"));
-        } else recipients = List.of(getRecipients(parameters, "notification_"));*/
         return recipients;
     }
 
