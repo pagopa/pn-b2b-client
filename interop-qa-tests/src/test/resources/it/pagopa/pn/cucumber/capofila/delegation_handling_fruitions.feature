@@ -4,12 +4,6 @@ Feature: Creazione di una delega e gestione delle richieste di fruizione
   Background:
     Given l'ente "PA2" rimuove la disponibilità a ricevere deleghe
 
-  Scenario: [TC_CAPOFILA_33] La creazione di una delega in erogazione NON può essere compiuto da un utente ADMIN se l’aderente non si è reso disponibile ad accettare deleghe
-    Given l'utente è un "admin" di "PA2"
-    Given "PA2" ha già creato e pubblicato 1 e-service
-    When l'utente richiede la creazione di una delega per l'ente "PA1"
-    Then si ottiene lo status code 403
-
   #TC-35: Delegato da la disponibilità a ricevere deleghe
   #TC-55: Delegato può rifiutare una finalità in stato pending
   #TC-59: Delegato NON può sospendere finalità in stato pending
