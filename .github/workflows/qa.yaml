@@ -302,7 +302,8 @@ jobs:
   
   run_test:
     name: Run Cucumber Test Suite
-    if: ${{ always() && inputs.runTests }}
+#    if: ${{ always() && inputs.runTests }}
+    timeout-minutes: 10
     needs: [data_prep, create_runner]
     runs-on: [self-hosted, "run_id:${{ inputs.environment }}-${{ github.run_id }}"]
     environment: ${{ inputs.environment }}
