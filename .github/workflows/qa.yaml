@@ -7,11 +7,11 @@ on:
         description: 'Environment to run tests against'
         required: true
         type: environment
-      runTests:
-        description: 'Run test suite'
-        required: true
-        default: true
-        type: boolean
+      testSuite:
+        description: 'Choose the test suite to run'
+        required: false
+        default: NrtTest
+        type: string
 
 defaults:
     run:
@@ -32,7 +32,7 @@ jobs:
         run: |
           echo "- environment: \`${{ inputs.environment }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- branch name: \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "- runTests: \`${{ inputs.runTests }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- testSuite: \`${{ inputs.testSuite }}\`" >> $GITHUB_STEP_SUMMARY
 
   create_runner:
     name: Create Self-Hosted Runner
@@ -77,7 +77,7 @@ jobs:
         shell: bash
         run: |
           echo "Run test"
-          ( cd ./pn-b2b-client/interop-qa-tests && ./mvnw -Dtest=it.pagopa.pn.interop.cucumber.AuthorizationTest clean verify )
+          ( cd ./pn-b2b-client/interop-qa-tests && ./mvnw -Dtest=it.pagopa.pn.interop.cucumber.${{ inputs.testSuite }} clean verify )
 
   delete_runner:
     name: Delete Self-Hosted Runner
