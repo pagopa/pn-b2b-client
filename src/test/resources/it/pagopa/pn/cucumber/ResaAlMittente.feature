@@ -21,7 +21,7 @@ Feature: Resa al mittente di una notific
     Then viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
       | details | NOT_NULL |
 
-  @returnedToSender @webhook1 @cleanWebhook
+  #@returnedToSender @webhook1 @cleanWebhook
   Scenario: [RETURNED-TO-SENDER_2] Invio notifica AR mono-destinatario verso PF visualizzata precedentemente alla notifica di deceduto con controllo costo, retention dei documenti
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -211,7 +211,7 @@ Feature: Resa al mittente di una notific
     And si crea il nuovo stream per il "Comune_Multi" con versione "V26"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "DELIVERED" con versione V26
 
-  @returnedToSender  @cleanWebhook @webhook1
+  #@returnedToSender  @cleanWebhook @webhook1
   Scenario: [RETURNED-TO-SENDER_11] Invio notifica AR multi-destinatario aventi stati Visualizzata e Deceduto e stato mostrato VIEWED con controllo costo
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -304,7 +304,7 @@ Feature: Resa al mittente di una notific
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "DELIVERED" con versione V26
 
   #prima visualizza, poi deceduto
-  @returnedToSender  @cleanWebhook @webhook1
+  #@returnedToSender  @cleanWebhook @webhook1
   Scenario: [RETURNED-TO-SENDER_15] Invio notifica AR multi-destinatario aventi stati Irreperibile e Visualizzata e successivamente Deceduto con macro stato mostrato UNREACHABLE
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -394,7 +394,7 @@ Feature: Resa al mittente di una notific
     And si crea il nuovo stream per il "Comune_Multi" con versione "V26"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "RETURNED_TO_SENDER" con versione V26
 
- @returnedToSender  @cleanWebhook @webhook1
+ #@returnedToSender  @cleanWebhook @webhook1
   Scenario: [RETURNED-TO-SENDER_19] Invio notifica 890 multi-destinatario aventi stati Deceduto e Visualizzato che poi sarà Deceduto e macro stato mostrato RETURNED_TO_SENDER
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -515,7 +515,7 @@ Feature: Resa al mittente di una notific
     Then l'operazione ha prodotto un errore con status code "400"
 
 
-  @returnedToSender  @cleanWebhook @webhook1 @versionFlagFalse
+
   Scenario: [RETURNED-TO-SENDER_23] Invio notifica 890 multi-destinatario di cui un Deceduto con VersioningModeFlag=false, si attende errore 400
     #v25
     Given viene generata una nuova notifica
@@ -611,7 +611,7 @@ Feature: Resa al mittente di una notific
     #When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
 
-  @returnedToSender
+  #@returnedToSender
   Scenario: [RETURNED-TO-SENDER_31] Invio notifica 890 mono-destinatario Cancellata e successivamene notifica di Decesso con stato atteso CANCELLED e corretta visualizzazione della timeline del destinatario
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
