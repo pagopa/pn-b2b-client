@@ -47,8 +47,7 @@ public class AgreementCommonSteps {
         for (int i = 0; i < totalEservices; i++) {
             // Create e-service and descriptor
             int randomInt = ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE);
-            int testSeed = ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE);
-            String eserviceName = String.format("eservice-%d-%d-%d", i, testSeed, randomInt);
+            String eserviceName = String.format("eservice-%d-%d-%d", i, sharedStepsContext.getTestSeed(), randomInt);
             EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(
                     new EServiceSeed().name(eserviceName), new UpdateEServiceDescriptorSeed());
             // Set the descriptor to "PUBLISHED" state

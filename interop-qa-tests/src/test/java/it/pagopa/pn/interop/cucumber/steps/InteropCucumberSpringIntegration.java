@@ -29,29 +29,28 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 //@ComponentScan(basePackages = {"it.pagopa.pn.interop.cucumber"})
 @CucumberContextConfiguration
 @SpringBootTest(classes = {
-        IAuthorizationClient.class,
-        AuthorizationClientImpl.class,
-        InteropRestTemplateConfiguration.class,
-        CommonUtils.class,
-        SessionTokenFactory.class,
-        ProducerClientImpl.class,
-       DataPreparationService.class,
-        HttpCallExecutor.class,
-        AgreementClientImpl.class,
-        AttributeApiClientImpl.class,
-        IAgreementClient.class,
-        IAttributeApiClient.class,
-        ITenantsApi.class,
-        TenantsApiClientImpl.class,
-        InteropClientConfigs.class,
-        PurposeApiClientImpl.class,
-        IEServiceClient.class,
-        EServiceApiClientImpl.class,
-        RiskAnalysisDataInitializer.class,
-        ClientTokenConfigurator.class,
-        ProducerDelegationsApiClientImpl.class,
-        DelegationApiClientImpl.class
-
+    IAuthorizationClient.class,
+    AuthorizationClientImpl.class,
+    InteropRestTemplateConfiguration.class,
+    CommonUtils.class,
+    SessionTokenFactory.class,
+    ProducerClientImpl.class,
+    DataPreparationService.class,
+    HttpCallExecutor.class,
+    AgreementClientImpl.class,
+    AttributeApiClientImpl.class,
+    IAgreementClient.class,
+    IAttributeApiClient.class,
+    ITenantsApi.class,
+    TenantsApiClientImpl.class,
+    InteropClientConfigs.class,
+    PurposeApiClientImpl.class,
+    IEServiceClient.class,
+    EServiceApiClientImpl.class,
+    RiskAnalysisDataInitializer.class,
+    ClientTokenConfigurator.class,
+    ProducerDelegationsApiClientImpl.class,
+    DelegationApiClientImpl.class
 })
 @EnableScheduling
 @EnableConfigurationProperties
