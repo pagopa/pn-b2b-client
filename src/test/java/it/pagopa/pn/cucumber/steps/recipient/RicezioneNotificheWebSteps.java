@@ -995,6 +995,7 @@ public class RicezioneNotificheWebSteps {
             Assertions.assertEquals(data.getAccepted(), tosStatus.equalsIgnoreCase("positiva"));
         });
     }
+
 }
 
 

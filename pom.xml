@@ -45,6 +45,7 @@
         <open.api.version.external.registries>v2.4.1</open.api.version.external.registries>
         <open.api.version.paper.channel>develop</open.api.version.paper.channel>
         <open.api.version.external.bff>v1.3.0</open.api.version.external.bff>
+        <open.api.version.delivery_v11>v2.11.2</open.api.version.delivery_v11>
     </properties>
 
     <dependencies>
@@ -154,11 +155,6 @@
             <artifactId>pdfbox</artifactId>
             <version>3.0.2</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.pdfbox</groupId>
-            <artifactId>pdfbox</artifactId>
-            <version>3.0.2</version>
-        </dependency>
 
     </dependencies>
 
@@ -221,6 +217,7 @@
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
                 <version>5.4.0</version>
+                <inherited>false</inherited>
                 <executions>
                     <execution>
                         <id>generate-internal-client-radd</id>
@@ -326,7 +323,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery}/docs/openapi/api-internal-b2b-pa.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery_v11}/docs/openapi/api-internal-b2b-pa.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -558,7 +555,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery}/docs/openapi/api-external-b2b-pa-bundle.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery_v11}/docs/openapi/api-external-b2b-pa-bundle.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -705,7 +702,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery}/docs/openapi/api-external-web-recipient.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery_v11}/docs/openapi/api-external-web-recipient.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1024,7 +1021,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery}/docs/openapi/api-external-web-pa.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery_v11}/docs/openapi/api-external-web-pa.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1413,7 +1410,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-service-desk/${open.api.version}/docs/openapi/api-cruscotto-assistenza-pn-service-desk-v1.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-service-desk/v1.7.0-RC.1/docs/openapi/api-cruscotto-assistenza-pn-service-desk-v1.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1654,7 +1651,7 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery}/docs/openapi/pn-delivery-b2b-pg-external.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery_v11}/docs/openapi/pn-delivery-b2b-pg-external.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1900,6 +1897,7 @@
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
                             <generateModelTests>false</generateModelTests>
+                            <skipValidateSpec>true</skipValidateSpec>
                             <configOptions>
                                 <apiPackage>it.pagopa.interop.client.b2b.generated.openapi.clients.interop.api</apiPackage>
                                 <modelPackage>it.pagopa.interop.client.b2b.generated.openapi.clients.interop.model</modelPackage>
@@ -1918,7 +1916,37 @@
                         </configuration>
                     </execution>
 
-
+                    <execution>
+                        <id>generate-external-templates-engine-client</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <typeMappings>
+                                <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
+                                <typeMapping>file=org.springframework.core.io.Resource</typeMapping>
+                            </typeMappings>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-templates-engine/refs/heads/develop/docs/openapi/pn-internal-templates-v1.yaml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <configOptions>
+                                <apiPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.api</apiPackage>
+                                <modelPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+                        </configuration>
+                    </execution>
 
                 </executions>
             </plugin>
