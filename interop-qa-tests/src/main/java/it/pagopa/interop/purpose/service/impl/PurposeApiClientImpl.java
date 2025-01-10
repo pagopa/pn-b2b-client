@@ -1,28 +1,28 @@
 package it.pagopa.interop.purpose.service.impl;
 
-import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
 import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.PurposesApi;
-import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Purpose;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeEServiceSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RejectPurposeVersionPayload;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormConfig;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
-import org.springframework.web.client.RestTemplate;
-
 import java.util.UUID;
+import org.springframework.web.client.RestTemplate;
 
 public class PurposeApiClientImpl implements IPurposeApiClient {
     private final PurposesApi purposesApi;
     private final RestTemplate restTemplate;
     private final String basePath;
-    private final String bearerToken;
-    private final InteropClientConfigs interopClientConfigs;
 
     public PurposeApiClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
-        this.interopClientConfigs = interopClientConfigs;
         this.basePath = interopClientConfigs.getBaseUrl();
-        this.bearerToken = "bearerToken";
-        this.purposesApi = new PurposesApi(createApiClient(bearerToken));
+        this.purposesApi = new PurposesApi(createApiClient("bearerToken"));
     }
 
     private ApiClient createApiClient(String bearerToken) {

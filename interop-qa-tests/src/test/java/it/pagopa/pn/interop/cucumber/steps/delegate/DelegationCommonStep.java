@@ -2,8 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.delegate;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import it.pagopa.interop.authorization.service.utils.CommonUtils;
-import it.pagopa.interop.delegate.service.IDelegationApiClient;
+import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -13,25 +12,20 @@ import org.springframework.web.client.HttpClientErrorException;
 
 @Slf4j
 public class DelegationCommonStep {
-    private final SharedStepsContext sharedStepsContext;
-    private final IDelegationApiClient delegationApiClient;
-    private final CommonUtils commonUtils;
+
+    private final IdentityService identityService;
     private final HttpCallExecutor httpCallExecutor;
     private final ITenantsApi tenantsApi;
 
-    public DelegationCommonStep(SharedStepsContext sharedStepsContext,
-                                IDelegationApiClient delegationApiClient,
-                                ITenantsApi tenantsApi) {
-        this.sharedStepsContext = sharedStepsContext;
-        this.delegationApiClient = delegationApiClient;
-        this.commonUtils = sharedStepsContext.getCommonUtils();
+    public DelegationCommonStep(SharedStepsContext sharedStepsContext, ITenantsApi tenantsApi) {
+        this.identityService = sharedStepsContext.getIdentityService();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.tenantsApi = tenantsApi;
     }
 
     @Given("l'ente {string} rimuove la disponibilità a ricevere deleghe")
     public void tenantRemoveDelegationAvailability(String tenantType) {
-        commonUtils.setBearerToken(commonUtils.getToken(tenantType, null));
+        identityService.setBearerToken(identityService.getToken(tenantType, null));
         try {
             tenantsApi.deleteTenantDelegatedProducerFeature();
         } catch (HttpClientErrorException.Conflict e) {

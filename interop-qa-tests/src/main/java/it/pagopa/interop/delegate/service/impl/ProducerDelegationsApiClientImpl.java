@@ -15,13 +15,11 @@ public class ProducerDelegationsApiClientImpl implements IProducerDelegationsApi
     private final ProducerDelegationsApi producerDelegationsApi;
     private final RestTemplate restTemplate;
     private final String basePath;
-    private final String bearerToken;
 
     public ProducerDelegationsApiClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
         this.basePath = interopClientConfigs.getBaseUrl();
-        this.bearerToken = "bearerToken";
-        this.producerDelegationsApi = new ProducerDelegationsApi(createApiClient(bearerToken));
+        this.producerDelegationsApi = new ProducerDelegationsApi(createApiClient("bearerToken"));
     }
 
     private ApiClient createApiClient(String bearerToken) {

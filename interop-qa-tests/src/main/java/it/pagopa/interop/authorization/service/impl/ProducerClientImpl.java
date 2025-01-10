@@ -12,16 +12,12 @@ import java.util.UUID;
 public class ProducerClientImpl implements IProducerClient {
     private final EservicesApi eservicesApi;
     private final RestTemplate restTemplate;
-    private final InteropClientConfigs interopClientConfigs;
     private final String basePath;
-    private final String bearerToken;
 
     public ProducerClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
-        this.interopClientConfigs = interopClientConfigs;
         this.basePath = interopClientConfigs.getBaseUrl();
-        this.bearerToken = "apiBearerToken";
-        this.eservicesApi = new EservicesApi(createApiClient(bearerToken));
+        this.eservicesApi = new EservicesApi(createApiClient("apiBearerToken"));
     }
 
     private ApiClient createApiClient(String bearerToken) {

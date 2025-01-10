@@ -2,40 +2,32 @@ package it.pagopa.pn.interop.cucumber.steps.authorization;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
-import it.pagopa.interop.authorization.service.utils.CommonUtils;
-import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
-import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.interop.authorization.service.utils.IdentityService;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.utils.HttpCallExecutor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-
+import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import java.util.List;
 import java.util.Random;
 
 public class ClientCreateStep {
     private final IAuthorizationClient authorizationClientCreate;
-    private final CommonUtils commonUtils;
+    private final IdentityService identityService;
     private final HttpCallExecutor httpCallExecutor;
     private final SharedStepsContext sharedStepsContext;
-
-    private ResponseEntity<HttpStatus> createClientResponse;
 
     public ClientCreateStep(IAuthorizationClient authorizationClientCreate,
                             SharedStepsContext sharedStepsContext) {
         this.authorizationClientCreate = authorizationClientCreate;
-        this.commonUtils = sharedStepsContext.getCommonUtils();
+        this.identityService = sharedStepsContext.getIdentityService();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.sharedStepsContext = sharedStepsContext;
     }
 
     @Given("l'utente è un {string} di {string}")
     public void setRole(String role, String tenantType) {
-        String token = commonUtils.getToken(tenantType, role);
-        commonUtils.setBearerToken(token);
+        String token = identityService.getToken(tenantType, role);
+        identityService.setBearerToken(token);
         sharedStepsContext.setUserToken(token);
         sharedStepsContext.setTenantType(tenantType);
     }
