@@ -15,7 +15,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
 public class AgreementCommonSteps {
     private ClientTokenConfigurator clientTokenConfigurator;
     private DataPreparationService dataPreparationService;
