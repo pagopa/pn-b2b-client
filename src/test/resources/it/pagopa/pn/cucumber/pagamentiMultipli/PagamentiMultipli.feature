@@ -3528,6 +3528,24 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
+  @f24
+  Scenario: [B2B-PA-PAY_MULTI_NOT_VALIDATIO] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE Con flag validation False.
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 0                           |
+    And destinatario CucumberSpa e:
+      #Sezione PagoPA-----------------------------
+      | payment_pagoPaForm   | NULL                                       |
+      | apply_cost_pagopa    | NULL                                       |
+      | payment_f24          | PAYMENT_F24_SIMPLIFIED_NOTVALIDATION                   |
+      | title_payment        | F24_STANDARD_SEMPLIFICATO_-SURNAME |
+      | apply_cost_f24       | SI                                         |
+      | payment_multy_number | 1                                          |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+
 
 
 
