@@ -3,7 +3,7 @@ package it.pagopa.pn.interop.cucumber.steps.delegate;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.interop.authorization.service.utils.CommonUtils;
+import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.delegate.service.IDelegationApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactDelegation;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactDelegations;
@@ -20,13 +20,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import org.springframework.http.HttpStatus;
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class DelegationListingStep {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
     private final IDelegationApiClient delegationApiClient;
-    private final CommonUtils commonUtils;
+    private final PollingService pollingService;
     private final HttpCallExecutor httpCallExecutor;
     private final List<CompactDelegations> delegationList;
 
@@ -35,7 +36,7 @@ public class DelegationListingStep {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.delegationApiClient = clientTokenConfigurator.getDelegationApiClient();
-        this.commonUtils = sharedStepsContext.getCommonUtils();
+        this.pollingService = sharedStepsContext.getPollingService();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.delegationList = new ArrayList<>();
     }
@@ -53,10 +54,10 @@ public class DelegationListingStep {
 
     @And("l'utente recupera la lista delle deleghe in stato ACTIVE e WAITING_FOR_APPROVAL")
     public void retrieveDelegationsListByStatus() {
-        commonUtils.makePolling(
+        pollingService.makePolling(
                 () -> httpCallExecutor.performCall(() ->  delegationApiClient.getDelegation(sharedStepsContext.getXCorrelationId(), 0, 50, List.of(DelegationState.ACTIVE, DelegationState.WAITING_FOR_APPROVAL),
                         List.of(), List.of(), null, List.of())),
-                res -> res.is2xxSuccessful(),
+            HttpStatus::is2xxSuccessful,
                 "There was an error while retrieving the delegations!"
         );
         delegationList.add((CompactDelegations) httpCallExecutor.getResponse());
@@ -64,11 +65,13 @@ public class DelegationListingStep {
 
     @Then("viene verificato che sono state ritornate le prime {int} pagine")
     public void verifyPaginationReturned(int pageNumber) {
-        Assertions.assertTrue(delegationList.stream()
+        Assertions.assertEquals(
+            delegationList.stream()
                 .map(CompactDelegations::getPagination)
                 .map(Pagination::getOffset)
                 .collect(Collectors.toSet())
-                .size() == pageNumber);
+                .size(),
+            pageNumber);
     }
 
     @And("viene verificato che le deleghe ritornate sono soltanto quelle in stato ACTIVE e WAITING_FOR_APPROVAL")

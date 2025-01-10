@@ -13,14 +13,19 @@ import org.springframework.context.annotation.PropertySource;
 public class InteropClientConfigs {
     @Value("${bff.base-url}")
     private String baseUrl;
+
     @Value("${remote-wellknown-url}")
     private String remoteWellknownUrl;
+
     @Value("${session.tokens.duration.seconds}")
     private Long sessionTokenDurationSec;
+
     @Value("${interop-env}")
     private String environment;
+
     @Value("${max-polling-try-ms}")
     private int maxPollingTry;
+
     @Value("${max-polling-sleep-ms}")
     private int maxPollingSleep;
 }

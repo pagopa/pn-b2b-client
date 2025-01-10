@@ -2,8 +2,8 @@ package it.pagopa.pn.interop.cucumber.steps.authorization;
 
 import java.util.List;
 
+import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.interop.authorization.service.utils.CommonUtils;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import org.junit.jupiter.api.Assertions;
 
@@ -19,7 +19,6 @@ public class ClientUsersListingStep {
     private final IAuthorizationClient authorizationClient;
     private final SharedStepsContext sharedStepsContext;
     private final HttpCallExecutor httpCallExecutor;
-    private final CommonUtils commonUtils;
 
     public ClientUsersListingStep(ClientTokenConfigurator clientTokenConfigurator,
                                   SharedStepsContext sharedStepsContext) {
@@ -27,7 +26,6 @@ public class ClientUsersListingStep {
         this.authorizationClient = clientTokenConfigurator.getAuthorizationClient();
         this.sharedStepsContext = sharedStepsContext;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
-        this.commonUtils = sharedStepsContext.getCommonUtils();
     }
 
     @When("l'utente richiede una operazione di listing dei membri di quel client")

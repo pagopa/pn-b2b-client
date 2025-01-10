@@ -1,11 +1,14 @@
 package it.pagopa.interop.authorization.service.factory;
 
+import static org.apache.commons.lang3.BooleanUtils.isNotTrue;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import it.pagopa.interop.authorization.domain.Tenant;
 import it.pagopa.interop.authorization.domain.ExternalId;
+import it.pagopa.interop.authorization.domain.Tenant;
+import it.pagopa.interop.authorization.service.exception.UnsignedSTSGenerationException;
 import it.pagopa.interop.authorization.service.utils.ConfigFileReader;
 import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
 import lombok.Getter;
@@ -13,18 +16,27 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import software.amazon.awssdk.core.SdkBytes;
-import software.amazon.awssdk.services.kms.KmsClient;
-import software.amazon.awssdk.services.kms.model.*;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.Instant;
-import java.util.*;
+import java.util.Base64;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import software.amazon.awssdk.core.SdkBytes;
+import software.amazon.awssdk.services.kms.KmsClient;
+import software.amazon.awssdk.services.kms.model.SignRequest;
+import software.amazon.awssdk.services.kms.model.SignResponse;
+import software.amazon.awssdk.services.kms.model.VerifyRequest;
+import software.amazon.awssdk.services.kms.model.VerifyResponse;
 
 @Slf4j
 @Component
@@ -99,8 +111,7 @@ public class SessionTokenFactory {
         // Step 2. Parse well known
         log.debug("##Step 2. Parse well known ##");
         URL wellKnownUrl = new URL(interopClientConfigs.getRemoteWellknownUrl());
-        boolean isSecure = wellKnownUrl.getProtocol().equalsIgnoreCase("https");
-        Map<String, String> wellKnownData = fetchWellKnown(isSecure, wellKnownUrl.toString());
+        Map<String, String> wellKnownData = fetchWellKnown(wellKnownUrl.toString());
         if (!wellKnownData.containsKey("kid") || !wellKnownData.containsKey("alg")) {
             throw new IllegalStateException("Kid or alg not found.");
         }
@@ -108,25 +119,25 @@ public class SessionTokenFactory {
                 "kid", wellKnownData.get("kid"),
                 "alg", "RSASSA_PKCS1_V1_5_SHA_256"
         ));
-        log.debug("Got kid " + wellKnownData.get("kid") + " and alg " + wellKnownData.get("alg"));
+        log.debug("Got kid {} and alg {}", wellKnownData.get("kid"), wellKnownData.get("alg"));
 
         // Step 3. Generate STs header - Populate Session Token header from template
         log.debug("##Step 3. Generate STs header - Populate Session Token header from template ##");
         Map<String, String> stHeaderCompiled = new HashMap<>(SESSION_TOKEN_HEADER_TEMPLATE);
         stHeaderCompiled.put("kid", wellKnownData.get("kid"));
         stHeaderCompiled.put("alg", wellKnownData.get("alg"));
-        log.debug("ST Header Compiled: " + stHeaderCompiled);
+        log.debug("ST Header Compiled: {}", stHeaderCompiled);
 
         // Step 4. Generate STs payload
         log.debug("## Step 4. Generate STs payload ##");
         long epochTimeSeconds = Instant.now().getEpochSecond();
-        log.debug("Time in seconds since epoch: " + epochTimeSeconds);
+        log.debug("Time in seconds since epoch: {}", epochTimeSeconds);
 
         long epochTimeExpSeconds = epochTimeSeconds + interopClientConfigs.getSessionTokenDurationSec();
-        log.debug("Expiration Time in seconds: " + epochTimeExpSeconds);
+        log.debug("Expiration Time in seconds: {}", epochTimeExpSeconds);
 
         String randomUUID = UUID.randomUUID().toString();
-        log.debug("Random UUID: " + randomUUID);
+        log.debug("Random UUID: {}", randomUUID);
 
         HashMap<String, Object> stPayloadCompiled = new HashMap<>(SESSION_TOKEN_PAYLOAD_TEMPLATE);
         stPayloadCompiled.put("nbf", epochTimeSeconds);
@@ -138,12 +149,12 @@ public class SessionTokenFactory {
         String stPayloadJson = objectMapper.writeValueAsString(stPayloadCompiled).replace("{{ENVIRONMENT}}", environment);
         stPayloadCompiled = objectMapper.readValue(stPayloadJson, new TypeReference<>() {});
 
-        log.debug("ST Payload Compiled: " + stPayloadCompiled);
+        log.debug("ST Payload Compiled: {}", stPayloadCompiled);
 
         log.debug("## Step 5. Generate unsigned STs ##");
         // Map<String, Map<String, String>> unsignedSTs = unsignedStsGeneration(stHeaderCompiled, stPayloadCompiled, sessionTokenPayloadValues, environment);
         Map<String, Map<String, String>> unsignedSTs = unsignedStsGeneration(stHeaderCompiled, stPayloadCompiled, configFile, environment);
-        log.debug("Unsigned STs: " + unsignedSTs);
+        log.debug("Unsigned STs: {}", unsignedSTs);
 
         log.debug("## Step 6. Generate signed STs ##");
         Map<String, Map<String, String>> signedSTs = signedStsGeneration(unsignedSTs);
@@ -152,7 +163,7 @@ public class SessionTokenFactory {
         return signedSTs;
     }
 
-    private static Map<String, String> fetchWellKnown(boolean isSecure, String wellKnownUrl) throws Exception {
+    private static Map<String, String> fetchWellKnown(String wellKnownUrl) throws Exception {
         HttpURLConnection connection = (HttpURLConnection) new URL(wellKnownUrl).openConnection();
         connection.setRequestMethod("GET");
 
@@ -172,7 +183,7 @@ public class SessionTokenFactory {
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, Object> responseData = objectMapper.readValue(response.toString(), new TypeReference<>() {});
 
-        if (responseData.containsKey("keys") && ((List<?>) responseData.get("keys")).size() > 0) {
+        if (responseData.containsKey("keys") && !((List<?>) responseData.get("keys")).isEmpty()) {
             Map<String, Object> keyData = ((List<Map<String, Object>>) responseData.get("keys")).get(0);
             return Map.of("kid", (String) keyData.get("kid"), "alg", (String) keyData.get("alg"));
         }
@@ -182,7 +193,7 @@ public class SessionTokenFactory {
 
 
     public  Map<String, Map<String, String>> unsignedStsGeneration(
-            Map<String, String> stHeaderCompiled, HashMap<String, Object> stPayloadCompiled, List<Tenant> stPayloadValues, String environment) throws IOException {
+            Map<String, String> stHeaderCompiled, HashMap<String, Object> stPayloadCompiled, List<Tenant> stPayloadValues, String environment) {
 
         try {
             log.debug("unsignedStsGeneration::Phase1:START: Build roles dynamic substitutions");
@@ -200,9 +211,9 @@ public class SessionTokenFactory {
 
                Map<String, Object> stsSubOutput2 = new HashMap<>();
 
-               for (String interopRole : userRoles.keySet()) {
+               for (Entry<String, String> interopRole : userRoles.entrySet()) {
                    log.debug("unsignedStsGeneration::Phase1: Start dynamic substition for role {}", interopRole);
-                   String uid = userRoles.get(interopRole);
+                   String uid = interopRole.getValue();
 
                    Map<String, Object> stsSubOutput3 = deepCopy(stPayloadCompiled);
 
@@ -210,9 +221,9 @@ public class SessionTokenFactory {
                    stsSubOutput3.put("uid", uid);
                    stsSubOutput3.put("selfcareId", selfcareId);
                    stsSubOutput3.put("organizationId", organizationId);
-                   stsSubOutput3.put("user-roles", interopRole);
+                   stsSubOutput3.put("user-roles", interopRole.getKey());
 
-                   stsSubOutput2.put(interopRole, stsSubOutput3);
+                   stsSubOutput2.put(interopRole.getKey(), stsSubOutput3);
                }
                stsSubOutput.put(tenant.getName(), stsSubOutput2);
 
@@ -228,16 +239,16 @@ public class SessionTokenFactory {
             Map<String, Map<String, String>> stOutputIntermediate = new HashMap<>();
 
 
-            for (String tenant : stsSubOutput.keySet()) {
-                log.debug(String.format("unsignedStsGeneration::Phase2: Build partial JWT for %s", tenant));
+            for (Entry<String, Object> tenant : stsSubOutput.entrySet()) {
+                log.debug("unsignedStsGeneration::Phase2: Build partial JWT for {}", tenant);
 
-                stOutputIntermediate.put(tenant, new HashMap<String, String>());
+                stOutputIntermediate.put(tenant.getKey(), new HashMap<>());
 
-                for (String interopRole : ((Map<String, Object>)stsSubOutput.get(tenant)).keySet()) {
-                    String base64Role = b64UrlEncode(new ObjectMapper().writeValueAsString(((Map<String, Object>)stsSubOutput.get(tenant)).get(interopRole)));
+                for (String interopRole : ((Map<String, Object>)tenant.getValue()).keySet()) {
+                    String base64Role = b64UrlEncode(new ObjectMapper().writeValueAsString(((Map<String, Object>)tenant.getValue()).get(interopRole)));
                     String poJwtForRole = base64Header + "." + base64Role;
 
-                    stOutputIntermediate.get(tenant).put(interopRole, poJwtForRole);
+                    stOutputIntermediate.get(tenant.getKey()).put(interopRole, poJwtForRole);
                 }
 
             }
@@ -246,31 +257,31 @@ public class SessionTokenFactory {
             return stOutputIntermediate;
 
         } catch (Exception ex) {
-            System.err.println(ex);
-            throw new RuntimeException(ex);
+            log.error("unsignedStsGeneration::Error", ex);
+            throw new UnsignedSTSGenerationException("Error during unsigned STS generation", ex);
         }
     }
 
-    private Map<String, Map<String, String>> signedStsGeneration(Map<String, Map<String, String>> unsignedStValues) throws Exception {
+    private Map<String, Map<String, String>> signedStsGeneration(Map<String, Map<String, String>> unsignedStValues) {
         log.debug("SignedTokenGeneration::START");
         Map<String, Map<String, String>> signedTokens = new HashMap<>();
 
-        for (String tenant : unsignedStValues.keySet()) {
+        for (Entry<String,Map<String,String>> tenant : unsignedStValues.entrySet()) {
             log.debug("Building token for tenant {}", tenant);
 
-            signedTokens.put(tenant, new HashMap<>());
+            signedTokens.put(tenant.getKey(), new HashMap<>());
 
-            for (String tenantRole : ((Map<String, String>) unsignedStValues.get(tenant)).keySet()) {
+            for (String tenantRole : tenant.getValue().keySet()) {
                 log.debug("Building token for role {}", tenantRole);
 
-                String currentUnsignedJwt = ((Map<String, String>) unsignedStValues.get(tenant)).get(tenantRole);
+                String currentUnsignedJwt = unsignedStValues.get(tenant.getKey()).get(tenantRole);
                 Map<String, Object> kmsSignResponse = kmsSign(currentUnsignedJwt);
 
                 if (!kmsVerify(currentUnsignedJwt, (SignResponse) kmsSignResponse.get("signature"))) {
                     throw new IllegalArgumentException("Signed Token generation process failed to verify signature");
                 }
 
-                signedTokens.get(tenant).put(tenantRole, (String) kmsSignResponse.get("signedToken"));
+                signedTokens.get(tenant.getKey()).put(tenantRole, (String) kmsSignResponse.get("signedToken"));
 
 
             }
@@ -303,14 +314,16 @@ public class SessionTokenFactory {
                 .signingAlgorithm(CONFIG.get("kms").get("alg"))
                 .build();
 
-        SignResponse response = KmsClient.create().sign(signRequest);
-        if (response == null) {
-            throw new IllegalArgumentException("JWT Signature failed. Empty signature returned");
-        }
+        try(KmsClient kmsClient = KmsClient.create()) {
+            SignResponse response = kmsClient.sign(signRequest);
+            if (response == null) {
+                throw new IllegalArgumentException("JWT Signature failed. Empty signature returned");
+            }
 
-        String kmsSignature = Base64.getUrlEncoder().withoutPadding().encodeToString(response.signature().asByteArray());
-        return Map.of("signedToken", serializedToken + "." + kmsSignature,
-                "signature", response);
+            String kmsSignature = Base64.getUrlEncoder().withoutPadding().encodeToString(response.signature().asByteArray());
+            return Map.of("signedToken", serializedToken + "." + kmsSignature,
+                    "signature", response);
+        }
     }
 
     private boolean kmsVerify(String unsignedToken, SignResponse signature) {
@@ -326,11 +339,13 @@ public class SessionTokenFactory {
                 .signature(signature.signature())
                 .build();
 
-        VerifyResponse response = KmsClient.create().verify(verifyRequest);
-        if (!response.signatureValid()) {
-            throw new IllegalArgumentException("JWT Verify Signature failed");
+        try(KmsClient kmsClient = KmsClient.create()) {
+            VerifyResponse response = kmsClient.verify(verifyRequest);
+            if (isNotTrue(response.signatureValid())) {
+                throw new IllegalArgumentException("JWT Verify Signature failed");
+            }
+            return response.signatureValid();
         }
-        return response.signatureValid();
     }
 
 }

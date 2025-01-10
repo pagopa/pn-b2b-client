@@ -2,15 +2,16 @@ package it.pagopa.pn.interop.cucumber.steps.authorization;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import it.pagopa.interop.authorization.service.utils.IdentityService;
+import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactClients;
-import it.pagopa.interop.generated.openapi.clients.bff.model.KeyUse;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeAdditionDetailsSeed;
-import it.pagopa.interop.authorization.service.utils.CommonUtils;
 import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,8 +22,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import lombok.Getter;
+import lombok.Setter;
+import org.junit.jupiter.api.Assertions;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Getter
 @Setter
@@ -30,7 +34,7 @@ import java.util.stream.IntStream;
 public class ClientCommonSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final DataPreparationService dataPreparationService;
-    private final CommonUtils commonUtils;
+    private final IdentityService identityService;
     private final HttpCallExecutor httpCallExecutor;
     private final SharedStepsContext sharedStepsContext;
 
@@ -42,25 +46,25 @@ public class ClientCommonSteps {
                              SharedStepsContext sharedStepsContext) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.dataPreparationService = dataPreparationService;
-        this.commonUtils = sharedStepsContext.getCommonUtils();
+        this.identityService = sharedStepsContext.getIdentityService();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.sharedStepsContext = sharedStepsContext;
     }
 
     @Given("{string} ha già creato {int} client {string}")
     public void createClientsForTenants(String tenantType, int numClient, String clientKind) {
-        clientTokenConfigurator.setBearerToken(commonUtils.getToken(tenantType, null));
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
 
         List<UUID> clientIds = IntStream.range(0, numClient)
                 .mapToObj(i -> dataPreparationService.createClient(clientKind, createClientSeed(i)))
-                .collect(Collectors.toList());
+                .toList();
         sharedStepsContext.getClientCommonContext().setClients(clientIds);
     }
 
     @Given("{string} ha già inserito l'utente con ruolo {string} come membro di quel client")
     public void tenantHasAlreadyAddUsersWithRole(String tenantType, String roleOfMemberToAdd) {
-        clientTokenConfigurator.setBearerToken(commonUtils.getToken(tenantType, null));
-        UUID clientMemberUserId = commonUtils.getUserId(tenantType, roleOfMemberToAdd);
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        UUID clientMemberUserId = identityService.getUserId(tenantType, roleOfMemberToAdd);
         dataPreparationService.addMemberToClient(sharedStepsContext.getClientCommonContext().getFirstClient(), clientMemberUserId);
         sharedStepsContext.getClientCommonContext().setUsers(List.of(clientMemberUserId));
     }
@@ -73,10 +77,11 @@ public class ClientCommonSteps {
 
     @Given("un {string} di {string} ha caricato una chiave pubblica in quel client")
     public void roleOfTenantHasAlreadyUploadClientPublicKey(String role, String tenantType) {
-        clientTokenConfigurator.setBearerToken(commonUtils.getToken(tenantType, role));
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, role));
         String userPublicKey = KeyPairGeneratorUtil.createBase64PublicKey("RSA", 2048);
         sharedStepsContext.getClientCommonContext().setClientPublicKey(userPublicKey);
-        String keyId = dataPreparationService.addPublicKeyToClient(sharedStepsContext.getClientCommonContext().getFirstClient(), KeyPairGeneratorUtil.createKeySeed(KeyUse.SIG, "RS256", userPublicKey).get(0));
+        String keyId = dataPreparationService.addPublicKeyToClient(sharedStepsContext.getClientCommonContext().getFirstClient(), KeyPairGeneratorUtil.createKeySeed(
+            userPublicKey).get(0));
         sharedStepsContext.getClientCommonContext().setKeyId(keyId);
     }
 

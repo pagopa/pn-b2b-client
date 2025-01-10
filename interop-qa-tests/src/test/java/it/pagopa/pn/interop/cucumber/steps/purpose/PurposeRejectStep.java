@@ -2,7 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.purpose;
 
 import io.cucumber.java.en.When;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.interop.authorization.service.utils.CommonUtils;
+import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RejectPurposeVersionPayload;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.utils.HttpCallExecutor;
@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public class PurposeRejectStep {
     private final ClientTokenConfigurator clientTokenConfigurator;
-    private final CommonUtils commonUtils;
+    private final IdentityService identityService;
     private final SharedStepsContext sharedStepsContext;
     private final HttpCallExecutor httpCallExecutor;
     private final IPurposeApiClient purposeApiClient;
@@ -21,7 +21,7 @@ public class PurposeRejectStep {
                              SharedStepsContext sharedStepsContext) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
-        this.commonUtils = sharedStepsContext.getCommonUtils();
+        this.identityService = sharedStepsContext.getIdentityService();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
     }

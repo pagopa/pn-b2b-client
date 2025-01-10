@@ -2,7 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.purpose;
 
 import io.cucumber.java.en.When;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.interop.authorization.service.utils.CommonUtils;
+import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
@@ -17,8 +17,8 @@ import java.util.UUID;
 public class PurposeActivationStep {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final IPurposeApiClient purposeApiClient;
-    private final CommonUtils commonUtils;
     private final SharedStepsContext sharedStepsContext;
+    private final PollingService pollingService;
     private final HttpCallExecutor httpCallExecutor;
 
     public PurposeActivationStep(ClientTokenConfigurator clientTokenConfigurator,
@@ -26,12 +26,12 @@ public class PurposeActivationStep {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
         this.sharedStepsContext = sharedStepsContext;
-        this.commonUtils = sharedStepsContext.getCommonUtils();
+        this.pollingService = sharedStepsContext.getPollingService();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
     }
 
     @When("l'utente (ri)attiva la finalità in stato {string} per quell'e-service")
-    public void userActivatesPurposeInStateForThatEService(String state) throws InterruptedException {
+    public void userActivatesPurposeInStateForThatEService(String state) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         String versionId = "WAITING_FOR_APPROVAL".equals(state) || "REJECTED".equals(state)
                         ? sharedStepsContext.getPurposeCommonContext().getWaitingForApprovalVersionId()
@@ -39,7 +39,7 @@ public class PurposeActivationStep {
         if (versionId == null) throw new IllegalArgumentException("No versionId found!");
         httpCallExecutor.performCall(() -> purposeApiClient.activatePurposeVersion(sharedStepsContext.getXCorrelationId(),
                 UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId()), UUID.fromString(versionId)));
-        commonUtils.makePolling(() -> purposeApiClient.getPurpose(sharedStepsContext.getXCorrelationId(), UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId())),
+        pollingService.makePolling(() -> purposeApiClient.getPurpose(sharedStepsContext.getXCorrelationId(), UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId())),
                 res -> Optional.ofNullable(res.getCurrentVersion()).map(PurposeVersion::getState).filter(status -> status == PurposeVersionState.ACTIVE).isPresent(),
                 "There was an error while activating the purpose!");
     }

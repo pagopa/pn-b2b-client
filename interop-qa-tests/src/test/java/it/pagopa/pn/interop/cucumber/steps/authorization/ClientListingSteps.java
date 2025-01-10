@@ -6,7 +6,7 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientKind;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
-import it.pagopa.interop.authorization.service.utils.CommonUtils;
+import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -19,7 +19,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class ClientListingSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final IAuthorizationClient authorizationClient;
-    private final CommonUtils commonUtils;
+    private final IdentityService identityService;
     private final DataPreparationService dataPreparationService;
     private final HttpCallExecutor httpCallExecutor;
     private final SharedStepsContext sharedStepsContext;
@@ -29,7 +29,7 @@ public class ClientListingSteps {
                               SharedStepsContext sharedStepsContext) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.authorizationClient = clientTokenConfigurator.getAuthorizationClient();
-        this.commonUtils = sharedStepsContext.getCommonUtils();
+        this.identityService = sharedStepsContext.getIdentityService();
         this.dataPreparationService = dataPreparationService;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.sharedStepsContext = sharedStepsContext;
@@ -66,14 +66,14 @@ public class ClientListingSteps {
 
     @When("l'utente richiede una operazione di listing dei client filtrando per membro utente con ruolo {string}")
     public void retrieveClientsListByFilterForUserAndRole(String role) {
-        UUID userId = commonUtils.getUserId(sharedStepsContext.getTenantType(), role);
+        UUID userId = identityService.getUserId(sharedStepsContext.getTenantType(), role);
         httpCallExecutor.performCall(() ->
                 authorizationClient.getClients(sharedStepsContext.getXCorrelationId(), 0, 12, String.valueOf(sharedStepsContext.getTestSeed()), List.of(userId), null));
     }
 
     @When("l'utente richiede una operazione di listing dei client")
     public void retrieveClientsList() {
-        clientTokenConfigurator.setBearerToken(commonUtils.getToken(sharedStepsContext.getTenantType(), null));
+        clientTokenConfigurator.setBearerToken(identityService.getToken(sharedStepsContext.getTenantType(), null));
         httpCallExecutor.performCall(() ->
                 authorizationClient.getClients(sharedStepsContext.getXCorrelationId(), 0, 12, String.valueOf(sharedStepsContext.getTestSeed()), null, null));
     }
@@ -87,8 +87,5 @@ public class ClientListingSteps {
     private int getRandomInt() {
         return ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE);
     }
-
-
-
 
 }

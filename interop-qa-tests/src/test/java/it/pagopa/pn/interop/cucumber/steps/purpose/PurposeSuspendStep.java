@@ -1,27 +1,26 @@
 package it.pagopa.pn.interop.cucumber.steps.purpose;
 
 import io.cucumber.java.en.When;
-import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.interop.authorization.service.utils.CommonUtils;
+import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 
 import java.util.UUID;
 
 public class PurposeSuspendStep {
     private final ClientTokenConfigurator clientTokenConfigurator;
-    private final CommonUtils commonUtils;
     private final SharedStepsContext sharedStepsContext;
     private final IPurposeApiClient purposeApiClient;
     private final HttpCallExecutor httpCallExecutor;
 
     public PurposeSuspendStep(ClientTokenConfigurator clientTokenConfigurator,
-                              SharedStepsContext sharedStepsContext) {
+                              SharedStepsContext sharedStepsContext,
+                              IPurposeApiClient purposeApiClient) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
-        this.commonUtils = sharedStepsContext.getCommonUtils();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
     }
 
