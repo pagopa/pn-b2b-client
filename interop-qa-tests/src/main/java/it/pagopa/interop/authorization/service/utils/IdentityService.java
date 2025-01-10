@@ -3,7 +3,6 @@ package it.pagopa.interop.authorization.service.utils;
 import it.pagopa.interop.authorization.domain.Tenant;
 import it.pagopa.interop.authorization.service.exception.TenantsReadException;
 import it.pagopa.interop.authorization.service.factory.SessionTokenFactory;
-import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -11,8 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -23,20 +20,17 @@ import org.yaml.snakeyaml.constructor.Constructor;
 @Slf4j
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class CommonUtils {
+public class IdentityService {
     private final SessionTokenFactory sessionTokenFactory;
     private final ClientTokenConfigurator clientTokenConfigurator;
-    private final InteropClientConfigs interopClientConfigs;
     private final List<Tenant> configFile;
 
     private Map<String, Map<String, String>> cachedTokens = null;
 
-    public CommonUtils(SessionTokenFactory sessionTokenFactory,
-                       ClientTokenConfigurator clientTokenConfigurator,
-                       InteropClientConfigs interopClientConfigs) {
+    public IdentityService(SessionTokenFactory sessionTokenFactory,
+                       ClientTokenConfigurator clientTokenConfigurator) {
         this.sessionTokenFactory = sessionTokenFactory;
         this.clientTokenConfigurator = clientTokenConfigurator;
-        this.interopClientConfigs = interopClientConfigs;
         this.configFile = readProperty();
     }
 
@@ -84,29 +78,6 @@ public class CommonUtils {
                 .orElse(null);
     }
 
-    public <T> void makePolling(Supplier<T> promise, Predicate<T> shouldStop, String errorMessage) {
-        try {
-            for (int i = 0; i < interopClientConfigs.getMaxPollingTry(); i++) {
-                Thread.sleep(interopClientConfigs.getMaxPollingSleep());
-
-                // Execute the provided function and obtain the result
-                T response = promise.get();
-
-                boolean shouldStopPolling = shouldStop.test(response);
-                if (shouldStopPolling) {
-                    return;
-                }
-            }
-        } catch (InterruptedException e) {
-            log.error("Unexpected thread interruption  during polling: {}", e.getMessage());
-            Thread.currentThread().interrupt();
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Error during shouldStop polling logic evaluation: " + e.getMessage());
-        }
-
-        throw new IllegalArgumentException("Eventual consistency error: " + errorMessage);
-    }
-
     private List<Tenant> readProperty() {
         InputStream inputStream = null;
         List<Tenant> tenantList = new ArrayList<>();
@@ -119,6 +90,5 @@ public class CommonUtils {
         }
         return tenantList;
     }
-
 
 }

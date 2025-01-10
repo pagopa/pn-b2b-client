@@ -2,7 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.agreement;
 
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
-import it.pagopa.interop.authorization.service.utils.CommonUtils;
+import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -14,18 +14,18 @@ import java.util.UUID;
 public class AgreementActivateSteps {
     private final DataPreparationService dataPreparationService;
     private final SharedStepsContext sharedStepsContext;
-    private final CommonUtils commonUtils;
+    private final IdentityService identityService;
 
     public AgreementActivateSteps(DataPreparationService dataPreparationService,
                                   SharedStepsContext sharedStepsContext) {
         this.dataPreparationService = dataPreparationService;
         this.sharedStepsContext = sharedStepsContext;
-        this.commonUtils = sharedStepsContext.getCommonUtils();
+        this.identityService = sharedStepsContext.getIdentityService();
     }
 
     @Given("{string} ha già approvato quella richiesta di fruizione")
     public void tenantHasAlreadyAcceptedThatRequest(String tenantType) {
-        commonUtils.setBearerToken(commonUtils.getToken(tenantType, null));
+        identityService.setBearerToken(identityService.getToken(tenantType, null));
         dataPreparationService.activateAgreement(sharedStepsContext.getAgreementId(), null);
     }
 

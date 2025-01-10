@@ -1,7 +1,8 @@
 package it.pagopa.pn.interop.cucumber.steps;
 
 import io.cucumber.java.Before;
-import it.pagopa.interop.authorization.service.utils.CommonUtils;
+import it.pagopa.interop.authorization.service.utils.IdentityService;
+import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.common.ClientCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.DelegationCommonContext;
@@ -11,7 +12,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
@@ -21,8 +21,8 @@ import java.util.concurrent.ThreadLocalRandom;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class SharedStepsContext {
     private HttpCallExecutor httpCallExecutor;
-    private CommonUtils commonUtils;
-
+    private IdentityService identityService;
+    private PollingService pollingService;
 
     private int testSeed;
     private String tenantType;
@@ -33,9 +33,13 @@ public class SharedStepsContext {
     private EServicesCommonContext eServicesCommonContext;
     private DelegationCommonContext delegationCommonContext;
 
-    public SharedStepsContext(HttpCallExecutor httpCallExecutor, CommonUtils commonUtils) {
+    public SharedStepsContext(
+        HttpCallExecutor httpCallExecutor,
+        IdentityService identityService,
+        PollingService pollingService) {
         this.httpCallExecutor = httpCallExecutor;
-        this.commonUtils = commonUtils;
+        this.identityService = identityService;
+        this.pollingService = pollingService;
     }
 
     @Before

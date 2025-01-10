@@ -12,7 +12,8 @@ import it.pagopa.interop.authorization.service.factory.SessionTokenFactory;
 import it.pagopa.interop.authorization.service.impl.AuthorizationClientImpl;
 import it.pagopa.interop.authorization.service.impl.ProducerClientImpl;
 import it.pagopa.interop.authorization.service.utils.ClientTokenConfigurator;
-import it.pagopa.interop.authorization.service.utils.CommonUtils;
+import it.pagopa.interop.authorization.service.utils.IdentityService;
+import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
 import it.pagopa.interop.config.springconfig.springconfig.InteropRestTemplateConfiguration;
 import it.pagopa.interop.delegate.service.impl.DelegationApiClientImpl;
@@ -32,7 +33,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
     IAuthorizationClient.class,
     AuthorizationClientImpl.class,
     InteropRestTemplateConfiguration.class,
-    CommonUtils.class,
+    IdentityService.class,
+    PollingService.class,
     SessionTokenFactory.class,
     ProducerClientImpl.class,
     DataPreparationService.class,

@@ -1,7 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.authorization;
 
 import io.cucumber.java.en.When;
-import it.pagopa.interop.authorization.service.utils.CommonUtils;
+import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
 import it.pagopa.interop.utils.HttpCallExecutor;
@@ -11,19 +11,19 @@ public class ClientKeyUploadSteps {
     private final IAuthorizationClient authorizationClient;
     private final SharedStepsContext sharedStepsContext;
     private final HttpCallExecutor httpCallExecutor;
-    private final CommonUtils commonUtils;
+    private final IdentityService identityService;
 
     public ClientKeyUploadSteps(IAuthorizationClient authorizationClient,
                                 SharedStepsContext sharedStepsContext) {
         this.authorizationClient = authorizationClient;
         this.sharedStepsContext = sharedStepsContext;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
-        this.commonUtils = sharedStepsContext.getCommonUtils();
+        this.identityService = sharedStepsContext.getIdentityService();
     }
 
     @When("l'utente richiede il caricamento di una chiave pubblica di tipo {string}")
     public void userLoadsPublicKeyWithType(String keyType) {
-        commonUtils.setBearerToken(sharedStepsContext.getUserToken());
+        identityService.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(() -> authorizationClient.createKeys(sharedStepsContext.getXCorrelationId(), sharedStepsContext.getClientCommonContext().getFirstClient(),
                 KeyPairGeneratorUtil.createKeySeed(
                     KeyPairGeneratorUtil.createBase64PublicKey(keyType, 2048))));

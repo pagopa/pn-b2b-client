@@ -4,7 +4,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.domain.KeyPairPEM;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
-import it.pagopa.interop.authorization.service.utils.CommonUtils;
+import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.interop.utils.HttpCallExecutor;
@@ -15,7 +15,7 @@ public class ClientKeyReadSteps {
 
     private final IAuthorizationClient authorizationClient;
     private final SharedStepsContext sharedStepsContext;
-    private final CommonUtils commonUtils;
+    private final IdentityService identityService;
     private final HttpCallExecutor httpCallExecutor;
     private final DataPreparationService dataPreparationService;
 
@@ -24,14 +24,14 @@ public class ClientKeyReadSteps {
                               DataPreparationService dataPreparationService) {
         this.authorizationClient = authorizationClient;
         this.sharedStepsContext = sharedStepsContext;
-        this.commonUtils = sharedStepsContext.getCommonUtils();
+        this.identityService = sharedStepsContext.getIdentityService();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.dataPreparationService = dataPreparationService;
     }
 
     @Given("un {string} di {string} ha caricato una chiave pubblica nel client")
     public void clientPublicKeyUpload(String role, String tenantType) {
-        commonUtils.setBearerToken(commonUtils.getToken(tenantType, role));
+        identityService.setBearerToken(identityService.getToken(tenantType, role));
         KeyPairPEM keyPairPEM = KeyPairGeneratorUtil.createKeyPairPEM("RSA", 2048);
         String key = KeyPairGeneratorUtil.keyToBase64(keyPairPEM.getPublicKey(), true);
         sharedStepsContext.getClientCommonContext().setClientPublicKey(key);
@@ -42,7 +42,7 @@ public class ClientKeyReadSteps {
 
     @When("l'utente richiede la lettura della chiave pubblica")
     public void userReadPublicKey() {
-        commonUtils.setBearerToken(sharedStepsContext.getUserToken());
+        identityService.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(() ->
                 authorizationClient.getClientKeyById(sharedStepsContext.getXCorrelationId(),
                         sharedStepsContext.getClientCommonContext().getFirstClient(),
