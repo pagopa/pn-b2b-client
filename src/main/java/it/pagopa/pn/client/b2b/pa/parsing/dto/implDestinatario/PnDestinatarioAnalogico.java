@@ -2,7 +2,6 @@ package it.pagopa.pn.client.b2b.pa.parsing.dto.implDestinatario;
 
 import it.pagopa.pn.client.b2b.pa.parsing.dto.PnParserRecord;
 import it.pagopa.pn.client.b2b.pa.parsing.parser.IPnParserLegalFact;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,7 +13,6 @@ import java.util.*;
 @Getter
 @SuperBuilder
 @NoArgsConstructor
-@EqualsAndHashCode
 public class PnDestinatarioAnalogico extends PnDestinatarioDigitale {
     private String indirizzoFisico;
 
