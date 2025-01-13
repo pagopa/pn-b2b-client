@@ -52,6 +52,7 @@ import static org.awaitility.Awaitility.await;
 
 @Slf4j
 public class AvanzamentoNotificheB2bSteps {
+
     @Autowired
     private PnPaB2bUtils utils;
     private final IPnPaB2bClient b2bClient;
@@ -70,6 +71,9 @@ public class AvanzamentoNotificheB2bSteps {
     private String pnEcConsAllowedFutureOffsetDuration;
     @Value("${pn.consolidatore.requestId}")
     private String requestIdConsolidator;
+
+    @Value("${spring.profiles.active}")
+    private String env;
 
     @Autowired
     public AvanzamentoNotificheB2bSteps(SharedSteps sharedSteps,
@@ -3608,5 +3612,44 @@ public class AvanzamentoNotificheB2bSteps {
         this.legalFactContentVerifySteps.setLegalFactUrl(legalFact.getKey());
         log.info("LEGAL FACT CATEGORY = " + legalFact.getCategory());
         log.info("LEGAL FACT URL: " + legalFact.getKey());
+    }
+
+    @And("controllo che le tempistiche di arrivo tra l elemento {string} e l'elemento {string} siano corrette per la notifica {string}")
+    public void controlloCheLeTempisticheDiArrivoTraLElementoELElementoSiaDiMinuti(String firstElement, String secondElement, String notificationType) {
+        Assertions.assertNotNull(sharedSteps.getSentNotification());
+        Assertions.assertNotNull(sharedSteps.getSentNotification().getTimeline());
+
+        TimelineElementV25 firstElementToCheck = sharedSteps.getSentNotification().getTimeline()
+                .stream().filter(data -> data.getElementId().startsWith(firstElement))
+                .findFirst().orElse(null);
+        Assertions.assertNotNull(firstElementToCheck);
+        Assertions.assertNotNull(firstElementToCheck.getEventTimestamp());
+
+        TimelineElementV25 secondElementToCheck = sharedSteps.getSentNotification().getTimeline()
+                .stream().filter(data -> data.getElementId().startsWith(secondElement))
+                .findFirst().orElse(null);
+        Assertions.assertNotNull(secondElementToCheck);
+        Assertions.assertNotNull(secondElementToCheck.getDetails());
+        Assertions.assertNotNull(secondElementToCheck.getDetails().getSchedulingDate());
+
+        Assertions.assertEquals(firstElementToCheck.getTimestamp(), firstElementToCheck.getEventTimestamp());
+
+        int minsToCheck = getMinsToCheck(notificationType);
+
+        long differenceInMinutes = Duration.between(firstElementToCheck.getEventTimestamp(), secondElementToCheck.getDetails().getSchedulingDate()).toMinutes();
+        Assertions.assertTrue(differenceInMinutes >= minsToCheck);
+    }
+
+    private int getMinsToCheck(String notificationType) {
+        return switch (env) {
+            case "dev" -> calculateMins(notificationType,4, 6, 3);
+            case "test" -> calculateMins(notificationType,2, 3, 1);
+            case "uat" -> calculateMins(notificationType, 8, 10, 6);
+            default -> throw new IllegalArgumentException("No env founded");
+        };
+    }
+
+    private int calculateMins(String notificationType, int analogicaMins, int digitalErrorMins, int digitalSuccessMins) {
+        return "ANALOGICA".equals(notificationType) ? analogicaMins : "SUCCESSO DIGITALE".equals(notificationType) ? digitalSuccessMins : digitalErrorMins;
     }
 }
