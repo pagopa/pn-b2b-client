@@ -53,5 +53,5 @@ Feature: Caricamento di una chiave pubblica contenuta in un client
     Given "PA1" ha già creato 1 client "CONSUMER"
     Given "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
     Given un "admin" di "PA1" ha caricato una chiave pubblica nel client
-    When l'utente richiede il caricamento di una chiave pubblica di tipo "RSA" di lunghezza 2048 con lo stesso kid
+    When l'utente richiede il caricamento di una chiave pubblica di tipo RSA di lunghezza 2048 con lo stesso kid
     Then si ottiene status code 409

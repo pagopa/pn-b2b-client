@@ -43,7 +43,7 @@ public class DelegationListingStep {
 
     @And("l'utente recupera le prime {int} pagine con la lista delle deleghe")
     public void retrieveDelegationsList(int pageNumber) {
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < pageNumber; i++) {
             AtomicInteger offset = new AtomicInteger(i);
             httpCallExecutor.performCall(
                     () -> delegationApiClient.getDelegation(sharedStepsContext.getXCorrelationId(), offset.get(), 50, List.of(), List.of(), List.of(), null, List.of())

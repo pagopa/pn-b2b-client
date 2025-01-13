@@ -37,6 +37,7 @@ public class ClientListingSteps {
 
     @Given("{string} ha già creato {int} client {string} con la keyword {string} nel nome")
     public void userHasAlreadyCreatedClientWithSameKeyword(String tenantType, int numClient, String clientKind, String keyword) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         List<UUID> result = new ArrayList<>();
         for (int i = 0; i < numClient; i ++) {
             ClientSeed clientSeed = new ClientSeed();
@@ -82,10 +83,6 @@ public class ClientListingSteps {
     public void retrieveTruncateClientsList(int limit) {
         httpCallExecutor.performCall(() ->
                 authorizationClient.getClients(sharedStepsContext.getXCorrelationId(), 0, limit, String.valueOf(sharedStepsContext.getTestSeed()), null, null));
-    }
-
-    private int getRandomInt() {
-        return ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE);
     }
 
 }
