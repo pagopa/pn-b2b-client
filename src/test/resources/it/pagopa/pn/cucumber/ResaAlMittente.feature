@@ -227,7 +227,7 @@ Feature: Resa al mittente di una notifica
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Mario Cucumber e:
-      | physicalAddress_address | @FAIL_DECEDUTO_SLOW_AR |
+      | physicalAddress_address | @FAIL_DECEDUTO_AR |
       | digitalDomicile         | NULL              |
     And destinatario Cucumber Analogic e:
       | digitalDomicile         | NULL      |
