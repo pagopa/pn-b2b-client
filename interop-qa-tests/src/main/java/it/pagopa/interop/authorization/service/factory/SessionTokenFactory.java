@@ -152,7 +152,6 @@ public class SessionTokenFactory {
         log.debug("ST Payload Compiled: {}", stPayloadCompiled);
 
         log.debug("## Step 5. Generate unsigned STs ##");
-        // Map<String, Map<String, String>> unsignedSTs = unsignedStsGeneration(stHeaderCompiled, stPayloadCompiled, sessionTokenPayloadValues, environment);
         Map<String, Map<String, String>> unsignedSTs = unsignedStsGeneration(stHeaderCompiled, stPayloadCompiled, configFile, environment);
         log.debug("Unsigned STs: {}", unsignedSTs);
 
