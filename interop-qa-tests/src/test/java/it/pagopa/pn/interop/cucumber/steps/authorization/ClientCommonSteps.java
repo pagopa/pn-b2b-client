@@ -7,9 +7,18 @@ import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactClients;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeAdditionDetailsSeed;
+import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
+import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
@@ -21,7 +30,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @Getter
 @Setter
+@Slf4j
 public class ClientCommonSteps {
+    private final ClientTokenConfigurator clientTokenConfigurator;
     private final DataPreparationService dataPreparationService;
     private final IdentityService identityService;
     private final HttpCallExecutor httpCallExecutor;
@@ -30,8 +41,10 @@ public class ClientCommonSteps {
     private PurposeAdditionDetailsSeed purposeAdditionDetailsSeed;
 
     @Autowired
-    public ClientCommonSteps(DataPreparationService dataPreparationService,
+    public ClientCommonSteps(ClientTokenConfigurator clientTokenConfigurator,
+                             DataPreparationService dataPreparationService,
                              SharedStepsContext sharedStepsContext) {
+        this.clientTokenConfigurator = clientTokenConfigurator;
         this.dataPreparationService = dataPreparationService;
         this.identityService = sharedStepsContext.getIdentityService();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
@@ -40,7 +53,7 @@ public class ClientCommonSteps {
 
     @Given("{string} ha già creato {int} client {string}")
     public void createClientsForTenants(String tenantType, int numClient, String clientKind) {
-        identityService.setBearerToken(identityService.getToken(tenantType, null));
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
 
         List<UUID> clientIds = IntStream.range(0, numClient)
                 .mapToObj(i -> dataPreparationService.createClient(clientKind, createClientSeed(i)))
@@ -50,7 +63,7 @@ public class ClientCommonSteps {
 
     @Given("{string} ha già inserito l'utente con ruolo {string} come membro di quel client")
     public void tenantHasAlreadyAddUsersWithRole(String tenantType, String roleOfMemberToAdd) {
-        identityService.setBearerToken(identityService.getToken(tenantType, null));
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         UUID clientMemberUserId = identityService.getUserId(tenantType, roleOfMemberToAdd);
         dataPreparationService.addMemberToClient(sharedStepsContext.getClientCommonContext().getFirstClient(), clientMemberUserId);
         sharedStepsContext.getClientCommonContext().setUsers(List.of(clientMemberUserId));
@@ -64,7 +77,7 @@ public class ClientCommonSteps {
 
     @Given("un {string} di {string} ha caricato una chiave pubblica in quel client")
     public void roleOfTenantHasAlreadyUploadClientPublicKey(String role, String tenantType) {
-        identityService.setBearerToken(identityService.getToken(tenantType, role));
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, role));
         String userPublicKey = KeyPairGeneratorUtil.createBase64PublicKey("RSA", 2048);
         sharedStepsContext.getClientCommonContext().setClientPublicKey(userPublicKey);
         String keyId = dataPreparationService.addPublicKeyToClient(sharedStepsContext.getClientCommonContext().getFirstClient(), KeyPairGeneratorUtil.createKeySeed(

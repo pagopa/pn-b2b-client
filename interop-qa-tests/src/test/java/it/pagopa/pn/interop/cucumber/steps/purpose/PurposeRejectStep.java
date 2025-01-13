@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.purpose;
 
 import io.cucumber.java.en.When;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RejectPurposeVersionPayload;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
@@ -10,22 +11,24 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import java.util.UUID;
 
 public class PurposeRejectStep {
+    private final ClientTokenConfigurator clientTokenConfigurator;
     private final IdentityService identityService;
     private final SharedStepsContext sharedStepsContext;
     private final HttpCallExecutor httpCallExecutor;
     private final IPurposeApiClient purposeApiClient;
 
-    public PurposeRejectStep(SharedStepsContext sharedStepsContext,
-                             IPurposeApiClient purposeApiClient) {
+    public PurposeRejectStep(ClientTokenConfigurator clientTokenConfigurator,
+                             SharedStepsContext sharedStepsContext) {
+        this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.identityService = sharedStepsContext.getIdentityService();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
-        this.purposeApiClient = purposeApiClient;
+        this.purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
     }
 
     @When("l'utente rifiuta la finalità aggiungendo una motivazione")
     public void userRejectsPurposeWithReason() {
-        identityService.setBearerToken(sharedStepsContext.getUserToken());
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         String versionId = sharedStepsContext.getPurposeCommonContext().getWaitingForApprovalVersionId() != null
                 ? sharedStepsContext.getPurposeCommonContext().getWaitingForApprovalVersionId()
                 : sharedStepsContext.getPurposeCommonContext().getVersionId();

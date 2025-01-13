@@ -4,21 +4,23 @@ import java.util.UUID;
 
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject3;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 
 public class ClientUserAddStep {
-
+    private final ClientTokenConfigurator clientTokenConfigurator;
     private final IAuthorizationClient authorizationClient;
     private final SharedStepsContext sharedStepsContext;
     private final IdentityService identityService;
     private final HttpCallExecutor httpCallExecutor;
 
-    public ClientUserAddStep(IAuthorizationClient authorizationClient,
+    public ClientUserAddStep(ClientTokenConfigurator clientTokenConfigurator,
             SharedStepsContext sharedStepsContext) {
-        this.authorizationClient = authorizationClient;
+        this.clientTokenConfigurator = clientTokenConfigurator;
+        this.authorizationClient = clientTokenConfigurator.getAuthorizationClient();
         this.sharedStepsContext = sharedStepsContext;
         this.identityService = sharedStepsContext.getIdentityService();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
@@ -26,7 +28,7 @@ public class ClientUserAddStep {
 
     @When("l'utente richiede l'aggiunta di un admin di {string} al client")
     public void addUsersToClient(String tenantType) {
-        identityService.setBearerToken(sharedStepsContext.getUserToken());
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         UUID userId = identityService.getUserId(tenantType, "admin");
         InlineObject3 inlineObject = new InlineObject3().addUserIdsItem(userId);
         httpCallExecutor.performCall(

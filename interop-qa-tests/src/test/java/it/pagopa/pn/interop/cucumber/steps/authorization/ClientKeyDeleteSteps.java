@@ -3,6 +3,7 @@ package it.pagopa.pn.interop.cucumber.steps.authorization;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.utils.HttpCallExecutor;
@@ -11,15 +12,17 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import java.util.UUID;
 
 public class ClientKeyDeleteSteps {
+    private final ClientTokenConfigurator clientTokenConfigurator;
     private final IAuthorizationClient authorizationClient;
     private final SharedStepsContext sharedStepsContext;
     private final IdentityService identityService;
     private final PollingService pollingService;
     private final HttpCallExecutor httpCallExecutor;
 
-    public ClientKeyDeleteSteps(IAuthorizationClient authorizationClient,
+    public ClientKeyDeleteSteps(ClientTokenConfigurator clientTokenConfigurator,
                                 SharedStepsContext sharedStepsContext) {
-        this.authorizationClient = authorizationClient;
+        this.clientTokenConfigurator = clientTokenConfigurator;
+        this.authorizationClient = clientTokenConfigurator.getAuthorizationClient();
         this.sharedStepsContext = sharedStepsContext;
         this.identityService = sharedStepsContext.getIdentityService();
         this.pollingService = sharedStepsContext.getPollingService();
@@ -33,7 +36,7 @@ public class ClientKeyDeleteSteps {
 
     @When("l'utente richiede una operazione di cancellazione della chiave di quel client")
     public void deleteClientKeyById() {
-        identityService.setBearerToken(sharedStepsContext.getUserToken());
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(() -> authorizationClient.deleteClientKeyById(sharedStepsContext.getXCorrelationId(),
                 sharedStepsContext.getClientCommonContext().getFirstClient(), sharedStepsContext.getClientCommonContext().getKeyId()));
     }

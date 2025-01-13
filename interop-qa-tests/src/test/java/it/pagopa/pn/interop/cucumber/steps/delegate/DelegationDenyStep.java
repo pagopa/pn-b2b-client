@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.delegate;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.When;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.delegate.service.IProducerDelegationsApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RejectDelegationPayload;
@@ -11,14 +12,16 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class DelegationDenyStep {
+    private final ClientTokenConfigurator clientTokenConfigurator;
     private final IProducerDelegationsApiClient producerDelegationsApiClient;
     private final IdentityService identityService;
     private final SharedStepsContext sharedStepsContext;
     private final HttpCallExecutor httpCallExecutor;
 
-    public DelegationDenyStep(IProducerDelegationsApiClient producerDelegationsApiClient,
+    public DelegationDenyStep(ClientTokenConfigurator clientTokenConfigurator,
                               SharedStepsContext sharedStepsContext) {
-        this.producerDelegationsApiClient = producerDelegationsApiClient;
+        this.clientTokenConfigurator = clientTokenConfigurator;
+        this.producerDelegationsApiClient = clientTokenConfigurator.getProducerDelegationsApiClient();
         this.sharedStepsContext = sharedStepsContext;
         this.identityService = sharedStepsContext.getIdentityService();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
@@ -27,13 +30,13 @@ public class DelegationDenyStep {
     @When("l'utente rifiuta la delega")
     public void whenUserRejectsDelegation() {
         String authToken = sharedStepsContext.getUserToken();
-        identityService.setBearerToken(authToken);
+        clientTokenConfigurator.setBearerToken(authToken);
         rejectDelegation();
     }
 
     @And("l'ente {string} rifiuta la delega")
     public void delegationIsRejectedByTenant(String tenantType) {
-        identityService.setBearerToken(identityService.getToken(tenantType, null));
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         rejectDelegation();
     }
 
@@ -46,7 +49,7 @@ public class DelegationDenyStep {
 
     @And("l'ente {string} con ruolo {string} revoca la delega")
     public void delegationIsRevokedByTenantWithRole(String tenantType, String role) {
-        identityService.setBearerToken(identityService.getToken(tenantType, role));
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, role));
         httpCallExecutor.performCall(
                 () -> producerDelegationsApiClient.revokeProducerDelegation(sharedStepsContext.getXCorrelationId(),
                         String.valueOf(sharedStepsContext.getDelegationCommonContext().getDelegationId())));

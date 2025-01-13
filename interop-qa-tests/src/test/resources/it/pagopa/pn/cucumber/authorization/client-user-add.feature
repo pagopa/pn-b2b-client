@@ -21,7 +21,7 @@ Feature: Aggiunta di un membro ad un client
       | PA1  | support      |        403 |
       | PA1  | api,security |        403 |
 
-  Scenario Outline: Un utente con sufficienti permessi (admin); appartenente all'ente che ha creato il client; aggiunge al client un admin che è associato ad un altro ente. Ottiene un errore
+  Scenario: Un utente con sufficienti permessi (admin); appartenente all'ente che ha creato il client; aggiunge al client un admin che è associato ad un altro ente. Ottiene un errore
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato 1 client "CONSUMER"
     When l'utente richiede l'aggiunta di un admin di "PA2" al client

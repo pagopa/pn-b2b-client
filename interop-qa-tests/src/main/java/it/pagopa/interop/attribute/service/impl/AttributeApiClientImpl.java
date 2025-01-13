@@ -10,8 +10,14 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Attributes;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedAttributeSeed;
 import java.util.List;
+
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+@Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class AttributeApiClientImpl implements IAttributeApiClient {
     private final AttributesApi attributesApi;
     private final RestTemplate restTemplate;
@@ -20,7 +26,7 @@ public class AttributeApiClientImpl implements IAttributeApiClient {
     public AttributeApiClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
         this.basePath = interopClientConfigs.getBaseUrl();
-        this.attributesApi = new AttributesApi(createApiClient("bearerToken"));
+        this.attributesApi = new AttributesApi(createApiClient("dummyBearer"));
     }
 
     private ApiClient createApiClient(String bearerToken) {

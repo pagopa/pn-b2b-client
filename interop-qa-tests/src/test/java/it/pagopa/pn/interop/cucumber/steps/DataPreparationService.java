@@ -75,9 +75,9 @@ import org.springframework.http.HttpStatus;
 
 @Slf4j
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-@AllArgsConstructor
 public class DataPreparationService {
     private static final ClientSeed DEFAULT_CLIENT_SEED = new ClientSeed();
+    private final ClientTokenConfigurator clientTokenConfigurator;
     private final IAuthorizationClient authorizationClient;
     private final IAgreementClient agreementClient;
     private final IAttributeApiClient attributeApiClient;
@@ -94,6 +94,24 @@ public class DataPreparationService {
         DEFAULT_CLIENT_SEED.setName(String.format("client %d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)));
         DEFAULT_CLIENT_SEED.setDescription("Descrizione client");
         DEFAULT_CLIENT_SEED.setMembers(List.of());
+    }
+
+    public DataPreparationService(ClientTokenConfigurator clientTokenConfigurator,
+                                  PollingService pollingService,
+                                  RiskAnalysisDataInitializer riskAnalysisDataInitializer,
+                                  SharedStepsContext sharedStepsContext) {
+        this.clientTokenConfigurator = clientTokenConfigurator;
+        this.authorizationClient = clientTokenConfigurator.getAuthorizationClient();
+        this.agreementClient = clientTokenConfigurator.getAgreementClient();
+        this.attributeApiClient = clientTokenConfigurator.getAttributeApiClient();
+        this.tenantsApi = clientTokenConfigurator.getTenantsApi();
+        this.eServiceClient = clientTokenConfigurator.getEServiceClient();
+        this.producerClient = clientTokenConfigurator.getProducerClient();
+        this.purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
+        this.sharedStepsContext = sharedStepsContext;
+        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+        this.pollingService = sharedStepsContext.getPollingService();
+        this.riskAnalysisDataInitializer = riskAnalysisDataInitializer;
     }
 
     public UUID createClient(String clientKind, ClientSeed partialClientSeed) {
@@ -123,7 +141,11 @@ public class DataPreparationService {
         assertValidResponse();
         pollingService.makePolling(
                 () -> httpCallExecutor.performCall(() -> authorizationClient.getClientUsers(sharedStepsContext.getXCorrelationId(), clientId)),
-                res -> ((List<CompactUser>) httpCallExecutor.getResponse()).stream().anyMatch(user -> user.getUserId().equals(userId)),
+                res -> Optional.ofNullable(httpCallExecutor.getResponse())
+                        .map(obj -> (List<CompactUser>) obj)
+                        .orElse(List.of())
+                        .stream()
+                        .anyMatch(user -> user.getUserId().equals(userId)),
                 "Failed to retrieve the client users list!"
         );
     }

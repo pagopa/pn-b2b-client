@@ -3,6 +3,7 @@ package it.pagopa.pn.interop.cucumber.steps.authorization;
 import java.util.List;
 
 import it.pagopa.interop.authorization.service.utils.IdentityService;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import org.junit.jupiter.api.Assertions;
 
@@ -14,22 +15,22 @@ import it.pagopa.interop.utils.HttpCallExecutor;
 
 public class ClientUsersListingStep {
 
+    private final ClientTokenConfigurator clientTokenConfigurator;
     private final IAuthorizationClient authorizationClient;
     private final SharedStepsContext sharedStepsContext;
     private final HttpCallExecutor httpCallExecutor;
-    private final IdentityService identityService;
 
-    public ClientUsersListingStep(IAuthorizationClient authorizationClient,
-            SharedStepsContext sharedStepsContext) {
-        this.authorizationClient = authorizationClient;
+    public ClientUsersListingStep(ClientTokenConfigurator clientTokenConfigurator,
+                                  SharedStepsContext sharedStepsContext) {
+        this.clientTokenConfigurator = clientTokenConfigurator;
+        this.authorizationClient = clientTokenConfigurator.getAuthorizationClient();
         this.sharedStepsContext = sharedStepsContext;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
-        this.identityService = sharedStepsContext.getIdentityService();
     }
 
     @When("l'utente richiede una operazione di listing dei membri di quel client")
     public void getClientUsers() {
-        identityService.setBearerToken(sharedStepsContext.getUserToken());
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor
                 .performCall(() -> authorizationClient.getClientUsers(sharedStepsContext.getXCorrelationId(), sharedStepsContext.getClientCommonContext().getFirstClient()));
     }

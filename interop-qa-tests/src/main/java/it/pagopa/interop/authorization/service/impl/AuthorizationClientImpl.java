@@ -1,5 +1,12 @@
 package it.pagopa.interop.authorization.service.impl;
 
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
@@ -19,6 +26,8 @@ import java.util.List;
 import java.util.UUID;
 import org.springframework.web.client.RestTemplate;
 
+@Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class AuthorizationClientImpl implements IAuthorizationClient {
     private final ClientsApi clientsApi;
     private final RestTemplate restTemplate;
@@ -27,7 +36,7 @@ public class AuthorizationClientImpl implements IAuthorizationClient {
     public AuthorizationClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
         this.basePath = interopClientConfigs.getBaseUrl();
-        this.clientsApi = new ClientsApi(createApiClient("apiBearerToken"));
+        this.clientsApi = new ClientsApi(createApiClient("dummyBearer"));
     }
 
     private ApiClient createApiClient(String bearerToken) {

@@ -11,7 +11,7 @@ import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.factory.SessionTokenFactory;
 import it.pagopa.interop.authorization.service.impl.AuthorizationClientImpl;
 import it.pagopa.interop.authorization.service.impl.ProducerClientImpl;
-import it.pagopa.interop.authorization.service.utils.ClientTokenConfigurator;
+import it.pagopa.interop.authorization.service.utils.ConfigFileReader;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
@@ -52,7 +52,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
     RiskAnalysisDataInitializer.class,
     ClientTokenConfigurator.class,
     ProducerDelegationsApiClientImpl.class,
-    DelegationApiClientImpl.class
+    DelegationApiClientImpl.class,
+    ConfigFileReader.class
 })
 @EnableScheduling
 @EnableConfigurationProperties

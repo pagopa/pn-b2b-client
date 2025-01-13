@@ -11,8 +11,14 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementSubmission
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import java.io.File;
 import java.util.UUID;
+
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+@Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class AgreementClientImpl implements IAgreementClient {
     private final AgreementsApi agreementsApi;
     private final RestTemplate restTemplate;
@@ -21,7 +27,7 @@ public class AgreementClientImpl implements IAgreementClient {
     public AgreementClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
         this.basePath = interopClientConfigs.getBaseUrl();
-        this.agreementsApi = new AgreementsApi(createApiClient("bearerToken"));
+        this.agreementsApi = new AgreementsApi(createApiClient("dummyBearer"));
     }
 
     private ApiClient createApiClient(String bearerToken) {

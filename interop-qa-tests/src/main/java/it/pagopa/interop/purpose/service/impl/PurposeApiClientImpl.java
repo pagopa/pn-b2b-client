@@ -11,9 +11,16 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionResou
 import it.pagopa.interop.generated.openapi.clients.bff.model.RejectPurposeVersionPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormConfig;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
+
 import java.util.UUID;
 import org.springframework.web.client.RestTemplate;
 
+@Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PurposeApiClientImpl implements IPurposeApiClient {
     private final PurposesApi purposesApi;
     private final RestTemplate restTemplate;
@@ -22,7 +29,7 @@ public class PurposeApiClientImpl implements IPurposeApiClient {
     public PurposeApiClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
         this.basePath = interopClientConfigs.getBaseUrl();
-        this.purposesApi = new PurposesApi(createApiClient("bearerToken"));
+        this.purposesApi = new PurposesApi(createApiClient("dummyBearer"));
     }
 
     private ApiClient createApiClient(String bearerToken) {

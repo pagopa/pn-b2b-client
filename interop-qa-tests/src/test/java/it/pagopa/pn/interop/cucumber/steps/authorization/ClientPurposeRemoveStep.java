@@ -3,6 +3,7 @@ package it.pagopa.pn.interop.cucumber.steps.authorization;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
@@ -13,16 +14,18 @@ import java.util.UUID;
 
 public class ClientPurposeRemoveStep {
 
+    private final ClientTokenConfigurator clientTokenConfigurator;
     private final IAuthorizationClient authorizationClient;
     private final SharedStepsContext sharedStepsContext;
     private final DataPreparationService dataPreparationService;
     private final HttpCallExecutor httpCallExecutor;
     private final IdentityService identityService;
 
-    public ClientPurposeRemoveStep(IAuthorizationClient authorizationClient,
+    public ClientPurposeRemoveStep(ClientTokenConfigurator clientTokenConfigurator,
             SharedStepsContext sharedStepsContext,
             DataPreparationService dataPreparationService) {
-        this.authorizationClient = authorizationClient;
+        this.clientTokenConfigurator = clientTokenConfigurator;
+        this.authorizationClient = clientTokenConfigurator.getAuthorizationClient();
         this.sharedStepsContext = sharedStepsContext;
         this.dataPreparationService = dataPreparationService;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
@@ -31,7 +34,7 @@ public class ClientPurposeRemoveStep {
 
     @Given("{string} ha già associato la finalità a quel client")
     public void addPurposeToClient(String tenantType) {
-        identityService.setBearerToken(identityService.getToken(tenantType, null));
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         httpCallExecutor
                 .performCall(() -> dataPreparationService.addPurposeToClient(sharedStepsContext.getClientCommonContext().getFirstClient(),
                         UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId())));
@@ -39,7 +42,7 @@ public class ClientPurposeRemoveStep {
 
     @Given("{string} ha già archiviato quella finalità")
     public void archivePurpose(String tenantType) {
-        identityService.setBearerToken(identityService.getToken(tenantType, null));
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         PurposeCommonContext purposeCommonContext = sharedStepsContext.getPurposeCommonContext();
         httpCallExecutor.performCall(() -> dataPreparationService.archivePurpose(UUID.fromString(purposeCommonContext.getPurposeId()),
                         UUID.fromString(purposeCommonContext.getVersionId())));
@@ -47,7 +50,7 @@ public class ClientPurposeRemoveStep {
 
     @When("l'utente richiede la disassociazione della finalità dal client")
     public void getClientUsers() {
-        identityService.setBearerToken(sharedStepsContext.getUserToken());
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(() -> authorizationClient.removeClientPurpose(sharedStepsContext.getXCorrelationId(),
                 sharedStepsContext.getClientCommonContext().getFirstClient(), UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId())));
     }
