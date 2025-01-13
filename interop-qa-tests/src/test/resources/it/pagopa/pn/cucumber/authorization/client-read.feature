@@ -26,13 +26,13 @@ Feature: Lettura client singolo
       | Privato | support      |        200 |
       | Privato | api,security |        200 |
 
-  Scenario Outline: Un utente admin legge un client appartenente al proprio ente. La richiesta va a buon fine
+  Scenario: Un utente admin legge un client appartenente al proprio ente. La richiesta va a buon fine
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato 1 client "CONSUMER"
     When l'utente richiede una operazione di lettura di quel client
     Then si ottiene status code 200
 
-  Scenario Outline: Un utente security legge un client del quale è membro. La richiesta va a buon fine
+  Scenario: Un utente security legge un client del quale è membro. La richiesta va a buon fine
     Given l'utente è un "security" di "PA1"
     Given "PA1" ha già creato 1 client "CONSUMER"
     Given "PA1" ha già inserito l'utente con ruolo "security" come membro di quel client
@@ -40,25 +40,25 @@ Feature: Lettura client singolo
     Then si ottiene status code 200
 
   @wait_for_fix
-  Scenario Outline: Un utente security legge un client di un ente al quale è stato associato, ma del quale non è membro. Ottiene un errore
+  Scenario: Un utente security legge un client di un ente al quale è stato associato, ma del quale non è membro. Ottiene un errore
     Given l'utente è un "security" di "PA1"
     Given "PA1" ha già creato 1 client "CONSUMER"
     When l'utente richiede una operazione di lettura di quel client
     Then si ottiene status code 400
 
-  Scenario Outline: Un utente support legge un client di un ente per il quale sta operando. La richiesta va a buon fine
+  Scenario: Un utente support legge un client di un ente per il quale sta operando. La richiesta va a buon fine
     Given l'utente è un "support" di "PA1"
     Given "PA1" ha già creato 1 client "CONSUMER"
     When l'utente richiede una operazione di lettura di quel client
     Then si ottiene status code 200
 
-  Scenario Outline: Un utente api legge un client dell'ente al quale è associato. Ottiene un errore
+  Scenario: Un utente api legge un client dell'ente al quale è associato. Ottiene un errore
     Given l'utente è un "api" di "PA1"
     Given "PA1" ha già creato 1 client "CONSUMER"
     When l'utente richiede una operazione di lettura di quel client
     Then si ottiene status code 403
 
-  Scenario Outline: A fronte di una richiesta di lettura da parte di un ente, di un client creato da un altro ente, la richiesta va a buon fine
+  Scenario: A fronte di una richiesta di lettura da parte di un ente, di un client creato da un altro ente, la richiesta va a buon fine
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato 1 client "CONSUMER"
     When l'utente richiede una operazione di lettura di quel client
