@@ -1,30 +1,32 @@
 package it.pagopa.pn.interop.cucumber.steps.delegate;
 
+import static it.pagopa.interop.generated.openapi.clients.bff.model.DelegationState.ACTIVE;
+import static it.pagopa.interop.generated.openapi.clients.bff.model.DelegationState.WAITING_FOR_APPROVAL;
+import static java.util.Collections.emptyList;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
-import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.delegate.service.IDelegationApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactDelegation;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactDelegations;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Pagination;
 import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import lombok.AllArgsConstructor;
-import org.junit.jupiter.api.Assertions;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import org.assertj.core.api.Condition;
+import org.junit.jupiter.api.Assertions;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class DelegationListingStep {
-    private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
     private final IDelegationApiClient delegationApiClient;
     private final PollingService pollingService;
@@ -33,7 +35,6 @@ public class DelegationListingStep {
 
     public DelegationListingStep(ClientTokenConfigurator clientTokenConfigurator,
                                  SharedStepsContext sharedStepsContext) {
-        this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.delegationApiClient = clientTokenConfigurator.getDelegationApiClient();
         this.pollingService = sharedStepsContext.getPollingService();
@@ -55,7 +56,8 @@ public class DelegationListingStep {
     @And("l'utente recupera la lista delle deleghe in stato ACTIVE e WAITING_FOR_APPROVAL")
     public void retrieveDelegationsListByStatus() {
         pollingService.makePolling(
-                () -> httpCallExecutor.performCall(() ->  delegationApiClient.getDelegation(sharedStepsContext.getXCorrelationId(), 0, 50, List.of(DelegationState.ACTIVE, DelegationState.WAITING_FOR_APPROVAL),
+                () -> httpCallExecutor.performCall(() ->  delegationApiClient.getDelegation(sharedStepsContext.getXCorrelationId(), 0, 50, List.of(
+                        ACTIVE, WAITING_FOR_APPROVAL),
                         List.of(), List.of(), null, List.of())),
             HttpStatus::is2xxSuccessful,
                 "There was an error while retrieving the delegations!"
@@ -76,12 +78,21 @@ public class DelegationListingStep {
 
     @And("viene verificato che le deleghe ritornate sono soltanto quelle in stato ACTIVE e WAITING_FOR_APPROVAL")
     public void verifyStatusDelegationsReturned() {
-        delegationList.stream()
-                .map(CompactDelegations::getResults)
-                .findFirst()
-                .orElse(List.of())
-                .stream()
-                .map(CompactDelegation::getState)
-                .noneMatch(state -> (state != DelegationState.ACTIVE) || (state != DelegationState.WAITING_FOR_APPROVAL));
-        }
+        List<CompactDelegation> delegations = delegationList.stream()
+            .map(CompactDelegations::getResults)
+            .findFirst()
+            .orElse(emptyList());
+
+        Condition<CompactDelegation> ofExpectedStates = new Condition<>(
+            delegation -> delegation.getState().equals(ACTIVE) || delegation.getState().equals(WAITING_FOR_APPROVAL),
+            "ACTIVE or WAITING_FOR_APPROVAL"
+        );
+
+        /* NOTE 13/01/2025: assertion checked for the following borderline cases:
+         * - empty list: success
+         * - null list (currently impossible): failure
+         */
+        assertThat(delegations).are(ofExpectedStates);
+    }
+
 }
