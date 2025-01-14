@@ -1,5 +1,10 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.ApiClient;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api.*;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
@@ -35,6 +40,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     private final it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api_v1.SenderReadB2BApi senderReadB2BApiV1;
     private final it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api_v2.SenderReadB2BApi senderReadB2BApiV2;
     private final it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api_v21.SenderReadB2BApi senderReadB2BApiV21;
+    private final it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api_v25.SenderReadB2BApi senderReadB2BApiV25;
     private final LegalFactsApi legalFactsApi;
     private final it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api_v21.NotificationPriceApi notificationPriceApiV21;
     private final NotificationPriceV23Api notificationPriceV23Api;
@@ -87,6 +93,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         this.senderReadB2BApiV1 = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api_v1.SenderReadB2BApi(newApiClient(restTemplate, basePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
         this.senderReadB2BApiV2 = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api_v2.SenderReadB2BApi(newApiClient(restTemplate, basePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
         this.senderReadB2BApiV21 = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api_v21.SenderReadB2BApi(newApiClient(restTemplate, basePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
+        this.senderReadB2BApiV25 = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api_v25.SenderReadB2BApi( newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop) );
         this.legalFactsApi = new LegalFactsApi(newApiClient(restTemplate, basePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
         this.notificationPriceApiV21 = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api_v21.NotificationPriceApi(newApiClient(restTemplate, basePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
         this.notificationPriceV23Api = new NotificationPriceV23Api(newApiClient(restTemplate, basePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
@@ -307,9 +314,15 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     }
 
     @Override
-    public FullSentNotificationV25 getSentNotification(String iun) {
+    public FullSentNotificationV26 getSentNotification(String iun) {
         refreshAndSetTokenInteropClient();
-        return senderReadB2BApi.retrieveSentNotificationV25(iun);
+        return senderReadB2BApi.retrieveSentNotificationV26(iun);
+    }
+
+    @Override
+    public FullSentNotificationV25 getSentNotificationV25(String iun) {
+        refreshAndSetTokenInteropClient();
+        return deepCopy(senderReadB2BApiV25.retrieveSentNotificationV25(iun), FullSentNotificationV25.class);
     }
 
     @Override
@@ -341,7 +354,13 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     }
 
     @Override
-    public NewNotificationRequestStatusResponseV23 getNotificationRequestStatus(String notificationRequestId) {
+    public NewNotificationRequestStatusResponseV24 getNotificationRequestStatus(String notificationRequestId) {
+        refreshAndSetTokenInteropClient();
+        return senderReadB2BApi.retrieveNotificationRequestStatusV24( notificationRequestId, null, null );
+    }
+
+    @Override
+    public NewNotificationRequestStatusResponseV23 getNotificationRequestStatusV23(String notificationRequestId) {
         refreshAndSetTokenInteropClient();
         return senderReadB2BApi.retrieveNotificationRequestStatusV23(notificationRequestId, null, null);
     }
@@ -398,5 +417,17 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     public RequestStatus notificationCancellation(String iun) throws RestClientException {
         refreshAndSetTokenInteropClient();
         return this.notificationCancellationApi.notificationCancellation(iun);
+    }
+
+    private <T> T deepCopy( Object obj, Class<T> toClass) {
+        ObjectMapper objMapper = JsonMapper.builder()
+                .addModule(new JavaTimeModule())
+                .build();
+        try {
+            String json = objMapper.writeValueAsString( obj );
+            return objMapper.readValue( json, toClass );
+        } catch (JsonProcessingException exc) {
+            throw new PnB2bException(exc.getMessage());
+        }
     }
 }
