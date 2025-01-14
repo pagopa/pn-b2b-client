@@ -3652,4 +3652,37 @@ public class AvanzamentoNotificheB2bSteps {
     private int calculateMins(String notificationType, int analogicaMins, int digitalErrorMins, int digitalSuccessMins) {
         return "ANALOGICA".equals(notificationType) ? analogicaMins : "SUCCESSO DIGITALE".equals(notificationType) ? digitalSuccessMins : digitalErrorMins;
     }
+
+    @And("controllo che le tempistiche di arrivo tra l elemento {string} con address type {string} digitalAddressSource {string} in {string} e l'elemento {string} siano corrette per la notifica {string}")
+    public void controlloCheLeTempisticheDiArrivoTraLElementoConAddressTypeDigitalAddressSourceInELElementoSianoCorrettePerLaNotifica(String firstElement, String addressType, String digitalAddressSource, String responseStatus, String secondElement, String notificationType) {
+        Assertions.assertNotNull(sharedSteps.getSentNotification());
+        Assertions.assertNotNull(sharedSteps.getSentNotification().getTimeline());
+
+        TimelineElementV25 firstElementToCheck = sharedSteps.getSentNotification().getTimeline()
+                .stream()
+                .filter(data -> data.getElementId().startsWith(firstElement))
+                .filter(data -> data.getDetails() != null)
+                .filter(data -> data.getDetails().getResponseStatus().equals(ResponseStatus.fromValue(responseStatus.toUpperCase())))
+                .filter(data -> data.getDetails().getDigitalAddress().getType().equals(addressType))
+                .filter(data -> data.getDetails().getDigitalAddressSource().equals(DigitalAddressSource.fromValue(digitalAddressSource.toUpperCase())))
+                .findFirst()
+                .orElse(null);
+
+        Assertions.assertNotNull(firstElementToCheck);
+        Assertions.assertNotNull(firstElementToCheck.getEventTimestamp());
+
+        TimelineElementV25 secondElementToCheck = sharedSteps.getSentNotification().getTimeline()
+                .stream().filter(data -> data.getElementId().startsWith(secondElement))
+                .findFirst().orElse(null);
+        Assertions.assertNotNull(secondElementToCheck);
+        Assertions.assertNotNull(secondElementToCheck.getDetails());
+        Assertions.assertNotNull(secondElementToCheck.getDetails().getSchedulingDate());
+
+        Assertions.assertEquals(firstElementToCheck.getTimestamp(), firstElementToCheck.getEventTimestamp());
+
+        int minsToCheck = getMinsToCheck(notificationType);
+
+        long differenceInMinutes = Duration.between(firstElementToCheck.getEventTimestamp(), secondElementToCheck.getDetails().getSchedulingDate()).toMinutes();
+        Assertions.assertTrue(differenceInMinutes >= minsToCheck);
+    }
 }
