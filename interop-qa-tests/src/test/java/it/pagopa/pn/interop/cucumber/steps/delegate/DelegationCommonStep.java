@@ -3,10 +3,9 @@ package it.pagopa.pn.interop.cucumber.steps.delegate;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
-import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.interop.delegate.service.IDelegationApiClient;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -35,15 +34,18 @@ public class DelegationCommonStep {
         } catch (HttpClientErrorException.Conflict e) {
             log.info("No delegation availability defined for the given tenant!");
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error while removing delegation availability", e);
         }
     }
 
     @Then("si ottiene lo status code {int}")
     public void thenStatusCodeIs(int statusCode) {
+        Object response = httpCallExecutor.getResponse();
         int actualStatusCode = httpCallExecutor.getClientResponse().value();
-        if (isSuccessful(statusCode)) Assertions.assertEquals(200, actualStatusCode);
-        else Assertions.assertEquals(statusCode, actualStatusCode);
+        String errorMsg = "Unexpected status code. Received response: %n%s".formatted(response);
+
+        if (isSuccessful(statusCode)) Assertions.assertEquals(200, actualStatusCode, errorMsg);
+        else Assertions.assertEquals(statusCode, actualStatusCode, errorMsg);
     }
 
     boolean isSuccessful(int statusCode) {
