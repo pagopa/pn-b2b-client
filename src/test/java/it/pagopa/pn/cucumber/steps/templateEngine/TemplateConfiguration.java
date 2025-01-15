@@ -48,7 +48,7 @@ public class TemplateConfiguration {
     public List<String> notificationReceiverLegalFactFields() {
         return List.of("context_senddate", "context_subject", "context_digest", "notification_iun", "context_notification",
                 "notification_sender", "notification_recipient", "notification_sender_paDenomination", "notification_sender_paTaxId",
-                 "notification_recipient_denomination", "notification_recipient_taxId", "notification_recipient_digitalDomicile");
+                 "notification_recipient_denomination", "notification_recipient_taxId");
     }
 
     @Bean
