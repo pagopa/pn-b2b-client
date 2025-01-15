@@ -1,5 +1,6 @@
 Feature:Perfezionamento della notifica con destinatario irreperibile a 10g dal deposito AAR e revisione date perfezionamento digitali
 
+  @perfezionamentoIrreperibile
   Scenario Outline: [PERFEZIONAMENTO_IRREPERIBILE_1] Notifica analogica AR per PF nel caso in cui il 1° e il 2° tentativo di consegna falliscono controllo delle tempistiche tra SCHEDULE_REFINEMENT_WORKFLOW e ANALOG_FAILURE_WORKFLOW
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -19,6 +20,7 @@ Feature:Perfezionamento della notifica con destinatario irreperibile a 10g dal d
     | Via@FAIL-Irreperibile_AR        |
     | Via@FAIL_IndirizzoInesistenteAR |
 
+  @perfezionamentoIrreperibile
   Scenario: [PERFEZIONAMENTO_IRREPERIBILE_2] Notifica analogica AR per PF nel caso in cui il 1° tentativo fallisse e non fosse possibile individuare un altro indirizzo valido per effettuare un 2° tentativo il sistema procederà a schedulare il perfezionamento - controllo delle tempistiche tra SCHEDULE_REFINEMENT_WORKFLOW e ANALOG_FAILURE_WORKFLOW
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
