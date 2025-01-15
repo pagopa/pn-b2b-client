@@ -318,7 +318,6 @@ Feature: Resa al mittente di una notifica
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
       | digitalDomicile         | NULL               |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    #And esiste l'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" per l'utente 2
     And "Mario Cucumber" legge la notifica
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
     And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost ugauale a "null" per l'utente 2
