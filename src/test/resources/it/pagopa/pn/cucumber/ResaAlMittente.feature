@@ -514,8 +514,8 @@ Feature: Resa al mittente di una notifica
       | details          | NOT_NULL |
       | details_recIndex | 0        |
 
-
-  Scenario: [RETURNED-TO-SENDER_20] Invio notifica AR mono-destinatario Deceduto con VersioningModeFlag=true, atteso stato DELIVERING
+  @returnedToSender
+  Scenario: [RETURNED-TO-SENDER_20-FLAG-TRUE] Invio notifica AR mono-destinatario Deceduto con VersioningModeFlag=true, atteso stato DELIVERING
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -524,7 +524,6 @@ Feature: Resa al mittente di una notifica
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
       | digitalDomicile         | NULL              |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "DELIVERING" con versione V23
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
     Then viene controllato che l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" non esiste con V23
 
@@ -545,8 +544,8 @@ Feature: Resa al mittente di una notifica
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "DELIVERING" con versione V23
 
-
-  Scenario: [RETURNED-TO-SENDER_21-TEST] Invio notifica AR multi-destinatario di cui un Deceduto con VersioningModeFlag=true, atteso stato DELIVERING
+  @returnedToSender @cleanWebhook @precondition @webhook1
+  Scenario: [RETURNED-TO-SENDER_21-FLAG-TRUE] Invio notifica AR multi-destinatario di cui un Deceduto con VersioningModeFlag=true, atteso stato DELIVERING
     And vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V23"
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -555,9 +554,9 @@ Feature: Resa al mittente di una notifica
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
       | digitalDomicile         | NULL              |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V23"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V23"
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "DELIVERING" con versione V23
     Then viene controllato che l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" non esiste con V23
 
