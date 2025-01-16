@@ -21,6 +21,11 @@ public class ConfirmPecBodyStrategy implements ITemplateEngineStrategy {
         return new TemplateEngineResult(file);
     }
 
+    @Override
+    public String getTextToCheckLanguage(String language) {
+        return "Ricevi questa comunicazione perch&eacute; hai inserito il tuo indirizzo";
+    }
+
     private PecVerificationCodeBody createRequest(boolean body, TemplateRequestContext context) {
         if (!body)
             return null;

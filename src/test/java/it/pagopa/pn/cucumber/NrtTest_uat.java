@@ -17,7 +17,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 @ExcludeTags({"ignore", "mockNR", "uat", "appIo", "integration", "giacenza890Complex"})
 @IncludeTags({"workflowDigitale", "workflowAnalogico", "pagamentiMultipli", "giacenza890Simplified",
         "Async", "f24", "version", "AOO_UO", "Annullamento",
-        "validation", "RetentionAllegati", "apiKeyManager", "downtimeLogs",
+        "validation", "RetentionAllegati", "apiKeyManager", "downtimeLogs", "templateEngine",
         "legalFact", "letturaDestinatario", "timestampTecnici", "attestatoAnnullamentoNotifica"})
 public class NrtTest_uat {
 }
