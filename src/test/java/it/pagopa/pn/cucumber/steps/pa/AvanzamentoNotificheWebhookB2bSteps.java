@@ -834,8 +834,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         int numCheck = statusEventForStream.getNumCheck();
         int waiting = statusEventForStream.getWaiting();
 
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus notificationInternalStatus =
-                it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus.valueOf(notificationStatus.name());
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus notificationInternalStatus = it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus.valueOf(notificationStatus.name());
 
         ProgressResponseElementV23 progressResponseElement = null;
 
@@ -843,8 +842,8 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         for (int i = 0; i < numCheck; i++) {
             sleepTest(waiting);
 
-            sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
-            NotificationStatusHistoryElementV26 notificationStatusHistoryElement = sharedSteps.getSentNotification().getNotificationStatusHistory().stream().filter(elem -> elem.getStatus().equals(notificationInternalStatus)).findAny().orElse(null);
+            sharedSteps.setSentNotificationV23(b2bClient.getSentNotificationV23(sharedSteps.getSentNotification().getIun()));
+            NotificationStatusHistoryElement notificationStatusHistoryElement = sharedSteps.getSentNotificationV23().getNotificationStatusHistory().stream().filter(elem -> elem.getStatus().equals(notificationInternalStatus)).findAny().orElse(null);
 
             if (notificationStatusHistoryElement != null) {
                 finded = true;
@@ -868,7 +867,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             log.info("EventProgress: " + progressResponseElement);
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
-                    " {IUN: " + sharedSteps.getSentNotification().getIun() + " -WEBHOOK: " + this.eventStreamListV23.get(0).getStreamId() + " }";
+                    " {IUN: " + sharedSteps.getSentNotificationV23().getIun() + " -WEBHOOK: " + this.eventStreamListV23.get(0).getStreamId() + " }";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
 
@@ -1014,8 +1013,8 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
         ProgressResponseElement progressResponseElement = null;
 
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23 timelineElementInternalCategory =
-                it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23.valueOf(timelineElementCategory.name());
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26 timelineElementInternalCategory =
+                it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26.valueOf(timelineElementCategory.name());
 
         boolean finish = checkInternalTimeline(timelineElementCategory.name(), numCheck, waiting);
         Assertions.assertTrue(finish);
@@ -1168,13 +1167,13 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         try {
             Assertions.assertNotNull(progressResponseElement);
             Assertions.assertEquals(progressResponseElement.getElement().getTimestamp().truncatedTo(ChronoUnit.SECONDS),
-                    sharedSteps.getSentNotification().getTimeline().stream()
+                    sharedSteps.getSentNotificationV23().getTimeline().stream()
                             .filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().get().getTimestamp().truncatedTo(ChronoUnit.SECONDS));
             log.info("EventProgress: " + progressResponseElement);
 
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
-                    "{IUN: " + sharedSteps.getSentNotification().getIun() + " -WEBHOOK: " + this.eventStreamListV23.get(0).getStreamId() + " }";
+                    "{IUN: " + sharedSteps.getSentNotificationV23().getIun() + " -WEBHOOK: " + this.eventStreamListV23.get(0).getStreamId() + " }";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
     }
@@ -1293,14 +1292,14 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             progressResponseElementResultV23 = progressResponseElement;
             //TODO Verificare...
             Assertions.assertEquals(progressResponseElement.getElement().getTimestamp().truncatedTo(ChronoUnit.SECONDS),
-                    sharedSteps.getSentNotification().getTimeline().stream()
+                    sharedSteps.getSentNotificationV23().getTimeline().stream()
                             .filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().get().getTimestamp().truncatedTo(ChronoUnit.SECONDS));
             log.info("EventProgress: " + progressResponseElement);
             sharedSteps.setProgressResponseElementV23(progressResponseElement);
             //sharedSteps.getTimelineElementV23().getDetails();
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
-                    "{IUN: " + sharedSteps.getSentNotification().getIun() + " -WEBHOOK: " + this.eventStreamListV23.get(0).getStreamId() + " }";
+                    "{IUN: " + sharedSteps.getSentNotificationV23().getIun() + " -WEBHOOK: " + this.eventStreamListV23.get(0).getStreamId() + " }";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
     }
@@ -2001,8 +2000,8 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }
 
     private boolean checkInternalTimeline(String timelineElementName, int numCheck, int waiting) {
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23 timelineElementInternalCategory =
-                it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23.valueOf(timelineElementName);
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26 timelineElementInternalCategory =
+                it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26.valueOf(timelineElementName);
 
         boolean finish = false;
         for (int i = 0; i < numCheck; i++) {
