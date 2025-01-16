@@ -144,9 +144,9 @@ Feature: Resa al mittente di una notifica
       | taxId                   | NNTNRZ80A01H501D   |
       | digitalDomicile         | NULL               |
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V26"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V26"
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "RETURNED_TO_SENDER" con versione V26
 
   @returnedToSender
@@ -318,7 +318,6 @@ Feature: Resa al mittente di una notifica
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
       | digitalDomicile         | NULL               |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And esiste l'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" per l'utente 2
     And "Mario Cucumber" legge la notifica
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
     And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost ugauale a "null" per l'utente 2
