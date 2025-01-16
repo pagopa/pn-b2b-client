@@ -72,9 +72,6 @@ public class AvanzamentoNotificheB2bSteps {
     @Value("${pn.consolidatore.requestId}")
     private String requestIdConsolidator;
 
-    @Value("${spring.profiles.active}")
-    private String env;
-
     @Autowired
     public AvanzamentoNotificheB2bSteps(SharedSteps sharedSteps,
                                         TimingForPolling timingForPolling,
@@ -3565,76 +3562,89 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
+    @And("controllo che le tempistiche di arrivo tra l elemento {string} con address type {string} digitalAddressSource {string} in {string} e l'elemento {string} siano corrette per la notifica {string}")
+    public void controlloCheLeTempisticheDiArrivoTraLElementoConAddressTypeDigitalAddressSourceInELElementoSianoCorrettePerLaNotifica(String firstElement, String addressType, String digitalAddressSource, String responseStatus, String secondElement, String notificationType) {
 
-    @And("controllo che le tempistiche di arrivo tra l elemento {string} e l'elemento {string} siano corrette per la notifica {string}")
-    public void controlloCheLeTempisticheDiArrivoTraLElementoELElementoSiaDiMinuti(String firstElement, String secondElement, String notificationType) {
         Assertions.assertNotNull(sharedSteps.getSentNotification());
         Assertions.assertNotNull(sharedSteps.getSentNotification().getTimeline());
+        String iun = sharedSteps.getSentNotification().getIun();
 
-        TimelineElementV26 firstElementToCheck = sharedSteps.getSentNotification().getTimeline()
-                .stream().filter(data -> data.getElementId().startsWith(firstElement))
-                .findFirst().orElse(null);
-        Assertions.assertNotNull(firstElementToCheck);
-        Assertions.assertNotNull(firstElementToCheck.getEventTimestamp());
+        TimelineElementV26 firstElementToCheck = getElementToCheck(firstElement, addressType, digitalAddressSource, responseStatus);
 
-        TimelineElementV26 secondElementToCheck = sharedSteps.getSentNotification().getTimeline()
-                .stream().filter(data -> data.getElementId().startsWith(secondElement))
-                .findFirst().orElse(null);
-        Assertions.assertNotNull(secondElementToCheck);
-        Assertions.assertNotNull(secondElementToCheck.getDetails());
-        Assertions.assertNotNull(secondElementToCheck.getDetails().getSchedulingDate());
+        Assertions.assertNotNull(firstElementToCheck, "first element to check not found iun: " + iun);
+        Assertions.assertNotNull(firstElementToCheck.getEventTimestamp(), "EventTimestamp for first element to check not found iun: " + iun);
+
+        TimelineElementV26 secondElementToCheck = getElementToCheck(secondElement);
+
+        Assertions.assertNotNull(secondElementToCheck, "second element to check not found iun: " + iun);
+        Assertions.assertNotNull(secondElementToCheck.getDetails(), "Details for second element to check not found iun: " + iun);
+        Assertions.assertNotNull(secondElementToCheck.getDetails().getSchedulingDate(), "SchedulingDate for second element to check not found iun: " + iun);
 
         Assertions.assertEquals(firstElementToCheck.getTimestamp(), firstElementToCheck.getEventTimestamp());
 
         int minsToCheck = getMinsToCheck(notificationType);
 
-        long differenceInMinutes = Duration.between(firstElementToCheck.getEventTimestamp(), secondElementToCheck.getDetails().getSchedulingDate()).toMinutes();
-        Assertions.assertTrue(differenceInMinutes >= minsToCheck);
+        long differenceInMinutes = Duration.between(getFirstElementTime(firstElementToCheck, firstElement, iun), secondElementToCheck.getDetails().getSchedulingDate()).toMinutes();
+        Assertions.assertEquals(minsToCheck, differenceInMinutes, "Time between first and second element not correct: " + iun + " expected wait " + minsToCheck + " actual wait " + differenceInMinutes);
     }
 
-    private int getMinsToCheck(String notificationType) {
-        return switch (env) {
-            case "dev" -> calculateMins(notificationType,4, 6, 3);
-            case "test" -> calculateMins(notificationType,2, 3, 1);
-            case "uat" -> calculateMins(notificationType, 8, 10, 6);
-            default -> throw new IllegalArgumentException("No env founded");
-        };
+    private OffsetDateTime getFirstElementTime(TimelineElementV26 firstElementToCheck, String firstElement, String iun) {
+        if (firstElement.equalsIgnoreCase("DIGITAL_DELIVERY_CREATION_REQUEST")) {
+            Assertions.assertNotNull(firstElementToCheck.getDetails(), "Details for first element to check not found iun: " + iun);
+            Assertions.assertNotNull(firstElementToCheck.getDetails().getCompletionWorkflowDate(), "CompletionWorkflowDate for first element to check not found iun: " + iun);
+            return firstElementToCheck.getDetails().getCompletionWorkflowDate();
+        } else return firstElementToCheck.getEventTimestamp();
+
     }
 
-    private int calculateMins(String notificationType, int analogicaMins, int digitalErrorMins, int digitalSuccessMins) {
-        return "ANALOGICA".equals(notificationType) ? analogicaMins : "SUCCESSO DIGITALE".equals(notificationType) ? digitalSuccessMins : digitalErrorMins;
+    private TimelineElementV26 getElementToCheck(String secondElement) {
+        return sharedSteps.getSentNotification().getTimeline()
+                .stream().filter(data -> data.getElementId().startsWith(secondElement))
+                .findFirst().orElse(null);
     }
 
-    @And("controllo che le tempistiche di arrivo tra l elemento {string} con address type {string} digitalAddressSource {string} in {string} e l'elemento {string} siano corrette per la notifica {string}")
-    public void controlloCheLeTempisticheDiArrivoTraLElementoConAddressTypeDigitalAddressSourceInELElementoSianoCorrettePerLaNotifica(String firstElement, String addressType, String digitalAddressSource, String responseStatus, String secondElement, String notificationType) {
-        Assertions.assertNotNull(sharedSteps.getSentNotification());
-        Assertions.assertNotNull(sharedSteps.getSentNotification().getTimeline());
-
-        TimelineElementV26 firstElementToCheck = sharedSteps.getSentNotification().getTimeline()
+    private TimelineElementV26 getElementToCheck(String firstElement, String addressType, String digitalAddressSource, String responseStatus) {
+        return sharedSteps.getSentNotification().getTimeline()
                 .stream()
                 .filter(data -> data.getElementId().startsWith(firstElement))
                 .filter(data -> data.getDetails() != null)
-                .filter(data -> data.getDetails().getResponseStatus().equals(ResponseStatus.fromValue(responseStatus.toUpperCase())))
-                .filter(data -> data.getDetails().getDigitalAddress().getType().equals(addressType))
-                .filter(data -> data.getDetails().getDigitalAddressSource().equals(DigitalAddressSource.fromValue(digitalAddressSource.toUpperCase())))
+                .filter(data -> responseStatus == null || data.getDetails().getResponseStatus().equals(ResponseStatus.fromValue(responseStatus.toUpperCase())))
+                .filter(data -> addressType == null || data.getDetails().getDigitalAddress().getType().equals(addressType))
+                .filter(data -> digitalAddressSource == null || data.getDetails().getDigitalAddressSource().equals(DigitalAddressSource.fromValue(digitalAddressSource.toUpperCase())))
                 .findFirst()
                 .orElse(null);
+    }
 
-        Assertions.assertNotNull(firstElementToCheck);
-        Assertions.assertNotNull(firstElementToCheck.getEventTimestamp());
+    @And("controllo che le tempistiche di arrivo tra l elemento {string} e l'elemento {string} siano corrette per la notifica {string}")
+    public void controlloCheLeTempisticheDiArrivoTraLElementoELElementoSiaDiMinuti(String firstElement, String secondElement, String notificationType) {
+        controlloCheLeTempisticheDiArrivoTraLElementoConAddressTypeDigitalAddressSourceInELElementoSianoCorrettePerLaNotifica(firstElement, null, null, null, secondElement, notificationType);
+    }
 
-        TimelineElementV26 secondElementToCheck = sharedSteps.getSentNotification().getTimeline()
-                .stream().filter(data -> data.getElementId().startsWith(secondElement))
+    private int getMinsToCheck(String notificationType) {
+        return switch (notificationType) {
+            case "SUCCESSO ANALOGICO" -> sharedSteps.getSchedulingDaysSuccessAnalogRefinement().toMinutesPart();
+            case "ERRORE ANALOGICO" -> sharedSteps.getSchedulingDaysFailureAnalogRefinement().toMinutesPart();
+            case "SUCCESSO DIGITALE" -> sharedSteps.getSchedulingDaysSuccessDigitalRefinement().toMinutesPart();
+            case "ERRORE DIGITALE" -> sharedSteps.getSchedulingDaysFailureDigitalRefinement().toMinutesPart();
+            default -> throw new IllegalArgumentException("No notificationType founded");
+        };
+    }
+
+    @And("viene verificato che l'elemento di timeline {string} con response status {string} con la {string} {string}")
+    public void vieneVerificatoCheLElementoDiTimelineConResponseStatusPerLa(String timelineElement, String responseStatus, String type, String address) {
+        Assertions.assertNotNull(sharedSteps.getSentNotification());
+        Assertions.assertNotNull(sharedSteps.getSentNotification().getTimeline());
+        String iun = sharedSteps.getSentNotification().getIun();
+
+        TimelineElementV26 element = sharedSteps.getSentNotification().getTimeline()
+                .stream()
+                .filter(data -> data.getElementId().startsWith(timelineElement))
+                .filter(data -> data.getDetails() != null)
+                .filter(data -> data.getDetails().getResponseStatus().equals(ResponseStatus.fromValue(responseStatus.toUpperCase())))
+                .filter(data -> data.getDetails().getDigitalAddress().getType().equalsIgnoreCase(type))
+                .filter(data -> data.getDetails().getDigitalAddress().getAddress().equalsIgnoreCase(address))
                 .findFirst().orElse(null);
-        Assertions.assertNotNull(secondElementToCheck);
-        Assertions.assertNotNull(secondElementToCheck.getDetails());
-        Assertions.assertNotNull(secondElementToCheck.getDetails().getSchedulingDate());
 
-        Assertions.assertEquals(firstElementToCheck.getTimestamp(), firstElementToCheck.getEventTimestamp());
-
-        int minsToCheck = getMinsToCheck(notificationType);
-
-        long differenceInMinutes = Duration.between(firstElementToCheck.getEventTimestamp(), secondElementToCheck.getDetails().getSchedulingDate()).toMinutes();
-        Assertions.assertTrue(differenceInMinutes >= minsToCheck);
+        Assertions.assertNotNull(element, "the element to check is not found iun: " + iun);
     }
 }

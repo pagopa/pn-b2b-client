@@ -14,7 +14,7 @@ Feature:Perfezionamento della notifica con destinatario irreperibile a 10g dal d
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    And controllo che le tempistiche di arrivo tra l elemento "ANALOG_FAILURE_WORKFLOW" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "ANALOGICA"
+    And controllo che le tempistiche di arrivo tra l elemento "ANALOG_FAILURE_WORKFLOW" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "ERRORE ANALOGICO"
     Examples:
     | SEQUENCE                        |
     | Via@FAIL-Irreperibile_AR        |
@@ -34,4 +34,4 @@ Feature:Perfezionamento della notifica con destinatario irreperibile a 10g dal d
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    And controllo che le tempistiche di arrivo tra l elemento "ANALOG_FAILURE_WORKFLOW" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "ANALOGICA"
+    And controllo che le tempistiche di arrivo tra l elemento "ANALOG_FAILURE_WORKFLOW" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "ERRORE ANALOGICO"
