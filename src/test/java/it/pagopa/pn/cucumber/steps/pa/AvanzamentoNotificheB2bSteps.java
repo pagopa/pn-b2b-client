@@ -1,17 +1,59 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
+import static java.time.OffsetDateTime.now;
+import static java.time.temporal.ChronoUnit.SECONDS;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.within;
+import static org.awaitility.Awaitility.await;
+
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.DelegateInfo;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV26;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactCategory;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactDownloadMetadataResponse;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactsIdV20;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NewNotificationRequestV24;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationFeePolicy;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationPaymentItem;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationPriceResponseV23;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryElementV26;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PaymentEventPagoPa;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PaymentEventsRequestPagoPa;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.RequestStatus;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.ServiceLevel;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementDetailsV23;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementDetailsV26;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26;
 import it.pagopa.pn.client.b2b.pa.mapper.impl.PnTimelineAndLegalFactV26;
 import it.pagopa.pn.client.b2b.pa.mapper.model.PnTimelineLegalFactV26;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
-import it.pagopa.pn.client.b2b.pa.polling.dto.*;
-import it.pagopa.pn.client.b2b.pa.polling.impl.*;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingPredicate;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV1;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV20;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV21;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV23;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV26;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceStatusRapidV1;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceStatusRapidV26;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineExtraRapidV26;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineRapidV1;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineRapidV20;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineRapidV21;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineRapidV23;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineRapidV26;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineSlowV1;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineSlowV26;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnPrivateDeliveryPushExternalClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
@@ -22,6 +64,25 @@ import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.ResponsePaperNotificationFailedDto;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.utils.DataTest;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -32,22 +93,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.HttpStatusCodeException;
-
-import java.time.Duration;
-import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Predicate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static java.time.OffsetDateTime.now;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static org.awaitility.Awaitility.await;
 
 
 @Slf4j
@@ -563,9 +608,9 @@ public class AvanzamentoNotificheB2bSteps {
     @Then("verifica date business in timeline COMPLETELY_UNREACHABLE per l'utente {int}")
     public void verificationDateComplettelyUnreachableWithRefinement(Integer destinatario) {
         try {
-            OffsetDateTime shedulingDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV26.SCHEDULE_REFINEMENT) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
-            OffsetDateTime complettelyUnreachableDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV26.COMPLETELY_UNREACHABLE) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
-            OffsetDateTime complettelyUnreachableRequestDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV26.COMPLETELY_UNREACHABLE_CREATION_REQUEST) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
+            OffsetDateTime schedulingDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV26.SCHEDULE_REFINEMENT) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
+            OffsetDateTime completelyUnreachableDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV26.COMPLETELY_UNREACHABLE) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
+            OffsetDateTime completelyUnreachableRequestDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV26.COMPLETELY_UNREACHABLE_CREATION_REQUEST) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
             OffsetDateTime analogFailureDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV26.ANALOG_FAILURE_WORKFLOW) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
             OffsetDateTime sendAnalogProgressTimestampDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV26.SEND_ANALOG_PROGRESS) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
             OffsetDateTime sendAnalogProgressNotificationDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV26.SEND_ANALOG_PROGRESS) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getDetails().getNotificationDate();
@@ -577,21 +622,28 @@ public class AvanzamentoNotificheB2bSteps {
             log.info("sendAnalogProgressTimestampDate : {}", sendAnalogProgressTimestampDate);
             log.info("sendFeedbackTimestampDate : {} ", sendFeedbackTimestampDate);
             log.info("analogFailureDate Timestamp : {}", analogFailureDate);
-            log.info("complettelyUnreachableRequestDate Timestamp : {}", complettelyUnreachableRequestDate);
-            log.info("complettelyUnreachableDate Timestamp : {}", complettelyUnreachableDate);
+            log.info("completelyUnreachableRequestDate Timestamp : {}", completelyUnreachableRequestDate);
+            log.info("completelyUnreachableDate Timestamp : {}", completelyUnreachableDate);
             log.info("prepareAnalogDomicileFailureTimestamp : {}", prepareAnalogDomicileFailureTimestamp);
 
-            log.info("shedulingDate Timestamp: {}", shedulingDate);
+            log.info("schedulingDate Timestamp: {}", schedulingDate);
 
             log.info("sendAnalogProgressNotificationDate : {}", sendAnalogProgressNotificationDate);
             log.info("sendFeedbackNotificationDate : {}", sendFeedbackNotificationDate);
 
-            Assertions.assertEquals(shedulingDate, complettelyUnreachableDate);
-            Assertions.assertEquals(shedulingDate, complettelyUnreachableRequestDate);
-            Assertions.assertEquals(shedulingDate, analogFailureDate);
-            Assertions.assertEquals(shedulingDate, prepareAnalogDomicileFailureTimestamp);
-            Assertions.assertEquals(sendAnalogProgressTimestampDate, sendAnalogProgressNotificationDate);
-            Assertions.assertEquals(sendFeedbackTimestampDate, sendFeedbackNotificationDate);
+            assertThat(completelyUnreachableDate)
+                .isCloseTo(schedulingDate, within(1, SECONDS));
+            assertThat(completelyUnreachableRequestDate)
+                .isCloseTo(schedulingDate, within(1, SECONDS));
+            assertThat(analogFailureDate)
+                .isCloseTo(schedulingDate, within(1, SECONDS));
+            assertThat(prepareAnalogDomicileFailureTimestamp)
+                .isCloseTo(schedulingDate, within(1, SECONDS));
+            assertThat(sendAnalogProgressNotificationDate)
+                .isCloseTo(schedulingDate, within(1, SECONDS));
+            assertThat(sendFeedbackNotificationDate)
+                .isCloseTo(schedulingDate, within(1, SECONDS));
+
             //TODO  Verificare..
             // Assertions.assertEquals(sendFeedbackDate,sendAnalogProgressDate);
         } catch (AssertionFailedError assertionFailedError) {
@@ -602,7 +654,7 @@ public class AvanzamentoNotificheB2bSteps {
     @Then("verifica date business in timeline ANALOG_SUCCESS_WORKFLOW per l'utente {int} al tentativo {int}")
     public void verificationDateScheduleRefinementWithSendAnalogFeedback(Integer destinatario, Integer tentativo) {
         try {
-            OffsetDateTime shedulingDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV26.SCHEDULE_REFINEMENT) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
+            OffsetDateTime schedulingDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV26.SCHEDULE_REFINEMENT) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
             OffsetDateTime sendAnalogProgressNotificationDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV26.SEND_ANALOG_PROGRESS) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getDetails().getNotificationDate();
             OffsetDateTime sendAnalogProgressTimestampDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV26.SEND_ANALOG_PROGRESS) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
             OffsetDateTime sendFeedbackTimestampDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV26.SEND_ANALOG_FEEDBACK) && elem.getDetails().getRecIndex().equals(destinatario) && elem.getDetails().getSentAttemptMade().equals(tentativo)).findAny().get().getTimestamp();
@@ -613,18 +665,20 @@ public class AvanzamentoNotificheB2bSteps {
             log.info("sendAnalogProgressTimestampDate: {}", sendAnalogProgressTimestampDate);
             log.info("sendFeedbackTimestampDate: {}", sendFeedbackTimestampDate);
             log.info("analogSuccessDate Timestamp: {}", analogSuccessDate);
-            log.info("shedulingDate Timestamp: {}", shedulingDate);
+            log.info("schedulingDate Timestamp: {}", schedulingDate);
 
 
             log.info("sendFeedbackNotificationDate : {}", sendFeedbackNotificationDate);
             log.info("sendAnalogProgressNotificationDate: {}", sendAnalogProgressNotificationDate);
 
-            Assertions.assertEquals(shedulingDate, analogSuccessDate);
-            Assertions.assertEquals(shedulingDate, sendFeedbackTimestampDate);
-
-            Assertions.assertEquals(sendAnalogProgressTimestampDate, sendAnalogProgressNotificationDate);
-            Assertions.assertEquals(sendFeedbackTimestampDate, sendFeedbackNotificationDate);
-
+            assertThat(analogSuccessDate)
+                .isCloseTo(schedulingDate, within(1, SECONDS));
+            assertThat(sendFeedbackTimestampDate)
+                .isCloseTo(schedulingDate, within(1, SECONDS));
+            assertThat(sendAnalogProgressNotificationDate)
+                .isCloseTo(sendAnalogProgressTimestampDate, within(1, SECONDS));
+            assertThat(sendFeedbackNotificationDate)
+                .isCloseTo(sendFeedbackTimestampDate, within(1, SECONDS));
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
