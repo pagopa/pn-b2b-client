@@ -255,7 +255,7 @@ public class AvanzamentoNotificheB2bSteps {
                     if (Objects.nonNull(detailsFromTest.getPhysicalAddress()))
                         Assertions.assertEquals(detailsFromNotification.getPhysicalAddress(), detailsFromTest.getPhysicalAddress());
                     if (Objects.nonNull(detailsFromTest.getResponseStatus()))
-                    Assertions.assertEquals(detailsFromNotification.getResponseStatus().getValue(), detailsFromTest.getResponseStatus().getValue());
+                        Assertions.assertEquals(detailsFromNotification.getResponseStatus().getValue(), detailsFromTest.getResponseStatus().getValue());
                     if (Objects.nonNull(detailsFromTest.getDeliveryFailureCause())) {
                         List<String> failureCauses = Arrays.asList(detailsFromTest.getDeliveryFailureCause().split(" "));
                         Assertions.assertTrue(failureCauses.contains(elementFromNotification.getDetails().getDeliveryFailureCause()));
@@ -3558,6 +3558,18 @@ public class AvanzamentoNotificheB2bSteps {
             sharedSteps.setSentNotificationV23(pnPollingResponseV23.getNotification());
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
+    @Then("viene controllato che l'elemento di timeline della notifica {string} non esiste con errore V23")
+    public void readingNotEventUpToTheTimelineElementOfNotificationV23Error(String timelineEventCategory) {
+
+        try {
+            PnPollingServiceTimelineRapidV23 timelineRapidV23 = (PnPollingServiceTimelineRapidV23) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_RAPID_V23);
+
+        } catch (HttpStatusCodeException e) {
+            this.notificationError = e;
+            sharedSteps.setNotificationError(e);
         }
     }
 

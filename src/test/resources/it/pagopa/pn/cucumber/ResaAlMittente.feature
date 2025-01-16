@@ -525,6 +525,7 @@ Feature: Resa al mittente di una notifica
       | digitalDomicile         | NULL              |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
+    #And vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
     Then viene controllato che l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" non esiste con V23
 
 
@@ -560,7 +561,7 @@ Feature: Resa al mittente di una notifica
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "DELIVERING" con versione V23
     Then viene controllato che l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" non esiste con V23
 
-
+  #@returnedToSender @cleanWebhook @precondition @webhook1
   Scenario: [RETURNED-TO-SENDER_22] Invio notifica 890 mono-destinatario Deceduto con VersioningModeFlag=false, si attende errore 400
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -572,6 +573,10 @@ Feature: Resa al mittente di una notifica
       | digitalDomicile         | NULL               |
     #When la notifica viene inviata dal "Comune_Multi"
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V23"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V23"
+    Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "DELIVERING" con versione V23
+    #When vengono letti gli eventi dello stream versione V23
     Then l'operazione ha prodotto un errore con status code "400"
 
 
@@ -592,4 +597,21 @@ Feature: Resa al mittente di una notifica
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V25"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V25"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "RETURNED_TO_SENDER"
+    Then l'operazione ha prodotto un errore con status code "400"
+
+
+
+  #@returnedToSender
+  Scenario: [RETURNED-TO-SENDER_20-FLAG-FALSE] Invio notifica AR mono-destinatario Deceduto con VersioningModeFlag=true, atteso stato DELIVERING
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_AR |
+      | digitalDomicile         | NULL              |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
+    And vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
+    Then viene controllato che l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" non esiste con errore V23
     Then l'operazione ha prodotto un errore con status code "400"
