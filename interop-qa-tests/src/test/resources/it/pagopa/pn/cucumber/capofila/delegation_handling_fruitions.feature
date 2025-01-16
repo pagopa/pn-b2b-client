@@ -73,4 +73,5 @@ Feature: Creazione di una delega e gestione delle richieste di fruizione
     And l'ente "PA1" accetta la delega
     Given "GSP" ha già creato e inviato una richiesta di fruizione per quell'e-service ed è in attesa di approvazione
     And "PA1" ha già rifiutato quella richiesta di fruizione
+    Then si ottiene lo status code 200
 
