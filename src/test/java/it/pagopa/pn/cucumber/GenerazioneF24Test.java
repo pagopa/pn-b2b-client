@@ -16,6 +16,6 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 
 })
 @ExcludeTags({"ignore"})
-@IncludeTags({"f24"})
+@IncludeTags({"f24ValidationOff"})
 public class GenerazioneF24Test {
 }

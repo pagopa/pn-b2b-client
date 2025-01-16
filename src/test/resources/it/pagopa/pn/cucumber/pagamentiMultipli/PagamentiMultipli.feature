@@ -3525,7 +3525,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
-  @f24
+  @f24 @f24ValidationOff
   Scenario: [B2B-PA-PAY_VALIDATION_OFF_1] PA - Inserimento notifica mono destinatario con F24 SEMPLIFICATO con FLAG ISVALIDATIONENABLE OFF verso PG con USERNAME non valido.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -3544,7 +3544,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
-  @f24
+  @f24 @f24ValidationOff
   Scenario: [B2B-PA-PAY_VALIDATION_OFF_2] PA - Inserimento notifica mono destinatario con F24 SEMPLIFICATO con FLAG ISVALIDATIONENABLE OFF verso PF con USERNAME non valido.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -3562,7 +3562,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
-  @f24
+  @f24 @f24ValidationOff
   Scenario: [B2B-PA-PAY_VALIDATION_OFF_3] PA - Inserimento notifica mono destinatario con F24 SEMPLIFICATO con FLAG ISVALIDATIONENABLE OFF verso PG con TAXCODE numerico.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
