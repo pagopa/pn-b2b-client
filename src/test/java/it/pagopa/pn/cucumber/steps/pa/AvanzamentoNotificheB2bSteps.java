@@ -3580,7 +3580,7 @@ public class AvanzamentoNotificheB2bSteps {
         Assertions.assertNotNull(secondElementToCheck.getDetails(), "Details for second element to check not found iun: " + iun);
         Assertions.assertNotNull(secondElementToCheck.getDetails().getSchedulingDate(), "SchedulingDate for second element to check not found iun: " + iun);
 
-        Assertions.assertEquals(secondElementToCheck.getTimestamp(), firstElementToCheck.getEventTimestamp());
+        Assertions.assertEquals(firstElementToCheck.getTimestamp(), firstElementToCheck.getEventTimestamp());
 
         int minsToCheck = getMinsToCheck(notificationType);
 

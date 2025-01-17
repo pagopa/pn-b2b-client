@@ -19,7 +19,7 @@ Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal 
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" con address type "SERCQ" digitalAddressSource "PLATFORM" in "OK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
 
-    #21
+    #21ko
   @perfezionamentoIrreperibile
   Scenario: [PERFEZIONAMENTO_IRREPERIBILE_4] Invio notifica digitale monodestinatario PF con indirizzo speciale associato
     Given viene generata una nuova notifica
