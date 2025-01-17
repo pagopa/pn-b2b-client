@@ -17,7 +17,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 })
 @ExcludeTags({"ignore", "uat", "realNR", "appIo", "giacenza890Complex"})
 @IncludeTags({"workflowDigitale", "workflowAnalogico", "pagamentiMultipli", "giacenza890Simplified",
-        "Async", "f24", "version", "AOO_UO", "Annullamento", "templateEngine",
+        "Async", "f24", "version", "AOO_UO", "Annullamento",
         "validation", "RetentionAllegati", "apiKeyManager", "downtimeLogs",
         "legalFact", "letturaDestinatario", "timestampTecnici", "attestatoAnnullamentoNotifica"})
 //TMP EXCLUDED: ,"partitaIva","raddAlt"
