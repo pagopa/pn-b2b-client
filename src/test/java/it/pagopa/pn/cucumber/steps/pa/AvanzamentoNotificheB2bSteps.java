@@ -640,14 +640,14 @@ public class AvanzamentoNotificheB2bSteps {
             assertThat(prepareAnalogDomicileFailureTimestamp)
                 .isCloseTo(schedulingDate, within(1, SECONDS));
             assertThat(sendAnalogProgressNotificationDate)
-                .isCloseTo(schedulingDate, within(1, SECONDS));
+                .isCloseTo(sendAnalogProgressTimestampDate, within(1, SECONDS));
             assertThat(sendFeedbackNotificationDate)
-                .isCloseTo(schedulingDate, within(1, SECONDS));
+                .isCloseTo(sendFeedbackTimestampDate, within(1, SECONDS));
 
             //TODO  Verificare..
-            // Assertions.assertEquals(sendFeedbackDate,sendAnalogProgressDate);
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            // Assertions.Assertions.assertEquals(sendFeedbackDate,sendAnalogProgressDate);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionError);
         }
     }
 
@@ -679,8 +679,8 @@ public class AvanzamentoNotificheB2bSteps {
                 .isCloseTo(sendAnalogProgressTimestampDate, within(1, SECONDS));
             assertThat(sendFeedbackNotificationDate)
                 .isCloseTo(sendFeedbackTimestampDate, within(1, SECONDS));
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionError);
         }
     }
 
@@ -2660,7 +2660,7 @@ public class AvanzamentoNotificheB2bSteps {
         System.out.println(timelineElement.getDetails().getSchedulingDate().format(fmt1));
         System.out.println(schedulingDate.format(fmt1));
         Assertions.assertEquals(timelineElement.getDetails().getSchedulingDate().format(fmt1), schedulingDate.format(fmt1));
-        //Assertions.assertEquals(timelineElement.getDetails().getSchedulingDate(), schedulingDate);
+        //Assertions.Assertions.assertEquals(timelineElement.getDetails().getSchedulingDate(), schedulingDate);
     }
 
     @And("si attende che sia presente il perfezionamento per decorrenza termini")
