@@ -73,7 +73,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico AR
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW" per l'utente 0
 
 
-  @workflowAnalogico @QA5439
+  @workflowAnalogico
   Scenario: [B2B_TIMELINE_MULTI_ANALOG_AR_5] Invio notifica multidestinatario complettamente irreperibile e successo digitale e controllo date business PN-9059
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -118,7 +118,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico AR
     And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 1
 
 
-  @workflowAnalogico @QA5439
+  @workflowAnalogico
   Scenario: [B2B_TIMELINE_MULTI_ANALOG_AR_7] Invio notifica multidestinatario completamente irreperibile e fallimento digitale e controllo date business PN-9059
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -140,7 +140,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico AR
     And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 0
     And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 1
 
-  @QA5439
+
   Scenario: [B2B_TIMELINE_MULTI_ANALOG_AR_8] Invio notifica multidestinatario ritardo analogico ,2 tentativi analogici e successo digitale e controllo date business PN-9059
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -168,7 +168,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico AR
     And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 1
     And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 2
 
-  @QA5439
+
   Scenario: [B2B_TIMELINE_MULTI_ANALOG_AR_9] Invio notifica multidestinatario ritardo analogico ,2 tentativi analogici e fallimento digitale e controllo date business PN-9059
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -197,7 +197,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico AR
     And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 1
     And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 2
 
-  @QA5439
+
   Scenario: [B2B_TIMELINE_MULTI_ANALOG_AR_10] Invio notifica multidestinatario ritardo analogico e fallimento digitale e controllo date business PN-9059
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -217,7 +217,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico AR
     And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 0
     And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 1
 
-  @QA5439
+
   Scenario: [B2B_TIMELINE_MULTI_ANALOG_AR_11] Invio notifica multidestinatario ritardo analogico e successo digitale e controllo date business PN-9059
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -236,7 +236,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico AR
     And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 0
     And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 1
 
-  @QA5439
+
   Scenario: [B2B_TIMELINE_MULTI_ANALOG_AR_12] Invio notifica multidestinatario ritardo analogico ,2 tentativi e controllo date business PN-9059
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |

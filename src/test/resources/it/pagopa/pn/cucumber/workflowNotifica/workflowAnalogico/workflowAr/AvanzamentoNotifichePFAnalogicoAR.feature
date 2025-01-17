@@ -53,7 +53,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo AR
     And verifica date business in timeline ANALOG_SUCCESS_WORKFLOW per l'utente 0 al tentativo 0
 
 
-  @workflowAnalogico @QA5439
+  @workflowAnalogico
   Scenario: [B2B_TIMELINE_ANALOG_AR_3] Attesa elemento di timeline COMPLETELY_UNREACHABLE_fail_AR_scenario negativo PN-9059
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
