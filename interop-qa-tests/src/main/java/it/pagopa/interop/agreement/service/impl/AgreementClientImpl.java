@@ -1,32 +1,33 @@
 package it.pagopa.interop.agreement.service.impl;
 
 import it.pagopa.interop.agreement.service.IAgreementClient;
-import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
 import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.AgreementsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Agreement;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementRejectionPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementSubmissionPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import org.springframework.web.client.RestTemplate;
-
 import java.io.File;
 import java.util.UUID;
 
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
+
+@Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class AgreementClientImpl implements IAgreementClient {
     private final AgreementsApi agreementsApi;
     private final RestTemplate restTemplate;
-    private final InteropClientConfigs interopClientConfigs;
     private final String basePath;
-    private final String bearerToken;
 
     public AgreementClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
-        this.interopClientConfigs = interopClientConfigs;
         this.basePath = interopClientConfigs.getBaseUrl();
-        this.bearerToken = "bearerToken";
-        this.agreementsApi = new AgreementsApi(createApiClient(bearerToken));
+        this.agreementsApi = new AgreementsApi(createApiClient("dummyBearer"));
     }
 
     private ApiClient createApiClient(String bearerToken) {
@@ -47,6 +48,11 @@ public class AgreementClientImpl implements IAgreementClient {
     }
 
     @Override
+    public Agreement activateAgreement(String xCorrelationId, UUID agreementId) {
+        return agreementsApi.activateAgreement(xCorrelationId, agreementId);
+    }
+
+    @Override
     public Agreement submitAgreement(String xCorrelationId, UUID agreementId, AgreementSubmissionPayload agreementSubmissionPayload) {
         return agreementsApi.submitAgreement(xCorrelationId, agreementId, agreementSubmissionPayload);
     }
@@ -59,6 +65,11 @@ public class AgreementClientImpl implements IAgreementClient {
     @Override
     public void archiveAgreement(String xCorrelationId, UUID agreementId) {
         agreementsApi.archiveAgreement(xCorrelationId, agreementId);
+    }
+
+    @Override
+    public Agreement rejectAgreement(String xCorrelationId, UUID agreementId, AgreementRejectionPayload agreementRejectionPayload) {
+        return agreementsApi.rejectAgreement(xCorrelationId, agreementId, agreementRejectionPayload);
     }
 
     @Override

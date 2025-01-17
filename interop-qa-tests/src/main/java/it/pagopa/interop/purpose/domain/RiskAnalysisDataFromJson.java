@@ -1,22 +1,23 @@
 package it.pagopa.interop.purpose.domain;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.File;
-import java.io.IOException;
+import it.pagopa.interop.purpose.exception.RiskAnalysisMapGenerationException;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
+@ToString
+@EqualsAndHashCode
 public class RiskAnalysisDataFromJson {
 
     @Getter
     @Setter
+    @ToString
+    @EqualsAndHashCode
     public static class RiskAnalysisAttributes {
         private List<String> purpose;
         private List<String> institutionalPurpose;
@@ -38,6 +39,7 @@ public class RiskAnalysisDataFromJson {
         public Map<String, List<String>> toMap() {
             Map<String, List<String>> map = new HashMap<>();
             for (Field field : this.getClass().getDeclaredFields()) {
+                boolean originalAccessibility = field.canAccess(this);
                 field.setAccessible(true);
                 try {
                     List<String> value = (List<String>) field.get(this);
@@ -45,8 +47,9 @@ public class RiskAnalysisDataFromJson {
                         map.put(field.getName(), value);
                     }
                 } catch (IllegalAccessException e) {
-                    throw new RuntimeException("Unable to access field: " + field.getName(), e);
+                    throw new RiskAnalysisMapGenerationException("Unable to access field: " + field.getName(), e);
                 }
+                field.setAccessible(originalAccessibility);
             }
             return map;
         }
@@ -54,10 +57,11 @@ public class RiskAnalysisDataFromJson {
 
     @Getter
     @Setter
+    @ToString
+    @EqualsAndHashCode
     public static class RiskAnalysisTemplate {
         private RiskAnalysisAttributes completed;
         private RiskAnalysisAttributes uncompleted;
-
     }
 
 }
