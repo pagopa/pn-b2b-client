@@ -170,6 +170,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
 
 
   #-------------------------------------------------------------------------------------------------
+  @ignore # because of https://pagopa.atlassian.net/browse/QA-5441
   @pagamentiMultipli @f24 @refused
   Scenario: [B2B-PA-PAY_MULTI_83_4] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi)-Invalid tax code: it not corresponds to other personal data.
     Given viene generata una nuova notifica
@@ -189,6 +190,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | payment_multy_number | 1                           |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
+  @ignore # because of https://pagopa.atlassian.net/browse/QA-5441
   @pagamentiMultipli @f24 @refused
   Scenario: [B2B-PA-PAY_MULTI_83_5] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi)-Invalid tax code: it not corresponds to other personal data.
     Given viene generata una nuova notifica
@@ -333,6 +335,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
+  @ignore # because of https://pagopa.atlassian.net/browse/QA-5441
   @pagamentiMultipli @f24 @refused
   Scenario: [B2B-PA-PAY_MULTI_95_1] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) -Invalid tax code: it not corresponds to other personal data (taxcode e birthDate non congruenti ).
     Given viene generata una nuova notifica
@@ -350,6 +353,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | payment_multy_number | 1                                  |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
+  @ignore # because of https://pagopa.atlassian.net/browse/QA-5441
   @pagamentiMultipli @f24 @refused
   Scenario: [B2B-PA-PAY_MULTI_95_2] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) -Invalid tax code: Argument 'municipality' is not valid .
     Given viene generata una nuova notifica
