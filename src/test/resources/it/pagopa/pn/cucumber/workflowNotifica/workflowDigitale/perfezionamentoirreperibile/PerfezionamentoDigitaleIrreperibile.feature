@@ -34,7 +34,7 @@ Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal 
     And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" con address type "PEC" digitalAddressSource "SPECIAL" in "OK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
 
     #23
-  @perfezionamentoIrreperibile
+  @perfezionamentoIrreperibile @uatEnvCondition
   Scenario: [PERFEZIONAMENTO_IRREPERIBILE_5] Invio notifica digitale monodestinatario PF con indirizzo generale associato
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
