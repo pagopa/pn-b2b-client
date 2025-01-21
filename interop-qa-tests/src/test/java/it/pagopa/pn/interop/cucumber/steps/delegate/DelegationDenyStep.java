@@ -55,4 +55,22 @@ public class DelegationDenyStep {
                         String.valueOf(sharedStepsContext.getDelegationCommonContext().getDelegationId())));
     }
 
+    @Given("l'ente qualificato come PA su Interoperabilità di tipo amministratore")
+    public void tenantIsQualifiedAsPA() {
+        // Logic to qualify the tenant as PA with administrator privileges
+        commonUtils.setBearerToken(commonUtils.getToken("PA_ADMIN", null));
+    }
+    
+    @When("Richiamare l’API di disponibilità in fruizione di un e-service")
+    public void callAvailabilityAPI() {
+        // Logic to call the API for availability
+        httpCallExecutor.performCall(() -> delegationApiClient.checkAvailability());
+    }
+    
+    @Then("La disponibilità viene correttamente data e in risposta si ottiene codice 200")
+    public void verifyAvailabilityResponse() {
+        // Verify that the response status code is 200
+        Assertions.assertEquals(200, httpCallExecutor.getClientResponse().value());
+    }
+
 }
