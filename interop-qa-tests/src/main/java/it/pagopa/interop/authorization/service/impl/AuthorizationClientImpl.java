@@ -1,12 +1,5 @@
 package it.pagopa.interop.authorization.service.impl;
 
-import java.util.List;
-import java.util.UUID;
-
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
@@ -17,13 +10,16 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactClients;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactUser;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject3;
+import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject4;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKey;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKeys;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeAdditionDetailsSeed;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 @Component
@@ -119,8 +115,8 @@ public class AuthorizationClientImpl implements IAuthorizationClient {
     }
 
     @Override
-    public CreatedResource addUsersToClient(String xCorrelationId, UUID clientId, InlineObject3 inlineObject3) {
-        return clientsApi.addUsersToClient(xCorrelationId, clientId, inlineObject3);
+    public CreatedResource addUsersToClient(String xCorrelationId, UUID clientId, InlineObject4 inlineObject4) {
+        return clientsApi.addUsersToClient(xCorrelationId, clientId, inlineObject4);
     }
 
     @Override

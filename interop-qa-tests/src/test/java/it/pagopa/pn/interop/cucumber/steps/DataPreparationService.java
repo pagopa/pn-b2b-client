@@ -30,7 +30,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorS
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTechnology;
-import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject3;
+import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject4;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKey;
@@ -64,7 +64,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -132,7 +131,7 @@ public class DataPreparationService {
     }
 
     public void addMemberToClient(UUID clientId, UUID userId) {
-        InlineObject3 inlineObject = new InlineObject3().addUserIdsItem(userId);
+        InlineObject4 inlineObject = new InlineObject4().addUserIdsItem(userId);
         pollingService.makePolling(
                 () -> httpCallExecutor.performCall(() -> authorizationClient.addUsersToClient(sharedStepsContext.getXCorrelationId(), clientId, inlineObject)),
                 res -> !res.is5xxServerError(),

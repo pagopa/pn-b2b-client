@@ -1,14 +1,17 @@
 package it.pagopa.pn.interop.cucumber.steps.delegate;
 
 import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.delegate.service.IProducerDelegationsApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RejectDelegationPayload;
 import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 
 @Slf4j
 public class DelegationDenyStep {
@@ -31,18 +34,18 @@ public class DelegationDenyStep {
     public void whenUserRejectsDelegation() {
         String authToken = sharedStepsContext.getUserToken();
         clientTokenConfigurator.setBearerToken(authToken);
-        rejectDelegation();
+        rejectProducerDelegation();
     }
 
     @And("l'ente {string} rifiuta la delega")
     public void delegationIsRejectedByTenant(String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        rejectDelegation();
+        rejectProducerDelegation();
     }
 
-    private void rejectDelegation() {
+    private void rejectProducerDelegation() {
         httpCallExecutor.performCall(
-                () -> producerDelegationsApiClient.rejectDelegation(sharedStepsContext.getXCorrelationId(),
+                () -> producerDelegationsApiClient.rejectProducerDelegation(sharedStepsContext.getXCorrelationId(),
                         sharedStepsContext.getDelegationCommonContext().getDelegationId(),
                         new RejectDelegationPayload().rejectionReason("Missing all required data!")));
     }
@@ -55,16 +58,18 @@ public class DelegationDenyStep {
                         String.valueOf(sharedStepsContext.getDelegationCommonContext().getDelegationId())));
     }
 
+    // FIXME 21/01/2025 revisionare i seguenti metodi ed eventualmente rimuovere
+
     @Given("l'ente qualificato come PA su Interoperabilità di tipo amministratore")
     public void tenantIsQualifiedAsPA() {
         // Logic to qualify the tenant as PA with administrator privileges
-        commonUtils.setBearerToken(commonUtils.getToken("PA_ADMIN", null));
+        clientTokenConfigurator.setBearerToken(identityService.getToken("PA_ADMIN", null));
     }
     
     @When("Richiamare l’API di disponibilità in fruizione di un e-service")
     public void callAvailabilityAPI() {
         // Logic to call the API for availability
-        httpCallExecutor.performCall(() -> delegationApiClient.checkAvailability());
+       // httpCallExecutor.performCall(() -> producerDelegationsApiClient.checkAvailability());
     }
     
     @Then("La disponibilità viene correttamente data e in risposta si ottiene codice 200")
