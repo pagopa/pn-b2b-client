@@ -1162,7 +1162,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             if (progressResponseElement != null) {
                 break;
             }
-            //sleepTest();
+            sleepTest();
         }
         try {
             Assertions.assertNotNull(progressResponseElement);
