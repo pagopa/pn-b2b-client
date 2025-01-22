@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
+
 import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -25,7 +26,7 @@ public class AppIOB2bSteps {
     private final IPnAppIOB2bClient iPnAppIOB2bClient;
     private final SharedSteps sharedSteps;
     private final PnPaB2bUtils b2bUtils;
-    private HttpStatusCodeException notficationServerError;
+    private HttpStatusCodeException notificationServerError;
     private String sha256DocumentDownload;
     private final String marioCucumberTaxID;
     private final String marioGherkinTaxID;
@@ -43,14 +44,14 @@ public class AppIOB2bSteps {
     @Then("la notifica può essere recuperata tramite AppIO")
     public void notificationCanBeRetrievedAppIO() {
         AtomicReference<ThirdPartyMessage> notificationByIun = new AtomicReference<>();
-        try{
+        try {
             Assertions.assertDoesNotThrow(() ->
                     notificationByIun.set(this.iPnAppIOB2bClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(),
                             sharedSteps.getSentNotification().getRecipients().get(0).getTaxId()))
             );
             Assertions.assertNotNull(notificationByIun.get());
-        }catch(AssertionFailedError assertionFailedError){
-                sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
     }
 
@@ -66,7 +67,7 @@ public class AppIOB2bSteps {
             this.sha256DocumentDownload = b2bUtils.computeSha256(new ByteArrayInputStream(bytes));
 
             Assertions.assertEquals(this.sha256DocumentDownload, sentNotificationDocument.getSha256());
-        }catch (AssertionFailedError assertionFailedError){
+        } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
     }
@@ -75,14 +76,14 @@ public class AppIOB2bSteps {
     public void notifiedDocumentPaymentCanBeRetrievedAppIO(String typeDocument) {
         List<NotificationDocument> documents = sharedSteps.getSentNotification().getDocuments();
         it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.NotificationAttachmentDownloadMetadataResponse sentNotificationDocument =
-                iPnAppIOB2bClient.getReceivedNotificationAttachment(sharedSteps.getSentNotification().getIun(),typeDocument, sharedSteps.getSentNotification().getRecipients().get(0).getTaxId(), Integer.parseInt(documents.get(0).getDocIdx()));
+                iPnAppIOB2bClient.getReceivedNotificationAttachment(sharedSteps.getSentNotification().getIun(), typeDocument, sharedSteps.getSentNotification().getRecipients().get(0).getTaxId(), Integer.parseInt(documents.get(0).getDocIdx()));
         try {
             byte[] bytes = Assertions.assertDoesNotThrow(() ->
                     b2bUtils.downloadFile(sentNotificationDocument.getUrl()));
             this.sha256DocumentDownload = b2bUtils.computeSha256(new ByteArrayInputStream(bytes));
 
             Assertions.assertEquals(this.sha256DocumentDownload, sentNotificationDocument.getSha256());
-        }catch (AssertionFailedError assertionFailedError){
+        } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
     }
@@ -90,10 +91,10 @@ public class AppIOB2bSteps {
     @Then("il documento di pagamento {string} può essere recuperata tramite AppIO da {string}")
     public void paymentDocumentCanBeRetrievedAppIO(String typeDocument, String recipient) {
 
-        if ("F24".equalsIgnoreCase(typeDocument)){
-            downloadF24AppIo(typeDocument,recipient);
+        if ("F24".equalsIgnoreCase(typeDocument)) {
+            downloadF24AppIo(typeDocument, recipient);
         } else if ("PAGOPA".equalsIgnoreCase(typeDocument)) {
-            downloadPAGOPAAppIo(typeDocument,recipient);
+            downloadPAGOPAAppIo(typeDocument, recipient);
         }
     }
 
@@ -103,10 +104,10 @@ public class AppIOB2bSteps {
             it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.NotificationAttachmentDownloadMetadataResponse downloadResponse =
                     iPnAppIOB2bClient.getReceivedNotificationAttachment(sharedSteps.getSentNotification().getIun(), typeDocument, selectTaxIdUser(recipient), Integer.parseInt(documents.get(0).getDocIdx()));
 
-            if ((downloadResponse!= null && downloadResponse.getRetryAfter()!= null && downloadResponse.getRetryAfter()>0)){
+            if ((downloadResponse != null && downloadResponse.getRetryAfter() != null && downloadResponse.getRetryAfter() > 0)) {
                 try {
                     System.out.println("SECONDO TENTATIVO");
-                    Thread.sleep(downloadResponse.getRetryAfter()*3);
+                    Thread.sleep(downloadResponse.getRetryAfter() * 3L);
                     downloadResponse = iPnAppIOB2bClient.getReceivedNotificationAttachment(sharedSteps.getSentNotification().getIun(), typeDocument, selectTaxIdUser(recipient), Integer.parseInt(documents.get(0).getDocIdx()));
 
                 } catch (InterruptedException exc) {
@@ -123,27 +124,25 @@ public class AppIOB2bSteps {
             Assertions.assertEquals(this.sha256DocumentDownload, downloadResponse.getSha256());
 
         } catch (HttpClientErrorException | HttpServerErrorException e) {
-            if (e instanceof HttpStatusCodeException) {
-                this.notficationServerError = e;
-            }
+            this.notificationServerError = e;
         }
     }
 
     public void downloadF24AppIo(String typeDocument, String recipient) {
 
         AtomicReference<ThirdPartyMessage> notificationByIun = new AtomicReference<>();
-        try{
+        try {
             Assertions.assertDoesNotThrow(() ->
                     notificationByIun.set(this.iPnAppIOB2bClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(),
                             sharedSteps.getSentNotification().getRecipients().get(0).getTaxId()))
             );
             Assertions.assertNotNull(notificationByIun.get());
-        }catch(AssertionFailedError assertionFailedError){
+        } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
         String url = null;
-        for (ThirdPartyAttachment tmpAtt :notificationByIun.get().getAttachments()) {
-            if (typeDocument.equalsIgnoreCase(tmpAtt.getCategory().getValue())){
+        for (ThirdPartyAttachment tmpAtt : notificationByIun.get().getAttachments()) {
+            if (typeDocument.equalsIgnoreCase(tmpAtt.getCategory().getValue())) {
                 url = tmpAtt.getUrl();
                 System.out.println(notificationByIun.get().getAttachments().get(0).getUrl());
                 break;
@@ -156,10 +155,10 @@ public class AppIOB2bSteps {
             it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.NotificationAttachmentDownloadMetadataResponse downloadResponse =
                     iPnAppIOB2bClient.getReceivedNotificationAttachmentByUrl(url, selectTaxIdUser(recipient));
 
-            if ((downloadResponse!= null && downloadResponse.getRetryAfter()!= null && downloadResponse.getRetryAfter()>0)){
+            if ((downloadResponse != null && downloadResponse.getRetryAfter() != null && downloadResponse.getRetryAfter() > 0)) {
                 try {
                     System.out.println("SECONDO TENTATIVO");
-                    Thread.sleep(downloadResponse.getRetryAfter()*3);
+                    Thread.sleep(downloadResponse.getRetryAfter() * 3L);
                     downloadResponse = iPnAppIOB2bClient.getReceivedNotificationAttachmentByUrl(url, selectTaxIdUser(recipient));
 
                 } catch (InterruptedException exc) {
@@ -173,14 +172,12 @@ public class AppIOB2bSteps {
                     b2bUtils.downloadFile(downloadResponseFinal.getUrl()));
             this.sha256DocumentDownload = b2bUtils.computeSha256(new ByteArrayInputStream(bytes));
 
-            if(!"F24".equalsIgnoreCase(typeDocument)) {
+            if (!"F24".equalsIgnoreCase(typeDocument)) {
                 Assertions.assertEquals(this.sha256DocumentDownload, downloadResponse.getSha256());
             }
 
         } catch (HttpClientErrorException | HttpServerErrorException e) {
-            if (e instanceof HttpStatusCodeException) {
-                this.notficationServerError = e;
-            }
+            this.notificationServerError = e;
         }
     }
 
@@ -200,9 +197,7 @@ public class AppIOB2bSteps {
 
             Assertions.assertEquals(this.sha256DocumentDownload, sentNotificationDocument.getSha256());
         } catch (HttpClientErrorException | HttpServerErrorException e) {
-            if (e instanceof HttpStatusCodeException) {
-                this.notficationServerError = e;
-            }
+            this.notificationServerError = e;
         }
     }
 
@@ -211,24 +206,22 @@ public class AppIOB2bSteps {
         try {
             this.iPnAppIOB2bClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), selectTaxIdUser(recipient));
         } catch (HttpClientErrorException | HttpServerErrorException e) {
-            if (e instanceof HttpStatusCodeException) {
-                this.notficationServerError = e;
-            }
+            this.notificationServerError = e;
         }
     }
 
     @Then("il tentativo di recupero con appIO ha prodotto un errore con status code {string}")
     public void retrievalAttemptWithAppIOProducedAnErrorWithStatusCode(String statusCode) {
-        Assertions.assertTrue((this.notficationServerError != null) &&
-                (this.notficationServerError.getStatusCode().toString().substring(0,3).equals(statusCode)));
+        Assertions.assertTrue((this.notificationServerError != null) &&
+                (this.notificationServerError.getStatusCode().toString().substring(0, 3).equals(statusCode)));
     }
 
-    private String selectTaxIdUser(String recipient){
-        if(recipient.trim().equalsIgnoreCase("mario cucumber")){
+    private String selectTaxIdUser(String recipient) {
+        if (recipient.trim().equalsIgnoreCase("mario cucumber")) {
             return this.marioCucumberTaxID;
-        } else if (recipient.trim().equalsIgnoreCase("mario gherkin")){
+        } else if (recipient.trim().equalsIgnoreCase("mario gherkin")) {
             return this.marioGherkinTaxID;
-        }else{
+        } else {
             throw new IllegalArgumentException();
         }
     }
@@ -237,13 +230,13 @@ public class AppIOB2bSteps {
     @Then("{string} recupera la notifica tramite AppIO")
     public void recuperaLaNotificaTramiteAppIO(String recipient) {
         AtomicReference<ThirdPartyMessage> notificationByIun = new AtomicReference<>();
-        try{
+        try {
             Assertions.assertDoesNotThrow(() ->
                     notificationByIun.set(this.iPnAppIOB2bClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(),
                             selectTaxIdUser(recipient)))
             );
             Assertions.assertNotNull(notificationByIun.get());
-        }catch(AssertionFailedError assertionFailedError){
+        } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
     }
@@ -260,7 +253,7 @@ public class AppIOB2bSteps {
             this.sha256DocumentDownload = b2bUtils.computeSha256(new ByteArrayInputStream(bytes));
 
             Assertions.assertEquals(this.sha256DocumentDownload, sentNotificationDocument.getSha256());
-        }catch (AssertionFailedError assertionFailedError){
+        } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
     }

@@ -12,16 +12,14 @@ import org.springframework.web.client.RestTemplate;
 @Component
 public class B2BDeliveryPushServiceClientImpl implements IB2BDeliveryPushServiceClient {
 
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
     private final String basePath;
-
     private final String marioCucumberBearerToken;
     private final String marioGherkinBearerToken;
     private final String leonardoBearerToken;
     private final String gherkinSrlBearerToken;
     private final String cucumberSpaBearerToken;
-
-    private LegalFactsApi legalFactsApi;
+    private final LegalFactsApi legalFactsApi;
 
     public B2BDeliveryPushServiceClientImpl(@Value("${pn.bearer-token.user1}") String marioCucumberBearerToken,
                                             @Value("${pn.bearer-token.user2}") String marioGherkinBearerToken,
@@ -42,7 +40,7 @@ public class B2BDeliveryPushServiceClientImpl implements IB2BDeliveryPushService
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken) {
         ApiClient newApiClient = new ApiClient(restTemplate);
-        newApiClient.addDefaultHeader("Authorization","Bearer " + bearerToken);
+        newApiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
         newApiClient.setBasePath(basePath);
         return newApiClient;
     }
@@ -54,7 +52,7 @@ public class B2BDeliveryPushServiceClientImpl implements IB2BDeliveryPushService
 
     @Override
     public boolean setBearerToken(BearerTokenType bearerToken) {
-        boolean operation = false;
+        boolean operation;
         switch (bearerToken) {
             case USER_1 -> {
                 this.legalFactsApi.setApiClient(newApiClient(restTemplate, basePath, marioCucumberBearerToken));

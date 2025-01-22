@@ -4,7 +4,6 @@ import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV26;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV26;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnGPDClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
@@ -36,7 +35,7 @@ public class AsyncSteps {
     private final PnPaymentInfoClientImpl pnPaymentInfoClientImpl;
     private final List<PaymentPositionModel> paymentPositionModel;
     private List<PaymentInfoV21> paymentInfoResponse;
-    private String deleteGDPresponse;
+    private String deleteGdpResponse;
     private Integer amountGPD;
     private final List<Integer> amountNotifica;
     private static final Integer NUM_CHECK_PAYMENT_INFO = 32;
@@ -48,35 +47,35 @@ public class AsyncSteps {
         this.avanzamentoNotificheB2bSteps = avanzamentoNotificheB2bSteps;
         this.sharedSteps = sharedSteps;
         this.pnGPDClientImpl = sharedSteps.getPnGPDClientImpl();
-        this.pnPaymentInfoClientImpl =sharedSteps.getPnPaymentInfoClientImpl();
-        this.paymentPositionModel= new ArrayList<>();
-        this.amountNotifica= new ArrayList<>();
+        this.pnPaymentInfoClientImpl = sharedSteps.getPnPaymentInfoClientImpl();
+        this.paymentPositionModel = new ArrayList<>();
+        this.amountNotifica = new ArrayList<>();
     }
 
-    private String generateRandomIuv(){
+    private String generateRandomIuv() {
         int randomSleepToRandomize = new Random().nextInt(100);
         try {
             Thread.sleep(randomSleepToRandomize);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        String threadNumber = (Thread.currentThread().getId()+"");
-        String numberOfThread = threadNumber.length() < 2 ? "0"+threadNumber: threadNumber.substring(0, 2);
-        String timeNano = System.nanoTime()+"";
-        String iuv = String.format("47%13s44", (numberOfThread+timeNano).substring(0,13));
+        String threadNumber = (String.valueOf(Thread.currentThread().getId()));
+        String numberOfThread = threadNumber.length() < 2 ? "0" + threadNumber : threadNumber.substring(0, 2);
+        String timeNano = String.valueOf(System.nanoTime());
+        String iuv = String.format("47%13s44", (numberOfThread + timeNano).substring(0, 13));
         log.info("Iuv generato: " + iuv);
         return iuv;
     }
 
     @And("viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore {string} e amount {string} per {string} con (CF)(Piva) {string}")
-    public void vieneCreataUnaPosizioneDebitoria(String organitationCode,String amount,String name,String taxId) {
+    public void vieneCreataUnaPosizioneDebitoria(String organizationCode, String amount, String name, String taxId) {
         String iuv = generateRandomIuv();
-        log.info("IUPD generate: " + organitationCode +"-64c8e41bfec846e04"+ iuv, System.currentTimeMillis());
+        log.info("IUPD generate: " + organizationCode + "-64c8e41bfec846e04" + iuv, System.currentTimeMillis());
         sharedSteps.addIuvGPD(iuv);
 
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         PaymentPositionModel paymentPositionModelSend = new PaymentPositionModel()
-                .iupd(String.format(organitationCode+"-64c8e41bfec846e04"+  iuv, System.currentTimeMillis()))
+                .iupd(String.format(organizationCode + "-64c8e41bfec846e04" + iuv, System.currentTimeMillis()))
                 .type(PaymentPositionModel.TypeEnum.F)
                 .companyName("Automation")
                 .fullName(name)
@@ -90,7 +89,7 @@ public class AsyncSteps {
                         .retentionDate(new StringBuilder(dateTimeFormatter.format(OffsetDateTime.now().plusDays(2))))
                         .addTransferItem(new TransferModel()
                                 .idTransfer(TransferModel.IdTransferEnum._1)
-                                .organizationFiscalCode(organitationCode)
+                                .organizationFiscalCode(organizationCode)
                                 .amount(Long.parseLong(amount))
                                 .remittanceInformation("Test Automation")
                                 .category("9/0301100TS/")
@@ -100,7 +99,8 @@ public class AsyncSteps {
         amountNotifica.add(Integer.parseInt(amount));
         try {
             Assertions.assertDoesNotThrow(() -> {
-                paymentPositionModel.add(pnGPDClientImpl.createPosition(organitationCode, paymentPositionModelSend, null, true));});
+                paymentPositionModel.add(pnGPDClientImpl.createPosition(organizationCode, paymentPositionModelSend, null, true));
+            });
             Assertions.assertNotNull(paymentPositionModel);
             Assertions.assertNotNull(amountNotifica);
             log.info("Request: " + paymentPositionModel);
@@ -113,29 +113,30 @@ public class AsyncSteps {
 
     @And("lettura amount posizione debitoria per la notifica corrente di {string}")
     public void letturaAmountPosizioneDebitoria(String user) {
-        PaymentPositionModel postionUser = new PaymentPositionModel();
-        for(PaymentPositionModel position: paymentPositionModel){
-            if(position.getFullName().equalsIgnoreCase(user)){
-                postionUser=position;
+        PaymentPositionModel positionUser = new PaymentPositionModel();
+        for (PaymentPositionModel position : paymentPositionModel) {
+            if (position.getFullName().equalsIgnoreCase(user)) {
+                positionUser = position;
             }
         }
 
-        List<PaymentInfoRequest> paymentInfoRequestList= new ArrayList<PaymentInfoRequest>();
+        List<PaymentInfoRequest> paymentInfoRequestList = new ArrayList<>();
         PaymentInfoRequest paymentInfoRequest = new PaymentInfoRequest()
-                .creditorTaxId(Objects.requireNonNull(Objects.requireNonNull(postionUser.getPaymentOption()).get(0).getTransfer()).get(0).getOrganizationFiscalCode())
-                .noticeCode("3"+postionUser.getPaymentOption().get(0).getIuv());
+                .creditorTaxId(Objects.requireNonNull(Objects.requireNonNull(positionUser.getPaymentOption()).get(0).getTransfer()).get(0).getOrganizationFiscalCode())
+                .noticeCode("3" + positionUser.getPaymentOption().get(0).getIuv());
         paymentInfoRequestList.add(paymentInfoRequest);
 
-        log.info("User: " + postionUser);
+        log.info("User: " + positionUser);
         log.info("Messaggio json da allegare: " + paymentInfoRequest);
         //TODO utilizzare algoritmo di polling
-        for(int i=0; i< NUM_CHECK_PAYMENT_INFO ;i++) {
+        for (int i = 0; i < NUM_CHECK_PAYMENT_INFO; i++) {
             try {
                 Assertions.assertDoesNotThrow(() -> {
                     paymentInfoResponse = pnPaymentInfoClientImpl.getPaymentInfoV21(paymentInfoRequestList);
-                    log.info("Risposta recupero posizione debitoria: " + paymentInfoResponse.toString());});
+                    log.info("Risposta recupero posizione debitoria: " + paymentInfoResponse.toString());
+                });
                 Assertions.assertNotNull(paymentInfoResponse);
-                if(amountGPD != paymentInfoResponse.get(0).getAmount()){
+                if (!Objects.equals(amountGPD, paymentInfoResponse.get(0).getAmount())) {
                     amountGPD = paymentInfoResponse.get(0).getAmount();
                     break;
                 }
@@ -154,22 +155,23 @@ public class AsyncSteps {
 
     @And("lettura amount posizione debitoria per pagamento {int}")
     public void letturaAmountPosizioneDebitoria(Integer pagamento) {
-        PaymentPositionModel postionUser = paymentPositionModel.get(pagamento);
-        List<PaymentInfoRequest> paymentInfoRequestList= new ArrayList<PaymentInfoRequest>();
+        PaymentPositionModel positionUser = paymentPositionModel.get(pagamento);
+        List<PaymentInfoRequest> paymentInfoRequestList = new ArrayList<>();
         PaymentInfoRequest paymentInfoRequest = new PaymentInfoRequest()
-                .creditorTaxId(Objects.requireNonNull(Objects.requireNonNull(postionUser.getPaymentOption()).get(0).getTransfer()).get(0).getOrganizationFiscalCode())
-                .noticeCode("3"+postionUser.getPaymentOption().get(0).getIuv());
+                .creditorTaxId(Objects.requireNonNull(Objects.requireNonNull(positionUser.getPaymentOption()).get(0).getTransfer()).get(0).getOrganizationFiscalCode())
+                .noticeCode("3" + positionUser.getPaymentOption().get(0).getIuv());
 
         paymentInfoRequestList.add(paymentInfoRequest);
-        log.info("User: " + postionUser);
+        log.info("User: " + positionUser);
         log.info("Messaggio json da allegare: " + paymentInfoRequest);
 
         try {
             Assertions.assertDoesNotThrow(() -> {
-                paymentInfoResponse= pnPaymentInfoClientImpl.getPaymentInfoV21(paymentInfoRequestList);
-                log.info("Risposta recupero posizione debitoria: " + paymentInfoResponse.toString());});
+                paymentInfoResponse = pnPaymentInfoClientImpl.getPaymentInfoV21(paymentInfoRequestList);
+                log.info("Risposta recupero posizione debitoria: " + paymentInfoResponse.toString());
+            });
             Assertions.assertNotNull(paymentInfoResponse);
-            amountGPD=paymentInfoResponse.get(0).getAmount();
+            amountGPD = paymentInfoResponse.get(0).getAmount();
             Assertions.assertNotNull(amountGPD);
         } catch (AssertionFailedError assertionFailedError) {
 
@@ -182,20 +184,20 @@ public class AsyncSteps {
     @And("viene cancellata la posizione debitoria di {string}")
     public void vieneCancellataLaPosizioneDebitoria(String user) {
         try {
-            for(PaymentPositionModel position: paymentPositionModel){
-                if(position.getFullName().equalsIgnoreCase(user)){
+            for (PaymentPositionModel position : paymentPositionModel) {
+                if (position.getFullName().equalsIgnoreCase(user)) {
                     Assertions.assertDoesNotThrow(() -> {
-                        deleteGDPresponse = pnGPDClientImpl.deletePosition(Objects.requireNonNull(Objects.requireNonNull(position.getPaymentOption()).get(0).getTransfer()).get(0).getOrganizationFiscalCode(), position.getIupd(), null);
+                        deleteGdpResponse = pnGPDClientImpl.deletePosition(Objects.requireNonNull(Objects.requireNonNull(position.getPaymentOption()).get(0).getTransfer()).get(0).getOrganizationFiscalCode(), position.getIupd(), null);
                     });
                 }
             }
 
-            Assertions.assertNotNull(deleteGDPresponse);
-            log.info("Risposta evento cancellazione: " + deleteGDPresponse);
+            Assertions.assertNotNull(deleteGdpResponse);
+            log.info("Risposta evento cancellazione: " + deleteGdpResponse);
 
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
-                    "{la posizione debitoria " + (deleteGDPresponse == null ? "NULL" : deleteGDPresponse) + " }";
+                    "{la posizione debitoria " + (deleteGdpResponse == null ? "NULL" : deleteGdpResponse) + " }";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
     }
@@ -205,14 +207,14 @@ public class AsyncSteps {
     public void vieneCancellataLaPosizioneDebitoriaDelPagamento(Integer pagamento) {
         try {
             Assertions.assertDoesNotThrow(() -> {
-                deleteGDPresponse = pnGPDClientImpl.deletePosition(Objects.requireNonNull(Objects.requireNonNull(paymentPositionModel.get(pagamento).getPaymentOption()).get(0).getTransfer()).get(0).getOrganizationFiscalCode(), paymentPositionModel.get(pagamento).getIupd(), null);
+                deleteGdpResponse = pnGPDClientImpl.deletePosition(Objects.requireNonNull(Objects.requireNonNull(paymentPositionModel.get(pagamento).getPaymentOption()).get(0).getTransfer()).get(0).getOrganizationFiscalCode(), paymentPositionModel.get(pagamento).getIupd(), null);
             });
-            Assertions.assertNotNull(deleteGDPresponse);
-            log.info("Risposta evento cancellazione: " + deleteGDPresponse);
+            Assertions.assertNotNull(deleteGdpResponse);
+            log.info("Risposta evento cancellazione: " + deleteGdpResponse);
 
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
-                    "{la posizione debitoria " + (deleteGDPresponse == null ? "NULL" : deleteGDPresponse) + " }";
+                    "{la posizione debitoria " + (deleteGdpResponse == null ? "NULL" : deleteGdpResponse) + " }";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
     }
@@ -220,16 +222,16 @@ public class AsyncSteps {
     @And("vengono cancellate le posizioni debitorie")
     public void vengonoCancellateLaPosizioniDebitorie() {
         try {
-            for(PaymentPositionModel paymentPositionModelUser :paymentPositionModel) {
+            for (PaymentPositionModel paymentPositionModelUser : paymentPositionModel) {
                 Assertions.assertDoesNotThrow(() -> {
-                    deleteGDPresponse = pnGPDClientImpl.deletePosition(Objects.requireNonNull(Objects.requireNonNull(paymentPositionModelUser.getPaymentOption()).get(0).getTransfer()).get(0).getOrganizationFiscalCode(), paymentPositionModelUser.getIupd(), null);
+                    deleteGdpResponse = pnGPDClientImpl.deletePosition(Objects.requireNonNull(Objects.requireNonNull(paymentPositionModelUser.getPaymentOption()).get(0).getTransfer()).get(0).getOrganizationFiscalCode(), paymentPositionModelUser.getIupd(), null);
                 });
             }
-            Assertions.assertNotNull(deleteGDPresponse);
-            log.info("Risposta evento cancellazione: " + deleteGDPresponse);
+            Assertions.assertNotNull(deleteGdpResponse);
+            log.info("Risposta evento cancellazione: " + deleteGdpResponse);
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
-                    "{la posizione debitoria " + (deleteGDPresponse == null ? "NULL" : deleteGDPresponse) + " }";
+                    "{la posizione debitoria " + (deleteGdpResponse == null ? "NULL" : deleteGdpResponse) + " }";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
     }
@@ -237,8 +239,8 @@ public class AsyncSteps {
     @And("viene effettuato il controllo del amount di GPD = {string}")
     public void vieneEffettuatoIlControlloDelAmountDiGPD(String amount) {
         try {
-            log.info("Amount GPD: "+amountGPD);
-            Assertions.assertEquals(amountGPD,Integer.parseInt(amount));
+            log.info("Amount GPD: " + amountGPD);
+            Assertions.assertEquals(amountGPD, Integer.parseInt(amount));
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithAmountGDPAndIUN(assertionFailedError, amountGPD);
         }
@@ -247,21 +249,21 @@ public class AsyncSteps {
     @And("viene effettuato il controllo del amount di GPD con amount notifica del (utente)(pagamento) {int}")
     public void vieneEffettuatoIlControlloDelAmountDiGPDConAmountNotifica(Integer user) {
         try {
-            Assertions.assertEquals(amountGPD,amountNotifica.get(user));
+            Assertions.assertEquals(amountGPD, amountNotifica.get(user));
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithAmountGDPAndIUN(assertionFailedError, amountGPD);
         }
     }
 
     @Then("viene effettuato il controllo del cambiamento del amount nella timeline {string} del (utente)(pagamento) {int}")
-    public void vieneEffettuatoIlControlloDelCambiamentoDelAmount(String timelineEventCategory,Integer user) {
+    public void vieneEffettuatoIlControlloDelCambiamentoDelAmount(String timelineEventCategory, Integer user) {
         TimelineElementV26 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, null);
         int analogCost = Objects.requireNonNull(Objects.requireNonNull(timelineElement.getDetails()).getAnalogCost());
-        amountNotifica.set(user,amountNotifica.get(user) + analogCost);
+        amountNotifica.set(user, amountNotifica.get(user) + analogCost);
     }
 
     @Then("viene effettuato il controllo del cambiamento del amount nella timeline {string} del (utente)(pagamento) {int} (al tentativo):")
-    public void vieneEffettuatoIlControlloDelCambiamentoDelAmountAlTentativo(String timelineEventCategory,Integer user,@Transpose DataTest dataFromTest ) {
+    public void vieneEffettuatoIlControlloDelCambiamentoDelAmountAlTentativo(String timelineEventCategory, Integer user, @Transpose DataTest dataFromTest) {
         TimelineElementV26 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         int analogCost = Objects.requireNonNull(Objects.requireNonNull(timelineElement.getDetails()).getAnalogCost());
         amountNotifica.set(user, amountNotifica.get(user) + analogCost);
@@ -270,22 +272,22 @@ public class AsyncSteps {
 
     @Then("si controlla che l'aggiornamento del costo del (utente)(pagamento) {int} sia corretto")
     public void vieneEffettuatoIlControlloDelCambiamentoDelAmount(Integer user) {
-            log.info("Costo totale attualmente presente sulla Notifica: {}", amountNotifica.get(user));
-            log.info("Costo totale attualmente presente sulla posizione debitoria: {}", amountGPD);
-            Assertions.assertEquals(amountGPD, amountNotifica.get(user));
+        log.info("Costo totale attualmente presente sulla Notifica: {}", amountNotifica.get(user));
+        log.info("Costo totale attualmente presente sulla posizione debitoria: {}", amountGPD);
+        Assertions.assertEquals(amountGPD, amountNotifica.get(user));
     }
 
 
-    //dopo accettato amount_gpd + 100 (costo base) + pafee
-    //Ogni elemento di timeline analogico ha un analog cost per ogni elemento va verificato che aumenti di  + analog_cost.
-    //se riufiutata amount_gpd
+    //Dopo accettato amount_gpd + 100 (costo base) + paFee
+    //Ogni elemento di timeline analogico ha un analog cost per ogni elemento va verificato che aumenti di + analog_cost.
+    //Se rifiutata amount_gpd
     @Then("viene verificato il costo finale della notifica amount_gpd + costo_base + pafee + analog_cost per ogni elemento di timeline")
-    public void vieneVerificatoIlCostoFinaleDellaNotificaAmount_gpdCosto_basePafeeAnalog_costPerOgniElementoDiTimeline() {
+    public void vieneVerificatoIlCostoFinaleDellaNotificaAmount_gpdCosto_basePaFeeAnalog_costPerOgniElementoDiTimeline() {
         FullSentNotificationV26 sentNotification = sharedSteps.getSentNotification();
         Integer costoTotale = getCostoTotale(sentNotification);
 
-        String creditorTaxId = Assertions.assertDoesNotThrow(()-> Objects.requireNonNull(Objects.requireNonNull(sentNotification.getRecipients().get(0).getPayments()).get(0).getPagoPa()).getCreditorTaxId());
-        String noticeCode = Assertions.assertDoesNotThrow(()-> Objects.requireNonNull(Objects.requireNonNull(sentNotification.getRecipients().get(0).getPayments()).get(0).getPagoPa()).getNoticeCode());
+        String creditorTaxId = Assertions.assertDoesNotThrow(() -> Objects.requireNonNull(Objects.requireNonNull(sentNotification.getRecipients().get(0).getPayments()).get(0).getPagoPa()).getCreditorTaxId());
+        String noticeCode = Assertions.assertDoesNotThrow(() -> Objects.requireNonNull(Objects.requireNonNull(sentNotification.getRecipients().get(0).getPayments()).get(0).getPagoPa()).getNoticeCode());
         Assertions.assertNotNull(creditorTaxId);
         Assertions.assertNotNull(noticeCode);
 
@@ -295,15 +297,15 @@ public class AsyncSteps {
 
         paymentInfoResponse = Assertions.assertDoesNotThrow(() -> pnPaymentInfoClientImpl.getPaymentInfoV21(Collections.singletonList(paymentInfoRequest)));
         Assertions.assertNotNull(paymentInfoResponse);
-        System.out.println("Costo totale previsto: {}"+costoTotale);
-        System.out.println("Costo attuale su gpd: {}"+paymentInfoResponse.get(0).getAmount());
-        Assertions.assertEquals(costoTotale,paymentInfoResponse.get(0).getAmount());
+        System.out.println("Costo totale previsto: {}" + costoTotale);
+        System.out.println("Costo attuale su gpd: {}" + paymentInfoResponse.get(0).getAmount());
+        Assertions.assertEquals(costoTotale, paymentInfoResponse.get(0).getAmount());
     }
 
     @And("viene aggiunto il costo della notifica totale del utente {int}")
     public void vieneAggiuntoIlCostoDellaNotificaTotaleAlUtente(Integer user) {
         try {
-            for(int i=0;i<amountNotifica.size();i++) {
+            for (int i = 0; i < amountNotifica.size(); i++) {
                 Assertions.assertDoesNotThrow(() -> {
                     int amount = Objects.requireNonNull(Objects.requireNonNull(sharedSteps.getSentNotification()).getAmount());
                     int paFee = Objects.requireNonNull(Objects.requireNonNull(sharedSteps.getSentNotification()).getPaFee());
@@ -321,11 +323,11 @@ public class AsyncSteps {
     @And("viene aggiunto il costo della notifica totale")
     public void vieneAggiuntoIlCostoDellaNotificaTotale() {
         try {
-            for(int i=0; i < amountNotifica.size(); i++) {
+            for (int i = 0; i < amountNotifica.size(); i++) {
                 int paFee = Objects.requireNonNull(Objects.requireNonNull(sharedSteps.getSentNotification()).getPaFee());
-                int costototale = costoBaseNotifica + paFee;
-                log.info("Amount+costo base:" + costototale);
-                amountNotifica.set(i, amountNotifica.get(i) + costototale);
+                int costoTotale = costoBaseNotifica + paFee;
+                log.info("Amount+costo base:" + costoTotale);
+                amountNotifica.set(i, amountNotifica.get(i) + costoTotale);
             }
             Assertions.assertNotNull(amountNotifica);
         } catch (AssertionFailedError assertionFailedError) {
@@ -336,11 +338,11 @@ public class AsyncSteps {
     }
 
     @And("viene effettuato il controllo del amount di GPD con il costo {string} della notifica con iva inclusa")
-    public void vieneEffettuatoIlControlloDelAmountDiGPDConCostoTotaleConIva(String tipoCosto ) {
+    public void vieneEffettuatoIlControlloDelAmountDiGPDConCostoTotaleConIva(String tipoCosto) {
         try {
-            log.info("Amount GPD: "+amountGPD);
-            amountGPD= amountGPD - Integer.parseInt(String.valueOf(Objects.requireNonNull(paymentPositionModel.get(0).getPaymentOption()).get(0).getAmount()));
-            avanzamentoNotificheB2bSteps.priceVerificationV23(amountGPD,null,0,tipoCosto);
+            log.info("Amount GPD: " + amountGPD);
+            amountGPD = amountGPD - Integer.parseInt(String.valueOf(Objects.requireNonNull(paymentPositionModel.get(0).getPaymentOption()).get(0).getAmount()));
+            avanzamentoNotificheB2bSteps.priceVerificationV23(amountGPD, null, 0, tipoCosto);
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithAmountGDPAndIUN(assertionFailedError, amountGPD);
         }

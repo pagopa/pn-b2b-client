@@ -5,8 +5,7 @@ import javax.validation.constraints.NotNull;
 
 /**
  * Classe builder che permette di costruire un timelineEventId
- *
- * Il formato dello della stringa di input dovrà essere:
+ * Il formato dello della stringa in input dovrà essere:
  * <CATEGORY_VALUE>;IUN_<IUN_VALUE>;RECINDEX_<RECINDEX_VALUE>...
  * tutti i value sono facoltativi, tranne il campo category.
  * Sarà responsabilità del builder concatenare ogni singolo value alla timelineEventId solo se non gli viene passato null.
@@ -27,27 +26,19 @@ public class TimelineEventIdBuilder {
 
     private String progressIndex = "";
 
-    private String deliveryMode = "";
-
-    private String contactPhase = "";
-
-    private String correlationId = ""; // for national registries
-
     private String courtesyAddressType = "";
-
-    private String paymentCode = "";
 
     private String isFirstSendRetry = "";
 
     public TimelineEventIdBuilder withIun(@Nullable String iun) {
-        if(iun != null)
+        if (iun != null)
             this.iun = DELIMITER.concat("IUN_").concat(iun);
         return this;
     }
 
     public TimelineEventIdBuilder withRecIndex(@Nullable Integer recIndex) {
-        if(recIndex != null)
-            this.recIndex = DELIMITER.concat("RECINDEX_").concat(recIndex + "");
+        if (recIndex != null)
+            this.recIndex = DELIMITER.concat("RECINDEX_").concat(String.valueOf(recIndex));
         return this;
     }
 
@@ -57,33 +48,33 @@ public class TimelineEventIdBuilder {
     }
 
     public TimelineEventIdBuilder withCourtesyAddressType(@Nullable String courtesyAddressType) {
-        if(courtesyAddressType != null)
+        if (courtesyAddressType != null)
             this.courtesyAddressType = DELIMITER.concat("COURTESYADDRESSTYPE_").concat(courtesyAddressType);
         return this;
     }
 
     public TimelineEventIdBuilder withSource(@Nullable String source) {
-        if(source != null)
+        if (source != null)
             this.source = DELIMITER.concat("SOURCE_").concat(source);
         return this;
     }
 
     public TimelineEventIdBuilder withIsFirstSendRetry(@Nullable Boolean retry) {
-        if(retry != null)
+        if (retry != null)
             this.isFirstSendRetry = DELIMITER.concat("REPEAT_").concat(retry.toString());
         return this;
     }
 
     public TimelineEventIdBuilder withSentAttemptMade(@Nullable Integer sentAttemptMade) {
-        if(sentAttemptMade != null && sentAttemptMade >= 0)
-            this.sentAttemptMade = DELIMITER.concat("ATTEMPT_").concat(sentAttemptMade + "");
+        if (sentAttemptMade != null && sentAttemptMade >= 0)
+            this.sentAttemptMade = DELIMITER.concat("ATTEMPT_").concat(String.valueOf(sentAttemptMade));
         return this;
     }
 
     public TimelineEventIdBuilder withProgressIndex(@Nullable Integer progressIndex) {
-        // se passo un progressindex negativo, è perchè non voglio che venga inserito nell'eventid. Usato per cercare con l'inizia per
-        if(progressIndex != null && progressIndex >= 0)
-            this.progressIndex = DELIMITER.concat("IDX_").concat(progressIndex + "");
+        // Se passo un progressIndex negativo, è perché non voglio che venga inserito nell'eventId. Usato per cercare con l'inizia per
+        if (progressIndex != null && progressIndex >= 0)
+            this.progressIndex = DELIMITER.concat("IDX_").concat(String.valueOf(progressIndex));
         return this;
     }
 
@@ -117,6 +108,11 @@ public class TimelineEventIdBuilder {
      */
 
     public String build() {
+        String paymentCode = "";
+        String deliveryMode = "";
+        String contactPhase = "";
+        // for national registries
+        String correlationId = "";
         return category +
                 iun +
                 recIndex +

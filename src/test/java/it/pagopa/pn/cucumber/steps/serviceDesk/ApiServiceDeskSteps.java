@@ -71,18 +71,18 @@ public class ApiServiceDeskSteps {
     @Value("${pn.retention.videotime.preload}")
     private Integer retentionTimePreLoad;
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ01234556789";
-    private static final String CF_corretto = "CLMCST42R12D969Z";
-    private static final String CF_ada = "LVLDAA85T50G702B";
-    private static final String CF_errato = "CPNTMS85T15H703WCPNTMS85T15H703W|";
-    private static final String PIVA_errata = "1234567899999999999999999999999999999";
-    private static final String CF_errato2 = "CPNTM@85T15H703W";
-    private final String CF_vuoto = null;
-    private static final String ticketid_errato = "XXXXXXXXXXXXXXXXXxxxxxxxxxxxxxxxX";
-    private final String ticketid_vuoto = null;
-    private static final String ticketoperationid_errato = "abcdfeghilm";
-    private final String ticketoperationid_vuoto = null;
-    private static final Integer delay = 420000;
-    private static final Integer workFlowWaitDefault = 31000;
+    private static final String CF_CORRETTO = "CLMCST42R12D969Z";
+    private static final String CF_ADA = "LVLDAA85T50G702B";
+    private static final String CF_ERRATO = "CPNTMS85T15H703WCPNTMS85T15H703W|";
+    private static final String PIVA_ERRATA = "1234567899999999999999999999999999999";
+    private static final String CF_ERRATO_2 = "CPNTM@85T15H703W";
+    private static final String CF_VUOTO = null;
+    private static final String TICKET_ID_ERRATO = "XXXXXXXXXXXXXXXXXxxxxxxxxxxxxxxxX";
+    private static final String TICKET_ID_VUOTO = null;
+    private static final String TICKET_OPERATION_ID_ERRATO = "abcdfeghilm";
+    private static final String TICKET_OPERATION_ID_VUOTO = null;
+    private static final Integer DELAY = 420000;
+    private static final Integer WORKFLOW_WAIT_DEFAULT = 31000;
     private List<PaSummary> listPa = null;
     private HttpStatusCodeException notificationError;
     private SearchNotificationsResponse searchNotificationsResponse;
@@ -141,7 +141,7 @@ public class ApiServiceDeskSteps {
 
     @Given("viene creata una nuova richiesta per invocare il servizio UNREACHABLE con cf vuoto")
     public void createVerifyUnreachableRequest() {
-        createRequestByFiscalCode(CF_vuoto, true);
+        createRequestByFiscalCode(CF_VUOTO, true);
     }
 
     @When("viene invocato il servizio UNREACHABLE")
@@ -203,39 +203,28 @@ public class ApiServiceDeskSteps {
     @Given("viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION per con {string} {string} {string}")
     public void createOperationReq(String cf, String ticketid, String ticketOperationid) {
         if (cf.equals("CF_vuoto")) {
-            createOperationRequest.setTaxId(CF_vuoto);
+            createOperationRequest.setTaxId(CF_VUOTO);
         } else {
             createOperationRequest.setTaxId(cf);
         }
 
         switch (ticketid) {
-            case "ticketid_vuoto":
-                createOperationRequest.setTicketId(ticketid_vuoto);
-                break;
-
-            case "ticketid_errato":
-                createOperationRequest.setTicketId(ticketid_errato);
-                break;
-            default:
-                createOperationRequest.setTicketId(ticketid);
+            case "ticketid_vuoto" -> createOperationRequest.setTicketId(TICKET_ID_VUOTO);
+            case "ticketid_errato" -> createOperationRequest.setTicketId(TICKET_ID_ERRATO);
+            default -> createOperationRequest.setTicketId(ticketid);
         }
 
         switch (ticketOperationid) {
-            case "ticketoperationid_vuoto":
-                createOperationRequest.setTicketOperationId(ticketoperationid_vuoto);
-                break;
-            case "ticketoperationid_errato":
-                createOperationRequest.setTicketOperationId(ticketoperationid_errato);
-                break;
-            default:
-                createOperationRequest.setTicketOperationId(ticketOperationid);
+            case "ticketoperationid_vuoto" -> createOperationRequest.setTicketOperationId(TICKET_OPERATION_ID_VUOTO);
+            case "ticketoperationid_errato" -> createOperationRequest.setTicketOperationId(TICKET_OPERATION_ID_ERRATO);
+            default -> createOperationRequest.setTicketOperationId(ticketOperationid);
         }
         createOperationRequest.setAddress(analogAddress);
     }
 
     @Given("viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con cf vuoto")
     public void createOperationReqCFVuoto() {
-        createOperationRequestSteps(CF_vuoto);
+        createOperationRequestSteps(CF_VUOTO);
     }
 
     @When("viene invocato il servizio CREATE_OPERATION con errore")
@@ -384,7 +373,7 @@ public class ApiServiceDeskSteps {
 
     @When("viene invocato il servizio SEARCH con delay")
     public void searchResponseWithDelay() {
-        threadWait(delay);
+        threadWait(DELAY);
         searchResponseSteps();
     }
 
@@ -629,7 +618,7 @@ public class ApiServiceDeskSteps {
 
     @Given("l'operatore richiede l'elenco di tutti i messaggi di cortesia inviati con cf vuoto")
     public void lOperatoreRichiedeLElencoDiDiTuttiIMessaggiDiCortesiaInviatiConCfVuoto() {
-        lOperatoreRichiedeLElencoDiDiTuttiIMessaggiDiCortesiaInviatiSteps(CF_vuoto);
+        lOperatoreRichiedeLElencoDiDiTuttiIMessaggiDiCortesiaInviatiSteps(CF_VUOTO);
     }
 
     @Given("l'operatore richiede l'elenco di tutti i messaggi di cortesia inviati con cf errato {string}")
@@ -641,7 +630,7 @@ public class ApiServiceDeskSteps {
     public void lOperatoreRichiedeLElencoDiDiTuttiIMessaggiDiCortesiaInviatiConRecipientTypeVuoto() {
         try {
             searchNotificationsRequest = new SearchNotificationsRequest();
-            searchNotificationsRequest.setTaxId(CF_corretto);
+            searchNotificationsRequest.setTaxId(CF_CORRETTO);
             searchNotificationsRequest.setRecipientType(null);
             searchNotificationsResponse = ipServiceDeskClient.searchNotificationsFromTaxId(10, null, null, null, searchNotificationsRequest);
             threadWait(getWorkFlowWait());
@@ -704,9 +693,9 @@ public class ApiServiceDeskSteps {
                 profileRequest.setTaxId("");
             } else if ("ERRATO".equalsIgnoreCase(taxId)) {
                 if ("PF".equalsIgnoreCase(recipientType)) {
-                    profileRequest.setTaxId(CF_errato);
+                    profileRequest.setTaxId(CF_ERRATO);
                 } else {
-                    profileRequest.setTaxId(PIVA_errata);
+                    profileRequest.setTaxId(PIVA_ERRATA);
                 }
 
             } else {
@@ -737,9 +726,9 @@ public class ApiServiceDeskSteps {
                 searchNotificationsRequest.setTaxId("");
             } else if ("ERRATO".equalsIgnoreCase(taxId)) {
                 if ("PF".equalsIgnoreCase(recipientType)) {
-                    searchNotificationsRequest.setTaxId(CF_errato);
+                    searchNotificationsRequest.setTaxId(CF_ERRATO);
                 } else {
-                    searchNotificationsRequest.setTaxId(PIVA_errata);
+                    searchNotificationsRequest.setTaxId(PIVA_ERRATA);
                 }
             } else {
                 searchNotificationsRequest.setTaxId(setTaxID(taxId));
@@ -830,9 +819,9 @@ public class ApiServiceDeskSteps {
             } else if ("VUOTO".equalsIgnoreCase(taxid)) {
                 searchNotificationsRequest.setTaxId("");
             } else if ("ERRATO".equalsIgnoreCase(taxid)) {
-                searchNotificationsRequest.setTaxId(CF_errato);
+                searchNotificationsRequest.setTaxId(CF_ERRATO);
             } else if ("ADA".equalsIgnoreCase(taxid)) {
-                searchNotificationsRequest.setTaxId(CF_errato);
+                searchNotificationsRequest.setTaxId(CF_ERRATO);
             } else {
                 String resultTaxID = setTaxID(taxid);
                 searchNotificationsRequest.setTaxId(resultTaxID);
@@ -859,9 +848,9 @@ public class ApiServiceDeskSteps {
             } else if ("VUOTO".equalsIgnoreCase(taxId)) {
                 searchNotificationsRequest.setTaxId("");
             } else if ("ERRATO".equalsIgnoreCase(taxId)) {
-                searchNotificationsRequest.setTaxId(CF_errato);
+                searchNotificationsRequest.setTaxId(CF_ERRATO);
             } else if ("ADA".equalsIgnoreCase(taxId)) {
-                searchNotificationsRequest.setTaxId(CF_ada);
+                searchNotificationsRequest.setTaxId(CF_ADA);
             } else {
                 searchNotificationsRequest.setTaxId(setTaxID(taxId));
             }
@@ -1034,39 +1023,40 @@ public class ApiServiceDeskSteps {
 
     private void createRequestByFiscalCode(String cf, boolean isNotificationRequest) {
         if (cf == null) {
-            notificationRequest.setTaxId(CF_vuoto);
+            notificationRequest.setTaxId(CF_VUOTO);
             return;
         }
 
         switch (cf) {
-            case "CF_vuoto":
+            case "CF_vuoto" -> {
                 if (isNotificationRequest) {
-                    notificationRequest.setTaxId(CF_vuoto);
+                    notificationRequest.setTaxId(CF_VUOTO);
                 } else {
-                    searchNotificationRequest.setTaxId(CF_vuoto);
+                    searchNotificationRequest.setTaxId(CF_VUOTO);
                 }
-                break;
-            case "CF_errato":
+            }
+            case "CF_errato" -> {
                 if (isNotificationRequest) {
-                    notificationRequest.setTaxId(CF_errato);
+                    notificationRequest.setTaxId(CF_ERRATO);
                 } else {
-                    searchNotificationRequest.setTaxId(CF_errato);
+                    searchNotificationRequest.setTaxId(CF_ERRATO);
                 }
-                break;
-            case "CF_errato2":
+            }
+            case "CF_errato2" -> {
                 if (isNotificationRequest) {
-                    notificationRequest.setTaxId(CF_errato2);
+                    notificationRequest.setTaxId(CF_ERRATO_2);
                 } else {
-                    searchNotificationRequest.setTaxId(CF_errato2);
+                    searchNotificationRequest.setTaxId(CF_ERRATO_2);
                 }
-                break;
-            default:
+            }
+            default -> {
                 if (isNotificationRequest) {
                     notificationRequest.setTaxId(cf);
                 } else {
                     searchNotificationRequest.setTaxId(cf);
                 }
                 log.info("Inserito CF:" + cf);
+            }
         }
     }
 
@@ -1312,7 +1302,7 @@ public class ApiServiceDeskSteps {
     }
 
     public Integer getWorkFlowWait() {
-        if (workFlowWait == null) return workFlowWaitDefault;
+        if (workFlowWait == null) return WORKFLOW_WAIT_DEFAULT;
         return workFlowWait;
     }
 
@@ -1395,7 +1385,7 @@ public class ApiServiceDeskSteps {
 
     public void setRecipientType(String recipientType) {
         switch (recipientType) {
-            case "PF":
+            case "PF" -> {
                 if (searchNotificationsRequest != null) {
                     searchNotificationsRequest.setRecipientType(RecipientType.PF);
                 }
@@ -1405,8 +1395,8 @@ public class ApiServiceDeskSteps {
                 if (documentsRequest != null) {
                     documentsRequest.setRecipientType(RecipientType.PF);
                 }
-                break;
-            case "PG":
+            }
+            case "PG" -> {
                 if (searchNotificationsRequest != null) {
                     searchNotificationsRequest.setRecipientType(RecipientType.PG);
                 }
@@ -1416,8 +1406,8 @@ public class ApiServiceDeskSteps {
                 if (documentsRequest != null) {
                     documentsRequest.setRecipientType(RecipientType.PG);
                 }
-                break;
-            default:
+            }
+            default -> {
                 if (searchNotificationsRequest != null) {
                     searchNotificationsRequest.setRecipientType(null);
                 }
@@ -1427,6 +1417,7 @@ public class ApiServiceDeskSteps {
                 if (documentsRequest != null) {
                     documentsRequest.setRecipientType(null);
                 }
+            }
         }
     }
 
@@ -1516,39 +1507,21 @@ public class ApiServiceDeskSteps {
     }
 
     private String createIUN(String iun) {
-        return  switch (iun.toUpperCase()) {
-            case "VUOTO" -> {
-                yield "";
-            }
-            case "INESISTENTE" -> {
-                yield IUN_ERRATO;
-            }
-            case "ASSOCIATO A PAGAMENTO PAGOPA" -> {
-                yield iunWithPagoPAPayment;
-            }
-            case "ASSOCIATO A PAGAMENTO F24" -> {
-                yield iunWithF24Payment;
-            }
-            case "NOTIFICA SENZA PAGAMENTI" -> {
-                yield iunWithoutPayment;
-            }
-            default -> {
-                yield iun;
-            }
+        return switch (iun.toUpperCase()) {
+            case "VUOTO" -> "";
+            case "INESISTENTE" -> IUN_ERRATO;
+            case "ASSOCIATO A PAGAMENTO PAGOPA" -> iunWithPagoPAPayment;
+            case "ASSOCIATO A PAGAMENTO F24" -> iunWithF24Payment;
+            case "NOTIFICA SENZA PAGAMENTI" -> iunWithoutPayment;
+            default -> iun;
         };
     }
 
     private String createTaxId(String user) {
         return switch (user.toUpperCase()) {
-            case "VUOTO" -> {
-                yield "";
-            }
-            case "ERRATO" -> {
-                yield CF_errato;
-            }
-            default -> {
-                yield setTaxID(user);
-            }
+            case "VUOTO" -> "";
+            case "ERRATO" -> CF_ERRATO;
+            default -> setTaxID(user);
         };
     }
 
@@ -1575,7 +1548,7 @@ public class ApiServiceDeskSteps {
         }
     }
 
-    private boolean checkAddressAndChannelType(String addressType, String addressCategory,  Address data) {
+    private boolean checkAddressAndChannelType(String addressType, String addressCategory, Address data) {
         if (addressType.equals("cortesia")) {
             return data.getCourtesyValue() != null && data.getCourtesyChannelType().equals(CourtesyChannelType.fromValue(addressCategory.toUpperCase()));
         } else if (addressType.equals("legale")) {

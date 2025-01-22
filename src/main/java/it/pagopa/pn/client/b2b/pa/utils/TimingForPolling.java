@@ -140,8 +140,8 @@ public class TimingForPolling {
         //TIMING FOR TRACING
         INTEROP_TRACING(3, 1),
 
-        RETURNED_TO_SENDER(12,1),
-        ANALOG_WORKFLOW_RECIPIENT_DECEASED(12,1);
+        RETURNED_TO_SENDER(12, 1),
+        ANALOG_WORKFLOW_RECIPIENT_DECEASED(12, 1);
 
 
         private final int numCheck;

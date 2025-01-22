@@ -480,7 +480,7 @@ public class SharedSteps {
                     threadWait(getWorkFlowWait());
                     fullSentNotificationV26 = b2bClient.getSentNotification(fullSentNotificationV26.getIun());
                     log.info("NOTIFICATION_TIMELINE: " + fullSentNotificationV26.getTimeline());
-                    timelineElement = fullSentNotificationV26.getTimeline().stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(TimelineElementCategoryV23.COMPLETELY_UNREACHABLE)).findAny().orElse(null);
+                    timelineElement = fullSentNotificationV26.getTimeline().stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(TimelineElementCategoryV26.COMPLETELY_UNREACHABLE)).findAny().orElse(null);
                     if (timelineElement != null) {
                         break;
                     }

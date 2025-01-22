@@ -11,7 +11,7 @@ Feature: Resa al mittente di una notifica
       | digitalDomicile         | NULL               |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
-    And esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost ugauale a "NotNull" per l'utente 0
+    And esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost uguale a "NotNull" per l'utente 0
     Then viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
       | details | NOT_NULL |
 
@@ -23,11 +23,11 @@ Feature: Resa al mittente di una notifica
       | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
-      | digitalDomicile         | NULL                   |
+      | digitalDomicile         | NULL              |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then "Mario Cucumber" legge la notifica
     And vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
-    And esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost ugauale a "null" per l'utente 0
+    And esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost uguale a "null" per l'utente 0
     Then viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
       | details          | NOT_NULL |
       | details_recIndex | 0        |
@@ -65,7 +65,7 @@ Feature: Resa al mittente di una notifica
     And esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" per l'utente 0
     And "Mario Cucumber" legge la notifica
     Then vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
-    And esiste l'elemento di timeline della notifica "NOTIFICATION_VIEWED" abbia notificationCost ugauale a "null" per l'utente 0
+    And esiste l'elemento di timeline della notifica "NOTIFICATION_VIEWED" abbia notificationCost uguale a "null" per l'utente 0
     Then viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
       | details          | NOT_NULL |
       | details_recIndex | 0        |
@@ -79,7 +79,7 @@ Feature: Resa al mittente di una notifica
       | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_SLOW_AR |
-      | digitalDomicile         | NULL              |
+      | digitalDomicile         | NULL                   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And esiste l'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" per l'utente 0
     When la notifica può essere annullata dal sistema tramite codice IUN
@@ -107,7 +107,7 @@ Feature: Resa al mittente di una notifica
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V26"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V26"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "DELIVERED" con versione V26
-    And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost ugauale a "NotNull" per l'utente 0
+    And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost uguale a "NotNull" per l'utente 0
 
   @returnedToSender  @cleanWebhook @precondition @webhook1
   Scenario: [RETURNED-TO-SENDER_7_TEST] Invio notifica AR multi-destinatario aventi stati Irreperibile, Deceduto e macro stato mostrato UNREACHABLE
@@ -236,7 +236,7 @@ Feature: Resa al mittente di una notifica
     And esiste l'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" per l'utente 0
     And "Mario Cucumber" legge la notifica ricevuta
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
-    And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost ugauale a "null" per l'utente 0
+    And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost uguale a "null" per l'utente 0
 
   #prima deceduto, poi visualizza
   @returnedToSender
@@ -257,7 +257,7 @@ Feature: Resa al mittente di una notifica
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
       | digitalDomicile         | NULL               |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost ugauale a "NotNull" per l'utente 2
+    And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost uguale a "NotNull" per l'utente 2
     And "Mario Cucumber" legge la notifica
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
 
@@ -320,7 +320,7 @@ Feature: Resa al mittente di una notifica
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And "Mario Cucumber" legge la notifica
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
-    And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost ugauale a "null" per l'utente 2
+    And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost uguale a "null" per l'utente 2
 
 
   @returnedToSender
@@ -339,11 +339,11 @@ Feature: Resa al mittente di una notifica
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" per l'utente 0
-    And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost ugauale a "NotNull" per l'utente 0
+    And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost uguale a "NotNull" per l'utente 0
     And "Mario Cucumber" legge la notifica
     Then vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
 
- @returnedToSender
+  @returnedToSender
   Scenario: [RETURNED-TO-SENDER_19] Invio notifica 890 multi-destinatario aventi stati Deceduto e Visualizzato che poi sarà Deceduto e macro stato mostrato RETURNED_TO_SENDER
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -360,8 +360,8 @@ Feature: Resa al mittente di una notifica
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And esiste l'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" per l'utente 1
     And "Mario Cucumber" legge la notifica
-    And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost ugauale a "null" per l'utente 1
-   Then vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
+    And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost uguale a "null" per l'utente 1
+    Then vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
 
 
   @returnedToSender
@@ -375,7 +375,7 @@ Feature: Resa al mittente di una notifica
       | digitalDomicile         | NULL              |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
-    And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost ugauale a "NotNull" per l'utente 0
+    And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost uguale a "NotNull" per l'utente 0
     Then viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
       | details | NOT_NULL |
 
