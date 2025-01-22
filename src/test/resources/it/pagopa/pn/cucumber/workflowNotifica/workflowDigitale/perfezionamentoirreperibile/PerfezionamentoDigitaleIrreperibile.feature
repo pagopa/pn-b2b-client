@@ -1,7 +1,7 @@
 Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal deposito AAR e revisione date perfezionamento digitali
 
   #19
-  @addressBook1 @perfezionamentoIrreperibile
+  @addressBook1 @perfezionamentoIrreperibile @uatEnvCondition
   Scenario: [PERFEZIONAMENTO_IRREPERIBILE_3] Invio notifica digitale monodestinatario PF con SERCQ attivo
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -34,7 +34,7 @@ Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal 
     And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" con address type "PEC" digitalAddressSource "SPECIAL" in "OK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
 
     #23
-  @perfezionamentoIrreperibile @uatEnvCondition
+  @perfezionamentoIrreperibile
   Scenario: [PERFEZIONAMENTO_IRREPERIBILE_5] Invio notifica digitale monodestinatario PF con indirizzo generale associato
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
