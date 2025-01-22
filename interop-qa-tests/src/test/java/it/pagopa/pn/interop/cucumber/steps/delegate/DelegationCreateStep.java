@@ -2,20 +2,24 @@ package it.pagopa.pn.interop.cucumber.steps.delegate;
 
 import static it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.DelegationRole.DELEGATE;
 import static it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.DelegationRole.DELEGATING;
+import static it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.DelegationStrategy.consumerStrategyUsing;
+import static it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.DelegationStrategy.producerStrategyUsing;
 
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
-import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.interop.delegate.service.IDelegationApiClient;
 import it.pagopa.interop.delegate.service.IProducerDelegationsApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DelegatedConsumer;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DelegatedProducer;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.TenantFeature;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import java.util.EnumMap;
 import java.util.List;
@@ -23,6 +27,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 
@@ -40,6 +49,21 @@ public class DelegationCreateStep {
     public enum DelegationRole {
         DELEGATE,
         DELEGATING
+    }
+
+    @Value
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class DelegationStrategy<T, U> {
+        Consumer<T> delegationAssignor;
+        Function<TenantFeature, U> featureExtractor;
+
+        public static DelegationStrategy<String, DelegatedProducer> producerStrategyUsing(ITenantsApi apiSet) {
+            return new DelegationStrategy<>(in -> apiSet.assignTenantDelegatedProducerFeature(), TenantFeature::getDelegatedProducer);
+        }
+
+        public static DelegationStrategy<String, DelegatedConsumer> consumerStrategyUsing(ITenantsApi apiSet) {
+            return new DelegationStrategy<>(apiSet::assignTenantDelegatedConsumerFeature, TenantFeature::getDelegatedConsumer);
+        }
     }
 
     private final Map<DelegationCreateStep.DelegationRole, String> tenants = new EnumMap<>(DelegationCreateStep.DelegationRole.class);
@@ -78,25 +102,32 @@ public class DelegationCreateStep {
     }
 
     @And("l'utente concede la disponibilità a ricevere le deleghe")
-    public void userGrantsDelegationAvailability() {
+    public void userGrantsProducerDelegationAvailability() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-        setDelegationAvailability(sharedStepsContext.getTenantType());
+        setDelegationAvailability(sharedStepsContext.getTenantType(), producerStrategyUsing(tenantsApi), null);
     }
 
     @And("l'ente {string} concede la disponibilità a ricevere deleghe")
-    public void tenantGrantsDelegationAvailability(String tenantType) {
+    public void tenantGrantsProducerDelegationAvailability(String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        setDelegationAvailability(tenantType);
+        setDelegationAvailability(tenantType, producerStrategyUsing(tenantsApi), null);
     }
 
-    private void setDelegationAvailability(String tenantType) {
-        httpCallExecutor.performCall(tenantsApi::assignTenantDelegatedProducerFeature);
+    @And("l'ente {string} concede la disponibilità a ricevere deleghe in fruizione")
+    public void tenantGrantsConsumerDelegationAvailability(String tenantType) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        setDelegationAvailability(tenantType, consumerStrategyUsing(tenantsApi), sharedStepsContext.getXCorrelationId());
+    }
+
+    private <T, U> void setDelegationAvailability(
+        String tenantType, DelegationStrategy<T, U> delegationStrategy, T delegationApiInput) {
+        httpCallExecutor.performCall(() -> delegationStrategy.getDelegationAssignor().accept(delegationApiInput));
         if (httpCallExecutor.getClientResponse() == HttpStatus.OK)
             pollingService.makePolling(() -> tenantsApi.getTenant(sharedStepsContext.getXCorrelationId(), identityService.getOrganizationId(tenantType)),
                 res -> Optional.ofNullable(res.getFeatures())
                         .orElse(List.of())
                         .stream()
-                        .map(TenantFeature::getDelegatedProducer)
+                        .map(delegationStrategy.getFeatureExtractor())
                         .anyMatch(Objects::nonNull),
                 "There was an error while providing the delegation availability!");
     }

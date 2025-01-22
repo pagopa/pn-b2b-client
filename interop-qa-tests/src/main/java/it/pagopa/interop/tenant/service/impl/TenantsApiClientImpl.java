@@ -9,12 +9,10 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredAttributesR
 import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredTenantAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Tenant;
 import it.pagopa.interop.tenant.service.ITenantsApi;
+import java.util.UUID;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.UUID;
 import org.springframework.web.client.RestTemplate;
 
 @Component
@@ -65,6 +63,16 @@ public class TenantsApiClientImpl implements ITenantsApi {
     @Override
     public void deleteTenantDelegatedProducerFeature() {
         tenantsApi.deleteTenantDelegatedProducerFeature();
+    }
+
+    @Override
+    public void assignTenantDelegatedConsumerFeature(String xCorrelationId){
+        tenantsApi.assignTenantDelegatedConsumerFeature(xCorrelationId);
+    }
+
+    @Override
+    public void deleteTenantDelegatedConsumerFeature(String xCorrelationId) {
+        tenantsApi.deleteTenantDelegatedConsumerFeature(xCorrelationId);
     }
 
     @Override
