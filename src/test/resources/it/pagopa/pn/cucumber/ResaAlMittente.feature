@@ -617,8 +617,8 @@ Feature: Resa al mittente di una notifica
     Then l'operazione ha prodotto un errore con status code "400"
 
 
-  @returnedToSender @isDeceasedWorkflowActive
-  Scenario: [RETURNED-TO-SENDER_29] Invio notifica 890 mono-destinatario Deceduto che poi Visualizza con stato atteso RETURNED_TO_SENDER e corretta visualizzazione della timeline del destinatario
+  @isDeceasedWorkflowActive
+  Scenario: [RETURNED-TO-SENDER_FLAG_OFF] Invio notifica 890 mono-destinatario Deceduto che poi Visualizza con stato atteso RETURNED_TO_SENDER e corretta visualizzazione della timeline del destinatario
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
