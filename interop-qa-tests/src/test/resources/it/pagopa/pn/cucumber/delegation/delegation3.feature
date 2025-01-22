@@ -15,27 +15,39 @@ Feature: Test API Availability in Use of E-Service
 
   @TC_INCARICATO_46
   Scenario Outline: Verificare che il richiamo dell’API di disponibilità in fruizione di un e-service, per il quale è già stata data disponibilità, non possa essere compiuto da un utente di tipo amministratore
-    Given l'utente è un "<ruolo>" di "PA1"
+    Given l'ente delegante "PA1"
+    And l'utente è un "<ruolo>" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
+    And l'ente delegato "PA2"
     And l'utente è un "<ruolo>" di "PA2"
-    And l'ente "PA2" concede la disponibilità a ricevere deleghe in fruizione
-    When l'ente "PA2" concede la disponibilità a ricevere deleghe in fruizione
+    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
+    When l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
     Then si ottiene status code <statusCode>
-    
     Examples:
       | ruolo       | statusCode |
       | admin       |        400 |
+      | api         |        403 |
+      | security    |        403 |
+      | api,security|        403 |
+      | support     |        403 |
 
   @TC_INCARICATO_47
-  Scenario Outline: Richiamare l’API di creazione di una delega da parte di un fruitore delegante verso un altro ente
-    Given l'utente è un "<ruolo>" di "PA1"
-    And l'utente ha già creato un e-service che accetta richieste di fruizione in delega
-    When Richiamare l’API di creazione di una delega
+  Scenario Outline: Richiamare l’API di creazione di una delega da parte di un fruitore delegante verso un altro ente delegato
+    Given l'ente delegato "PA2"
+    And l'utente è un "<ruolo>" di "PA2"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in fruizione
+    And l'ente delegante "PA1"
+    And l'utente è un "<ruolo>" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    When l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
     Then si ottiene status code <statusCode>
-
     Examples:
       | ruolo       | statusCode |
       | admin       |        200 |
+      | api         |        403 |
+      | security    |        403 |
+      | api,security|        403 |
+      | support     |        403 |
 
   @TC_INCARICATO_48
   Scenario Outline: Richiamare l’API di creazione di una delega non permessa

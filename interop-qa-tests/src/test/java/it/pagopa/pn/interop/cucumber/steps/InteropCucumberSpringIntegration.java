@@ -16,6 +16,7 @@ import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
 import it.pagopa.interop.config.springconfig.springconfig.InteropRestTemplateConfiguration;
+import it.pagopa.interop.delegate.service.impl.ConsumerDelegationsApiClientImpl;
 import it.pagopa.interop.delegate.service.impl.DelegationApiClientImpl;
 import it.pagopa.interop.delegate.service.impl.ProducerDelegationsApiClientImpl;
 import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
@@ -52,6 +53,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
     RiskAnalysisDataInitializer.class,
     ClientTokenConfigurator.class,
     ProducerDelegationsApiClientImpl.class,
+    ConsumerDelegationsApiClientImpl.class,
     DelegationApiClientImpl.class,
     ConfigFileReader.class
 })

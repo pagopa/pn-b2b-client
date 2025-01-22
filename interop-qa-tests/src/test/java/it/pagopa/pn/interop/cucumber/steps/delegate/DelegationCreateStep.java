@@ -2,14 +2,15 @@ package it.pagopa.pn.interop.cucumber.steps.delegate;
 
 import static it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.DelegationRole.DELEGATE;
 import static it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.DelegationRole.DELEGATING;
-import static it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.DelegationStrategy.consumerStrategyUsing;
-import static it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.DelegationStrategy.producerStrategyUsing;
+import static it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.DelegationAvailabilityStrategy.consumerStrategyUsing;
+import static it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.DelegationAvailabilityStrategy.producerStrategyUsing;
 
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
+import it.pagopa.interop.delegate.service.IConsumerDelegationsApiClient;
 import it.pagopa.interop.delegate.service.IDelegationApiClient;
 import it.pagopa.interop.delegate.service.IProducerDelegationsApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
@@ -27,6 +28,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import lombok.AccessLevel;
@@ -39,6 +41,7 @@ import org.springframework.http.HttpStatus;
 public class DelegationCreateStep {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final IProducerDelegationsApiClient producerDelegationsApiClient;
+    private final IConsumerDelegationsApiClient consumerDelegationsApiClient;
     private final IDelegationApiClient delegationApiClient;
     private final ITenantsApi tenantsApi;
     private final IdentityService identityService;
@@ -53,16 +56,16 @@ public class DelegationCreateStep {
 
     @Value
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class DelegationStrategy<T, U> {
-        Consumer<T> delegationAssignor;
+    public static class DelegationAvailabilityStrategy<T, U> {
+        Consumer<T> delegationAvailabilityDeclarer;
         Function<TenantFeature, U> featureExtractor;
 
-        public static DelegationStrategy<String, DelegatedProducer> producerStrategyUsing(ITenantsApi apiSet) {
-            return new DelegationStrategy<>(in -> apiSet.assignTenantDelegatedProducerFeature(), TenantFeature::getDelegatedProducer);
+        public static DelegationAvailabilityStrategy<String, DelegatedProducer> producerStrategyUsing(ITenantsApi apiSet) {
+            return new DelegationAvailabilityStrategy<>(in -> apiSet.assignTenantDelegatedProducerFeature(), TenantFeature::getDelegatedProducer);
         }
 
-        public static DelegationStrategy<String, DelegatedConsumer> consumerStrategyUsing(ITenantsApi apiSet) {
-            return new DelegationStrategy<>(apiSet::assignTenantDelegatedConsumerFeature, TenantFeature::getDelegatedConsumer);
+        public static DelegationAvailabilityStrategy<String, DelegatedConsumer> consumerStrategyUsing(ITenantsApi apiSet) {
+            return new DelegationAvailabilityStrategy<>(apiSet::assignTenantDelegatedConsumerFeature, TenantFeature::getDelegatedConsumer);
         }
     }
 
@@ -72,6 +75,7 @@ public class DelegationCreateStep {
                                 SharedStepsContext sharedStepsContext) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.producerDelegationsApiClient = clientTokenConfigurator.getProducerDelegationsApiClient();
+        this.consumerDelegationsApiClient = clientTokenConfigurator.getConsumerDelegationsApiClient();
         this.delegationApiClient = clientTokenConfigurator.getDelegationApiClient();
         this.tenantsApi = clientTokenConfigurator.getTenantsApi();
         this.sharedStepsContext = sharedStepsContext;
@@ -98,7 +102,14 @@ public class DelegationCreateStep {
     public void givenDelegatingTenantHasRequestedDelegation() {
         String delegatingTenantToken = identityService.getToken(tenants.get(DELEGATING), null);
         clientTokenConfigurator.setBearerToken(delegatingTenantToken);
-        createDelegate(tenants.get(DELEGATE));
+        createDelegate(tenants.get(DELEGATE), producerDelegationsApiClient::createProducerDelegation);
+    }
+
+    @Given("l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato")
+    public void givenConsumerDelegatingTenantHasRequestedDelegation() {
+        String delegatingTenantToken = identityService.getToken(tenants.get(DELEGATING), null);
+        clientTokenConfigurator.setBearerToken(delegatingTenantToken);
+        createDelegate(tenants.get(DELEGATE), consumerDelegationsApiClient::createConsumerDelegation);
     }
 
     @And("l'utente concede la disponibilità a ricevere le deleghe")
@@ -119,9 +130,15 @@ public class DelegationCreateStep {
         setDelegationAvailability(tenantType, consumerStrategyUsing(tenantsApi), sharedStepsContext.getXCorrelationId());
     }
 
+    @And("l'ente {delegationRole} concede la disponibilità a ricevere deleghe in fruizione")
+    public void tenantGrantsConsumerDelegationAvailability(DelegationCreateStep.DelegationRole delegationRole) {
+        String tenantType = tenants.get(delegationRole);
+        tenantGrantsConsumerDelegationAvailability(tenantType);
+    }
+
     private <T, U> void setDelegationAvailability(
-        String tenantType, DelegationStrategy<T, U> delegationStrategy, T delegationApiInput) {
-        httpCallExecutor.performCall(() -> delegationStrategy.getDelegationAssignor().accept(delegationApiInput));
+        String tenantType, DelegationAvailabilityStrategy<T, U> delegationStrategy, T delegationApiInput) {
+        httpCallExecutor.performCall(() -> delegationStrategy.getDelegationAvailabilityDeclarer().accept(delegationApiInput));
         if (httpCallExecutor.getClientResponse() == HttpStatus.OK)
             pollingService.makePolling(() -> tenantsApi.getTenant(sharedStepsContext.getXCorrelationId(), identityService.getOrganizationId(tenantType)),
                 res -> Optional.ofNullable(res.getFeatures())
@@ -135,13 +152,13 @@ public class DelegationCreateStep {
     @And("l'ente {string} richiede la creazione di una delega per l'ente {string}")
     public void createDelegate(String delegatorTenantType, String tenantType) throws InterruptedException {
         clientTokenConfigurator.setBearerToken(identityService.getToken(delegatorTenantType, null));
-        createDelegate(tenantType);
+        createDelegate(tenantType, producerDelegationsApiClient::createProducerDelegation);
     }
 
     @And("l'utente richiede la creazione di una delega per l'ente {string}")
     public void userRequestDelegationCreation(String tenantType) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-        createDelegate(tenantType);
+        createDelegate(tenantType,  producerDelegationsApiClient::createProducerDelegation);
     }
 
     @And("la delega è stata creata correttamente")
@@ -154,9 +171,9 @@ public class DelegationCreateStep {
         );
     }
 
-    private void createDelegate(String tenantType) {
+    private void createDelegate(String tenantType, BiFunction<String, DelegationSeed, CreatedResource> delegationCreator) {
         UUID organizationId = identityService.getOrganizationId(tenantType);
-        httpCallExecutor.performCall(() -> producerDelegationsApiClient.createProducerDelegation(sharedStepsContext.getXCorrelationId(),
+        httpCallExecutor.performCall(() -> delegationCreator.apply(sharedStepsContext.getXCorrelationId(),
                 new DelegationSeed().eserviceId(sharedStepsContext.getEServicesCommonContext().getEserviceId()).delegateId(organizationId)));
         if (httpCallExecutor.getClientResponse() == HttpStatus.OK) {
             sharedStepsContext.getDelegationCommonContext().setDelegationId(((CreatedResource) httpCallExecutor.getResponse()).getId());
