@@ -336,7 +336,6 @@ public class AvanzamentoNotificheB2bSteps {
         Integer numCheck = dataFromTest != null ? dataFromTest.getNumCheck() : null;
         String pollingType = dataFromTest != null ? dataFromTest.getPollingType() : null;
 
-        //TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
         TimingForPolling.TimingResult timingForElement = timingForPolling.getTimingForElement(timelineEventCategory);
         if ("extraRapid".equals(pollingType)) {
             timingForElement = timingForPolling.getTimingForElement(timelineEventCategory, false, true);
@@ -897,12 +896,8 @@ public class AvanzamentoNotificheB2bSteps {
             sharedSteps.setSentNotification(pnPollingResponseV26.getNotification());
             TimelineElementV26 timelineElement = pnPollingResponseV26.getTimelineElement();
             log.info("TIMELINE_ELEMENT: " + timelineElement);
-            //Assertions.assertNotNull(timelineElement.getDetails().getAttachments());
-            //Assertions.assertTrue(timelineElement.getDetails().getAttachments().size()>0);
-            //Assertions.assertNotNull(timelineElement.getDetails().getAttachments().get(0).getDate());
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             Assertions.assertEquals(Objects.requireNonNull(timelineElement.getDetails()).getNotificationDate().format(fmt), now().plusDays(delay).format(fmt));
-            //Assertions.assertTrue(timelineElement.getDetails().getAttachments().get(0).getDate().format(fmt).equals(OffsetDateTime.now().plusDays(delay).format(fmt)));
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
@@ -953,7 +948,6 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertNotNull(Objects.requireNonNull(timelineElement.getDetails()).getAttachments());
             Assertions.assertFalse(timelineElement.getDetails().getAttachments().isEmpty());
             Assertions.assertNotNull(timelineElement.getDetails().getAttachments().get(0).getDocumentType());
-            // Assertions.assertTrue(timelineElement.getDetails().getNotificationDate().format(fmt).equals(OffsetDateTime.now().plusDays(delay).format(fmt)));
             Assertions.assertEquals(Objects.requireNonNull(timelineElement.getDetails().getAttachments().get(0).getDocumentType()), tipoDoc);
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
@@ -979,7 +973,6 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertNotNull(Objects.requireNonNull(timelineElement.getDetails()).getAttachments());
             Assertions.assertFalse(timelineElement.getDetails().getAttachments().isEmpty());
             Assertions.assertNotNull(timelineElement.getDetails().getAttachments().get(0).getDocumentType());
-            // Assertions.assertTrue(timelineElement.getDetails().getNotificationDate().format(fmt).equals(OffsetDateTime.now().plusDays(delay).format(fmt)));
             Assertions.assertTrue(Objects.requireNonNull(timelineElement.getDetails().getAttachments().get(0).getDocumentType()).equals(tipoDoc) || Objects.equals(timelineElement.getDetails().getAttachments().get(0).getDocumentType(), "Indagine"));
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
@@ -1294,13 +1287,13 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("la PA richiede il download dell'attestazione opponibile PEC_RECEIPT")
     public void paRequiresDownloadOfLegalFactPecRecipient() {
-        downloadLegalFactPecRecipient("PEC_RECEIPT", true, false, false, null);
+        downloadLegalFactPecRecipient(true, false, null);
     }
 
     @Then("{string} richiede il download dell'attestazione opponibile PEC_RECEIPT")
     public void userDownloadLegalFactPecRecipient(String user) {
         sharedSteps.selectUser(user);
-        downloadLegalFactPecRecipient("PEC_RECEIPT", false, false, true, null);
+        downloadLegalFactPecRecipient(false, true, null);
     }
 
     @Then("{string} richiede il download dell'attestazione opponibile {string} con errore {string}")
@@ -1310,8 +1303,6 @@ public class AvanzamentoNotificheB2bSteps {
             String legalFactUrl = downloadLegalFact(legalFactCategory, false, false, true, null);
             legalFactContentVerifySteps.setLegalFactUrl(legalFactUrl);
         } catch (AssertionFailedError assertionFailedError) {
-            // System.out.println(assertionFailedError.getCause().toString());
-            // System.out.println(assertionFailedError.getCause().getMessage().toString());
             Assertions.assertEquals(assertionFailedError.getCause().getMessage().substring(0, 3), statusCode);
         }
     }
@@ -1380,7 +1371,7 @@ public class AvanzamentoNotificheB2bSteps {
         return null;
     }
 
-    private void downloadLegalFactPecRecipient(String legalFactCategory, boolean pa, boolean appIO, boolean webRecipient, String deliveryDetailCode) {
+    private void downloadLegalFactPecRecipient(boolean pa, boolean webRecipient, String deliveryDetailCode) {
         try {
             Thread.sleep(sharedSteps.getWait());
         } catch (InterruptedException exc) {
@@ -1432,7 +1423,6 @@ public class AvanzamentoNotificheB2bSteps {
             String finalKeySearch = keySearch;
             if (pa) {
                 LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse = this.b2bClient.getLegalFact(sharedSteps.getSentNotification().getIun(), categorySearch, finalKeySearch);
-                //System.out.println("NOME FILE PEC RECIPIENT PA"+legalFactDownloadMetadataResponse.getFilename());
                 Assertions.assertNotNull(legalFactDownloadMetadataResponse);
                 Assertions.assertNotNull(legalFactDownloadMetadataResponse.getFilename());
                 Assertions.assertTrue(legalFactDownloadMetadataResponse.getFilename().contains(".eml"));
@@ -1444,7 +1434,6 @@ public class AvanzamentoNotificheB2bSteps {
                         sharedSteps.deepCopy(categorySearch,
                                 it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactCategory.class),
                         finalKeySearch);
-                // System.out.println("NOME FILE PEC RECIPIENT DEST"+legalFactDownloadMetadataResponse.getFilename());
                 Assertions.assertNotNull(legalFactDownloadMetadataResponse);
                 Assertions.assertNotNull(legalFactDownloadMetadataResponse.getFilename());
                 Assertions.assertTrue(legalFactDownloadMetadataResponse.getFilename().contains(".eml"));
@@ -2342,8 +2331,6 @@ public class AvanzamentoNotificheB2bSteps {
                     esiste = notificationPaymentItem != null;
                 }
                 Assertions.assertTrue(esiste);
-                //Assertions.assertTrue(sharedSteps.getSentNotification().getRecipients().get(destinatario).getPayments().get(avviso).getPagoPa().getCreditorTaxId().equals(timelineElement.getDetails().getCreditorTaxId()));
-                //Assertions.assertTrue(sharedSteps.getSentNotification().getRecipients().get(destinatario).getPayments().get(avviso).getPagoPa().getNoticeCode().equals(timelineElement.getDetails().getNoticeCode()));
             }
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
@@ -2364,8 +2351,6 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertFalse(pnPollingResponseV26.getResult());
             Assertions.assertNull(pnPollingResponseV26.getTimelineElement());
             sharedSteps.setSentNotification(pnPollingResponseV26.getNotification());
-            //Assertions.assertTrue(sharedSteps.getSentNotification().getRecipients().get(destinatario).getPayments().get(avviso).getPagoPa().getCreditorTaxId().equals(timelineElement.getDetails().getCreditorTaxId()));
-            //Assertions.assertTrue(sharedSteps.getSentNotification().getRecipients().get(destinatario).getPayments().get(avviso).getPagoPa().getNoticeCode().equals(timelineElement.getDetails().getNoticeCode()));
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
@@ -2601,7 +2586,6 @@ public class AvanzamentoNotificheB2bSteps {
         System.out.println(timelineElement.getDetails().getSchedulingDate().format(fmt1));
         System.out.println(schedulingDate.format(fmt1));
         Assertions.assertEquals(timelineElement.getDetails().getSchedulingDate().format(fmt1), schedulingDate.format(fmt1));
-        //Assertions.assertEquals(timelineElement.getDetails().getSchedulingDate(), schedulingDate);
     }
 
     @And("si attende che sia presente il perfezionamento per decorrenza termini")
@@ -3074,7 +3058,6 @@ public class AvanzamentoNotificheB2bSteps {
                     }
                 }
             }
-            //Duration ss = sharedSteps.getSchedulingDaysSuccessDigitalRefinement();
             //DateTimeFormatter fmt1 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
             Long schedulingDateMillis = timelineElement.getDetails().getSchedulingDate().toInstant().toEpochMilli();
             Long digitalDeliveryCreationMillis = Objects.requireNonNull(digitalDeliveryCreationRequestDate).toInstant().toEpochMilli();
@@ -3083,7 +3066,6 @@ public class AvanzamentoNotificheB2bSteps {
             log.info("PRE-ASSERTION: iun={} schedulingDateMillis={}, digitalDeliveryCreationMillis={}, diff={}, delayMillis={}, delta={}",
                     sharedSteps.getSentNotification().getIun(), schedulingDateMillis, digitalDeliveryCreationMillis, diff, delayMillis, delta);
             Assertions.assertTrue(diff <= delayMillis + delta && diff >= delayMillis - delta);
-            //Assertions.assertTrue(timelineElement.getDetails().getSchedulingDate().format(fmt1).equals(digitalDeliveryCreationRequestDate.plusMinutes(delay).format(fmt1)));
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
