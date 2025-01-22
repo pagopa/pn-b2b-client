@@ -458,7 +458,6 @@ public class ApiServiceDeskSteps {
     public void verifySearchResponseEmpty() {
         List<OperationResponse> lista = searchResponse.getOperations();
         log.info("STAMPA LISTA " + Objects.requireNonNull(lista));
-        //   Assertions.assertNull(lista);
         Assertions.assertEquals("[]", lista.toString());
     }
 
@@ -943,7 +942,6 @@ public class ApiServiceDeskSteps {
             Assertions.assertNotNull(searchNotificationsResponse);
             Assertions.assertNotNull(searchNotificationsResponse.getResults());
             Assertions.assertFalse(searchNotificationsResponse.getResults().isEmpty());
-            //  Assertions.assertTrue(searchNotificationsResponse.getResults().get(0).getIun().equalsIgnoreCase(sharedSteps.getSentNotification().getIun()));
         } catch (HttpStatusCodeException exception) {
             this.notificationError = exception;
         }
@@ -1189,7 +1187,6 @@ public class ApiServiceDeskSteps {
     }
 
     private void loadFileSafeStorageSteps() {
-        // notificationDocument = newDocument("classpath:/video.mp4");
         String resourceName = notificationDocument.getRef().getKey();
         log.info("Resouce name" + resourceName);
         loadToPresigned(videoUploadResponse.getUrl(), videoUploadResponse.getSecret(), videoUploadRequest.getSha256(), resourceName);

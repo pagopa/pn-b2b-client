@@ -22,8 +22,6 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKey;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKeys;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeAdditionDetailsSeed;
-import java.util.List;
-import java.util.UUID;
 import org.springframework.web.client.RestTemplate;
 
 @Component
