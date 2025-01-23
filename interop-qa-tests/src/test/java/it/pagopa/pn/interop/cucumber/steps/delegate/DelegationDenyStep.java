@@ -5,6 +5,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
+import it.pagopa.interop.delegate.service.IConsumerDelegationsApiClient;
 import it.pagopa.interop.delegate.service.IProducerDelegationsApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RejectDelegationPayload;
 import it.pagopa.interop.utils.HttpCallExecutor;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.Assertions;
 public class DelegationDenyStep {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final IProducerDelegationsApiClient producerDelegationsApiClient;
+    private final IConsumerDelegationsApiClient consumerDelegationsApiClient;
     private final IdentityService identityService;
     private final SharedStepsContext sharedStepsContext;
     private final HttpCallExecutor httpCallExecutor;
@@ -25,6 +27,7 @@ public class DelegationDenyStep {
                               SharedStepsContext sharedStepsContext) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.producerDelegationsApiClient = clientTokenConfigurator.getProducerDelegationsApiClient();
+        this.consumerDelegationsApiClient = clientTokenConfigurator.getConsumerDelegationsApiClient();
         this.sharedStepsContext = sharedStepsContext;
         this.identityService = sharedStepsContext.getIdentityService();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
@@ -46,6 +49,15 @@ public class DelegationDenyStep {
     private void rejectProducerDelegation() {
         httpCallExecutor.performCall(
                 () -> producerDelegationsApiClient.rejectProducerDelegation(sharedStepsContext.getXCorrelationId(),
+                        sharedStepsContext.getDelegationCommonContext().getDelegationId(),
+                        new RejectDelegationPayload().rejectionReason("Missing all required data!")));
+    }
+
+    @And("l'ente fruitore {string} rifiuta la delega")
+    public void rejectConsumerDelegation(String tenantType) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        httpCallExecutor.performCall(
+                () -> consumerDelegationsApiClient.rejectConsumerDelegation(sharedStepsContext.getXCorrelationId(),
                         sharedStepsContext.getDelegationCommonContext().getDelegationId(),
                         new RejectDelegationPayload().rejectionReason("Missing all required data!")));
     }
