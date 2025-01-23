@@ -1,5 +1,7 @@
 package it.pagopa.pn.client.b2b.pa.config.springconfig;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +13,8 @@ import java.util.Properties;
 @Configuration
 public class MailSenderConfig {
 
+    private static final Logger logger = LoggerFactory.getLogger(MailSenderConfig.class.getName());
+
     @Value("${b2b.mail.username}")
     private String mailUsername;
 
@@ -19,7 +23,7 @@ public class MailSenderConfig {
 
     @Bean
     public JavaMailSender javaMailSender(){
-        System.out.println("MAIL PASSWORD: "+mailPassowrd+" MAIL Username: "+mailUsername);
+        logger.info("MAIL PASSWORD: {} MAIL Username: {}", mailPassowrd, mailUsername);
 
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost("smtp.gmail.com");

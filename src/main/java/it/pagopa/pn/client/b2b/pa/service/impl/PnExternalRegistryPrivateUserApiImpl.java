@@ -54,9 +54,7 @@ public class PnExternalRegistryPrivateUserApiImpl implements IPnExternalRegistry
             case PG_3 -> this.externalRegistryUserApi.setApiClient(createApiClient(aldameriniPGBearerToken));
             case PG_4 -> this.externalRegistryUserApi.setApiClient(createApiClient(mariaMontessoriPGBearerToken));
             case PG_5 -> this.externalRegistryUserApi.setApiClient(createApiClient(nildeIottiPGBearerToken));
-            default ->  {
-                throw new IllegalArgumentException("user not allowed");
-                }
+            default -> throw new IllegalArgumentException("user not allowed");
             }
     }
 }

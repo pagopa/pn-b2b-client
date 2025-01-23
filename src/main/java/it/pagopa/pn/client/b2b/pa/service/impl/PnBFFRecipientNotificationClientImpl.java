@@ -91,21 +91,11 @@ public class PnBFFRecipientNotificationClientImpl implements IPnBFFRecipientNoti
     @Override
     public void setRecipientBearerToken(SettableBearerToken.BearerTokenType bearerToken) {
         switch (bearerToken) {
-            case USER_1 -> {
-                this.notificationReceivedApi.setApiClient(newApiClientForRecipient(restTemplate, basePath, marioCucumberBearerToken));
-            }
-            case USER_2 -> {
-                this.notificationReceivedApi.setApiClient(newApiClientForRecipient(restTemplate, basePath, marioGherkinBearerToken));
-            }
-            case USER_3 -> {
-                this.notificationReceivedApi.setApiClient(newApiClientForRecipient(restTemplate, basePath, leonardoBearerToken));
-            }
-            case PG_1 -> {
-                this.notificationReceivedApi.setApiClient(newApiClientForRecipient(restTemplate, basePath, gherkinSrlBearerToken));
-            }
-            case PG_2 -> {
-                this.notificationReceivedApi.setApiClient(newApiClientForRecipient(restTemplate, basePath, cucumberSpaBearerToken));
-            }
+            case USER_1 -> this.notificationReceivedApi.setApiClient(newApiClientForRecipient(restTemplate, basePath, marioCucumberBearerToken));
+            case USER_2 -> this.notificationReceivedApi.setApiClient(newApiClientForRecipient(restTemplate, basePath, marioGherkinBearerToken));
+            case USER_3 -> this.notificationReceivedApi.setApiClient(newApiClientForRecipient(restTemplate, basePath, leonardoBearerToken));
+            case PG_1 -> this.notificationReceivedApi.setApiClient(newApiClientForRecipient(restTemplate, basePath, gherkinSrlBearerToken));
+            case PG_2 -> this.notificationReceivedApi.setApiClient(newApiClientForRecipient(restTemplate, basePath, cucumberSpaBearerToken));
             default -> throw new IllegalStateException("Unexpected value: " + bearerToken);
         }
     }
@@ -113,21 +103,11 @@ public class PnBFFRecipientNotificationClientImpl implements IPnBFFRecipientNoti
     @Override
     public void setSenderBearerToken(SettableBearerToken.BearerTokenType bearerToken) {
         switch (bearerToken) {
-            case MVP_1 -> {
-                this.notificationSentApi.setApiClient( newApiClientForSender( this.restTemplate, basePath, bearerTokenCom1));
-            }
-            case MVP_2 -> {
-                this.notificationSentApi.setApiClient( newApiClientForSender( restTemplate, basePath, bearerTokenCom2));
-            }
-            case GA -> {
-                this.notificationSentApi.setApiClient( newApiClientForSender( restTemplate, basePath, bearerTokenGA));
-            }
-            case SON -> {
-                this.notificationSentApi.setApiClient( newApiClientForSender( restTemplate, basePath, bearerTokenSON));
-            }
-            case ROOT -> {
-                this.notificationSentApi.setApiClient( newApiClientForSender( restTemplate, basePath, bearerTokenROOT));
-            }
+            case MVP_1 -> this.notificationSentApi.setApiClient( newApiClientForSender( this.restTemplate, basePath, bearerTokenCom1));
+            case MVP_2 -> this.notificationSentApi.setApiClient( newApiClientForSender( restTemplate, basePath, bearerTokenCom2));
+            case GA -> this.notificationSentApi.setApiClient( newApiClientForSender( restTemplate, basePath, bearerTokenGA));
+            case SON -> this.notificationSentApi.setApiClient( newApiClientForSender( restTemplate, basePath, bearerTokenSON));
+            case ROOT -> this.notificationSentApi.setApiClient( newApiClientForSender( restTemplate, basePath, bearerTokenROOT));
             default -> throw new IllegalStateException("Unexpected value: " + bearerToken);
         }
     }

@@ -12,18 +12,18 @@ import org.springframework.web.client.HttpServerErrorException;
 @Slf4j
 public class InteropProbingSteps {
 
-  private final IPnInteropProbingClient IPnInteropProbingClient;
+  private final IPnInteropProbingClient ipnInteropProbingClient;
   private ResponseEntity<Void> probingResponse;
 
   @Autowired
-  public InteropProbingSteps(IPnInteropProbingClient IPnInteropProbingClient) {
-    this.IPnInteropProbingClient = IPnInteropProbingClient;
+  public InteropProbingSteps(IPnInteropProbingClient ipnInteropProbingClient) {
+    this.ipnInteropProbingClient = ipnInteropProbingClient;
   }
 
   @When("viene chiamato il servizio di probing per interop")
   public void probingService() {
     try {
-      probingResponse = IPnInteropProbingClient.getEserviceStatus();
+      probingResponse = ipnInteropProbingClient.getEserviceStatus();
     } catch (HttpServerErrorException e) {
       probingResponse = ResponseEntity.status(e.getRawStatusCode()).build();
     }

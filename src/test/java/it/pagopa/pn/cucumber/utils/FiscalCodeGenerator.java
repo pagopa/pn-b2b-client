@@ -104,21 +104,21 @@ public class FiscalCodeGenerator {
     }
 
     public static String generateCF(long iter) {
-        int _1Num = Long.valueOf(iter % 16).intValue();
-        int _2Num = Long.valueOf((iter / 16) % 16).intValue();
-        int _3Num = Long.valueOf((iter / (int) Math.pow(16, 2)) % 16).intValue();
-        int _4Num = Long.valueOf((iter / (int) Math.pow(16, 3)) % 16).intValue();
-        int _5Num = Long.valueOf((iter / (int) Math.pow(16, 4)) % 16).intValue();
-        int _6Num = Long.valueOf((iter / (int) Math.pow(16, 5)) % 16).intValue();
+        int numA = Long.valueOf(iter % 16).intValue();
+        int numB = Long.valueOf((iter / 16) % 16).intValue();
+        int numC = Long.valueOf((iter / (int) Math.pow(16, 2)) % 16).intValue();
+        int numD = Long.valueOf((iter / (int) Math.pow(16, 3)) % 16).intValue();
+        int numE = Long.valueOf((iter / (int) Math.pow(16, 4)) % 16).intValue();
+        int numF = Long.valueOf((iter / (int) Math.pow(16, 5)) % 16).intValue();
 
-        char _1Char = HEX_TO_LETTER[_1Num];
-        char _2Char = HEX_TO_LETTER[_2Num];
-        char _3Char = HEX_TO_LETTER[_3Num];
-        char _4Char = HEX_TO_LETTER[_4Num];
-        char _5Char = HEX_TO_LETTER[_5Num];
-        char _6Char = HEX_TO_LETTER[_6Num];
+        char charA = HEX_TO_LETTER[numA];
+        char charB = HEX_TO_LETTER[numB];
+        char charC = HEX_TO_LETTER[numC];
+        char charD = HEX_TO_LETTER[numD];
+        char charE = HEX_TO_LETTER[numE];
+        char charF = HEX_TO_LETTER[numF];
 
-        String cfPrefix = "" + _1Char + _2Char + _3Char + _4Char + _5Char + _6Char + "20T25A944";
+        String cfPrefix = "" + charA + charB + charC + charD + charE + charF + "20T25A944";
 
         char cc = generaCarattereControllo(cfPrefix);
         return cfPrefix + cc;

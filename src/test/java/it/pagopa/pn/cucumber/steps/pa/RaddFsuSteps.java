@@ -229,7 +229,6 @@ public class RaddFsuSteps {
     }
 
     private StartTransactionResponseStatus.CodeEnum getErrorCodeStartTransaction(int errorCode){
-        //return StartTransactionResponseStatus.CodeEnum.valueOf("NUMBER_"+errorCode);
         switch (errorCode){
             case 0 -> {
                 return StartTransactionResponseStatus.CodeEnum.NUMBER_0;
