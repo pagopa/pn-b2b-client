@@ -72,18 +72,10 @@ public class IPnTosPrivacyClientImpl implements IPnTosPrivacyClient {
     @Override
     public void setBearerToken(SettableBearerToken.BearerTokenType bearerToken) {
         switch (bearerToken) {
-            case PG_3 -> {
-                this.userConsentsApi.setApiClient(newApiClient(aldameriniPGBearerToken));
-            }
-            case PG_4 -> {
-                this.userConsentsApi.setApiClient(newApiClient(mariaMontessoriPGBearerToken));
-            }
-            case PG_5 -> {
-                this.userConsentsApi.setApiClient(newApiClient(nildeIottiPGBearerToken));
-            }
-            default ->  {
-                this.userConsentsApi.setApiClient(newApiClient(aldameriniPGBearerToken));
-            }
+            case PG_3 -> this.userConsentsApi.setApiClient(newApiClient(aldameriniPGBearerToken));
+            case PG_4 -> this.userConsentsApi.setApiClient(newApiClient(mariaMontessoriPGBearerToken));
+            case PG_5 -> this.userConsentsApi.setApiClient(newApiClient(nildeIottiPGBearerToken));
+            default -> this.userConsentsApi.setApiClient(newApiClient(aldameriniPGBearerToken));
         }
     }
 }

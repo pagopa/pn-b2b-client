@@ -175,7 +175,6 @@ public class PnExternalServiceClientImpl {
         final Map<String, Object> uriVariables = new HashMap<>();
 
         final MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
-        //queryParams.add("format", "json");
 
         final HttpHeaders headerParams = new HttpHeaders();
 

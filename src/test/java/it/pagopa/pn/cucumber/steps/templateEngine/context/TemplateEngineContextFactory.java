@@ -1,12 +1,10 @@
 package it.pagopa.pn.cucumber.steps.templateEngine.context;
 
-import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.*;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateRequestContext;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 

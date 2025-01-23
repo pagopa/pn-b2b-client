@@ -1,6 +1,5 @@
 package it.pagopa.interop.utils;
 
-import lombok.Data;
 import lombok.Getter;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;

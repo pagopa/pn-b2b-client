@@ -382,7 +382,6 @@ public class RaddAltSteps {
     }
 
     private StartTransactionResponseStatus.CodeEnum getErrorCodeStartTransaction(int errorCode) {
-        //return StartTransactionResponseStatus.CodeEnum.valueOf("NUMBER_"+errorCode);
         switch (errorCode) {
             case 0 -> {
                 return StartTransactionResponseStatus.CodeEnum.NUMBER_0;
@@ -853,8 +852,8 @@ public class RaddAltSteps {
     @After("@raddAlt")
     public void deleteZip() {
         if (fileZip != null) {
-            URI zip_disk = URI.create("target/classes/"+this.fileZip);
-            File file = new File(zip_disk.getPath());
+            URI zipDisk = URI.create("target/classes/"+this.fileZip);
+            File file = new File(zipDisk.getPath());
             boolean deleted = file.delete();
             System.out.println("delete "+deleted);
             }
