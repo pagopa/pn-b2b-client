@@ -78,35 +78,6 @@ public class TimelineEventIdBuilder {
         return this;
     }
 
-    /*
-
-    public TimelineEventIdBuilder withDeliveryMode(@Nullable DeliveryModeInt deliveryMode) {
-        if(deliveryMode != null)
-            this.deliveryMode = DELIMITER.concat("DELIVERYMODE_").concat(deliveryMode.getValue());
-        return this;
-    }
-
-    public TimelineEventIdBuilder withContactPhase(@Nullable ContactPhaseInt contactPhase) {
-        if(contactPhase != null)
-            this.contactPhase = DELIMITER.concat("CONTACTPHASE_").concat(contactPhase.getValue());
-        return this;
-    }
-
-    public TimelineEventIdBuilder withCorrelationId(@Nullable String correlationId) {
-        if(correlationId != null)
-            this.correlationId = DELIMITER.concat("CORRELATIONID_").concat(correlationId);
-        return this;
-    }
-
-    // payment code per pagamenti PagoPa = PPANoticeNumberCreditorTaxId
-    // payment code per pagamenti f24 = F24Idf24
-    public TimelineEventIdBuilder withPaymentCode(@Nullable String paymentCode) {
-        if(paymentCode != null)
-            this.paymentCode = DELIMITER.concat("CODE_").concat(paymentCode);
-        return this;
-    }
-     */
-
     public String build() {
         String paymentCode = "";
         String deliveryMode = "";

@@ -81,9 +81,7 @@ public class IPnLegalPersonAuthClientImpl implements IPnLegalPersonAuthClient {
             case PG_3 -> this.publicKeysApi.setApiClient(newApiClient(this.basePath, aldameriniPGBearerToken));
             case PG_4 -> this.publicKeysApi.setApiClient(newApiClient(this.basePath, mariaMontessoriPGBearerToken));
             case PG_5 -> this.publicKeysApi.setApiClient(newApiClient(this.basePath, nildeIottiPGBearerToken));
-            default ->  {
-                this.publicKeysApi.setApiClient(newApiClient(this.basePath, aldameriniPGBearerToken));
-            }
+            default -> this.publicKeysApi.setApiClient(newApiClient(this.basePath, aldameriniPGBearerToken));
         }
     }
 }

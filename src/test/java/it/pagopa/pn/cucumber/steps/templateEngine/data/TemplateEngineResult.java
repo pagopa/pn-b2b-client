@@ -3,8 +3,6 @@ package it.pagopa.pn.cucumber.steps.templateEngine.data;
 import lombok.Data;
 import org.springframework.core.io.Resource;
 
-import java.io.File;
-
 @Data
 public class TemplateEngineResult {
     private Resource templateFileReturned;

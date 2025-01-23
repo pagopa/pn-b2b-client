@@ -488,12 +488,12 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     @And("si disabilita(no) (lo)(gli) stream creat(o)(i) per il comune {string} con versione V23 e apiKey aggiornata")
     public void disableStreamUpdateApiKey(String pa) {
         updateApiKeyForStream();
-        disableStreamInternal();
+        disableStreamInternal(pa);
     }
 
     @And("si disabilita(no) (lo)(gli) stream V23 creat(o)(i) per il comune {string}")
     public void disableStream(String pa) {
-        disableStreamInternal();
+        disableStreamInternal(pa);
     }
 
     @And("si disabilita(no) (lo)(gli) stream che non esiste e apiKey aggiornata")
@@ -1067,6 +1067,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
         try {
             Assertions.assertNotNull(progressResponseElement);
+            ProgressResponseElementV26 finalProgressResponseElement = new ProgressResponseElementV26();
             Assertions.assertFalse(sharedSteps.getSentNotification()
                     .getTimeline()
                     .stream()
@@ -2286,7 +2287,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }
 
 
-    private void disableStreamInternal() {
+    private void disableStreamInternal(String pa) {
         try {
             for (StreamMetadataResponseV23 eventStream : eventStreamListV23) {
                 StreamMetadataResponseV23 result = webhookB2bClient.disableEventStreamV23(eventStream.getStreamId());

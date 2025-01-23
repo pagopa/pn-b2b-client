@@ -4,7 +4,6 @@ import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.model.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import org.springframework.web.client.RestClientException;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 

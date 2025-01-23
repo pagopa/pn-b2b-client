@@ -84,7 +84,6 @@ public enum RaddAltValue {
         String timeNano = System.nanoTime()+"";
         String randomClassePagamento = new Random().nextInt(20)+"";
         String finalNumber = "" + String.format(randomClassePagamento + numberOfThread + timeNano.substring(0, timeNano.length()-4));
-        // String finalNumber = "" + String.format("30210" +randomClassePagamento + numberOfThread + timeNano.substring(0, timeNano.length()-6));
         if(finalNumber.length() > ADDRESS_LENGTH){
             finalNumber = finalNumber.substring(0,ADDRESS_LENGTH);
         }else{

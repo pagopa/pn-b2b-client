@@ -406,9 +406,9 @@ public class InvioNotificheB2bSteps {
 
 
     @Given("viene letta la notifica {string} dal {string}")
-    public void vieneLettaLaNotificaDal(String IUN, String pa) {
+    public void vieneLettaLaNotificaDal(String iun, String pa) {
         sharedSteps.selectPA(pa);
-        FullSentNotificationV26 notificationByIun = b2bUtils.getNotificationByIun(IUN);
+        FullSentNotificationV26 notificationByIun = b2bUtils.getNotificationByIun(iun);
         sharedSteps.setSentNotification(notificationByIun);
     }
 

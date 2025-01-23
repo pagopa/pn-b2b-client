@@ -64,7 +64,7 @@ import static org.awaitility.Awaitility.await;
 
 @TestPropertySource(properties = {"spring.profiles.active=test"})
 @EnableConfigurationProperties
-public class NewNotificationTest {
+class NewNotificationTest {
 
     @Autowired
     private PnPaB2bUtils utils;

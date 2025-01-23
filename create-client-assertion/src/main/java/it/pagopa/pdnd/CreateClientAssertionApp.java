@@ -25,6 +25,9 @@ import java.util.Date;
 import java.util.UUID;
 
 public class CreateClientAssertionApp {
+
+    private static final Logger logger = LoggerFactory.getLogger(CreateClientAssertionApp.class.getName());
+
     public static void main(String... args) throws NoSuchAlgorithmException, IOException, JOSEException, InvalidKeySpecException {
         // Parsing command-line arguments
         Options options = getOptions();
@@ -70,7 +73,7 @@ public class CreateClientAssertionApp {
         // Serializing the JWT to a string
         String clientAssertion = signedJWT.serialize();
 
-        System.out.println(clientAssertion);
+        logger.info(clientAssertion);
 
 
     }
@@ -95,7 +98,7 @@ public class CreateClientAssertionApp {
         try {
             cmd = parser.parse(options, args);
         } catch (ParseException e) {
-            System.err.println("Error parsing command line arguments: " + e.getMessage());
+            logger.info("Error parsing command line arguments: " + e.getMessage());
             HelpFormatter formatter = new HelpFormatter();
             formatter.printHelp("java -jar create-client-assertion.jar", options);
             System.exit(1);
