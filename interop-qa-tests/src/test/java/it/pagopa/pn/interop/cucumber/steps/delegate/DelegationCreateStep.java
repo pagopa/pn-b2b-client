@@ -1,11 +1,10 @@
 package it.pagopa.pn.interop.cucumber.steps.delegate;
 
-import static it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.DelegationRole.DELEGATE;
-import static it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.DelegationRole.DELEGATING;
 import static it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.DelegationAvailabilityStrategy.consumerStrategyUsing;
 import static it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.DelegationAvailabilityStrategy.producerStrategyUsing;
+import static it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole.DELEGATE;
+import static it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole.DELEGATING;
 
-import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
@@ -22,9 +21,7 @@ import it.pagopa.interop.tenant.service.ITenantsApi;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -49,11 +46,6 @@ public class DelegationCreateStep {
     private final SharedStepsContext sharedStepsContext;
     private final HttpCallExecutor httpCallExecutor;
 
-    public enum DelegationRole {
-        DELEGATE,
-        DELEGATING
-    }
-
     @Value
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public static class DelegationAvailabilityStrategy<T, U> {
@@ -69,8 +61,6 @@ public class DelegationCreateStep {
         }
     }
 
-    private final Map<DelegationCreateStep.DelegationRole, String> tenants = new EnumMap<>(DelegationCreateStep.DelegationRole.class);
-
     public DelegationCreateStep(ClientTokenConfigurator clientTokenConfigurator,
                                 SharedStepsContext sharedStepsContext) {
         this.clientTokenConfigurator = clientTokenConfigurator;
@@ -85,13 +75,17 @@ public class DelegationCreateStep {
     }
 
     @Given("l'ente {delegationRole} {string}")
-    public void givenDelegatingTenant(DelegationCreateStep.DelegationRole delegationRole, String tenant) {
-        this.tenants.put(delegationRole, tenant);
+    public void givenDelegatingTenant(DelegationRole delegationRole, String tenant) {
+        switch (delegationRole) {
+            case DELEGATE -> sharedStepsContext.getDelegationCommonContext().setDelegateTenant(tenant);
+            case DELEGATING -> sharedStepsContext.getDelegationCommonContext().setDelegatorTenant(tenant);
+            default -> throw new IllegalArgumentException("Invalid delegation role");
+        }
     }
 
     @Given("un utente dell'ente {delegationRole} con ruolo {string}")
-    public void givenUserWithRole(DelegationCreateStep.DelegationRole delegationRole, String iamRole) {
-        String tenantType = tenants.get(delegationRole);
+    public void givenUserWithRole(DelegationRole delegationRole, String iamRole) {
+        String tenantType = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
         String token = identityService.getToken(tenantType, iamRole);
         clientTokenConfigurator.setBearerToken(token);
         sharedStepsContext.setUserToken(token);
@@ -100,16 +94,16 @@ public class DelegationCreateStep {
 
     @Given("l'ente delegante ha inoltrato una richiesta di delega all'ente delegato")
     public void givenDelegatingTenantHasRequestedDelegation() {
-        String delegatingTenantToken = identityService.getToken(tenants.get(DELEGATING), null);
+        String delegatingTenantToken = identityService.getToken(sharedStepsContext.getDelegationCommonContext().getTenantBy(DELEGATING), null);
         clientTokenConfigurator.setBearerToken(delegatingTenantToken);
-        createDelegate(tenants.get(DELEGATE), producerDelegationsApiClient::createProducerDelegation);
+        createDelegate(sharedStepsContext.getDelegationCommonContext().getTenantBy(DELEGATE), producerDelegationsApiClient::createProducerDelegation);
     }
 
     @Given("l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato")
     public void givenConsumerDelegatingTenantHasRequestedDelegation() {
-        String delegatingTenantToken = identityService.getToken(tenants.get(DELEGATING), null);
+        String delegatingTenantToken = identityService.getToken(sharedStepsContext.getDelegationCommonContext().getTenantBy(DELEGATING), null);
         clientTokenConfigurator.setBearerToken(delegatingTenantToken);
-        createDelegate(tenants.get(DELEGATE), consumerDelegationsApiClient::createConsumerDelegation);
+        createDelegate(sharedStepsContext.getDelegationCommonContext().getTenantBy(DELEGATE), consumerDelegationsApiClient::createConsumerDelegation);
     }
 
     @And("l'utente concede la disponibilità a ricevere le deleghe")
@@ -131,8 +125,8 @@ public class DelegationCreateStep {
     }
 
     @And("l'ente {delegationRole} concede la disponibilità a ricevere deleghe in fruizione")
-    public void tenantGrantsConsumerDelegationAvailability(DelegationCreateStep.DelegationRole delegationRole) {
-        String tenantType = tenants.get(delegationRole);
+    public void tenantGrantsConsumerDelegationAvailability(DelegationRole delegationRole) {
+        String tenantType = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
         tenantGrantsConsumerDelegationAvailability(tenantType);
     }
 
@@ -184,16 +178,6 @@ public class DelegationCreateStep {
                     "There was an error while creating the delegation!"
             );
         }
-    }
-
-    @ParameterType("delegato|delegante")
-    public DelegationCreateStep.DelegationRole delegationRole(String delegationRole) {
-        return switch (delegationRole) {
-            case "delegato" -> DELEGATE;
-            case "delegante" -> DELEGATING;
-            default ->
-                    throw new IllegalArgumentException("Invalid delegation role: " + delegationRole);
-        };
     }
 
 }

@@ -1,4 +1,9 @@
 Feature: Test API Availability in Use of E-Service
+  #TODO rivedere così da unire gli step 'l'ente delegato "PA2"' e 'l'utente è un "admin" dell'ente delegato'
+  #TODO rivedere così da non dovere definire gli utenti più volte nello stesso scenario (i.e. non ripetere gli step come 'l'ente delegato "PA2"')
+  #TODO rivedere nomi e descrizioni così fa aver maggior coerenza stilistica (es. se in due test diversi si usano le espressioni
+        #"il test deve produrre un errore" e "il test deve fallire" sceglierne una e usarla per entrambi
+
 
   @TC_INCARICATO_45
   Scenario Outline: Verificare che il richiamo dell’API di disponibilità in fruizione di un e-service possa essere compiuto da un utente di tipo amministratore
@@ -15,11 +20,8 @@ Feature: Test API Availability in Use of E-Service
 
   @TC_INCARICATO_46
   Scenario Outline: Verificare che il richiamo dell’API di disponibilità in fruizione di un e-service, per il quale è già stata data disponibilità, non possa essere compiuto da un utente di tipo amministratore
-    Given l'ente delegante "PA1"
-    And l'utente è un "<ruolo>" di "PA1"
-    And "PA1" ha già creato e pubblicato 1 e-service
-    And l'ente delegato "PA2"
-    And l'utente è un "<ruolo>" di "PA2"
+    Given l'ente delegato "PA2"
+    And l'utente è un "<ruolo>" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
     When l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
     Then si ottiene status code <statusCode>
@@ -34,11 +36,11 @@ Feature: Test API Availability in Use of E-Service
   @TC_INCARICATO_47
   Scenario Outline: Richiamare l’API di creazione di una delega da parte di un fruitore delegante verso un altro ente delegato
     Given l'ente delegato "PA2"
-    And l'utente è un "<ruolo>" di "PA2"
-    And l'ente "PA2" concede la disponibilità a ricevere deleghe in fruizione
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
     And l'ente delegante "PA1"
-    And l'utente è un "<ruolo>" di "PA1"
-    And "PA1" ha già creato e pubblicato 1 e-service
+    And l'utente è un "<ruolo>" dell'ente delegante
+    And l'ente delegante ha già creato e pubblicato 1 e-service
     When l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
     Then si ottiene status code <statusCode>
     Examples:
@@ -50,48 +52,61 @@ Feature: Test API Availability in Use of E-Service
       | support     |        403 |
 
   @TC_INCARICATO_48
-  Scenario Outline: Richiamare l’API di creazione di una delega non permessa
-    Given l'utente è un "<ruolo>" di "PA1"
-    And l’aderente non è disponibile ad accettare deleghe
-    When Richiamare l’API di creazione di una delega
+  Scenario Outline: La creazione di una delega in fruizione verso un ente che non ha dato la propria disponibilità a ricevere deleghe in fruizione deve fallire
+    Given l'ente delegante "PA1"
+    And l'utente è un "<ruolo>" dell'ente delegante
+    And l'ente delegato "PA2"
+    #And l'ente delegato non è disponibile ad accettare deleghe     <--  si ritiene implicito per l'assenza dello step di concessione della disponibilità
+    When l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
     Then si ottiene status code <statusCode>
-
     Examples:
       | ruolo       | statusCode |
       | admin       |        400 |
+      | api         |        403 |
+      | security    |        403 |
+      | api,security|        403 |
+      | support     |        403 |
 
-  @TC_INCARICATO_49
-  Scenario Outline: Richiamare l’API di creazione di una delega già delegato
-    Given l'utente è un "<ruolo>" di "PA1"
-    And Aver già inserito una delega in fruizione per un e-service verso un aderente
-    When Richiamare l’API di creazione di una delega
-    Then si ottiene status code <statusCode>
-
-    Examples:
-      | ruolo       | statusCode |
-      | admin       |        400 |
+  # @TC_INCARICATO_49 rimosso a seguito di revisione perché non ritenuto più pertinente
 
   @TC_INCARICATO_50
-  Scenario Outline: Richiamare l’API di accettazione di una delega in stato pending
-    Given l'utente è un "<ruolo>" di "PA1"
-    And Aver creato una delega in stato pending
-    When Richiamare l’API di accettazione di una delega
+  Scenario Outline: Richiamare l’API di accettazione di una delega in stato WAITING_FOR_APPROVAL
+    Given l'ente delegato "PA2"
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
+    And l'ente delegante "PA1"
+    And l'utente è un "admin" dell'ente delegante
+    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
+    When l'utente è un "<ruolo>" dell'ente delegato
+    And l'ente delegato accetta la delega in fruizione
     Then si ottiene status code <statusCode>
-
     Examples:
       | ruolo       | statusCode |
       | admin       |        200 |
+      | api         |        403 |
+      | security    |        403 |
+      | api,security|        403 |
+      | support     |        403 |
 
   @TC_INCARICATO_51
-  Scenario Outline: Richiamare l’API di accettazione di una delega in stato revocata
-    Given l'utente è un "<ruolo>" di "PA1"
-    And Aver creato una delega in stato revocata
-    When Richiamare l’API di accettazione di una delega
+  Scenario Outline: Richiamare l’API di accettazione di una delega in stato "revocata" deve produrre un errore
+    Given l'ente delegato "PA1"
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
+    And l'ente delegante "PA2"
+    And l'utente è un "admin" dell'ente delegante
+    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
+    And l'ente delegante con ruolo "admin" revoca la delega in fruizione
+    When l'utente è un "<ruolo>" dell'ente delegato
+    And l'ente delegato accetta la delega in fruizione
     Then si ottiene status code <statusCode>
-
     Examples:
       | ruolo       | statusCode |
       | admin       |        400 |
+      | api         |        403 |
+      | security    |        403 |
+      | api,security|        403 |
+      | support     |        403 |
 
   @TC_INCARICATO_52
   Scenario Outline: Richiamare l’API di accettazione di una delega in stato rifiutata

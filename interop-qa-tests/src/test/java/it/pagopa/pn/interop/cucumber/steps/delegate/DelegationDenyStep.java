@@ -46,6 +46,13 @@ public class DelegationDenyStep {
         rejectProducerDelegation();
     }
 
+    @And("l'ente {delegationRole} rifiuta la delega in fruizione")
+    public void delegationIsRejectedByTenant(DelegationRole delegationRole) {
+        String tenantType = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        rejectConsumerDelegation(tenantType);
+    }
+
     private void rejectProducerDelegation() {
         httpCallExecutor.performCall(
                 () -> producerDelegationsApiClient.rejectProducerDelegation(sharedStepsContext.getXCorrelationId(),
@@ -68,6 +75,20 @@ public class DelegationDenyStep {
         httpCallExecutor.performCall(
                 () -> producerDelegationsApiClient.revokeProducerDelegation(sharedStepsContext.getXCorrelationId(),
                         String.valueOf(sharedStepsContext.getDelegationCommonContext().getDelegationId())));
+    }
+
+    @And("l'ente {string} con ruolo {string} revoca la delega in fruizione")
+    public void consumerDelegationIsRevokedByTenantWithRole(String tenantType, String role) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, role));
+        httpCallExecutor.performCall(
+                () -> consumerDelegationsApiClient.revokeConsumerDelegation(sharedStepsContext.getXCorrelationId(),
+                        String.valueOf(sharedStepsContext.getDelegationCommonContext().getDelegationId())));
+    }
+
+    @And("l'ente {delegationRole} con ruolo {string} revoca la delega in fruizione")
+    public void consumerDelegationIsRevokedByTenantWithRole(DelegationRole delegationRole, String role) {
+        String tenantType = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
+        consumerDelegationIsRevokedByTenantWithRole(tenantType, role);
     }
 
     // FIXME 21/01/2025 revisionare i seguenti metodi ed eventualmente rimuovere
