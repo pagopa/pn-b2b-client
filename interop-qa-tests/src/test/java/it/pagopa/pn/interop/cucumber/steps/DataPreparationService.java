@@ -312,12 +312,12 @@ public class DataPreparationService {
     }
 
     public EServiceDescriptor createEServiceAndDraftDescriptor(EServiceSeed partialEserviceSeed, UpdateEServiceDescriptorSeed partialDescriptorSeed) {
-        EServiceSeed DEFAULT_ESERVICE_SEED = new EServiceSeed()
+        EServiceSeed defaultEserviceSeed = new EServiceSeed()
                 .name(String.format("e-service %d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)))
                 .description("Descrizione e-service")
                 .technology(EServiceTechnology.REST)
                 .mode(EServiceMode.DELIVER);
-        EServiceSeed eServiceSeed = merge(DEFAULT_ESERVICE_SEED, partialEserviceSeed);
+        EServiceSeed eServiceSeed = merge(defaultEserviceSeed, partialEserviceSeed);
 
         httpCallExecutor.performCall(() -> eServiceClient.createEService(sharedStepsContext.getXCorrelationId(), eServiceSeed));
         assertValidResponse();
@@ -608,7 +608,6 @@ public class DataPreparationService {
         }
         sharedStepsContext.getPurposeCommonContext().setPurposeId(String.valueOf(purposeId));
         sharedStepsContext.getPurposeCommonContext().setVersionId(String.valueOf(currentVersion.get()));
-        return;
     }
 
     public void rejectPurposeVersion(UUID purposeId, UUID versionId) {

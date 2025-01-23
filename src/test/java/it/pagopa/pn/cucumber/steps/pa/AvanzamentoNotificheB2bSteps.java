@@ -1287,13 +1287,14 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("la PA richiede il download dell'attestazione opponibile PEC_RECEIPT")
     public void paRequiresDownloadOfLegalFactPecRecipient() {
-        downloadLegalFactPecRecipient(true, false, null);
+        downloadLegalFactPecRecipient("PEC_RECEIPT", true, false, false, null);
+
     }
 
     @Then("{string} richiede il download dell'attestazione opponibile PEC_RECEIPT")
     public void userDownloadLegalFactPecRecipient(String user) {
         sharedSteps.selectUser(user);
-        downloadLegalFactPecRecipient(false, true, null);
+        downloadLegalFactPecRecipient("PEC_RECEIPT", false, false, true, null);
     }
 
     @Then("{string} richiede il download dell'attestazione opponibile {string} con errore {string}")
@@ -1371,7 +1372,7 @@ public class AvanzamentoNotificheB2bSteps {
         return null;
     }
 
-    private void downloadLegalFactPecRecipient(boolean pa, boolean webRecipient, String deliveryDetailCode) {
+    private void downloadLegalFactPecRecipient(String legalFactCategory, boolean pa, boolean appIO, boolean webRecipient, String deliveryDetailCode) {
         try {
             Thread.sleep(sharedSteps.getWait());
         } catch (InterruptedException exc) {

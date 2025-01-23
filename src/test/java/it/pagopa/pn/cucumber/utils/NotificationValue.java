@@ -110,10 +110,6 @@ public enum NotificationValue {
         NotificationValue notificationValue =
                 Arrays.stream(NotificationValue.values()).filter(value -> value.key.equals(key)).findFirst().orElse(null);
         return (notificationValue == null ? null : (notificationValue.addCurrentTime ? (notificationValue.defaultValue + generateRandomNumber()) : notificationValue.defaultValue));
-        /*
-        String number = threadNumber.length() < 2 ? "0"+threadNumber: threadNumber.substring(0, 2);
-        return (notificationValue == null ? null : (notificationValue.addCurrentTime? (notificationValue.defaultValue + (""+String.format("302"+number+"%13d",System.currentTimeMillis()))) : notificationValue.defaultValue));
-         */
     }
 
     public static String generateRandomNumber() {
@@ -123,7 +119,6 @@ public enum NotificationValue {
         String randomClassePagamento = String.valueOf(new Random().nextInt(14));
         randomClassePagamento = randomClassePagamento.length() < 2 ? "0" + randomClassePagamento : randomClassePagamento;
         String finalNumber = String.format("302" + randomClassePagamento + numberOfThread + timeNano.substring(0, timeNano.length() - 4));
-        // String finalNumber = "" + String.format("30210" +randomClassePagamento + numberOfThread + timeNano.substring(0, timeNano.length()-6));
         if (finalNumber.length() > NOTICE_CODE_LENGTH) {
             finalNumber = finalNumber.substring(0, NOTICE_CODE_LENGTH);
         } else {
@@ -136,11 +131,6 @@ public enum NotificationValue {
 
     public static String getValue(Map<String, String> data, String key) {
         if (data.containsKey(key)) {
-            /* TEST
-            if(data.get(key).equals(EXCLUDE_VALUE)){
-                return EXCLUDE_VALUE;
-            }
-             */
             return data.get(key).equals(NULL_VALUE) ? null : (data.get(key).contains("_CHAR") ? getCharSeq(data.get(key)) : data.get(key));
         } else {
             return getDefaultValue(key);

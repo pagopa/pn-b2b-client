@@ -151,7 +151,7 @@ public class MandateReverseSteps {
                 this.mandateServiceClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
             }
             default -> throw new IllegalStateException("Unexpected value: " + user.trim().toLowerCase());
-        };
+        }
     }
 
     private Optional<MandateDto> isMandatePresent(String delegator) {

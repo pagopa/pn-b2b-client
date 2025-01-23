@@ -227,13 +227,13 @@ public class RicezioneNotificheWebSteps {
     public void theDocumentCanBeProperlyRetrievedBy(String recipient) {
         sharedSteps.selectUser(recipient);
         NotificationAttachmentDownloadMetadataResponse downloadResponse = getRecivedNotificationDocument();
-        AtomicReference<String> Sha256 = new AtomicReference<>("");
+        AtomicReference<String> sha256 = new AtomicReference<>("");
         Assertions.assertDoesNotThrow(() -> {
             byte[] bytes = Assertions.assertDoesNotThrow(() ->
                     b2bUtils.downloadFile(downloadResponse.getUrl()));
-            Sha256.set(b2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
+            sha256.set(b2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
         });
-        Assertions.assertEquals(Sha256.get(), downloadResponse.getSha256());
+        Assertions.assertEquals(sha256.get(), downloadResponse.getSha256());
     }
 
     @Then("il documento notificato non può essere correttamente recuperato da {string}")
@@ -291,14 +291,14 @@ public class RicezioneNotificheWebSteps {
         }
 
         if (!"F24".equalsIgnoreCase(attachmentName)) {
-            AtomicReference<String> Sha256 = new AtomicReference<>("");
+            AtomicReference<String> sha256 = new AtomicReference<>("");
             NotificationAttachmentDownloadMetadataResponse finalDownloadResponse = downloadResponse;
             Assertions.assertDoesNotThrow(() -> {
                 byte[] bytes = Assertions.assertDoesNotThrow(() ->
                         b2bUtils.downloadFile(Objects.requireNonNull(finalDownloadResponse).getUrl()));
-                Sha256.set(b2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
+                sha256.set(b2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
             });
-            Assertions.assertEquals(Sha256.get(), Objects.requireNonNull(downloadResponse).getSha256());
+            Assertions.assertEquals(sha256.get(), Objects.requireNonNull(downloadResponse).getSha256());
         } else {
             NotificationAttachmentDownloadMetadataResponse finalDownloadResponse = downloadResponse;
             Assertions.assertDoesNotThrow(() ->
@@ -444,7 +444,7 @@ public class RicezioneNotificheWebSteps {
         if (data.containsKey("status")) {
             searchParam.status = NotificationStatusV26.valueOf(data.get("status"));
         }
-        searchParam.iunMatch = ((iun != null && iun.equalsIgnoreCase("ACTUAL") ? sharedSteps.getSentNotification().getIun() : iun));
+        searchParam.iunMatch = (iun != null && iun.equalsIgnoreCase("ACTUAL") ? sharedSteps.getSentNotification().getIun() : iun);
         searchParam.size = Integer.parseInt(data.getOrDefault("size", "10"));
         if (searchParam.size == -1) searchParam.size = null;
         return searchParam;
@@ -460,7 +460,7 @@ public class RicezioneNotificheWebSteps {
         searchParam.endDate = dates.getValue2();
         searchParam.subjectRegExp = data.getOrDefault("subjectRegExp", null);
         String iun = data.getOrDefault("iunMatch", null);
-        searchParam.iunMatch = ((iun != null && iun.equalsIgnoreCase("ACTUAL") ? sharedSteps.getSentNotification().getIun() : iun));
+        searchParam.iunMatch = (iun != null && iun.equalsIgnoreCase("ACTUAL") ? sharedSteps.getSentNotification().getIun() : iun);
         searchParam.size = Integer.parseInt(data.getOrDefault("size", "10"));
         return searchParam;
     }
@@ -475,7 +475,6 @@ public class RicezioneNotificheWebSteps {
         String start = data.getOrDefault("startDate", dayString + "/" + monthString + "/" + now.get(Calendar.YEAR));
         String end = data.getOrDefault("endDate", null);
 
-//        OffsetDateTime sentAt = sharedSteps.getSentNotification().getSentAt();
         OffsetDateTime sentAt = Optional.ofNullable(sharedSteps.getSentNotification()).map(FullSentNotificationV26::getSentAt).orElse(OffsetDateTime.now());
         LocalDateTime localDateStart = LocalDate.parse(start, DateTimeFormatter.ofPattern("dd/MM/yyyy")).atStartOfDay();
         OffsetDateTime startDate = OffsetDateTime.of(localDateStart, sentAt.getOffset());

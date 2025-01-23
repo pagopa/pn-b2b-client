@@ -75,21 +75,11 @@ public class IPnLegalPersonVirtualKeyServiceClientImpl implements IPnLegalPerson
     @Override
     public void setBearerToken(SettableBearerToken.BearerTokenType bearerToken) {
         switch (bearerToken) {
-            case PG_3 -> {
-                this.virtualKeysApi.setApiClient(newApiClient(aldameriniPGBearerToken));
-            }
-            case PG_4 -> {
-                this.virtualKeysApi.setApiClient(newApiClient(mariaMontessoriPGBearerToken));
-            }
-            case PG_5 -> {
-                this.virtualKeysApi.setApiClient(newApiClient(nildeIottiPGBearerToken));
-            }
-            case PG_2 -> {
-                this.virtualKeysApi.setApiClient(newApiClient(cucumberSpaBearerToken));
-            }
-            default ->  {
-                throw new IllegalArgumentException("User not found");
-            }
+            case PG_3 -> this.virtualKeysApi.setApiClient(newApiClient(aldameriniPGBearerToken));
+            case PG_4 -> this.virtualKeysApi.setApiClient(newApiClient(mariaMontessoriPGBearerToken));
+            case PG_5 -> this.virtualKeysApi.setApiClient(newApiClient(nildeIottiPGBearerToken));
+            case PG_2 -> this.virtualKeysApi.setApiClient(newApiClient(cucumberSpaBearerToken));
+            default -> throw new IllegalArgumentException("User not found");
         }
     }
 }
