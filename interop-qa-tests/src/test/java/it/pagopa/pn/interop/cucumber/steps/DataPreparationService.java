@@ -76,7 +76,6 @@ import org.springframework.http.HttpStatus;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class DataPreparationService {
     private static final ClientSeed DEFAULT_CLIENT_SEED = new ClientSeed();
-    private final ClientTokenConfigurator clientTokenConfigurator;
     private final IAuthorizationClient authorizationClient;
     private final IAgreementClient agreementClient;
     private final IAttributeApiClient attributeApiClient;
@@ -96,10 +95,8 @@ public class DataPreparationService {
     }
 
     public DataPreparationService(ClientTokenConfigurator clientTokenConfigurator,
-                                  PollingService pollingService,
                                   RiskAnalysisDataInitializer riskAnalysisDataInitializer,
                                   SharedStepsContext sharedStepsContext) {
-        this.clientTokenConfigurator = clientTokenConfigurator;
         this.authorizationClient = clientTokenConfigurator.getAuthorizationClient();
         this.agreementClient = clientTokenConfigurator.getAgreementClient();
         this.attributeApiClient = clientTokenConfigurator.getAttributeApiClient();
@@ -226,13 +223,17 @@ public class DataPreparationService {
     }
 
     public UUID createAgreement(UUID eServiceID, UUID descriptorId) {
-        httpCallExecutor.performCall(() -> agreementClient.createAgreement(sharedStepsContext.getXCorrelationId(), new AgreementPayload().eserviceId(eServiceID).descriptorId(descriptorId)));
+        return createAgreement(eServiceID, descriptorId, null);
+    }
+
+    public UUID createAgreement(UUID eServiceID, UUID descriptorId, UUID delegationId) {
+        httpCallExecutor.performCall(() -> agreementClient.createAgreement(sharedStepsContext.getXCorrelationId(), new AgreementPayload().eserviceId(eServiceID).descriptorId(descriptorId).delegationId(delegationId)));
         assertValidResponse();
         UUID agreementId = ((CreatedResource) httpCallExecutor.getResponse()).getId();
         pollingService.makePolling(
-                () ->  httpCallExecutor.performCall(() -> agreementClient.getAgreementById(sharedStepsContext.getXCorrelationId(), agreementId)),
-                res -> res != HttpStatus.NOT_FOUND,
-                "There was an error while retrieving the agreement by ID!"
+            () ->  httpCallExecutor.performCall(() -> agreementClient.getAgreementById(sharedStepsContext.getXCorrelationId(), agreementId)),
+            res -> res != HttpStatus.NOT_FOUND,
+            "There was an error while retrieving the agreement by ID!"
         );
         return agreementId;
     }

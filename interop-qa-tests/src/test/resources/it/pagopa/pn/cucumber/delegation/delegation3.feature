@@ -220,59 +220,123 @@ Feature: Test API Availability in Use of E-Service
       | support     |        403 |
 
   @TC_INCARICATO_57
-  Scenario Outline: Richiamare l’API di creazione fruizione da parte di un delegato alla fruizione
-    Given l'utente è un "<ruolo>" di "PA1"
-    And Nessuna delega presente
-    When Richiamare l’API di creazione fruizione
+  Scenario Outline: Richiamare l’API di creazione fruizione da parte di un delegato alla fruizione, specificando la delega corretta
+    Given l'ente delegato "PA1"
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
+    And l'ente delegante "PA2"
+    And l'utente è un "admin" dell'ente delegante
+    And l'ente delegante ha già creato e pubblicato 1 e-service
+    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato accetta la delega in fruizione
+    And l'utente è un "<ruolo>" dell'ente delegato
+    When il delegato ha già creato e inviato una richiesta di fruizione in delega ed è in attesa di approvazione
     Then si ottiene status code <statusCode>
     Examples:
       | ruolo       | statusCode |
       | admin       |        200 |
+      | api         |        403 |
+      | security    |        403 |
+      | api,security|        403 |
+      | support     |        403 |
 
 
   @TC_INCARICATO_58
-  Scenario Outline: Richiamare l’API di accettazione di una richiesta di fruizione
-    Given l'utente è un "<ruolo>" di "PA1"
-    And Aver creato una richiesta di fruizione in stato pending
-    When Richiamare l’API di accettazione di una richiesta di fruizione
+  Scenario Outline: Richiamare l’API di creazione di una richiesta di fruizione, specificando una delega inesistente
+    Given l'ente delegato "PA1"
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
+    And l'ente delegante "PA2"
+    And l'utente è un "admin" dell'ente delegante
+    And l'ente delegante ha già creato e pubblicato 1 e-service
+    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato accetta la delega in fruizione
+    And l'utente è un "<ruolo>" dell'ente delegato
+    When il delegato ha già creato e inviato una richiesta di fruizione indicando una delega inesistente
     Then si ottiene status code <statusCode>
-
-    Examples:
-      | ruolo       | statusCode |
-      | admin       |        200 |
-
-  @TC_INCARICATO_59
-  Scenario Outline: Richiamare l’API di rifiuto di una richiesta di fruizione
-    Given l'utente è un "<ruolo>" di "PA1"
-    And Aver creato una richiesta di fruizione in stato pending
-    When Richiamare l’API di rifiuto di una richiesta di fruizione
-    Then si ottiene status code <statusCode>
-
-    Examples:
-      | ruolo       | statusCode |
-      | admin       |        200 |
-
-  @TC_INCARICATO_60
-  Scenario Outline: Richiamare l’API di accettazione di una richiesta di fruizione non esistente
-    Given l'utente è un "<ruolo>" di "PA1"
-    And Nessuna richiesta di fruizione presente
-    When Richiamare l’API di accettazione di una richiesta di fruizione
-    Then si ottiene status code <statusCode>
-
     Examples:
       | ruolo       | statusCode |
       | admin       |        400 |
+      | api         |        403 |
+      | security    |        403 |
+      | api,security|        403 |
+      | support     |        403 |
 
-  @TC_INCARICATO_61
-  Scenario Outline: Richiamare l’API di creazione della finalità per la fruizione
-    Given l'utente è un "<ruolo>" di "PA1"
-    And Aver creato una delega
-    When Richiamare l’API di creazione della finalità
+  @TC_INCARICATO_58_BIS
+  Scenario Outline: Richiamare l’API di creazione di una richiesta di fruizione, specificando una delega su cui non si ha autorità
+    Given l'ente delegato "PA1"
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
+    And l'ente delegante "PA2"
+    And l'utente è un "admin" dell'ente delegante
+    And l'ente delegante ha già creato e pubblicato 1 e-service
+    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato accetta la delega in fruizione
+    And l'utente è un "<ruolo>" dell'ente delegato
+
+      # TODO Capire come implementare questo passo al livello tecnico
+    When il delegato ha già creato e inviato una richiesta di fruizione indicando una delega che non gli appartiene
+
     Then si ottiene status code <statusCode>
+    Examples:
+      | ruolo       | statusCode |
+      | admin       |        400 |
+      | api         |        403 |
+      | security    |        403 |
+      | api,security|        403 |
+      | support     |        403 |
 
+  @TC_INCARICATO_59
+  Scenario Outline: Richiamare l’API di accettazione di una richiesta di fruizione fatta da un delegato
+    Given l'ente delegato "PA1"
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
+    And l'ente delegante "PA2"
+    And l'utente è un "admin" dell'ente delegante
+    And l'ente delegante ha già creato e pubblicato 1 e-service
+    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato accetta la delega in fruizione
+    And l'utente è un "admin" dell'ente delegato
+    And il delegato ha già creato e inviato una richiesta di fruizione in delega ed è in attesa di approvazione
+    And l'utente è un "<ruolo>" dell'ente delegante
+    When il delegante ha già approvato quella richiesta di fruizione
+    Then si ottiene status code <statusCode>
     Examples:
       | ruolo       | statusCode |
       | admin       |        200 |
+      | api         |        403 |
+      | security    |        403 |
+      | api,security|        403 |
+      | support     |        403 |
+
+
+  @TC_INCARICATO_60
+  Scenario Outline: Richiamare l’API di rifiuto di una richiesta di fruizione fatta da un delegato
+    Given l'ente delegato "PA1"
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
+    And l'ente delegante "PA2"
+    And l'utente è un "admin" dell'ente delegante
+    And l'ente delegante ha già creato e pubblicato 1 e-service
+    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato accetta la delega in fruizione
+    And l'utente è un "admin" dell'ente delegato
+    And il delegato ha già creato e inviato una richiesta di fruizione in delega ed è in attesa di approvazione
+    And l'utente è un "<ruolo>" dell'ente delegante
+    When il delegante ha già rifiutato quella richiesta di fruizione
+    Then si ottiene status code <statusCode>
+    Examples:
+      | ruolo       | statusCode |
+      | admin       |        200 |
+      | api         |        403 |
+      | security    |        403 |
+      | api,security|        403 |
+      | support     |        403 |
 
   @TC_INCARICATO_62
   Scenario Outline: Richiamare l’API di creazione di un client da parte di un delegato alla fruizione

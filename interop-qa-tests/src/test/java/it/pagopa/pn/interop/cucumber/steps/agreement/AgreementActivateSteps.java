@@ -8,6 +8,7 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 
+import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -31,6 +32,12 @@ public class AgreementActivateSteps {
     public void tenantHasAlreadyAcceptedThatRequest(String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         dataPreparationService.activateAgreement(sharedStepsContext.getAgreementId(), null);
+    }
+
+    @Given("il {delegationRole} ha già approvato quella richiesta di fruizione")
+    public void tenantHasAlreadyAcceptedThatRequest(DelegationRole delegationRole) {
+        String tenantType = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
+        tenantHasAlreadyAcceptedThatRequest(tenantType);
     }
 
     @Given("{string} ha già creato un e-service in stato {string} che richiede quegli attributi con approvazione {string}")
