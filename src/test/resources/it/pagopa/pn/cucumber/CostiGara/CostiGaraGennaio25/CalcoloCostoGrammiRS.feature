@@ -22,7 +22,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche RS
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE | SUBJECT                        |
-      | 60010 | 342   | OSTRA        | AN       | notifica analogica FSU         |
+      | 60010 | 342   | BARBARA      | AN       | notifica analogica FSU         |
       | 04100 | 338   | LE FERRIERE  | LT       | notifica analogica RECAPITISTA |
       | 00123 | 311   | ROMA         | RM       | notifica analogica RECAPITISTA |
       | 00018 | 398   | CRETONE      | RM       | notifica analogica RECAPITISTA |
