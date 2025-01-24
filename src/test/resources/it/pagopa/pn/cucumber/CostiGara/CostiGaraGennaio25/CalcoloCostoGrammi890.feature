@@ -23,8 +23,8 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY            | PROVINCE | SUBJECT                        |
-      | 05010 | 948   | COLLELUNGO              | TR       | notifica analogica FSU         |
-      | 06031 | 948   | BEVAGNA                 | PG       | notifica analogica RECAPITISTA |
+      | 05010 | 1092   | COLLELUNGO              | TR       | notifica analogica FSU         |
+      | 06031 | 1092   | BEVAGNA                 | PG       | notifica analogica RECAPITISTA |
       | 64011 | 945   | ALBA ADRIATICA          | TE       | notifica analogica RECAPITISTA |
       | 00010 | 898   | CASAPE                  | RM       | notifica analogica RECAPITISTA |
       | 70010 | 853   | ADELFIA                 | BA       | notifica analogica RECAPITISTA |
@@ -33,7 +33,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 35049 | 916   | SANTA CATERINA D'ESTE   | PD       | notifica analogica RECAPITISTA |
       | 90052 | 853   | CERDA                   | PA       | notifica analogica RECAPITISTA |
       | 06012 | 948   | CERBARA                 | PG       | notifica analogica RECAPITISTA |
-      | 17011 | 948   | ALBISOLA CAPO           | SV       | notifica analogica RECAPITISTA |
+      | 17011 | 1092   | ALBISOLA CAPO           | SV       | notifica analogica RECAPITISTA |
       | 87020 | 948   | ACQUAPPESA              | CS       | notifica analogica RECAPITISTA |
 
       | 21009 | 898   | BARDELLO                | VA       | notifica analogica RECAPITISTA |
@@ -60,8 +60,8 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY   | PROVINCE | SUBJECT                        |
-      | 05010 | 1036  | COLLELUNGO     | TR       | notifica analogica FSU         |
-      | 06031 | 1036  | BEVAGNA        | PG       | notifica analogica RECAPITISTA |
+      | 05010 | 1195  | COLLELUNGO     | TR       | notifica analogica FSU         |
+      | 06031 | 1195  | BEVAGNA        | PG       | notifica analogica RECAPITISTA |
       | 64011 | 1090  | ALBA ADRIATICA | TE       | notifica analogica RECAPITISTA |
       | 00010 | 1056  | CASAPE         | RM       | notifica analogica RECAPITISTA |
       | 70010 | 1003  | ADELFIA        | BA       | notifica analogica RECAPITISTA |
@@ -93,8 +93,8 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY   | PROVINCE | SUBJECT                        |
-      | 05010 | 1053  | COLLELUNGO     | TR       | notifica analogica FSU         |
-      | 06031 | 1053  | BEVAGNA        | PG       | notifica analogica RECAPITISTA |
+      | 05010 | 1212  | COLLELUNGO     | TR       | notifica analogica FSU         |
+      | 06031 | 1212  | BEVAGNA        | PG       | notifica analogica RECAPITISTA |
       | 64011 | 1106  | ALBA ADRIATICA | TE       | notifica analogica RECAPITISTA |
       | 00010 | 1073  | CASAPE         | RM       | notifica analogica RECAPITISTA |
       | 70010 | 1019  | ADELFIA        | BA       | notifica analogica RECAPITISTA |
@@ -127,8 +127,8 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY   | PROVINCE | SUBJECT                        |
-      | 05010 | 1056  | COLLELUNGO     | TR       | notifica analogica FSU         |
-      | 06031 | 1056  | BEVAGNA        | PG       | notifica analogica RECAPITISTA |
+      | 05010 | 1215  | COLLELUNGO     | TR       | notifica analogica FSU         |
+      | 06031 | 1215  | BEVAGNA        | PG       | notifica analogica RECAPITISTA |
       | 64011 | 1109  | ALBA ADRIATICA | TE       | notifica analogica RECAPITISTA |
       | 00010 | 1076  | CASAPE         | RM       | notifica analogica RECAPITISTA |
       | 70010 | 1022  | ADELFIA        | BA       | notifica analogica RECAPITISTA |
@@ -158,8 +158,8 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY   | PROVINCE | SUBJECT                        |
-      | 05010 | 1085  | COLLELUNGO     | TR       | notifica analogica FSU         |
-      | 06031 | 1085  | BEVAGNA        | PG       | notifica analogica RECAPITISTA |
+      | 05010 | 1244  | COLLELUNGO     | TR       | notifica analogica FSU         |
+      | 06031 | 1244  | BEVAGNA        | PG       | notifica analogica RECAPITISTA |
       | 64011 | 1139  | ALBA ADRIATICA | TE       | notifica analogica RECAPITISTA |
       | 00010 | 1105  | CASAPE         | RM       | notifica analogica RECAPITISTA |
       | 70010 | 1052  | ADELFIA        | BA       | notifica analogica RECAPITISTA |
@@ -190,8 +190,8 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY   | PROVINCE | SUBJECT                        |
-      | 05010 | 1163  | COLLELUNGO     | TR       | notifica analogica FSU         |
-      | 06031 | 1163  | BEVAGNA        | PG       | notifica analogica RECAPITISTA |
+      | 05010 | 1335  | COLLELUNGO     | TR       | notifica analogica FSU         |
+      | 06031 | 1335  | BEVAGNA        | PG       | notifica analogica RECAPITISTA |
       | 64011 | 1221  | ALBA ADRIATICA | TE       | notifica analogica RECAPITISTA |
       | 00010 | 1183  | CASAPE         | RM       | notifica analogica RECAPITISTA |
       | 70010 | 1124  | ADELFIA        | BA       | notifica analogica RECAPITISTA |
@@ -224,8 +224,8 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY          | PROVINCE | SUBJECT                        |
-      | 05010 | 1257  | COLLELUNGO            | TR       | notifica analogica FSU         |
-      | 06031 | 1257  | BEVAGNA               | PG       | notifica analogica RECAPITISTA |
+      | 05010 | 1429  | COLLELUNGO            | TR       | notifica analogica FSU         |
+      | 06031 | 1429  | BEVAGNA               | PG       | notifica analogica RECAPITISTA |
       | 64011 | 1315  | ALBA ADRIATICA        | TE       | notifica analogica RECAPITISTA |
       | 00010 | 1277  | CASAPE                | RM       | notifica analogica RECAPITISTA |
       | 70010 | 1219  | ADELFIA               | BA       | notifica analogica RECAPITISTA |
@@ -256,8 +256,8 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY   | PROVINCE | SUBJECT                        |
-      | 05010 | 1261  | COLLELUNGO     | TR       | notifica analogica FSU         |
-      | 06031 | 1261  | BEVAGNA        | PG       | notifica analogica RECAPITISTA |
+      | 05010 | 1433  | COLLELUNGO     | TR       | notifica analogica FSU         |
+      | 06031 | 1433  | BEVAGNA        | PG       | notifica analogica RECAPITISTA |
       | 64011 | 1319  | ALBA ADRIATICA | TE       | notifica analogica RECAPITISTA |
       | 00010 | 1281  | CASAPE         | RM       | notifica analogica RECAPITISTA |
       | 70010 | 1222  | ADELFIA        | BA       | notifica analogica RECAPITISTA |
@@ -290,7 +290,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
     Examples:
       | CAP   | COSTO | MUNICIPALITY   | PROVINCE | SUBJECT                        |
       | 05010 | 1323  | COLLELUNGO     | TR       | notifica analogica FSU         |
-      | 06031 | 1323  | BEVAGNA        | PG       | notifica analogica RECAPITISTA |
+      | 06031 | 1495  | BEVAGNA        | PG       | notifica analogica RECAPITISTA |
       | 64011 | 1381  | ALBA ADRIATICA | TE       | notifica analogica RECAPITISTA |
       | 00010 | 1343  | CASAPE         | RM       | notifica analogica RECAPITISTA |
       | 70010 | 1285  | ADELFIA        | BA       | notifica analogica RECAPITISTA |
@@ -321,8 +321,8 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY   | PROVINCE | SUBJECT                        |
-      | 05010 | 1422  | COLLELUNGO     | TR       | notifica analogica FSU         |
-      | 06031 | 1422  | BEVAGNA        | PG       | notifica analogica RECAPITISTA |
+      | 05010 | 1611  | COLLELUNGO     | TR       | notifica analogica FSU         |
+      | 06031 | 1611  | BEVAGNA        | PG       | notifica analogica RECAPITISTA |
       | 64011 | 1486  | ALBA ADRIATICA | TE       | notifica analogica RECAPITISTA |
       | 00010 | 1442  | CASAPE         | RM       | notifica analogica RECAPITISTA |
       | 70010 | 1378  | ADELFIA        | BA       | notifica analogica RECAPITISTA |
@@ -354,8 +354,8 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY          | PROVINCE | SUBJECT                        |
-      | 05010 | 1843  | COLLELUNGO            | TR       | notifica analogica FSU         |
-      | 06031 | 1843  | BEVAGNA               | PG       | notifica analogica RECAPITISTA |
+      | 05010 | 2033  | COLLELUNGO            | TR       | notifica analogica FSU         |
+      | 06031 | 2033  | BEVAGNA               | PG       | notifica analogica RECAPITISTA |
       | 64011 | 1908  | ALBA ADRIATICA        | TE       | notifica analogica RECAPITISTA |
       | 00010 | 1864  | CASAPE                | RM       | notifica analogica RECAPITISTA |
       | 70010 | 1800  | ADELFIA               | BA       | notifica analogica RECAPITISTA |
@@ -386,8 +386,8 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY   | PROVINCE | SUBJECT                        |
-      | 05010 | 1847  | COLLELUNGO     | TR       | notifica analogica FSU         |
-      | 06031 | 1847  | BEVAGNA        | PG       | notifica analogica RECAPITISTA |
+      | 05010 | 2036  | COLLELUNGO     | TR       | notifica analogica FSU         |
+      | 06031 | 2036  | BEVAGNA        | PG       | notifica analogica RECAPITISTA |
       | 64011 | 1911  | ALBA ADRIATICA | TE       | notifica analogica RECAPITISTA |
       | 00010 | 1867  | CASAPE         | RM       | notifica analogica RECAPITISTA |
       | 70010 | 1803  | ADELFIA        | BA       | notifica analogica RECAPITISTA |
@@ -418,8 +418,8 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY   | PROVINCE | SUBJECT                        |
-      | 05010 | 2497  | COLLELUNGO     | TR       | notifica analogica FSU         |
-      | 06031 | 2497  | BEVAGNA        | PG       | notifica analogica RECAPITISTA |
+      | 05010 | 2686  | COLLELUNGO     | TR       | notifica analogica FSU         |
+      | 06031 | 2686  | BEVAGNA        | PG       | notifica analogica RECAPITISTA |
       | 64011 | 2561  | ALBA ADRIATICA | TE       | notifica analogica RECAPITISTA |
       | 00010 | 2517  | CASAPE         | RM       | notifica analogica RECAPITISTA |
       | 70010 | 2453  | ADELFIA        | BA       | notifica analogica RECAPITISTA |
