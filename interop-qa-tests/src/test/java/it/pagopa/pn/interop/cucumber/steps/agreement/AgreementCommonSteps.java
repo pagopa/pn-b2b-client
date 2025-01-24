@@ -36,12 +36,24 @@ public class AgreementCommonSteps {
 
     @Given("{string} ha una richiesta di fruizione in stato {string} per quell'e-service")
     public void tenantAlreadyHasFruitionRequestWithState(String tenant, String agreementState) {
+        tenantAlreadyHasFruitionRequestWithState(agreementState, tenant, null);
+    }
+
+    @Given("il {delegationRole} ha una richiesta di fruizione in stato {string} per quell'e-service")
+    public void tenantAlreadyHasFruitionRequestWithState(DelegationRole delegationRole, String agreementState) {
+        String tenant = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
+        UUID delegationId = sharedStepsContext.getDelegationCommonContext().getDelegationId();
+        tenantAlreadyHasFruitionRequestWithState(agreementState, tenant, delegationId);
+    }
+
+    private void tenantAlreadyHasFruitionRequestWithState(String agreementState, String tenant, UUID delegationId) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenant, null));
         UUID agreementId = dataPreparationService.createAgreementWithGivenState(
-                AgreementState.fromValue(agreementState),
-                sharedStepsContext.getEServicesCommonContext().getEserviceId(),
-                sharedStepsContext.getEServicesCommonContext().getDescriptorId(),
-                null);
+            AgreementState.fromValue(agreementState),
+            sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+            sharedStepsContext.getEServicesCommonContext().getDescriptorId(),
+            delegationId,
+            null);
         sharedStepsContext.setAgreementId(agreementId);
     }
 

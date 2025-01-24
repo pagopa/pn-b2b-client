@@ -11,6 +11,7 @@ import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 
+import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
@@ -58,6 +59,12 @@ public class PurposeCommonStep {
         purposeCommonContext.setPurposeId((purposesIds.isEmpty()) ? null : purposesIds.get(purposesIds.size() - 1));
         purposeCommonContext.setVersionId((currentVersionIds.isEmpty()) ? null : currentVersionIds.get(currentVersionIds.size() - 1));
         purposeCommonContext.setWaitingForApprovalVersionId((waitingForApprovalVersionIds.isEmpty()) ? null : waitingForApprovalVersionIds.get(waitingForApprovalVersionIds.size() - 1));
+    }
+
+    @Given("il {delegationRole} ha già creato {int} finalità in stato {string} per quell'eservice")
+    public void tenantHasAlreadyCreateFinalizationWithStatus(DelegationRole delegationRole, int n, String purposeVersionState) {
+        String tenantType = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
+        tenantHasAlreadyCreateFinalizationWithStatus(tenantType, n, purposeVersionState);
     }
 
     @Given("{string} ha già rifiutato l'aggiornamento della stima di carico per quella finalità")

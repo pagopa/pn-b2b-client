@@ -198,8 +198,12 @@ public class DataPreparationService {
     }
 
     public UUID createAgreementWithGivenState(AgreementState agreementState, UUID eServiceID, UUID descriptorId, File doc) {
+        return createAgreementWithGivenState(agreementState, eServiceID, descriptorId, null, doc);
+    }
+
+    public UUID createAgreementWithGivenState(AgreementState agreementState, UUID eServiceID, UUID descriptorId, UUID delegationId, File doc) {
         // agreement in state DRAFT
-        UUID agreementId = createAgreement(eServiceID, descriptorId);
+        UUID agreementId = createAgreement(eServiceID, descriptorId, delegationId);
         if (doc != null) addConsumerDocumentToAgreement(agreementId, doc);
         return switch (agreementState) {
             case DRAFT -> agreementId;
