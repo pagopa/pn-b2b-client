@@ -289,7 +289,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY   | PROVINCE | SUBJECT                        |
-      | 05010 | 1323  | COLLELUNGO     | TR       | notifica analogica FSU         |
+      | 05010 | 1495  | COLLELUNGO     | TR       | notifica analogica FSU         |
       | 06031 | 1495  | BEVAGNA        | PG       | notifica analogica RECAPITISTA |
       | 64011 | 1381  | ALBA ADRIATICA | TE       | notifica analogica RECAPITISTA |
       | 00010 | 1343  | CASAPE         | RM       | notifica analogica RECAPITISTA |
