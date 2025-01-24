@@ -318,6 +318,7 @@ public class AvanzamentoNotificheB2bSteps {
                     Assertions.assertEquals(delegateInfoFromNotification.getDelegateType(), delegateInfoFromTest.getDelegateType());
                     Assertions.assertEquals(delegateInfoFromNotification.getDenomination(), delegateInfoFromTest.getDenomination());
                 }
+                break;
             case "COMPLETELY_UNREACHABLE":
                 if (Objects.nonNull(elementFromTest.getLegalFactsIds())) {
                     assert elementFromNotification.getLegalFactsIds() != null;
@@ -3059,7 +3060,6 @@ public class AvanzamentoNotificheB2bSteps {
                     }
                 }
             }
-            //DateTimeFormatter fmt1 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
             Long schedulingDateMillis = timelineElement.getDetails().getSchedulingDate().toInstant().toEpochMilli();
             Long digitalDeliveryCreationMillis = Objects.requireNonNull(digitalDeliveryCreationRequestDate).toInstant().toEpochMilli();
             long diff = schedulingDateMillis - digitalDeliveryCreationMillis;

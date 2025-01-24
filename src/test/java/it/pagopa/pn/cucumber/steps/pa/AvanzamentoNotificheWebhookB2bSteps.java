@@ -432,6 +432,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                     this.notificationError = e;
                     sharedSteps.setNotificationError(e);
                 }
+                break;
             case "V23":
                 try {
                     streamRequestV23 = new StreamRequestV23();

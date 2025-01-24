@@ -14,7 +14,6 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.ConsentType;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV25;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV26;
 import it.pagopa.pn.client.b2b.pa.service.*;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
@@ -56,7 +55,7 @@ public class RicezioneNotificheWebSteps {
     private final IPnBFFRecipientNotificationClient bffRecipientNotificationClient;
     private final IPnTosPrivacyClient iPnTosPrivacyClient;
     private final PnB2bClientTimingConfigs timingConfigs;
-    private static final Integer waitDefault = 10000;
+    private static final Integer WAIT_DEFAULT = 10000;
 
     private HttpStatusCodeException notificationError;
     private FullReceivedNotificationV25 fullNotification;
@@ -698,7 +697,7 @@ public class RicezioneNotificheWebSteps {
 
     @And("attendo che gli elementi di timeline SEND_ANALOG_PROGRESS vengano ricevuti tutti")
     public void attendoCheGliElementiDiTimelineSEND_ANALOG_PROGRESSVenganoRicevutiTutti() {
-        Integer waiting = timingConfigs.getWaitMillisForSendAnalogEvents() == null ? waitDefault : timingConfigs.getWaitMillisForSendAnalogEvents();
+        Integer waiting = timingConfigs.getWaitMillisForSendAnalogEvents() == null ? WAIT_DEFAULT : timingConfigs.getWaitMillisForSendAnalogEvents();
         waitState(waiting);
     }
 

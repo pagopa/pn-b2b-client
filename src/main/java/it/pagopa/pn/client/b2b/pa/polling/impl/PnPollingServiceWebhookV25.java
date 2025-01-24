@@ -151,10 +151,6 @@ public class PnPollingServiceWebhookV25 extends PnPollingTemplate<PnPollingRespo
 
     private Predicate<ProgressResponseElementV25> toCheckCondition(PnPollingParameter pnPollingParameter) {
         return progressResponseElementV25 ->
-                progressResponseElementV25.getIun() != null && progressResponseElementV25.getIun().equals(iun)
-                        && progressResponseElementV25.getElement().getCategory() != null && progressResponseElementV25.getElement().getCategory().equals(pnPollingParameter.getPnPollingWebhook().getTimelineElementCategoryV23())
-                        ||
-                        progressResponseElementV25.getIun() != null && progressResponseElementV25.getIun().equals(iun)
-                                && (progressResponseElementV25.getNewStatus() != null && (progressResponseElementV25.getNewStatus().equals(pnPollingParameter.getPnPollingWebhook().getNotificationStatusV23())));
+                progressResponseElementV25.getIun() != null && progressResponseElementV25.getIun().equals(iun);
     }
 }

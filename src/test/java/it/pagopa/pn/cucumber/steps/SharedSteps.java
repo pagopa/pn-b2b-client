@@ -297,7 +297,6 @@ public class SharedSteps {
     private final Duration secondNotificationWorkflowWaitingTimeDefault = DurationStyle.detectAndParse("6m");
     private final Duration waitingForReadCourtesyMessageDefault = DurationStyle.detectAndParse("5m");
     private final String gherkinSpaTaxID = "12666810299";
-    //  private String cucumberSrlTaxID = "SCTPTR04A01C352E";
     private final String cucumberSrlTaxID = "20517490320";
     private final String cucumberSocietyTaxID = "20517490320";// "DNNGRL83A01C352D";
     private final String gherkinIrreperibileTaxID = "00749900049";
@@ -1198,6 +1197,7 @@ public class SharedSteps {
                 break;
             case ADDRESS:
                 Assertions.assertTrue(NOT_VALID_ADDRESS.equalsIgnoreCase(errorCode));
+                break;
             case INVALID_PARAMETER_MAX_ATTACHMENT:
                 Assertions.assertTrue(INVALID_PARAMETER_MAX_ATTACHMENT.equalsIgnoreCase(errorCode));
                 break;
@@ -2223,21 +2223,21 @@ public class SharedSteps {
     }
 
     public List<String> getDatiPagamentoVersionamento(Integer destinatario, Integer pagamento) {
-        List<String> DatiPagamento = new ArrayList<>();
+        List<String> datiPagamento = new ArrayList<>();
         if (getSentNotificationV1() != null) {
-            DatiPagamento.add(Objects.requireNonNull(getSentNotificationV1().getRecipients().get(destinatario).getPayment()).getCreditorTaxId());
-            DatiPagamento.add(Objects.requireNonNull(getSentNotificationV1().getRecipients().get(destinatario).getPayment()).getNoticeCode());
+            datiPagamento.add(Objects.requireNonNull(getSentNotificationV1().getRecipients().get(destinatario).getPayment()).getCreditorTaxId());
+            datiPagamento.add(Objects.requireNonNull(getSentNotificationV1().getRecipients().get(destinatario).getPayment()).getNoticeCode());
         } else if (getSentNotificationV2() != null) {
-            DatiPagamento.add(Objects.requireNonNull(getSentNotificationV2().getRecipients().get(destinatario).getPayment()).getCreditorTaxId());
-            DatiPagamento.add(Objects.requireNonNull(getSentNotificationV2().getRecipients().get(destinatario).getPayment()).getNoticeCode());
+            datiPagamento.add(Objects.requireNonNull(getSentNotificationV2().getRecipients().get(destinatario).getPayment()).getCreditorTaxId());
+            datiPagamento.add(Objects.requireNonNull(getSentNotificationV2().getRecipients().get(destinatario).getPayment()).getNoticeCode());
         } else if (getSentNotificationV21() != null) {
-            DatiPagamento.add(Objects.requireNonNull(Objects.requireNonNull(getSentNotificationV21().getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getCreditorTaxId());
-            DatiPagamento.add(Objects.requireNonNull(Objects.requireNonNull(getSentNotificationV21().getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getNoticeCode());
+            datiPagamento.add(Objects.requireNonNull(Objects.requireNonNull(getSentNotificationV21().getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getCreditorTaxId());
+            datiPagamento.add(Objects.requireNonNull(Objects.requireNonNull(getSentNotificationV21().getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getNoticeCode());
         } else if (getSentNotification() != null) {
-            DatiPagamento.add(Objects.requireNonNull(Objects.requireNonNull(getSentNotification().getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getCreditorTaxId());
-            DatiPagamento.add(Objects.requireNonNull(Objects.requireNonNull(getSentNotification().getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getNoticeCode());
+            datiPagamento.add(Objects.requireNonNull(Objects.requireNonNull(getSentNotification().getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getCreditorTaxId());
+            datiPagamento.add(Objects.requireNonNull(Objects.requireNonNull(getSentNotification().getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getNoticeCode());
         }
-        return DatiPagamento;
+        return datiPagamento;
     }
 
     private static void threadWait(int wait) {

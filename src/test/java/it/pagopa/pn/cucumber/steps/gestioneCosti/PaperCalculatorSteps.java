@@ -99,7 +99,7 @@ public class PaperCalculatorSteps {
                     Optional.ofNullable(calculateResponseResponseEntity)
                             .map(HttpEntity::getBody)
                             .map(ShipmentCalculateResponse::getCost)
-                            .ifPresentOrElse((value) -> checkIfEquals(x, value),
+                            .ifPresentOrElse(value -> checkIfEquals(x, value),
                                     () -> errorList.add(formatSingleErrorMessage(x, AssertionFailureBuilder.assertionFailure().message("errore nel recuperare il costo").build())));
                 });
         Assertions.assertTrue(errorList.isEmpty(), createGeneralErrorMessage(errorList));

@@ -29,12 +29,11 @@ public class IdentityService {
     }
 
     public String getToken(String tenantType, String role) {
-        String token = Optional.ofNullable(sessionTokenFactory.getCachedTokens())
+        return Optional.ofNullable(sessionTokenFactory.getCachedTokens())
                 .map(m -> m.get(tenantType))
                 .map(m -> (role == null) ? m.get("admin") : m.get(role))
                 .filter(Objects::nonNull)
                 .orElseThrow(() -> new IllegalArgumentException("Token not found for tenant: " + tenantType + " and role: " + role));
-        return token;
     }
 
     public UUID getUserId(String tenantType, String role) {

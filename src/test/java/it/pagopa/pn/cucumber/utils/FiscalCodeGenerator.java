@@ -104,12 +104,12 @@ public class FiscalCodeGenerator {
     }
 
     public static String generateCF(long iter) {
-        int numA = Long.valueOf(iter % 16).intValue();
-        int numB = Long.valueOf((iter / 16) % 16).intValue();
-        int numC = Long.valueOf((iter / (int) Math.pow(16, 2)) % 16).intValue();
-        int numD = Long.valueOf((iter / (int) Math.pow(16, 3)) % 16).intValue();
-        int numE = Long.valueOf((iter / (int) Math.pow(16, 4)) % 16).intValue();
-        int numF = Long.valueOf((iter / (int) Math.pow(16, 5)) % 16).intValue();
+        int numA = (int) (iter % 16);
+        int numB = (int) ((iter / 16) % 16);
+        int numC = (int) ((iter / (int) Math.pow(16, 2)) % 16);
+        int numD = (int) ((iter / (int) Math.pow(16, 3)) % 16);
+        int numE = (int) ((iter / (int) Math.pow(16, 4)) % 16);
+        int numF = (int) ((iter / (int) Math.pow(16, 5)) % 16);
 
         char charA = HEX_TO_LETTER[numA];
         char charB = HEX_TO_LETTER[numB];

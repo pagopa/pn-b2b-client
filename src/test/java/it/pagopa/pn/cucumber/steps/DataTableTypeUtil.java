@@ -610,7 +610,7 @@ public class DataTableTypeUtil {
         String analogCost = getValue(data, DETAILS_ANALOG_COST.key);
         String pollingTime = getValue(data, POLLING_TIME.key);
         String numCheck = getValue(data, NUM_CHECK.key);
-        String pollingType = getValue(data, POLLING_Type.key);
+        String pollingType = getValue(data, POLLING_TYPE.key);
         String loadTimeline = getValue(data, LOAD_TIMELINE.key);
 
         if (data.size() == 1 && data.get("NULL") != null) {
