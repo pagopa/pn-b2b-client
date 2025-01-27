@@ -14,8 +14,10 @@ import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
@@ -32,6 +34,13 @@ public class AgreementCommonSteps {
         this.dataPreparationService = dataPreparationService;
         this.sharedStepsContext = sharedStepsContext;
         this.identityService = sharedStepsContext.getIdentityService();
+    }
+
+    @Data
+    @Builder
+    public static class EServiceConfig {
+        private Boolean delegable;
+        private Boolean clientAccessDelegable;
     }
 
     @Given("{string} ha una richiesta di fruizione in stato {string} per quell'e-service")
@@ -67,6 +76,27 @@ public class AgreementCommonSteps {
 
     @Given("{string} ha già creato e pubblicato {int} e-service(s)")
     public void tenantHasAlreadyCreatedAndPublishedEService(String tenantType, int totalEservices) {
+        tenantHasAlreadyCreatedAndPublishedEService(tenantType, totalEservices, Optional.empty());
+    }
+
+    @Given("{string} ha già creato e pubblicato {int} e-service(s) delegabile(i) in fruizione")
+    public void tenantHasAlreadyCreatedAndPublishedDelegableEService(String tenantType, int totalEservices) {
+        EServiceConfig build = EServiceConfig.builder()
+            .delegable(true)
+            .build();
+        tenantHasAlreadyCreatedAndPublishedEService(tenantType, totalEservices, Optional.of(build));
+    }
+
+    @Given("{string} ha già creato e pubblicato {int} e-service(s) delegabile(i) in fruizione con client del delegato utilizzabile")
+    public void tenantHasAlreadyCreatedAndPublishedDelegableEServiceWithClientAccessDelegable(String tenantType, int totalEservices) {
+        EServiceConfig build = EServiceConfig.builder()
+            .delegable(true)
+            .clientAccessDelegable(true)
+            .build();
+        tenantHasAlreadyCreatedAndPublishedEService(tenantType, totalEservices, Optional.of(build));
+    }
+
+    public void tenantHasAlreadyCreatedAndPublishedEService(String tenantType, int totalEservices, Optional<EServiceConfig> eServiceConfig) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         // Create e-services and publish descriptors
         EServicesCommonContext eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
@@ -74,11 +104,15 @@ public class AgreementCommonSteps {
             // Create e-service and descriptor
             int randomInt = ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE);
             String eserviceName = String.format("eservice-%d-%d-%d", i, sharedStepsContext.getTestSeed(), randomInt);
+            EServiceSeed eserviceSeed = new EServiceSeed()
+                .name(eserviceName)
+                .isDelegable(eServiceConfig.map(EServiceConfig::getDelegable).orElse(null))
+                .isClientAccessDelegable(eServiceConfig.map(EServiceConfig::getClientAccessDelegable).orElse(null));
             EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(
-                    new EServiceSeed().name(eserviceName), new UpdateEServiceDescriptorSeed());
+                eserviceSeed, new UpdateEServiceDescriptorSeed());
             // Set the descriptor to "PUBLISHED" state
             dataPreparationService.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(),
-                    eServiceDescriptor.getDescriptorId(), EServiceDescriptorState.PUBLISHED, false);
+                eServiceDescriptor.getDescriptorId(), EServiceDescriptorState.PUBLISHED, false);
             // Add the e-service to the list of published ones
             eServicesCommonContext.getPublishedEservicesIds().add(eServiceDescriptor);
         }
