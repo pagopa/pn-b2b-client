@@ -1,4 +1,5 @@
 Feature: Test API Availability in Use of E-Service
+  #TODO 27/01/2025 in molti test si lascia che a fungere da erogatore sia il delegante stesso, spostare l'erogazione su una terza PA
   #TODO 24/01/2025 rivedere codici di errori, es. molti non sono 400 ma 409
   #TODO 23/01/2025 rivedere così da unire gli step 'l'ente delegato "PA2"' e 'l'utente è un "admin" dell'ente delegato'
   #TODO 23/01/2025 rivedere così da non dovere definire gli utenti più volte nello stesso scenario (i.e. non ripetere gli step come 'l'ente delegato "PA2"')
@@ -359,19 +360,33 @@ Feature: Test API Availability in Use of E-Service
       | api,security|        403 |
       | support     |        403 |
 
-    #TODO
   @TC_INCARICATO_63
   Scenario Outline: Richiamare l’API di associazione di un client alla propria finalità
-    Given l'utente è un "<ruolo>" di "PA1"
-    And Aver creato una finalità
-    When Richiamare l’API di associazione di un client alla propria finalità
+    Given l'utente è un "admin" di "GSP"
+    And "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione con client del delegato utilizzabile
+    And l'ente delegato "PA1"
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
+    And l'ente delegante "PA2"
+    And l'utente è un "admin" dell'ente delegante
+    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato accetta la delega in fruizione
+    And il delegato ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" dell'ente delegato
+    And il delegato ha già creato 1 finalità in stato "WAITING_FOR_APPROVAL" per quell'eservice
+    And l'utente è un "<ruolo>" dell'ente delegato
+    When l'utente richiede la creazione di un client "CONSUMER"
     Then si ottiene status code <statusCode>
-
     Examples:
       | ruolo       | statusCode |
       | admin       |        200 |
+      | api         |        403 |
+      | security    |        403 |
+      | api,security|        403 |
+      | support     |        403 |
 
-    #TODO
+    #TODO, aggiungere eventualmente test specchiato
   @TC_INCARICATO_64
   Scenario Outline: Richiamare l’API di associazione di un client non esistente
     Given l'utente è un "<ruolo>" di "PA1"
