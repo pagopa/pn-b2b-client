@@ -25,9 +25,21 @@ public class ClientPurposeAddSteps {
 
     @When("l'utente richiede l'associazione della finalità al client")
     public void userRetrievesFinalization() {
+        UUID clientId = sharedStepsContext.getClientCommonContext().getFirstClient();
+        userRetrievesFinalization(clientId);
+    }
+
+    @When("l'utente richiede l'associazione della finalità a un client inesistente")
+    public void userRetrievesFinalizationForNonExistentClient() {
+        UUID clientId = UUID.randomUUID();
+        userRetrievesFinalization(clientId);
+    }
+
+    private void userRetrievesFinalization(UUID clientId) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(() ->
-                authorizationClient.addClientPurpose(sharedStepsContext.getXCorrelationId(), sharedStepsContext.getClientCommonContext().getFirstClient(),
+                authorizationClient.addClientPurpose(sharedStepsContext.getXCorrelationId(),
+                    clientId,
                         new PurposeAdditionDetailsSeed().purposeId(UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId())))
         );
     }

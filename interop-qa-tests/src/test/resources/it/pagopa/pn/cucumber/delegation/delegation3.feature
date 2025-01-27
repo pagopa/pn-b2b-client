@@ -439,29 +439,58 @@ Feature: Test API Availability in Use of E-Service
       | api,security|        403 |
       | support     |        403 |
 
-    #TODO
   @TC_INCARICATO_65
-  Scenario Outline: Richiamare l’API di creazione della finalità per la fruizione
-    Given l'utente è un "<ruolo>" di "PA1"
-    And Aver creato una delega
-    When Richiamare l’API di creazione della finalità
+  Scenario Outline: Richiamare l’API di associazione di un client creato dal delegato NON avendo i permessi di associare un client da delegato all' e-service
+    Given l'utente è un "admin" di "GSP"
+    And "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
+    And l'ente delegato "PA1"
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
+    And l'ente delegante "PA2"
+    And l'utente è un "admin" dell'ente delegante
+    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato accetta la delega in fruizione
+    And il delegato ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" dell'ente delegante
+    And il delegante ha già creato 1 finalità in stato "WAITING_FOR_APPROVAL" per quell'eservice
+    And l'utente è un "<ruolo>" dell'ente delegato
+    And l'utente richiede la creazione di un client "CONSUMER"
+    When l'utente richiede l'associazione della finalità al client
     Then si ottiene status code <statusCode>
-
     Examples:
       | ruolo       | statusCode |
-      | admin       |        200 |
+      | admin       |        403 |
+      | api         |        403 |
+      | security    |        403 |
+      | api,security|        403 |
+      | support     |        403 |
 
-    #TODO
   @TC_INCARICATO_66
-  Scenario Outline: Richiamare l’API di revoca della delega
-    Given l'utente è un "<ruolo>" di "PA1"
-    And Aver creato una delega in stato attivo
-    When Richiamare l’API di revoca della delega
+  Scenario Outline: Il delegato richiama l’API di associazione di un client NON precedentemente creato
+    Given l'utente è un "admin" di "GSP"
+    And "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
+    And l'ente delegato "PA1"
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
+    And l'ente delegante "PA2"
+    And l'utente è un "admin" dell'ente delegante
+    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato accetta la delega in fruizione
+    And il delegato ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" dell'ente delegante
+    And il delegante ha già creato 1 finalità in stato "WAITING_FOR_APPROVAL" per quell'eservice
+    And l'utente è un "<ruolo>" dell'ente delegato
+    When l'utente richiede l'associazione della finalità a un client inesistente
     Then si ottiene status code <statusCode>
-
     Examples:
       | ruolo       | statusCode |
-      | admin       |        200 |
+      | admin       |        404 |
+      | api         |        403 |
+      | security    |        403 |
+      | api,security|        403 |
+      | support     |        403 |
 
   @TC_INCARICATO_67
   Scenario Outline: Il delegante può creare una finalità per un e-service che ha dato in delega
