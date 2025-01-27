@@ -2507,6 +2507,11 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
     }
 
+    @Then("si controlla che tra gli elementi dello stream ritornati non ci sia l'elemento {string}")
+    public void streamDoesntContainElement(String elementType) {
+        Assertions.assertFalse(progressResponseElementsV25.stream().map(x -> x.getElement()).anyMatch(x -> x.getElementId().contains(elementType)));
+    }
+
     @Then("tra gli elementi di timeline versione {string} di categoria {string} nessuno contiene un legalFact con categoria {string}")
     public void checkTimelineElementVersionLegalFacts(String version, String timelineCategory, String legalFactCategory) {
         if (version.equalsIgnoreCase("V26")) {
