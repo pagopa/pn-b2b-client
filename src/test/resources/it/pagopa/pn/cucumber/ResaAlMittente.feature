@@ -645,7 +645,7 @@ Feature: Resa al mittente di una notifica
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
     And si invoca l'api Webhook versione "V25" per ottenere gli elementi di timeline di tale notifica
-    Then si controlla che tra gli elementi dello stream ritornati non ci sia l'elemento "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
+    Then si controlla che tra gli elementi dello stream "V25" ritornati non ci sia l'elemento "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
 
   @returnedToSender @cleanWebhook @webhook1
   Scenario: [RETURNED-TO-SENDER_STREAM_V25_WITHOUT_FILTER] Invio notifica AR multi-destinatario aventi stati Irreperibile, Deceduto e macro stato mostrato UNREACHABLE
@@ -664,7 +664,7 @@ Feature: Resa al mittente di una notifica
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V25"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V25"
     And si invoca l'api Webhook versione "V25" per ottenere gli elementi di timeline di tale notifica
-    Then si controlla che tra gli elementi dello stream ritornati non ci sia l'elemento "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
+    Then si controlla che tra gli elementi dello stream "V25" ritornati non ci sia l'elemento "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
 
 
 
