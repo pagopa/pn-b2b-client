@@ -9,6 +9,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.PaperEngageRequestAttachments;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.ReceivedMessage;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
+import it.pagopa.pn.client.b2b.pa.exception.IllegalConfigurationException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
@@ -1189,6 +1190,7 @@ public class InvioNotificheB2bSteps {
             }
             case "digitale" ->
                     attchmentNotification = documentiPec.get(0).getDigitalNotificationRequest().getAttachmentUrls();
+            default -> throw new IllegalConfigurationException("Invalid request type");
         }
         return attchmentNotification;
     }

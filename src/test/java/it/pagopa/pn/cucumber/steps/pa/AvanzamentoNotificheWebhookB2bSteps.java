@@ -10,6 +10,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.pn.client.b2b.pa.exception.IllegalConfigurationException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
@@ -656,6 +657,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 case V24 -> webhookB2bClient.retrieveEventStreamV24(this.eventStreamListV24.get(0).getStreamId());
                 case V25 -> webhookB2bClient.retrieveEventStreamV25(this.eventStreamListV25.get(0).getStreamId());
                 case V26 -> webhookB2bClient.retrieveEventStreamV26(this.eventStreamListV26.get(0).getStreamId());
+                default -> throw new IllegalConfigurationException("Unsupported API Webhook version");
             }
         } catch (HttpStatusCodeException e) {
             this.notificationError = e;
@@ -1906,6 +1908,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                     result.setNumCheck(timingForElement.numCheck());
                     return (TimelineElementSearchResult<T>) result;
                 }
+                default -> throw new IllegalConfigurationException("Unsupported API Webhook version");
             }
         } catch (ClassCastException classCastException) {
             log.error("Wrong type t for streamVersion {}, error in cast {}", streamVersion, classCastException.getMessage());
@@ -1950,6 +1953,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                     return (StatusElementSearchResult<T>) result;
 
                 }
+                default -> throw new IllegalConfigurationException("Unsupported API Webhook version");
             }
         } catch (ClassCastException classCastException) {
             log.error("Wrong type t for streamVersion {}, error in cast {}", streamVersion, classCastException.getMessage());
@@ -2077,6 +2081,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                     streamCreationRequestListV26.add(streamRequest);
                 }
             }
+            default -> throw new IllegalConfigurationException("Unsupported API Webhook version");
         }
     }
 
@@ -2314,6 +2319,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 case V24 -> webhookB2bClient.deleteEventStreamV24(streamID);
                 case V25 -> webhookB2bClient.deleteEventStreamV25(streamID);
                 case V26 -> webhookB2bClient.deleteEventStreamV26(streamID);
+                default -> throw new IllegalConfigurationException("Unsupported API Webhook version");
             }
             return true;
         } catch (HttpStatusCodeException e) {
@@ -2440,6 +2446,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 List<ProgressResponseElementV26> progressResponseElementV26List = webhookB2bClient.consumeEventStreamV26(uuid, null);
                 this.progressResponseElementsV26 = progressResponseElementV26List;
             }
+            default -> throw new IllegalConfigurationException("Unsupported API Webhook version");
         }
     }
 

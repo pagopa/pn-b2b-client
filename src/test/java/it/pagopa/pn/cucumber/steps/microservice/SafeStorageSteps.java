@@ -7,6 +7,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
+import it.pagopa.pn.client.b2b.pa.exception.IllegalConfigurationException;
 import it.pagopa.pn.client.b2b.pa.service.IPnSafeStoragePrivateClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.model.*;
 import it.pagopa.pn.cucumber.utils.IndicizzazioneStepsPojo;
@@ -150,6 +151,7 @@ public class SafeStorageSteps {
                         "PN_NOTIFICATION_ATTACHMENTS-eabd62ef59444526beeab293b2255ace.pdf", client);
                 case "SEARCH_FILE" -> this.safeStorageClient.additionalFileTagsSearchWithHttpInfo(
                         client, "AND", true, new HashMap<>());
+                default -> throw new IllegalConfigurationException("Unexpected operation");
             }
         } catch (HttpClientErrorException httpExc) {
             this.indicizzazioneStepsPojo.setHttpException(httpExc);

@@ -679,7 +679,7 @@ public class PnPaB2bUtils {
     }
 
     private void checkNotificationStatus(NotificationStatusV26 notificationStatus) {
-        if (notificationStatus.equals(NotificationStatus.REFUSED)) {
+        if (notificationStatus.equals(NotificationStatusV26.REFUSED)) {
             throw new IllegalStateException(WRONG_STATUS + notificationStatus);
         }
     }
@@ -1344,7 +1344,7 @@ public class PnPaB2bUtils {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             for (Map.Entry<String, List<String>> entry : connection.getHeaderFields().entrySet()) {
-                System.out.println(entry.getKey() + ": " + entry.getValue());
+                log.info("{}: {}", entry.getKey(), entry.getValue());
                 return StringUtils.equals(connection.getHeaderField("Content-Type"), contentType);
             }
         } catch (IOException e) {

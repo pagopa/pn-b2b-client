@@ -15,6 +15,7 @@ import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
+import it.pagopa.pn.client.b2b.pa.exception.IllegalConfigurationException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
@@ -1729,6 +1730,7 @@ public class SharedSteps {
                 setGrup(SettableApiKey.ApiKeyType.ROOT);
                 apiKeyTypeSetted = SettableApiKey.ApiKeyType.ROOT;
             }
+            default -> throw new IllegalConfigurationException("Invalid ApiKey type");
         }
     }
 
@@ -1739,7 +1741,7 @@ public class SharedSteps {
             case "v21" -> this.notificationRequestV21.setSenderTaxId(getSenderTaxIdFromProperties(settedPa));
             case "v23" -> this.notificationRequest.setSenderTaxId(getSenderTaxIdFromProperties(settedPa));
             case "v24" -> this.notificationRequestV24.setSenderTaxId(getSenderTaxIdFromProperties(settedPa));
-
+            default -> throw new IllegalConfigurationException("Unsupported notification version");
         }
     }
 
@@ -1777,6 +1779,7 @@ public class SharedSteps {
             case "v1" -> group = this.notificationRequestV1.getGroup();
             case "v2" -> group = this.notificationRequestV2.getGroup();
             case "v21" -> group = this.notificationRequestV21.getGroup();
+            default -> throw new IllegalConfigurationException("Unsupported notification version");
         }
 
         if (groupToSet && group == null) {
@@ -1795,6 +1798,7 @@ public class SharedSteps {
                 case "v1" -> this.notificationRequestV1.setGroup(id);
                 case "v2" -> this.notificationRequestV2.setGroup(id);
                 case "v21" -> this.notificationRequestV21.setGroup(id);
+                default -> throw new IllegalConfigurationException("Unsupported notification version");
             }
         }
     }
@@ -2256,6 +2260,7 @@ public class SharedSteps {
             case "v2" -> sendNotificationV2();
             case "v21" -> sendNotificationV21();
             case "v25" -> sendNotificationV25();
+            default -> throw new IllegalConfigurationException("Unsupported notification version");
         }
     }
 

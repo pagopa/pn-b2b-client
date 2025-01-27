@@ -4,6 +4,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.pn.client.b2b.pa.exception.IllegalConfigurationException;
 import it.pagopa.pn.client.b2b.pa.service.IPnApiKeyManagerClient;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model.*;
@@ -213,6 +214,7 @@ public class ApikeyManagerSteps {
             case "Comune_Multi" -> apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.GA);
             case "Comune_Son" -> apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.SON);
             case "Comune_Root" -> apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.ROOT);
+            default -> throw new IllegalConfigurationException("Invalid ApiKey type");
         }
     }
 
@@ -312,6 +314,7 @@ public class ApikeyManagerSteps {
             case "Comune_Multi" -> apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.GA);
             case "Comune_Son" -> apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.SON);
             case "Comune_Root" -> apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.ROOT);
+            default -> throw new IllegalConfigurationException("Invalid ApiKey type");
         }
 
     }
