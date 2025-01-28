@@ -52,6 +52,7 @@ import static org.awaitility.Awaitility.await;
 
 @Slf4j
 public class AvanzamentoNotificheB2bSteps {
+
     @Autowired
     private PnPaB2bUtils utils;
     private final IPnPaB2bClient b2bClient;
@@ -3561,4 +3562,89 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
+    @And("controllo che le tempistiche di arrivo tra l elemento {string} con address type {string} digitalAddressSource {string} in {string} e l'elemento {string} siano corrette per la notifica {string}")
+    public void controlloCheLeTempisticheDiArrivoTraLElementoConAddressTypeDigitalAddressSourceInELElementoSianoCorrettePerLaNotifica(String firstElement, String addressType, String digitalAddressSource, String responseStatus, String secondElement, String notificationType) {
+
+        Assertions.assertNotNull(sharedSteps.getSentNotification());
+        Assertions.assertNotNull(sharedSteps.getSentNotification().getTimeline());
+        String iun = sharedSteps.getSentNotification().getIun();
+
+        TimelineElementV26 firstElementToCheck = getElementToCheck(firstElement, addressType, digitalAddressSource, responseStatus);
+
+        Assertions.assertNotNull(firstElementToCheck, "first element to check not found iun: " + iun);
+        Assertions.assertNotNull(firstElementToCheck.getEventTimestamp(), "EventTimestamp for first element to check not found iun: " + iun);
+
+        TimelineElementV26 secondElementToCheck = getElementToCheck(secondElement);
+
+        Assertions.assertNotNull(secondElementToCheck, "second element to check not found iun: " + iun);
+        Assertions.assertNotNull(secondElementToCheck.getDetails(), "Details for second element to check not found iun: " + iun);
+        Assertions.assertNotNull(secondElementToCheck.getDetails().getSchedulingDate(), "SchedulingDate for second element to check not found iun: " + iun);
+
+        Assertions.assertEquals(firstElementToCheck.getTimestamp(), firstElementToCheck.getEventTimestamp());
+
+        int minsToCheck = getMinsToCheck(notificationType);
+
+        long differenceInMinutes = Duration.between(getFirstElementTime(firstElementToCheck, firstElement, iun), secondElementToCheck.getDetails().getSchedulingDate()).toMinutes();
+        Assertions.assertEquals(minsToCheck, differenceInMinutes, "Time between first and second element not correct: " + iun + " expected wait " + minsToCheck + " actual wait " + differenceInMinutes);
+    }
+
+    private OffsetDateTime getFirstElementTime(TimelineElementV26 firstElementToCheck, String firstElement, String iun) {
+        if (firstElement.equalsIgnoreCase("DIGITAL_DELIVERY_CREATION_REQUEST")) {
+            Assertions.assertNotNull(firstElementToCheck.getDetails(), "Details for first element to check not found iun: " + iun);
+            Assertions.assertNotNull(firstElementToCheck.getDetails().getCompletionWorkflowDate(), "CompletionWorkflowDate for first element to check not found iun: " + iun);
+            return firstElementToCheck.getDetails().getCompletionWorkflowDate();
+        } else return firstElementToCheck.getEventTimestamp();
+
+    }
+
+    private TimelineElementV26 getElementToCheck(String secondElement) {
+        return sharedSteps.getSentNotification().getTimeline()
+                .stream().filter(data -> data.getElementId().startsWith(secondElement))
+                .findFirst().orElse(null);
+    }
+
+    private TimelineElementV26 getElementToCheck(String firstElement, String addressType, String digitalAddressSource, String responseStatus) {
+        return sharedSteps.getSentNotification().getTimeline()
+                .stream()
+                .filter(data -> data.getElementId().startsWith(firstElement))
+                .filter(data -> data.getDetails() != null)
+                .filter(data -> responseStatus == null || data.getDetails().getResponseStatus().equals(ResponseStatus.fromValue(responseStatus.toUpperCase())))
+                .filter(data -> addressType == null || data.getDetails().getDigitalAddress().getType().equals(addressType))
+                .filter(data -> digitalAddressSource == null || data.getDetails().getDigitalAddressSource().equals(DigitalAddressSource.fromValue(digitalAddressSource.toUpperCase())))
+                .findFirst()
+                .orElse(null);
+    }
+
+    @And("controllo che le tempistiche di arrivo tra l elemento {string} e l'elemento {string} siano corrette per la notifica {string}")
+    public void controlloCheLeTempisticheDiArrivoTraLElementoELElementoSiaDiMinuti(String firstElement, String secondElement, String notificationType) {
+        controlloCheLeTempisticheDiArrivoTraLElementoConAddressTypeDigitalAddressSourceInELElementoSianoCorrettePerLaNotifica(firstElement, null, null, null, secondElement, notificationType);
+    }
+
+    private int getMinsToCheck(String notificationType) {
+        return switch (notificationType) {
+            case "SUCCESSO ANALOGICO" -> sharedSteps.getSchedulingDaysSuccessAnalogRefinement().toMinutesPart();
+            case "ERRORE ANALOGICO" -> sharedSteps.getSchedulingDaysFailureAnalogRefinement().toMinutesPart();
+            case "SUCCESSO DIGITALE" -> sharedSteps.getSchedulingDaysSuccessDigitalRefinement().toMinutesPart();
+            case "ERRORE DIGITALE" -> sharedSteps.getSchedulingDaysFailureDigitalRefinement().toMinutesPart();
+            default -> throw new IllegalArgumentException("No notificationType founded");
+        };
+    }
+
+    @And("viene verificato che l'elemento di timeline {string} con response status {string} con la {string} {string}")
+    public void vieneVerificatoCheLElementoDiTimelineConResponseStatusPerLa(String timelineElement, String responseStatus, String type, String address) {
+        Assertions.assertNotNull(sharedSteps.getSentNotification());
+        Assertions.assertNotNull(sharedSteps.getSentNotification().getTimeline());
+        String iun = sharedSteps.getSentNotification().getIun();
+
+        TimelineElementV26 element = sharedSteps.getSentNotification().getTimeline()
+                .stream()
+                .filter(data -> data.getElementId().startsWith(timelineElement))
+                .filter(data -> data.getDetails() != null)
+                .filter(data -> data.getDetails().getResponseStatus().equals(ResponseStatus.fromValue(responseStatus.toUpperCase())))
+                .filter(data -> data.getDetails().getDigitalAddress().getType().equalsIgnoreCase(type))
+                .filter(data -> data.getDetails().getDigitalAddress().getAddress().equalsIgnoreCase(address))
+                .findFirst().orElse(null);
+
+        Assertions.assertNotNull(element, "the element to check is not found iun: " + iun);
+    }
 }
