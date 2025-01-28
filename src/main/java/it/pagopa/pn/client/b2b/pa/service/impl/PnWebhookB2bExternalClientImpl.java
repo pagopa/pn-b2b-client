@@ -1,5 +1,6 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
+import it.pagopa.pn.client.b2b.pa.exception.IllegalConfigurationException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebhookB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
@@ -378,6 +379,7 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
                 }
                 beenSet = true;
             }
+            default -> throw new IllegalConfigurationException("Invalid ApiKey type: " + apiKey);
         }
         return beenSet;
     }

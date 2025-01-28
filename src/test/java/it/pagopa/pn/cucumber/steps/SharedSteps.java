@@ -299,7 +299,7 @@ public class SharedSteps {
     private final Duration waitingForReadCourtesyMessageDefault = DurationStyle.detectAndParse("5m");
     private final String gherkinSpaTaxID = "12666810299";
     private final String cucumberSrlTaxID = "20517490320";
-    private final String cucumberSocietyTaxID = "20517490320";// "DNNGRL83A01C352D";
+    private final String cucumberSocietyTaxID = "20517490320";//
     private final String gherkinIrreperibileTaxID = "00749900049";
     private final ObjectMapper objMapper = JsonMapper.builder()
             .addModule(new JavaTimeModule())
@@ -1730,7 +1730,7 @@ public class SharedSteps {
                 setGrup(SettableApiKey.ApiKeyType.ROOT);
                 apiKeyTypeSetted = SettableApiKey.ApiKeyType.ROOT;
             }
-            default -> throw new IllegalConfigurationException("Invalid ApiKey type");
+            default -> throw new IllegalConfigurationException("Invalid ApiKey type: " + settedPa);
         }
     }
 
@@ -1741,7 +1741,7 @@ public class SharedSteps {
             case "v21" -> this.notificationRequestV21.setSenderTaxId(getSenderTaxIdFromProperties(settedPa));
             case "v23" -> this.notificationRequest.setSenderTaxId(getSenderTaxIdFromProperties(settedPa));
             case "v24" -> this.notificationRequestV24.setSenderTaxId(getSenderTaxIdFromProperties(settedPa));
-            default -> throw new IllegalConfigurationException("Unsupported notification version");
+            default -> throw new IllegalConfigurationException("Unsupported notification version: " + version.toLowerCase());
         }
     }
 
@@ -1779,7 +1779,7 @@ public class SharedSteps {
             case "v1" -> group = this.notificationRequestV1.getGroup();
             case "v2" -> group = this.notificationRequestV2.getGroup();
             case "v21" -> group = this.notificationRequestV21.getGroup();
-            default -> throw new IllegalConfigurationException("Unsupported notification version");
+            default -> throw new IllegalConfigurationException("Unsupported notification version: " + version.toLowerCase());
         }
 
         if (groupToSet && group == null) {
@@ -1798,7 +1798,7 @@ public class SharedSteps {
                 case "v1" -> this.notificationRequestV1.setGroup(id);
                 case "v2" -> this.notificationRequestV2.setGroup(id);
                 case "v21" -> this.notificationRequestV21.setGroup(id);
-                default -> throw new IllegalConfigurationException("Unsupported notification version");
+                default -> throw new IllegalConfigurationException("Unsupported notification version: " + version.toLowerCase());
             }
         }
     }
@@ -2260,7 +2260,7 @@ public class SharedSteps {
             case "v2" -> sendNotificationV2();
             case "v21" -> sendNotificationV21();
             case "v25" -> sendNotificationV25();
-            default -> throw new IllegalConfigurationException("Unsupported notification version");
+            default -> throw new IllegalConfigurationException("Unsupported notification version: " + version.toLowerCase());
         }
     }
 

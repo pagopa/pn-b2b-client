@@ -5,6 +5,7 @@ import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
+import it.pagopa.pn.client.b2b.pa.exception.IllegalConfigurationException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.mapper.impl.PnTimelineAndLegalFactV26;
 import it.pagopa.pn.client.b2b.pa.mapper.model.PnTimelineLegalFactV26;
@@ -1629,7 +1630,7 @@ public class AvanzamentoNotificheB2bSteps {
                             Assertions.assertEquals(Integer.parseInt(price), notificationPrice.getAmount());
                         }
                         if (notificationPrice.getRefinementDate() != null) {
-                            Assertions.assertEquals(OffsetDateTime.now().toLocalDate(), notificationPrice.getRefinementDate().toLocalDate());
+                            Assertions.assertEquals(now().toLocalDate(), notificationPrice.getRefinementDate().toLocalDate());
                         }
                     } catch (AssertionFailedError assertionFailedError) {
                         sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
@@ -1697,6 +1698,8 @@ public class AvanzamentoNotificheB2bSteps {
                                 case "parziale" ->
                                         Assertions.assertEquals(price, notificationPriceV23.getPartialPrice());
                                 case "totale" -> Assertions.assertEquals(price, notificationPriceV23.getTotalPrice());
+                                default ->
+                                        throw new IllegalConfigurationException("Unexpected value type: " + tipologiaCosto.toLowerCase());
                             }
                         }
                         if (date != null) {
@@ -3001,32 +3004,6 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
-    /*
-    UTILE PER TEST
-
-    @Given("viene vista la pec per l'utente {string}")
-    public void vieneRimossaLaPecPerLUtente(String arg0) {
-        webUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
-        List<LegalDigitalAddress> legalAddressByRecipient = webUserAttributesClient.getLegalAddressByRecipient();
-        System.out.println(legalAddressByRecipient);
-        webUserAttributesClient.deleteRecipientLegalAddress("default",LegalChannelType.PEC);
-        webUserAttributesClient.postRecipientLegalAddress("default", LegalChannelType.PEC,
-                (new AddressVerification().verificationCode("17947").value("test@fail.it")));
-    }
-
-
-    @Given("viene {string} l'app IO per {string}")
-    public void vieneLAppIOPer(String onOff, String recipient) {
-        webUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
-
-        //IoCourtesyDigitalAddressActivation ioCourtesyDigitalAddressActivation = new IoCourtesyDigitalAddressActivation();
-        //ioCourtesyDigitalAddressActivation.setActivationStatus(onOff.equalsIgnoreCase("abilitata")?true:false);
-        //ioUserAttributerExternaClient.setCourtesyAddressIo(selectTaxIdUser(recipient),ioCourtesyDigitalAddressActivation);
-        System.out.println("STATUS IO: "+ioUserAttributerExternaClient.getCourtesyAddressIo(selectTaxIdUser(recipient)));
-    }
-
-     */
-
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} e verifica data schedulingDate per il destinatario {int} rispetto ell'evento in timeline {string}")
     public void readingEventUpToTheTimelineElementOfNotificationWithVerifySchedulingDate(String timelineEventCategory, int destinatario, String evento) {
         long delayMillis = 0;
@@ -3134,6 +3111,7 @@ public class AvanzamentoNotificheB2bSteps {
             switch (toValidate.toLowerCase()) {
                 case "vat" -> Assertions.assertEquals(valueToValidate, notifica.getVat());
                 case "pafee" -> Assertions.assertEquals(valueToValidate, notifica.getPaFee());
+                default -> throw new IllegalConfigurationException("Unexpected field: " + toValidate.toLowerCase());
             }
 
         } catch (AssertionFailedError assertionFailedError) {

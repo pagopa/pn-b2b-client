@@ -3,6 +3,7 @@ package it.pagopa.pn.cucumber.steps.templateEngine;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.pn.client.b2b.pa.exception.IllegalConfigurationException;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextFactory;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateEngineResult;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateRequestContext;
@@ -201,6 +202,7 @@ public class TemplateEngineSteps {
                 int count = countOccurrences("TEST_digest_allegato");
                 Assertions.assertEquals(2, count);
             }
+            default -> throw new IllegalConfigurationException("Invalid notification type: " + notificationType);
         }
     }
 }

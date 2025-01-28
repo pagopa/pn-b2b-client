@@ -1190,7 +1190,7 @@ public class InvioNotificheB2bSteps {
             }
             case "digitale" ->
                     attchmentNotification = documentiPec.get(0).getDigitalNotificationRequest().getAttachmentUrls();
-            default -> throw new IllegalConfigurationException("Invalid request type");
+            default -> throw new IllegalConfigurationException("Invalid request type: " + type.toLowerCase());
         }
         return attchmentNotification;
     }

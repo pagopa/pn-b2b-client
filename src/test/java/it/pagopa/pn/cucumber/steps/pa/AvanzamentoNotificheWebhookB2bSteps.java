@@ -638,6 +638,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 Assertions.assertNotNull(eventStreamV26.getStreamId());
                 log.info("EVENTSTREAM: {}", eventStreamV26);
             }
+            default -> throw new IllegalConfigurationException("Unsupported API Webhook version: " + streamVersion);
         }
     }
 
@@ -657,7 +658,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 case V24 -> webhookB2bClient.retrieveEventStreamV24(this.eventStreamListV24.get(0).getStreamId());
                 case V25 -> webhookB2bClient.retrieveEventStreamV25(this.eventStreamListV25.get(0).getStreamId());
                 case V26 -> webhookB2bClient.retrieveEventStreamV26(this.eventStreamListV26.get(0).getStreamId());
-                default -> throw new IllegalConfigurationException("Unsupported API Webhook version");
+                default -> throw new IllegalConfigurationException("Unsupported API Webhook version: " + streamVersion);
             }
         } catch (HttpStatusCodeException e) {
             this.notificationError = e;
@@ -1254,7 +1255,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                     Assertions.assertTrue(webhookB2bClient.consumeEventStream(this.eventStreamList.get(0).getStreamId(), null).isEmpty());
             case V23, V10_V23 ->
                     Assertions.assertTrue(webhookB2bClient.consumeEventStreamV23(this.eventStreamListV23.get(0).getStreamId(), null).isEmpty());
-
+            default -> throw new IllegalConfigurationException("Unsupported API Webhook version: " + streamVersion);
         }
     }
 
@@ -1492,12 +1493,12 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
         ProgressResponseElement progressResponseElement = null;
         ResponseEntity<List<ProgressResponseElement>> listResponseEntity = webhookB2bClient.consumeEventStreamHttp(this.eventStreamList.get(0).getStreamId(), lastEventId);
-        List<ProgressResponseElement> progressResponseElements = listResponseEntity.getBody();
+        List<ProgressResponseElement> listResponseEntityBody = listResponseEntity.getBody();
         if (deepCount >= 200) {
-            throw new IllegalStateException("LOP: PROGRESS-ELEMENTS: " + progressResponseElements
+            throw new IllegalStateException("LOP: PROGRESS-ELEMENTS: " + listResponseEntityBody
                     + " WEBHOOK: " + this.eventStreamList.get(0).getStreamId() + " IUN: " + sharedSteps.getSentNotification().getIun() + " DEEP: " + deepCount);
         }
-        for (ProgressResponseElement elem : progressResponseElements) {
+        for (ProgressResponseElement elem : listResponseEntityBody) {
             if ("REFUSED".equalsIgnoreCase(elem.getNewStatus().getValue()) && elem.getValidationErrors() != null && elem.getValidationErrors().size() > 0) {
                 if (elem.getValidationErrors().get(0).getErrorCode() != null && "FILE_NOTFOUND".equalsIgnoreCase(elem.getValidationErrors().get(0).getErrorCode()))
                     progressResponseElement = elem;
@@ -1516,12 +1517,12 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
         ProgressResponseElementV23 progressResponseElement = null;
         ResponseEntity<List<ProgressResponseElementV23>> listResponseEntity = webhookB2bClient.consumeEventStreamHttpV23(this.eventStreamListV23.get(0).getStreamId(), lastEventId);
-        List<ProgressResponseElementV23> progressResponseElements = listResponseEntity.getBody();
+        List<ProgressResponseElementV23> progressResponseElementV23List = listResponseEntity.getBody();
         if (deepCount >= 200) {
-            throw new IllegalStateException("LOP: PROGRESS-ELEMENTS: " + progressResponseElements
+            throw new IllegalStateException("LOP: PROGRESS-ELEMENTS: " + progressResponseElementV23List
                     + " WEBHOOK: " + this.eventStreamListV23.get(0).getStreamId() + " IUN: " + sharedSteps.getSentNotification().getIun() + " DEEP: " + deepCount);
         }
-        for (ProgressResponseElementV23 elem : progressResponseElements) {
+        for (ProgressResponseElementV23 elem : progressResponseElementV23List) {
             if ("REFUSED".equalsIgnoreCase(elem.getNewStatus().getValue())) {
                 //TODO Verificare se Corretto
                 break;
@@ -1707,11 +1708,11 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
     @Then("viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati V23")
     public void vieneVerificatoCheIlProgressResponseElementIdDelWebhookSiaIncrementaleESenzaDuplicatiV23() {
-        List<ProgressResponseElementV23> progressResponseElements = sharedSteps.getProgressResponseElementsV23();
-        Assertions.assertNotNull(progressResponseElements);
+        List<ProgressResponseElementV23> progressResponseElementV23List = sharedSteps.getProgressResponseElementsV23();
+        Assertions.assertNotNull(progressResponseElementV23List);
         boolean counterIncrement = true;
         int lastEventID = SharedSteps.lastEventID;
-        for (ProgressResponseElementV23 elem : progressResponseElements) {
+        for (ProgressResponseElementV23 elem : progressResponseElementV23List) {
             if (lastEventID == 0) {
                 lastEventID = Integer.parseInt(elem.getEventId());
                 continue;
@@ -1726,7 +1727,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         try {
             Assertions.assertTrue(counterIncrement);
         } catch (AssertionFailedError assertionFailedError) {
-            throw new AssertionFailedError(assertionFailedError.getMessage() + " PROGRESS-ELEMENT: \n" + progressResponseElements);
+            throw new AssertionFailedError(assertionFailedError.getMessage() + " PROGRESS-ELEMENT: \n" + progressResponseElementV23List);
         }
 
         SharedSteps.lastEventID = lastEventID;
@@ -1736,11 +1737,11 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     @Then("viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati")
     public void vieneVerificatoCheIlProgressResponseElementIdDelWebhookSiaIncrementaleESenzaDuplicati() {
 
-        List<ProgressResponseElement> progressResponseElements = sharedSteps.getProgressResponseElements();
-        Assertions.assertNotNull(progressResponseElements);
+        List<ProgressResponseElement> sharedStepsProgressResponseElements = sharedSteps.getProgressResponseElements();
+        Assertions.assertNotNull(sharedStepsProgressResponseElements);
         boolean counterIncrement = true;
         int lastEventID = SharedSteps.lastEventID;
-        for (ProgressResponseElement elem : progressResponseElements) {
+        for (ProgressResponseElement elem : sharedStepsProgressResponseElements) {
             if (lastEventID == 0) {
                 lastEventID = Integer.parseInt(elem.getEventId());
                 continue;
@@ -1755,7 +1756,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         try {
             Assertions.assertTrue(counterIncrement);
         } catch (AssertionFailedError assertionFailedError) {
-            throw new AssertionFailedError(assertionFailedError.getMessage() + " PROGRESS-ELEMENT: \n" + progressResponseElements);
+            throw new AssertionFailedError(assertionFailedError.getMessage() + " PROGRESS-ELEMENT: \n" + sharedStepsProgressResponseElements);
         }
 
         SharedSteps.lastEventID = lastEventID;
@@ -1766,20 +1767,20 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         switch (versione) {
             case "V10":
                 Assertions.assertDoesNotThrow(() -> {
-                    List<ProgressResponseElement> progressResponseElements = webhookB2bClient.consumeEventStream(this.eventStreamList.get(0).getStreamId(), null);
-                    log.info("EventProgress: " + progressResponseElements);
+                    List<ProgressResponseElement> responseElementList = webhookB2bClient.consumeEventStream(this.eventStreamList.get(0).getStreamId(), null);
+                    log.info("EventProgress: " + responseElementList);
 
-                    Assertions.assertEquals(progressResponseElements.size(), numEventi);
-                    System.out.println("ELEMENTI NEL WEBHOOK: " + progressResponseElements.size());
+                    Assertions.assertEquals(responseElementList.size(), numEventi);
+                    System.out.println("ELEMENTI NEL WEBHOOK: " + responseElementList.size());
                 });
                 break;
             case "V23":
                 Assertions.assertDoesNotThrow(() -> {
-                    List<ProgressResponseElementV23> progressResponseElements = webhookB2bClient.consumeEventStreamV23(this.eventStreamListV23.get(0).getStreamId(), null);
-                    log.info("EventProgress: " + progressResponseElements);
+                    List<ProgressResponseElementV23> progressResponseElementV23List = webhookB2bClient.consumeEventStreamV23(this.eventStreamListV23.get(0).getStreamId(), null);
+                    log.info("EventProgress: " + progressResponseElementV23List);
 
-                    Assertions.assertEquals(progressResponseElements.size(), numEventi);
-                    System.out.println("ELEMENTI NEL WEBHOOK: " + progressResponseElements.size());
+                    Assertions.assertEquals(progressResponseElementV23List.size(), numEventi);
+                    System.out.println("ELEMENTI NEL WEBHOOK: " + progressResponseElementV23List.size());
                 });
                 break;
             default:
@@ -1791,11 +1792,11 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     @And("vengono letti gli eventi dello stream che contenga {int} eventi")
     public void readStreamNumberEvents(Integer numEventi) {
         Assertions.assertDoesNotThrow(() -> {
-            List<ProgressResponseElement> progressResponseElements = webhookB2bClient.consumeEventStream(this.eventStreamList.get(0).getStreamId(), null);
-            log.info("EventProgress: " + progressResponseElements);
+            List<ProgressResponseElement> responseElementList = webhookB2bClient.consumeEventStream(this.eventStreamList.get(0).getStreamId(), null);
+            log.info("EventProgress: " + responseElementList);
 
-            Assertions.assertEquals(progressResponseElements.size(), numEventi);
-            System.out.println("ELEMENTI NEL WEBHOOK: " + progressResponseElements.size());
+            Assertions.assertEquals(responseElementList.size(), numEventi);
+            System.out.println("ELEMENTI NEL WEBHOOK: " + responseElementList.size());
         });
     }
 
@@ -1908,7 +1909,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                     result.setNumCheck(timingForElement.numCheck());
                     return (TimelineElementSearchResult<T>) result;
                 }
-                default -> throw new IllegalConfigurationException("Unsupported API Webhook version");
+                default -> throw new IllegalConfigurationException("Unsupported API Webhook version: " + streamVersion);
             }
         } catch (ClassCastException classCastException) {
             log.error("Wrong type t for streamVersion {}, error in cast {}", streamVersion, classCastException.getMessage());
@@ -1953,7 +1954,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                     return (StatusElementSearchResult<T>) result;
 
                 }
-                default -> throw new IllegalConfigurationException("Unsupported API Webhook version");
+                default -> throw new IllegalConfigurationException("Unsupported API Webhook version: " + streamVersion);
             }
         } catch (ClassCastException classCastException) {
             log.error("Wrong type t for streamVersion {}, error in cast {}", streamVersion, classCastException.getMessage());
@@ -2081,7 +2082,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                     streamCreationRequestListV26.add(streamRequest);
                 }
             }
-            default -> throw new IllegalConfigurationException("Unsupported API Webhook version");
+            default -> throw new IllegalConfigurationException("Unsupported API Webhook version: " + streamVersion);
         }
     }
 
@@ -2319,7 +2320,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 case V24 -> webhookB2bClient.deleteEventStreamV24(streamID);
                 case V25 -> webhookB2bClient.deleteEventStreamV25(streamID);
                 case V26 -> webhookB2bClient.deleteEventStreamV26(streamID);
-                default -> throw new IllegalConfigurationException("Unsupported API Webhook version");
+                default -> throw new IllegalConfigurationException("Unsupported API Webhook version: " + streamVersion);
             }
             return true;
         } catch (HttpStatusCodeException e) {
@@ -2335,6 +2336,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 case V24 -> webhookB2bClient.retrieveEventStreamV24(streamID);
                 case V25 -> webhookB2bClient.retrieveEventStreamV25(streamID);
                 case V26 -> webhookB2bClient.retrieveEventStreamV26(streamID);
+                default -> throw new IllegalConfigurationException("Unsupported API Webhook version: " + streamVersion);
             }
             this.notificationError = e;
             sharedSteps.setNotificationError(e);
@@ -2423,30 +2425,25 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         switch (version.toUpperCase()) {
             case "V10" -> {
                 uuid = this.eventStreamList.get(0).getStreamId();
-                List<ProgressResponseElement> progressResponseElementList = webhookB2bClient.consumeEventStream(uuid, null);
-                this.progressResponseElements = progressResponseElementList;
+                this.progressResponseElements = webhookB2bClient.consumeEventStream(uuid, null);
             }
             case "v23" -> {
                 uuid = this.eventStreamListV23.get(0).getStreamId();
-                List<ProgressResponseElementV23> progressResponseElementV23List = webhookB2bClient.consumeEventStreamV23(uuid, null);
-                this.progressResponseElementsV23 = progressResponseElementV23List;
+                this.progressResponseElementsV23 = webhookB2bClient.consumeEventStreamV23(uuid, null);
             }
             case "V24" -> {
                 uuid = this.eventStreamListV24.get(0).getStreamId();
-                List<ProgressResponseElementV24> progressResponseElementV24List = webhookB2bClient.consumeEventStreamV24(uuid, null);
-                this.progressResponseElementsV24 = progressResponseElementV24List;
+                this.progressResponseElementsV24 = webhookB2bClient.consumeEventStreamV24(uuid, null);
             }
             case "V25" -> {
                 uuid = this.eventStreamListV25.get(0).getStreamId();
-                List<ProgressResponseElementV25> progressResponseElementV25List = webhookB2bClient.consumeEventStreamV25(uuid, null);
-                this.progressResponseElementsV25 = progressResponseElementV25List;
+                this.progressResponseElementsV25 = webhookB2bClient.consumeEventStreamV25(uuid, null);
             }
             case "V26" -> {
                 uuid = this.eventStreamListV26.get(0).getStreamId();
-                List<ProgressResponseElementV26> progressResponseElementV26List = webhookB2bClient.consumeEventStreamV26(uuid, null);
-                this.progressResponseElementsV26 = progressResponseElementV26List;
+                this.progressResponseElementsV26 = webhookB2bClient.consumeEventStreamV26(uuid, null);
             }
-            default -> throw new IllegalConfigurationException("Unsupported API Webhook version");
+            default -> throw new IllegalConfigurationException("Unsupported API Webhook version: " + version.toUpperCase());
         }
     }
 
@@ -2510,6 +2507,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 //                        Assertions.assertTrue(this.sharedSteps.getNotificationResponseCompleteV23().getTimeline().stream().filter(x -> x.getCategory().getValue().equals(timelineElement)).toList().isEmpty());
                 case 25 ->
                         Assertions.assertTrue(this.sharedSteps.getNotificationResponseComplete().getTimeline().stream().filter(x -> x.getCategory().getValue().equals(timelineElement)).toList().isEmpty());
+                default -> throw new IllegalConfigurationException("Unsupported API Webhook version: " + readingVersion);
             }
         } else {
             switch (readingVersion) {
@@ -2525,6 +2523,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 //                        Assertions.assertFalse(this.sharedSteps.getNotificationResponseCompleteV23().getTimeline().stream().filter(x -> x.getCategory().getValue().equals(timelineElement)).toList().isEmpty());
                 case 25 ->
                         Assertions.assertFalse(this.sharedSteps.getNotificationResponseComplete().getTimeline().stream().filter(x -> x.getCategory().getValue().equals(timelineElement)).toList().isEmpty());
+                default -> throw new IllegalConfigurationException("Unsupported API Webhook version: " + readingVersion);
             }
         }
     }
@@ -2621,6 +2620,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                     Assertions.assertEquals(timelineElementV25.getIngestionTimestamp(), timelineElementV25.getNotificationSentAt());
                     Assertions.assertEquals(timelineElementV25.getNotificationSentAt(), timelineElementV25.getIngestionTimestamp());
                 }
+                default -> throw new IllegalConfigurationException("Invalid timeline category: " + category);
             }
         } catch (AssertionFailedError e) {
             log.error("Assertion failed for category " + category);

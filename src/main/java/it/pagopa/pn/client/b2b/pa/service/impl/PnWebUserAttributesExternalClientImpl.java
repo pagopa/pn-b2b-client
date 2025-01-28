@@ -1,5 +1,6 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
+import it.pagopa.pn.client.b2b.pa.exception.IllegalConfigurationException;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.api.AllApi;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.api.CourtesyApi;
@@ -186,7 +187,8 @@ public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttribut
                 this.bearerTokenSetted = BearerTokenType.USER_SCADUTO;
                 beenSet = true;
                 break;
-
+            default:
+                throw new IllegalConfigurationException("Invalid token: " + bearerToken);
         }
         return beenSet;
     }

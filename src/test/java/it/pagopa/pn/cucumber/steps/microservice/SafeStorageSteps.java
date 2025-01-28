@@ -151,7 +151,7 @@ public class SafeStorageSteps {
                         "PN_NOTIFICATION_ATTACHMENTS-eabd62ef59444526beeab293b2255ace.pdf", client);
                 case "SEARCH_FILE" -> this.safeStorageClient.additionalFileTagsSearchWithHttpInfo(
                         client, "AND", true, new HashMap<>());
-                default -> throw new IllegalConfigurationException("Unexpected operation");
+                default -> throw new IllegalConfigurationException("Unexpected operation: " + operation);
             }
         } catch (HttpClientErrorException httpExc) {
             this.indicizzazioneStepsPojo.setHttpException(httpExc);

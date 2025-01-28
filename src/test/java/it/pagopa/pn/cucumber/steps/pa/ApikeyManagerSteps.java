@@ -91,8 +91,8 @@ public class ApikeyManagerSteps {
     public void siTentaLaCancellazioneDellApiKey() {
         try {
             apiKeyManagerClient.deleteApiKeys(responseNewApiKey.getId());
-        } catch (HttpStatusCodeException httpStatusCodeException) {
-            this.httpStatusCodeException = httpStatusCodeException;
+        } catch (HttpStatusCodeException httpCodeException) {
+            this.httpStatusCodeException = httpCodeException;
         }
     }
 
@@ -132,22 +132,22 @@ public class ApikeyManagerSteps {
 
     @Then("l'invio della notifica non ha prodotto errori")
     public void lInvioDellaNotificaNonHaProdottoErrori() {
-        HttpStatusCodeException httpStatusCodeException = sharedSteps.consumeNotificationError();
-        Assertions.assertNull(httpStatusCodeException);
+        HttpStatusCodeException httpCodeException = sharedSteps.consumeNotificationError();
+        Assertions.assertNull(httpCodeException);
     }
 
     @Then("l'invio della notifica ha sollevato un errore di autenticazione {string}")
     public void lInvioDellaNotificaHaSollevatoUnErroreDiAutenticazione(String statusCode) {
-        HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
-        Assertions.assertTrue((httpStatusCodeException != null) &&
-                (httpStatusCodeException.getStatusCode().toString().substring(0, 3).equals(statusCode)));
+        HttpStatusCodeException httpCodeException = this.sharedSteps.consumeNotificationError();
+        Assertions.assertTrue((httpCodeException != null) &&
+                (httpCodeException.getStatusCode().toString().substring(0, 3).equals(statusCode)));
     }
 
     @Then("(l'invio)(il recupero) della notifica ha sollevato un errore {string}")
     public void lInvioDellaNotificaHaSollevatoUnErrore(String statusCode) {
-        HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
-        Assertions.assertTrue((httpStatusCodeException != null) &&
-                (httpStatusCodeException.getStatusCode().toString().substring(0, 3).equals(statusCode)));
+        HttpStatusCodeException httpCodeException = this.sharedSteps.consumeNotificationError();
+        Assertions.assertTrue((httpCodeException != null) &&
+                (httpCodeException.getStatusCode().toString().substring(0, 3).equals(statusCode)));
     }
 
     @Given("Viene generata una nuova apiKey con il gruppo {string}")
@@ -157,8 +157,8 @@ public class ApikeyManagerSteps {
         try {
             this.apiKeyManagerClient.newApiKey(requestNewApiKey);
             sharedSteps.setRequestNewApiKey(requestNewApiKey);
-        } catch (HttpStatusCodeException httpStatusCodeException) {
-            this.httpStatusCodeException = httpStatusCodeException;
+        } catch (HttpStatusCodeException httpCodeException) {
+            this.httpStatusCodeException = httpCodeException;
         }
     }
 
@@ -214,7 +214,7 @@ public class ApikeyManagerSteps {
             case "Comune_Multi" -> apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.GA);
             case "Comune_Son" -> apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.SON);
             case "Comune_Root" -> apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.ROOT);
-            default -> throw new IllegalConfigurationException("Invalid ApiKey type");
+            default -> throw new IllegalConfigurationException("Invalid ApiKey type: " + setPa);
         }
     }
 
@@ -314,7 +314,7 @@ public class ApikeyManagerSteps {
             case "Comune_Multi" -> apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.GA);
             case "Comune_Son" -> apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.SON);
             case "Comune_Root" -> apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.ROOT);
-            default -> throw new IllegalConfigurationException("Invalid ApiKey type");
+            default -> throw new IllegalConfigurationException("Invalid ApiKey type: " + setPa);
         }
 
     }
