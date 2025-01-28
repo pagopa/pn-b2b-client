@@ -3506,7 +3506,7 @@ public class AvanzamentoNotificheB2bSteps {
         log.info("LEGAL FACT CATEGORY = " + legalFact.getCategory());
         log.info("LEGAL FACT URL: " + legalFact.getKey());
     }
-    @Then("esiste l'elemento di timeline della notifica {string} abbia notificationCost ugauale a {string} per l'utente {int}")
+    @Then("esiste l'elemento di timeline della notifica {string} abbia notificationCost uguale a {string} per l'utente {int}")
     public void TimelineElementOfNotificationUserCost(String timelineEventCategory, String cost, Integer destinatario) {
         TimelineElementV26 event = readingEventUpToTheTimelineElementOfNotificationForCategoryUser(timelineEventCategory, destinatario);
         Long notificationCost = event.getDetails().getNotificationCost();
@@ -3560,17 +3560,4 @@ public class AvanzamentoNotificheB2bSteps {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
     }
-
-    @Then("viene controllato che l'elemento di timeline della notifica {string} non esiste con errore V23")
-    public void readingNotEventUpToTheTimelineElementOfNotificationV23Error(String timelineEventCategory) {
-
-        try {
-            PnPollingServiceTimelineRapidV23 timelineRapidV23 = (PnPollingServiceTimelineRapidV23) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_RAPID_V23);
-
-        } catch (HttpStatusCodeException e) {
-            this.notificationError = e;
-            sharedSteps.setNotificationError(e);
-        }
-    }
-
 }

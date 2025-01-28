@@ -525,7 +525,6 @@ Feature: Resa al mittente di una notifica
       | digitalDomicile         | NULL              |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
-    #And vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
     Then viene controllato che l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" non esiste con V23
 
 
@@ -576,7 +575,6 @@ Feature: Resa al mittente di una notifica
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V23"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V23"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "DELIVERING" con versione V23
-    #When vengono letti gli eventi dello stream versione V23
     Then l'operazione ha prodotto un errore con status code "400"
 
 
@@ -613,7 +611,6 @@ Feature: Resa al mittente di una notifica
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
     And vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
-    Then viene controllato che l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" non esiste con errore V23
     Then l'operazione ha prodotto un errore con status code "400"
 
 
@@ -630,12 +627,9 @@ Feature: Resa al mittente di una notifica
     And esiste l'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
 
-    #***************
+
 
 #pregressi
-
-#***************
-
   @activationDeceaseAfter
   Scenario: [RETURNED-TO-SENDER_36] Invio notifica 890 mono-destinatario verso PF  notifica di deceduto comportamento pregresso
     Given viene generata una nuova notifica
@@ -728,7 +722,6 @@ Feature: Resa al mittente di una notifica
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V26"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V26"
-    #And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost ugauale a "NotNull" per l'utente 0
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "VIEWED"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "ANALOG_SUCCESS_WORKFLOW"
     And  vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SCHEDULE_REFINEMENT_WORKFLOW"
@@ -755,4 +748,4 @@ Feature: Resa al mittente di una notifica
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V26"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V26"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "DELIVERED" con versione V26
-    And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost ugauale a "NotNull" per l'utente 0
+    And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost uguale a "NotNull" per l'utente 0

@@ -2721,7 +2721,6 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         Assertions.assertTrue(this.notificationError.getMessage().contains(errorMessage));
     }
 
-
     @And("vengono letti gli eventi dello stream del {string} fino allo stato {string} con versione V25")
     public void readStreamEventsStateV25(String pa, String status) {
         setPaWebhook(pa);
