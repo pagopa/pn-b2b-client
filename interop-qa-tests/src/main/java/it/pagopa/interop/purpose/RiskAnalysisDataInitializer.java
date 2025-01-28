@@ -3,30 +3,31 @@ package it.pagopa.interop.purpose;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.interop.purpose.domain.RiskAnalysisDataFromJson;
-import lombok.Getter;
-
+import it.pagopa.interop.purpose.exception.RiskAnalysisDataInitializationException;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import lombok.Value;
 
-@Getter
+@Value
 public class RiskAnalysisDataInitializer {
-    private final Map<String, RiskAnalysisDataFromJson.RiskAnalysisTemplate> riskAnalysisData;
+    Map<String, RiskAnalysisDataFromJson.RiskAnalysisTemplate> riskAnalysisData;
 
-    public RiskAnalysisDataInitializer(Map<String, RiskAnalysisDataFromJson.RiskAnalysisTemplate> riskAnalysisData) {
+    public RiskAnalysisDataInitializer() {
         this.riskAnalysisData = initializeMap();
     }
 
     private Map<String, RiskAnalysisDataFromJson.RiskAnalysisTemplate> initializeMap() {
         ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, RiskAnalysisDataFromJson.RiskAnalysisTemplate> riskAnalysisData = null;
+        Map<String, RiskAnalysisDataFromJson.RiskAnalysisTemplate> ongoingRiskAnalysisData = null;
         try {
-            riskAnalysisData = objectMapper.readValue(new File("src/main/resources/risk_analysis_data.json"),
-                    new TypeReference<Map<String, RiskAnalysisDataFromJson.RiskAnalysisTemplate>>() {}
+            ongoingRiskAnalysisData = objectMapper.readValue(
+                new File("src/main/resources/risk_analysis_data.json"),
+                new TypeReference<>() {}
             );
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RiskAnalysisDataInitializationException("Error while reading risk analysis data from file", e);
         }
-        return riskAnalysisData;
+        return ongoingRiskAnalysisData;
     }
 }

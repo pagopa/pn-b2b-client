@@ -64,7 +64,7 @@ Feature: esposizione timestamp tecnici per gli SLA
     And si crea il nuovo stream per il "Comune_Multi" con versione "<version>"
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<timeline_element>"
-    When si invoca l'api Webhook versione "<version>" per ottenere gli elementi di timeline di tale notifica
+    When vengono letti gli eventi dello stream versione "<version>"
     Then gli elementi di timeline restituiti dal Webhook contengono i campi attesi in accordo alla versione "<version>"
     Examples:
       | timeline_element | version |
@@ -91,7 +91,7 @@ Feature: esposizione timestamp tecnici per gli SLA
     And si crea il nuovo stream per il "Comune_Multi" con versione "V23"
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
-    When si invoca l'api Webhook versione "V23" per ottenere gli elementi di timeline di tale notifica
+    When vengono letti gli eventi dello stream versione "V23"
     Then gli elementi di timeline restituiti dal Webhook contengono i campi attesi in accordo alla versione "V23"
 
   @timestampTecnici @precondition @webhook2 @cleanWebhook
