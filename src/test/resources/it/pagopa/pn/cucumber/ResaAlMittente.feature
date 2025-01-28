@@ -542,7 +542,7 @@ Feature: Resa al mittente di una notifica
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V23"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V23"
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "DELIVERING" con versione V23
+    Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "DELIVERING" con la versione V23
 
   @returnedToSender @cleanWebhook @precondition @webhook1
   Scenario: [RETURNED-TO-SENDER_21-FLAG-TRUE] Invio notifica AR multi-destinatario di cui un Deceduto con VersioningModeFlag=true, atteso stato DELIVERING
@@ -557,8 +557,8 @@ Feature: Resa al mittente di una notifica
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V23"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V23"
-    Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "DELIVERING" con versione V23
-    
+    Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "DELIVERING" con la versione V23
+
 
   #@returnedToSender @cleanWebhook @precondition @webhook1
   Scenario: [RETURNED-TO-SENDER_22] Invio notifica 890 mono-destinatario Deceduto con VersioningModeFlag=false, si attende errore 400

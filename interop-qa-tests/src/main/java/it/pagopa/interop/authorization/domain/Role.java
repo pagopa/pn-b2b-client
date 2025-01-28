@@ -10,7 +10,7 @@ public enum Role {
     SUPPORT("support"),
     API_SECURITY("api,security");
 
-    private String value;
+    private final String value;
 
     Role(String value) {
         this.value = value;

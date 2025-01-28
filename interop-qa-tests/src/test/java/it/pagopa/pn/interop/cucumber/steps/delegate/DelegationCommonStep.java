@@ -1,0 +1,55 @@
+package it.pagopa.pn.interop.cucumber.steps.delegate;
+
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import it.pagopa.interop.authorization.service.utils.IdentityService;
+import it.pagopa.interop.tenant.service.ITenantsApi;
+import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
+import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
+import org.springframework.web.client.HttpClientErrorException;
+
+@Slf4j
+public class DelegationCommonStep {
+    private final ClientTokenConfigurator clientTokenConfigurator;
+    private final IdentityService identityService;
+    private final HttpCallExecutor httpCallExecutor;
+    private final ITenantsApi tenantsApi;
+
+    public DelegationCommonStep(ClientTokenConfigurator clientTokenConfigurator,
+                                SharedStepsContext sharedStepsContext) {
+        this.clientTokenConfigurator = clientTokenConfigurator;
+        this.identityService = sharedStepsContext.getIdentityService();
+        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+        this.tenantsApi = clientTokenConfigurator.getTenantsApi();
+    }
+
+    @Given("l'ente {string} rimuove la disponibilità a ricevere deleghe")
+    public void tenantRemoveDelegationAvailability(String tenantType) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        try {
+            tenantsApi.deleteTenantDelegatedProducerFeature();
+        } catch (HttpClientErrorException.Conflict e) {
+            log.info("No delegation availability defined for the given tenant!");
+        } catch (Exception e) {
+            log.error("Error while removing delegation availability", e);
+        }
+    }
+
+    @Then("si ottiene lo status code {int}")
+    public void thenStatusCodeIs(int statusCode) {
+        Object response = httpCallExecutor.getResponse();
+        int actualStatusCode = httpCallExecutor.getClientResponse().value();
+        String errorMsg = "Unexpected status code. Received response: %n%s".formatted(response);
+
+        if (isSuccessful(statusCode)) Assertions.assertEquals(200, actualStatusCode, errorMsg);
+        else Assertions.assertEquals(statusCode, actualStatusCode, errorMsg);
+    }
+
+    boolean isSuccessful(int statusCode) {
+        return statusCode >= 200 && statusCode < 300;
+    }
+
+}
