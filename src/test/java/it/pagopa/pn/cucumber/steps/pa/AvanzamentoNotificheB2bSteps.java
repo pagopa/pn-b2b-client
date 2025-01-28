@@ -497,6 +497,7 @@ public class AvanzamentoNotificheB2bSteps {
                 .orElse(List.of())
                 .stream()
                 .map(TimelineElementV26::getCategory)
+                .filter(Objects::nonNull)
                 .map(TimelineElementCategoryV26::toString)
                 .toList();
         try {

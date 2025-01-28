@@ -1,6 +1,7 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -53,6 +54,7 @@ import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
+import java.lang.reflect.Field;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -637,7 +639,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             }
             case V26 -> {
                 StreamMetadataResponseV26 eventStreamV26 = Assertions.assertDoesNotThrow(() ->
-                        webhookB2bClient.retrieveEventStreamV26(this.eventStreamListV25.get(0).getStreamId()));
+                        webhookB2bClient.retrieveEventStreamV26(this.eventStreamListV26.get(0).getStreamId()));
                 sharedSteps.setEventStreamV26(eventStreamV26);
                 Assertions.assertNotNull(eventStreamV26);
                 Assertions.assertNotNull(eventStreamV26.getStreamId());
@@ -1166,9 +1168,18 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
         try {
             Assertions.assertNotNull(progressResponseElement);
+
+            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 elementToCheck = sharedSteps.getSentNotification().getTimeline().stream()
+                    .filter(elem -> elem.getCategory() != null)
+                    .filter(elem -> elem.getCategory().getValue().equals(timelineElementInternalCategory.getValue()))
+                            .findAny()
+                            .orElse(null);
+
+            Assertions.assertNotNull(elementToCheck);
+            Assertions.assertNotNull(elementToCheck.getTimestamp());
             Assertions.assertEquals(progressResponseElement.getElement().getTimestamp().truncatedTo(ChronoUnit.SECONDS),
-                    sharedSteps.getSentNotificationV23().getTimeline().stream()
-                            .filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().get().getTimestamp().truncatedTo(ChronoUnit.SECONDS));
+                    elementToCheck.getTimestamp().truncatedTo(ChronoUnit.SECONDS));
+
             log.info("EventProgress: " + progressResponseElement);
 
         } catch (AssertionFailedError assertionFailedError) {
@@ -1291,9 +1302,16 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             Assertions.assertNotNull(progressResponseElement);
             progressResponseElementResultV23 = progressResponseElement;
             //TODO Verificare...
+
+            TimelineElementV26 elementToCheck = sharedSteps.getSentNotification().getTimeline().stream()
+                    .filter(elem -> elem.getCategory() != null)
+                    .filter(elem -> elem.getCategory().getValue().equals(timelineElementInternalCategory.getValue()))
+                    .findAny()
+                    .orElse(null);
+
+            Assertions.assertNotNull(elementToCheck);
             Assertions.assertEquals(progressResponseElement.getElement().getTimestamp().truncatedTo(ChronoUnit.SECONDS),
-                    sharedSteps.getSentNotificationV23().getTimeline().stream()
-                            .filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().get().getTimestamp().truncatedTo(ChronoUnit.SECONDS));
+                    elementToCheck.getTimestamp().truncatedTo(ChronoUnit.SECONDS));
             log.info("EventProgress: " + progressResponseElement);
             sharedSteps.setProgressResponseElementV23(progressResponseElement);
             //sharedSteps.getTimelineElementV23().getDetails();
@@ -1825,18 +1843,59 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
     @And("verifica corrispondenza tra i detail del webhook e quelli della timeline")
     public void verificaCorrispondenzaTraIDetailDelWebhookEQuelliDellaTimeline() throws JsonProcessingException {
-        TimelineElementDetailsV26 timelineElementDetails = sharedSteps.getTimelineElement().getDetails();//PERCHè NON TENERLO NELLA CLASSE ?!
-        TimelineElementDetailsV23 timelineElementWebhookDetails = sharedSteps.getProgressResponseElementV23().getElement().getDetails();
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        String json = ow.writeValueAsString(timelineElementDetails);
-        System.out.println(json);
+        //TimelineElementDetailsV26 timelineElementDetails = sharedSteps.getTimelineElement().getDetails();
+        it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.TimelineElementV23 timelineElementWebHook = sharedSteps.getProgressResponseElementV23().getElement();
 
-        ObjectWriter ow1 = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        String json1 = ow1.writeValueAsString(timelineElementWebhookDetails);
+        Assertions.assertNotNull(timelineElementWebHook);
+        Assertions.assertNotNull(timelineElementWebHook.getCategory());
+
+        String elementId = timelineElementWebHook.getCategory().toString();
+        TimelineElementV26 timelineElement = sharedSteps.getSentNotification().getTimeline().stream()
+                .filter(data -> data.getCategory() != null)
+                .filter(data -> data.getCategory().getValue().equalsIgnoreCase(elementId))
+                .findFirst()
+                .orElse(null);
+
+        Assertions.assertNotNull(timelineElement);
+
+        TimelineElementDetailsV26 timelineElementDetails = timelineElement.getDetails();
+
+        Assertions.assertNotNull(timelineElementDetails);
+
+        it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.TimelineElementDetailsV23 timelineElementWebhookDetails = timelineElementWebHook.getDetails();
+
+        Assertions.assertNotNull(timelineElementWebhookDetails);
+
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        String json = ow.writeValueAsString(serializeObject(timelineElementDetails));
+        System.out.println(json);
+        String json1 = ow.writeValueAsString(serializeObject(timelineElementWebhookDetails));
         System.out.println(json1);
 
         ObjectMapper mapper = new ObjectMapper();
         Assertions.assertEquals(mapper.readTree(json), mapper.readTree(json1));
+    }
+
+    private Object serializeObject(Object obj) {
+        Map<String, Object> result = new LinkedHashMap<>();
+        if (obj == null) {
+            return result;
+        }
+        Field[] fields = obj.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            field.setAccessible(true);
+            try {
+                Object value = field.get(obj);
+                if (value instanceof OffsetDateTime) {
+                    result.put(field.getName(), ((OffsetDateTime) value).toString());
+                } else {
+                    result.put(field.getName(), value);
+                }
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException("Errore nell'accesso al campo " + field.getName(), e);
+            }
+        }
+        return result;
     }
 
     @Then("verifica deanonimizzazione degli eventi di timeline con delega {string} analogico")

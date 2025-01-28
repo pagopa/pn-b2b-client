@@ -38,6 +38,8 @@ Feature: avanzamento notifiche webhook b2b V23
 #COMUNE 1
   @webhookV23 @precondition @cleanWebhook @webhook1
   Scenario: [B2B-STREAM_ES1.1_112] Creazione con replaceID di uno stream notifica senza gruppo uguale al precedente stream con eventType "TIMELINE" utilizzando un apikey master. (replacedStreamId settato) con controllo EventId incrementale e senza duplicati.
+    Given si predispone addressbook per l'utente "Galileo Galilei"
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -74,6 +76,54 @@ Feature: avanzamento notifiche webhook b2b V23
     And Si verifica che l'elemento di timeline REFINEMENT abbia il timestamp uguale a quella presente nel webhook con la versione V23
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
+
+
+  @webhookV23 @precondition @cleanWebhook @webhook1
+  Scenario: [B2B-STREAM_ES1.1_112_PROVA] Creazione con replaceID di uno stream notifica senza gruppo uguale al precedente stream con eventType "TIMELINE" utilizzando un apikey master. (replacedStreamId settato) con controllo EventId incrementale e senza duplicati.
+    Given si predispone addressbook per l'utente "Galileo Galilei"
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario
+      | denomination  | Galileo galileo   |
+      | taxId         | GLLGLL64B15G702I  |
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V23"
+    And Viene creata una nuova apiKey per il comune "Comune_1" senza gruppo
+    And viene impostata l'apikey appena generata
+    And viene aggiornata la apiKey utilizzata per gli stream
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V26"
+    And si crea il nuovo stream per il "Comune_1" con versione "V26"
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V26"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    #TEST LETTURA ACCEPTED
+    Then vengono letti gli eventi dello stream del "Comune_1" fino allo stato "ACCEPTED" con versione V26
+    #TEST LETTURA REQUEST_ACCEPTED
+    And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "REQUEST_ACCEPTED" con versione V26
+    #And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "REQUEST_ACCEPTED" con la versione V23
+    #TEST LETTURA DIGITAL_SUCCESS_WORKFLOW
+    Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" con la versione V23
+    And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" con versione V26
+    #Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" con la versione V23
+    And viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati V23
+    #TEST VERIFICA CORRISPONDENZA ELEMENTO DI TIMELINE STREAM
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "SEND_COURTESY_MESSAGE" con versione V26
+    #And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "SEND_COURTESY_MESSAGE" con versione V23 e apiKey aggiornata con position 0
+    And verifica corrispondenza tra i detail del webhook e quelli della timeline
+    And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "SEND_DIGITAL_DOMICILE" con versione V23 e apiKey aggiornata con position 0
+    And verifica corrispondenza tra i detail del webhook e quelli della timeline
+    And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "SEND_DIGITAL_FEEDBACK" con versione V23 e apiKey aggiornata con position 0
+    And verifica corrispondenza tra i detail del webhook e quelli della timeline
+    And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" con versione V23 e apiKey aggiornata con position 0
+    And verifica corrispondenza tra i detail del webhook e quelli della timeline
+    #TEST VERIFICA REFINEMENT
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "REFINEMENT" con versione V23 e apiKey aggiornata con position 0
+    And Si verifica che l'elemento di timeline REFINEMENT abbia il timestamp uguale a quella presente nel webhook con la versione V23
+    And viene modificato lo stato dell'apiKey in "BLOCK"
+    And l'apiKey viene cancellata
+
 
 
   @webhookV23 @precondition @cleanWebhook @webhook1
