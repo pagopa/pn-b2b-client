@@ -116,7 +116,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo AR
       | details_deliveryDetailCode | RECRN002C |
 
 
-  @workflowAnalogico
+  @workflowAnalogico @ignore # ANALOG_SUCCESS_WORKFLOW non è più generato per deceduto a seguito del nuovo sviluppo
   Scenario: [B2B_TIMELINE_ANALOG_AR_5] Attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_fail_AR_NR_scenario positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
