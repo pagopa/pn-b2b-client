@@ -2230,7 +2230,7 @@ public class SharedSteps {
                             && Objects.equals(Objects.requireNonNull(elem.getDetails()).getDeliveryDetailCode(), Objects.requireNonNull(timelineElementDetails).getDeliveryDetailCode()))
                     .toList();
             }
-            return timelineElementList.stream().filter(elem -> Objects.requireNonNull(elem.getElementId()).equals(timelineEventId)).toList();
+            return timelineElementList.stream().filter(elem -> Objects.requireNonNull(elem.getElementId()).contains(timelineEventId)).toList();
         }
         return timelineElementList.stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).getValue().equals(timelineEventCategory)).toList();
     }
