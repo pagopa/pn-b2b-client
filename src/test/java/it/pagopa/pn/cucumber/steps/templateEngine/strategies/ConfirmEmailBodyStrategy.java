@@ -21,6 +21,11 @@ public class ConfirmEmailBodyStrategy implements ITemplateEngineStrategy {
         return new TemplateEngineResult(file);
     }
 
+    @Override
+    public String getTextToCheckLanguage(String language) {
+        return "Ricevi questa comunicazione perch&eacute; hai inserito questo indirizzo";
+    }
+
     private MailVerificationCodeBody createRequest(boolean body, TemplateRequestContext context) {
         if (!body)
             return null;

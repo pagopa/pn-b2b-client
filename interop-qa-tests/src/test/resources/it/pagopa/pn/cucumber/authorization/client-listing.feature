@@ -25,26 +25,26 @@ Feature: Listing client
       | Privato | support      |
       | Privato | api,security |
 
-  Scenario Outline: A fronte di 5 client in db, restituisce solo i primi 3 risultati
+  Scenario: A fronte di 5 client in db, restituisce solo i primi 3 risultati
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato 5 client "CONSUMER"
     When l'utente richiede una operazione di listing dei client limitata a 3 risultati
     Then si ottiene status code 200 e la lista di 3 client
 
-  Scenario Outline: A fronte di 5 client in db e una richiesta di offset 3, restituisce solo 2 risultati
+  Scenario: A fronte di 5 client in db e una richiesta di offset 3, restituisce solo 2 risultati
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato 5 client "CONSUMER"
     When l'utente richiede una operazione di listing dei client con offset 3
     Then si ottiene status code 200 e la lista di 2 client
 
-  Scenario Outline: Restituisce solo i client da utilizzare per gli e-service
+  Scenario: Restituisce solo i client da utilizzare per gli e-service
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato 3 client "CONSUMER"
     Given "PA1" ha già creato 2 client "API"
     When l'utente richiede una operazione di listing dei client con filtro "CONSUMER"
     Then si ottiene status code 200 e la lista di 3 client
 
-  Scenario Outline: Restituisce solo i client che hanno per membro l’utente con specifico userId
+  Scenario: Restituisce solo i client che hanno per membro l’utente con specifico userId
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato 1 client "CONSUMER"
     Given "PA1" ha già inserito l'utente con ruolo "security" come membro di quel client
@@ -53,20 +53,20 @@ Feature: Listing client
     When l'utente richiede una operazione di listing dei client filtrando per membro utente con ruolo "security"
     Then si ottiene status code 200 e la lista di 1 client
 
-  Scenario Outline: Restituisce i client che contengono la keyword "test" all'interno del nome, con ricerca case insensitive
+  Scenario: Restituisce i client che contengono la keyword "test" all'interno del nome, con ricerca case insensitive
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato 2 client "CONSUMER"
     Given "PA1" ha già creato 1 client "CONSUMER" con la keyword "test" nel nome
     When l'utente richiede una operazione di listing dei client filtrando per la keyword "test"
     Then si ottiene status code 200 e la lista di 1 client
 
-  Scenario Outline: Restituisce un insieme vuoto di client per una ricerca che non porta risultati
+  Scenario: Restituisce un insieme vuoto di client per una ricerca che non porta risultati
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato 1 client "CONSUMER"
     When l'utente richiede una operazione di listing dei client filtrando per la keyword "unknown"
     Then si ottiene status code 200 e la lista di 0 client
 
-  Scenario Outline: A fronte di una richiesta di listing da parte di un ente, con client creati da altri enti, restituisce 200 e la lista di 0 client
+  Scenario: A fronte di una richiesta di listing da parte di un ente, con client creati da altri enti, restituisce 200 e la lista di 0 client
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato 1 client "CONSUMER"
     Given "GSP" ha già creato 1 client "CONSUMER"
