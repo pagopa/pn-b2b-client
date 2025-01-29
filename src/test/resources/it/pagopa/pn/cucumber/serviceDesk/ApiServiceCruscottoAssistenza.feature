@@ -944,7 +944,7 @@ Feature: Api Service Cruscotto Assitenza
     When come operatore devo accedere ai dettagli dei pagamenti di una notifica con uno iun "<IUN>" associata all' utente "<USER>" con uid "corretto"
     Then controllo che la risposta del servizio contenta una lista "<LIST_TYPE>"
     Examples:
-    | USER          | IUN                           | LIST_TYPE |
-    | Mario Gherkin | ASSOCIATO A PAGAMENTO PAGOPA  | COMPILATA |
+    | USER          | IUN                           | LIST_TYPE  |
+    | Mario Gherkin | ASSOCIATO A PAGAMENTO PAGOPA  | COMPILATA  |
     | Mario Gherkin | NOTIFICA SENZA PAGAMENTI      | VUOTA      |
     | Mario Gherkin | ASSOCIATO A PAGAMENTO F24     | VUOTA      |
