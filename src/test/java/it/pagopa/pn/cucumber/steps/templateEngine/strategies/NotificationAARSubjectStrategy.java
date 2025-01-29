@@ -24,6 +24,11 @@ public class NotificationAARSubjectStrategy implements ITemplateEngineStrategy{
         return new TemplateEngineResult(file);
     }
 
+    @Override
+    public String getTextToCheckLanguage(String language) {
+        return "SEND - Nuova notifica da";
+    }
+
     private NotificationAarForSubject createRequest(boolean body, TemplateRequestContext context) {
         if (!body)
             return null;
@@ -35,6 +40,7 @@ public class NotificationAARSubjectStrategy implements ITemplateEngineStrategy{
     private AarForSubjectNotification createNotification(TemplateRequestContext context) {
         return Optional.ofNullable(context.getNotification())
                 .map(data -> new AarForSubjectNotification()
+                        .iun(context.getIun())
                         .sender(createSender(data)))
                 .orElse(null);
     }

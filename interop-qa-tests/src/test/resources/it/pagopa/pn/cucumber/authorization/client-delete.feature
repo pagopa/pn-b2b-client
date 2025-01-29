@@ -26,7 +26,7 @@ Feature: Cancellazione client
       | Privato | support      |        403 |
       | Privato | api,security |        403 |
 
-  Scenario Outline: Un utente con sufficienti permessi (admin) non associato all’ente che ha creato il client, richiede la cancellazione del client. Ottiene un errore
+  Scenario: Un utente con sufficienti permessi (admin) non associato all’ente che ha creato il client, richiede la cancellazione del client. Ottiene un errore
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato 1 client "CONSUMER"
     When l'utente richiede una operazione di cancellazione di quel client

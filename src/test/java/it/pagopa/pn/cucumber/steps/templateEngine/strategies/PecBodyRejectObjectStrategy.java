@@ -18,4 +18,9 @@ public class PecBodyRejectObjectStrategy implements ITemplateEngineStrategy {
         String file = templateEngineClient.pecsubjectreject(selectLanguage(language));
         return new TemplateEngineResult(file);
     }
+
+    @Override
+    public String getTextToCheckLanguage(String language) {
+        return "SEND - La PEC che hai inserito non è valida";
+    }
 }
