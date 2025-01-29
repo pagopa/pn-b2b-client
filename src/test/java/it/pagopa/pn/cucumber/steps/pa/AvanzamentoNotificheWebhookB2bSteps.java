@@ -1328,7 +1328,8 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             Assertions.assertFalse(sharedSteps.getSentNotification()
                     .getTimeline()
                     .stream()
-                    .filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)
+                    .filter(data -> data.getCategory() != null && data.getDetails() != null && data.getDetails().getDeliveryDetailCode() != null)
+                    .filter(elem -> elem.getCategory().getValue().equals(timelineElementInternalCategory.getValue())
                             && elem.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode))
                     .findAny()
                     .isEmpty());
@@ -1457,7 +1458,15 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             //TODO Verificare...
             EventTimestamp = progressResponseElementListV23.stream().filter(elem -> elem.getElement().getCategory().equals(TimelineElementCategoryV23.REFINEMENT)).findAny().get().getElement().getTimestamp();
             //EventTimestamp = progressResponseElementListV23.stream().filter(elem -> elem.getTimelineEventCategory().equals(TimelineElementCategoryV23.REFINEMENT)).findAny().get().getTimestamp();
-            NotificationTimestamp = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23.SCHEDULE_REFINEMENT)).findAny().get().getDetails().getSchedulingDate();
+            TimelineElementV26 timelineToCheck = sharedSteps.getSentNotification().getTimeline().stream()
+                    .filter(elem -> elem.getCategory().getValue().equals(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23.SCHEDULE_REFINEMENT.getValue()))
+                    .findAny()
+                    .orElse(null);
+
+            Assertions.assertNotNull(timelineToCheck);
+            Assertions.assertNotNull(timelineToCheck.getDetails());
+
+            NotificationTimestamp = timelineToCheck.getDetails().getSchedulingDate();
             log.info("event timestamp : {}", EventTimestamp);
             log.info("notification timestamp : {}", NotificationTimestamp);
 
