@@ -1107,6 +1107,7 @@ Feature: annullamento notifiche b2b
 
 
 
+  @ignore # because of https://pagopa.atlassian.net/browse/QA-5441
   @Annullamento @refused
   Scenario: [B2B-PA-ANNULLAMENTO_42] PA mittente: Annullamento notifica in stato “REFUSED” - PN-9065
     Given viene generata una nuova notifica
