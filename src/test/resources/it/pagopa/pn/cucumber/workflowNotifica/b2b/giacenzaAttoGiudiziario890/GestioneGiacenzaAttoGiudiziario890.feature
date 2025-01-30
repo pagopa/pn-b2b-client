@@ -54,7 +54,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
   #RECAG008C -- Compiuta giacenza. Il destinatario non ha ritirato la raccomandata 890 numero {{numero raccomandata}} presso il punto di giacenza entro 6 mesi.
 
 
-  @giacenza890Simplified @con020 @con020success
+  @giacenza890Simplified
   Scenario: [B2B_GIACENZA_890_WI1.1_2] Consegnato in Giacenza dopo i 10 giorni. In questo scenario viene simulato il perfezionamento dell’atto al 10° giorno.
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -110,7 +110,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
     #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.60s-RECAG012.5s-RECAG011B[DOC:ARCAD;DOC:23L].60s-RECAG005A.5s-RECAG005C"
 
 
-  @giacenza890Simplified @con020 @con020success
+  @giacenza890Simplified
   Scenario: [B2B_GIACENZA_890_WI1.1_3] Consegnato in Giacenza dopo i 10 giorni. In questo scenario viene simulato il perfezionamento dell’atto al 10° giorno
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -166,7 +166,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
 
   #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.60s-RECAG012.5s-RECAG011B[DOC:ARCAD].5s-RECAG005A.5s-RECAG005B[DOC:23L].5s-RECAG005C"
 
-  @giacenza890Simplified @con020 @con020success @con020ToCheck
+  @giacenza890Simplified
   Scenario: [B2B_GIACENZA_890_WI1.1_4] Consegnato a persona delegata in Giacenza prima dei 10 giorni.
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -224,7 +224,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
   #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.30s-RECAG012.5s-RECAG006A.5s-RECAG006B[DOC:ARCAD;DOC:23L].5s-RECAG006C"
 
 
-  @giacenza890Simplified @con020 @con020success @con020ToCheck
+  @giacenza890Simplified
   Scenario: [B2B_GIACENZA_890_WI1.1_5] Consegnato a persona delegata in Giacenza dopo dei 10 giorni. In questo scenario viene simulato il perfezionamento dell’atto al 10° giorno
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -281,7 +281,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
     #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.60s-RECAG012.5s-RECAG011B[DOC:ARCAD;DOC:23L].60s-RECAG006A.5s-RECAG006C"
 
 
-  @giacenza890Simplified @con020 @con020success @con020ToCheck
+  @giacenza890Simplified
   Scenario: [B2B_GIACENZA_890_WI1.1_6] Consegnato a persona delegata in Giacenza dopo dei 10 giorni. In questo scenario viene simulato il perfezionamento dell’atto al 10° giorno
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -359,7 +359,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
 
   #"@sequence.5s-CON080.5s-RECAG010.5s-RECAG011A.30s-RECAG012.5s-RECAG007A.5s-RECAG007B[DOC:ARCAD;DOC:Plico].5s-RECAG007C"
 
-  @giacenza890Simplified @con020 @con020success @con020ToCheck
+  @giacenza890Simplified
   Scenario: [B2B_GIACENZA_890_WI1.1_8] Mancata Consegna in Giacenza dopo i 10 giorni. In questo scenario viene simulato il perfezionamento dell’atto al 10° giorno.
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -444,7 +444,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
   #"@sequence.5s-CON080.5s-RECAG010.5s-RECAG011A.60s-RECAG012.5s-RECAG011B[DOC:ARCAD].5s-RECAG007A.5s-RECAG007B[DOC:23L;DOC:Plico].5s-RECAG007C"
 
 
-  @giacenza890Simplified @con020 @con020success @con020ToCheck
+  @giacenza890Simplified
   Scenario: [B2B_GIACENZA_890_WI1.1_10] Compiuta Giacenza. In questo scenario viene simulato il perfezionamento dell’atto al 10° giorno
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -522,7 +522,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     #"@sequence.5s-RECAG011B[DOC:ARCAD].5s-RECAG011B[DOC:23L].5m-RECAG012"
 
-  @giacenza890Simplified @con020 @con020success @con020ToCheck
+  @giacenza890Simplified
   Scenario: [B2B_GIACENZA_890_WI1.1_12]  Invio notifica con percorso analogico (OK-GiacenzaDelegato-lte10_890_redrive)  per verificare evento fuori sequenza che produce un redrive automatico di paper channel
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -576,7 +576,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
     #"sequenceName": "OK-GiacenzaDelegato-lte10_890_redrive", "sequence": "@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.30s-RECAG006A.5s-RECAG006B[DOC:ARCAD;DOC:23L].60s-RECAG006C.60s-RECAG012"
     #Risultato atteso: l’evento fuori ordine viene inserito nella tabella degli errori e recuperato automaticamente da paper channel all’arrivo dell’evento RECAG012
 
-  @giacenza890Simplified @con020 @con020success @con020ToCheck
+  @giacenza890Simplified
   Scenario: [B2B_GIACENZA_890_WI1.1_13]  Invio notifica con percorso analogico (FAIL-Giacenza-gt10_890_no_recag012)  per verificare che paper channel calcoli la data di perfezionamento e invii il PNAG012 come feedback poichè oltre i 10 giorni
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |

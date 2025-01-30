@@ -2030,9 +2030,18 @@ public class SharedSteps {
     }
 
     public void throwAssertFailerWithIUN(AssertionFailedError assertionFailedError) {
-        String message = assertionFailedError.getMessage() +
-                "{IUN: " + notificationResponseComplete.getIun() + " }";
+        String message = decorateErrorMsg(assertionFailedError.getMessage());
         throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+    }
+
+    public void throwAssertFailerWithIUN(AssertionError assertionError) {
+        String message = decorateErrorMsg(assertionError.getMessage());
+        throw new AssertionError(message, assertionError.getCause());
+    }
+
+    private String decorateErrorMsg(String originalMessage) {
+        return originalMessage +
+            " {IUN: " + notificationResponseComplete.getIun() + " }";
     }
 
     public void throwAssertFailerWithAmountGDPAndIUN(AssertionFailedError assertionFailedError, Integer amountGDP) {

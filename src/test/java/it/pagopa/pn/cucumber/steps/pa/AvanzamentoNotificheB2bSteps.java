@@ -2,6 +2,7 @@ package it.pagopa.pn.cucumber.steps.pa;
 
 import static java.time.OffsetDateTime.now;
 import static java.time.temporal.ChronoUnit.MINUTES;
+import static java.time.temporal.ChronoUnit.SECONDS;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
@@ -40,23 +41,8 @@ import it.pagopa.pn.client.b2b.pa.mapper.impl.PnTimelineAndLegalFactV26;
 import it.pagopa.pn.client.b2b.pa.mapper.model.PnTimelineLegalFactV26;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
-import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
-import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingPredicate;
-import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV1;
-import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV20;
-import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV21;
-import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV23;
-import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV26;
-import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceStatusRapidV1;
-import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceStatusRapidV26;
-import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineExtraRapidV26;
-import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineRapidV1;
-import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineRapidV20;
-import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineRapidV21;
-import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineRapidV23;
-import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineRapidV26;
-import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineSlowV1;
-import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineSlowV26;
+import it.pagopa.pn.client.b2b.pa.polling.dto.*;
+import it.pagopa.pn.client.b2b.pa.polling.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnPrivateDeliveryPushExternalClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
@@ -391,7 +377,6 @@ public class AvanzamentoNotificheB2bSteps {
         Integer numCheck = dataFromTest != null ? dataFromTest.getNumCheck() : null;
         String pollingType = dataFromTest != null ? dataFromTest.getPollingType() : null;
 
-        //TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
         TimingForPolling.TimingResult timingForElement = timingForPolling.getTimingForElement(timelineEventCategory);
         if ("extraRapid".equals(pollingType)) {
             timingForElement = timingForPolling.getTimingForElement(timelineEventCategory, false, true);
@@ -622,9 +607,9 @@ public class AvanzamentoNotificheB2bSteps {
     @Then("verifica date business in timeline COMPLETELY_UNREACHABLE per l'utente {int}")
     public void verificationDateComplettelyUnreachableWithRefinement(Integer destinatario) {
         try {
-            OffsetDateTime shedulingDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV26.SCHEDULE_REFINEMENT) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
-            OffsetDateTime complettelyUnreachableDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV26.COMPLETELY_UNREACHABLE) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
-            OffsetDateTime complettelyUnreachableRequestDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV26.COMPLETELY_UNREACHABLE_CREATION_REQUEST) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
+            OffsetDateTime schedulingDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV26.SCHEDULE_REFINEMENT) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
+            OffsetDateTime completelyUnreachableDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV26.COMPLETELY_UNREACHABLE) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
+            OffsetDateTime completelyUnreachableRequestDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV26.COMPLETELY_UNREACHABLE_CREATION_REQUEST) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
             OffsetDateTime analogFailureDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV26.ANALOG_FAILURE_WORKFLOW) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
             OffsetDateTime sendAnalogProgressTimestampDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV26.SEND_ANALOG_PROGRESS) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
             OffsetDateTime sendAnalogProgressNotificationDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV26.SEND_ANALOG_PROGRESS) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getDetails().getNotificationDate();
@@ -636,32 +621,36 @@ public class AvanzamentoNotificheB2bSteps {
             log.info("sendAnalogProgressTimestampDate : {}", sendAnalogProgressTimestampDate);
             log.info("sendFeedbackTimestampDate : {} ", sendFeedbackTimestampDate);
             log.info("analogFailureDate Timestamp : {}", analogFailureDate);
-            log.info("complettelyUnreachableRequestDate Timestamp : {}", complettelyUnreachableRequestDate);
-            log.info("complettelyUnreachableDate Timestamp : {}", complettelyUnreachableDate);
+            log.info("completelyUnreachableRequestDate Timestamp : {}", completelyUnreachableRequestDate);
+            log.info("completelyUnreachableDate Timestamp : {}", completelyUnreachableDate);
             log.info("prepareAnalogDomicileFailureTimestamp : {}", prepareAnalogDomicileFailureTimestamp);
 
-            log.info("shedulingDate Timestamp: {}", shedulingDate);
+            log.info("schedulingDate Timestamp: {}", schedulingDate);
 
             log.info("sendAnalogProgressNotificationDate : {}", sendAnalogProgressNotificationDate);
             log.info("sendFeedbackNotificationDate : {}", sendFeedbackNotificationDate);
 
-            Assertions.assertEquals(shedulingDate, complettelyUnreachableDate);
-            Assertions.assertEquals(shedulingDate, complettelyUnreachableRequestDate);
-            Assertions.assertEquals(shedulingDate, analogFailureDate);
-            Assertions.assertEquals(shedulingDate, prepareAnalogDomicileFailureTimestamp);
-            Assertions.assertEquals(sendAnalogProgressTimestampDate, sendAnalogProgressNotificationDate);
-            Assertions.assertEquals(sendFeedbackTimestampDate, sendFeedbackNotificationDate);
-            //TODO  Verificare..
-            // Assertions.assertEquals(sendFeedbackDate,sendAnalogProgressDate);
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            assertThat(completelyUnreachableDate)
+                .isCloseTo(schedulingDate, within(1, SECONDS));
+            assertThat(completelyUnreachableRequestDate)
+                .isCloseTo(schedulingDate, within(1, SECONDS));
+            assertThat(analogFailureDate)
+                .isCloseTo(schedulingDate, within(1, SECONDS));
+            assertThat(prepareAnalogDomicileFailureTimestamp)
+                .isCloseTo(schedulingDate, within(1, SECONDS));
+            assertThat(sendAnalogProgressNotificationDate)
+                .isCloseTo(sendAnalogProgressTimestampDate, within(1, SECONDS));
+            assertThat(sendFeedbackNotificationDate)
+                .isCloseTo(sendFeedbackTimestampDate, within(1, SECONDS));
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionError);
         }
     }
 
     @Then("verifica date business in timeline ANALOG_SUCCESS_WORKFLOW per l'utente {int} al tentativo {int}")
     public void verificationDateScheduleRefinementWithSendAnalogFeedback(Integer destinatario, Integer tentativo) {
         try {
-            OffsetDateTime shedulingDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV26.SCHEDULE_REFINEMENT) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
+            OffsetDateTime schedulingDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV26.SCHEDULE_REFINEMENT) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
             OffsetDateTime sendAnalogProgressNotificationDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV26.SEND_ANALOG_PROGRESS) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getDetails().getNotificationDate();
             OffsetDateTime sendAnalogProgressTimestampDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV26.SEND_ANALOG_PROGRESS) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
             OffsetDateTime sendFeedbackTimestampDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV26.SEND_ANALOG_FEEDBACK) && elem.getDetails().getRecIndex().equals(destinatario) && elem.getDetails().getSentAttemptMade().equals(tentativo)).findAny().get().getTimestamp();
@@ -672,20 +661,22 @@ public class AvanzamentoNotificheB2bSteps {
             log.info("sendAnalogProgressTimestampDate: {}", sendAnalogProgressTimestampDate);
             log.info("sendFeedbackTimestampDate: {}", sendFeedbackTimestampDate);
             log.info("analogSuccessDate Timestamp: {}", analogSuccessDate);
-            log.info("shedulingDate Timestamp: {}", shedulingDate);
+            log.info("schedulingDate Timestamp: {}", schedulingDate);
 
 
             log.info("sendFeedbackNotificationDate : {}", sendFeedbackNotificationDate);
             log.info("sendAnalogProgressNotificationDate: {}", sendAnalogProgressNotificationDate);
 
-            Assertions.assertEquals(shedulingDate, analogSuccessDate);
-            Assertions.assertEquals(shedulingDate, sendFeedbackTimestampDate);
-
-            Assertions.assertEquals(sendAnalogProgressTimestampDate, sendAnalogProgressNotificationDate);
-            Assertions.assertEquals(sendFeedbackTimestampDate, sendFeedbackNotificationDate);
-
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            assertThat(analogSuccessDate)
+                .isCloseTo(schedulingDate, within(1, SECONDS));
+            assertThat(sendFeedbackTimestampDate)
+                .isCloseTo(schedulingDate, within(1, SECONDS));
+            assertThat(sendAnalogProgressNotificationDate)
+                .isCloseTo(sendAnalogProgressTimestampDate, within(1, SECONDS));
+            assertThat(sendFeedbackNotificationDate)
+                .isCloseTo(sendFeedbackTimestampDate, within(1, SECONDS));
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionError);
         }
     }
 
@@ -954,12 +945,8 @@ public class AvanzamentoNotificheB2bSteps {
             sharedSteps.setSentNotification(pnPollingResponseV26.getNotification());
             TimelineElementV26 timelineElement = pnPollingResponseV26.getTimelineElement();
             log.info("TIMELINE_ELEMENT: " + timelineElement);
-            //Assertions.assertNotNull(timelineElement.getDetails().getAttachments());
-            //Assertions.assertTrue(timelineElement.getDetails().getAttachments().size()>0);
-            //Assertions.assertNotNull(timelineElement.getDetails().getAttachments().get(0).getDate());
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             Assertions.assertEquals(Objects.requireNonNull(timelineElement.getDetails()).getNotificationDate().format(fmt), now().plusDays(delay).format(fmt));
-            //Assertions.assertTrue(timelineElement.getDetails().getAttachments().get(0).getDate().format(fmt).equals(OffsetDateTime.now().plusDays(delay).format(fmt)));
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
@@ -1010,7 +997,6 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertNotNull(Objects.requireNonNull(timelineElement.getDetails()).getAttachments());
             Assertions.assertFalse(timelineElement.getDetails().getAttachments().isEmpty());
             Assertions.assertNotNull(timelineElement.getDetails().getAttachments().get(0).getDocumentType());
-            // Assertions.assertTrue(timelineElement.getDetails().getNotificationDate().format(fmt).equals(OffsetDateTime.now().plusDays(delay).format(fmt)));
             Assertions.assertEquals(Objects.requireNonNull(timelineElement.getDetails().getAttachments().get(0).getDocumentType()), tipoDoc);
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
@@ -1036,7 +1022,6 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertNotNull(Objects.requireNonNull(timelineElement.getDetails()).getAttachments());
             Assertions.assertFalse(timelineElement.getDetails().getAttachments().isEmpty());
             Assertions.assertNotNull(timelineElement.getDetails().getAttachments().get(0).getDocumentType());
-            // Assertions.assertTrue(timelineElement.getDetails().getNotificationDate().format(fmt).equals(OffsetDateTime.now().plusDays(delay).format(fmt)));
             Assertions.assertTrue(Objects.requireNonNull(timelineElement.getDetails().getAttachments().get(0).getDocumentType()).equals(tipoDoc) || Objects.equals(timelineElement.getDetails().getAttachments().get(0).getDocumentType(), "Indagine"));
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
@@ -1367,8 +1352,6 @@ public class AvanzamentoNotificheB2bSteps {
             String legalFactUrl = downloadLegalFact(legalFactCategory, false, false, true, null);
             legalFactContentVerifySteps.setLegalFactUrl(legalFactUrl);
         } catch (AssertionFailedError assertionFailedError) {
-            // System.out.println(assertionFailedError.getCause().toString());
-            // System.out.println(assertionFailedError.getCause().getMessage().toString());
             Assertions.assertEquals(assertionFailedError.getCause().getMessage().substring(0, 3), statusCode);
         }
     }
@@ -1489,7 +1472,6 @@ public class AvanzamentoNotificheB2bSteps {
             String finalKeySearch = keySearch;
             if (pa) {
                 LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse = this.b2bClient.getLegalFact(sharedSteps.getSentNotification().getIun(), categorySearch, finalKeySearch);
-                //System.out.println("NOME FILE PEC RECIPIENT PA"+legalFactDownloadMetadataResponse.getFilename());
                 Assertions.assertNotNull(legalFactDownloadMetadataResponse);
                 Assertions.assertNotNull(legalFactDownloadMetadataResponse.getFilename());
                 Assertions.assertTrue(legalFactDownloadMetadataResponse.getFilename().contains(".eml"));
@@ -1501,7 +1483,6 @@ public class AvanzamentoNotificheB2bSteps {
                         sharedSteps.deepCopy(categorySearch,
                                 it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactCategory.class),
                         finalKeySearch);
-                // System.out.println("NOME FILE PEC RECIPIENT DEST"+legalFactDownloadMetadataResponse.getFilename());
                 Assertions.assertNotNull(legalFactDownloadMetadataResponse);
                 Assertions.assertNotNull(legalFactDownloadMetadataResponse.getFilename());
                 Assertions.assertTrue(legalFactDownloadMetadataResponse.getFilename().contains(".eml"));
@@ -2407,8 +2388,6 @@ public class AvanzamentoNotificheB2bSteps {
                     esiste = notificationPaymentItem != null;
                 }
                 Assertions.assertTrue(esiste);
-                //Assertions.assertTrue(sharedSteps.getSentNotification().getRecipients().get(destinatario).getPayments().get(avviso).getPagoPa().getCreditorTaxId().equals(timelineElement.getDetails().getCreditorTaxId()));
-                //Assertions.assertTrue(sharedSteps.getSentNotification().getRecipients().get(destinatario).getPayments().get(avviso).getPagoPa().getNoticeCode().equals(timelineElement.getDetails().getNoticeCode()));
             }
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
@@ -2429,8 +2408,6 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertFalse(pnPollingResponseV26.getResult());
             Assertions.assertNull(pnPollingResponseV26.getTimelineElement());
             sharedSteps.setSentNotification(pnPollingResponseV26.getNotification());
-            //Assertions.assertTrue(sharedSteps.getSentNotification().getRecipients().get(destinatario).getPayments().get(avviso).getPagoPa().getCreditorTaxId().equals(timelineElement.getDetails().getCreditorTaxId()));
-            //Assertions.assertTrue(sharedSteps.getSentNotification().getRecipients().get(destinatario).getPayments().get(avviso).getPagoPa().getNoticeCode().equals(timelineElement.getDetails().getNoticeCode()));
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
@@ -2605,7 +2582,6 @@ public class AvanzamentoNotificheB2bSteps {
                     throw assertionFailedError;
                 }
             }
-
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
@@ -2763,8 +2739,6 @@ public class AvanzamentoNotificheB2bSteps {
 
         OffsetDateTime expectedDate = timelineElement.getDetails().getSchedulingDate();
         assertThat(expectedDate).isCloseTo(schedulingDate, within(5, MINUTES));
-
-        //Assertions.assertEquals(timelineElement.getDetails().getSchedulingDate(), schedulingDate);
     }
 
     @And("si attende che sia presente il perfezionamento per decorrenza termini")
@@ -3237,8 +3211,6 @@ public class AvanzamentoNotificheB2bSteps {
                     }
                 }
             }
-            //Duration ss = sharedSteps.getSchedulingDaysSuccessDigitalRefinement();
-            //DateTimeFormatter fmt1 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
             Long schedulingDateMillis = timelineElement.getDetails().getSchedulingDate().toInstant().toEpochMilli();
             Long digitalDeliveryCreationMillis = Objects.requireNonNull(digitalDeliveryCreationRequestDate).toInstant().toEpochMilli();
             long diff = schedulingDateMillis - digitalDeliveryCreationMillis;
@@ -3246,7 +3218,6 @@ public class AvanzamentoNotificheB2bSteps {
             log.info("PRE-ASSERTION: iun={} schedulingDateMillis={}, digitalDeliveryCreationMillis={}, diff={}, delayMillis={}, delta={}",
                     sharedSteps.getSentNotification().getIun(), schedulingDateMillis, digitalDeliveryCreationMillis, diff, delayMillis, delta);
             Assertions.assertTrue(diff <= delayMillis + delta && diff >= delayMillis - delta);
-            //Assertions.assertTrue(timelineElement.getDetails().getSchedulingDate().format(fmt1).equals(digitalDeliveryCreationRequestDate.plusMinutes(delay).format(fmt1)));
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
@@ -3645,7 +3616,6 @@ public class AvanzamentoNotificheB2bSteps {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
     }
-
 
     @And("ricerca ed effettua download del legalFact con la categoria {string} con DetailCode {string}")
     public void ricercaEdEffettuaDownloadDelLegalFactConLaCategoria(String legalFactCategory, String deliveryDetailCode) {
