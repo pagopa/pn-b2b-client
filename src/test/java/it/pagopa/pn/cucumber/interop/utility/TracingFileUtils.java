@@ -22,8 +22,10 @@ public class TracingFileUtils {
         File file = new File(CSV_OK_FILEPATH);
         try {
             CSVWriter csvWriter = new CSVWriter(new FileWriter(file));
-            csvWriter.writeNext(new String[] {"date", "purpose_id", "status", "requests_count"});
-            csvWriter.writeNext(new String[] {date, "28874634-6ea6-4def-b200-7377182c71be", "200", "48"});
+            csvWriter.writeNext(new String[] {"date", "purpose_id", "token", "status", "requests_count"});
+            csvWriter.writeNext(new String[] {date, "28874634-6ea6-4def-b200-7377182c71be", "99382e29-b0cf-412b-a060-72e421b6d167", "200", "48"});
+            csvWriter.writeNext(new String[] {date, "28874634-6ea6-4def-b200-7377182c71be", "99382e29-b0cf-412b-a060-72e421b6d167", "404", "150"});
+            csvWriter.writeNext(new String[] {date, "28874634-6ea6-4def-b200-7377182c71be", "99382e29-b0cf-412b-a060-72e421b6d167", "500", "50"});
             csvWriter.close();
         } catch (IOException ex) {
             throw new AssertionFailedError("There was an error while generating the csv file: " + ex);
