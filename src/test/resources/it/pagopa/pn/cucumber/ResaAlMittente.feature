@@ -595,6 +595,72 @@ Feature: Resa al mittente di una notifica
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "RETURNED_TO_SENDER"
     Then l'operazione ha prodotto un errore con status code "400"
 
+  @returnedToSender @cleanWebhook @webhook1
+  Scenario: [RETURNED-TO-SENDER_STREAM_WITH_FILTER] Invio notifica e controllo che stream con eventType DEFAULT e versione da V26 contenga elemento ANALOG_WORKFLOW_RECIPIENT_DECEASED
+    Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V26"
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_AR |
+      | digitalDomicile         | NULL              |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V26"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V26" e filtro status "DEFAULT"
+    Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "ANALOG_WORKFLOW_RECIPIENT_DECEASED" con versione V26
+
+  @returnedToSender @cleanWebhook @webhook1
+  Scenario: [RETURNED-TO-SENDER_STREAM_WITHOUT_FILTER] Invio notifica e controllo che stream con eventType vuoto e versione da V26 contenga elemento ANALOG_WORKFLOW_RECIPIENT_DECEASED
+    Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V26"
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_AR |
+      | digitalDomicile         | NULL              |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V26"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V26"
+    Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "ANALOG_WORKFLOW_RECIPIENT_DECEASED" con versione V26
+
+  @returnedToSender @cleanWebhook @webhook1
+  Scenario: [RETURNED-TO-SENDER_STREAM_V25_WITH_FILTER] Invio notifica e controllo che stream con eventType DEFAULT e versione differente da V26 non contenga elemento ANALOG_WORKFLOW_RECIPIENT_DECEASED
+    Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V25"
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V25"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V25" e filtro status "DEFAULT"
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V25"
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_AR |
+      | digitalDomicile         | NULL              |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
+    And si invoca l'api Webhook versione "V25" per ottenere gli elementi di timeline di tale notifica
+    Then si controlla che tra gli elementi dello stream "V25" ritornati non ci sia l'elemento "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
+
+  @returnedToSender @cleanWebhook @webhook1
+  Scenario: [RETURNED-TO-SENDER_STREAM_V25_WITHOUT_FILTER] Invio notifica e controllo che stream con eventType vuoto e versione differente da V26 non contenga elemento ANALOG_WORKFLOW_RECIPIENT_DECEASED
+    Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V25"
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V25"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V25"
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V25"
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_AR |
+      | digitalDomicile         | NULL              |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
+    And si invoca l'api Webhook versione "V25" per ottenere gli elementi di timeline di tale notifica
+    Then si controlla che tra gli elementi dello stream "V25" ritornati non ci sia l'elemento "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
+
 
 
   #@returnedToSender

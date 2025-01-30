@@ -2595,6 +2595,17 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
     }
 
+    @Then("si controlla che tra gli elementi dello stream {string} ritornati non ci sia l'elemento {string}")
+    public void streamDoesntContainsElement(String version, String elementType) {
+        switch (version.toUpperCase()) {
+            case "V23" -> Assertions.assertFalse(progressResponseElementsV23.stream().map(x -> x.getElement()).anyMatch(x -> x.getElementId().contains(elementType)));
+            case "V24" -> Assertions.assertFalse(progressResponseElementsV24.stream().map(x -> x.getElement()).anyMatch(x -> x.getElementId().contains(elementType)));
+            case "V25" -> Assertions.assertFalse(progressResponseElementsV25.stream().map(x -> x.getElement()).anyMatch(x -> x.getElementId().contains(elementType)));
+            case "V26" -> Assertions.assertFalse(progressResponseElementsV26.stream().map(x -> x.getElement()).anyMatch(x -> x.getElementId().contains(elementType)));
+            default -> throw new IllegalArgumentException("Version not supported!");
+        }
+    }
+
     @Then("tra gli elementi di timeline versione {string} di categoria {string} nessuno contiene un legalFact con categoria {string}")
     public void checkTimelineElementVersionLegalFacts(String version, String timelineCategory, String legalFactCategory) {
         if (version.equalsIgnoreCase("V26")) {
