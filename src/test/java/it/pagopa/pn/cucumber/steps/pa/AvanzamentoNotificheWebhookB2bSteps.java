@@ -11,11 +11,35 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV23;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV24;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV25;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV26;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryElement;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryElementV26;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.ProgressResponseElementV24;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.ProgressResponseElementV25;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.StreamCreationRequestV24;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.StreamCreationRequestV25;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.StreamMetadataResponseV24;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.StreamMetadataResponseV25;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.StreamRequestV25;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementDetailsV26;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV24;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV25;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
-import it.pagopa.pn.client.b2b.pa.polling.dto.*;
-import it.pagopa.pn.client.b2b.pa.polling.impl.*;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV20;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV23;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV24;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV26;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingWebhook;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceWebhookV20;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceWebhookV23;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceWebhookV24;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceWebhookV26;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebhookB2bClient;
@@ -54,9 +78,22 @@ import org.springframework.web.client.HttpStatusCodeException;
 import java.lang.reflect.Field;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.Function;
 
-import static it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps.StreamVersion.*;
+import static it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps.StreamVersion.V10;
+import static it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps.StreamVersion.V23;
+import static it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps.StreamVersion.V24;
+import static it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps.StreamVersion.V25;
+import static it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps.StreamVersion.V26;
 
 @Slf4j
 public class AvanzamentoNotificheWebhookB2bSteps {
@@ -1865,62 +1902,26 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
     }
 
-    @Then("viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati V23")
-    public void vieneVerificatoCheIlProgressResponseElementIdDelWebhookSiaIncrementaleESenzaDuplicatiV23() {
-        List<ProgressResponseElementV23> progressResponseElements = sharedSteps.getProgressResponseElementsV23();
+    public <T> void verifyIncrementalEventId(List<T> progressResponseElements, Function<T, String> eventIdExtractor) {
         Assertions.assertNotNull(progressResponseElements);
         boolean counterIncrement = true;
-        int lastEventID = SharedSteps.lastEventID;
-        //logger.info("ELEMENTI NEL WEBHOOK LAST EVENT ID1: "+lastEventID);
-        for (ProgressResponseElementV23 elem : progressResponseElements) {
-            if (lastEventID == 0) {
-                lastEventID = Integer.parseInt(elem.getEventId());
-                continue;
+        int lastEventID = 0;
+        for (T elem : progressResponseElements) {
+            int currentEventId = Integer.parseInt(eventIdExtractor.apply(elem));
+            if (lastEventID != 0 && currentEventId <= lastEventID) {
+                Assertions.fail(String.format("EventId is not incremental: %d <= %d", currentEventId, lastEventID));
             }
-            if (Integer.parseInt(elem.getEventId()) <= lastEventID) {
-                counterIncrement = false;
-                break;
-            } else {
-                lastEventID = Integer.parseInt(elem.getEventId());
-            }
-        }//for
-        try {
-            Assertions.assertTrue(counterIncrement);
-        } catch (AssertionFailedError assertionFailedError) {
-            throw new AssertionFailedError(assertionFailedError.getMessage() + " PROGRESS-ELEMENT: \n" + progressResponseElements);
         }
-
-        SharedSteps.lastEventID = lastEventID;
-        //logger.info("ELEMENTI NEL WEBHOOK LAST EVENT ID2: "+lastEventID);
     }
 
+    @Then("viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati V23")
+    public void vieneVerificatoCheIlProgressResponseElementIdDelWebhookSiaIncrementaleESenzaDuplicatiV23() {
+        verifyIncrementalEventId(sharedSteps.getProgressResponseElementsV23(), ProgressResponseElementV23::getEventId);
+    }
 
     @Then("viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati")
     public void vieneVerificatoCheIlProgressResponseElementIdDelWebhookSiaIncrementaleESenzaDuplicati() {
-
-        List<ProgressResponseElement> progressResponseElements = sharedSteps.getProgressResponseElements();
-        Assertions.assertNotNull(progressResponseElements);
-        boolean counterIncrement = true;
-        int lastEventID = SharedSteps.lastEventID;
-        for (ProgressResponseElement elem : progressResponseElements) {
-            if (lastEventID == 0) {
-                lastEventID = Integer.parseInt(elem.getEventId());
-                continue;
-            }
-            if (Integer.parseInt(elem.getEventId()) <= lastEventID) {
-                counterIncrement = false;
-                break;
-            } else {
-                lastEventID = Integer.parseInt(elem.getEventId());
-            }
-        }//for
-        try {
-            Assertions.assertTrue(counterIncrement);
-        } catch (AssertionFailedError assertionFailedError) {
-            throw new AssertionFailedError(assertionFailedError.getMessage() + " PROGRESS-ELEMENT: \n" + progressResponseElements);
-        }
-
-        SharedSteps.lastEventID = lastEventID;
+        verifyIncrementalEventId(sharedSteps.getProgressResponseElements(), ProgressResponseElement::getEventId);
     }
 
     @And("vengono letti gli eventi dello stream che contenga {int} eventi con la versione {string}")

@@ -282,11 +282,9 @@ public class SharedSteps {
     @Setter
     private FullSentNotificationV26 notificationResponseComplete;
 
-
     private String settedPa = "Comune_1";
     private boolean groupToSet = true;
     private String errorCode = null;
-    public static Integer lastEventID = 0;
     private final SecureRandom secureRandom = new SecureRandom();
     private final PnB2bClientTimingConfigs timingConfigs;
     private final Duration schedulingDaysSuccessDigitalRefinementDefault = DurationStyle.detectAndParse("6m");
