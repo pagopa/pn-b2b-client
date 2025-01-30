@@ -148,7 +148,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza 890
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
 
-  @dev @giacenza890Complex @con020 @con020success
+  @dev @giacenza890Complex
   Scenario: [B2B_TIMELINE_ANALOG_GIACENZA_890_11] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK con deliveryDetailCode PNAG012 positivo PN-5820
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |

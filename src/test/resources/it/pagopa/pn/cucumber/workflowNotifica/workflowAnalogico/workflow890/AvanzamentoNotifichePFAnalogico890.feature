@@ -16,7 +16,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
 
-  @workflowAnalogico @con020 @con020success
+  @workflowAnalogico
   Scenario: [B2B_TIMELINE_ANALOG_890_2] Attesa elemento di timeline SEND_ANALOG_FEEDBACK_fail_890_scenario negativo
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -201,7 +201,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
 
 
-  @workflowAnalogico @con020 @con020success
+  @workflowAnalogico
   Scenario: [B2B_TIMELINE_ANALOG_890_12] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK con deliveryDetailCode RECRN015 890 momentaneamente non rendicontabile positivo PN-6079
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -237,7 +237,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
     #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG015[FAILCAUSE:C01].5s-RECAG001A.5s-RECAG001B[DOC:23L].5s-RECAG001C"
 
 
-  @workflowAnalogico @con020 @con020success
+  @workflowAnalogico
   Scenario: [B2B_TIMELINE_ANALOG_890_13] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK con deliveryDetailCode RECRN013 890 momentaneamente non rendicontabile positivo PN-6079
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -273,7 +273,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
     #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG013@retry.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG001A.5s-RECAG001B[DOC:23L].5s-RECAG001C"
 
 
-  @workflowAnalogico @con020 @con020success
+  @workflowAnalogico
   Scenario: [B2B_TIMELINE_ANALOG_890_14] Attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_FAIL-DiscoveryIrreperibile_890_scenario positivo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -354,7 +354,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
 
-  @workflowAnalogico @con020 @con020success
+  @workflowAnalogico
   Scenario: [B2B_TIMELINE_ANALOG_890_16] Attesa elemento di timeline REFINEMENT con physicalAddress OK-REC008_890 - PN-9929
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -388,7 +388,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
       | details_sentAttemptMade | 0 |
     # "@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.5s-RECAG008A.5s-RECAG008B[DOC:ARCAD;DOC:23L].5s-RECAG012.5s-RECAG008C"
 
-  @workflowAnalogico @uatEnvCondition @con020 @con020success
+  @workflowAnalogico @uatEnvCondition
   Scenario: [B2B_TIMELINE_ANALOG_890_17]  PA mittente: invio notifica analogica FAIL-DiscoveryIrreperibileBadCAP_890 - PN-10146
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
