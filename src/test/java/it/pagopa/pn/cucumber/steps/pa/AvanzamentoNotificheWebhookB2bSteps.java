@@ -1,5 +1,12 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
+import static it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps.StreamVersion.V10;
+import static it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps.StreamVersion.V23;
+import static it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps.StreamVersion.V24;
+import static it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps.StreamVersion.V25;
+import static it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps.StreamVersion.V26;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -10,11 +17,35 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV23;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV24;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV25;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV26;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryElement;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryElementV26;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.ProgressResponseElementV24;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.ProgressResponseElementV25;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.StreamCreationRequestV24;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.StreamCreationRequestV25;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.StreamMetadataResponseV24;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.StreamMetadataResponseV25;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.StreamRequestV25;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementDetailsV26;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV24;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV25;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
-import it.pagopa.pn.client.b2b.pa.polling.dto.*;
-import it.pagopa.pn.client.b2b.pa.polling.impl.*;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV20;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV23;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV24;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV26;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingWebhook;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceWebhookV20;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceWebhookV23;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceWebhookV24;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceWebhookV26;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebhookB2bClient;
@@ -27,9 +58,9 @@ import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebh
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.ProgressResponseElementV26;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.StreamCreationRequestV26;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.StreamMetadataResponseV26;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.NotificationStatus;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.StreamRequestV26;
-
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.TimelineElementCategoryV26;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.NotificationStatus;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.ProgressResponseElementV23;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamCreationRequestV23;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamListElement;
@@ -38,9 +69,18 @@ import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebh
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.TimelineElementCategoryV23;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.TimelineElementDetailsV23;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.TimelineElementV23;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.TimelineElementCategoryV26;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.utils.GroupPosition;
+import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -49,12 +89,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
-
-import java.time.OffsetDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
-
-import static it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps.StreamVersion.*;
 
 @Slf4j
 public class AvanzamentoNotificheWebhookB2bSteps {
@@ -933,33 +967,33 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     public void readStreamEventsStateV23(String pa, String status) {
 
         setPaWebhook(pa);
-        StatusElementSearchResult<NotificationStatus> statusEventForStream = getStatusEventForStream(StreamVersion.V23, status);
+        StatusElementSearchResult<NotificationStatus> statusEventForStream = getStatusEventForStream(
+            V23, status);
         NotificationStatus notificationStatus = statusEventForStream.getNotificationStatus();
 
         int numCheck = statusEventForStream.getNumCheck();
-        int waiting = statusEventForStream.getWaiting();
+        int waitingInterval = statusEventForStream.getWaiting();
 
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus notificationInternalStatus = it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus.valueOf(notificationStatus.name());
 
         ProgressResponseElementV23 progressResponseElement = null;
 
-        boolean finded = false;
+        NotificationStatusHistoryElement notificationStatusHistoryElement = null;
         for (int i = 0; i < numCheck; i++) {
-            sleepTest(waiting);
+            sleepTest(waitingInterval);
 
             sharedSteps.setSentNotificationV23(b2bClient.getSentNotificationV23(sharedSteps.getSentNotification().getIun()));
-            NotificationStatusHistoryElement notificationStatusHistoryElement = sharedSteps.getSentNotificationV23().getNotificationStatusHistory().stream().filter(elem -> elem.getStatus().equals(notificationInternalStatus)).findAny().orElse(null);
+            notificationStatusHistoryElement = sharedSteps.getSentNotificationV23().getNotificationStatusHistory().stream().filter(elem -> elem.getStatus().equals(notificationInternalStatus)).findAny().orElse(null);
 
             if (notificationStatusHistoryElement != null) {
-                finded = true;
                 break;
             }
         }
 
-        Assertions.assertTrue(finded);
-        for (int i = 0; i < 4; i++) {
+        int webhookSearchAttempts = 4;
+        for (int i = 0; i < webhookSearchAttempts; i++) {
             progressResponseElement = searchInWebhookV23(notificationStatus, null, 0, 0);
-            log.debug("PROGRESS-ELEMENT: " + progressResponseElement);
+            log.debug("PROGRESS-ELEMENT: {}", progressResponseElement);
 
             if (progressResponseElement != null) {
                 break;
@@ -968,14 +1002,39 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
 
         try {
-            Assertions.assertNotNull(progressResponseElement);
-            log.info("EventProgress: " + progressResponseElement);
-        } catch (AssertionFailedError assertionFailedError) {
-            String message = assertionFailedError.getMessage() +
-                    " {IUN: " + sharedSteps.getSentNotificationV23().getIun() + " -WEBHOOK: " + this.eventStreamListV23.get(0).getStreamId() + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+            NotificationStatusHistoryElement finalNotificationStatusHistoryElement = notificationStatusHistoryElement;
+            ProgressResponseElementV23 finalProgressResponseElement = progressResponseElement;
+            assertSoftly(softly -> {
+                softly.assertThat(finalNotificationStatusHistoryElement)
+                    .as("Check esistenza elemento di timeline della notifica")
+                    .withFailMessage(
+                        "A seguito di %d tentativi effettuati, separati da un intervallo di %d "
+                            + "millisecondi ciascuno, non è stato trovato un elemento di timeline della notifica con stato '%s'. "
+                            + " E' possibile che l'elemento sia giunto con ritardo rispetto a quanto atteso o che "
+                            + "sia subentrato un errore imprevisto.", numCheck, waitingInterval,
+                        notificationStatus)
+                    .isNotNull();
+                softly.assertThat(finalProgressResponseElement)
+                    // TODO migliorare descrizioni e messaggi di errore
+                    .as("Check esistenza elemento nel webhook")
+                    .withFailMessage(
+                        "A seguito di %d tentativi effettuati, separati da un intervallo di %d "
+                            + "millisecondi ciascuno, non è stato trovato nel webhook un elemento con stato '%s'. "
+                            + " E' possibile che <AVANZARE IPOTESI: anche qui può giungere con ritardo? Che altro può accadere?>",
+                        webhookSearchAttempts, sharedSteps.getWait(), notificationStatus)
+                    .isNotNull();
+            });
+            log.info("EventProgress: {}", progressResponseElement);
+        } catch (AssertionError assertionError) {
+            String message = buildWebhookErrorMsg(assertionError);
+            throw new AssertionError(message, assertionError.getCause());
         }
 
+    }
+
+    private String buildWebhookErrorMsg(AssertionError assertionError) {
+        return assertionError.getMessage() +
+            " {IUN: " + sharedSteps.getSentNotificationV23().getIun() + " -WEBHOOK: " + this.eventStreamListV23.get(0).getStreamId() + " }";
     }
 
 
