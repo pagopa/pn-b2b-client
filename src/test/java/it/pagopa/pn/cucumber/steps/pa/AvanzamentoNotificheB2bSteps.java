@@ -320,12 +320,12 @@ public class AvanzamentoNotificheB2bSteps {
                         for (int i = 0; i < detailsFromNotification.getAttachments().size(); i++) {
                             List<String> documentTypes = Arrays.asList(detailsFromTest.getAttachments().get(i).getDocumentType().split(" "));
                             Assertions.assertTrue(
-                                documentTypes.contains(detailsFromNotification.getAttachments().get(i).getDocumentType()),
-                                "DocumentType not match. Actual document types: %s, Expected document types: %s. IUN: %s".formatted(
-                                    detailsFromNotification.getAttachments().stream().map(AttachmentDetails::getDocumentType).toList(),
-                                    detailsFromTest.getAttachments().stream().map(AttachmentDetails::getDocumentType).toList(),
-                                    sharedSteps.getSentNotification().getIun()
-                                ));
+                                    documentTypes.contains(detailsFromNotification.getAttachments().get(i).getDocumentType()),
+                                    "DocumentType not match. Actual document types: %s, Expected document types: %s. IUN: %s".formatted(
+                                            detailsFromNotification.getAttachments().stream().map(AttachmentDetails::getDocumentType).toList(),
+                                            detailsFromTest.getAttachments().stream().map(AttachmentDetails::getDocumentType).toList(),
+                                            sharedSteps.getSentNotification().getIun()
+                                    ));
                         }
                     }
 
@@ -540,6 +540,7 @@ public class AvanzamentoNotificheB2bSteps {
                 .orElse(List.of())
                 .stream()
                 .map(TimelineElementV26::getCategory)
+                .filter(Objects::nonNull)
                 .map(TimelineElementCategoryV26::toString)
                 .toList();
         try {
@@ -631,17 +632,17 @@ public class AvanzamentoNotificheB2bSteps {
             log.info("sendFeedbackNotificationDate : {}", sendFeedbackNotificationDate);
 
             assertThat(completelyUnreachableDate)
-                .isCloseTo(schedulingDate, within(1, SECONDS));
+                    .isCloseTo(schedulingDate, within(1, SECONDS));
             assertThat(completelyUnreachableRequestDate)
-                .isCloseTo(schedulingDate, within(1, SECONDS));
+                    .isCloseTo(schedulingDate, within(1, SECONDS));
             assertThat(analogFailureDate)
-                .isCloseTo(schedulingDate, within(1, SECONDS));
+                    .isCloseTo(schedulingDate, within(1, SECONDS));
             assertThat(prepareAnalogDomicileFailureTimestamp)
-                .isCloseTo(schedulingDate, within(1, SECONDS));
+                    .isCloseTo(schedulingDate, within(1, SECONDS));
             assertThat(sendAnalogProgressNotificationDate)
-                .isCloseTo(sendAnalogProgressTimestampDate, within(1, SECONDS));
+                    .isCloseTo(sendAnalogProgressTimestampDate, within(1, SECONDS));
             assertThat(sendFeedbackNotificationDate)
-                .isCloseTo(sendFeedbackTimestampDate, within(1, SECONDS));
+                    .isCloseTo(sendFeedbackTimestampDate, within(1, SECONDS));
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertFailerWithIUN(assertionError);
         }
@@ -668,13 +669,13 @@ public class AvanzamentoNotificheB2bSteps {
             log.info("sendAnalogProgressNotificationDate: {}", sendAnalogProgressNotificationDate);
 
             assertThat(analogSuccessDate)
-                .isCloseTo(schedulingDate, within(1, SECONDS));
+                    .isCloseTo(schedulingDate, within(1, SECONDS));
             assertThat(sendFeedbackTimestampDate)
-                .isCloseTo(schedulingDate, within(1, SECONDS));
+                    .isCloseTo(schedulingDate, within(1, SECONDS));
             assertThat(sendAnalogProgressNotificationDate)
-                .isCloseTo(sendAnalogProgressTimestampDate, within(1, SECONDS));
+                    .isCloseTo(sendAnalogProgressTimestampDate, within(1, SECONDS));
             assertThat(sendFeedbackNotificationDate)
-                .isCloseTo(sendFeedbackTimestampDate, within(1, SECONDS));
+                    .isCloseTo(sendFeedbackTimestampDate, within(1, SECONDS));
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertFailerWithIUN(assertionError);
         }
@@ -2554,8 +2555,8 @@ public class AvanzamentoNotificheB2bSteps {
         try {
             List<TimelineElementV26> timelineElements = sharedSteps.getTimelineElementsByEventId(timelineEventCategory, dataFromTest);
             assertThat(timelineElements)
-                .withFailMessage("Not found a time element '%s'. IUN: %s".formatted(timelineEventCategory, sharedSteps.getSentNotification().getIun()))
-                .isNotEmpty();
+                    .withFailMessage("Not found a time element '%s'. IUN: %s".formatted(timelineEventCategory, sharedSteps.getSentNotification().getIun()))
+                    .isNotEmpty();
 
             if (dataFromTest != null && dataFromTest.getTimelineElement() != null) {
                 boolean atLeastOneSuccessful = false;
@@ -2633,27 +2634,27 @@ public class AvanzamentoNotificheB2bSteps {
     public void vieneVerificatoCheElementoTimelineAbbiaUnValoreDiCampoCompatibileConRegex(String fieldPath, String regex) {
         try {
             Assertions.assertNotNull(lastTimelineElement,
-                "There is no time element to analyze. Remember that this proposition is made "
-                    + "to be called after another that get a timeline event, such as "
-                    + "'it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheB2bSteps.vieneVerificatoElementoTimeline'");
+                    "There is no time element to analyze. Remember that this proposition is made "
+                            + "to be called after another that get a timeline event, such as "
+                            + "'it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheB2bSteps.vieneVerificatoElementoTimeline'");
 
             String fieldValue = getProperty(fieldPath, lastTimelineElement);
             Assertions.assertNotNull(fieldValue,
-                "Field %s has NULL value in timeline element".formatted(fieldPath));
+                    "Field %s has NULL value in timeline element".formatted(fieldPath));
 
             Assertions.assertTrue(fieldValue.matches(regex),
-                "Field %s with value %s does not match regex %s".formatted(fieldPath, fieldValue,
-                    regex));
+                    "Field %s with value %s does not match regex %s".formatted(fieldPath, fieldValue,
+                            regex));
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             sharedSteps.throwAssertFailerWithIUN(
-                new AssertionFailedError("Error accessing field %s".formatted(fieldPath)));
+                    new AssertionFailedError("Error accessing field %s".formatted(fieldPath)));
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
     }
 
     private String getProperty(String fieldPath, TimelineElementV26 lastTimelineElement)
-        throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         String sanitizedFieldPath = fieldPath.replace("_", ".");
         return BeanUtils.getProperty(lastTimelineElement, sanitizedFieldPath);
     }
@@ -3635,7 +3636,7 @@ public class AvanzamentoNotificheB2bSteps {
         log.info("LEGAL FACT CATEGORY = " + legalFact.getCategory());
         log.info("LEGAL FACT URL: " + legalFact.getKey());
     }
-    @Then("esiste l'elemento di timeline della notifica {string} abbia notificationCost ugauale a {string} per l'utente {int}")
+    @Then("esiste l'elemento di timeline della notifica {string} abbia notificationCost uguale a {string} per l'utente {int}")
     public void TimelineElementOfNotificationUserCost(String timelineEventCategory, String cost, Integer destinatario) {
         TimelineElementV26 event = readingEventUpToTheTimelineElementOfNotificationForCategoryUser(timelineEventCategory, destinatario);
         Long notificationCost = event.getDetails().getNotificationCost();
