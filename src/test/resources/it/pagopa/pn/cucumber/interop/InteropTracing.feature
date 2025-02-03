@@ -47,7 +47,8 @@ Feature: Interop Tracing feature
       | PENDING   |
       | ERROR     |
 
-  @interopTracingCsv
+  # Questo test va eseguito usando un'utenza con cui non sono mai stati caricati file di tracing
+  @interopTracingCsv @ignore
   Scenario: [INTEROP-TRACING-05] Recupero lista tracing per utenza dove non sia stato mai inserito alcun file
     Given l'utenza "TENANT2" effettua le chiamate
     When viene recuperata la lista di tracing con uno stato tra i seguenti
@@ -98,4 +99,4 @@ Feature: Interop Tracing feature
     Given l'utenza "TENANT1" effettua le chiamate
     Given viene recuperata la lista di tracing con stato "MISSING"
     When viene inviato il csv "CORRETTO" per la data mancante
-    And si attende che il file di tracing caricato passi in stato "COMPLETED"
+    And viene recuperato il file di tracing appena caricato e si verifica che lo stato sia "COMPLETED"
