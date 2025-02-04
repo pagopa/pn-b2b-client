@@ -1009,7 +1009,7 @@ Feature: Workflow analogico
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@FAIL_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+    Then viene verificato che l'elemento di timeline "ANALOG_WORKFLOW_RECIPIENT_DECEASED" esista
 
       | loadTimeline            | true                                                                                                                                                                                            |
       | details                 | NOT_NULL                                                                                                                                                                                        |
