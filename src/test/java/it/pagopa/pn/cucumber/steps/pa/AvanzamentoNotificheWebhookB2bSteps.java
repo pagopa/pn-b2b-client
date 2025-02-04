@@ -5,6 +5,9 @@ import static it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps
 import static it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps.StreamVersion.V24;
 import static it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps.StreamVersion.V25;
 import static it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps.StreamVersion.V26;
+import static java.time.temporal.ChronoUnit.SECONDS;
+import static java.util.Objects.nonNull;
+import static org.assertj.core.api.Assertions.within;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -72,7 +75,6 @@ import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebh
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.utils.GroupPosition;
 import java.time.OffsetDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -1009,19 +1011,19 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                     .as("Check esistenza elemento di timeline della notifica")
                     .withFailMessage(
                         "A seguito di %d tentativi effettuati, separati da un intervallo di %d "
-                            + "millisecondi ciascuno, non è stato trovato un elemento di timeline della notifica con stato '%s'. "
-                            + " E' possibile che l'elemento sia giunto con ritardo rispetto a quanto atteso o che "
+                            + "millisecondi ciascuno, non è stato trovato un elemento di timeline nella notifica con stato '%s'. "
+                            + "E' possibile che l'elemento sia giunto con ritardo rispetto a quanto atteso o che "
                             + "sia subentrato un errore imprevisto.", numCheck, waitingInterval,
                         notificationStatus)
                     .isNotNull();
                 softly.assertThat(finalProgressResponseElement)
-                    // TODO migliorare descrizioni e messaggi di errore
-                    .as("Check esistenza elemento nel webhook")
+                    .as("Check esistenza evento nello stream della PA")
                     .withFailMessage(
                         "A seguito di %d tentativi effettuati, separati da un intervallo di %d "
-                            + "millisecondi ciascuno, non è stato trovato nel webhook un elemento con stato '%s'. "
-                            + " E' possibile che <AVANZARE IPOTESI: anche qui può giungere con ritardo? Che altro può accadere?>",
-                        webhookSearchAttempts, sharedSteps.getWait(), notificationStatus)
+                            + "millisecondi ciascuno, non è un stato trovato un evento con stato '%s' nello stream della PA '%s'. "
+                            + "E' possibile che l'evento sia giunto con ritardo rispetto a quanto atteso o che "
+                            + "sia subentrato un errore imprevisto.",
+                        webhookSearchAttempts, sharedSteps.getWait(), notificationStatus, pa)
                     .isNotNull();
             });
             log.info("EventProgress: {}", progressResponseElement);
@@ -1199,7 +1201,8 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                     .getTimeline()
                     .stream()
                     .filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)
-                            && elem.getTimestamp().truncatedTo(ChronoUnit.SECONDS).equals(finalProgressResponseElement.getTimestamp().truncatedTo(ChronoUnit.SECONDS)))
+                            && elem.getTimestamp().truncatedTo(SECONDS).equals(finalProgressResponseElement.getTimestamp().truncatedTo(
+                        SECONDS)))
                     .findAny()
                     .isEmpty());
             log.info("EventProgress: " + progressResponseElement);
@@ -1310,18 +1313,18 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         TimelineElementSearchResult<TimelineElementCategoryV23> timelineForStream = getTimelineEventForStream(StreamVersion.V23, timelineEventCategory);
         TimelineElementCategoryV23 timelineElementCategory = timelineForStream.getTimelineElementCategory();
         int numCheck = timelineForStream.getNumCheck();
-        int waiting = timelineForStream.getWaiting();
+        int waitingInterval = timelineForStream.getWaiting();
 
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23 timelineElementInternalCategory =
                 it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23.valueOf(timelineElementCategory.name());
 
         ProgressResponseElementV23 progressResponseElement = null;
-        boolean finish = checkInternalTimeline(timelineElementCategory.name(), numCheck, waiting);
-        Assertions.assertTrue(finish);
+        boolean finish = checkInternalTimeline(timelineElementCategory.name(), numCheck, waitingInterval);
 
-        for (int i = 0; i < 4; i++) {
+        int webhookSearchAttempts = 4;
+        for (int i = 0; i < webhookSearchAttempts; i++) {
             progressResponseElement = searchInWebhookV23(timelineElementCategory, null, 0, 0);
-            log.debug("PROGRESS-ELEMENT: " + progressResponseElement);
+            log.debug("PROGRESS-ELEMENT: {}", progressResponseElement);
 
             if (progressResponseElement != null) {
                 break;
@@ -1329,11 +1332,41 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             //sleepTest();
         }
         try {
-            Assertions.assertNotNull(progressResponseElement);
-            Assertions.assertEquals(progressResponseElement.getElement().getTimestamp().truncatedTo(ChronoUnit.SECONDS),
-                    sharedSteps.getSentNotificationV23().getTimeline().stream()
-                            .filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().get().getTimestamp().truncatedTo(ChronoUnit.SECONDS));
-            log.info("EventProgress: " + progressResponseElement);
+            log.info("EventProgress: {}", progressResponseElement);
+            ProgressResponseElementV23 finalProgressResponseElement = progressResponseElement;
+            assertSoftly(softly -> {
+                softly.assertThat(finish)
+                    .as("Check esistenza elemento di timeline della notifica")
+                    .withFailMessage(
+                        "A seguito di %d tentativi effettuati, separati da un intervallo di %d "
+                            + "millisecondi ciascuno, non è stato trovato un elemento di timeline nella notifica di categoria '%s'. "
+                            + "E' possibile che l'elemento sia giunto con ritardo rispetto a quanto atteso o che "
+                            + "sia subentrato un errore imprevisto.", numCheck, waitingInterval,
+                        timelineElementCategory.name())
+                    .isTrue();
+                softly.assertThat(finalProgressResponseElement)
+                    .as("Check esistenza evento nello stream della PA")
+                    .withFailMessage(
+                        "A seguito di %d tentativi effettuati, separati da un intervallo di %d "
+                            + "millisecondi ciascuno, non è un stato trovato un evento di categoria '%s' nello stream della PA '%s'. "
+                            + "E' possibile che l'evento sia giunto con ritardo rispetto a quanto atteso o che "
+                            + "sia subentrato un errore imprevisto.",
+                        webhookSearchAttempts, 0, timelineElementCategory.name(), pa)
+                    .isNotNull();
+
+                if(nonNull(finalProgressResponseElement)) {
+                    OffsetDateTime streamElementTimestamp = finalProgressResponseElement.getElement().getTimestamp();
+                    OffsetDateTime notificationElementTimestamp = sharedSteps.getSentNotificationV23()
+                        .getTimeline().stream()
+                        .filter(elem -> elem.getCategory().equals(timelineElementInternalCategory))
+                        .findAny()
+                        .get()
+                        .getTimestamp();
+                    softly.assertThat(streamElementTimestamp)
+                        .as("Check timestamps notifica e stream")
+                        .isCloseTo(notificationElementTimestamp, within(1, SECONDS));
+                }
+            });
 
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
@@ -1449,9 +1482,11 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             Assertions.assertNotNull(progressResponseElement);
             progressResponseElementResultV23 = progressResponseElement;
             //TODO Verificare...
-            Assertions.assertEquals(progressResponseElement.getElement().getTimestamp().truncatedTo(ChronoUnit.SECONDS),
+            Assertions.assertEquals(progressResponseElement.getElement().getTimestamp().truncatedTo(
+                    SECONDS),
                     sharedSteps.getSentNotificationV23().getTimeline().stream()
-                            .filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().get().getTimestamp().truncatedTo(ChronoUnit.SECONDS));
+                            .filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().get().getTimestamp().truncatedTo(
+                            SECONDS));
             log.info("EventProgress: " + progressResponseElement);
             sharedSteps.setProgressResponseElementV23(progressResponseElement);
             //sharedSteps.getTimelineElementV23().getDetails();
