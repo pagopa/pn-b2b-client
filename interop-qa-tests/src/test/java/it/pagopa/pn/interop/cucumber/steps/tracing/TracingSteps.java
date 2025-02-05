@@ -1,35 +1,40 @@
-package it.pagopa.pn.cucumber.steps.pa;
+package it.pagopa.pn.interop.cucumber.steps.tracing;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.model.*;
-import it.pagopa.pn.client.b2b.pa.interop.IInteropTracingClient;
-import it.pagopa.pn.client.b2b.pa.interop.polling.dto.PnPollingInterop;
-import it.pagopa.pn.client.b2b.pa.interop.polling.dto.PnTracingResponse;
-import it.pagopa.pn.client.b2b.pa.interop.service.impl.PnPollingInteropTracing;
-import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
-import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
-import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
-import it.pagopa.pn.cucumber.interop.utility.TracingFileUtils;
+import it.pagopa.interop.authorization.service.utils.PollingService;
+import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.model.GetTracingErrorsResponse;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.model.GetTracingErrorsResponseResults;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.model.GetTracingsResponse;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.model.GetTracingsResponseResults;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.model.SubmitTracingResponse;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.model.TracingState;
+import it.pagopa.interop.tracing.service.IInteropTracingClient;
+import it.pagopa.interop.tracing.service.TracingRetriever;
+import it.pagopa.pn.interop.cucumber.utility.TracingFileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
-import org.springframework.core.io.*;
+import org.springframework.core.io.Resource;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
-import static it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy.INTEROP_TRACING;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TracingSteps {
     private static final int OFFSET_VALUE = 0;
     private static final int LIMIT_VALUE = 50;
-    private final PnPollingFactory pnPollingFactory;
     private final IInteropTracingClient interopTracingClient;
     private final TracingFileUtils tracingFileUtils;
+    private final PollingService pollingService;
+    private final TracingRetriever tracingRetriever;
 
     private SubmitTracingResponse submitTracingResponse;
     private GetTracingsResponse getTracingsResponse;
@@ -42,18 +47,21 @@ public class TracingSteps {
      * @param pnPollingFactory {@link PnPollingFactory}
      * @param interopTracingClient {@link IInteropTracingClient}
      * @param tracingFileUtils {@link TracingFileUtils}
+     * @param pollingService {@link PollingService}
      */
-    public TracingSteps(PnPollingFactory pnPollingFactory, IInteropTracingClient interopTracingClient, TracingFileUtils tracingFileUtils) {
-        this.pnPollingFactory = pnPollingFactory;
+    public TracingSteps(IInteropTracingClient interopTracingClient,
+                        TracingFileUtils tracingFileUtils, PollingService pollingService, TracingRetriever tracingRetriever) {
         this.interopTracingClient = interopTracingClient;
         this.tracingFileUtils = tracingFileUtils;
+        this.pollingService = pollingService;
+        this.tracingRetriever = tracingRetriever;
     }
 
     @Given("l'utenza {string} effettua le chiamate")
     public void selectOperator(String operator) {
         switch (operator.trim().toLowerCase()) {
-            case "tenant1" -> interopTracingClient.setBearerToken(SettableBearerToken.BearerTokenType.TENANT_1);
-            case "tenant2" -> interopTracingClient.setBearerToken(SettableBearerToken.BearerTokenType.TENANT_2);
+            case "tenant1" -> interopTracingClient.setBearerToken(SettableBearerToken.BearerTokenType.TENANT_1.toString());
+            case "tenant2" -> interopTracingClient.setBearerToken(SettableBearerToken.BearerTokenType.TENANT_2.toString());
             default -> throw new IllegalStateException("Unexpected value: " + operator.trim().toLowerCase());
         }
     }
@@ -147,7 +155,7 @@ public class TracingSteps {
                 createExpectedResponse("INVALID_PURPOSE", "purpose_id: Invalid uuid", "", 2),
                 createExpectedResponse("INVALID_DATE", String.format("date: Date field (2024-08-25) in csv is different from tracing date (%s).", submissionDate.toString()), "", 2)
         );
-        assertThat(getTracingErrorsResponse.getResults()).containsAll(expectedResult);
+        org.assertj.core.api.Assertions.assertThat(getTracingErrorsResponse.getResults()).containsAll(expectedResult);
     }
 
     @When("gli errori riscontrati vengono corretti passando il csv {string}")
@@ -216,15 +224,28 @@ public class TracingSteps {
     }
 
     @And("si attende che il file di tracing caricato passi in stato {string}")
-    public void waitForStatus(String status) {
-        PnPollingInteropTracing interopTracing = (PnPollingInteropTracing) pnPollingFactory.getPollingService(INTEROP_TRACING);
-        PnTracingResponse pnTracingResponse = interopTracing.waitForEvent(null,
-                PnPollingParameter.builder()
-                        .value(INTEROP_TRACING)
-                        .pollingType(PnPollingParameter.PollingType.RAPID)
-                        .pnPollingInterop(new PnPollingInterop(submitTracingResponse.getTracingId().toString(), TracingState.fromValue(status)))
-                        .build());
-        Assertions.assertTrue(pnTracingResponse.getResult());
+    public void waitForStatus(String state) {
+        pollingService.makePolling(
+                () -> tracingRetriever.retrieve(0, List.of(TracingState.fromValue(state))),
+                res -> res.getResults().stream()
+                        .filter(x -> x.getTracingId().equals(submitTracingResponse.getTracingId().toString()))
+                        .map(GetTracingsResponseResults::getState)
+                        .anyMatch(tracingState -> tracingState.equals(state)),
+                ""
+        );
+//
+//
+//
+//
+//
+//        PnPollingInteropTracing interopTracing = (PnPollingInteropTracing) pnPollingFactory.getPollingService(PnPollingStrategy.INTEROP_TRACING);
+//        PnTracingResponse pnTracingResponse = interopTracing.waitForEvent(null,
+//                PnPollingParameter.builder()
+//                        .value(PnPollingStrategy.INTEROP_TRACING)
+//                        .pollingType(PnPollingParameter.PollingType.RAPID)
+//                        .pnPollingInterop(new PnPollingInterop(submitTracingResponse.getTracingId().toString(), TracingState.fromValue(status)))
+//                        .build());
+//        Assertions.assertTrue(pnTracingResponse.getResult());
     }
 
     @Then("viene recuperato il file di tracing appena caricato e si verifica che lo stato sia {string}")

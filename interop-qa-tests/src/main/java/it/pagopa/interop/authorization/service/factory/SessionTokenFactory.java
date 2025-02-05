@@ -10,7 +10,7 @@ import it.pagopa.interop.authorization.domain.ExternalId;
 import it.pagopa.interop.authorization.domain.Tenant;
 import it.pagopa.interop.authorization.service.exception.UnsignedSTSGenerationException;
 import it.pagopa.interop.authorization.service.utils.ConfigFileReader;
-import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
+import it.pagopa.interop.conf.InteropClientConfigs;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;

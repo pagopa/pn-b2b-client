@@ -1,7 +1,7 @@
 package it.pagopa.interop.authorization.service.impl;
 
 import it.pagopa.interop.authorization.service.IProducerClient;
-import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
+import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EservicesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;

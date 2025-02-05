@@ -1,11 +1,16 @@
-package it.pagopa.pn.client.b2b.pa.interop.service.impl;
+package it.pagopa.interop.tracing.service.impl;
 
 import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.ApiClient;
 import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.api.HealthApi;
 import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.api.TracingsApi;
-import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.model.*;
-import it.pagopa.pn.client.b2b.pa.interop.config.InteropClientConfigs;
-import it.pagopa.pn.client.b2b.pa.interop.IInteropTracingClient;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.model.GetTracingErrorsResponse;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.model.GetTracingsResponse;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.model.RecoverTracingResponse;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.model.ReplaceTracingResponse;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.model.SubmitTracingResponse;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.model.TracingState;
+import it.pagopa.interop.tracing.config.TracingClientConfigs;
+import it.pagopa.interop.tracing.service.IInteropTracingClient;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.Resource;
@@ -22,14 +27,14 @@ public class InteropTracingClientImpl implements IInteropTracingClient {
     private final RestTemplate restTemplate;
     private final TracingsApi tracingsApi;
     private final HealthApi healthApi;
-    private final InteropClientConfigs interopClientConfigs;
+    private final TracingClientConfigs tracingClientConfigs;
     private BearerTokenType bearerTokenSetted;
 
-    public InteropTracingClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
+    public InteropTracingClientImpl(RestTemplate restTemplate, TracingClientConfigs tracingClientConfigs) {
         this.restTemplate = restTemplate;
-        this.interopClientConfigs = interopClientConfigs;
-        this.tracingsApi = new TracingsApi(createApiClient(interopClientConfigs.getBaseUrl(), interopClientConfigs.getBearerToken1()));
-        this.healthApi = new HealthApi(createApiClient(interopClientConfigs.getBaseUrl(), interopClientConfigs.getBearerToken1()));
+        this.tracingClientConfigs = tracingClientConfigs;
+        this.tracingsApi = new TracingsApi(createApiClient(tracingClientConfigs.getBaseUrl(), tracingClientConfigs.getBearerToken1()));
+        this.healthApi = new HealthApi(createApiClient(tracingClientConfigs.getBaseUrl(), tracingClientConfigs.getBearerToken1()));
         this.bearerTokenSetted = BearerTokenType.TENANT_1;
     }
 
@@ -71,23 +76,22 @@ public class InteropTracingClientImpl implements IInteropTracingClient {
     }
 
     @Override
-    public boolean setBearerToken(BearerTokenType bearerToken) {
+    public void setBearerToken(String bearerToken) {
         switch (bearerToken) {
-            case TENANT_1 -> {
-                this.tracingsApi.setApiClient(createApiClient(interopClientConfigs.getBaseUrl(), interopClientConfigs.getBearerToken1()));
+            case "TENANT_1" -> {
+                this.tracingsApi.setApiClient(createApiClient(tracingClientConfigs.getBaseUrl(), tracingClientConfigs.getBearerToken1()));
                 this.bearerTokenSetted = BearerTokenType.TENANT_1;
             }
-            case TENANT_2 -> {
-                this.tracingsApi.setApiClient(createApiClient(interopClientConfigs.getBaseUrl(), interopClientConfigs.getBearerToken2()));
+            case "TENANT_2" -> {
+                this.tracingsApi.setApiClient(createApiClient(tracingClientConfigs.getBaseUrl(), tracingClientConfigs.getBearerToken2()));
                 this.bearerTokenSetted = BearerTokenType.TENANT_2;
             }
             default -> throw new IllegalStateException("Unexpected value: " + bearerToken);
         }
-        return true;
     }
 
-    @Override
     public BearerTokenType getBearerTokenSetted() {
         return this.bearerTokenSetted;
     }
+
 }

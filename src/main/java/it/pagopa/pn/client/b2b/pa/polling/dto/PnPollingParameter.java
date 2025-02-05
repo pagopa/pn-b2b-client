@@ -1,6 +1,5 @@
 package it.pagopa.pn.client.b2b.pa.polling.dto;
 
-import it.pagopa.pn.client.b2b.pa.interop.polling.dto.PnPollingInterop;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,5 +19,4 @@ public class PnPollingParameter {
     public enum PollingType {SLOW, RAPID, SHORT}
     private PnPollingPredicate pnPollingPredicate;
     private PnPollingWebhook pnPollingWebhook;
-    private PnPollingInterop pnPollingInterop;
 }
