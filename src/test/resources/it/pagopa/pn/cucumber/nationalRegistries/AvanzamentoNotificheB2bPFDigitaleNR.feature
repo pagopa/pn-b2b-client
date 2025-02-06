@@ -1,22 +1,5 @@
 Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry (INAD-IPA-INIPEC)
-  #DOMICILIO DIGITALE:
-  #PF ---> INAD
-  #PG ---> IPA/INIPEC
 
-  #DOMICILIO FISICO:
-  #PF ---> ANPR
-  #PG ---> REGISTRO DELLE IMPRESE
-
-  #1 (MITTENTE) Invio Notifica mono destinatario a PF con recupero del domicilio digitale - INAD OK
-  #Accedere a PN mittente e inviare una notifica mono destinatario PF non inserendo alcun domicilio digitale (ne piattaforma ne speciale)
-  #La notifica viene inviata ed è presente in elenco
-  #La notifica prosegue per via digitale, in quanto viene trovato l’indirizzo da National Registry
-
-  #Recupero del domicilio digitale di una Persona Fisica (INAD)
-  #Inviare una notifica in ambiente UAT al destinatario (PF) con CF: MDEPLG67E41Z354G, inserendo come domicilio digitale la keyword “@fail.it"
-
-  #Risultato:  La notifica viene inviata correttamente al domicilio digitale corrispondente al destinatario inserito (test@pec.it), recuperato tramite INAD.
- #OK---------->
   @uat @workflowDigitale @realNR
   Scenario: [B2B_TIMELINE_7597_1] Invio Notifica mono destinatario a PF con recupero del domicilio digitale - INAD Real OK
     Given viene generata una nuova notifica
@@ -31,7 +14,6 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK" con responseStatus "OK" e digitalAddressSource "GENERAL"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
-  #OK------------>
   @workflowDigitale @mockNR
   Scenario: [B2B_TIMELINE_7597_1_1] Invio Notifica mono destinatario a PF con recupero del domicilio digitale – INAD Trovato - Mock
     Given viene generata una nuova notifica
@@ -45,7 +27,6 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
     Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK" con responseStatus "OK" e digitalAddressSource "GENERAL"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
-
 
   @workflowDigitale @mockNR
   Scenario: [B2B_TIMELINE_7597_1_2] Invio Notifica mono destinatario a PF con recupero del domicilio digitale - INAD Mock KO
@@ -71,18 +52,25 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
   #Mock PPPPLT80A01H501V
 
   #OK------------>
-  @workflowDigitale @mockNR
+  @workflowDigitale @mockNR # scenario 10
   Scenario: [B2B_TIMELINE_7597_2] Invio Notifica mono destinatario a PF con recupero del domicilio digitale - IPA risponde OK
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
     And destinatario
       | denomination    | Test digitale ok |
-      | taxId           | PPPPLT80A01H501V |
+      | taxId           | DRCMRA80A01H501L |
       | digitalDomicile | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK" con responseStatus "OK" e digitalAddressSource "GENERAL"
+    And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
+      | details | NOT_NULL |
+      | details_responseStatus | OK |
+      | details_sendingReceipts | [{"id": null, "system": null}] |
+      | details_digitalAddress | {"address": "esempio@pec.it", "type": "PEC"} |
+      | details_recIndex | 0 |
+      | details_digitalAddressSource | GENERAL |
+      | details_sentAttemptMade | 0 |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
 
@@ -104,7 +92,7 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   #OK------------>
-  @workflowDigitale @mockNR
+  @workflowDigitale @mockNR # scenario 1
   Scenario: [B2B_TIMELINE_7597_2_3] Invio Notifica mono destinatario a PF con recupero del domicilio digitale - IPA risponde KO e viene fatta chiamata a INIPEC
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -112,11 +100,18 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
     And destinatario
       | denomination    | Test digitale ok |
       | recipientType   | PF               |
-      | taxId           | CTNMCP34B16H501T |
+      | taxId           | DRCMRA80A01H501L |
       | digitalDomicile | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK" con responseStatus "OK" e digitalAddressSource "GENERAL"
+    And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
+      | details | NOT_NULL |
+      | details_responseStatus | OK |
+      | details_sendingReceipts | [{"id": null, "system": null}] |
+      | details_digitalAddress | {"address": "esempio@pec.it", "type": "PEC"} |
+      | details_recIndex | 0 |
+      | details_digitalAddressSource | GENERAL |
+      | details_sentAttemptMade | 0 |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
  #4 (MITTENTE) Invio Notifica mono destinatario a PF con recupero del domicilio digitale - IPA e INIPEC risponde lista vuota e parte chiamata INAD
