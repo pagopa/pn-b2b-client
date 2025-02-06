@@ -106,7 +106,7 @@ public class AgreementCommonSteps {
             String eserviceName = String.format("eservice-%d-%d-%d", i, sharedStepsContext.getTestSeed(), randomInt);
             EServiceSeed eserviceSeed = new EServiceSeed()
                 .name(eserviceName)
-                .isDelegable(eServiceConfig.map(EServiceConfig::getDelegable).orElse(null))
+                .isConsumerDelegable(eServiceConfig.map(EServiceConfig::getDelegable).orElse(null))
                 .isClientAccessDelegable(eServiceConfig.map(EServiceConfig::getClientAccessDelegable).orElse(null));
             EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(
                 eserviceSeed, new UpdateEServiceDescriptorSeed());

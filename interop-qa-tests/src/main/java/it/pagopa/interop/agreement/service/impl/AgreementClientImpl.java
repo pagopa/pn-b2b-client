@@ -39,7 +39,9 @@ public class AgreementClientImpl implements IAgreementClient {
 
     @Override
     public CreatedResource createAgreement(String xCorrelationId, AgreementPayload agreementPayload) {
-        return agreementsApi.createAgreement(xCorrelationId, agreementPayload);
+        // 06/02/2025 TODO la nuova versione delle APIs non prevede i parametro correlationId, eventualmente
+        // rimuoverlo anche dalla firma del metodo e da tutte le chiamate sparse
+        return agreementsApi.createAgreement(agreementPayload);
     }
 
     @Override
