@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 @Configuration
-@PropertySource("classpath:qa-interop.properties")
 @Getter
 @Setter
 public class InteropClientConfigs {
