@@ -1000,7 +1000,7 @@ Feature: Test API Availability in Use of E-Service
     And l'utente è un "<ruolo>" dell'ente delegante
     And l'ente delegante ha già creato e pubblicato 1 e-service
     And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
-    When l'ente delegante visualizza il dettaglio della delega conferita
+    When l'utente visualizza il dettaglio della delega creata
     Then si ottiene status code <statusCode>
 
     Examples:
@@ -1017,10 +1017,11 @@ Feature: Test API Availability in Use of E-Service
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
     And l'ente delegante "PA1"
-    And l'utente è un "<ruolo>" dell'ente delegante
+    And l'utente è un "admin" dell'ente delegante
     And l'ente delegante ha già creato e pubblicato 1 e-service
     And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
-    When l'ente delegato visualizza il dettaglio della delega ricevuta
+    When l'utente è un "<ruolo>" dell'ente delegato
+    And l'utente visualizza il dettaglio della delega creata
     Then si ottiene status code <statusCode>
 
     Examples:
@@ -1032,52 +1033,13 @@ Feature: Test API Availability in Use of E-Service
       | support     |        403 |
 
   @TC_INCARICATO_89
-  Scenario Outline: Richiamare l’API di creazione di una delega da parte di un utente amministratore su un e-service con almeno una richiesta di fruizione attiva
-    Given l'ente delegato "PA2"
-    And l'utente è un "admin" dell'ente delegato
-    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
-    And il delegato ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    When l'ente delegato crea una delega
+  Scenario Outline: L'ente NON deve essere in grado di creare una delega per un e-service per il quale ha in corso una richiesta di fruizione in stato ACTIVE, SUSPENDED o WAITING_FOR_APPROVAL
+    Given l'utente è un "admin" di "PA2"
+    And "PA2" ha una richiesta di fruizione in stato <statoFruizione> per quell'e-service
+    When l'ente "PA2" ha inoltrato una richiesta di delega in fruizione all'ente "PA1"
     Then si ottiene status code <statusCode>
-
     Examples:
-      | ruolo       | statusCode |
-      | admin       |        403 |
-      | api         |        403 |
-      | security    |        403 |
-      | api,security|        403 |
-      | support     |        403 |
-
-  @TC_INCARICATO_90
-  Scenario Outline: Richiamare l’API di creazione di una delega da parte di un utente amministratore su un e-service con almeno una richiesta di fruizione sospesa
-    Given l'ente delegato "PA2"
-    And l'utente è un "admin" dell'ente delegato
-    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
-    And il delegato ha una richiesta di fruizione in stato "SUSPENDED" per quell'e-service
-    When l'ente delegato crea una delega
-    Then si ottiene status code <statusCode>
-
-    Examples:
-      | ruolo       | statusCode |
-      | admin       |        403 |
-      | api         |        403 |
-      | security    |        403 |
-      | api,security|        403 |
-      | support     |        403 |
-
-  @TC_INCARICATO_91
-  Scenario Outline: Richiamare l’API di creazione di una delega da parte di un utente amministratore su un e-service con almeno una richiesta di fruizione pending
-    Given l'ente delegato "PA2"
-    And l'utente è un "admin" dell'ente delegato
-    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
-    And il delegato ha una richiesta di fruizione in stato "WAITING_FOR_APPROVAL" per quell'e-service
-    When l'ente delegato crea una delega
-    Then si ottiene status code <statusCode>
-
-    Examples:
-      | ruolo       | statusCode |
-      | admin       |        403 |
-      | api         |        403 |
-      | security    |        403 |
-      | api,security|        403 |
-      | support     |        403 |
+      | statusCode | statoFruizione         |
+      |        403 | "ACTIVE"               |
+      |        403 | "SUSPENDED"            |
+      |        403 | "WAITING_FOR_APPROVAL" |

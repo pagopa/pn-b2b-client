@@ -2,7 +2,6 @@ package it.pagopa.pn.interop.cucumber.steps.delegate;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
-import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.delegate.service.IDelegationApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactDelegation;
@@ -10,21 +9,20 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CompactDelegations;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Pagination;
 import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import lombok.AllArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class DelegationListingStep {
-    private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
     private final IDelegationApiClient delegationApiClient;
     private final PollingService pollingService;
@@ -33,7 +31,6 @@ public class DelegationListingStep {
 
     public DelegationListingStep(ClientTokenConfigurator clientTokenConfigurator,
                                  SharedStepsContext sharedStepsContext) {
-        this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.delegationApiClient = clientTokenConfigurator.getDelegationApiClient();
         this.pollingService = sharedStepsContext.getPollingService();
@@ -50,6 +47,25 @@ public class DelegationListingStep {
             );
             delegationList.add((CompactDelegations) httpCallExecutor.getResponse());
         }
+    }
+
+    @And("l'ente {delegationRole} visualizza l'elenco delle deleghe ricevute")
+    public void retrieveDelegateDelegationsList(DelegationRole delegationRole) {
+        UUID tenantId = sharedStepsContext.getDelegationCommonContext().getIdBy(delegationRole);
+        httpCallExecutor.performCall(() -> delegationApiClient.getDelegation(sharedStepsContext.getXCorrelationId(), 0, 2, List.of(), List.of(), List.of(tenantId), null, List.of()));
+    }
+
+    @And("l'ente {delegationRole} visualizza l'elenco delle deleghe conferite")
+    public void retrieveDelegatorDelegationsList(DelegationRole delegationRole) {
+        UUID tenantId = sharedStepsContext.getDelegationCommonContext().getIdBy(delegationRole);
+        httpCallExecutor.performCall(() -> delegationApiClient.getDelegation(sharedStepsContext.getXCorrelationId(), 0, 2, List.of(), List.of(tenantId), List.of(), null, List.of()));
+    }
+
+    @And("l'utente visualizza il dettaglio della delega creata")
+    public void retrieveDelegationDetails() {
+        String xCorrelationId = sharedStepsContext.getXCorrelationId();
+        String delegationId = String.valueOf(sharedStepsContext.getDelegationCommonContext().getDelegationId());
+        httpCallExecutor.performCall(() -> delegationApiClient.getDelegation(xCorrelationId, delegationId));
     }
 
     @And("l'utente recupera la lista delle deleghe in stato ACTIVE e WAITING_FOR_APPROVAL")
