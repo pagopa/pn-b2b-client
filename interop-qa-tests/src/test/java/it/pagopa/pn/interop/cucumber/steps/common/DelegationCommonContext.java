@@ -18,6 +18,10 @@ public class DelegationCommonContext {
     private String delegatorTenant;
     private String delegateTenant;
 
+    /* 06/02/2025 useful in those test cases where it is necessary to have a third-party
+     * delegation ID in addition to the one between delegate and delegator */
+    private UUID auxDelegationId;
+
     public String getTenantBy(DelegationRole role) {
         return role == DelegationRole.DELEGATING ? delegatorTenant : delegateTenant;
     }

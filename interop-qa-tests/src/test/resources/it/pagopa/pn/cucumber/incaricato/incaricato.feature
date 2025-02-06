@@ -266,7 +266,7 @@ Feature: Test API Availability in Use of E-Service
       | support     |        403 |
 
   @TC_INCARICATO_58_BIS
-  Scenario Outline: Richiamare l’API di creazione di una richiesta di fruizione, specificando una delega su cui non si ha autorità
+  Scenario Outline: Richiamare l’API di creazione di una richiesta di fruizione, specificando una delega che non compete al delegato
     Given "GSP" ha già creato e pubblicato 1 e-service
     Given l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
@@ -278,9 +278,13 @@ Feature: Test API Availability in Use of E-Service
     And l'ente delegato accetta la delega in fruizione
     And l'utente è un "<ruolo>" dell'ente delegato
 
-      # TODO Capire come implementare questo passo al livello tecnico
-    When il delegato ha già creato e inviato una richiesta di fruizione indicando una delega che non gli appartiene
+    # Processo di produzione di una delega tra il delegante e un terzo ente
+    And l'utente è un "admin" di "GSP2"
+    And l'ente "GSP2" concede la disponibilità a ricevere deleghe in fruizione
+    And l'utente è un "admin" dell'ente delegante
+    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente terzo "GSP2"
 
+    When il delegato ha già creato e inviato una richiesta di fruizione indicando la delega dell'ente terzo
     Then si ottiene status code <statusCode>
     Examples:
       | ruolo       | statusCode |

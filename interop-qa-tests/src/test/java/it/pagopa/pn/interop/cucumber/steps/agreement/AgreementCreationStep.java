@@ -61,6 +61,13 @@ public class AgreementCreationStep {
         agreementProcessRequest(tenantType, delegationId);
     }
 
+    @Given("il {delegationRole} ha già creato e inviato una richiesta di fruizione indicando la delega dell'ente terzo")
+    public void wrongDelegationRequestForServiceAlreadySubmittedAndPendingApproval(DelegationRole delegationRole) {
+        String tenantType = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
+        UUID delegationId = sharedStepsContext.getDelegationCommonContext().getAuxDelegationId();
+        agreementProcessRequest(tenantType, delegationId);
+    }
+
     private void agreementProcessRequest(String tenantType, UUID delegationId) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         UUID agreementId = dataPreparationService.createAgreement(

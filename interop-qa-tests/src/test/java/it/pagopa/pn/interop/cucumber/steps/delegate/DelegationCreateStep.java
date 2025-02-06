@@ -101,9 +101,39 @@ public class DelegationCreateStep {
 
     @Given("l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato")
     public void givenConsumerDelegatingTenantHasRequestedDelegation() {
-        String delegatingTenantToken = identityService.getToken(sharedStepsContext.getDelegationCommonContext().getTenantBy(DELEGATING), null);
+        String delegatorTenant = sharedStepsContext.getDelegationCommonContext().getTenantBy(DELEGATING);
+        String delegateTenant = sharedStepsContext.getDelegationCommonContext().getTenantBy(DELEGATE);
+        givenConsumerDelegatingTenantHasRequestedDelegation(delegatorTenant, delegateTenant);
+    }
+
+    @Given("l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente {string}")
+    public void givenConsumerDelegatingTenantHasRequestedDelegation(String delegateTenant) {
+        String delegatorTenant = sharedStepsContext.getDelegationCommonContext()
+            .getTenantBy(DELEGATING);
+        givenConsumerDelegatingTenantHasRequestedDelegation(delegatorTenant, delegateTenant);
+    }
+
+    @Given("l'ente {string} ha inoltrato una richiesta di delega in fruizione all'ente {string}")
+    public void givenConsumerDelegatingTenantHasRequestedDelegation(String delegatorTenant, String delegateTenant) {
+        authAndConsumerDelegation(delegatorTenant, delegateTenant, DelegationProxy.ofMainDelegation(sharedStepsContext.getDelegationCommonContext()));
+    }
+
+    @Given("l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente terzo {string}")
+    public void givenConsumerDelegatingTenantHasRequestedAuxDelegation(String delegateTenant) {
+        String delegatorTenant = sharedStepsContext.getDelegationCommonContext()
+            .getTenantBy(DELEGATING);
+        givenConsumerDelegatingTenantHasRequestedAuxDelegation(delegatorTenant, delegateTenant);
+    }
+
+    @Given("l'ente {string} ha inoltrato una richiesta di delega in fruizione all'ente terzo {string}")
+    public void givenConsumerDelegatingTenantHasRequestedAuxDelegation(String delegatorTenant, String delegateTenant) {
+        authAndConsumerDelegation(delegatorTenant, delegateTenant, DelegationProxy.ofAuxDelegation(sharedStepsContext.getDelegationCommonContext()));
+    }
+
+    private void authAndConsumerDelegation(String delegatorTenant, String delegateTenant, DelegationProxy delegationProxy) {
+        String delegatingTenantToken = identityService.getToken(delegatorTenant, null);
         clientTokenConfigurator.setBearerToken(delegatingTenantToken);
-        createDelegate(sharedStepsContext.getDelegationCommonContext().getTenantBy(DELEGATE), consumerDelegationsApiClient::createConsumerDelegation);
+        createDelegate(delegateTenant, consumerDelegationsApiClient::createConsumerDelegation, delegationProxy);
     }
 
     @And("l'utente concede la disponibilità a ricevere le deleghe")
@@ -144,7 +174,7 @@ public class DelegationCreateStep {
     }
 
     @And("l'ente {string} richiede la creazione di una delega per l'ente {string}")
-    public void createDelegate(String delegatorTenantType, String tenantType) throws InterruptedException {
+    public void createDelegate(String delegatorTenantType, String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(delegatorTenantType, null));
         createDelegate(tenantType, producerDelegationsApiClient::createProducerDelegation);
     }
@@ -165,15 +195,24 @@ public class DelegationCreateStep {
         );
     }
 
-    private void createDelegate(String tenantType, BiFunction<String, DelegationSeed, CreatedResource> delegationCreator) {
+    private void createDelegate(
+        String tenantType,
+        BiFunction<String, DelegationSeed, CreatedResource> delegationCreator) {
+        this.createDelegate(tenantType, delegationCreator, DelegationProxy.ofMainDelegation(sharedStepsContext.getDelegationCommonContext()));
+    }
+
+    private void createDelegate(
+        String tenantType,
+        BiFunction<String, DelegationSeed, CreatedResource> delegationCreator,
+        DelegationProxy delegationProxy) {
         UUID organizationId = identityService.getOrganizationId(tenantType);
         httpCallExecutor.performCall(() -> delegationCreator.apply(sharedStepsContext.getXCorrelationId(),
                 new DelegationSeed().eserviceId(sharedStepsContext.getEServicesCommonContext().getEserviceId()).delegateId(organizationId)));
         if (httpCallExecutor.getClientResponse() == HttpStatus.OK) {
-            sharedStepsContext.getDelegationCommonContext().setDelegationId(((CreatedResource) httpCallExecutor.getResponse()).getId());
+            delegationProxy.setDelegationId(((CreatedResource) httpCallExecutor.getResponse()).getId());
             pollingService.makePolling(
                     () -> httpCallExecutor.performCall(() -> delegationApiClient.getDelegation(sharedStepsContext.getXCorrelationId(),
-                            String.valueOf(sharedStepsContext.getDelegationCommonContext().getDelegationId()))),
+                            String.valueOf(delegationProxy.getDelegationId()))),
                     res -> res != HttpStatus.NOT_FOUND,
                     "There was an error while creating the delegation!"
             );
