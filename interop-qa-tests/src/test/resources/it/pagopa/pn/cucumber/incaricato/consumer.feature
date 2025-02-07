@@ -10,6 +10,11 @@ Feature: Test API Availability in Use of E-Service
   #TODO 24/01/2025 rivedere le descrizioni di ciascun scenario così che siano chiare ed esaustive
   #TODO 24/01/2025 verificare il corretto uso delle clausole Given, When e Then
 
+  Background:
+    # TODO 07/02/2025: considerare di generalizzare così da resettare TUTTI gli enti automaticamente
+    Given l'ente "PA2" rimuove la disponibilità a ricevere deleghe in fruizione
+    And l'ente "PA1" rimuove la disponibilità a ricevere deleghe in fruizione
+
   Scenario Outline: [TC_INCARICATO_45] Verificare che il richiamo dell’API di disponibilità in fruizione di un e-service possa essere compiuto da un utente di tipo amministratore
     Given l'utente è un "<ruolo>" di "PA1"
     When l'ente "PA1" concede la disponibilità a ricevere deleghe in fruizione

@@ -3,10 +3,9 @@ package it.pagopa.pn.interop.cucumber.steps.delegate;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
-import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.interop.delegate.service.IDelegationApiClient;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -14,6 +13,7 @@ import org.springframework.web.client.HttpClientErrorException;
 
 @Slf4j
 public class DelegationCommonStep {
+    private final SharedStepsContext sharedStepsContext;
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final IdentityService identityService;
     private final HttpCallExecutor httpCallExecutor;
@@ -21,6 +21,7 @@ public class DelegationCommonStep {
 
     public DelegationCommonStep(ClientTokenConfigurator clientTokenConfigurator,
                                 SharedStepsContext sharedStepsContext) {
+        this.sharedStepsContext = sharedStepsContext;
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.identityService = sharedStepsContext.getIdentityService();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
@@ -32,6 +33,19 @@ public class DelegationCommonStep {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         try {
             tenantsApi.deleteTenantDelegatedProducerFeature();
+        } catch (HttpClientErrorException.Conflict e) {
+            log.info("No delegation availability defined for the given tenant!");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Given("l'ente {string} rimuove la disponibilità a ricevere deleghe in fruizione")
+    public void tenantRemoveConsumerDelegationAvailability(String tenantType) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        try {
+            String correlationId = sharedStepsContext.getXCorrelationId();
+            tenantsApi.deleteTenantDelegatedConsumerFeature(correlationId);
         } catch (HttpClientErrorException.Conflict e) {
             log.info("No delegation availability defined for the given tenant!");
         } catch (Exception e) {
