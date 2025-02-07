@@ -1,5 +1,7 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -49,6 +51,10 @@ public class InvioNotificheB2bSteps {
     private Integer retentionTimePreLoad;
     @Value("${pn.retention.time.load}")
     private Integer retentionTimeLoad;
+
+    @Value("${pn.blacklist.tax-ids}")
+    private String blackListTaxIdsProperties;
+
     private final PnPaB2bUtils b2bUtils;
     private final IPnWebPaClient webPaClient;
     private final IPnPaB2bClient b2bClient;
@@ -69,6 +75,7 @@ public class InvioNotificheB2bSteps {
 
     private final JavaMailSender emailSender;
 
+    private List<String> blackListTaxIds;
 
     @Autowired
     public InvioNotificheB2bSteps(PnExternalServiceClientImpl safeStorageClient, SharedSteps sharedSteps,PnExternalChannelsServiceClientImpl pnExternalChannelsServiceClientImpl, JavaMailSender emailSender) {
@@ -526,13 +533,14 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
     @Then("l'operazione ha prodotto un errore con status code {string} con messaggio di errore {string}")
     public void operationProducedAnErrorWithMessage(String statusCode, String errore) {
         HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
-        Assertions.assertTrue((httpStatusCodeException != null) &&
-                (httpStatusCodeException.getStatusCode().toString().substring(0, 3).equals(statusCode)));
+        Assertions.assertNotNull(httpStatusCodeException, "Cannot find any expected exception");
+        Assertions.assertNotNull(httpStatusCodeException.getStatusCode(), "Cannot find the status exception code");
+        Assertions.assertEquals(String.valueOf(httpStatusCodeException.getStatusCode().value()), statusCode);
 
         byte[] responseBody = httpStatusCodeException.getResponseBodyAsByteArray();
         String responseBodyText = new String(responseBody, StandardCharsets.UTF_8);
 
-        Assertions.assertTrue(responseBodyText.contains(errore)) ;
+        Assertions.assertTrue(responseBodyText.contains(errore));
     }
 
     @Then("l'operazione non ha prodotto errori")
@@ -1245,6 +1253,35 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
     public void verificaContentTypeAttestazione(String contentType) {
         LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse = getLegalFactIdAAR("PN_AAR");
         Assertions.assertTrue(b2bUtils.downloadUrlAndCheckContent(legalFactDownloadMetadataResponse.getUrl(), contentType));
+    }
+
+    @When("invio una notifica ad ogni taxId della blackList e ricevo un errore {string} con con messaggio di errore {string}")
+    public void invioUnaNotificaAdOgniTaxIdDellaBlackListERicevoUnErroreConConMessaggioDiErrore(String errorCode, String errorMessage) {
+        blackListTaxIds.forEach(data -> {
+            HashMap<String, String> map = new HashMap<>();
+            map.put("taxId", data);
+            sharedSteps.destinatario(map);
+            sharedSteps.laNotificaVieneInviataDallaPA("Comune_1");
+            operationProducedAnErrorWithMessage(errorCode, errorMessage);
+        });
+    }
+
+    @And("riprendo tutti i taxId presenti nella blacklist")
+    public void riprendoTuttiITaxIdPresentiNellaBlacklist() {
+        Assertions.assertNotNull(blackListTaxIdsProperties);
+        blackListTaxIds = retrieveTaxIdsFromProperties();
+        Assertions.assertNotNull(blackListTaxIds);
+        Assertions.assertFalse(blackListTaxIds.isEmpty());
+    }
+
+    private List<String> retrieveTaxIdsFromProperties() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode rootNode = Assertions.assertDoesNotThrow(() -> objectMapper.readTree(blackListTaxIdsProperties));
+        List<String> taxIds = new ArrayList<>();
+        for (JsonNode node : rootNode) {
+            taxIds.add(node.get("taxId").asText());
+        }
+        return taxIds;
     }
 
 }
