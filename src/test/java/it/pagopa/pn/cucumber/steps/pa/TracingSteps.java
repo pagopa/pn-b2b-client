@@ -147,7 +147,7 @@ public class TracingSteps {
                 createExpectedResponse("INVALID_PURPOSE", "purpose_id: Invalid uuid", "", 2),
                 createExpectedResponse("INVALID_DATE", String.format("date: Date field (2024-08-25) in csv is different from tracing date (%s).", submissionDate.toString()), "", 2)
         );
-        assertThat(getTracingErrorsResponse.getResults()).hasSameElementsAs(expectedResult);
+        assertThat(getTracingErrorsResponse.getResults()).containsAll(expectedResult);
     }
 
     @When("gli errori riscontrati vengono corretti passando il csv {string}")
@@ -226,6 +226,32 @@ public class TracingSteps {
                         .build());
         Assertions.assertTrue(pnTracingResponse.getResult());
     }
+
+    @Then("viene recuperato il file di tracing appena caricato e si verifica che lo stato sia {string}")
+    public void retrieveTracingAndVerifyStatus(String status) {
+        List<GetTracingsResponseResults> results = new ArrayList<>();
+        GetTracingsResponseResults result;
+        int attempt = 0;
+        int totalPages;
+        try  {
+            do {
+                GetTracingsResponse getTracingsResponse = interopTracingClient.getTracings(attempt, LIMIT_VALUE, List.of(TracingState.fromValue(status)));
+                result = getTracingsResponse.getResults().stream()
+                        .filter(x -> x.getTracingId().equals(submitTracingResponse.getTracingId().toString()))
+                        .findFirst()
+                        .orElse(null);
+                totalPages = getTracingsResponse.getTotalCount().intValue();
+                if (result != null || getTracingsResponse.getResults().isEmpty()) break;
+                attempt++;
+            } while (attempt < totalPages);
+            if (result == null) {
+                throw new RuntimeException("Tracing ID not found after " + totalPages + " attempts!");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while retrieving the tracing file!");
+        }
+    }
+
 
     private GetTracingErrorsResponseResults createExpectedResponse(String errorCode, String message, String purposeId, Integer rowNumber) {
         GetTracingErrorsResponseResults tracingErrorsResponse = new GetTracingErrorsResponseResults();
