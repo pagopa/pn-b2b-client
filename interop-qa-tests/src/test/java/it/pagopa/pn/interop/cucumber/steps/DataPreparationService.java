@@ -64,6 +64,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
+import javax.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -203,7 +204,7 @@ public class DataPreparationService {
 
     public UUID createAgreementWithGivenState(AgreementState agreementState, UUID eServiceID, UUID descriptorId, UUID delegationId, File doc) {
         // agreement in state DRAFT
-        UUID agreementId = createAgreement(eServiceID, descriptorId, delegationId);
+        UUID agreementId = createAndCheckAgreement(eServiceID, descriptorId, delegationId);
         if (doc != null) addConsumerDocumentToAgreement(agreementId, doc);
         return switch (agreementState) {
             case DRAFT -> agreementId;
@@ -226,14 +227,18 @@ public class DataPreparationService {
         };
     }
 
-    public UUID createAgreement(UUID eServiceID, UUID descriptorId) {
-        return createAgreement(eServiceID, descriptorId, null);
+    public UUID createAndCheckAgreement(UUID eServiceID, UUID descriptorId) {
+        return createAndCheckAgreement(eServiceID, descriptorId, null);
     }
 
-    public UUID createAgreement(UUID eServiceID, UUID descriptorId, UUID delegationId) {
+    public UUID createAgreement(UUID eServiceID, UUID descriptorId, @Nullable UUID delegationId) {
         httpCallExecutor.performCall(() -> agreementClient.createAgreement(sharedStepsContext.getXCorrelationId(), new AgreementPayload().eserviceId(eServiceID).descriptorId(descriptorId).delegationId(delegationId)));
+        return ((CreatedResource) httpCallExecutor.getResponse()).getId();
+    }
+
+    public UUID createAndCheckAgreement(UUID eServiceID, UUID descriptorId, UUID delegationId) {
+        UUID agreementId = createAgreement(eServiceID, descriptorId, delegationId);
         assertValidResponse();
-        UUID agreementId = ((CreatedResource) httpCallExecutor.getResponse()).getId();
         pollingService.makePolling(
             () ->  httpCallExecutor.performCall(() -> agreementClient.getAgreementById(sharedStepsContext.getXCorrelationId(), agreementId)),
             res -> res != HttpStatus.NOT_FOUND,
@@ -387,7 +392,7 @@ public class DataPreparationService {
 
         if (descriptorState == EServiceDescriptorState.DEPRECATED) {
             // Optional. Create an agreement
-            UUID agreementId = createAgreement(eServiceId, descriptorId);
+            UUID agreementId = createAndCheckAgreement(eServiceId, descriptorId);
             submitAgreement(agreementId, AgreementState.ACTIVE);
         }
 

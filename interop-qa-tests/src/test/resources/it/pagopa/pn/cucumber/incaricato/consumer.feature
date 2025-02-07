@@ -89,6 +89,8 @@ Feature: Test API Availability in Use of E-Service
       | api,security|        403 |
       | support     |        403 |
 
+    # NOTA BUG: per il ruolo admin viene restituito 500, non il migliore degli stati d'errore. Esempio:
+    # Response Body: {"type":"about:blank","title":"Unexpected error","status":500,"detail":"Unexpected error","correlationId":"1e7c18d5-c2bf-4eb4-958b-26a12a051cc8","errors":[{"code":"9991","detail":"Unexpected error"}]}
     Scenario: [TC_INCARICATO_51] Richiamare l’API di accettazione di una delega in stato "revocata" deve produrre un errore
     Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA1"
@@ -102,7 +104,10 @@ Feature: Test API Availability in Use of E-Service
     And l'ente delegato accetta la delega in fruizione
     Then si ottiene status code 403
 
-    Scenario Outline: [TC_INCARICATO_52] Richiamare l’API di accettazione di una delega in stato rifiutata
+    # NOTA BUG: per il ruolo admin viene restituito 500, non il migliore degli stati d'errore. Esempio:
+    # Response Body: {"type":"about:blank","title":"Unexpected error","status":500,"detail":"Unexpected error","correlationId":"1e7c18d5-c2bf-4eb4-958b-26a12a051cc8","errors":[{"code":"9991","detail":"Unexpected error"}]}
+    # TC_INCARICATO_56 invece ha un codice migliore, 409 [al momento di stesura del ticket non fare riferimento all'id del test ma a ciò che testa]
+  Scenario: [TC_INCARICATO_52] Richiamare l’API di accettazione di una delega in stato rifiutata
     Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
@@ -135,6 +140,8 @@ Feature: Test API Availability in Use of E-Service
       | api,security|        403 |
       | support     |        403 |
 
+    # NOTA BUG: per il ruolo admin viene restituito 500, non il migliore degli stati d'errore. Esempio:
+    # Response Body: {"type":"about:blank","title":"Unexpected error","status":500,"detail":"Unexpected error","correlationId":"1e7c18d5-c2bf-4eb4-958b-26a12a051cc8","errors":[{"code":"9991","detail":"Unexpected error"}]}
     Scenario: [TC_INCARICATO_54] Richiamare l’API di rifiuto su una delega in stato REVOKED
     Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA1"
@@ -181,27 +188,32 @@ Feature: Test API Availability in Use of E-Service
     When l'ente delegato rifiuta la delega in fruizione
     Then si ottiene status code 409
 
-    Scenario Outline: [TC_INCARICATO_57] Richiamare l’API di creazione fruizione da parte di un delegato alla fruizione, specificando la delega corretta
-    Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione manuale
-    Given l'ente delegato "PA1"
-    And l'utente è un "admin" dell'ente delegato
-    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
-    And l'ente delegante "PA2"
-    And l'utente è un "admin" dell'ente delegante
-    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
-    And l'utente è un "admin" dell'ente delegato
-    And l'ente delegato accetta la delega in fruizione
-    And l'utente è un "<ruolo>" dell'ente delegato
-    When il delegato ha già creato e inviato una richiesta di fruizione in delega ed è in attesa di approvazione
-    #When il delegato ha una richiesta di fruizione in stato "PENDING" per quell'e-service
-    Then si ottiene status code <statusCode>
+    Scenario: [TC_INCARICATO_57] Richiamare l’API di creazione fruizione da parte di un delegato alla fruizione, specificando la delega corretta
+      Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione manuale
+      Given l'ente delegato "PA1"
+      And l'utente è un "admin" dell'ente delegato
+      And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
+      And l'ente delegante "PA2"
+      And l'utente è un "admin" dell'ente delegante
+      And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
+      And l'utente è un "admin" dell'ente delegato
+      And l'ente delegato accetta la delega in fruizione
+      And l'utente è un "admin" dell'ente delegato
+      When il delegato ha già creato e inviato una richiesta di fruizione in delega ed è in attesa di approvazione
+      Then si ottiene status code 200
+
+  # Test non strettamente attinente la feature Incaricato, considerare di spostarlo altrove
+  Scenario Outline: [TC_INTEROP_NON-ADMIN_FRUITION_REQUEST] Un utente con ruolo NON amministratore NON può richiedere la fruizione di un e-service
+    Given "GSP" ha già creato e pubblicato 1 e-service
+    And l'utente è un "<ruolo>" di "PA1"
+    When l'utente crea una richiesta di fruizione
+    Then si ottiene status code 403
     Examples:
-      | ruolo       | statusCode |
-      | admin       |        200 |
-      | api         |        403 |
-      | security    |        403 |
-      | api,security|        403 |
-      | support     |        403 |
+      | ruolo        |
+      | api          |
+      | security     |
+      | api,security |
+      | support      |
 
 
     Scenario Outline: [TC_INCARICATO_58] Richiamare l’API di creazione di una richiesta di fruizione, specificando una delega inesistente
