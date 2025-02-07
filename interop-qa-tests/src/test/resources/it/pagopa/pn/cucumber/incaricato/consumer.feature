@@ -53,7 +53,7 @@ Feature: Test API Availability in Use of E-Service
         | support     |        403 |
 
     Scenario Outline: [TC_INCARICATO_48] La creazione di una delega in fruizione verso un ente che non ha dato la propria disponibilità a ricevere deleghe in fruizione deve fallire
-    Given "GSP" ha già creato e pubblicato 1 e-service
+    Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegante "PA1"
     And l'utente è un "<ruolo>" dell'ente delegante
     And l'ente delegato "PA2"
