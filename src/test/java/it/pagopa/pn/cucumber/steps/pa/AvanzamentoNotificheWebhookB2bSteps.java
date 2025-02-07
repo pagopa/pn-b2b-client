@@ -834,7 +834,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
     }
 
-    UUID retrieveStreamIdBasedOnCreatedVersion(String versionCreated) {
+    private UUID retrieveStreamIdBasedOnCreatedVersion(String versionCreated) {
         return switch (versionCreated.toUpperCase()) {
             case "V10" -> this.eventStreamList.get(0).getStreamId();
             case "V23" -> this.eventStreamListV23.get(0).getStreamId();
