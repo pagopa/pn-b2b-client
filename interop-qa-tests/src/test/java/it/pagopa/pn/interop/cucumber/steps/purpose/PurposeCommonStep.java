@@ -36,6 +36,18 @@ public class PurposeCommonStep {
     public void tenantHasAlreadyCreateFinalizationWithStatus(String tenantType, int n, String purposeVersionState) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         UUID consumerId = identityService.getOrganizationId(tenantType);
+        createFinalizationWithGivenStatus(consumerId, tenantType, n, purposeVersionState);
+    }
+
+    @Given("per conto del {delegationRole}, il {delegationRole} ha già creato {int} finalità in stato {string} per quell'eservice")
+    public void tenantHasAlreadyCreateFinalizationWithStatus(DelegationRole delegationRole1, DelegationRole delegationRole2, int n, String purposeVersionState) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        String tenantType = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole1);
+        UUID consumerId = identityService.getOrganizationId(tenantType);
+        createFinalizationWithGivenStatus(consumerId, tenantType, n, purposeVersionState);
+    }
+
+    public void createFinalizationWithGivenStatus(UUID consumerId, String tenantType, int n, String purposeVersionState) {
         RiskAnalysis riskAnalysis = dataPreparationService.getRiskAnalysis(tenantType, true);
         PurposeCommonContext purposeCommonContext = sharedStepsContext.getPurposeCommonContext();
         for (int index = 0; index < n; index++) {
@@ -59,12 +71,7 @@ public class PurposeCommonStep {
         purposeCommonContext.setPurposeId((purposesIds.isEmpty()) ? null : purposesIds.get(purposesIds.size() - 1));
         purposeCommonContext.setVersionId((currentVersionIds.isEmpty()) ? null : currentVersionIds.get(currentVersionIds.size() - 1));
         purposeCommonContext.setWaitingForApprovalVersionId((waitingForApprovalVersionIds.isEmpty()) ? null : waitingForApprovalVersionIds.get(waitingForApprovalVersionIds.size() - 1));
-    }
 
-    @Given("il {delegationRole} ha già creato {int} finalità in stato {string} per quell'eservice")
-    public void tenantHasAlreadyCreateFinalizationWithStatus(DelegationRole delegationRole, int n, String purposeVersionState) {
-        String tenantType = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
-        tenantHasAlreadyCreateFinalizationWithStatus(tenantType, n, purposeVersionState);
     }
 
     @Given("{string} ha già rifiutato l'aggiornamento della stima di carico per quella finalità")
