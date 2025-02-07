@@ -3707,14 +3707,19 @@ public class AvanzamentoNotificheB2bSteps {
 
         int minsToCheck = getMinsToCheck(notificationType);
 
-        long differenceInMinutes = Duration.between(getFirstElementTime(firstElementToCheck, firstElement, iun), secondElementToCheck.getDetails().getSchedulingDate()).toMinutes();
+        long differenceInMinutes = Duration.between(getFirstElementTime(firstElementToCheck, firstElement, digitalAddressSource,  iun), secondElementToCheck.getDetails().getSchedulingDate()).toMinutes();
         Assertions.assertEquals(minsToCheck, differenceInMinutes, "Time between first and second element not correct: " + iun + " expected wait " + minsToCheck + " actual wait " + differenceInMinutes);
     }
 
-    private OffsetDateTime getFirstElementTime(TimelineElementV26 firstElementToCheck, String firstElement, String iun) {
-        if (firstElement.equalsIgnoreCase("DIGITAL_DELIVERY_CREATION_REQUEST")) {
+    private OffsetDateTime getFirstElementTime(TimelineElementV26 firstElementToCheck, String firstElement, String digitalAddressSource, String iun) {
+        if(firstElement.equalsIgnoreCase("SEND_DIGITAL_FEEDBACK") && digitalAddressSource.equals("SERCQ")) {
+            Assertions.assertNotNull(firstElementToCheck.getDetails(), "Details for first element to check not found iun: " + iun);
+            Assertions.assertNotNull(firstElementToCheck.getDetails().getNotificationDate(), "NotificationDate for first element to check not found iun: " + iun);
+            return firstElementToCheck.getDetails().getNotificationDate();
+        } else if (firstElement.equalsIgnoreCase("DIGITAL_DELIVERY_CREATION_REQUEST")) {
             Assertions.assertNotNull(firstElementToCheck.getDetails(), "Details for first element to check not found iun: " + iun);
             Assertions.assertNotNull(firstElementToCheck.getDetails().getCompletionWorkflowDate(), "CompletionWorkflowDate for first element to check not found iun: " + iun);
+            Assertions.assertNotNull(firstElementToCheck.getDetails().getNotificationDate(), "CompletionWorkflowDate for first element to check not found iun: " + iun);
             return firstElementToCheck.getDetails().getCompletionWorkflowDate();
         } else return firstElementToCheck.getEventTimestamp();
 
