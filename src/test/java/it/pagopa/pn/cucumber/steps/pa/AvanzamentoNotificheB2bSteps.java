@@ -136,24 +136,53 @@ public class AvanzamentoNotificheB2bSteps {
     public void readingEventUpToTheStatusOfNotification(String status) {
         PnPollingPredicate pnPollingPredicate = new PnPollingPredicate();
         pnPollingPredicate.setNotificationStatusHistoryElementPredicateV26(
-                statusHistory -> statusHistory
-                        .getStatus()
-                        .getValue().equals(status)
+                statusHistory -> statusHistory.getStatus().getValue().equals(status)
         );
 
-        PnPollingServiceStatusRapidV26 statusRapidV26 = (PnPollingServiceStatusRapidV26) pnPollingFactory.getPollingService(PnPollingStrategy.STATUS_RAPID_V26);
+        PnPollingServiceStatusRapidV26 statusRapidV26 =
+                (PnPollingServiceStatusRapidV26) pnPollingFactory.getPollingService(PnPollingStrategy.STATUS_RAPID_V26);
 
-        PnPollingResponseV26 pnPollingResponseV26 = statusRapidV26.waitForEvent(sharedSteps.getSentNotification().getIun(),
+        // Prevenzione NullPointerException
+        assertThat(sharedSteps.getSentNotification())
+                .as("La notifica inviata non dovrebbe essere nulla")
+                .isNotNull();
+
+        PnPollingResponseV26 pnPollingResponseV26 = statusRapidV26.waitForEvent(
+                sharedSteps.getSentNotification().getIun(),
                 PnPollingParameter.builder()
                         .value(status)
                         .pnPollingPredicate(pnPollingPredicate)
-                        .build());
-        log.info("NOTIFICATION_STATUS_HISTORY: " + pnPollingResponseV26.getNotification().getNotificationStatusHistory());
+                        .build()
+        );
+
+        // Prevenzione NullPointerException
+        assertThat(pnPollingResponseV26)
+                .as("La risposta di polling non dovrebbe essere nulla")
+                .isNotNull();
+
+        assertThat(pnPollingResponseV26.getNotification())
+                .as("La notifica nella risposta di polling non dovrebbe essere nulla")
+                .isNotNull();
+
+        assertThat(pnPollingResponseV26.getNotification().getNotificationStatusHistory())
+                .as("Lo storico degli stati della notifica non dovrebbe essere nullo")
+                .isNotNull();
+
+        log.info("NOTIFICATION_STATUS_HISTORY: {}", pnPollingResponseV26.getNotification().getNotificationStatusHistory());
+
         try {
-            Assertions.assertTrue(pnPollingResponseV26.getResult());
-            Assertions.assertNotNull(pnPollingResponseV26.getNotificationStatusHistoryElement());
+            assertThat(pnPollingResponseV26.getResult())
+                    .as("Il risultato del polling deve essere valorizzato")
+                    .isTrue();
+
+            assertThat(pnPollingResponseV26.getNotificationStatusHistoryElement())
+                    .as("L'elemento dello storico degli stati non dovrebbe essere nullo")
+                    .isNotNull();
+
             sharedSteps.setSentNotification(pnPollingResponseV26.getNotification());
-            log.info("NOTIFICATION_STATUS_HISTORY_ELEMENT: " + pnPollingResponseV26.getNotificationStatusHistoryElement());
+
+            log.info("NOTIFICATION_STATUS_HISTORY_ELEMENT: {}", pnPollingResponseV26.getNotificationStatusHistoryElement());
+
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
@@ -3665,17 +3694,35 @@ public class AvanzamentoNotificheB2bSteps {
         log.info("LEGAL FACT CATEGORY = " + legalFact.getCategory());
         log.info("LEGAL FACT URL: " + legalFact.getKey());
     }
+
     @Then("esiste l'elemento di timeline della notifica {string} abbia notificationCost uguale a {string} per l'utente {int}")
     public void TimelineElementOfNotificationUserCost(String timelineEventCategory, String cost, Integer destinatario) {
+
         TimelineElementV26 event = readingEventUpToTheTimelineElementOfNotificationForCategoryUser(timelineEventCategory, destinatario);
+
+        // Prevenzione NullPointerException
+        assertThat(event)
+                .as("L'evento della timeline non dovrebbe essere nullo per la categoria '%s' e destinatario '%d'", timelineEventCategory, destinatario)
+                .isNotNull();
+
+        assertThat(event.getDetails())
+                .as("I dettagli dell'evento non dovrebbero essere nulli per la categoria '%s' e destinatario '%d'", timelineEventCategory, destinatario)
+                .isNotNull();
+
         Long notificationCost = event.getDetails().getNotificationCost();
 
         if (cost.equalsIgnoreCase("null")) {
-            Assertions.assertNull(notificationCost);
+            assertThat(notificationCost)
+                    .as("Il notificationCost dovrebbe essere null per la categoria '%s' e destinatario '%d'", timelineEventCategory, destinatario)
+                    .isNull();
         } else if (cost.equalsIgnoreCase("NotNull")) {
-            Assertions.assertNotNull(notificationCost);
+            assertThat(notificationCost)
+                    .as("Il notificationCost non dovrebbe essere null per la categoria '%s' e destinatario '%d'", timelineEventCategory, destinatario)
+                    .isNotNull();
         } else {
-            Assertions.assertEquals(Long.parseLong(cost), notificationCost);
+            assertThat(notificationCost)
+                    .as("Il notificationCost dovrebbe essere uguale a '%s' per la categoria '%s' e destinatario '%d'", cost, timelineEventCategory, destinatario)
+                    .isEqualTo(Long.parseLong(cost));
         }
     }
 

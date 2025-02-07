@@ -364,7 +364,9 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
         if (documentType.equals("ATTACHMENTS")) {
             for (int i = 0; i < sharedSteps.getSentNotification().getDocuments().size(); i++) {
                 String key = sharedSteps.getSentNotification().getDocuments().get(i).getRef().getKey();
-                Assertions.assertTrue(checkRetention(key, retentionTimeLoad, timelineElement.getTimestamp()));
+                assertThat(checkRetention(key, retentionTimeLoad, timelineElement.getTimestamp()))
+                        .as("La verifica della retention ha fallito per la chiave '%s'", key)
+                        .isTrue();
             }
         } else {
             throw new IllegalArgumentException();
