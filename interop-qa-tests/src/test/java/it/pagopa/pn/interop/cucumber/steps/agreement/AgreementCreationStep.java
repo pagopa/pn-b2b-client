@@ -69,7 +69,7 @@ public class AgreementCreationStep {
     }
 
     private void agreementProcessRequest(String tenantType, UUID delegationId) {
-        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         UUID agreementId = dataPreparationService.createAgreement(
             sharedStepsContext.getEServicesCommonContext().getEserviceId(),
             sharedStepsContext.getEServicesCommonContext().getDescriptorId(),

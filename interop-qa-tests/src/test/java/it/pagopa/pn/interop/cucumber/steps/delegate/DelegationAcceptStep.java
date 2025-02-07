@@ -52,7 +52,7 @@ public class DelegationAcceptStep {
     @And("l'ente {delegationRole} accetta la delega in fruizione")
     public void consumerDelegationIsAcceptedByTenant(DelegationRole delegationRole) {
         String tenantType = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
-        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         approveConsumerDelegation();
         if (httpCallExecutor.getClientResponse() == HttpStatus.OK) waitUntilDelegationIsApprove();
     }

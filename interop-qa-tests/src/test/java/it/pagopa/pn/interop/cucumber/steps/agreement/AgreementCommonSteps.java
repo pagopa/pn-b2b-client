@@ -17,6 +17,7 @@ import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
+
 import lombok.Builder;
 import lombok.Data;
 
@@ -41,6 +42,7 @@ public class AgreementCommonSteps {
     public static class EServiceConfig {
         private Boolean delegable;
         private Boolean clientAccessDelegable;
+        private AgreementApprovalPolicy agreementApprovalPolicy;
     }
 
     @Given("{string} ha una richiesta di fruizione in stato {string} per quell'e-service")
@@ -56,7 +58,7 @@ public class AgreementCommonSteps {
     }
 
     private void tenantAlreadyHasFruitionRequestWithState(String agreementState, String tenant, UUID delegationId) {
-        clientTokenConfigurator.setBearerToken(identityService.getToken(tenant, null));
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         UUID agreementId = dataPreparationService.createAgreementWithGivenState(
             AgreementState.fromValue(agreementState),
             sharedStepsContext.getEServicesCommonContext().getEserviceId(),
@@ -77,6 +79,15 @@ public class AgreementCommonSteps {
     @Given("{string} ha già creato e pubblicato {int} e-service(s)")
     public void tenantHasAlreadyCreatedAndPublishedEService(String tenantType, int totalEservices) {
         tenantHasAlreadyCreatedAndPublishedEService(tenantType, totalEservices, Optional.empty());
+    }
+
+    @Given("{string} ha già creato e pubblicato {int} e-service(s) delegabile(i) in fruizione con approvazione {agreementApprovalPolicy}")
+    public void tenantHasAlreadyCreatedAndPublishedDelegableEService(String tenantType, int totalEservices, AgreementApprovalPolicy agreementApprovalPolicy) {
+        EServiceConfig build = EServiceConfig.builder()
+                .delegable(true)
+                .agreementApprovalPolicy(agreementApprovalPolicy)
+                .build();
+        tenantHasAlreadyCreatedAndPublishedEService(tenantType, totalEservices, Optional.of(build));
     }
 
     @Given("{string} ha già creato e pubblicato {int} e-service(s) delegabile(i) in fruizione")
@@ -109,7 +120,7 @@ public class AgreementCommonSteps {
                 .isConsumerDelegable(eServiceConfig.map(EServiceConfig::getDelegable).orElse(null))
                 .isClientAccessDelegable(eServiceConfig.map(EServiceConfig::getClientAccessDelegable).orElse(null));
             EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(
-                eserviceSeed, new UpdateEServiceDescriptorSeed());
+                eserviceSeed, new UpdateEServiceDescriptorSeed().agreementApprovalPolicy(eServiceConfig.map(EServiceConfig::getAgreementApprovalPolicy).orElse(null)));
             // Set the descriptor to "PUBLISHED" state
             dataPreparationService.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(),
                 eServiceDescriptor.getDescriptorId(), EServiceDescriptorState.PUBLISHED, false);

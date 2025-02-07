@@ -49,7 +49,7 @@ public class DelegationDenyStep {
     @And("l'ente {delegationRole} rifiuta la delega in fruizione")
     public void delegationIsRejectedByTenant(DelegationRole delegationRole) {
         String tenantType = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
-        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         rejectConsumerDelegation(tenantType);
     }
 
@@ -62,7 +62,7 @@ public class DelegationDenyStep {
 
     @And("l'ente fruitore {string} rifiuta la delega")
     public void rejectConsumerDelegation(String tenantType) {
-        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(
                 () -> consumerDelegationsApiClient.rejectConsumerDelegation(sharedStepsContext.getXCorrelationId(),
                         sharedStepsContext.getDelegationCommonContext().getDelegationId(),
