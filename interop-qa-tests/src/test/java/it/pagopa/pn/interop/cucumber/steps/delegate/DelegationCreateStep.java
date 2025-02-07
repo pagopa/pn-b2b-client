@@ -150,7 +150,7 @@ public class DelegationCreateStep {
 
     @And("l'ente {string} concede la disponibilità a ricevere deleghe in fruizione")
     public void tenantGrantsConsumerDelegationAvailability(String tenantType) {
-        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         setDelegationAvailability(tenantType, consumerStrategyUsing(tenantsApi), sharedStepsContext.getXCorrelationId());
     }
 
