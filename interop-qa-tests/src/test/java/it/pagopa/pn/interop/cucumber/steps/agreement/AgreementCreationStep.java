@@ -39,11 +39,15 @@ public class AgreementCreationStep {
 
     @Given("l'utente crea una richiesta di fruizione")
     public void userCreatesRequestForService() {
+        agreementCreationRequest(null);
+    }
+
+    private void agreementCreationRequest(UUID delegationId) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         UUID agreementId = dataPreparationService.createAgreement(
             sharedStepsContext.getEServicesCommonContext().getEserviceId(),
             sharedStepsContext.getEServicesCommonContext().getDescriptorId(),
-            null);
+            delegationId);
         sharedStepsContext.setAgreementId(agreementId);
     }
 
@@ -54,26 +58,25 @@ public class AgreementCreationStep {
 
     @Given("il {delegationRole} ha già creato e inviato una richiesta di fruizione in delega ed è in attesa di approvazione")
     public void delegationRequestForServiceAlreadySubmittedAndPendingApproval(DelegationRole delegationRole) {
-        String tenantType = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
-        delegationRequestForServiceAlreadySubmittedAndPendingApproval(tenantType);
+        delegationRequestForServiceAlreadySubmittedAndPendingApproval();
     }
 
     @Given("{string} ha già creato e inviato una richiesta di fruizione in delega ed è in attesa di approvazione")
-    public void delegationRequestForServiceAlreadySubmittedAndPendingApproval(String tenantType) {
+    public void delegationRequestForServiceAlreadySubmittedAndPendingApproval() {
         UUID delegationId = sharedStepsContext.getDelegationCommonContext().getDelegationId();
         agreementProcessRequest(delegationId);
     }
 
-    @Given("il {delegationRole} ha già creato e inviato una richiesta di fruizione indicando una delega inesistente")
-    public void delegationNotExistRequestForServiceAlreadySubmittedAndPendingApproval(DelegationRole delegationRole) {
+    @Given("l'utente ha già creato una richiesta di fruizione indicando una delega inesistente")
+    public void delegationNotExistRequestForServiceAlreadySubmittedAndPendingApproval() {
         UUID delegationId = UUID.randomUUID();
-        agreementProcessRequest(delegationId);
+        agreementCreationRequest(delegationId);
     }
 
-    @Given("il {delegationRole} ha già creato e inviato una richiesta di fruizione indicando la delega dell'ente terzo")
-    public void wrongDelegationRequestForServiceAlreadySubmittedAndPendingApproval(DelegationRole delegationRole) {
+    @Given("l'utente ha già creato una richiesta di fruizione indicando la delega dell'ente terzo")
+    public void wrongDelegationRequestForServiceAlreadySubmittedAndPendingApproval() {
         UUID delegationId = sharedStepsContext.getDelegationCommonContext().getAuxDelegationId();
-        agreementProcessRequest(delegationId);
+        agreementCreationRequest(delegationId);
     }
 
     private void agreementProcessRequest(UUID delegationId) {
