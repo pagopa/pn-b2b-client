@@ -682,24 +682,53 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
     public TimelineElementV26 readingEventUpToTheTimelineElementOfNotificationForCategory(String timelineEventCategory) {
-        PnPollingServiceTimelineSlowV26 timelineSlowV26 = (PnPollingServiceTimelineSlowV26) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_SLOW_V26);
+        PnPollingServiceTimelineSlowV26 timelineSlowV26 =
+                (PnPollingServiceTimelineSlowV26) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_SLOW_V26);
 
-        PnPollingResponseV26 pnPollingResponseV26 = timelineSlowV26.waitForEvent(sharedSteps.getIunVersionamento(),
+        PnPollingResponseV26 pnPollingResponseV26 = timelineSlowV26.waitForEvent(
+                sharedSteps.getIunVersionamento(),
                 PnPollingParameter.builder()
                         .value(timelineEventCategory)
-                        .build());
+                        .build()
+        );
+
+        // Controllo NullPointerException
+        assertThat(pnPollingResponseV26)
+                .as("La risposta di polling non dovrebbe essere nulla")
+                .isNotNull();
+
+        assertThat(pnPollingResponseV26.getNotification())
+                .as("La notifica nella risposta di polling non dovrebbe essere nulla")
+                .isNotNull();
+
+        assertThat(pnPollingResponseV26.getNotification().getTimeline())
+                .as("La timeline della notifica non dovrebbe essere nulla")
+                .isNotNull();
+
         log.info("NOTIFICATION_TIMELINE: " + pnPollingResponseV26.getNotification().getTimeline());
+
         try {
-            Assertions.assertTrue(pnPollingResponseV26.getResult());
-            Assertions.assertNotNull(pnPollingResponseV26.getTimelineElement());
+            assertThat(pnPollingResponseV26.getResult())
+                    .as("Il risultato del polling dovrebbe essere valorizzato")
+                    .isTrue();
+
+            assertThat(pnPollingResponseV26.getTimelineElement())
+                    .as("L'elemento della timeline non dovrebbe essere nullo")
+                    .isNotNull();
+
             sharedSteps.setSentNotification(pnPollingResponseV26.getNotification());
+
             TimelineElementV26 timelineElement = pnPollingResponseV26.getTimelineElement();
             log.info("TIMELINE_ELEMENT: " + timelineElement);
             sharedSteps.setTimelineElement(timelineElement);
+
+            return timelineElement;
+
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
-        return pnPollingResponseV26.getTimelineElement();
+
+        return null;
     }
 
     public TimelineElementV26 readingEventUpToTheTimelineElementOfNotificationForCategoryExtraRapid(String timelineEventCategory) {

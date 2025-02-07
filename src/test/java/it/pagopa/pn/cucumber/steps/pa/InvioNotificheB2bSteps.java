@@ -30,7 +30,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpStatusCodeException;
-
+import static org.assertj.core.api.Assertions.assertThat;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.*;
@@ -1068,30 +1068,78 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
     @And("si verifica il contenuto degli attachments da inviare in via cartacea al destinatario {int} con {int} allegati")
     public void checkDocumentInviatiPaper(Integer destinatario, Integer allegati) {
         try {
-            this.documentiPec = pnExternalChannelsServiceClientImpl.getReceivedMessagesAnalogico(sharedSteps.getIunVersionamento(), destinatario);
-            Assertions.assertNotNull(documentiPec);
+            this.documentiPec = pnExternalChannelsServiceClientImpl.getReceivedMessagesAnalogico(
+                    sharedSteps.getIunVersionamento(), destinatario
+            );
+
+            // Prevenzione NullPointerException
+            assertThat(documentiPec)
+                    .as("La lista dei documenti analogici non dovrebbe essere nulla")
+                    .isNotNull()
+                    .isNotEmpty(); // Assicura che ci sia almeno un documento
+
             log.info("documenti analogici : {}", documentiPec);
-            Assertions.assertEquals(allegati, documentiPec.get(0).getPaperEngageRequest().getAttachments().size());
+
+            // Prevenzione NullPointerException
+            ReceivedMessage firstDocument = documentiPec.get(0);
+            assertThat(firstDocument)
+                    .as("Il primo documento ricevuto non dovrebbe essere nullo")
+                    .isNotNull();
+
+            assertThat(firstDocument.getPaperEngageRequest())
+                    .as("Il PaperEngageRequest del primo documento non dovrebbe essere nullo")
+                    .isNotNull();
+
+            assertThat(firstDocument.getPaperEngageRequest().getAttachments())
+                    .as("Gli allegati del PaperEngageRequest non dovrebbero essere nulli")
+                    .isNotNull()
+                    .hasSize(allegati); //*
+
         } catch (AssertionFailedError assertionFailedError) {
-            String message = assertionFailedError.getMessage() + "Verifica Allegati analogici in errore ";
+            String message = assertionFailedError.getMessage() + " - Verifica Allegati analogici in errore.";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
     }
 
     @And("si verifica che il contenuto degli attachments da inviare in via cartacea abbia {int} attachment di tipo {string}")
     public void presenceAttachmentAnalogicFlow(Integer numeroDocumenti, String tipologia) {
-        List<String> attachmentsUri = Optional.ofNullable(documentiPec.get(0))
-                .map(ReceivedMessage::getPaperEngageRequest)
-                .map(PaperEngageRequest::getAttachments)
-                .orElse(List.of())
-                .stream()
-                .map(PaperEngageRequestAttachments::getUri)
-                .filter(uri -> uri.contains(tipologia))
-                .toList();
         try {
-            Assertions.assertEquals(numeroDocumenti, attachmentsUri.size());
+            // Prevenzione NullPointerException
+            assertThat(documentiPec)
+                    .as("La lista dei documenti PEC non dovrebbe essere nulla")
+                    .isNotNull()
+                    .isNotEmpty();
+
+            ReceivedMessage firstDocument = documentiPec.get(0);
+            assertThat(firstDocument)
+                    .as("Il primo documento ricevuto non dovrebbe essere nullo")
+                    .isNotNull();
+
+            PaperEngageRequest paperEngageRequest = firstDocument.getPaperEngageRequest();
+            assertThat(paperEngageRequest)
+                    .as("Il PaperEngageRequest non dovrebbe essere nullo")
+                    .isNotNull();
+
+            List<PaperEngageRequestAttachments> attachments = paperEngageRequest.getAttachments();
+            assertThat(attachments)
+                    .as("La lista degli allegati non dovrebbe essere nulla")
+                    .isNotNull();
+
+            List<String> attachmentsUri = Optional.ofNullable(documentiPec.get(0))
+                    .map(ReceivedMessage::getPaperEngageRequest)
+                    .map(PaperEngageRequest::getAttachments)
+                    .orElse(List.of())
+                    .stream()
+                    .map(PaperEngageRequestAttachments::getUri)
+                    .filter(uri -> uri.contains(tipologia))
+                    .toList();
+
+            assertThat(attachmentsUri)
+                    .as("Il numero di allegati ottenuto non corrisponde al valore atteso", tipologia, numeroDocumenti)
+                    .hasSize(numeroDocumenti);
+
         } catch (AssertionFailedError assertionFailedError) {
-            String message = assertionFailedError.getMessage() + "Verifica Allegati Cartacei in errore ";
+            String message = assertionFailedError.getMessage() + " - Verifica Allegati Cartacei in errore.";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
     }
@@ -1099,9 +1147,23 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
     @And("si verifica che il {int} documento arrivato sia di tipo {string}")
     public void checkIndexedDocument(Integer documentIndex, String tipologia) {
         ReceivedMessage firstDocumentReceived = documentiPec.get(0);
-        Assertions.assertNotNull(firstDocumentReceived.getPaperEngageRequest());
-        Assertions.assertNotNull(firstDocumentReceived.getPaperEngageRequest().getAttachments());
-        Assertions.assertTrue(firstDocumentReceived.getPaperEngageRequest().getAttachments().get(documentIndex - 1).getDocumentType().equals(tipologia));
+
+        assertThat(firstDocumentReceived.getPaperEngageRequest())
+                .as("Il PaperEngageRequest non dovrebbe essere nullo")
+                .isNotNull();
+
+        assertThat(firstDocumentReceived.getPaperEngageRequest().getAttachments())
+                .as("Gli allegati del PaperEngageRequest non dovrebbero essere nulli")
+                .isNotNull();
+
+        assertThat(firstDocumentReceived.getPaperEngageRequest().getAttachments())
+                .as("L'indice fornito (%d) è fuori dai limiti della lista degli allegati", documentIndex)
+                .hasSizeGreaterThanOrEqualTo(documentIndex);
+
+        assertThat(firstDocumentReceived.getPaperEngageRequest().getAttachments().get(documentIndex - 1).getDocumentType())
+                .as("Il documento all'indice %d non è del tipo atteso: %s", documentIndex, tipologia)
+                .isEqualTo(tipologia);
+
         log.info(firstDocumentReceived.toString());
     }
 
