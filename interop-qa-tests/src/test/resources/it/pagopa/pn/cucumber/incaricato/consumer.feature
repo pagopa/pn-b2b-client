@@ -71,7 +71,7 @@ Feature: Test API Availability in Use of E-Service
   # @TC_INCARICATO_49 rimosso a seguito di revisione perché non ritenuto più pertinente
 
     Scenario Outline: [TC_INCARICATO_50] Richiamare l’API di accettazione di una delega in stato WAITING_FOR_APPROVAL
-    Given "GSP" ha già creato e pubblicato 1 e-service
+    Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA2"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
@@ -90,7 +90,7 @@ Feature: Test API Availability in Use of E-Service
       | support     |        403 |
 
     Scenario Outline: [TC_INCARICATO_51] Richiamare l’API di accettazione di una delega in stato "revocata" deve produrre un errore
-    Given "GSP" ha già creato e pubblicato 1 e-service
+    Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
@@ -110,7 +110,7 @@ Feature: Test API Availability in Use of E-Service
       | support     |        403 |
 
     Scenario Outline: [TC_INCARICATO_52] Richiamare l’API di accettazione di una delega in stato rifiutata
-    Given "GSP" ha già creato e pubblicato 1 e-service
+    Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
@@ -131,7 +131,7 @@ Feature: Test API Availability in Use of E-Service
       | support     |        403 |
 
     Scenario Outline: [TC_INCARICATO_53] Richiamare l’API di rifiuto di una delega in stato WAITING_FOR_APPROVAL
-    Given "GSP" ha già creato e pubblicato 1 e-service
+    Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
@@ -150,7 +150,7 @@ Feature: Test API Availability in Use of E-Service
       | support     |        403 |
 
     Scenario Outline: [TC_INCARICATO_54] Richiamare l’API di rifiuto su una delega in stato REVOKED
-    Given "GSP" ha già creato e pubblicato 1 e-service
+    Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
@@ -170,7 +170,7 @@ Feature: Test API Availability in Use of E-Service
       | support     |        403 |
 
     Scenario Outline: [TC_INCARICATO_55] Richiamare l’API di rifiuto di una delega da parte del delegante: non permessa in quanto il rifiuto è una facoltà esclusiva del delegato
-    Given "GSP" ha già creato e pubblicato 1 e-service
+    Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
@@ -189,7 +189,7 @@ Feature: Test API Availability in Use of E-Service
       | support     |        403 |
 
     Scenario Outline: [TC_INCARICATO_56] Richiamare l’API di rifiuto di una delega in stato ACTIVE: non è permesso rifiutare una delega già precedentemente accettata
-    Given "GSP" ha già creato e pubblicato 1 e-service
+    Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
@@ -210,7 +210,7 @@ Feature: Test API Availability in Use of E-Service
       | support     |        403 |
 
     Scenario Outline: [TC_INCARICATO_57] Richiamare l’API di creazione fruizione da parte di un delegato alla fruizione, specificando la delega corretta
-    Given "GSP" ha già creato e pubblicato 1 e-service
+    Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
@@ -232,7 +232,7 @@ Feature: Test API Availability in Use of E-Service
 
 
     Scenario Outline: [TC_INCARICATO_58] Richiamare l’API di creazione di una richiesta di fruizione, specificando una delega inesistente
-    Given "GSP" ha già creato e pubblicato 1 e-service
+    Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
@@ -253,7 +253,7 @@ Feature: Test API Availability in Use of E-Service
       | support     |        403 |
 
     Scenario Outline: [TC_INCARICATO_58_BIS] Richiamare l’API di creazione di una richiesta di fruizione, specificando una delega che non compete al delegato
-    Given "GSP" ha già creato e pubblicato 1 e-service
+    Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
@@ -281,7 +281,7 @@ Feature: Test API Availability in Use of E-Service
       | support     |        403 |
 
     Scenario Outline: [TC_INCARICATO_58_TRIS] Richiamare l’API di creazione di una richiesta di fruizione, specificando una delega che non compete né al delegante né al delegato
-    Given "GSP" ha già creato e pubblicato 1 e-service
+    Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
@@ -309,7 +309,7 @@ Feature: Test API Availability in Use of E-Service
       | support     |        403 |
 
     Scenario Outline: [TC_INCARICATO_59] Richiamare l’API di accettazione di una richiesta di fruizione fatta da un delegato
-    Given "GSP" ha già creato e pubblicato 1 e-service
+    Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
@@ -334,7 +334,7 @@ Feature: Test API Availability in Use of E-Service
 
 
     Scenario Outline: [TC_INCARICATO_60] Richiamare l’API di rifiuto di una richiesta di fruizione fatta da un delegato
-    Given "GSP" ha già creato e pubblicato 1 e-service
+    Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
@@ -357,7 +357,7 @@ Feature: Test API Availability in Use of E-Service
       | support     |        403 |
 
     Scenario Outline: [TC_INCARICATO_62] Richiamare l’API di creazione di una finalità da parte di un delegato alla fruizione
-    Given "GSP" ha già creato e pubblicato 1 e-service
+    Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
