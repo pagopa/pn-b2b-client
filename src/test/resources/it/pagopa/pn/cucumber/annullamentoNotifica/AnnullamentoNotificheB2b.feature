@@ -57,7 +57,7 @@ Feature: annullamento notifiche b2b
       | physicalCommunication |  AR_REGISTERED_LETTER |
     And destinatario
       | denomination | Test AR Fail 2 |
-      | taxId | MNTMRA03M71C615V |
+      | taxId | DVNLRD52D15M059P |
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -724,7 +724,7 @@ Feature: annullamento notifiche b2b
   @Annullamento  @addressBook1
   Scenario:  [B2B-PA-ANNULLAMENTO_28] PA mittente: annullamento notifica durante invio mail di cortesia
     Given si predispone addressbook per l'utente "Galileo Galilei"
-    And viene inserito un recapito legale "example@pecSuccess.it"
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "Comune_1"
     And viene generata una nuova notifica
       | subject | invio notifica con cucumber |
     And destinatario
