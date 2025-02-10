@@ -250,12 +250,8 @@ Feature: Test API Availability in Use of E-Service
     Then si ottiene status code 409
 
 
-  # FIXME 10/02/2025: questo test non può essere fatto usando l'ente "Privato", per cui al passo
-  # -> l'ente "Privato" ha inoltrato una richiesta di delega in fruizione all'ente terzo "GSP2"
-  # si ottiene la response
-  # -> {"type":"about:blank","title":"Origin is not compliant","status":403,"detail":"Delegator a7a87b2c-5742-43fb-a847-6304bb0414b4 with external origin IVASS is not allowed","correlationId":"81b68165-382c-4ee6-bba0-8bc64162c700","errors":[{"code":"0006","detail":"Delegator a7a87b2c-5742-43fb-a847-6304bb0414b4 with external origin IVASS is not allowed"}]}
-  # Ci sarebbe dunque bisogno di un nuovo ente che possa fare deleghe in fruizione a GSP2
-  @ignore
+  # NOTA BUG: per un risultato di tipo 'not found' ci si aspetterebbe un 404, non 400
+  # Response body: {"type":"about:blank","title":"Delegation not found","status":400,"detail":"Delegation dd54ea4f-3922-4ab5-847c-35765fef8efe not found","correlationId":"b1303079-d942-4f0b-ab71-765d389645c7","errors":[{"code":"0026","detail":"Delegation dd54ea4f-3922-4ab5-847c-35765fef8efe not found"}]}
   Scenario: [TC_INCARICATO_58_TRIS] Richiamare l’API di creazione di una richiesta di fruizione, specificando una delega che non compete né al delegante né al delegato
     Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     And l'ente delegato "PA1"
@@ -270,12 +266,12 @@ Feature: Test API Availability in Use of E-Service
     # Processo di produzione di una delega tra due enti diversi da delegante e delegato
     And l'utente è un "admin" di "GSP2"
     And l'ente "GSP2" concede la disponibilità a ricevere deleghe in fruizione
-    And l'utente è un "admin" di "Privato"
-    And l'ente "Privato" ha inoltrato una richiesta di delega in fruizione all'ente terzo "GSP2"
+    And l'utente è un "admin" di "GSP"
+    And l'ente "GSP" ha inoltrato una richiesta di delega in fruizione all'ente terzo "GSP2"
     And l'utente è un "admin" dell'ente delegato
 
     When l'utente ha già creato una richiesta di fruizione indicando la delega dell'ente terzo
-    Then si ottiene status code 403
+    Then si ottiene status code 404
 
   Scenario Outline: [TC_INCARICATO_59] Richiamare l’API di accettazione di una richiesta di fruizione fatta da un delegato
     Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione manuale
@@ -430,7 +426,7 @@ Feature: Test API Availability in Use of E-Service
     When l'utente richiede l'associazione della finalità al client
     Then si ottiene status code 403
 
-    Scenario Outline: [TC_INCARICATO_66] Il delegato richiama l’API di associazione di un client NON precedentemente creato
+    Scenario: [TC_INCARICATO_66] Il delegato richiama l’API di associazione di un client NON precedentemente creato
     Given l'utente è un "admin" di "GSP"
     And "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     And l'ente delegato "PA1"
