@@ -816,6 +816,7 @@ Feature: Test API Availability in Use of E-Service
 #      | api,security|        403 |
 #      | support     |        403 |
 
+  # TODO 10/02/2025: chiedere conferma che gli altri ruoli possano ottenere questa informazione
   Scenario Outline: [TC_INCARICATO_85] Richiamare l’API di visualizzazione elenco deleghe conferite lato delegante
     Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     And l'ente delegato "PA2"
@@ -825,15 +826,15 @@ Feature: Test API Availability in Use of E-Service
     And l'utente è un "<ruolo>" dell'ente delegante
     And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
     When l'ente delegante visualizza l'elenco delle deleghe conferite
-    Then si ottiene status code <statusCode>
+    Then si ottiene status code 200
 
     Examples:
-      | ruolo       | statusCode |
-      | admin       |        200 |
-      | api         |        403 |
-      | security    |        403 |
-      | api,security|        403 |
-      | support     |        403 |
+      | ruolo        |
+      | admin        |
+      | api          |
+      | security     |
+      | api,security |
+      | support      |
 
     Scenario Outline: [TC_INCARICATO_86] Richiamare l’API di visualizzazione elenco deleghe ricevute lato delegato da parte di un utente amministratore o non-amministratore
     Given l'ente delegato "PA2"
