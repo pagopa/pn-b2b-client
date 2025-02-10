@@ -836,16 +836,16 @@ Feature: Test API Availability in Use of E-Service
       | api,security |
       | support      |
 
-    Scenario Outline: [TC_INCARICATO_86] Richiamare l’API di visualizzazione elenco deleghe ricevute lato delegato da parte di un utente amministratore o non-amministratore
-    Given l'ente delegato "PA2"
+  Scenario Outline: [TC_INCARICATO_86] Richiamare l’API di visualizzazione elenco deleghe ricevute lato delegato da parte di un utente amministratore o non-amministratore
+    Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
+    And l'ente delegato "PA2"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
     And l'ente delegante "PA1"
     And l'utente è un "<ruolo>" dell'ente delegante
-    And l'ente delegante ha già creato e pubblicato 1 e-service
     And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
     When l'ente delegato visualizza l'elenco delle deleghe ricevute
-    Then si ottiene status code <statusCode>
+    Then si ottiene status code 200
 
     Examples:
       | ruolo       | statusCode |
@@ -855,24 +855,24 @@ Feature: Test API Availability in Use of E-Service
       | api,security|        403 |
       | support     |        403 |
 
-    Scenario Outline: [TC_INCARICATO_87] Richiamare l’API di visualizzazione dettaglio delega conferita lato delegante
-    Given l'ente delegato "PA2"
+  Scenario Outline: [TC_INCARICATO_87] Richiamare l’API di visualizzazione dettaglio delega conferita lato delegante
+    Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
+    And l'ente delegato "PA2"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
     And l'ente delegante "PA1"
     And l'utente è un "<ruolo>" dell'ente delegante
-    And l'ente delegante ha già creato e pubblicato 1 e-service
     And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
     When l'utente visualizza il dettaglio della delega creata
-    Then si ottiene status code <statusCode>
+    Then si ottiene status code 200
 
     Examples:
-      | ruolo       | statusCode |
-      | admin       |        200 |
-      | api         |        403 |
-      | security    |        403 |
-      | api,security|        403 |
-      | support     |        403 |
+      | ruolo        |
+      | admin        |
+      | api          |
+      | security     |
+      | api,security |
+      | support      |
 
     Scenario Outline: [TC_INCARICATO_88] Richiamare l’API di visualizzazione del dettaglio della delega ricevuta lato delegato, da parte di un utente amministratore o non-amministratore
     Given l'ente delegato "PA2"
@@ -887,12 +887,12 @@ Feature: Test API Availability in Use of E-Service
     Then si ottiene status code <statusCode>
 
     Examples:
-      | ruolo       | statusCode |
-      | admin       |        200 |
-      | api         |        403 |
-      | security    |        403 |
-      | api,security|        403 |
-      | support     |        403 |
+      | ruolo        |
+      | admin        |
+      | api          |
+      | security     |
+      | api,security |
+      | support      |
 
     Scenario Outline: [TC_INCARICATO_89] L'ente NON deve essere in grado di creare una delega per un e-service per il quale ha in corso una richiesta di fruizione in stato ACTIVE, SUSPENDED o WAITING_FOR_APPROVAL
     Given l'utente è un "admin" di "PA2"
