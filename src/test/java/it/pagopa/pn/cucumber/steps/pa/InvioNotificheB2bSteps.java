@@ -1258,12 +1258,23 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
     @When("invio una notifica ad ogni taxId della blackList e ricevo un errore {string} con con messaggio di errore {string}")
     public void invioUnaNotificaAdOgniTaxIdDellaBlackListERicevoUnErroreConConMessaggioDiErrore(String errorCode, String errorMessage) {
         blackListTaxIds.forEach(data -> {
+            resetNotificationRequest();
             HashMap<String, String> map = new HashMap<>();
             map.put("taxId", data);
             sharedSteps.destinatario(map);
             sharedSteps.laNotificaVieneInviataDallaPA("Comune_1");
             operationProducedAnErrorWithMessage(errorCode, errorMessage);
         });
+    }
+
+    private void resetNotificationRequest() {
+        sharedSteps.getNotificationRequest().setRecipients(new ArrayList<>());
+        NotificationAttachmentBodyRef ref = new NotificationAttachmentBodyRef()
+                .key("classpath:/sample.pdf");
+        NotificationDocument document = new NotificationDocument()
+                .contentType("application/pdf")
+                        .ref(ref);
+        sharedSteps.getNotificationRequest().setDocuments(List.of(document));
     }
 
     @And("riprendo tutti i taxId presenti nella blacklist")

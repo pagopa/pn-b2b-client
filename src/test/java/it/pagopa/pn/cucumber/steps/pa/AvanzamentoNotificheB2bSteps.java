@@ -3707,12 +3707,12 @@ public class AvanzamentoNotificheB2bSteps {
 
         int minsToCheck = getMinsToCheck(notificationType);
 
-        long differenceInMinutes = Duration.between(getFirstElementTime(firstElementToCheck, firstElement, digitalAddressSource,  iun), secondElementToCheck.getDetails().getSchedulingDate()).toMinutes();
+        long differenceInMinutes = Duration.between(getFirstElementTime(firstElementToCheck, firstElement, addressType,  iun), secondElementToCheck.getDetails().getSchedulingDate()).toMinutes();
         Assertions.assertEquals(minsToCheck, differenceInMinutes, "Time between first and second element not correct: " + iun + " expected wait " + minsToCheck + " actual wait " + differenceInMinutes);
     }
 
-    private OffsetDateTime getFirstElementTime(TimelineElementV26 firstElementToCheck, String firstElement, String digitalAddressSource, String iun) {
-        if(firstElement.equalsIgnoreCase("SEND_DIGITAL_FEEDBACK") && digitalAddressSource.equals("SERCQ")) {
+    private OffsetDateTime getFirstElementTime(TimelineElementV26 firstElementToCheck, String firstElement, String addressType, String iun) {
+        if(firstElement.equalsIgnoreCase("SEND_DIGITAL_FEEDBACK") && addressType.equals("SERCQ")) {
             Assertions.assertNotNull(firstElementToCheck.getDetails(), "Details for first element to check not found iun: " + iun);
             Assertions.assertNotNull(firstElementToCheck.getDetails().getNotificationDate(), "NotificationDate for first element to check not found iun: " + iun);
             return firstElementToCheck.getDetails().getNotificationDate();
