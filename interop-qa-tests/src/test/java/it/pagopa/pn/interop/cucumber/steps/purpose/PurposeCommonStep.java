@@ -1,11 +1,15 @@
 package it.pagopa.pn.interop.cucumber.steps.purpose;
 
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Purpose;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
 import it.pagopa.interop.purpose.domain.RiskAnalysis;
 import it.pagopa.interop.purpose.domain.TEServiceMode;
+import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
@@ -13,6 +17,7 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -21,6 +26,8 @@ public class PurposeCommonStep {
     private final IdentityService identityService;
     private final DataPreparationService dataPreparationService;
     private final SharedStepsContext sharedStepsContext;
+    private final IPurposeApiClient purposeApiClient;
+
 
     public PurposeCommonStep(ClientTokenConfigurator clientTokenConfigurator,
                              IdentityService identityService,
@@ -30,6 +37,13 @@ public class PurposeCommonStep {
         this.identityService = identityService;
         this.dataPreparationService = dataPreparationService;
         this.sharedStepsContext = sharedStepsContext;
+        this.purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
+    }
+
+    @Given("il {delegationRole} ha già creato {int} finalità in stato {string} per quell'eservice")
+    public void tenantHasAlreadyCreateFinalizationWithStatus(DelegationRole delegationRole, int n, String purposeVersionState) {
+        String tenantType = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
+        tenantHasAlreadyCreateFinalizationWithStatus(tenantType, n, purposeVersionState);
     }
 
     @Given("{string} ha già creato {int} finalità in stato {string} per quell'eservice")
@@ -79,6 +93,22 @@ public class PurposeCommonStep {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         PurposeCommonContext purposeCommonContext = sharedStepsContext.getPurposeCommonContext();
         dataPreparationService.rejectPurposeVersion(UUID.fromString(purposeCommonContext.getPurposeId()), UUID.fromString(purposeCommonContext.getWaitingForApprovalVersionId()));
+    }
+
+    @And("il {delegationRole} controlla che la finalità sia stata archiviata")
+    public void purposeIsArchived(DelegationRole delegationRole) {
+        String tenantType = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        Purpose purpose = purposeApiClient.getPurpose(sharedStepsContext.getXCorrelationId(),
+                UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId()));
+        Optional.ofNullable(purpose)
+                .map(Purpose::getCurrentVersion)
+                .map(PurposeVersion::getState)
+                .filter(state -> state.equals(PurposeVersionState.ARCHIVED))
+                .orElseThrow(() -> new IllegalStateException("The purpose was not archived"));
+
+
+
     }
 
 }
