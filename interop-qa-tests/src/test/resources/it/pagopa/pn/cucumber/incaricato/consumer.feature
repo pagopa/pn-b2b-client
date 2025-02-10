@@ -27,32 +27,42 @@ Feature: Test API Availability in Use of E-Service
       | api,security|        403 |
       | support     |        403 |
 
-    Scenario: [TC_INCARICATO_46] Verificare che il richiamo dell’API di disponibilità in fruizione di un e-service, per il quale è già stata data disponibilità, non possa essere compiuto da un utente di tipo amministratore
-      Given l'ente delegato "PA2"
-      And l'utente è un "admin" dell'ente delegato
-      And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
-      When l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
-      Then si ottiene status code 409
+  Scenario: [TC_INCARICATO_46] Verificare che il richiamo dell’API di disponibilità in fruizione di un e-service, per il quale è già stata data disponibilità, non possa essere compiuto da un utente di tipo amministratore
+    Given l'ente delegato "PA2"
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
+    When l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
+    Then si ottiene status code 409
 
-      # NOTA BUG: se viene creata una delega per un e-service NON delegabile in fruizione, lo status d'errore restituito è 500.  #TODO identificare o elaborare test che testi proprio questo
-    Scenario Outline: [TC_INCARICATO_47] Richiamare l’API di creazione di una delega da parte di un fruitore delegante verso un altro ente delegato
-      Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
-      Given l'ente delegato "PA2"
-      And l'utente è un "admin" dell'ente delegato
-      And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
-      And l'ente delegante "PA1"
-      And l'utente è un "<ruolo>" dell'ente delegante
-      When l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
-      Then si ottiene status code <statusCode>
-      Examples:
-        | ruolo       | statusCode |
-        | admin       |        200 |
-        | api         |        403 |
-        | security    |        403 |
-        | api,security|        403 |
-        | support     |        403 |
+  Scenario Outline: [TC_INCARICATO_47] Richiamare l’API di creazione di una delega da parte di un fruitore delegante verso un altro ente delegato
+    Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
+    Given l'ente delegato "PA2"
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
+    And l'ente delegante "PA1"
+    And l'utente è un "<ruolo>" dell'ente delegante
+    When l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
+    Then si ottiene status code <statusCode>
+    Examples:
+      | ruolo       | statusCode |
+      | admin       |        200 |
+      | api         |        403 |
+      | security    |        403 |
+      | api,security|        403 |
+      | support     |        403 |
 
-    Scenario Outline: [TC_INCARICATO_48] La creazione di una delega in fruizione verso un ente che non ha dato la propria disponibilità a ricevere deleghe in fruizione deve fallire
+  # NOTA BUG: se viene creata una delega per un e-service NON delegabile in fruizione, lo status d'errore restituito è 500.
+  Scenario: [TC_INCARICATO_47_BIS] Richiamare l’API di creazione di una delega da parte di un fruitore delegante verso un altro ente delegato, su un e-service NON delegabile in fruizione
+    Given "GSP" ha già creato e pubblicato 1 e-service
+    Given l'ente delegato "PA2"
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
+    And l'ente delegante "PA1"
+    And l'utente è un "admin" dell'ente delegante
+    When l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
+    Then si ottiene status code 400
+
+  Scenario Outline: [TC_INCARICATO_48] La creazione di una delega in fruizione verso un ente che non ha dato la propria disponibilità a ricevere deleghe in fruizione deve fallire
     Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegante "PA1"
     And l'utente è un "<ruolo>" dell'ente delegante
