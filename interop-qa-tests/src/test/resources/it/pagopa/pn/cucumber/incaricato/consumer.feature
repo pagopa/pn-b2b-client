@@ -434,7 +434,7 @@ Feature: Test API Availability in Use of E-Service
     When l'utente richiede l'associazione della finalità al client
     Then si ottiene status code 403
 
-    Scenario Outline: [TC_INCARICATO_66] Il delegato richiama l’API di associazione di un client NON precedentemente creato
+    Scenario: [TC_INCARICATO_66] Il delegato richiama l’API di associazione di un client NON precedentemente creato
     Given l'utente è un "admin" di "GSP"
     And "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     And l'ente delegato "PA1"
@@ -828,8 +828,9 @@ Feature: Test API Availability in Use of E-Service
       | api,security|        403 |
       | support     |        403 |
 
-    Scenario Outline: [TC_INCARICATO_85] Richiamare l’API di visualizzazione elenco deleghe conferite lato delegante
-    Given l'ente delegato "PA2"
+  Scenario Outline: [TC_INCARICATO_85] Richiamare l’API di visualizzazione elenco deleghe conferite lato delegante
+    Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
+    And l'ente delegato "PA2"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
     And l'ente delegante "PA1"
