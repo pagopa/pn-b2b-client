@@ -14,6 +14,7 @@ Feature: Test API Availability in Use of E-Service
     # TODO 07/02/2025: considerare di generalizzare così da resettare TUTTI gli enti automaticamente
     Given l'ente "PA2" rimuove la disponibilità a ricevere deleghe in fruizione
     And l'ente "PA1" rimuove la disponibilità a ricevere deleghe in fruizione
+    And l'ente "GSP2" rimuove la disponibilità a ricevere deleghe in fruizione
 
   Scenario Outline: [TC_INCARICATO_45] Verificare che il richiamo dell’API di disponibilità in fruizione di un e-service possa essere compiuto da un utente di tipo amministratore
     Given l'utente è un "<ruolo>" di "PA1"
@@ -99,6 +100,8 @@ Feature: Test API Availability in Use of E-Service
       | api,security|        403 |
       | support     |        403 |
 
+    # NOTA BUG: per il ruolo admin viene restituito 500, non il migliore degli stati d'errore. Esempio:
+    # Response Body: {"type":"about:blank","title":"Unexpected error","status":500,"detail":"Unexpected error","correlationId":"1e7c18d5-c2bf-4eb4-958b-26a12a051cc8","errors":[{"code":"9991","detail":"Unexpected error"}]}
     Scenario: [TC_INCARICATO_51] Richiamare l’API di accettazione di una delega in stato "revocata" deve produrre un errore
     Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA1"
@@ -112,7 +115,10 @@ Feature: Test API Availability in Use of E-Service
     And l'ente delegato accetta la delega in fruizione
     Then si ottiene status code 403
 
-    Scenario: [TC_INCARICATO_52] Richiamare l’API di accettazione di una delega in stato rifiutata
+    # NOTA BUG: per il ruolo admin viene restituito 500, non il migliore degli stati d'errore. Esempio:
+    # Response Body: {"type":"about:blank","title":"Unexpected error","status":500,"detail":"Unexpected error","correlationId":"1e7c18d5-c2bf-4eb4-958b-26a12a051cc8","errors":[{"code":"9991","detail":"Unexpected error"}]}
+    # TC_INCARICATO_56 invece ha un codice migliore, 409 [al momento di stesura del ticket non fare riferimento all'id del test ma a ciò che testa]
+  Scenario: [TC_INCARICATO_52] Richiamare l’API di accettazione di una delega in stato rifiutata
     Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
@@ -191,7 +197,7 @@ Feature: Test API Availability in Use of E-Service
     When l'ente delegato rifiuta la delega in fruizione
     Then si ottiene status code 409
 
-    Scenario Outline: [TC_INCARICATO_57] Richiamare l’API di creazione fruizione da parte di un delegato alla fruizione, specificando la delega corretta
+  Scenario: [TC_INCARICATO_57] Richiamare l’API di creazione fruizione da parte di un delegato alla fruizione, specificando la delega corretta
     Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione manuale
     Given l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
@@ -201,22 +207,28 @@ Feature: Test API Availability in Use of E-Service
     And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato accetta la delega in fruizione
-    And l'utente è un "<ruolo>" dell'ente delegato
+    And l'utente è un "admin" dell'ente delegato
     When il delegato ha già creato e inviato una richiesta di fruizione in delega ed è in attesa di approvazione
-    #When il delegato ha una richiesta di fruizione in stato "PENDING" per quell'e-service
-    Then si ottiene status code <statusCode>
+    Then si ottiene status code 200
+
+  # Test non strettamente attinente la feature Incaricato, considerare di spostarlo altrove
+  Scenario Outline: [TC_INTEROP_NON-ADMIN_FRUITION_REQUEST] Un utente con ruolo NON amministratore NON può richiedere la fruizione di un e-service
+    Given "GSP" ha già creato e pubblicato 1 e-service
+    And l'utente è un "<ruolo>" di "PA1"
+    When l'utente crea una richiesta di fruizione
+    Then si ottiene status code 403
     Examples:
-      | ruolo       | statusCode |
-      | admin       |        200 |
-      | api         |        403 |
-      | security    |        403 |
-      | api,security|        403 |
-      | support     |        403 |
+      | ruolo        |
+      | api          |
+      | security     |
+      | api,security |
+      | support      |
 
-
-    Scenario Outline: [TC_INCARICATO_58] Richiamare l’API di creazione di una richiesta di fruizione, specificando una delega inesistente
+  # NOTA BUG: per un risultato di tipo 'not found' ci si aspetterebbe un 404, non 400
+  # Response Body: {"type":"about:blank","title":"Delegation not found","status":400,"detail":"Delegation c3bb23e4-5b43-4cf9-88aa-704a5ebd0374 not found","correlationId":"30b9e0d1-372a-4105-af1e-8ae850b40d6a","errors":[{"code":"0026","detail":"Delegation c3bb23e4-5b43-4cf9-88aa-704a5ebd0374 not found"}]}
+  Scenario: [TC_INCARICATO_58] Richiamare l’API di creazione di una richiesta di fruizione, specificando una delega inesistente
     Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
-    Given l'ente delegato "PA1"
+    And l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
     And l'ente delegante "PA2"
@@ -224,20 +236,12 @@ Feature: Test API Availability in Use of E-Service
     And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato accetta la delega in fruizione
-    And l'utente è un "<ruolo>" dell'ente delegato
-    When il delegato ha già creato e inviato una richiesta di fruizione indicando una delega inesistente
-    Then si ottiene status code <statusCode>
-    Examples:
-      | ruolo       | statusCode |
-      | admin       |        400 |
-      | api         |        403 |
-      | security    |        403 |
-      | api,security|        403 |
-      | support     |        403 |
+    When l'utente ha già creato una richiesta di fruizione indicando una delega inesistente
+    Then si ottiene status code 404
 
-    Scenario Outline: [TC_INCARICATO_58_BIS] Richiamare l’API di creazione di una richiesta di fruizione, specificando una delega che non compete al delegato
+  Scenario: [TC_INCARICATO_58_BIS] L'ente delegante NON può creare una richiesta di fruizione per un e-service per il quale ha già creato una richiesta di fruizione
     Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
-    Given l'ente delegato "PA1"
+    And l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
     And l'ente delegante "PA2"
@@ -245,27 +249,20 @@ Feature: Test API Availability in Use of E-Service
     And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato accetta la delega in fruizione
-    And l'utente è un "<ruolo>" dell'ente delegato
 
     # Processo di produzione di una delega tra il delegante e un terzo ente
     And l'utente è un "admin" di "GSP2"
     And l'ente "GSP2" concede la disponibilità a ricevere deleghe in fruizione
     And l'utente è un "admin" dell'ente delegante
-    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente terzo "GSP2"
+    When l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente terzo "GSP2"
+    Then si ottiene status code 409
 
-    When il delegato ha già creato e inviato una richiesta di fruizione indicando la delega dell'ente terzo
-    Then si ottiene status code <statusCode>
-    Examples:
-      | ruolo       | statusCode |
-      | admin       |        400 |
-      | api         |        403 |
-      | security    |        403 |
-      | api,security|        403 |
-      | support     |        403 |
 
-    Scenario Outline: [TC_INCARICATO_58_TRIS] Richiamare l’API di creazione di una richiesta di fruizione, specificando una delega che non compete né al delegante né al delegato
+  # NOTA BUG: per un risultato di tipo 'not found' ci si aspetterebbe un 404, non 400
+  # Response body: {"type":"about:blank","title":"Delegation not found","status":400,"detail":"Delegation dd54ea4f-3922-4ab5-847c-35765fef8efe not found","correlationId":"b1303079-d942-4f0b-ab71-765d389645c7","errors":[{"code":"0026","detail":"Delegation dd54ea4f-3922-4ab5-847c-35765fef8efe not found"}]}
+  Scenario: [TC_INCARICATO_58_TRIS] Richiamare l’API di creazione di una richiesta di fruizione, specificando una delega che non compete né al delegante né al delegato
     Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
-    Given l'ente delegato "PA1"
+    And l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
     And l'ente delegante "PA2"
@@ -273,25 +270,18 @@ Feature: Test API Availability in Use of E-Service
     And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato accetta la delega in fruizione
-    And l'utente è un "<ruolo>" dell'ente delegato
 
     # Processo di produzione di una delega tra due enti diversi da delegante e delegato
     And l'utente è un "admin" di "GSP2"
     And l'ente "GSP2" concede la disponibilità a ricevere deleghe in fruizione
-    And l'utente è un "admin" di "Privato"
-    And l'ente "Privato" ha inoltrato una richiesta di delega in fruizione all'ente terzo "GSP2"
+    And l'utente è un "admin" di "GSP"
+    And l'ente "GSP" ha inoltrato una richiesta di delega in fruizione all'ente terzo "GSP2"
+    And l'utente è un "admin" dell'ente delegato
 
-    When il delegato ha già creato e inviato una richiesta di fruizione indicando la delega dell'ente terzo
-    Then si ottiene status code <statusCode>
-    Examples:
-      | ruolo       | statusCode |
-      | admin       |        400 |
-      | api         |        403 |
-      | security    |        403 |
-      | api,security|        403 |
-      | support     |        403 |
+    When l'utente ha già creato una richiesta di fruizione indicando la delega dell'ente terzo
+    Then si ottiene status code 404
 
-    Scenario Outline: [TC_INCARICATO_59] Richiamare l’API di accettazione di una richiesta di fruizione fatta da un delegato
+  Scenario Outline: [TC_INCARICATO_59] Richiamare l’API di accettazione di una richiesta di fruizione fatta da un delegato
     Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione manuale
     Given l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
@@ -316,7 +306,7 @@ Feature: Test API Availability in Use of E-Service
 #      | support     |        403 |
 
 
-    Scenario Outline: [TC_INCARICATO_60] Richiamare l’API di rifiuto di una richiesta di fruizione fatta da un delegato
+  Scenario Outline: [TC_INCARICATO_60] Richiamare l’API di rifiuto di una richiesta di fruizione fatta da un delegato
     Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione manuale
     Given l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
