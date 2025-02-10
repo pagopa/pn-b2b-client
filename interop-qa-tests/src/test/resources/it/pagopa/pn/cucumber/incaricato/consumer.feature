@@ -835,7 +835,6 @@ Feature: Test API Availability in Use of E-Service
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
     And l'ente delegante "PA1"
     And l'utente è un "<ruolo>" dell'ente delegante
-    And l'ente delegante ha già creato e pubblicato 1 e-service
     And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
     When l'ente delegante visualizza l'elenco delle deleghe conferite
     Then si ottiene status code <statusCode>
