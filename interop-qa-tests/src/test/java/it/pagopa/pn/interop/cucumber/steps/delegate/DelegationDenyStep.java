@@ -5,32 +5,40 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
+import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.delegate.service.IConsumerDelegationsApiClient;
+import it.pagopa.interop.delegate.service.IDelegationApiClient;
 import it.pagopa.interop.delegate.service.IProducerDelegationsApiClient;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RejectDelegationPayload;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
+import org.springframework.http.HttpStatus;
 
 @Slf4j
 public class DelegationDenyStep {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final IProducerDelegationsApiClient producerDelegationsApiClient;
     private final IConsumerDelegationsApiClient consumerDelegationsApiClient;
+    private final IDelegationApiClient delegationApiClient;
     private final IdentityService identityService;
     private final SharedStepsContext sharedStepsContext;
     private final HttpCallExecutor httpCallExecutor;
+    private final PollingService pollingService;
 
     public DelegationDenyStep(ClientTokenConfigurator clientTokenConfigurator,
                               SharedStepsContext sharedStepsContext) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.producerDelegationsApiClient = clientTokenConfigurator.getProducerDelegationsApiClient();
         this.consumerDelegationsApiClient = clientTokenConfigurator.getConsumerDelegationsApiClient();
+        this.delegationApiClient = clientTokenConfigurator.getDelegationApiClient();
         this.sharedStepsContext = sharedStepsContext;
         this.identityService = sharedStepsContext.getIdentityService();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+        this.pollingService = sharedStepsContext.getPollingService();
     }
 
     @When("l'utente rifiuta la delega")
@@ -83,6 +91,7 @@ public class DelegationDenyStep {
         httpCallExecutor.performCall(
                 () -> consumerDelegationsApiClient.revokeConsumerDelegation(sharedStepsContext.getXCorrelationId(),
                         String.valueOf(sharedStepsContext.getDelegationCommonContext().getDelegationId())));
+        if (httpCallExecutor.getClientResponse() == HttpStatus.OK) waitUntilDelegationIsReject();
     }
 
     @And("l'ente {delegationRole} con ruolo {string} revoca la delega in fruizione")
@@ -109,6 +118,17 @@ public class DelegationDenyStep {
     public void verifyAvailabilityResponse() {
         // Verify that the response status code is 200
         Assertions.assertEquals(200, httpCallExecutor.getClientResponse().value());
+    }
+
+    private void waitUntilDelegationIsReject() {
+        // wait until delegation is correctly rejected
+        pollingService.makePolling(
+                () -> delegationApiClient.getDelegation(sharedStepsContext.getXCorrelationId(),
+                        String.valueOf(sharedStepsContext.getDelegationCommonContext().getDelegationId())),
+                res ->  res.getState().equals(DelegationState.REVOKED),
+                "There was an error while revoking the delegation!"
+        );
+
     }
 
 }

@@ -76,9 +76,16 @@ public class DelegationCreateStep {
 
     @Given("l'ente {delegationRole} {string}")
     public void givenDelegatingTenant(DelegationRole delegationRole, String tenant) {
+        final UUID organizationId = identityService.getOrganizationId(tenant);
         switch (delegationRole) {
-            case DELEGATE -> sharedStepsContext.getDelegationCommonContext().setDelegateTenant(tenant);
-            case DELEGATING -> sharedStepsContext.getDelegationCommonContext().setDelegatorTenant(tenant);
+            case DELEGATE -> {
+                sharedStepsContext.getDelegationCommonContext().setDelegateTenant(tenant);
+                sharedStepsContext.getDelegationCommonContext().setDelegateId(organizationId);
+            }
+            case DELEGATING -> {
+                sharedStepsContext.getDelegationCommonContext().setDelegatorTenant(tenant);
+                sharedStepsContext.getDelegationCommonContext().setDelegatorId(organizationId);
+            }
             default -> throw new IllegalArgumentException("Invalid delegation role");
         }
     }
