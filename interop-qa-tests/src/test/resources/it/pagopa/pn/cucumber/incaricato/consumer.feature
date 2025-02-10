@@ -633,9 +633,9 @@ Feature: Test API Availability in Use of E-Service
       When l'ente delegante con ruolo "admin" revoca la delega in fruizione
       And il delegato controlla che la finalità sia stata archiviata
 
-      #da rivedere
-    Scenario Outline: [TC_INCARICATO_77] Richiamare l’API di visualizzazione elenco deleghe ricevute
-    Given l'ente delegato "PA1"
+  Scenario Outline: [TC_INCARICATO_77] Richiamare l’API di visualizzazione finalità precedentemente creata da parte del delegante, a seguito di revoca della delega - lato delegante
+    Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
+    And l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
     And l'ente delegante "PA2"
@@ -645,19 +645,20 @@ Feature: Test API Availability in Use of E-Service
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato accetta la delega in fruizione
     And il delegato ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And l'utente è un "<ruolo>" dell'ente delegante
+    And l'utente è un "admin" dell'ente delegante
     And il delegante ha già creato 1 finalità in stato "WAITING_FOR_APPROVAL" per quell'eservice
-    And l'ente delegante con ruolo "<ruolo>" revoca la delega in fruizione
-    When il delegante ha già creato 1 finalità in stato "WAITING_FOR_APPROVAL" per quell'eservice
-    Then si ottiene status code <statusCode>
+    And l'ente delegante con ruolo "admin" revoca la delega in fruizione
+    And l'utente è un "<ruolo>" dell'ente delegante
+    When il delegante visualizza la finalità creata
+    Then si ottiene status code 200
 
     Examples:
-        | ruolo       | statusCode |
-        | admin       |        200 |
-        | api         |        403 |
-        | security    |        403 |
-        | api,security|        403 |
-        | support     |        403 |
+        | ruolo        |
+        | admin        |
+        | api          |
+        | security     |
+        | api,security |
+        | support      |
 
     #da rivedere
   Scenario Outline: [TC_INCARICATO_78] Richiamare l’API di visualizzazione dettagli delega conferita
