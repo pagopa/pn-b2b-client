@@ -46,6 +46,14 @@ public class PurposeCommonStep {
         tenantHasAlreadyCreateFinalizationWithStatus(tenantType, n, purposeVersionState);
     }
 
+    @Given("il {delegationRole} visualizza la finalità creata")
+    public void tenantViewCreatedPurpose(DelegationRole delegationRole) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        purposeApiClient.getPurpose(
+            sharedStepsContext.getXCorrelationId(),
+            UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId()));
+    }
+
     @Given("{string} ha già creato {int} finalità in stato {string} per quell'eservice")
     public void tenantHasAlreadyCreateFinalizationWithStatus(String tenantType, int n, String purposeVersionState) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
