@@ -60,6 +60,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
@@ -231,13 +232,18 @@ public class DataPreparationService {
         return createAndCheckAgreement(eServiceID, descriptorId, null);
     }
 
-    public UUID createAgreement(UUID eServiceID, UUID descriptorId, @Nullable UUID delegationId) {
-        httpCallExecutor.performCall(() -> agreementClient.createAgreement(sharedStepsContext.getXCorrelationId(), new AgreementPayload().eserviceId(eServiceID).descriptorId(descriptorId).delegationId(delegationId)));
-        return ((CreatedResource) httpCallExecutor.getResponse()).getId();
+    public Optional<UUID> createAgreement(UUID eServiceID, UUID descriptorId, @Nullable UUID delegationId) {
+        httpCallExecutor.performCall(() -> agreementClient.createAgreement(
+            sharedStepsContext.getXCorrelationId(),
+            new AgreementPayload().eserviceId(eServiceID).descriptorId(descriptorId).delegationId(delegationId)));
+        return httpCallExecutor.getClientResponse().is2xxSuccessful()
+            ? Optional.of(((CreatedResource) httpCallExecutor.getResponse()).getId())
+            : Optional.empty();
     }
 
     public UUID createAndCheckAgreement(UUID eServiceID, UUID descriptorId, UUID delegationId) {
-        UUID agreementId = createAgreement(eServiceID, descriptorId, delegationId);
+        UUID agreementId = createAgreement(eServiceID, descriptorId, delegationId).orElseThrow(
+            () -> new NoSuchElementException("Failed to create an agreement: result of agreement creation API is '%s'".formatted(httpCallExecutor.getClientResponse())));
         assertValidResponse();
         pollingService.makePolling(
             () ->  httpCallExecutor.performCall(() -> agreementClient.getAgreementById(sharedStepsContext.getXCorrelationId(), agreementId)),
