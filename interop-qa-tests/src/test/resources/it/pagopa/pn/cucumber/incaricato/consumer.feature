@@ -659,162 +659,24 @@ Feature: Test API Availability in Use of E-Service
         | api,security|        403 |
         | support     |        403 |
 
-    #da rivedere
-  Scenario Outline: [TC_INCARICATO_78] Richiamare l’API di visualizzazione dettagli delega conferita
+  Scenario Outline: [TC_INCARICATO_78] Richiamare l’API di verifica richiesta di fruizione precedentemente creata da parte del delegato, a fronte della revoca della delega - lato delegante
+    Given l'utente è un "admin" di "GSP"
+    And "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
     And l'ente delegante "PA2"
     And l'utente è un "admin" dell'ente delegante
-    And l'ente delegante ha già creato e pubblicato 1 e-service
     And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato accetta la delega in fruizione
     And il delegato ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And l'utente è un "<ruolo>" dell'ente delegante
-    And il delegante ha già creato 1 finalità in stato "WAITING_FOR_APPROVAL" per quell'eservice
-    And l'ente delegante con ruolo "<ruolo>" revoca la delega in fruizione
-    # TODO: Controllare RICHIESTA di fruizione in stato "WAITING_FOR_APPROVAL"
-    When il delegante ha già creato 1 finalità in stato "WAITING_FOR_APPROVAL" per quell'eservice
-    Then si ottiene status code <statusCode>
-
-    Examples:
-        | ruolo       | statusCode |
-        | admin       |        200 |
-        | api         |        403 |
-        | security    |        403 |
-        | api,security|        403 |
-        | support     |        403 |
-
-    #da rivedere
-  Scenario Outline: [TC_INCARICATO_79] Richiamare l’API di visualizzazione dettagli delega ricevuta
-    Given l'ente delegato "PA1"
-    And l'utente è un "admin" dell'ente delegato
-    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
-    And l'ente delegante "PA2"
     And l'utente è un "admin" dell'ente delegante
-    And l'ente delegante ha già creato e pubblicato 1 e-service
-    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
-    And l'utente è un "admin" dell'ente delegato
-    And l'ente delegato accetta la delega in fruizione
-    And il delegato ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And l'utente è un "<ruolo>" dell'ente delegato
-    And il delegante ha già creato 1 finalità in stato "WAITING_FOR_APPROVAL" per quell'eservice
-    And l'ente delegante con ruolo "<ruolo>" revoca la delega in fruizione
-    # TODO: Controllare RICHIESTA di fruizione in stato "WAITING_FOR_APPROVAL"
-    When il delegato ha già creato 0 finalità in stato "WAITING_FOR_APPROVAL" per quell'eservice
-    Then si ottiene status code <statusCode>
-
-    Examples:
-        | ruolo       | statusCode |
-        | admin       |        200 |
-        | api         |        403 |
-        | security    |        403 |
-        | api,security|        403 |
-        | support     |        403 |
-
-#    Scenario Outline: [TC_INCARICATO_80] Richiamare l’API di visualizzazione elenco deleghe da un utente non amministratore
-#    Given l'ente delegato "PA1"
-#    And l'utente è un "admin" dell'ente delegato
-#    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
-#    And l'ente delegante "PA2"
-#    And l'utente è un "admin" dell'ente delegante
-#    And l'ente delegante ha già creato e pubblicato 1 e-service
-#    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
-#    And l'utente è un "admin" dell'ente delegato
-#    And l'ente delegato accetta la delega in fruizione
-#    And il delegato ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-#    And l'utente è un "<ruolo>" dell'ente delegato
-#    # TODO: Controllare DISPONIBILITA di fruizione in stato "WAITING_FOR_APPROVAL"
-#    When il delegante ha già creato 1 finalità in stato "WAITING_FOR_APPROVAL" per quell'eservice
-#    Then si ottiene status code <statusCode>
-#
-#    Examples:
-#        | ruolo       | statusCode |
-#        | admin       |        200 |
-#        | api         |        403 |
-#        | security    |        403 |
-#        | api,security|        403 |
-#        | support     |        403 |
-#
-#    Scenario Outline: [TC_INCARICATO_81] Richiamare l’API di visualizzazione del dettaglio della delega da un utente non amministratore
-#    Given l'ente delegato "PA2"
-#    And l'utente è un "admin" dell'ente delegato
-#    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
-#    And l'ente delegante "PA1"
-#    And l'utente è un "<ruolo>" dell'ente delegante
-#    And l'ente delegante ha già creato e pubblicato 1 e-service
-#    When l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
-#    Then si ottiene status code <statusCode>
-#
-#    Examples:
-#      | ruolo       | statusCode |
-#      | admin       |        200 |
-#      | api         |        403 |
-#      | security    |        403 |
-#      | api,security|        403 |
-#      | support     |        403 |
-#
-#    Scenario Outline: [TC_INCARICATO_82] Richiamare l’API di accettazione di una delega da parte di un delegato in stato pending - utente non amministratore
-#    Given l'ente delegato "PA2"
-#    And l'utente è un "admin" dell'ente delegato
-#    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
-#    And l'ente delegante "PA1"
-#    And l'utente è un "admin" dell'ente delegante
-#    And l'ente delegante ha già creato e pubblicato 1 e-service
-#    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
-#    When l'utente è un "<ruolo>" dell'ente delegato
-#    And l'ente delegato accetta la delega in fruizione
-#    Then si ottiene status code <statusCode>
-#
-#    Examples:
-#      | ruolo       | statusCode |
-#      | admin       |        200 |
-#      | api         |        403 |
-#      | security    |        403 |
-#      | api,security|        403 |
-#      | support     |        403 |
-#
-#    Scenario Outline: [TC_INCARICATO_83] Richiamare l’API di rifiuto di una delega da parte di un delegato in stato pending - utente non amministratore
-#    Given l'ente delegato "PA1"
-#    And l'utente è un "admin" dell'ente delegato
-#    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
-#    And l'ente delegante "PA2"
-#    And l'utente è un "admin" dell'ente delegante
-#    And l'ente delegante ha già creato e pubblicato 1 e-service
-#    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
-#    And l'utente è un "<ruolo>" dell'ente delegato
-#    And l'ente delegato rifiuta la delega in fruizione
-#    Then si ottiene status code <statusCode>
-#
-#    Examples:
-#      | ruolo       | statusCode |
-#      | admin       |        200 |
-#      | api         |        403 |
-#      | security    |        403 |
-#      | api,security|        403 |
-#      | support     |        403 |
-#
-#    Scenario Outline: [TC_INCARICATO_84] Richiamare l’API da parte del delegante per la revoca della delega alla fruizione al delegato in stato attivo - utente non amministratore
-#    Given l'ente delegato "PA2"
-#    And l'utente è un "admin" dell'ente delegato
-#    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
-#    And l'ente delegante "PA1"
-#    And l'utente è un "admin" dell'ente delegante
-#    And l'ente delegante ha già creato e pubblicato 1 e-service
-#    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
-#    And l'utente è un "<ruolo>" dell'ente delegato
-#    And l'ente delegato accetta la delega in fruizione
-#    When l'ente delegante con ruolo "<ruolo>" revoca la delega in fruizione
-#    Then si ottiene status code <statusCode>
-#
-#    Examples:
-#      | ruolo       | statusCode |
-#      | admin       |        200 |
-#      | api         |        403 |
-#      | security    |        403 |
-#      | api,security|        403 |
-#      | support     |        403 |
+    When l'ente delegato con ruolo "admin" revoca la delega in fruizione
+    #lato delegante
+    And il delegante controlla che la richiesta di fruizione sia stata archiviata
+    #lato delegato
+    And il delegato controlla che la richiesta di fruizione sia stata archiviata
 
   # TODO 10/02/2025: chiedere conferma che gli altri ruoli possano ottenere questa informazione
   Scenario Outline: [TC_INCARICATO_85] Richiamare l’API di visualizzazione elenco deleghe conferite lato delegante

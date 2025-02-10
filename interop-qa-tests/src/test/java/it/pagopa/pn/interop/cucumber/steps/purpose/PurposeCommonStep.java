@@ -106,9 +106,6 @@ public class PurposeCommonStep {
                 .map(PurposeVersion::getState)
                 .filter(state -> state.equals(PurposeVersionState.ARCHIVED))
                 .orElseThrow(() -> new IllegalStateException("The purpose was not archived"));
-
-
-
     }
 
 }

@@ -1,14 +1,13 @@
 package it.pagopa.pn.interop.cucumber.steps.agreement;
 
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
+import it.pagopa.interop.agreement.service.IAgreementClient;
+import it.pagopa.interop.agreement.service.impl.AgreementClientImpl;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
+import it.pagopa.interop.authorization.service.utils.PollingService;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -27,6 +26,8 @@ public class AgreementCommonSteps {
     private DataPreparationService dataPreparationService;
     private IdentityService identityService;
     private SharedStepsContext sharedStepsContext;
+    private IAgreementClient agreementClient;
+    private PollingService pollingService;
 
     public AgreementCommonSteps(ClientTokenConfigurator clientTokenConfigurator,
                                 DataPreparationService dataPreparationService,
@@ -35,6 +36,8 @@ public class AgreementCommonSteps {
         this.dataPreparationService = dataPreparationService;
         this.sharedStepsContext = sharedStepsContext;
         this.identityService = sharedStepsContext.getIdentityService();
+        this.agreementClient = clientTokenConfigurator.getAgreementClient();
+        this.pollingService = sharedStepsContext.getPollingService();
     }
 
     @Data
@@ -151,5 +154,16 @@ public class AgreementCommonSteps {
                 eServiceDescriptor.getDescriptorId(), EServiceDescriptorState.valueOf(descriptorState), false);
         sharedStepsContext.getEServicesCommonContext().setEserviceId(eServiceDescriptor.getEServiceId());
         sharedStepsContext.getEServicesCommonContext().setDescriptorId(eServiceDescriptor.getDescriptorId());
+    }
+
+    @And("il {delegationRole} controlla che la richiesta di fruizione sia stata archiviata")
+    public void verifyAgreementIsArchived(DelegationRole delegationRole) {
+        String tenantType = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        pollingService.makePolling(
+                () -> agreementClient.getAgreementById(sharedStepsContext.getXCorrelationId(), sharedStepsContext.getAgreementId()),
+                res -> res.getState().equals(AgreementState.ARCHIVED),
+                "The agreement was not archived"
+        );
     }
 }
