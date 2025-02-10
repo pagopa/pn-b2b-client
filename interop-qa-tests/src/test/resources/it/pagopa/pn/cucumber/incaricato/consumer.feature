@@ -151,7 +151,6 @@ Feature: Test API Availability in Use of E-Service
       | api,security|        403 |
       | support     |        403 |
 
-      @wait_for_fix
     Scenario: [TC_INCARICATO_54] Richiamare l’API di rifiuto su una delega in stato REVOKED
     Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA1"
@@ -163,7 +162,7 @@ Feature: Test API Availability in Use of E-Service
     And l'ente delegante con ruolo "admin" revoca la delega in fruizione
     When l'utente è un "admin" dell'ente delegato
     And l'ente delegato rifiuta la delega in fruizione
-    Then si ottiene status code 403
+    Then si ottiene status code 409
 
         @wait_for_fix
     Scenario Outline: [TC_INCARICATO_55] Richiamare l’API di rifiuto di una delega da parte del delegante: non permessa in quanto il rifiuto è una facoltà esclusiva del delegato
