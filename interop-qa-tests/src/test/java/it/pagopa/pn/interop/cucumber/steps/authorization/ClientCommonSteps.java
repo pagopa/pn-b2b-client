@@ -13,6 +13,7 @@ import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +50,12 @@ public class ClientCommonSteps {
         this.identityService = sharedStepsContext.getIdentityService();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.sharedStepsContext = sharedStepsContext;
+    }
+
+    @Given("il {delegationRole} ha già creato {int} client {string}")
+    public void createClientsForTenants(DelegationRole delegationRole, int numClient, String clientKind) {
+        String tenantType = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
+        createClientsForTenants(tenantType, numClient, clientKind);
     }
 
     @Given("{string} ha già creato {int} client {string}")
