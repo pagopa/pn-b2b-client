@@ -6,6 +6,7 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.awaitility.Awaitility.await;
 
 import io.cucumber.datatable.DataTable;
@@ -949,12 +950,33 @@ public class AvanzamentoNotificheB2bSteps {
     public void readingEventUpToTheTimelineElementOfNotificationWithDeliveryDetailCode(String timelineEventCategory, String deliveryDetailCode) {
         PnPollingResponseV26 pnPollingResponseV26 = getPollingResponse(timelineEventCategory, deliveryDetailCode);
 
-        log.info("NOTIFICATION_TIMELINE: " + pnPollingResponseV26.getNotification().getTimeline());
+        assertThat(pnPollingResponseV26)
+                .as("La risposta del polling non deve essere nulla")
+                .isNotNull();
+
+        if (pnPollingResponseV26.getNotification() != null) {
+            log.info("NOTIFICATION_TIMELINE: {}", pnPollingResponseV26.getNotification().getTimeline());
+        }
+
         try {
-            Assertions.assertTrue(pnPollingResponseV26.getResult(), "Polling failed. IUN: " + sharedSteps.getSentNotification().getIun());
-            Assertions.assertNotNull(pnPollingResponseV26.getTimelineElement(), "The timeline element was not found. IUN: " + sharedSteps.getSentNotification().getIun());
+            assertSoftly(softly -> {
+                softly.assertThat(pnPollingResponseV26.getResult())
+                        .as("Verifica che il polling abbia avuto successo per IUN: " +
+                                (sharedSteps.getSentNotification() != null ? sharedSteps.getSentNotification().getIun() : "UNKNOWN"))
+                        .isTrue();
+
+                softly.assertThat(pnPollingResponseV26.getTimelineElement())
+                        .as("Verifica che l'elemento di timeline esista per IUN: " +
+                                (sharedSteps.getSentNotification() != null ? sharedSteps.getSentNotification().getIun() : "UNKNOWN"))
+                        .isNotNull();
+            });
+
             sharedSteps.setSentNotification(pnPollingResponseV26.getNotification());
-            log.info("TIMELINE_ELEMENT: " + pnPollingResponseV26.getTimelineElement());
+
+            if (pnPollingResponseV26.getTimelineElement() != null) {
+                log.info("TIMELINE_ELEMENT: {}", pnPollingResponseV26.getTimelineElement());
+            }
+
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
