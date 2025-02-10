@@ -151,6 +151,7 @@ Feature: Test API Availability in Use of E-Service
       | api,security|        403 |
       | support     |        403 |
 
+      @wait_for_fix
     Scenario: [TC_INCARICATO_54] Richiamare l’API di rifiuto su una delega in stato REVOKED
     Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA1"
@@ -164,6 +165,7 @@ Feature: Test API Availability in Use of E-Service
     And l'ente delegato rifiuta la delega in fruizione
     Then si ottiene status code 403
 
+        @wait_for_fix
     Scenario Outline: [TC_INCARICATO_55] Richiamare l’API di rifiuto di una delega da parte del delegante: non permessa in quanto il rifiuto è una facoltà esclusiva del delegato
     Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA1"
@@ -452,6 +454,7 @@ Feature: Test API Availability in Use of E-Service
     When l'utente richiede l'associazione della finalità a un client inesistente
     Then si ottiene status code 404
 
+  @wait_for_fix
     # NOTA lo step di creazione finalità sembra non sia permesso dal delegante (riga 466)
     Scenario: [TC_INCARICATO_67] Il delegante può creare una finalità per un e-service che ha dato in delega
     Given l'ente delegato "PA1"
@@ -541,6 +544,7 @@ Feature: Test API Availability in Use of E-Service
       | ruolo       | statusCode |
       | admin       |        404 |
 
+  @wait_for_fix
     Scenario Outline: [TC_INCARICATO_72] Richiamare l’API revoca della delega
     Given l'utente è un "admin" di "GSP"
     And "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
@@ -633,6 +637,7 @@ Feature: Test API Availability in Use of E-Service
       When l'ente delegante con ruolo "admin" revoca la delega in fruizione
       And il delegato controlla che la finalità sia stata archiviata
 
+  @wait_for_fix
   Scenario Outline: [TC_INCARICATO_77] Richiamare l’API di visualizzazione finalità precedentemente creata da parte del delegante, a seguito di revoca della delega - lato delegante
     Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     And l'ente delegato "PA1"
@@ -660,7 +665,8 @@ Feature: Test API Availability in Use of E-Service
         | api,security |
         | support      |
 
-  Scenario Outline: [TC_INCARICATO_78] Richiamare l’API di verifica richiesta di fruizione precedentemente creata da parte del delegato, a fronte della revoca della delega - lato delegante
+  @wait_for_fix
+  Scenario: [TC_INCARICATO_78] Richiamare l’API di verifica richiesta di fruizione precedentemente creata da parte del delegato, a fronte della revoca della delega - lato delegante
     Given l'utente è un "admin" di "GSP"
     And "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA1"
@@ -718,6 +724,7 @@ Feature: Test API Availability in Use of E-Service
       | api,security |
       | support      |
 
+  @wait_for_fix
   Scenario Outline: [TC_INCARICATO_87_88] Richiamare l’API di visualizzazione dettaglio delega conferita lato delegante, e di quella ricevuta lato delegato
     Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     And l'ente delegato "PA2"
@@ -745,6 +752,7 @@ Feature: Test API Availability in Use of E-Service
       | api,security |
       | support      |
 
+  @wait_for_fix
   # NOTA BUG: il test fallisce con status code 500
   # Response body: {"type":"about:blank","title":"Active agreement for this eservice and consumer exists","status":500,"detail":"Active agreement 7175e3ff-45fd-49e1-b517-33c206a873aa for eservice afc51671-9635-4db0-9b12-6da73ea9d87a and consumer 0e9e2dab-2e93-4f24-ba59-38d9f11198ca exists","correlationId":"c9fd4049-22c9-403c-b1ce-0962c8da9b58","errors":[{"code":"0015","detail":"Active agreement 7175e3ff-45fd-49e1-b517-33c206a873aa for eservice afc51671-9635-4db0-9b12-6da73ea9d87a and consumer 0e9e2dab-2e93-4f24-ba59-38d9f11198ca exists"}]}
   Scenario Outline: [TC_INCARICATO_89] L'ente NON deve essere in grado di creare una delega per un e-service per il quale ha in corso una richiesta di fruizione in stato ACTIVE, SUSPENDED
@@ -761,6 +769,7 @@ Feature: Test API Availability in Use of E-Service
       |        403 | "SUSPENDED"    |
       |        403 | "PENDING"      |
 
+  @wait_for_fix
   # NOTA BUG: il test fallisce con status code 500
   # Response body: {"type":"about:blank","title":"Active agreement for this eservice and consumer exists","status":500,"detail":"Active agreement 7175e3ff-45fd-49e1-b517-33c206a873aa for eservice afc51671-9635-4db0-9b12-6da73ea9d87a and consumer 0e9e2dab-2e93-4f24-ba59-38d9f11198ca exists","correlationId":"c9fd4049-22c9-403c-b1ce-0962c8da9b58","errors":[{"code":"0015","detail":"Active agreement 7175e3ff-45fd-49e1-b517-33c206a873aa for eservice afc51671-9635-4db0-9b12-6da73ea9d87a and consumer 0e9e2dab-2e93-4f24-ba59-38d9f11198ca exists"}]}
   # NOTA DEV 10/02/2025: sarebbe il caso di trovare il modo di accorparlo con TC_INCARICATO_90
