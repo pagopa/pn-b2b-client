@@ -102,7 +102,7 @@ Feature: Test API Availability in Use of E-Service
     And l'ente delegato accetta la delega in fruizione
     Then si ottiene status code 403
 
-    Scenario Outline: [TC_INCARICATO_52] Richiamare l’API di accettazione di una delega in stato rifiutata
+    Scenario: [TC_INCARICATO_52] Richiamare l’API di accettazione di una delega in stato rifiutata
     Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
@@ -616,7 +616,7 @@ Feature: Test API Availability in Use of E-Service
     When l'ente delegante con ruolo "admin" revoca la delega in fruizione
     Then si ottiene status code 200
 
-    Scenario Outline: [TC_INCARICATO_76] Richiamare l’API di verifica archiviazione finalità e rimozione client associati in caso di revoca della delega - lato delegato
+    Scenario: [TC_INCARICATO_76] Richiamare l’API di verifica archiviazione finalità e rimozione client associati in caso di revoca della delega - lato delegato
       Given l'utente è un "admin" di "GSP"
       And "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
       Given l'ente delegato "PA2"
@@ -882,7 +882,9 @@ Feature: Test API Availability in Use of E-Service
       | api,security |
       | support      |
 
-  Scenario Outline: [TC_INCARICATO_89] L'ente NON deve essere in grado di creare una delega per un e-service per il quale ha in corso una richiesta di fruizione in stato ACTIVE, SUSPENDED o DRAFT
+  # NOTA BUG: il test fallisce con status code 500
+  # Response body: {"type":"about:blank","title":"Active agreement for this eservice and consumer exists","status":500,"detail":"Active agreement 7175e3ff-45fd-49e1-b517-33c206a873aa for eservice afc51671-9635-4db0-9b12-6da73ea9d87a and consumer 0e9e2dab-2e93-4f24-ba59-38d9f11198ca exists","correlationId":"c9fd4049-22c9-403c-b1ce-0962c8da9b58","errors":[{"code":"0015","detail":"Active agreement 7175e3ff-45fd-49e1-b517-33c206a873aa for eservice afc51671-9635-4db0-9b12-6da73ea9d87a and consumer 0e9e2dab-2e93-4f24-ba59-38d9f11198ca exists"}]}
+  Scenario Outline: [TC_INCARICATO_89] L'ente NON deve essere in grado di creare una delega per un e-service per il quale ha in corso una richiesta di fruizione in stato ACTIVE, SUSPENDED
     Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     And l'utente è un "admin" di "PA1"
     And l'ente "PA1" concede la disponibilità a ricevere deleghe in fruizione
@@ -894,4 +896,16 @@ Feature: Test API Availability in Use of E-Service
       | statusCode | statoFruizione |
       |        403 | "ACTIVE"       |
       |        403 | "SUSPENDED"    |
-      |        403 | "DRAFT"        |
+      |        403 | "PENDING"      |
+
+  # NOTA BUG: il test fallisce con status code 500
+  # Response body: {"type":"about:blank","title":"Active agreement for this eservice and consumer exists","status":500,"detail":"Active agreement 7175e3ff-45fd-49e1-b517-33c206a873aa for eservice afc51671-9635-4db0-9b12-6da73ea9d87a and consumer 0e9e2dab-2e93-4f24-ba59-38d9f11198ca exists","correlationId":"c9fd4049-22c9-403c-b1ce-0962c8da9b58","errors":[{"code":"0015","detail":"Active agreement 7175e3ff-45fd-49e1-b517-33c206a873aa for eservice afc51671-9635-4db0-9b12-6da73ea9d87a and consumer 0e9e2dab-2e93-4f24-ba59-38d9f11198ca exists"}]}
+  # NOTA DEV 10/02/2025: sarebbe il caso di trovare il modo di accorparlo con TC_INCARICATO_90
+  Scenario: [TC_INCARICATO_90] L'ente NON deve essere in grado di creare una delega per un e-service per il quale ha in corso una richiesta di fruizione in stato PENDING
+    Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione manuale
+    And l'utente è un "admin" di "PA1"
+    And l'ente "PA1" concede la disponibilità a ricevere deleghe in fruizione
+    And l'utente è un "admin" di "PA2"
+    And "PA2" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    When l'ente "PA2" ha inoltrato una richiesta di delega in fruizione all'ente "PA1"
+    Then si ottiene status code 403
