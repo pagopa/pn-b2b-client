@@ -848,12 +848,12 @@ Feature: Test API Availability in Use of E-Service
     Then si ottiene status code 200
 
     Examples:
-      | ruolo       | statusCode |
-      | admin       |        200 |
-      | api         |        403 |
-      | security    |        403 |
-      | api,security|        403 |
-      | support     |        403 |
+      | ruolo        |
+      | admin        |
+      | api          |
+      | security     |
+      | api,security |
+      | support      |
 
   Scenario Outline: [TC_INCARICATO_87] Richiamare l’API di visualizzazione dettaglio delega conferita lato delegante
     Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
@@ -861,8 +861,9 @@ Feature: Test API Availability in Use of E-Service
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
     And l'ente delegante "PA1"
-    And l'utente è un "<ruolo>" dell'ente delegante
+    And l'utente è un "admin" dell'ente delegante
     And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
+    And l'utente è un "<ruolo>" dell'ente delegante
     When l'utente visualizza il dettaglio della delega creata
     Then si ottiene status code 200
 
