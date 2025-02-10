@@ -56,18 +56,20 @@ public class AgreementCreationStep {
 
     @Given("{string} ha già creato e inviato una richiesta di fruizione per quell'e-service ed è in attesa di approvazione")
     public void requestForServiceAlreadySubmittedAndPendingApproval(String tenantType) {
-        agreementProcessRequest(null);
+        agreementProcessRequest(identityService.getToken(tenantType, null), null);
     }
 
     @Given("il {delegationRole} ha già creato e inviato una richiesta di fruizione in delega ed è in attesa di approvazione")
     public void delegationRequestForServiceAlreadySubmittedAndPendingApproval(DelegationRole delegationRole) {
-        delegationRequestForServiceAlreadySubmittedAndPendingApproval();
+        String tenant = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
+        String token = identityService.getToken(tenant, null);
+        delegationRequestForServiceAlreadySubmittedAndPendingApproval(token);
     }
 
     @Given("{string} ha già creato e inviato una richiesta di fruizione in delega ed è in attesa di approvazione")
-    public void delegationRequestForServiceAlreadySubmittedAndPendingApproval() {
+    public void delegationRequestForServiceAlreadySubmittedAndPendingApproval(String token) {
         UUID delegationId = sharedStepsContext.getDelegationCommonContext().getDelegationId();
-        agreementProcessRequest(delegationId);
+        agreementProcessRequest(token, delegationId);
     }
 
     @Given("l'utente ha già creato una richiesta di fruizione indicando una delega inesistente")
@@ -85,8 +87,8 @@ public class AgreementCreationStep {
         agreementCreationRequest(delegationId);
     }
 
-    private void agreementProcessRequest(UUID delegationId) {
-        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+    private void agreementProcessRequest(String token, UUID delegationId) {
+        clientTokenConfigurator.setBearerToken(token);
         UUID agreementId = dataPreparationService.createAndCheckAgreement(
             sharedStepsContext.getEServicesCommonContext().getEserviceId(),
             sharedStepsContext.getEServicesCommonContext().getDescriptorId(),
