@@ -198,9 +198,12 @@ Feature: Test API Availability in Use of E-Service
     And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato accetta la delega in fruizione
-    And l'utente è un "admin" dell'ente delegato
     When il delegato ha già creato e inviato una richiesta di fruizione in delega ed è in attesa di approvazione
     Then si ottiene status code 200
+    And si recupera la lista dei delegatori e si verifica che non sia vuota
+    And si recupera la lista dei delegatori con deleghe ATTIVE e si verifica che non sia vuota
+    And l'utente è un "admin" dell'ente delegante
+    And viene recuperata la lista degli e-service delegati
 
   Scenario Outline: [TC_INTEROP_NON-ADMIN_FRUITION_REQUEST] Un utente con ruolo NON amministratore NON può richiedere la fruizione di un e-service
     Given "GSP" ha già creato e pubblicato 1 e-service
@@ -227,7 +230,7 @@ Feature: Test API Availability in Use of E-Service
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato accetta la delega in fruizione
     When l'utente ha già creato una richiesta di fruizione indicando una delega inesistente
-    Then si ottiene status code 404
+    Then si ottiene status code 400
 
   Scenario: [TC_INCARICATO_58_BIS] L'ente delegante NON può creare una richiesta di fruizione per un e-service per il quale ha già creato una richiesta di fruizione
     Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
@@ -267,7 +270,7 @@ Feature: Test API Availability in Use of E-Service
     And l'utente è un "admin" dell'ente delegato
 
     When l'utente ha già creato una richiesta di fruizione indicando la delega dell'ente terzo
-    Then si ottiene status code 404
+    Then si ottiene status code 400
 
   Scenario Outline: [TC_INCARICATO_59] Richiamare l’API di accettazione di una richiesta di fruizione fatta da un delegato
     Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione manuale
