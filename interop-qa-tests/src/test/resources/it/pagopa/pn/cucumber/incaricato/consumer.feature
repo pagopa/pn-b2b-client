@@ -113,9 +113,6 @@ Feature: Test API Availability in Use of E-Service
     And l'ente delegato accetta la delega in fruizione
     Then si ottiene status code 409
 
-    # NOTA BUG: per il ruolo admin viene restituito 500, non il migliore degli stati d'errore. Esempio:
-    # Response Body: {"type":"about:blank","title":"Unexpected error","status":500,"detail":"Unexpected error","correlationId":"1e7c18d5-c2bf-4eb4-958b-26a12a051cc8","errors":[{"code":"9991","detail":"Unexpected error"}]}
-    # TC_INCARICATO_56 invece ha un codice migliore, 409 [al momento di stesura del ticket non fare riferimento all'id del test ma a ciò che testa]
   Scenario: [TC_INCARICATO_52] Richiamare l’API di accettazione di una delega in stato rifiutata
     Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA1"
