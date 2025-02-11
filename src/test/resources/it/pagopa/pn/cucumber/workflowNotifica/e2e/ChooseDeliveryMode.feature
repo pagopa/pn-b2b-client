@@ -104,7 +104,7 @@ Feature: Scelta canale di invio (Digitale o analogico)
       | details_sentAttemptMade | 0 |
       | details_isAvailable | false |
 
-  @workflowDigitale @addressBook1 #(NO indirizzo GENERALE  - SI indirizzo PIATTAFORMA & SPECIALE) scenario 13
+  @addressBook1 @liberiProfessionisti #(NO indirizzo GENERALE  - SI indirizzo PIATTAFORMA & SPECIALE) scenario 13
   Scenario: [B2B_TIMELINE_RECAPITI_PF_1] Invio notifica mono destinatario. L’utente ha configurato l’indirizzo di piattaforma e viene passato lo speciale
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -133,7 +133,7 @@ Feature: Scelta canale di invio (Digitale o analogico)
       | details_sentAttemptMade | 0 |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
-  @workflowDigitale @addressBook1 #(NO indirizzo GENERALE & SPECIALE - SI indirizzo PIATTAFORMA) scenario 13
+  @addressBook1 @liberiProfessionisti #(NO indirizzo GENERALE & SPECIALE - SI indirizzo PIATTAFORMA) scenario 13
   Scenario: [B2B_TIMELINE_RECAPITI_PF_2] Invio notifica mono destinatario. L’utente ha configurato l’indirizzo di piattaforma e viene passato lo speciale
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente

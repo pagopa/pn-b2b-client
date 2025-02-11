@@ -1196,7 +1196,7 @@ Feature: verifica validazione sincrona
       | 120102P      |
       | 120103P      |
 
-  @syncValidation @workflowAnalogico
+  @blackListCF
   Scenario: [B2B_TIMELINE_RECAPITI_BLACKLIST_1] validazione sincrona campo taxId per la blackList
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
