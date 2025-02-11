@@ -52,7 +52,6 @@ Feature: Test API Availability in Use of E-Service
       | api,security|        403 |
       | support     |        403 |
 
-  # NOTA BUG: se viene creata una delega per un e-service NON delegabile in fruizione, lo status d'errore restituito è 500.
   Scenario: [TC_INCARICATO_47_BIS] Richiamare l’API di creazione di una delega da parte di un fruitore delegante verso un altro ente delegato, su un e-service NON delegabile in fruizione
     Given "GSP" ha già creato e pubblicato 1 e-service
     Given l'ente delegato "PA2"
@@ -78,8 +77,6 @@ Feature: Test API Availability in Use of E-Service
       | security    |        403 |
       | api,security|        403 |
       | support     |        403 |
-
-  # @TC_INCARICATO_49 rimosso a seguito di revisione perché non ritenuto più pertinente
 
     Scenario Outline: [TC_INCARICATO_50] Richiamare l’API di accettazione di una delega in stato WAITING_FOR_APPROVAL
     Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
@@ -205,7 +202,6 @@ Feature: Test API Availability in Use of E-Service
     When il delegato ha già creato e inviato una richiesta di fruizione in delega ed è in attesa di approvazione
     Then si ottiene status code 200
 
-  # Test non strettamente attinente la feature Incaricato, considerare di spostarlo altrove
   Scenario Outline: [TC_INTEROP_NON-ADMIN_FRUITION_REQUEST] Un utente con ruolo NON amministratore NON può richiedere la fruizione di un e-service
     Given "GSP" ha già creato e pubblicato 1 e-service
     And l'utente è un "<ruolo>" di "PA1"
@@ -243,7 +239,6 @@ Feature: Test API Availability in Use of E-Service
     And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato accetta la delega in fruizione
-
     # Processo di produzione di una delega tra il delegante e un terzo ente
     And l'utente è un "admin" di "GSP2"
     And l'ente "GSP2" concede la disponibilità a ricevere deleghe in fruizione
@@ -264,7 +259,6 @@ Feature: Test API Availability in Use of E-Service
     And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato accetta la delega in fruizione
-
     # Processo di produzione di una delega tra due enti diversi da delegante e delegato
     And l'utente è un "admin" di "GSP2"
     And l'ente "GSP2" concede la disponibilità a ricevere deleghe in fruizione
