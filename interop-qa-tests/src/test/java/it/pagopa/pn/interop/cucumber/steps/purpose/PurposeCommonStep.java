@@ -3,10 +3,8 @@ package it.pagopa.pn.interop.cucumber.steps.purpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
-import it.pagopa.interop.generated.openapi.clients.bff.model.Purpose;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersion;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
+import it.pagopa.interop.authorization.service.utils.PollingService;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.purpose.domain.RiskAnalysis;
 import it.pagopa.interop.purpose.domain.TEServiceMode;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
@@ -27,6 +25,7 @@ public class PurposeCommonStep {
     private final DataPreparationService dataPreparationService;
     private final SharedStepsContext sharedStepsContext;
     private final IPurposeApiClient purposeApiClient;
+    private final PollingService pollingService;
 
 
     public PurposeCommonStep(ClientTokenConfigurator clientTokenConfigurator,
@@ -38,6 +37,7 @@ public class PurposeCommonStep {
         this.dataPreparationService = dataPreparationService;
         this.sharedStepsContext = sharedStepsContext;
         this.purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
+        this.pollingService = sharedStepsContext.getPollingService();
     }
 
     @Given("il {delegationRole} ha già creato {int} finalità in stato {string} per quell'eservice")
@@ -107,13 +107,11 @@ public class PurposeCommonStep {
     public void purposeIsArchived(DelegationRole delegationRole) {
         String tenantType = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        Purpose purpose = purposeApiClient.getPurpose(sharedStepsContext.getXCorrelationId(),
-                UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId()));
-        Optional.ofNullable(purpose)
-                .map(Purpose::getCurrentVersion)
-                .map(PurposeVersion::getState)
-                .filter(state -> state.equals(PurposeVersionState.ARCHIVED))
-                .orElseThrow(() -> new IllegalStateException("The purpose was not archived"));
+        pollingService.makePolling(
+                () -> purposeApiClient.getPurpose(sharedStepsContext.getXCorrelationId(), UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId())),
+                res -> Optional.ofNullable(res).map(Purpose::getCurrentVersion).map(PurposeVersion::getState).filter(state -> state.equals(PurposeVersionState.ARCHIVED)).isPresent(),
+                "The purpose was not archived"
+        );
     }
 
 }
