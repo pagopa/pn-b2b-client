@@ -555,7 +555,6 @@ Feature: Test API Availability in Use of E-Service
       | api,security|        403 |
       | support     |        403 |
 
-    # NOTA: il primo caso con ruolo admin torna status code 500, non proprio il massimo
     Scenario Outline: [TC_INCARICATO_73] Richiamare l’API di revoca di una delega in stato REFUSED
     Given l'utente è un "admin" di "GSP"
     And "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
@@ -571,7 +570,7 @@ Feature: Test API Availability in Use of E-Service
     Then si ottiene status code <statusCode>
     Examples:
       | ruolo       | statusCode |
-      | admin       |        500 |
+      | admin       |        409 |
       | api         |        403 |
       | security    |        403 |
       | api,security|        403 |
