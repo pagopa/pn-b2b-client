@@ -661,7 +661,6 @@ Feature: Test API Availability in Use of E-Service
         | api,security |
         | support      |
 
-  @wait_for_fix
   Scenario: [TC_INCARICATO_78] Richiamare l’API di verifica richiesta di fruizione precedentemente creata da parte del delegato, a fronte della revoca della delega - lato delegante
     Given l'utente è un "admin" di "GSP"
     And "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
