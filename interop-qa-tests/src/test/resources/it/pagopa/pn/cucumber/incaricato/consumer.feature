@@ -127,7 +127,7 @@ Feature: Test API Availability in Use of E-Service
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato rifiuta la delega in fruizione
     And l'ente delegato accetta la delega in fruizione
-    Then si ottiene status code 403
+    Then si ottiene status code 409
 
     Scenario Outline: [TC_INCARICATO_53] Richiamare l’API di rifiuto di una delega in stato WAITING_FOR_APPROVAL
     Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione

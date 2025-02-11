@@ -75,6 +75,7 @@ public class DelegationDenyStep {
                 () -> consumerDelegationsApiClient.rejectConsumerDelegation(sharedStepsContext.getXCorrelationId(),
                         sharedStepsContext.getDelegationCommonContext().getDelegationId(),
                         new RejectDelegationPayload().rejectionReason("Missing all required data!")));
+        if (httpCallExecutor.getClientResponse() == HttpStatus.OK) waitForDelegationState(DelegationState.REJECTED);
     }
 
     @And("l'ente {string} con ruolo {string} revoca la delega")
@@ -91,7 +92,7 @@ public class DelegationDenyStep {
         httpCallExecutor.performCall(
                 () -> consumerDelegationsApiClient.revokeConsumerDelegation(sharedStepsContext.getXCorrelationId(),
                         String.valueOf(sharedStepsContext.getDelegationCommonContext().getDelegationId())));
-        if (httpCallExecutor.getClientResponse() == HttpStatus.OK) waitUntilDelegationIsReject();
+        if (httpCallExecutor.getClientResponse() == HttpStatus.OK) waitForDelegationState(DelegationState.REVOKED);
     }
 
     @And("l'ente {delegationRole} con ruolo {string} revoca la delega in fruizione")
@@ -120,12 +121,12 @@ public class DelegationDenyStep {
         Assertions.assertEquals(200, httpCallExecutor.getClientResponse().value());
     }
 
-    private void waitUntilDelegationIsReject() {
+    private void waitForDelegationState(DelegationState delegationState) {
         // wait until delegation is correctly rejected
         pollingService.makePolling(
                 () -> delegationApiClient.getDelegation(sharedStepsContext.getXCorrelationId(),
                         String.valueOf(sharedStepsContext.getDelegationCommonContext().getDelegationId())),
-                res ->  res.getState().equals(DelegationState.REVOKED),
+                res ->  res.getState().equals(delegationState),
                 "There was an error while revoking the delegation!"
         );
 
