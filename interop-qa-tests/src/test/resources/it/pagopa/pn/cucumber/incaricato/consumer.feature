@@ -203,7 +203,7 @@ Feature: Test API Availability in Use of E-Service
     And si recupera la lista dei delegatori e si verifica che non sia vuota
     And si recupera la lista dei delegatori con deleghe ATTIVE e si verifica che non sia vuota
     And l'utente è un "admin" dell'ente delegante
-    And viene recuperata la lista degli e-service delegati
+    And viene recuperata la lista degli e-service delegati e si verifica che non sia vuota
 
   Scenario Outline: [TC_INTEROP_NON-ADMIN_FRUITION_REQUEST] Un utente con ruolo NON amministratore NON può richiedere la fruizione di un e-service
     Given "GSP" ha già creato e pubblicato 1 e-service

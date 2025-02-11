@@ -1,5 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.delegate;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
@@ -15,12 +17,11 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.Pagination;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -36,7 +37,6 @@ public class DelegationListingStep {
     private final HttpCallExecutor httpCallExecutor;
     private final List<CompactDelegations> delegationList;
     private final IConsumerDelegationsApiClient consumerDelegationsApiClient;
-    private final IdentityService identityService;
 
     private DelegationTenants delegationTenants;
     private CompactEServices compactEServices;
@@ -49,7 +49,6 @@ public class DelegationListingStep {
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.delegationList = new ArrayList<>();
         this.consumerDelegationsApiClient = clientTokenConfigurator.getConsumerDelegationsApiClient();
-        this.identityService = sharedStepsContext.getIdentityService();
     }
 
     @And("l'utente recupera le prime {int} pagine con la lista delle deleghe")
@@ -123,7 +122,7 @@ public class DelegationListingStep {
         } catch (RestClientException e) {
             throw new RuntimeException("There was an error while retrieving the delegators list: ", e);
         }
-        Assertions.assertFalse(Optional.ofNullable(delegationTenants).map(DelegationTenants::getResults).isEmpty());
+        assertResultsNotEmpty(delegationTenants, DelegationTenants::getResults, "deleganti");
     }
 
     @And("si recupera la lista dei delegatori con deleghe ATTIVE e si verifica che non sia vuota")
@@ -133,10 +132,10 @@ public class DelegationListingStep {
         } catch (RestClientException e) {
             throw new RuntimeException("There was an error while retrieving the delegators with an active agreement: ", e);
         }
-        Assertions.assertFalse(Optional.ofNullable(delegationTenants).map(DelegationTenants::getResults).isEmpty());
+        assertResultsNotEmpty(delegationTenants, DelegationTenants::getResults, "deleganti");
     }
 
-    @And("viene recuperata la lista degli e-service delegati")
+    @And("viene recuperata la lista degli e-service delegati e si verifica che non sia vuota")
     public void retrieveDelegatedEServices() {
         try {
             compactEServices = consumerDelegationsApiClient.getConsumerDelegatedEservices(sharedStepsContext.getXCorrelationId(),
@@ -144,6 +143,18 @@ public class DelegationListingStep {
         } catch (RestClientException e) {
             throw new RuntimeException("There was an error while retrieving the delegated e-service list: ", e);
         }
-        Assertions.assertFalse(Optional.ofNullable(compactEServices).map(CompactEServices::getResults).isEmpty());
+        assertResultsNotEmpty(compactEServices, CompactEServices::getResults, "e-service delegati");
+    }
+
+    private static <T, U> void assertResultsNotEmpty(T resultsContainer, Function<T, U> resultsExtractor, String resultsName) {
+        assertThat(resultsContainer)
+            .withFailMessage("L'oggetto di risposta contenente la lista di '%s' non dovrebbe essere NULL", resultsName)
+            .isNotNull()
+            .extracting(resultsExtractor)
+            .withFailMessage("La lista di '%s' non dovrebbe essere NULL", resultsName)
+            .asList()
+            .withFailMessage("La lista di '%s' non dovrebbe essere vuota", resultsName)
+            .isNotEmpty()
+        ;
     }
 }
