@@ -460,7 +460,7 @@ Feature: Test API Availability in Use of E-Service
     And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato accetta la delega in fruizione
-    And il delegante ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And il delegato ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     Then si ottiene status code 200
 
@@ -530,7 +530,7 @@ Feature: Test API Availability in Use of E-Service
     And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato accetta la delega in fruizione
-    And il delegante ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And il delegato ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     Given il delegante ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     When l'utente è un "<ruolo>" dell'ente delegante
     And l'utente richiede l'associazione della finalità a un client inesistente
