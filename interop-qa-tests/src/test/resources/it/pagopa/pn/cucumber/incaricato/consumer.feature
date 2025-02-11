@@ -449,19 +449,19 @@ Feature: Test API Availability in Use of E-Service
     When l'utente richiede l'associazione della finalità a un client inesistente
     Then si ottiene status code 404
 
-  @wait_for_fix
-    # NOTA lo step di creazione finalità sembra non sia permesso dal delegante (riga 466)
   Scenario: [TC_INCARICATO_67] Il delegante può creare una finalità per un e-service che ha dato in delega
-    Given l'ente delegato "PA1"
+    Given l'utente è un "admin" di "GSP"
+    And "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
+    And l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
     And l'ente delegante "PA2"
     And l'utente è un "admin" dell'ente delegante
-    And l'ente delegante ha già creato e pubblicato 1 e-service
     And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato accetta la delega in fruizione
     And il delegante ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And l'utente è un "admin" dell'ente delegante
-    And per conto del delegato, il delegante ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     Then si ottiene status code 200
 
     # NOTA: caso già testato con i test di client-create.feature
@@ -658,7 +658,6 @@ Feature: Test API Availability in Use of E-Service
         | api,security |
         | support      |
 
-  @wait_for_fix
   Scenario: [TC_INCARICATO_78] Richiamare l’API di verifica richiesta di fruizione precedentemente creata da parte del delegato, a fronte della revoca della delega - lato delegante
     Given l'utente è un "admin" di "GSP"
     And "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
@@ -672,7 +671,7 @@ Feature: Test API Availability in Use of E-Service
     And l'ente delegato accetta la delega in fruizione
     And il delegato ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And l'utente è un "admin" dell'ente delegante
-    When l'ente delegato con ruolo "admin" revoca la delega in fruizione
+    When l'ente delegante con ruolo "admin" revoca la delega in fruizione
     #lato delegante
     And il delegante controlla che la richiesta di fruizione sia stata archiviata
     #lato delegato
