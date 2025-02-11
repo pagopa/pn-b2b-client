@@ -724,7 +724,8 @@ Feature: annullamento notifiche b2b
   @Annullamento  @addressBook1
   Scenario:  [B2B-PA-ANNULLAMENTO_28] PA mittente: annullamento notifica durante invio mail di cortesia
     Given si predispone addressbook per l'utente "Galileo Galilei"
-    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "Comune_1"
+    And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserita l'email di cortesia "provaemail2@test.it" per il comune "default"
     And viene generata una nuova notifica
       | subject | invio notifica con cucumber |
     And destinatario
@@ -735,7 +736,7 @@ Feature: annullamento notifiche b2b
     And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
       | loadTimeline | true |
       | details | NOT_NULL |
-      | details_digitalAddress | {"address": "example@pecSuccess.it", "type": "EMAIL"} |
+      | details_digitalAddress | {"address": "provaemail2@test.it", "type": "EMAIL"} |
       | details_recIndex | 0 |
     When la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
