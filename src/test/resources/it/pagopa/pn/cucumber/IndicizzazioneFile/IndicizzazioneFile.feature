@@ -558,7 +558,7 @@ Feature: test preliminari indicizzazione File safeStorage
     Given Vengono caricati 2 nuovi documenti di tipo "PN_NOTIFICATION_ATTACHMENTS"
     When Si modificano i documenti secondo le seguenti operazioni
       | operation | tag                                  | documentIndex |
-      | SET       | global_singlevalue:test1             | 1             |
+      | SET       | global_singlevalue_inesistente:test1 | 1             |
       | SET       | global_singlevalue_inesistente:test2 | 2             |
     Then L'update massivo va in successo con stato 200
     And La response contiene uno o più errori "400.00" riportanti la dicitura "Tag 'global_singlevalue_inesistente' not found in the indexing configuration" riguardanti il documento 1
