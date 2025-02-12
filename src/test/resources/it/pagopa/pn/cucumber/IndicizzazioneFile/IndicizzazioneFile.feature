@@ -546,7 +546,7 @@ Feature: test preliminari indicizzazione File safeStorage
       | SET       | global_singlevalue:test1             | 1             |
       | SET       | global_singlevalue_inesistente:test2 | 2             |
     Then L'update massivo va in successo con stato 200
-    And La response contiene uno o più errori "400.00" riportanti la dicitura "Tag 'global_multivalue_inesistente' not found in the indexing configuration" riguardanti il documento 2
+    And La response contiene uno o più errori "400.00" riportanti la dicitura "Tag 'global_singlevalue_inesistente' not found in the indexing configuration" riguardanti il documento 2
     And Il documento 1 è associato alla seguente lista di tag
       | global_singlevalue:test1 |
     And Il documento 2 è associato alla seguente lista di tag
@@ -561,8 +561,8 @@ Feature: test preliminari indicizzazione File safeStorage
       | SET       | global_singlevalue:test1             | 1             |
       | SET       | global_singlevalue_inesistente:test2 | 2             |
     Then L'update massivo va in successo con stato 200
-    And La response contiene uno o più errori "400.00" riportanti la dicitura "Tag 'global_multivalue_inesistente1' not found in the indexing configuration" riguardanti il documento 1
-    And La response contiene uno o più errori "400.00" riportanti la dicitura "Tag 'global_multivalue_inesistente2' not found in the indexing configuration" riguardanti il documento 2
+    And La response contiene uno o più errori "400.00" riportanti la dicitura "Tag 'global_singlevalue_inesistente' not found in the indexing configuration" riguardanti il documento 1
+    And La response contiene uno o più errori "400.00" riportanti la dicitura "Tag 'global_singlevalue_inesistente' not found in the indexing configuration" riguardanti il documento 2
     And Il documento 1 è associato alla seguente lista di tag
       | null |
     And Il documento 2 è associato alla seguente lista di tag
