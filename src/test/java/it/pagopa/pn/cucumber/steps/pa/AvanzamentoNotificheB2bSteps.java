@@ -2620,7 +2620,7 @@ public class AvanzamentoNotificheB2bSteps {
                 .toList();
 
             assertThat(actualAttemptsMade)
-                .withFailMessage("Non è stato trovato alcun elemento di timeline corrispondente a un tentativo di indice minore o uguale a '%d'.".formatted(index))
+                .as("Non è stato trovato alcun elemento di timeline corrispondente a un tentativo di indice minore o uguale a '%d'.".formatted(index))
                 .isNotEmpty()
                 .as("I tentativi effettuati non corrispondono a quelli attesi.")
                 .hasSameElementsAs(expectedAttemptsMade);

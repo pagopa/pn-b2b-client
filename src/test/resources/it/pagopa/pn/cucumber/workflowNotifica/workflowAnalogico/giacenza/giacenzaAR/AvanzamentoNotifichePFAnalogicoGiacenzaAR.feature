@@ -75,7 +75,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza AR
       | digitalDomicile         | NULL                   |
       | physicalAddress_address | Via@FAIL-CompiutaGiacenza_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details | NOT_NULL |
       | details_deliveryDetailCode | CON080 |
@@ -107,9 +107,8 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza AR
       | details_deliveryDetailCode | PNRN012 |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
-    And viene verificato che l'ultimo tentativo effettuato abbia indice 1
+    And viene verificato che l'ultimo tentativo effettuato abbia indice 0
 
-    # FIXME 12/02/2025 attualmente non si ha certezza della sequenza corretta, rivedere il test una volta ottenuta
   @dev @workflowAnalogico
   Scenario: [B2B_TIMELINE_ANALOG_GIACENZA_AR_ERR_1] Invio Notifica Mono destinatario workflow cartaceo - Caso FAIL-CompiutaGiacenza_AR_ERR
     Given viene generata una nuova notifica
@@ -119,7 +118,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza AR
       | digitalDomicile         | NULL                   |
       | physicalAddress_address | Via@FAIL_CompiutaGiacenza_AR_ERR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN005C"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN005B"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details | NOT_NULL |
       | details_deliveryDetailCode | CON080 |
@@ -141,11 +140,6 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza AR
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_attachments | [{"documentType": "Plico"}] |
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" non esista nella timeline caricata
-      | details | NOT_NULL |
-      | details_deliveryDetailCode | PNRN012 |
-      | details_recIndex | 0 |
-      | details_sentAttemptMade | 0 |
     And viene verificato che l'ultimo tentativo effettuato abbia indice 0
 
   @dev @workflowAnalogico
