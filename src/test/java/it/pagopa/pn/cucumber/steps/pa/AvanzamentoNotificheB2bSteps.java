@@ -41,8 +41,23 @@ import it.pagopa.pn.client.b2b.pa.mapper.impl.PnTimelineAndLegalFactV26;
 import it.pagopa.pn.client.b2b.pa.mapper.model.PnTimelineLegalFactV26;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
-import it.pagopa.pn.client.b2b.pa.polling.dto.*;
-import it.pagopa.pn.client.b2b.pa.polling.impl.*;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingPredicate;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV1;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV20;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV21;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV23;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV26;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceStatusRapidV1;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceStatusRapidV26;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineExtraRapidV26;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineRapidV1;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineRapidV20;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineRapidV21;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineRapidV23;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineRapidV26;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineSlowV1;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineSlowV26;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnPrivateDeliveryPushExternalClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
@@ -73,6 +88,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.IntStream;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.pdfbox.Loader;
@@ -2588,6 +2604,31 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
+    @Then("viene verificato che l'ultimo tentativo effettuato abbia indice {int}")
+    public void vieneVerificatoCheUltimoTentativoEffettuatoAbbiaIndice(Integer index) {
+        try {
+            List<TimelineElementV26> actualTimelineElements = sharedSteps.getTimelineElementsToAttempt(
+                index);
+            List<Integer> actualAttemptsMade = actualTimelineElements.stream()
+                .map(TimelineElementV26::getDetails)
+                .filter(Objects::nonNull)
+                .map(TimelineElementDetailsV26::getSentAttemptMade)
+                .distinct()
+                .toList();
+            List<Integer> expectedAttemptsMade = IntStream.range(0, index + 1)
+                .boxed()
+                .toList();
+
+            assertThat(actualAttemptsMade)
+                .withFailMessage("Non è stato trovato alcun elemento di timeline corrispondente a un tentativo di indice minore o uguale a '%d'.".formatted(index))
+                .isNotEmpty()
+                .as("I tentativi effettuati non corrispondono a quelli attesi.")
+                .hasSameElementsAs(expectedAttemptsMade);
+        } catch (AssertionError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
     /** Checks that a certain timeline element has a field with a text value compatible with the specified regular expression.
      * @param timelineEventCategory the category of the timeline element, e.g. "SEND_ANALOG_PROGRESS"
      * @param eventId the event id of the timeline element, e.g. "CON020"
@@ -2682,6 +2723,20 @@ public class AvanzamentoNotificheB2bSteps {
 
         TimelineElementV26 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
 
+        try {
+            log.info("TIMELINE_ELEMENT: " + timelineElement);
+            Assertions.assertNull(timelineElement);
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
+    /* TODO 12/02/2025 Accorpare con vieneVerificatoCheElementoTimelineNonEsista(String timelineEventCategory, @Transpose DataTest dataFromTest)
+     * parametrizzando il load della timeline.
+     */
+    @And("viene verificato che l'elemento di timeline {string} non esista nella timeline caricata")
+    public void vieneVerificatoCheElementoTimelineNonEsistaNotLoadTimeline(String timelineEventCategory, @Transpose DataTest dataFromTest) {
+        TimelineElementV26 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         try {
             log.info("TIMELINE_ELEMENT: " + timelineElement);
             Assertions.assertNull(timelineElement);
