@@ -537,6 +537,37 @@ Feature: test preliminari indicizzazione File safeStorage
     And La response contiene uno o più errori "500.00" riportanti la dicitura "Document key not present in DB" riguardanti il documento 3
     And La response contiene uno o più errori "500.00" riportanti la dicitura "Document key not present in DB" riguardanti il documento 4
 
+  @aggiuntaTag
+  @indicizzazioneSafeStorage
+  Scenario: [INDEX_SS_UPDATE_MASSIVE_16] Update Massive ERROR - tag inesistente
+    Given Vengono caricati 2 nuovi documenti di tipo "PN_NOTIFICATION_ATTACHMENTS"
+    When Si modificano i documenti secondo le seguenti operazioni
+      | operation | tag                                  | documentIndex |
+      | SET       | global_singlevalue:test1             | 1             |
+      | SET       | global_singlevalue_inesistente:test2 | 2             |
+    Then L'update massivo va in successo con stato 200
+    And La response contiene uno o più errori "400.00" riportanti la dicitura "Tag 'global_multivalue_inesistente' not found in the indexing configuration" riguardanti il documento 1
+    And Il documento 1 è associato alla seguente lista di tag
+      | null |
+    And Il documento 2 è associato alla seguente lista di tag
+      | global_multivalue:test1 |
+
+  @aggiuntaTag
+  @indicizzazioneSafeStorage
+  Scenario: [INDEX_SS_UPDATE_MASSIVE_17] Update Massive ERROR - tutti i tag inesistenti
+    Given Vengono caricati 2 nuovi documenti di tipo "PN_NOTIFICATION_ATTACHMENTS"
+    When Si modificano i documenti secondo le seguenti operazioni
+      | operation | tag                                  | documentIndex |
+      | SET       | global_singlevalue:test1             | 1             |
+      | SET       | global_singlevalue_inesistente:test2 | 2             |
+    Then L'update massivo va in successo con stato 200
+    And La response contiene uno o più errori "400.00" riportanti la dicitura "Tag 'global_multivalue_inesistente1' not found in the indexing configuration" riguardanti il documento 1
+    And La response contiene uno o più errori "400.00" riportanti la dicitura "Tag 'global_multivalue_inesistente2' not found in the indexing configuration" riguardanti il documento 2
+    And Il documento 1 è associato alla seguente lista di tag
+      | null |
+    And Il documento 2 è associato alla seguente lista di tag
+      | null |
+
   ########################################################### SEARCH FILE-KEY ###################################################################
 
   @test
