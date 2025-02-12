@@ -63,11 +63,6 @@ public class AgreementCreationStep {
     public void delegationRequestForServiceAlreadySubmittedAndPendingApproval(DelegationRole delegationRole) {
         String tenant = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
         String token = identityService.getToken(tenant, null);
-        delegationRequestForServiceAlreadySubmittedAndPendingApproval(token);
-    }
-
-    @Given("{string} ha già creato e inviato una richiesta di fruizione in delega ed è in attesa di approvazione")
-    public void delegationRequestForServiceAlreadySubmittedAndPendingApproval(String token) {
         UUID delegationId = sharedStepsContext.getDelegationCommonContext().getDelegationId();
         agreementProcessRequest(token, delegationId);
     }
