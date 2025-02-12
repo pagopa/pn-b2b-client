@@ -130,7 +130,7 @@ Feature: test preliminari indicizzazione File safeStorage
   @indicizzazioneSafeStorage
   Scenario: [INDEX_SS_CREATE_7] Create ERROR - MaxValuesPerTagPerRequest
     Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
-      | global_multivalue:test1,test2,test3,test4,test5,test6, test7 |
+      | global_multivalue:test1,test2,test3,test4,test5,test6, test7, test8, test9, test10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101 |
     Then La chiamata genera un errore con status code 400
     And Il messaggio di errore riporta la dicitura "Limit 'MaxValuesPerTagPerRequest' reached"
 
@@ -402,7 +402,7 @@ Feature: test preliminari indicizzazione File safeStorage
       | DELETE    | global_multivalue:test2 | 1             |
       | DELETE    | global_multivalue:test2 | 2             |
     Then L'update massivo va in successo con stato 200
-    And La response contiene uno o più errori riportanti la dicitura "SET and DELETE cannot contain the same tags: [global_multivalue]" riguardanti il documento 1
+    And La response contiene uno o più errori "400.00" riportanti la dicitura "SET and DELETE cannot contain the same tags: [global_multivalue]" riguardanti il documento 1
     And Il documento 2 è associato alla seguente lista di tag
       | global_multivalue:test1  |
       | global_singlevalue:test1 |
@@ -438,7 +438,7 @@ Feature: test preliminari indicizzazione File safeStorage
       | SET       | pn-test~local_multivalue:test5   | 1             |
       | SET       | global_singlevalue:test6         | 2             |
     Then L'update massivo va in successo con stato 200
-    And La response contiene uno o più errori riportanti la dicitura "Number of tags to update exceeds maxOperationsOnTags limit" riguardanti il documento 1
+    And La response contiene uno o più errori "400.00" riportanti la dicitura "Number of tags to update exceeds maxOperationsOnTags limit" riguardanti il documento 1
     And Il documento 2 è associato alla seguente lista di tag
       | global_multivalue:test1  |
       | global_singlevalue:test6 |
@@ -457,7 +457,7 @@ Feature: test preliminari indicizzazione File safeStorage
       | SET       | global_indexed_multivalue:test | 6             |
       | SET       | global_multivalue:test1        | 1             |
     Then L'update massivo va in successo con stato 200
-    And La response contiene uno o più errori riportanti la dicitura "Limit 'MaxFileKeys' reached. Current value: 6. Max value: 5" riguardanti il documento 6
+    And La response contiene uno o più errori "400.00" riportanti la dicitura "Limit 'MaxFileKeys' reached. Current value: 6. Max value: 5" riguardanti il documento 6
     And Il documento 1 è associato alla seguente lista di tag
       | global_indexed_multivalue:test |
       | global_multivalue:test1        |
@@ -473,7 +473,7 @@ Feature: test preliminari indicizzazione File safeStorage
       | SET       | global_multivalue:test5       | 1             |
       | SET       | global_multivalue:test5,test6 | 2             |
     Then L'update massivo va in successo con stato 200
-    And La response contiene uno o più errori riportanti la dicitura "Limit 'MaxValuesPerTagDocument' reached. Current value: 6. Max value: 5" riguardanti il documento 2
+    And La response contiene uno o più errori "400.00" riportanti la dicitura "Limit 'MaxValuesPerTagDocument' reached. Current value: 6. Max value: 5" riguardanti il documento 2
     And Il documento 1 è associato alla seguente lista di tag
       | global_multivalue:test1,test2,test3,test4,test5 |
 
@@ -489,7 +489,7 @@ Feature: test preliminari indicizzazione File safeStorage
       | SET       | pn-test~local_multivalue:test1 | 1             |
       | SET       | global_singlevalue:test1       | 2             |
     Then L'update massivo va in successo con stato 200
-    And La response contiene uno o più errori riportanti la dicitura "Limit 'MaxTagsPerDocument' reached. Current value: 3. Max value: 2" riguardanti il documento 1
+    And La response contiene uno o più errori "400.00" riportanti la dicitura "Limit 'MaxTagsPerDocument' reached. Current value: 3. Max value: 2" riguardanti il documento 1
     And Il documento 2 è associato alla seguente lista di tag
       | global_multivalue:test1  |
       | global_singlevalue:test1 |
@@ -504,9 +504,38 @@ Feature: test preliminari indicizzazione File safeStorage
       | SET       | global_multivalue:test1,test2,test3,test4,test5,test6,test7 | 1             |
       | SET       | global_multivalue:test1                                     | 2             |
     Then L'update massivo va in successo con stato 200
-    And La response contiene uno o più errori riportanti la dicitura "Number of values for tag global_multivalue exceeds maxValues limit" riguardanti il documento 1
+    And La response contiene uno o più errori "400.00" riportanti la dicitura "Number of values for tag global_multivalue exceeds maxValues limit" riguardanti il documento 1
     And Il documento 2 è associato alla seguente lista di tag
       | global_multivalue:test1 |
+
+  @aggiuntaTag
+  @indicizzazioneSafeStorage
+  Scenario: [INDEX_SS_UPDATE_MASSIVE_14] Update Massive ERROR - tutte le filekeys inesistenti
+    Given si prova a fare l'update di 2 documenti inesistenti secondo le seguenti operazioni
+      | operation | tag                      | documentIndex |
+      | SET       | global_singlevalue:test1 | 1             |
+      | SET       | global_singlevalue:test2 | 2             |
+    Then L'update massivo va in successo con stato 200
+    And La response contiene uno o più errori "500.00" riportanti la dicitura "Document key not present in DB" riguardanti il documento 1
+    And La response contiene uno o più errori "500.00" riportanti la dicitura "Document key not present in DB" riguardanti il documento 2
+
+  @aggiuntaTag
+  @indicizzazioneSafeStorage
+  Scenario: [INDEX_SS_UPDATE_MASSIVE_15] Update Massive ERROR - due filekeys esistenti e due filekeys inesistenti
+    Given Vengono caricati 2 nuovi documenti di tipo "PN_NOTIFICATION_ATTACHMENTS"
+    When si prova a fare l'update dei documenti creati e di 2 documenti inesistenti secondo le seguenti operazioni
+      | tag                      | documentIndex | operation |
+      | global_singlevalue:test1 | 1             | SET       |
+      | global_singlevalue:test2 | 2             | SET       |
+      | global_singlevalue:test3 | 3             | SET       |
+      | global_singlevalue:test4 | 4             | SET       |
+    Then L'update massivo va in successo con stato 200
+    And Il documento 1 è associato alla seguente lista di tag
+      | global_singlevalue:test1 |
+    And Il documento 2 è associato alla seguente lista di tag
+      | global_singlevalue:test2 |
+    And La response contiene uno o più errori "500.00" riportanti la dicitura "Document key not present in DB" riguardanti il documento 3
+    And La response contiene uno o più errori "500.00" riportanti la dicitura "Document key not present in DB" riguardanti il documento 4
 
   ########################################################### SEARCH FILE-KEY ###################################################################
 

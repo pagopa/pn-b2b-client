@@ -160,7 +160,7 @@ public class SafeStorageSteps {
     public void checkForStatusCode(Integer statusCode) {
         Assertions.assertNotNull(this.indicizzazioneStepsPojo.getHttpException());
         Assertions.assertEquals(statusCode,
-            this.indicizzazioneStepsPojo.getHttpException().getRawStatusCode());
+                this.indicizzazioneStepsPojo.getHttpException().getRawStatusCode());
     }
 
     @And("Il messaggio di errore riporta la dicitura {string}")
@@ -254,6 +254,67 @@ public class SafeStorageSteps {
             tagsList.add(newTag);
         });
         request.setTags(tagsList);
+        return request;
+    }
+
+    @Given("si prova a fare l'update di {int} documenti inesistenti secondo le seguenti operazioni")
+    public AdditionalFileTagsMassiveUpdateRequest createMassiveRequestInesistente(Integer numberOfDocuments, List<Map<String, String>> data) {
+        AdditionalFileTagsMassiveUpdateRequest request = new AdditionalFileTagsMassiveUpdateRequest();
+        List<Tags> tagsList = new LinkedList<>();
+        for (int i = 0; i < numberOfDocuments; i++) {
+            Tags newTag = new Tags();
+            newTag.setFileKey("fileKeyInesistente" + (i + 1));
+            int index = i + 1;
+            List<Map<String, String>> documentMaps = data.stream().filter(
+                    map -> Integer.valueOf(map.get("documentIndex")).equals(index)).toList();
+            populateTag(newTag, documentMaps);
+            tagsList.add(newTag);
+            this.indicizzazioneStepsPojo.getFileKeyInesistenti().add(newTag.getFileKey());
+        }
+        request.setTags(tagsList);
+        try {
+            ResponseEntity<AdditionalFileTagsMassiveUpdateResponse> response = safeStorageClient.additionalFileTagsMassiveUpdateWithHttpInfo(
+                    "pn-test", request);
+            this.indicizzazioneStepsPojo.setUpdateMassiveResponseEntity(response);
+        } catch (HttpClientErrorException e) {
+            log.info("Errore durante l'aggiornamento del documento: {}", e.getMessage());
+            this.indicizzazioneStepsPojo.setHttpException(e);
+        }
+        return request;
+    }
+
+    @When("si prova a fare l'update dei documenti creati e di {int} documenti inesistenti secondo le seguenti operazioni")
+    public AdditionalFileTagsMassiveUpdateRequest createMassiveRequestEsistenteAndInesistente(Integer numberOfDocuments, List<Map<String, String>> data) {
+        AdditionalFileTagsMassiveUpdateRequest request = new AdditionalFileTagsMassiveUpdateRequest();
+        List<Tags> tagsList = new LinkedList<>();
+        for (int i = 0; i < this.indicizzazioneStepsPojo.getCreatedFiles().size(); i++) {
+            FileCreationResponse document = this.indicizzazioneStepsPojo.getCreatedFiles().get(i);
+            Tags newTag = new Tags();
+            newTag.setFileKey(document.getKey());
+            int index = i + 1;
+            List<Map<String, String>> documentMaps = data.stream().filter(map -> Integer.valueOf(map.get("documentIndex")).equals(index)).toList();
+            populateTag(newTag, documentMaps);
+            tagsList.add(newTag);
+        }
+        for (int i = 0; i < numberOfDocuments; i++) {
+            Tags newTag = new Tags();
+            newTag.setFileKey("fileKeyInesistente" + (i + 1));
+            int index = this.indicizzazioneStepsPojo.getCreatedFiles().size() + i + 1;
+            List<Map<String, String>> documentMaps = data.stream().filter(
+                    map -> Integer.valueOf(map.get("documentIndex")).equals(index)).toList();
+            populateTag(newTag, documentMaps);
+            tagsList.add(newTag);
+            this.indicizzazioneStepsPojo.getFileKeyInesistenti().add(newTag.getFileKey());
+        }
+        request.setTags(tagsList);
+        try {
+            ResponseEntity<AdditionalFileTagsMassiveUpdateResponse> response = safeStorageClient.additionalFileTagsMassiveUpdateWithHttpInfo(
+                    "pn-test", request);
+            this.indicizzazioneStepsPojo.setUpdateMassiveResponseEntity(response);
+        } catch (HttpClientErrorException e) {
+            log.info("Errore durante l'aggiornamento del documento: {}", e.getMessage());
+            this.indicizzazioneStepsPojo.setHttpException(e);
+        }
         return request;
     }
 
@@ -410,15 +471,21 @@ public class SafeStorageSteps {
         }
     }
 
-    @And("La response contiene uno o più errori riportanti la dicitura {string} riguardanti il documento {int}")
-    public void checkUpdateMassiveErrors(String errorMessage, Integer documentIndex) {
+    @And("La response contiene uno o più errori {string} riportanti la dicitura {string} riguardanti il documento {int}")
+    public void checkUpdateMassiveErrors(String errorCode, String errorMessage, Integer documentIndex) {
         Assertions.assertNotNull(this.indicizzazioneStepsPojo.getUpdateMassiveResponseEntity());
         Assertions.assertNotNull(this.indicizzazioneStepsPojo.getUpdateMassiveResponseEntity().getBody());
-        String faultyFileKey = this.indicizzazioneStepsPojo.getCreatedFiles().get(documentIndex - 1).getKey();
-        ErrorDetail fileKeyError = this.indicizzazioneStepsPojo.getUpdateMassiveResponseEntity().getBody().getErrors()
-                .stream().filter(x -> x.getFileKey().contains(faultyFileKey)).findFirst().orElse(null);
+        ErrorDetail fileKeyError;
+        if (this.indicizzazioneStepsPojo.getFileKeyInesistenti().isEmpty()) {
+            String faultyFileKey = this.indicizzazioneStepsPojo.getCreatedFiles().get(documentIndex - 1).getKey();
+            fileKeyError = this.indicizzazioneStepsPojo.getUpdateMassiveResponseEntity().getBody().getErrors()
+                    .stream().filter(x -> x.getFileKey().contains(faultyFileKey)).findFirst().orElse(null);
+        } else {
+            fileKeyError = this.indicizzazioneStepsPojo.getUpdateMassiveResponseEntity().getBody().getErrors().get(documentIndex - this.indicizzazioneStepsPojo.getCreatedFiles().size() - 1);
+        }
         Assertions.assertNotNull(fileKeyError);
-        Assertions.assertEquals("400.00", fileKeyError.getResultCode());
+        log.info("Errore sulla filekey " + fileKeyError.getFileKey().get(0));
+        Assertions.assertEquals(errorCode, fileKeyError.getResultCode());
         Assertions.assertTrue(fileKeyError.getResultDescription().contains(errorMessage));
     }
 
