@@ -312,7 +312,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
       | details_deliveryDetailCode | RECAG003F |
       | details_sentAttemptMade | 0 |
       | details_deliveryFailureCause | M03 |
-      | details_physicalAddress | {"address": "VIA@FAIL-DISCOVERYIRREPERIBILE_890", "municipality": "COSENZA", "municipalityDetails": "", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
+      | details_physicalAddress | {"address": "VIA@FAIL-DISCOVERYIRREPERIBILE_890", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
       | details_responseStatus | KO |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details | NOT_NULL |
@@ -428,7 +428,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
       | details_deliveryDetailCode | RECAG003F |
       | details_sentAttemptMade | 0 |
       | details_deliveryFailureCause | M03 |
-      | details_physicalAddress | {"address": "VIA@FAIL-DISCOVERYIRREPERIBILEBADCAP_890", "municipality": "COSENZA", "municipalityDetails": "", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
+      | details_physicalAddress | {"address": "VIA@FAIL-DISCOVERYIRREPERIBILEBADCAP_890", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
       | details_responseStatus | KO |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details | NOT_NULL |
