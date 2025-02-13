@@ -104,7 +104,7 @@ Feature: Scelta canale di invio (Digitale o analogico)
       | details_sentAttemptMade | 0 |
       | details_isAvailable | false |
 
-  @addressBook1 @liberiProfessionisti #(NO indirizzo GENERALE  - SI indirizzo PIATTAFORMA & SPECIALE) scenario 13
+  @addressBook1 @liberiProfessionisti #(NO indirizzo GENERALE  - SI indirizzo PIATTAFORMA & SPECIALE) scenario 12
   Scenario: [B2B_TIMELINE_RECAPITI_PF_1] Invio notifica mono destinatario. L’utente ha configurato l’indirizzo di piattaforma e viene passato lo speciale
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
