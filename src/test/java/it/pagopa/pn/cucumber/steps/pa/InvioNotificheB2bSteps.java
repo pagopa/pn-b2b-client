@@ -7,6 +7,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.payment.*;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.PaperEngageRequest;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.PaperEngageRequestAttachments;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.ReceivedMessage;
@@ -18,7 +19,6 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalChannelsServiceClientIm
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.payment_info.model.*;
 import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchResponse;
 import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchRow;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
@@ -63,8 +63,8 @@ public class InvioNotificheB2bSteps {
     private final PnPaymentInfoClientImpl pnPaymentInfoClientImpl;
     private final PnExternalChannelsServiceClientImpl pnExternalChannelsServiceClientImpl;
 
-    private PaymentResponse paymentResponse;
-    private List<PaymentInfoV21> paymentInfoResponse;
+    private BffPaymentResponse paymentResponse;
+    private List<BffPaymentInfoItem> paymentInfoResponse;
     private NotificationDocument notificationDocumentPreload;
     private NotificationPaymentAttachment notificationPaymentAttachmentPreload;
     private NotificationMetadataAttachment notificationMetadataAttachment;
@@ -731,7 +731,7 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
         NotificationPriceResponseV23 notificationPrice = this.b2bClient.getNotificationPriceV23(Objects.requireNonNull(Objects.requireNonNull(sharedSteps.getSentNotification().getRecipients().get(0).getPayments()).get(0).getPagoPa()).getCreditorTaxId(),
                 Objects.requireNonNull(Objects.requireNonNull(sharedSteps.getSentNotification().getRecipients().get(0).getPayments()).get(0).getPagoPa()).getNoticeCode());
 
-        PaymentRequest paymentRequest = getPaymentRequest(notificationPrice,
+        BffPaymentRequest paymentRequest = getPaymentRequest(notificationPrice,
                 Objects.requireNonNull(Objects.requireNonNull(sharedSteps.getSentNotification().getRecipients().get(0).getPayments()).get(0).getPagoPa()).getNoticeCode(),
                 Objects.requireNonNull(Objects.requireNonNull(sharedSteps.getSentNotification().getRecipients().get(0).getPayments()).get(0).getPagoPa()).getCreditorTaxId(),
                 "Test Automation",
@@ -800,7 +800,7 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
 
     @And("l'avviso pagopa viene pagato correttamente su checkout con errore {string}")
     public void laNotificaVienePagatasuCheckoutError(String codiceErrore) {
-        PaymentRequest paymentRequest = getPaymentRequest(null,
+        BffPaymentRequest paymentRequest = getPaymentRequest(null,
                 Objects.requireNonNull(Objects.requireNonNull(sharedSteps.getNotificationRequest().getRecipients().get(0).getPayments()).get(0).getPagoPa()).getNoticeCode(),
                 Objects.requireNonNull(Objects.requireNonNull(sharedSteps.getNotificationRequest().getRecipients().get(0).getPayments()).get(0).getPagoPa()).getCreditorTaxId(),
                 "Test Automation",
@@ -813,7 +813,7 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
 
     @And("l'avviso pagopa viene pagato correttamente su checkout creditorTaxID {string} noticeCode {string} con errore {string}")
     public void laNotificaVienePagatasuCheckoutError(String creditorTaxID , String noticeCode,String codiceErrore) {
-        PaymentRequest paymentRequest = getPaymentRequest(null,
+        BffPaymentRequest paymentRequest = getPaymentRequest(null,
                 noticeCode,
                 creditorTaxID,
                 "Test Automation",
@@ -880,8 +880,8 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
                 .creditorTaxId(creditorTaxId)
                 .noticeCode(noticeCode);
 
-        List<PaymentInfoV21> getPaymentInfoV21 = Assertions.assertDoesNotThrow(() -> pnPaymentInfoClientImpl.getPaymentInfoV21(Collections.singletonList(paymentInfoRequest)));
-        PaymentRequest paymentRequest = getPaymentRequest(null,
+        List<BffPaymentInfoItem> getPaymentInfoV21 = Assertions.assertDoesNotThrow(() -> pnPaymentInfoClientImpl.getPaymentInfoV21(Collections.singletonList(paymentInfoRequest)));
+        BffPaymentRequest paymentRequest = getPaymentRequest(null,
                 noticeCode,
                 creditorTaxId,
                 "Test Automation",
@@ -894,7 +894,7 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
         verifyCheckoutCart(paymentRequest, null);
     }
 
-    private void verifyCheckoutCart(PaymentRequest paymentRequest, String codiceErrore) {
+    private void verifyCheckoutCart(BffPaymentRequest paymentRequest, String codiceErrore) {
 
         try {
             Assertions.assertDoesNotThrow(() -> {
@@ -953,8 +953,8 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
         }
     }
 
-    private PaymentRequest getPaymentRequest(NotificationPriceResponseV23 notificationPrice, String noticeNumber, String fiscalCode, String companyName, Integer amount, String description, String returnUrl) {
-        PaymentRequest paymentRequest= new PaymentRequest();
+    private BffPaymentRequest getPaymentRequest(NotificationPriceResponseV23 notificationPrice, String noticeNumber, String fiscalCode, String companyName, Integer amount, String description, String returnUrl) {
+        BffPaymentRequest paymentRequest= new BffPaymentRequest();
         PaymentNotice paymentNotice= new PaymentNotice();
         paymentNotice.noticeNumber(noticeNumber);
         paymentNotice.fiscalCode(fiscalCode);
@@ -1136,9 +1136,9 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
 
     @Given("si richiama checkout con dati:")
     public void siRichiamaCheckoutConDati(Map<String, String> dataCheckout) {
-        PaymentRequest requestCheckout = creationPaymentRequest(dataCheckout);
+        BffPaymentRequest requestCheckout = creationPaymentRequest(dataCheckout);
      try {
-            PaymentResponse responseCheckout = pnPaymentInfoClientImpl.checkoutCart(requestCheckout);
+         BffPaymentResponse responseCheckout = pnPaymentInfoClientImpl.checkoutCart(requestCheckout);
             Assertions.assertNotNull(responseCheckout);
             Assertions.assertNotNull(responseCheckout.getCheckoutUrl());
             log.info("response checkout: {}", responseCheckout);
@@ -1149,7 +1149,7 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
 
     @Given("si richiama checkout con restituzione errore")
     public void siRichiamaCheckoutConDatiConErrore(Map<String, String> dataCheckout) {
-        PaymentRequest requestCheckout = creationPaymentRequest(dataCheckout);
+        BffPaymentRequest requestCheckout = creationPaymentRequest(dataCheckout);
         try {
             pnPaymentInfoClientImpl.checkoutCart(requestCheckout);
         } catch (HttpStatusCodeException e) {
@@ -1157,9 +1157,9 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
         }
     }
 
-    public PaymentRequest creationPaymentRequest(Map<String, String> dataCheckout) {
+    public BffPaymentRequest creationPaymentRequest(Map<String, String> dataCheckout) {
 
-        PaymentRequest requestCheckout = new PaymentRequest()
+        BffPaymentRequest requestCheckout = new BffPaymentRequest()
                 .paymentNotice(new PaymentNotice()
                         .noticeNumber(dataCheckout.get("noticeCode")!=null? dataCheckout.get("noticeCode"):
                                 sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(0).getPagoPa().getNoticeCode())
