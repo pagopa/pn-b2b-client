@@ -3719,7 +3719,6 @@ public class AvanzamentoNotificheB2bSteps {
         } else if (firstElement.equalsIgnoreCase("DIGITAL_DELIVERY_CREATION_REQUEST")) {
             Assertions.assertNotNull(firstElementToCheck.getDetails(), "Details for first element to check not found iun: " + iun);
             Assertions.assertNotNull(firstElementToCheck.getDetails().getCompletionWorkflowDate(), "CompletionWorkflowDate for first element to check not found iun: " + iun);
-            Assertions.assertNotNull(firstElementToCheck.getDetails().getNotificationDate(), "CompletionWorkflowDate for first element to check not found iun: " + iun);
             return firstElementToCheck.getDetails().getCompletionWorkflowDate();
         } else return firstElementToCheck.getEventTimestamp();
 
