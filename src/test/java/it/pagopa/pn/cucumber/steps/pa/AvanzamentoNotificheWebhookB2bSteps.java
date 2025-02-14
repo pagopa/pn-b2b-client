@@ -807,20 +807,42 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
     @And("vengono letti gli eventi dello stream versione {string}")
     public void readStreamEvents(String version) {
+        readStreamElement(version, version);
+    }
+
+
+    @When("vengono letti gli eventi dello stream con versione {string} creati dalla versione {string}")
+    public void vengonoLettiGliEventiDelloStreamConVersioneCreatiDallaVersione(String versionRead, String versionCreate) {
+        readStreamElement(versionCreate, versionRead);
+    }
+
+    public void readStreamElement(String versionCreate, String versionRead) {
         updateApiKeyForStream();
+        UUID streamId = retrieveStreamIdBasedOnCreatedVersion(versionCreate);
         try {
-            switch (version.toUpperCase()) {
-                case "V10" -> progressResponseElements = webhookB2bClient.consumeEventStream(this.eventStreamList.get(0).getStreamId(), null);
-                case "V23" -> progressResponseElementsV23 = webhookB2bClient.consumeEventStreamV23(this.eventStreamListV23.get(0).getStreamId(), null);
-                case "V24" -> progressResponseElementsV24 = webhookB2bClient.consumeEventStreamV24(this.eventStreamListV24.get(0).getStreamId(), null);
-                case "V25" -> progressResponseElementsV25 = webhookB2bClient.consumeEventStreamV25(this.eventStreamListV25.get(0).getStreamId(), null);
-                case "V26" -> progressResponseElementsV26 = webhookB2bClient.consumeEventStreamV26(this.eventStreamListV26.get(0).getStreamId(), null);
-                default -> throw new IllegalArgumentException("Version not supported!: " + version);
+            switch (versionRead.toUpperCase()) {
+                case "V10" -> progressResponseElements = webhookB2bClient.consumeEventStream(streamId, null);
+                case "V23" -> progressResponseElementsV23 = webhookB2bClient.consumeEventStreamV23(streamId, null);
+                case "V24" -> progressResponseElementsV24 = webhookB2bClient.consumeEventStreamV24(streamId, null);
+                case "V25" -> progressResponseElementsV25 = webhookB2bClient.consumeEventStreamV25(streamId, null);
+                case "V26" -> progressResponseElementsV26 = webhookB2bClient.consumeEventStreamV26(streamId, null);
+                default -> throw new IllegalArgumentException("Version not supported!: " + versionRead);
             }
         } catch (HttpStatusCodeException e) {
             this.notificationError = e;
             sharedSteps.setNotificationError(e);
         }
+    }
+
+    private UUID retrieveStreamIdBasedOnCreatedVersion(String versionCreated) {
+        return switch (versionCreated.toUpperCase()) {
+            case "V10" -> this.eventStreamList.get(0).getStreamId();
+            case "V23" -> this.eventStreamListV23.get(0).getStreamId();
+            case "V24" -> this.eventStreamListV24.get(0).getStreamId();
+            case "V25" -> this.eventStreamListV25.get(0).getStreamId();
+            case "V26" -> this.eventStreamListV26.get(0).getStreamId();
+            default -> throw new IllegalArgumentException("Version not supported!: " + versionCreated);
+        };
     }
 
     private boolean searchSpecificTimelineEvent(String timelineEvent, String deliveryDetailCode) {

@@ -1,7 +1,7 @@
 package it.pagopa.interop.tracing.service;
 
-import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.model.GetTracingsResponse;
-import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.model.TracingState;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.GetTracingsResponse;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.TracingState;
 
 import java.util.List;
 
