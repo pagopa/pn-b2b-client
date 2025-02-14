@@ -1,0 +1,127 @@
+name: Tracing Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to run tests against'
+        required: true
+        type: environment
+      javaBranchName:
+        description: 'Provide the branch name for pn-b2b-client to clone'
+        required: false
+        default: main
+        type: string
+
+
+defaults:
+  run:
+    shell: bash
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  skip_checkUserMembership: "true"
+  skip_failNotSelectedEnvTagRef: "true"
+  SCRIPTS_FOLDER: "./scripts"
+
+jobs:
+  inputs:
+    runs-on: ubuntu-22.04
+    environment: ${{ inputs.environment }}
+
+    steps:
+      - name: Print Inputs
+        id: print_inputs
+        run: |
+          echo "- environment: \`${{ inputs.environment }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- normalized environment: \`${{ vars.NORM_ENV }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- ref: \`${{ github.ref }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- plat-dep versions: \`${{ vars.PLAT_DEP_VERSIONS_URL }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- kafkaPurgeTopics: \`${{ inputs.kafkaPurgeTopics }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- runDataPreparation: \`${{ inputs.runDataPreparation }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- runTests: \`${{ inputs.runJSTests }}\`" >> $GITHUB_STEP_SUMMARY
+
+  create_runner:
+    name: Create Self-Hosted Runner
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        index: [1]
+      fail-fast: true
+    environment: ${{ inputs.environment }}
+
+    steps:
+      - name: Start GitHub Runner
+        id: start_runner
+        uses: pagopa/interop-github-runner-aws-create-action@main
+        with:
+          environment: ${{ inputs.environment }}
+          aws_region: ${{ secrets.AWS_REGION }}
+          iam_role_arn: ${{ secrets.ECS_IAM_ROLE_ARN }}
+          ecs_cluster_name: ${{ secrets.ECS_CLUSTER_NAME }}
+          ecs_task_definition: ${{ secrets.ECS_TASK_DEFINITION }}
+          ecs_container_name: ${{ vars.ECS_TASK_CONTAINER_NAME }}
+          ecs_task_max_duration_seconds: ${{ vars.ECS_TASK_MAX_DURATION_SECONDS }}
+          ecs_task_subnet_id: ${{ secrets.SUBNET_ID }}
+          ecs_task_sec_group: ${{ secrets.SEC_GROUP_ID }}
+          pat_token: ${{ secrets.BOT_TOKEN }}
+
+
+
+
+  run_java_test:
+    name: Run Java Cucumber Test Suite
+    needs: [create_runner]
+    runs-on: [self-hosted, "run_id:${{ inputs.environment }}-${{ github.run_id }}"]
+    environment: ${{ inputs.environment }}
+    env:
+      ENVIRONMENT: ${{ vars.ENVIRONMENT }}
+      ST_VERBOSE_MODE: ${{ vars.ST_VERBOSE_MODE }}
+
+    steps:
+      - name: Set up Maven
+        uses: s4u/setup-maven-action@6d44c18d67d9e1549907b8815efa5e4dada1801b # v1.12.0
+        with:
+          java-version: 17
+          maven-version: 3.9.8
+
+      - name: Clone the pn-b2b-client repo
+        id: clone_pn-b2b-client
+        shell: bash
+        run: |
+          echo "Cloning pn-b2b-client repo.."
+          git clone --depth 1 --branch ${{ inputs.javaBranchName }} https://github.com/pagopa/pn-b2b-client.git
+          echo "pn-b2b-client repo has been cloned"
+
+      - name: Run QA tests
+        id: run_pn-b2b-client_tests
+        shell: bash
+        run: |
+          set -uo pipefail
+          echo "Running tests..."
+          cd ./pn-b2b-client/interop-qa-tests && mvn -Dtest=it.pagopa.pn.interop.cucumber.${{ inputs.javaTestSuite }} clean verify
+
+  delete_runner:
+    name: Delete Self-Hosted Runner
+    needs: [create_runner, svc_version_check, data_prep, run_js_test, run_java_test]
+    if: ${{ always() }}
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        index: [1]
+      fail-fast: true
+    environment: ${{ inputs.environment }}
+
+    steps:
+      - name: Stop Github Runner
+        id: stop_runner
+        uses: pagopa/interop-github-runner-aws-cleanup-action@main
+        with:
+          environment: ${{ inputs.environment }}
+          aws_region: ${{ secrets.AWS_REGION }}
+          iam_role_arn: ${{ secrets.ECS_IAM_ROLE_ARN }}
+          ecs_cluster_name: ${{ secrets.ECS_CLUSTER_NAME }}
+          pat_token: ${{ secrets.BOT_TOKEN }}
