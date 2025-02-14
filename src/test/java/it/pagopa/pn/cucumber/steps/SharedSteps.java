@@ -6,6 +6,7 @@ import static it.pagopa.pn.cucumber.utils.NotificationValue.PAYMENT;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.PAYMENT_PAGOPA_FORM;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.getDefaultValue;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.getValue;
+import static java.util.Objects.nonNull;
 import static org.awaitility.Awaitility.await;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -2240,6 +2241,18 @@ public class SharedSteps {
             return timelineElementList.stream().filter(elem -> Objects.requireNonNull(elem.getElementId()).contains(timelineEventId)).toList();
         }
         return timelineElementList.stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).getValue().equals(timelineEventCategory)).toList();
+    }
+
+    /** Get all timeline elements having attempt index less or equal to the given one
+     * @param attemptIndex the index of the attempt (starting from 0)
+     * @return a list of timeline elements that match the given event category and data from test */
+    public List<TimelineElementV26> getTimelineElementsToAttempt(int attemptIndex) {
+        List<TimelineElementV26> timelineElementList = notificationResponseComplete.getTimeline();
+        return timelineElementList.stream()
+            .filter(elem -> nonNull(elem.getDetails()))
+            .filter(elem -> nonNull(elem.getDetails().getSentAttemptMade()))
+            .filter(elem -> elem.getDetails().getSentAttemptMade() <= attemptIndex)
+            .toList();
     }
 
     public TimelineElementV26 getTimelineElementByEventId(String timelineEventCategory, DataTest dataFromTest) {
