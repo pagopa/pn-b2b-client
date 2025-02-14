@@ -161,7 +161,7 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/develop/packages/api-clients/open-api/bffApi.yml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/bae46fcee339b15245ac748a6583e6dd829a6be5/packages/api-clients/open-api/bffApi.yml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -185,7 +185,7 @@
                     </execution>
 
                     <execution>
-                        <id>generate-external-interop-client</id>
+                        <id>generate-external-interop-tracing-client</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
@@ -201,8 +201,8 @@
                             <generateModelTests>false</generateModelTests>
                             <skipValidateSpec>true</skipValidateSpec>
                             <configOptions>
-                                <apiPackage>it.pagopa.interop.client.b2b.generated.openapi.clients.interop.api</apiPackage>
-                                <modelPackage>it.pagopa.interop.client.b2b.generated.openapi.clients.interop.model</modelPackage>
+                                <apiPackage>it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.api</apiPackage>
+                                <modelPackage>it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model</modelPackage>
                                 <dateLibrary>java8</dateLibrary>
                                 <annotationLibrary>none</annotationLibrary>
                                 <documentationProvider>source</documentationProvider>
@@ -213,8 +213,8 @@
                                     @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
                                 </additionalModelTypeAnnotations>
                             </configOptions>
-                            <apiPackage>it.pagopa.interop.client.b2b.generated.openapi.clients.interop.api</apiPackage>
-                            <modelPackage>it.pagopa.interop.client.b2b.generated.openapi.clients.interop.model</modelPackage>
+                            <apiPackage>it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.api</apiPackage>
+                            <modelPackage>it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model</modelPackage>
                         </configuration>
                     </execution>
 

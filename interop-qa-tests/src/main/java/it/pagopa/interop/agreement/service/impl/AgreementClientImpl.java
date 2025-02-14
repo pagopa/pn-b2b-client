@@ -38,8 +38,8 @@ public class AgreementClientImpl implements IAgreementClient {
     }
 
     @Override
-    public CreatedResource createAgreement(String xCorrelationId, AgreementPayload agreementPayload) {
-        return agreementsApi.createAgreement(xCorrelationId, agreementPayload);
+    public CreatedResource createAgreement(AgreementPayload agreementPayload) {
+        return agreementsApi.createAgreement(agreementPayload);
     }
 
     @Override

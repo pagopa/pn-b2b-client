@@ -1,14 +1,14 @@
 package it.pagopa.interop.tracing.service.impl;
 
-import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.ApiClient;
-import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.api.HealthApi;
-import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.api.TracingsApi;
-import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.model.GetTracingErrorsResponse;
-import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.model.GetTracingsResponse;
-import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.model.RecoverTracingResponse;
-import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.model.ReplaceTracingResponse;
-import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.model.SubmitTracingResponse;
-import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.model.TracingState;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.ApiClient;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.api.HealthApi;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.api.TracingsApi;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.GetTracingErrorsResponse;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.GetTracingsResponse;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.RecoverTracingResponse;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.ReplaceTracingResponse;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.SubmitTracingResponse;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.TracingState;
 import it.pagopa.interop.tracing.config.TracingClientConfigs;
 import it.pagopa.interop.tracing.service.IInteropTracingClient;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
