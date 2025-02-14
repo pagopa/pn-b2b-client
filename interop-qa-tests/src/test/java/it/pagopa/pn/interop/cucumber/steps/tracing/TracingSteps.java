@@ -4,7 +4,6 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
 import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.model.GetTracingErrorsResponse;
@@ -26,8 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class TracingSteps {
     private static final int OFFSET_VALUE = 0;
@@ -69,11 +66,13 @@ public class TracingSteps {
 
     @Given("viene aggiornato il file CSV con la prima data disponibile")
     public void updateCsv() {
-        submissionDate = interopTracingClient.getTracings(OFFSET_VALUE, LIMIT_VALUE, null).getResults().stream()
+        GetTracingsResponse tracingsResponse = interopTracingClient.getTracings(OFFSET_VALUE, LIMIT_VALUE, null);
+        submissionDate = tracingsResponse.getResults().stream()
                 .map(GetTracingsResponseResults::getDate)
                 .min(LocalDate::compareTo)
-                .get().minusDays(1);
-        tracingFileUtils.updateCsv(submissionDate.toString());
+                .map(date -> date.minusDays(1))
+                .orElseGet(() -> LocalDate.now().minusDays(1));
+        tracingFileUtils.updateCsv(submissionDate);
     }
 
     @When("viene sottomesso il file CSV {string}")
@@ -219,7 +218,7 @@ public class TracingSteps {
         Assertions.assertNotNull(getTracingsResponse, "There was an error while retrieving the tracing with MISSING status!");
         Assertions.assertFalse(getTracingsResponse.getResults().isEmpty(), "No tracing with MISSING status found!");
         GetTracingsResponseResults tracingsResponseResults = getTracingsResponse.getResults().get(0);
-        tracingFileUtils.updateCsv(tracingsResponseResults.getDate().toString());
+        tracingFileUtils.updateCsv(tracingsResponseResults.getDate());
         submissionDate = tracingsResponseResults.getDate();
         uploadCsv(fileType);
     }

@@ -20,6 +20,7 @@ public class QAAbstractInteropTracingClient extends AbstractInteropTracingClient
     public QAAbstractInteropTracingClient(RestTemplate restTemplate, TracingClientConfigs tracingClientConfigs, @Qualifier("tracingIdentityService") IdentityService identityService) {
         super(restTemplate, tracingClientConfigs, identityService.getToken("PA1", null));
         this.bearerTokenSetted = BearerTokenType.TENANT_1;
+        this.identityService = identityService;
     }
 
     @Override
