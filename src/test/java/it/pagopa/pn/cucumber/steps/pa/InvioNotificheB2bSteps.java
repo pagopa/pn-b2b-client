@@ -368,7 +368,9 @@ public class InvioNotificheB2bSteps {
     public void preLoadingOfDocument() {
         NotificationDocument notificationDocument = b2bUtils.newDocument("classpath:/sample.pdf");
         AtomicReference<NotificationDocument> notificationDocumentAtomic = new AtomicReference<>();
-        Assertions.assertDoesNotThrow(() -> notificationDocumentAtomic.set(b2bUtils.preloadDocument(notificationDocument)));
+        assertThatCode(() -> notificationDocumentAtomic.set(b2bUtils.preloadDocument(notificationDocument)))
+                .as("Il caricamento e l'assegnazione del documento di notifica non devono generare eccezioni")
+                .doesNotThrowAnyException();
 
         this.notificationDocumentPreload = notificationDocumentAtomic.get();
     }
@@ -377,7 +379,9 @@ public class InvioNotificheB2bSteps {
     public void preLoadingOfAttachment() {
         NotificationPaymentAttachment notificationPaymentAttachment = b2bUtils.newAttachment("classpath:/sample.pdf");
         AtomicReference<NotificationPaymentAttachment> notificationDocumentAtomic = new AtomicReference<>();
-        Assertions.assertDoesNotThrow(() -> notificationDocumentAtomic.set(b2bUtils.preloadAttachment(notificationPaymentAttachment)));
+        assertThatCode(() -> notificationDocumentAtomic.set(b2bUtils.preloadAttachment(notificationPaymentAttachment)))
+                .as("Il caricamento e l'assegnazione dell'allegato di notifica non devono generare eccezioni")
+                .doesNotThrowAnyException();
 
         this.notificationPaymentAttachmentPreload = notificationDocumentAtomic.get();
     }
@@ -386,7 +390,9 @@ public class InvioNotificheB2bSteps {
     public void preLoadingOfMetaDatiAttachmentF24() {
         NotificationMetadataAttachment notificationPaymentAttachment = b2bUtils.newMetadataAttachment("classpath:/METADATA_CORRETTO.json");
         AtomicReference<NotificationMetadataAttachment> notificationDocumentAtomic = new AtomicReference<>();
-        Assertions.assertDoesNotThrow(() -> notificationDocumentAtomic.set(b2bUtils.preloadMetadataAttachment(notificationPaymentAttachment)));
+        assertThatCode(() -> notificationDocumentAtomic.set(b2bUtils.preloadMetadataAttachment(notificationPaymentAttachment)))
+                .as("Il caricamento e l'assegnazione dei metadati dell'allegato di notifica non devono generare eccezioni")
+                .doesNotThrowAnyException();
         try {
             Thread.sleep(sharedSteps.getWait());
         } catch (InterruptedException e) {
@@ -405,7 +411,9 @@ public class InvioNotificheB2bSteps {
             case "F24" -> this.notificationMetadataAttachment.getRef().getKey();
             default -> throw new IllegalArgumentException();
         };
-        Assertions.assertTrue(checkRetetion(key, retentionTimePreLoad));
+        assertThat(checkRetetion(key, retentionTimePreLoad))
+                .as("La verifica della retention per la chiave "+key+"  con il tempo di retention deve restituire true", key, retentionTimePreLoad)
+                .isTrue();
     }
 
 
@@ -419,7 +427,9 @@ public class InvioNotificheB2bSteps {
                     sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(0).getF24().getMetadataAttachment().getRef().getKey();
             default -> throw new IllegalArgumentException();
         };
-        Assertions.assertTrue(checkRetetion(key, retentionTimeLoad));
+        assertThat(checkRetetion(key, retentionTimeLoad))
+                .as("La verifica della retention per la chiave "+key+" con il tempo di retention deve restituire true", key, retentionTimeLoad)
+                .isTrue();
     }
 
     @And("viene effettuato un controllo sulla durata della retention di {string} per l'elemento di timeline {string}")
@@ -443,7 +453,13 @@ public class InvioNotificheB2bSteps {
         if (documentType.equals("ATTACHMENTS")) {
             for (int i = 0; i < sharedSteps.getSentNotification().getRecipients().get(0).getPayments().size(); i++) {
                 String key = sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(i).getF24().getMetadataAttachment().getRef().getKey();
-                Assertions.assertTrue(checkRetention(key, retentionTimeLoad, timelineElement.getTimestamp()));
+
+                assertThat(timelineElement.getTimestamp()).as("Il timestamp dell'elemento della timeline non deve essere nullo").isNotNull();
+
+                assertThat(checkRetention(key, retentionTimeLoad, timelineElement.getTimestamp()))
+                        .as("La verifica della retention per la chiave con tempo di retention e il timestamp deve restituire true",
+                                key, retentionTimeLoad, timelineElement.getTimestamp())
+                        .isTrue();
             }
         } else {
             throw new IllegalArgumentException();
@@ -454,9 +470,19 @@ public class InvioNotificheB2bSteps {
     public void attachmentCheckLoadForTimelineElementF24(String documentType, String timelineEventCategory, String doc, @Transpose DataTest dataFromTest) throws RuntimeException {
         TimelineElementV26 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         if (documentType.equals("ATTACHMENTS")) {
-            Assertions.assertNotNull(timelineElement.getDetails().getAttachments());
-            Assertions.assertTrue(doc.equalsIgnoreCase(timelineElement.getDetails().getAttachments().get(0).getDocumentType()));
-            Assertions.assertTrue(timelineElement.getDetails().getAttachments().get(0).getUrl().contains(".zip"));
+            assertSoftly(softly -> {
+                softly.assertThat(timelineElement.getDetails().getAttachments())
+                        .as("La lista degli allegati non deve essere nulla")
+                        .isNotNull();
+
+                softly.assertThat(timelineElement.getDetails().getAttachments().get(0).getDocumentType())
+                        .as("Il tipo di documento dell'allegato deve essere uguale a '%s'", doc)
+                        .isEqualToIgnoringCase(doc);
+
+                softly.assertThat(timelineElement.getDetails().getAttachments().get(0).getUrl())
+                        .as("L'URL dell'allegato deve contenere '.zip'")
+                        .contains(".zip");
+            });
         } else {
             throw new IllegalArgumentException();
         }
@@ -468,7 +494,11 @@ public class InvioNotificheB2bSteps {
         if (documentType.equals("ATTACHMENTS")) {
             for (int i = 0; i < sharedSteps.getSentNotification().getRecipients().get(0).getPayments().size(); i++) {
                 String key = sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(i).getPagoPa().getAttachment().getRef().getKey();
-                Assertions.assertTrue(checkRetention(key, retentionTimeLoad, timelineElement.getTimestamp()));
+
+                assertThat(checkRetention(key, retentionTimeLoad, timelineElement.getTimestamp()))
+                        .as("La verifica della retention per la chiave con tempo di retention e il timestamp deve restituire true",
+                                key, retentionTimeLoad, timelineElement.getTimestamp())
+                        .isTrue();
             }
         } else {
             throw new IllegalArgumentException();
@@ -578,14 +608,21 @@ public class InvioNotificheB2bSteps {
 
     @Then("il download si conclude correttamente")
     public void correctlyDownload() {
-        Assertions.assertEquals(this.sha256DocumentDownload, this.downloadResponse.getSha256());
+        assertThat(this.downloadResponse.getSha256())
+                .as("L'hash SHA-256 del documento scaricato e diverso dal quello ricevuto in risposta", this.sha256DocumentDownload, this.downloadResponse.getSha256())
+                .isEqualTo(this.sha256DocumentDownload);
     }
 
     @Then("l'operazione ha prodotto un errore con status code {string}")
     public void operationProducedAnError(String statusCode) {
         HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
-        Assertions.assertTrue((httpStatusCodeException != null) &&
-                (httpStatusCodeException.getStatusCode().toString().substring(0, 3).equals(statusCode)));
+        assertThat(httpStatusCodeException)
+                .as("L'eccezione httpStatusCodeException non dovrebbe essere nulla")
+                .isNotNull();
+
+        assertThat(httpStatusCodeException.getStatusCode().toString().substring(0, 3))
+                .as("Il codice di stato HTTP non corrisponde a quello atteso", statusCode, httpStatusCodeException.getStatusCode().toString().substring(0, 3))
+                .isEqualTo(statusCode);
     }
 
     @Then("l'operazione ha prodotto un errore con status code {string} con messaggio di errore {string}")
@@ -625,18 +662,24 @@ public class InvioNotificheB2bSteps {
 
     @Then("si verifica la corretta acquisizione della notifica")
     public void correctAcquisitionNotification() {
-        Assertions.assertDoesNotThrow(() -> verifyNotificationVersioning("V23"));
+        assertThatCode(() -> verifyNotificationVersioning("V23"))
+                .as("La verifica della versione della notifica non deve generare eccezioni per la versione 'V23'")
+                .doesNotThrowAnyException();
     }
 
     @Then("si verifica la corretta acquisizione della notifica V1")
 
     public void correctAcquisitionNotificationV1() {
-        Assertions.assertDoesNotThrow(() -> verifyNotificationVersioning("V1"));
+        assertThatCode(() -> verifyNotificationVersioning("V1"))
+                .as("La verifica della versione della notifica non deve generare eccezioni per la versione 'V23'")
+                .doesNotThrowAnyException();
     }
 
     @Then("si verifica la corretta acquisizione della notifica V2")
     public void correctAcquisitionNotificationV2() {
-        Assertions.assertDoesNotThrow(() -> verifyNotificationVersioning("V2"));
+        assertThatCode(() -> verifyNotificationVersioning("V2"))
+                .as("La verifica della versione della notifica non deve generare eccezioni per la versione 'V23'")
+                .doesNotThrowAnyException();
     }
 
     @Then("si verifica lo scarto dell' acquisizione della notifica V1")
@@ -664,26 +707,33 @@ public class InvioNotificheB2bSteps {
         }
     }
 
-    @Then("si verifica la corretta acquisizione della notifica con verifica sha256 del allegato di pagamento {string}")
-    public void correctAcquisitionNotificationVerifySha256AllegatiPagamento(String attachnament) {
-        Assertions.assertDoesNotThrow(() -> b2bUtils.verifyNotificationAndSha256AllegatiPagamento(sharedSteps.getSentNotification(), attachnament));
+    @Then("si verifica la corretta acquisizione della notifica con verifica sha256 dell'allegato di pagamento {string}")
+    public void correctAcquisitionNotificationVerifySha256AllegatiPagamento(String attachment) {
+        assertThatCode(() -> b2bUtils.verifyNotificationAndSha256AllegatiPagamento(sharedSteps.getSentNotification(), attachment))
+                .as("Verifica fallita per la notifica e l'hash SHA-256 dell'allegato di pagamento . Assicurati che non vengano sollevate eccezioni.", attachment)
+                .doesNotThrowAnyException();
     }
 
 
     @And("viene controllato la presenza del taxonomyCode")
     public void checkTaxonomyCode() {
-        Assertions.assertNotNull(this.sharedSteps.getSentNotification().getTaxonomyCode());
-        if (this.sharedSteps.getNotificationRequest().getTaxonomyCode() != null) {
-            Assertions.assertEquals(this.sharedSteps.getNotificationRequest().getTaxonomyCode(),
-                    this.sharedSteps.getSentNotification().getTaxonomyCode());
-        }
+        assertThat(this.sharedSteps.getSentNotification().getTaxonomyCode())
+                .as("Il taxonomyCode nella notifica inviata non dovrebbe essere nullo")
+                .isNotNull();
 
+        if (this.sharedSteps.getNotificationRequest().getTaxonomyCode() != null) {
+            assertThat(this.sharedSteps.getNotificationRequest().getTaxonomyCode())
+                    .as("Il taxonomyCode nella richiesta di notifica dovrebbe essere uguale al taxonomyCode nella notifica inviata")
+                    .isEqualTo(this.sharedSteps.getSentNotification().getTaxonomyCode());
+        }
     }
 
 
     @And("vengono prodotte le evidenze: metadati e requestID")
     public void evidenceProduced() {
-        Assertions.assertNotNull(this.sharedSteps.getNewNotificationResponse());
+        assertThat(this.sharedSteps.getNewNotificationResponse())
+                .as("La risposta della nuova notifica non dovrebbe essere nulla")
+                .isNotNull();
         log.info("METADATI: " + '\n' + this.sharedSteps.getNewNotificationResponse());
         log.info("REQUEST-ID: " + '\n' + this.sharedSteps.getNewNotificationResponse().getNotificationRequestId());
     }
@@ -691,9 +741,20 @@ public class InvioNotificheB2bSteps {
 
     @Then("si verifica la corretta acquisizione della richiesta di invio notifica")
     public void correctAcquisitionRequest() {
-        Assertions.assertNotNull(this.sharedSteps.getNewNotificationResponse());
-        Assertions.assertNotNull(this.sharedSteps.getNewNotificationResponse().getNotificationRequestId());
-        Assertions.assertNotNull(b2bClient.getNotificationRequestStatus(this.sharedSteps.getNewNotificationResponse().getNotificationRequestId()));
+        assertSoftly(softly -> {
+            softly.assertThat(this.sharedSteps.getNewNotificationResponse())
+                    .as("La risposta della nuova notifica non dovrebbe essere nulla")
+                    .isNotNull();
+
+            softly.assertThat(this.sharedSteps.getNewNotificationResponse().getNotificationRequestId())
+                    .as("L'ID della richiesta di notifica non dovrebbe essere nullo")
+                    .isNotNull();
+
+            softly.assertThat(b2bClient.getNotificationRequestStatus(this.sharedSteps.getNewNotificationResponse().getNotificationRequestId()))
+                    .as("Lo stato della richiesta di notifica non dovrebbe essere nullo.",
+                            this.sharedSteps.getNewNotificationResponse().getNotificationRequestId())
+                    .isNotNull();
+        });
     }
 
 
@@ -736,9 +797,11 @@ public class InvioNotificheB2bSteps {
     @And("l'importo della notifica è {int}")
     public void priceNotificationVerify(Integer price) {
         try {
-            Assertions.assertEquals(this.sharedSteps.getSentNotification().getAmount(), price);
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            assertThat(this.sharedSteps.getSentNotification().getAmount())
+                    .as("L'importo della notifica dovrebbe essere uguale a "+price, price)
+                    .isEqualTo(price);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionError);
         }
     }
 
@@ -765,7 +828,9 @@ public class InvioNotificheB2bSteps {
     private void verifyStatus(String notificationRequestId, String paProtocolNumber, String idempotenceToken) {
         NewNotificationRequestStatusResponseV23 newNotificationRequestStatusResponse = Assertions.assertDoesNotThrow(() ->
                 this.b2bClient.getNotificationRequestStatusAllParam(notificationRequestId, paProtocolNumber, idempotenceToken));
-        Assertions.assertNotNull(newNotificationRequestStatusResponse.getNotificationRequestStatus());
+        assertThat(newNotificationRequestStatusResponse.getNotificationRequestStatus())
+                .as("Lo stato della richiesta di notifica non dovrebbe essere nullo")
+                .isNotNull();
         log.debug(newNotificationRequestStatusResponse.getNotificationRequestStatus());
     }
 
@@ -782,15 +847,22 @@ public class InvioNotificheB2bSteps {
     //Annullamento Notifica
     @And("la notifica non può essere annullata dal sistema tramite codice IUN più volte")
     public void notificationNotCanBeCanceledWithIUN() {
-        Assertions.assertDoesNotThrow(() -> {
-            RequestStatus resp = Assertions.assertDoesNotThrow(() ->
-                    b2bClient.notificationCancellation(sharedSteps.getSentNotification().getIun()));
-
-            Assertions.assertNotNull(resp);
-            Assertions.assertNotNull(resp.getDetails());
-            Assertions.assertFalse(resp.getDetails().isEmpty());
-            Assertions.assertTrue("NOTIFICATION_ALREADY_CANCELLED".equalsIgnoreCase(resp.getDetails().get(0).getCode()));
-
+        assertSoftly(softly -> {
+            softly.assertThatCode(() -> {
+                RequestStatus resp = b2bClient.notificationCancellation(sharedSteps.getSentNotification().getIun());
+                softly.assertThat(resp)
+                        .as("La risposta alla cancellazione della notifica non dovrebbe essere nulla")
+                        .isNotNull();
+                softly.assertThat(resp.getDetails())
+                        .as("I dettagli della risposta non dovrebbero essere nulli")
+                        .isNotNull();
+                softly.assertThat(resp.getDetails())
+                        .as("I dettagli della risposta non dovrebbero essere vuoti")
+                        .isNotEmpty();
+                softly.assertThat(resp.getDetails().get(0).getCode())
+                        .as("Il codice nella risposta dovrebbe essere 'NOTIFICATION_ALREADY_CANCELLED'")
+                        .isEqualToIgnoringCase("NOTIFICATION_ALREADY_CANCELLED");
+            }).as("La cancellazione della notifica non dovrebbe generare eccezioni").doesNotThrowAnyException();
         });
     }
 
@@ -831,8 +903,14 @@ public class InvioNotificheB2bSteps {
                 paymentInfoResponse = pnPaymentInfoClientImpl.getPaymentInfoV21(paymentInfoRequestList);
                 log.info("Informazioni sullo stato del Pagamento: " + paymentInfoResponse.toString());
             });
-            Assertions.assertNotNull(paymentInfoResponse);
-            Assertions.assertTrue(codiceErrore.equalsIgnoreCase(paymentInfoResponse.get(0).getErrorCode()));
+            assertThat(paymentInfoResponse)
+                    .as("La risposta del pagamento non dovrebbe essere nulla")
+                    .isNotNull();
+
+            assertThat(paymentInfoResponse.get(0).getErrorCode())
+                    .as("Il codice errore nella risposta dovrebbe essere uguale a '%s'", codiceErrore)
+                    .isEqualToIgnoringCase(codiceErrore);
+
 
         } catch (AssertionFailedError assertionFailedError) {
 
@@ -855,13 +933,21 @@ public class InvioNotificheB2bSteps {
         log.info("Messaggio json da allegare: " + paymentInfoRequest);
 
         try {
-            Assertions.assertDoesNotThrow(() -> {
+            assertThatCode(() -> {
                 paymentInfoResponse = pnPaymentInfoClientImpl.getPaymentInfoV21(paymentInfoRequestList);
+            })
+                    .as("La chiamata al servizio di pagamento non dovrebbe generare eccezioni")
+                    .doesNotThrowAnyException();
 
-            });
-            Assertions.assertNotNull(paymentInfoResponse);
-            log.info("Informazioni sullo stato del Pagamento: " + paymentInfoResponse);
-            Assertions.assertTrue(status.equalsIgnoreCase(paymentInfoResponse.get(0).getStatus().getValue()));
+            assertThat(paymentInfoResponse)
+                    .as("La risposta del pagamento non dovrebbe essere nulla")
+                    .isNotNull();
+
+            log.info("Informazioni sullo stato del Pagamento: {}", paymentInfoResponse);
+
+            assertThat(paymentInfoResponse.get(0).getStatus().getValue())
+                    .as("Lo stato nella risposta dovrebbe essere uguale a "+status , status)
+                    .isEqualToIgnoringCase(status);
 
         } catch (AssertionFailedError assertionFailedError) {
 
@@ -903,12 +989,23 @@ public class InvioNotificheB2bSteps {
         String iun = sharedSteps.getIunVersionamento();
 
         try {
-            Assertions.assertDoesNotThrow(() ->
-                    notificationByIun.set(b2bUtils.getNotificationByIunV1(iun)));
+            assertThatCode(() -> {
+                notificationByIun.set(b2bUtils.getNotificationByIunV1(iun));
+            })
+                    .as("La chiamata per ottenere la notifica per l'IUN non dovrebbe generare eccezioni")
+                    .doesNotThrowAnyException();
 
-            Assertions.assertNotNull(notificationByIun.get());
-            Assertions.assertNotNull(Objects.requireNonNull(notificationByIun.get().getRecipients().get(0).getPayment()).getNoticeCode());
-            Assertions.assertNotNull(Objects.requireNonNull(notificationByIun.get().getRecipients().get(0).getPayment()).getNoticeCodeAlternative());
+            assertThat(notificationByIun.get())
+                    .as("La notifica recuperata non dovrebbe essere nulla")
+                    .isNotNull();
+
+            assertThat(notificationByIun.get().getRecipients())
+                    .as("I destinatari della notifica non dovrebbero essere nulli o vuoti")
+                    .isNotEmpty();
+
+            assertThat(notificationByIun.get().getRecipients().get(0).getPayment())
+                    .as("Il pagamento del primo destinatario della notifica non dovrebbe essere nullo")
+                    .isNotNull();
 
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
@@ -921,12 +1018,20 @@ public class InvioNotificheB2bSteps {
         String iun = sharedSteps.getIunVersionamento();
 
         try {
-            Assertions.assertDoesNotThrow(() ->
-                    notificationByIun.set(b2bUtils.getNotificationByIunV2(iun)));
 
-            Assertions.assertNotNull(notificationByIun.get());
-            Assertions.assertNotNull(Objects.requireNonNull(notificationByIun.get().getRecipients().get(0).getPayment()).getNoticeCode());
-            Assertions.assertNotNull(Objects.requireNonNull(notificationByIun.get().getRecipients().get(0).getPayment()).getNoticeCodeAlternative());
+            assertThatCode(() -> {
+                notificationByIun.set(b2bUtils.getNotificationByIunV2(iun));
+            })
+                    .as("La chiamata per ottenere la notifica per l'IUN non dovrebbe generare eccezioni")
+                    .doesNotThrowAnyException();
+
+            assertThat(notificationByIun.get().getRecipients().get(0).getPayment().getNoticeCode())
+                    .as("Il codice della notifica del pagamento non dovrebbe essere nullo")
+                    .isNotNull();
+
+            assertThat(notificationByIun.get().getRecipients().get(0).getPayment().getNoticeCodeAlternative())
+                    .as("Il codice alternativo della notifica del pagamento non dovrebbe essere nullo")
+                    .isNotNull();
 
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
@@ -938,10 +1043,21 @@ public class InvioNotificheB2bSteps {
         AtomicReference<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification> notificationByIun = new AtomicReference<>();
         String iun = sharedSteps.getIunVersionamento();
         try {
-            Assertions.assertDoesNotThrow(() ->
-                    notificationByIun.set(b2bUtils.getNotificationByIunV1(iun)));
-            Assertions.assertNotNull(notificationByIun.get());
-            Assertions.assertNotNull(Objects.requireNonNull(notificationByIun.get().getRecipients().get(0).getPayment()).getNoticeCode());
+            assertThatCode(() -> {
+                notificationByIun.set(b2bUtils.getNotificationByIunV1(iun));
+            })
+                    .as("La chiamata per ottenere la notifica tramite IUN non dovrebbe generare eccezioni")
+                    .doesNotThrowAnyException();
+
+            assertThat(notificationByIun.get())
+                    .as("La notifica recuperata non dovrebbe essere nulla")
+                    .isNotNull();
+
+            assertThat(notificationByIun.get().getRecipients().get(0).getPayment().getNoticeCode())
+                    .as("Il codice della notifica del pagamento non dovrebbe essere nullo")
+                    .isNotNull();
+
+
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
