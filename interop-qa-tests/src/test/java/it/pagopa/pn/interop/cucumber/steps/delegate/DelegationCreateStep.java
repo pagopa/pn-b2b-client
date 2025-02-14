@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -49,15 +50,15 @@ public class DelegationCreateStep {
     @Value
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public static class DelegationAvailabilityStrategy<T, U> {
-        Consumer<T> delegationAvailabilityDeclarer;
+        BiConsumer<Boolean, Boolean> delegationAvailabilityDeclarer;
         Function<TenantFeature, U> featureExtractor;
 
         public static DelegationAvailabilityStrategy<String, DelegatedProducer> producerStrategyUsing(ITenantsApi apiSet) {
-            return new DelegationAvailabilityStrategy<>(in -> apiSet.assignTenantDelegatedProducerFeature(), TenantFeature::getDelegatedProducer);
+            return new DelegationAvailabilityStrategy<>(apiSet::updateTenantDelegatedFeatures, TenantFeature::getDelegatedProducer);
         }
 
         public static DelegationAvailabilityStrategy<String, DelegatedConsumer> consumerStrategyUsing(ITenantsApi apiSet) {
-            return new DelegationAvailabilityStrategy<>(apiSet::assignTenantDelegatedConsumerFeature, TenantFeature::getDelegatedConsumer);
+            return new DelegationAvailabilityStrategy<>(apiSet::updateTenantDelegatedFeatures, TenantFeature::getDelegatedConsumer);
         }
     }
 
@@ -146,19 +147,19 @@ public class DelegationCreateStep {
     @And("l'utente concede la disponibilità a ricevere le deleghe")
     public void userGrantsProducerDelegationAvailability() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-        setDelegationAvailability(sharedStepsContext.getTenantType(), producerStrategyUsing(tenantsApi), null);
+        setDelegationAvailability(sharedStepsContext.getTenantType(), producerStrategyUsing(tenantsApi), true, false);
     }
 
     @And("l'ente {string} concede la disponibilità a ricevere deleghe")
     public void tenantGrantsProducerDelegationAvailability(String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        setDelegationAvailability(tenantType, producerStrategyUsing(tenantsApi), null);
+        setDelegationAvailability(tenantType, producerStrategyUsing(tenantsApi), true, false);
     }
 
     @And("l'ente {string} concede la disponibilità a ricevere deleghe in fruizione")
     public void tenantGrantsConsumerDelegationAvailability(String tenantType) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-        setDelegationAvailability(tenantType, consumerStrategyUsing(tenantsApi), sharedStepsContext.getXCorrelationId());
+        setDelegationAvailability(tenantType, consumerStrategyUsing(tenantsApi), false, true);
     }
 
     @And("l'ente {delegationRole} concede la disponibilità a ricevere deleghe in fruizione")
@@ -168,8 +169,8 @@ public class DelegationCreateStep {
     }
 
     private <T, U> void setDelegationAvailability(
-        String tenantType, DelegationAvailabilityStrategy<T, U> delegationStrategy, T delegationApiInput) {
-        httpCallExecutor.performCall(() -> delegationStrategy.getDelegationAvailabilityDeclarer().accept(delegationApiInput));
+        String tenantType, DelegationAvailabilityStrategy<T, U> delegationStrategy, Boolean isDelegatedProducer, Boolean isDelegatedConsumer) {
+        httpCallExecutor.performCall(() -> delegationStrategy.getDelegationAvailabilityDeclarer().accept(isDelegatedProducer, isDelegatedConsumer));
         if (httpCallExecutor.getClientResponse() == HttpStatus.OK)
             pollingService.makePolling(() -> tenantsApi.getTenant(sharedStepsContext.getXCorrelationId(), identityService.getOrganizationId(tenantType)),
                 res -> Optional.ofNullable(res.getFeatures())

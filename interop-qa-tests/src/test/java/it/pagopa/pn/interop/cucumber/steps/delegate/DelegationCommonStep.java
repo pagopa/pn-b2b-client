@@ -39,7 +39,7 @@ public class DelegationCommonStep {
     public void tenantRemoveDelegationAvailability(String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         try {
-            tenantsApi.deleteTenantDelegatedProducerFeature();
+            tenantsApi.updateTenantDelegatedFeatures(false, false);
         } catch (HttpClientErrorException.Conflict e) {
             log.info("No delegation availability defined for the given tenant!");
         } catch (Exception e) {
@@ -53,7 +53,7 @@ public class DelegationCommonStep {
         String correlationId = sharedStepsContext.getXCorrelationId();
         UUID tenantId = this.identityService.getOrganizationId(tenantType);
         try {
-            tenantsApi.deleteTenantDelegatedConsumerFeature(correlationId);
+            tenantsApi.updateTenantDelegatedFeatures(false, false);
             pollingService.makePolling(
                 () -> tenantsApi.getTenant(correlationId, tenantId),
         result -> result.getFeatures().stream()

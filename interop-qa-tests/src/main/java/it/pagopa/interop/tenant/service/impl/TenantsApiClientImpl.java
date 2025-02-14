@@ -8,6 +8,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedTenantAttr
 import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredAttributesResponse;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredTenantAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Tenant;
+import it.pagopa.interop.generated.openapi.clients.bff.model.TenantDelegatedFeaturesFlagsUpdateSeed;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import java.util.UUID;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -56,23 +57,12 @@ public class TenantsApiClientImpl implements ITenantsApi {
     }
 
     @Override
-    public void assignTenantDelegatedProducerFeature() {
-        tenantsApi.assignTenantDelegatedProducerFeature();
-    }
-
-    @Override
-    public void deleteTenantDelegatedProducerFeature() {
-        tenantsApi.deleteTenantDelegatedProducerFeature();
-    }
-
-    @Override
-    public void assignTenantDelegatedConsumerFeature(String xCorrelationId){
-        tenantsApi.assignTenantDelegatedConsumerFeature(xCorrelationId);
-    }
-
-    @Override
-    public void deleteTenantDelegatedConsumerFeature(String xCorrelationId) {
-        tenantsApi.deleteTenantDelegatedConsumerFeature(xCorrelationId);
+    public void updateTenantDelegatedFeatures(boolean isProducerFeatureEnabled, boolean isConsumerFeatureEnabled) {
+        tenantsApi.updateTenantDelegatedFeatures(
+                new TenantDelegatedFeaturesFlagsUpdateSeed()
+                        .isDelegatedProducerFeatureEnabled(isProducerFeatureEnabled)
+                        .isDelegatedConsumerFeatureEnabled(isConsumerFeatureEnabled)
+        );
     }
 
     @Override

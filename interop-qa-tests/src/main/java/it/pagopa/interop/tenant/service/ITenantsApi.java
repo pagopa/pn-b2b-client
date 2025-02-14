@@ -1,7 +1,11 @@
 package it.pagopa.interop.tenant.service;
 
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
-import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedAttributesResponse;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedTenantAttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredAttributesResponse;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredTenantAttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Tenant;
 
 import java.util.UUID;
 
@@ -14,13 +18,7 @@ public interface ITenantsApi extends SettableBearerToken {
 
     DeclaredAttributesResponse getDeclaredAttributes(String xCorrelationId, UUID tenantId);
 
-    void assignTenantDelegatedProducerFeature();
-
-    void deleteTenantDelegatedProducerFeature();
-
-    void assignTenantDelegatedConsumerFeature(String xCorrelationId);
-
-    void deleteTenantDelegatedConsumerFeature(String xCorrelationId);
+    void updateTenantDelegatedFeatures(boolean isProducerFeatureEnabled, boolean isConsumerFeatureEnabled);
 
     Tenant getTenant(String xCorrelationId, UUID tenantId);
 }
