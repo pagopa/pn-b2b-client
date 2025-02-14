@@ -15,7 +15,7 @@
         <cucumber.version>7.8.1</cucumber.version>
         <aws.sdk.version>2.20.1</aws.sdk.version>
         <gson.version>2.11.0</gson.version>
-        <spring.boot.version>2.5.2</spring.boot.version>
+        <spring.boot.version>2.5.12</spring.boot.version>
         <swagger.version>1.6.5</swagger.version>
         <findbugs.version>3.0.2</findbugs.version>
         <junit.platform.version>1.9.1</junit.platform.version>

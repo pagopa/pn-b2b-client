@@ -43,7 +43,7 @@ public class DelegationCommonStep {
         } catch (HttpClientErrorException.Conflict e) {
             log.info("No delegation availability defined for the given tenant!");
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error while removing delegation availability", e);
         }
     }
 

@@ -1,37 +1,815 @@
 Feature: Resa al mittente di una notifica
 
+  @returnedToSender
+  Scenario: [RETURNED-TO-SENDER_1] Invio notifica 890 mono-destinatario verso PF dichiarato deceduto con controllo costo, retention dei documenti e stato RETURNED_TO_SENDER
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_890       |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_890 |
+      | digitalDomicile         | NULL               |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
+    And esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost uguale a "NotNull" per l'utente 0
+    Then viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
+      | details | NOT_NULL |
 
-  Scenario: [RETURN-TO-SENDER_1] Invio notifica 890 mono-destinatario verso PF dichiarato deceduto con controllo costo, retention dei documenti e stato RETURNED_TO_SENDER
-
-  Scenario: [RETURN-TO-SENDER_2] Invio notifica AR mono-destinatario verso PF visualizzata precedentemente alla notifica di deceduto con controllo costo, retention dei documenti
-
-  Scenario: [RETURN-TO-SENDER_3] Invio notifica AR mono-destinatario verso PF cancellata dopo la notifica di decesso con controllo costo, retention dei documenti e stato CANCELLED
-
-  Scenario: [RETURN-TO-SENDER_4] Invio notifica 890 mono-destinatario verso PG deceduto e in seguito visualizzata con controllo costo, retention dei documenti stato finale RETURN_TO_SENDER
-
-  Scenario: [RETURN-TO-SENDER_5] Invio notifica AR mono-destinatario verso PF cancellata e susccessivamente arrivo notifica di deceduto con controllo costo e stato finale CANCELLED
-
-
-  Scenario: [RETURN-TO-SENDER_6] Invio notifica AR multi-destinatario aventi stati Inviata, Irraggiungibile, Deceduto e stato finale DELIVERED e controllo costo
-  Scenario: [RETURN-TO-SENDER_7] Invio notifica AR multi-destinatario aventi stati Irraggiungibile, Deceduto e stato finale UNREACHABLE
-  Scenario: [RETURN-TO-SENDER_8] Invio notifica 890 multi-destinatario entrambi deceduti e stato finale RETURNED_TO_SENDER
-  Scenario: [RETURN-TO-SENDER_9] Invio notifica 890 multi-destinatario aventi stati Inviata e Deceduto e stato finale DELIVERED
-  Scenario: [RETURN-TO-SENDER_10] Invio notifica AR multi-destinatario aventi stati Inviata e Irraggiungibile e stato finale DELIVERED
-  Scenario: [RETURN-TO-SENDER_11] Invio notifica AR multi-destinatario aventi stati Visualizzata e Deceduto e stato finale VIEWED con controllo costo
-  Scenario: [RETURN-TO-SENDER_12] Invio notifica AR multi-destinatario  aventi stati Inviata e Irraggiungibile e stato finale DELIVERED
-
-
-  Scenario: [RETURN-TO-SENDER_13] Invio notifica AR multi-destinatario aventi stati Inviata e prima Visualizzata e poi Deceduto e stato finale DELIVERED con controllo costo
-  Scenario: [RETURN-TO-SENDER_14] Invio notifica 890 multi-destinatario aventi stati Inviata, Irraggiungibile e Deceduto che poi Visualizza con stato finale DELIVERED e controllo costo
-  Scenario: [RETURN-TO-SENDER_15] Invio notifica AR multi-destinatario aventi stati Irraggiungibile e Visualizzata successivamente Deceduto con  stato finale UNREACHABLE
-  Scenario: [RETURN-TO-SENDER_16] Invio notifica 890 multi-destinatario aventi stati Irraggiungibile e Deceduto. A seguito della Cancellazione stato finale CANCELLED con controllo costo
-  Scenario: [RETURN-TO-SENDER_17] Invio notifica 890 multi-destinatario aventi stati Inviata, Irraggiungibile e Visualizzata che poi sarà Deceduto con stato finale DELIVERED
-  Scenario: [RETURN-TO-SENDER_18] Invio notifica AR multi-destinatario entrambi deceduti con in seguito una visualizzazione e stato finale RETURNED_TO_SENDER
-  Scenario: [RETURN-TO-SENDER_19] Invio notifica 890 multi-destinatario aventi stati Deceduto e Visualizzato che poi sarà Deceduto e stato finale RETURNED_TO_SENDER
-
-  Scenario: [RETURN-TO-SENDER_20] Invio notifica AR multi-destinatario aventi stati Inviata e prima Visualizzata e poi Deceduto e stato finale DELIVERED con controllo costo
-  Scenario: [RETURN-TO-SENDER_21] Invio notifica AR multi-destinatario aventi stati Inviata, Irraggiungibile e Deceduto che poi Visualizza con stato finale DELIVERED e controllo costo
-  Scenario: [RETURN-TO-SENDER_22] Invio notifica 890 multi-destinatario aventi stati Irraggiungibile e Visualizzata successivamente Deceduto con  stato finale UNREACHABLE
-  Scenario: [RETURN-TO-SENDER_23] Invio notifica 890 multi-destinatario aventi stati Irraggiungibile e Deceduto. A seguito della Cancellazione stato finale CANCELLED con controllo costo
+  @returnedToSender
+  Scenario: [RETURNED-TO-SENDER_2] Invio notifica AR mono-destinatario verso PF visualizzata precedentemente alla notifica di deceduto con controllo costo, retention dei documenti
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_AR |
+      | digitalDomicile         | NULL                   |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then "Mario Cucumber" legge la notifica
+    And vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
+    And esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost uguale a "null" per l'utente 0
+    Then viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
+      | details          | NOT_NULL |
+      | details_recIndex | 0        |
 
 
+  @returnedToSender
+  Scenario: [RETURNED-TO-SENDER_3] Invio notifica AR mono-destinatario verso PF cancellata dopo la notifica di decesso con controllo costo, retention dei documenti e stato CANCELLED
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_SLOW_AR |
+      | digitalDomicile         | NULL                   |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" per l'utente 0
+    And la notifica può essere annullata dal sistema tramite codice IUN
+    Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
+    And viene verificato che l'elemento di timeline "NOTIFICATION_CANCELLED" esista
+      | details_notificationCost | 0 |
+    Then viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
+      | details          | NOT_NULL |
+      | details_recIndex | 0        |
+
+  @returnedToSender
+  Scenario: [RETURNED-TO-SENDER_4] Invio notifica 890 mono-destinatario verso PF deceduto e in seguito visualizzata con controllo costo, retention dei documenti macro stato mostrato RETURN_TO_SENDER
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_890       |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_890 |
+      | digitalDomicile         | NULL               |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" per l'utente 0
+    And "Mario Cucumber" legge la notifica
+    Then vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
+    And esiste l'elemento di timeline della notifica "NOTIFICATION_VIEWED" abbia notificationCost uguale a "null" per l'utente 0
+    Then viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
+      | details          | NOT_NULL |
+      | details_recIndex | 0        |
+
+
+  @returnedToSender
+  Scenario: [RETURNED-TO-SENDER_5] Invio notifica AR mono-destinatario verso PF cancellata e susccessivamente arrivo notifica di deceduto con controllo costo e macro stato mostrato CANCELLED
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_SLOW_AR |
+      | digitalDomicile         | NULL              |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And esiste l'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" per l'utente 0
+    When la notifica può essere annullata dal sistema tramite codice IUN
+    Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
+
+
+  @returnedToSender  @cleanWebhook @webhook1
+  Scenario: [RETURNED-TO-SENDER_6] Invio notifica AR multi-destinatario aventi stati Inviata, Irreperibile, Deceduto e macro stato mostrato DELIVERED e controllo costo
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_AR |
+      | digitalDomicile         | NULL              |
+    And destinatario
+      | denomination            | Test AR Fail 2           |
+      | taxId                   | NNTNRZ80A01H501D         |
+      | digitalDomicile         | NULL                     |
+      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
+    And destinatario Cucumber Analogic e:
+      | digitalDomicile         | NULL      |
+      | physicalAddress_address | Via@ok_AR |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V26"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V26"
+    Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "DELIVERED" con versione V26
+    And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost uguale a "NotNull" per l'utente 0
+
+  @returnedToSender  @cleanWebhook @precondition @webhook1
+  Scenario: [RETURNED-TO-SENDER_7_TEST] Invio notifica AR multi-destinatario aventi stati Irreperibile, Deceduto e macro stato mostrato UNREACHABLE
+    Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V26"
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_AR |
+      | digitalDomicile         | NULL              |
+    And destinatario
+      | denomination            | Test AR Fail 2           |
+      | taxId                   | NNTNRZ80A01H501D         |
+      | digitalDomicile         | NULL                     |
+      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V26"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V26"
+    And  si invoca l'api Webhook versione "V26" per ottenere gli elementi di timeline di tale notifica
+    Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "COMPLETELY_UNREACHABLE" con versione V26
+
+  @returnedToSender  @cleanWebhook @precondition @webhook1
+  Scenario: [RETURNED-TO-SENDER_8_TEST] Invio notifica 890 multi-destinatario entrambi deceduti e macro stato mostrato RETURNED_TO_SENDER
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_890       |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_890 |
+      | digitalDomicile         | NULL               |
+    And destinatario
+      | denomination            | Test AR Fail 2     |
+      | taxId                   | NNTNRZ80A01H501D   |
+      | digitalDomicile         | NULL               |
+      | physicalAddress_address | @FAIL_DECEDUTO_890 |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V26"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V26"
+    And vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "RETURNED_TO_SENDER" con versione V26
+
+  @returnedToSender
+  Scenario: [RETURNED-TO-SENDER_9] Invio notifica 890 multi-destinatario aventi stati Inviata e Deceduto e macro stato mostrato DELIVERED
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_890       |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_890 |
+      | digitalDomicile         | NULL               |
+    And destinatario Cucumber Analogic e:
+      | digitalDomicile         | NULL      |
+      | physicalAddress_address | Via@ok_AR |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
+
+
+  @returnedToSender
+  Scenario: [RETURNED-TO-SENDER_10] Invio notifica AR multi-destinatario aventi stati Inviata e Irreperibile e macro stato mostrato DELIVERED
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Cucumber Analogic e:
+      | digitalDomicile         | NULL      |
+      | physicalAddress_address | Via@ok_AR |
+    And destinatario
+      | denomination            | Test AR Fail 2           |
+      | taxId                   | NNTNRZ80A01H501D         |
+      | digitalDomicile         | NULL                     |
+      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
+
+
+  @returnedToSender
+  Scenario: [RETURNED-TO-SENDER_11] Invio notifica AR multi-destinatario aventi stati Visualizzata e Deceduto e stato mostrato VIEWED con controllo costo
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | digitalDomicile | NULL |
+    And destinatario
+      | denomination            | Test AR Fail 2    |
+      | taxId                   | NNTNRZ80A01H501D  |
+      | digitalDomicile         | NULL              |
+      | physicalAddress_address | @FAIL_DECEDUTO_AR |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And esiste l'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" per l'utente 0
+    And "Mario Cucumber" legge la notifica
+    Then vengono letti gli eventi fino allo stato della notifica "VIEWED"
+
+  @returnedToSender
+  Scenario: [RETURNED-TO-SENDER_12] Invio notifica AR multi-destinatario  aventi stati Inviata e Irreperibile e macro stato mostrato DELIVERED
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Cucumber Analogic e:
+      | digitalDomicile         | NULL      |
+      | physicalAddress_address | Via@ok_AR |
+    And destinatario
+      | denomination            | Test AR Fail 2           |
+      | taxId                   | NNTNRZ80A01H501D         |
+      | digitalDomicile         | NULL                     |
+      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
+
+
+  #prima visualizza, poi deceduto
+  @returnedToSender
+  Scenario: [RETURNED-TO-SENDER_13] Invio notifica AR multi-destinatario aventi stati Inviata e prima Visualizzata e poi Deceduto e macro stato mostrato DELIVERED con controllo costo
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_AR |
+      | digitalDomicile         | NULL              |
+    And destinatario Cucumber Analogic e:
+      | digitalDomicile         | NULL      |
+      | physicalAddress_address | Via@ok_AR |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And esiste l'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" per l'utente 0
+    And "Mario Cucumber" legge la notifica ricevuta
+    Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
+    And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost uguale a "null" per l'utente 0
+
+  #prima deceduto, poi visualizza
+  @returnedToSender
+  Scenario: [RETURNED-TO-SENDER_14] Invio notifica 890 multi-destinatario aventi stati Inviata, Irreperibile e Deceduto che poi Visualizza con macro stato mostrato DELIVERED e controllo costo
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_890       |
+    And destinatario Cucumber Analogic e:
+      | digitalDomicile         | NULL      |
+      | physicalAddress_address | Via@ok_AR |
+    And destinatario
+      | denomination            | Test AR Fail 2           |
+      | taxId                   | NNTNRZ80A01H501D         |
+      | digitalDomicile         | NULL                     |
+      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_890 |
+      | digitalDomicile         | NULL               |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost uguale a "NotNull" per l'utente 2
+    And "Mario Cucumber" legge la notifica
+    Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
+
+  #prima visualizza, poi deceduto
+  @returnedToSender
+  Scenario: [RETURNED-TO-SENDER_15] Invio notifica AR multi-destinatario aventi stati Irreperibile e Visualizzata e successivamente Deceduto con macro stato mostrato UNREACHABLE
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_AR |
+      | digitalDomicile         | NULL              |
+    And destinatario
+      | denomination            | Test AR Fail 2           |
+      | taxId                   | NNTNRZ80A01H501D         |
+      | digitalDomicile         | NULL                     |
+      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And esiste l'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" per l'utente 0
+    And "Mario Cucumber" legge la notifica
+    Then vengono letti gli eventi fino allo stato della notifica "UNREACHABLE"
+
+  @returnedToSender
+  Scenario: [RETURNED-TO-SENDER_16] Invio notifica 890 multi-destinatario aventi stati Irreperibile e Deceduto. A seguito della Cancellazione e macro stato mostrato CANCELLED con controllo costo
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_890       |
+    And destinatario
+      | denomination            | Test AR Fail 2            |
+      | taxId                   | NNTNRZ80A01H501D          |
+      | digitalDomicile         | NULL                      |
+      | physicalAddress_address | Via@FAIL-Irreperibile_890 |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_890 |
+      | digitalDomicile         | NULL               |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino allo stato della notifica "UNREACHABLE"
+    When la notifica può essere annullata dal sistema tramite codice IUN
+    Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
+
+  @returnedToSender
+  Scenario: [RETURNED-TO-SENDER_17] Invio notifica 890 multi-destinatario aventi stati Inviata, Irreperibile e Visualizzata che poi sarà Deceduto con macro stato mostrato DELIVERED
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_890       |
+    And destinatario Cucumber Analogic e:
+      | digitalDomicile         | NULL       |
+      | physicalAddress_address | Via@ok_890 |
+    And destinatario
+      | denomination            | Test AR Fail 2            |
+      | taxId                   | NNTNRZ80A01H501D          |
+      | digitalDomicile         | NULL                      |
+      | physicalAddress_address | Via@FAIL-Irreperibile_890 |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_890 |
+      | digitalDomicile         | NULL               |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And "Mario Cucumber" legge la notifica
+    Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
+    And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost uguale a "null" per l'utente 2
+
+
+  @returnedToSender
+  Scenario: [RETURNED-TO-SENDER_18] Invio notifica AR multi-destinatario entrambi deceduti con in seguito una visualizzazione e macro stato mostrato RETURNED_TO_SENDER
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_AR |
+      | digitalDomicile         | NULL              |
+    And destinatario
+      | denomination            | Test AR Fail 2    |
+      | taxId                   | NNTNRZ80A01H501D  |
+      | digitalDomicile         | NULL              |
+      | physicalAddress_address | @FAIL_DECEDUTO_AR |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" per l'utente 0
+    And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost uguale a "NotNull" per l'utente 0
+    And "Mario Cucumber" legge la notifica
+    Then vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
+
+ @returnedToSender
+  Scenario: [RETURNED-TO-SENDER_19] Invio notifica 890 multi-destinatario aventi stati Deceduto e Visualizzato che poi sarà Deceduto e macro stato mostrato RETURNED_TO_SENDER
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_890       |
+    And destinatario
+      | denomination            | Test AR Fail 2     |
+      | taxId                   | NNTNRZ80A01H501D   |
+      | digitalDomicile         | NULL               |
+      | physicalAddress_address | @FAIL_DECEDUTO_890 |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_890 |
+      | digitalDomicile         | NULL               |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And esiste l'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" per l'utente 1
+    And "Mario Cucumber" legge la notifica
+    And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost uguale a "null" per l'utente 1
+   Then vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
+
+
+  @returnedToSender
+  Scenario: [RETURNED-TO-SENDER_MONO] Invio notifica AR mono-destinatario che Visualizza e poi dichiarato Deceduto con stato atteso RETURNED_TO_SENDER e corretta visualizzazione della timeline del destinatario
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_AR |
+      | digitalDomicile         | NULL              |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
+    And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost uguale a "NotNull" per l'utente 0
+    Then viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
+      | details | NOT_NULL |
+
+
+  @returnedToSender
+  Scenario: [RETURNED-TO-SENDER_28] Invio notifica AR mono-destinatario che Visualizza e poi dichiarato Deceduto con stato atteso RETURNED_TO_SENDER e corretta visualizzazione della timeline del destinatario
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_AR |
+      | digitalDomicile         | NULL              |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And esiste l'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" per l'utente 0
+    And "Mario Cucumber" legge la notifica
+    And vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
+
+
+  @returnedToSender
+  Scenario: [RETURNED-TO-SENDER_29] Invio notifica 890 mono-destinatario Deceduto che poi Visualizza con stato atteso RETURNED_TO_SENDER e corretta visualizzazione della timeline del destinatario
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_890       |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_890 |
+      | digitalDomicile         | NULL               |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And esiste l'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" per l'utente 0
+    And esiste l'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" per l'utente 0
+    And "Mario Cucumber" legge la notifica
+    And esiste l'elemento di timeline della notifica "NOTIFICATION_VIEWED" per l'utente 0
+    And vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
+
+
+  @returnedToSender
+  Scenario: [RETURNED-TO-SENDER_30] Invio notifica AR mono-destinatario Deceduto e successivamente notifica cancellata con stato atteso CANCELLED e corretta visualizzazione della timeline del destinatario
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_890 |
+      | digitalDomicile         | NULL               |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And esiste l'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" per l'utente 0
+    And esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" per l'utente 0
+    When la notifica può essere annullata dal sistema tramite codice IUN
+    Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
+
+  @returnedToSender
+  Scenario: [RETURNED-TO-SENDER_31] Invio notifica 890 mono-destinatario Cancellata e successivamene notifica di Decesso con stato atteso CANCELLED e corretta visualizzazione della timeline del destinatario
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_890       |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_890 |
+      | digitalDomicile         | NULL               |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And esiste l'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" per l'utente 0
+    When la notifica può essere annullata dal sistema tramite codice IUN
+    Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
+
+
+  @returnedToSender
+  Scenario: [RETURNED-TO-SENDER_32] Invio notifica 890 multi-destinatario una Perfezionata dopo Delivered e un Visualizzato preceduto dal Deceduto, stato atteso EFFECTIVE_DATE
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_890       |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_890 |
+      | digitalDomicile         | NULL               |
+    And destinatario Cucumber Analogic e:
+      | digitalDomicile         | NULL       |
+      | physicalAddress_address | Via@ok_890 |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And esiste l'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" per l'utente 0
+    And "Mario Cucumber" legge la notifica
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" per l'utente 0
+    And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
+
+
+  @returnedToSender
+  Scenario: [RETURNED-TO-SENDER_33] Invio notifica AR multi-destinatario una Perfezionata dopo Delivered e un Deceduto, stato atteso EFFECTIVE_DATE
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_AR |
+      | digitalDomicile         | NULL              |
+    And destinatario Cucumber Analogic e:
+      | digitalDomicile         | NULL       |
+      | physicalAddress_address | Via@ok_890 |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" per l'utente 0
+    And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
+
+
+  @returnedToSender
+  Scenario: [RETURNED-TO-SENDER_34] Invio notifica 890 multi-destinatario una Perfezionata dopo Delivered e un Deceduto preceduto dalla Visualizzazione, stato atteso EFFECTIVE_DATE
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_890       |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_890 |
+      | digitalDomicile         | NULL               |
+    And destinatario Cucumber Analogic e:
+      | digitalDomicile         | NULL       |
+      | physicalAddress_address | Via@ok_890 |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And esiste l'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" per l'utente 0
+    And "Mario Cucumber" legge la notifica
+    And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" per l'utente 0
+
+
+#----RS-----
+  @returnedToSender
+  Scenario: [RETURNED-TO-SENDER_35] Invio notifica RS mono-destinatario
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | ***RS***                    |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_RS |
+      | digitalDomicile         | NULL              |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
+    And viene verificato che l'elemento di timeline "ANALOG_WORKFLOW_RECIPIENT_DECEASED" non esista
+      | details          | NOT_NULL |
+      | details_recIndex | 0        |
+
+  @returnedToSender
+  Scenario: [RETURNED-TO-SENDER_20-FLAG-TRUE] Invio notifica AR mono-destinatario Deceduto con VersioningModeFlag=true, atteso stato DELIVERING
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_AR |
+      | digitalDomicile         | NULL              |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
+    Then viene controllato che l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" non esiste con V23
+
+
+  Scenario: [RETURNED-TO-SENDER_21] Invio notifica AR multi-destinatario di cui un Deceduto con VersioningModeFlag=true, atteso stato DELIVERING
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Cucumber Analogic e:
+      | digitalDomicile         | NULL      |
+      | physicalAddress_address | Via@ok_AR |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_AR |
+      | digitalDomicile         | NULL              |
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V23"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V23"
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "DELIVERING" con la versione V23
+
+  @returnedToSender @cleanWebhook @precondition @webhook1
+  Scenario: [RETURNED-TO-SENDER_21-FLAG-TRUE] Invio notifica AR multi-destinatario di cui un Deceduto con VersioningModeFlag=true, atteso stato DELIVERING
+    And vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V23"
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_AR |
+      | digitalDomicile         | NULL              |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V23"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V23"
+    Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "DELIVERING" con la versione V23
+
+
+  #@returnedToSender @cleanWebhook @precondition @webhook1
+  Scenario: [RETURNED-TO-SENDER_22] Invio notifica 890 mono-destinatario Deceduto con VersioningModeFlag=false, si attende errore 400
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_890       |
+      | digitalDomicile       | NULL                        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_890 |
+      | digitalDomicile         | NULL               |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V23"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V23"
+    Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "DELIVERING" con versione V23
+    Then l'operazione ha prodotto un errore con status code "400"
+
+
+  Scenario: [RETURNED-TO-SENDER_23] Invio notifica 890 multi-destinatario di cui un Deceduto con VersioningModeFlag=false, si attende errore 400
+    #v25
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_890       |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_890 |
+      | digitalDomicile         | NULL               |
+    And destinatario Cucumber Analogic e:
+      | digitalDomicile         | NULL       |
+      | physicalAddress_address | Via@ok_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V25"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V25"
+    Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "RETURNED_TO_SENDER"
+    Then l'operazione ha prodotto un errore con status code "400"
+
+  @returnedToSender @cleanWebhook @webhook1
+  Scenario: [RETURNED-TO-SENDER_STREAM_WITH_FILTER] Invio notifica e controllo che stream con eventType DEFAULT e versione da V26 contenga elemento ANALOG_WORKFLOW_RECIPIENT_DECEASED
+    Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V26"
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_AR |
+      | digitalDomicile         | NULL              |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V26"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V26" e filtro status "DEFAULT"
+    Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "ANALOG_WORKFLOW_RECIPIENT_DECEASED" con versione V26
+
+  @returnedToSender @cleanWebhook @webhook1
+  Scenario: [RETURNED-TO-SENDER_STREAM_WITHOUT_FILTER] Invio notifica e controllo che stream con eventType vuoto e versione da V26 contenga elemento ANALOG_WORKFLOW_RECIPIENT_DECEASED
+    Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V26"
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_AR |
+      | digitalDomicile         | NULL              |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V26"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V26"
+    Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "ANALOG_WORKFLOW_RECIPIENT_DECEASED" con versione V26
+
+  @returnedToSender @cleanWebhook @webhook1
+  Scenario: [RETURNED-TO-SENDER_STREAM_V25_WITH_FILTER] Invio notifica e controllo che stream con eventType DEFAULT e versione differente da V26 non contenga elemento ANALOG_WORKFLOW_RECIPIENT_DECEASED
+    Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V25"
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V25"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V25" e filtro status "DEFAULT"
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V25"
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_AR |
+      | digitalDomicile         | NULL              |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
+    And si invoca l'api Webhook versione "V25" per ottenere gli elementi di timeline di tale notifica
+    Then si controlla che tra gli elementi dello stream "V25" ritornati non ci sia l'elemento "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
+
+  @returnedToSender @cleanWebhook @webhook1
+  Scenario: [RETURNED-TO-SENDER_STREAM_V25_WITHOUT_FILTER] Invio notifica e controllo che stream con eventType vuoto e versione differente da V26 non contenga elemento ANALOG_WORKFLOW_RECIPIENT_DECEASED
+    Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V25"
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V25"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V25"
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V25"
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_AR |
+      | digitalDomicile         | NULL              |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
+    And si invoca l'api Webhook versione "V25" per ottenere gli elementi di timeline di tale notifica
+    Then si controlla che tra gli elementi dello stream "V25" ritornati non ci sia l'elemento "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
+
+
+
+  #@returnedToSender
+  Scenario: [RETURNED-TO-SENDER_20-FLAG-FALSE] Invio notifica AR mono-destinatario Deceduto con VersioningModeFlag=true, atteso stato DELIVERING
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_AR |
+      | digitalDomicile         | NULL              |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
+    And vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
+    Then l'operazione ha prodotto un errore con status code "400"
+
+
+  @isDeceasedWorkflowActive
+  Scenario: [RETURNED-TO-SENDER_FLAG_OFF] Invio notifica 890 mono-destinatario Deceduto che poi Visualizza con stato atteso RETURNED_TO_SENDER e corretta visualizzazione della timeline del destinatario
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_890       |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_890 |
+      | digitalDomicile         | NULL               |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And esiste l'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
+    And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
+
+
+
+#pregressi
+  @activationDeceaseAfter
+  Scenario: [RETURNED-TO-SENDER_36] Invio notifica 890 mono-destinatario verso PF  notifica di deceduto comportamento pregresso
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_890 |
+      | digitalDomicile         | NULL               |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW "
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT_WORKFLOW"
+
+  @activationDeceaseAfter
+  Scenario: [RETURNED-TO-SENDER_37] Invio notifica AR mono-destinatario verso PF visualizzata precedentemente alla notifica di deceduto comportamento pregresso
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_SLOW_AR |
+      | digitalDomicile         | NULL                   |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And "Mario Cucumber" legge la notifica
+    And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT_WORKFLOW"
+
+
+  #@activationDeceaseAfter
+  Scenario: [RETURNED-TO-SENDER_38] Invio notifica AR multi-destinatario aventi stati Inviata, Irreperibile, Deceduto e macro stato mostrato DELIVERED comportamento pregresso
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_AR |
+      | digitalDomicile         | NULL              |
+    And destinatario
+      | denomination            | Test AR Fail 2           |
+      | taxId                   | NNTNRZ80A01H501D         |
+      | digitalDomicile         | NULL                     |
+      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
+    And destinatario Cucumber Analogic e:
+      | digitalDomicile         | NULL      |
+      | physicalAddress_address | Via@ok_AR |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
+    Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "ANALOG_SUCCESS_WORKFLOW"
+    And  vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SCHEDULE_REFINEMENT_WORKFLOW"
+
+
+
+
+  @activationDeceaseAfter @cleanWebhook @precondition
+  Scenario: [RETURNED-TO-SENDER_40] Invio notifica 890 multi-destinatario aventi stati Inviata e Deceduto e macro stato mostrato DELIVERED comportamento pregresso
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_890       |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_890 |
+      | digitalDomicile         | NULL               |
+    And destinatario
+      | denomination            | Leonardo da Vinci |
+      | taxId                   | DVNLRD52D15M059P  |
+      | digitalDomicile         | NULL              |
+      | physicalAddress_address | Via@OK_890        |
+      | digitalDomicile         | NULL              |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "26"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V26"
+    Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "DELIVERED"
+    Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "ANALOG_SUCCESS_WORKFLOW"
+    And  vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SCHEDULE_REFINEMENT_WORKFLOW"
+
+  @activationDeceaseAfter @cleanWebhook @precondition @webhook1
+  Scenario: [RETURNED-TO-SENDER_41] Invio notifica AR multi-destinatario aventi stati Visualizzata e Deceduto e stato mostrato VIEWED con controllo costo
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_SLOW_AR |
+      | digitalDomicile         | NULL                   |
+    And destinatario GherkinSrl
+    And "GherkinSrl" legge la notifica
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V26"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V26"
+    Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "VIEWED"
+    Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "ANALOG_SUCCESS_WORKFLOW"
+    And  vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SCHEDULE_REFINEMENT_WORKFLOW"
+
+
+  @returnedToSender  @cleanWebhook @webhook1
+  Scenario: [RETURNED-TO-SENDER_6] Invio notifica AR multi-destinatario aventi stati Inviata, Irreperibile, Deceduto e macro stato mostrato DELIVERED e controllo costo
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_AR |
+      | digitalDomicile         | NULL              |
+    And destinatario
+      | denomination            | Test AR Fail 2           |
+      | taxId                   | NNTNRZ80A01H501D         |
+      | digitalDomicile         | NULL                     |
+      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
+    And destinatario Cucumber Analogic e:
+      | digitalDomicile         | NULL      |
+      | physicalAddress_address | Via@ok_AR |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V26"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V26"
+    Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "DELIVERED" con versione V26
+    And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost uguale a "NotNull" per l'utente 0

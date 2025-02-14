@@ -198,7 +198,7 @@ public class DowntimeLogsSteps {
     public void vieneChiamataLAPIPerIlDownloadDellAttoOpponibileProdottoPiuDiGiorniPrecedenti() {
         try {
             LocalDate date = LocalDate.now();
-            LocalDate before = date.minusDays(365);
+            LocalDate before = LocalDate.of(2024, 01, 27);
             siChiamaLApiDiRecuperoElencoDisserviziNellAnnoEMese(before.getYear(), before.getMonthValue());
             Assertions.assertNotNull(pnDowntimeHistoryResponse.getResult());
             Assertions.assertFalse(pnDowntimeHistoryResponse.getResult().isEmpty());
