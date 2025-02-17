@@ -39,9 +39,7 @@ import software.amazon.awssdk.services.kms.model.VerifyRequest;
 import software.amazon.awssdk.services.kms.model.VerifyResponse;
 
 @Slf4j
-@Component
-@Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
-public class SessionTokenFactory {
+public abstract class SessionTokenFactory {
     private static final Map<String, Map<String, String>> CONFIG = new HashMap<>();
     private static final Map<String, Object> SESSION_TOKEN_PAYLOAD_TEMPLATE;
     private static final Map<String, String> SESSION_TOKEN_HEADER_TEMPLATE = Map.of(
@@ -72,7 +70,6 @@ public class SessionTokenFactory {
         ));
         SESSION_TOKEN_PAYLOAD_TEMPLATE.put("uid", "VALUES_UID");
         SESSION_TOKEN_PAYLOAD_TEMPLATE.put("iss", "{{ENVIRONMENT}}.interop.pagopa.it");
-        SESSION_TOKEN_PAYLOAD_TEMPLATE.put("aud", "{{ENVIRONMENT}}.interop.pagopa.it/ui");
         SESSION_TOKEN_PAYLOAD_TEMPLATE.put("nbf", 123);
         SESSION_TOKEN_PAYLOAD_TEMPLATE.put("iat", 123);
         SESSION_TOKEN_PAYLOAD_TEMPLATE.put("exp", 456);
@@ -80,29 +77,18 @@ public class SessionTokenFactory {
     }
 
     private final InteropClientConfigs interopClientConfigs;
-    @Getter
-    private Map<String, Map<String, String>> cachedTokens = null;
     private ConfigFileReader configFileReader;
-
 
     public SessionTokenFactory(InteropClientConfigs interopClientConfigs, ConfigFileReader configFileReader) {
         this.interopClientConfigs = interopClientConfigs;
         this.configFileReader = configFileReader;
-        this.cachedTokens = loadToken();
     }
 
-    private Map<String, Map<String, String>> loadToken() {
-        try {
-            if (cachedTokens == null) {
-                cachedTokens = generateSessionToken(configFileReader.getTenantList());
-            }
-        } catch (Exception ex) {
-            throw new IllegalArgumentException("There was an error while creating the session token: " + ex.getMessage(), ex);
-        }
-        return cachedTokens;
-    }
+    public abstract Map<String, Map<String, String>> loadToken();
 
-    public Map<String, Map<String, String>> generateSessionToken(List<Tenant> configFile) throws Exception {
+    public abstract String getRemoteWellknownUrl();
+
+    public Map<String, Map<String, String>> generateSessionToken() throws Exception {
         // Step 1. Read session token payload values file
         log.info("##Generating session token... ##");
         log.debug("##Step 1. Read session token payload values file ##");
@@ -110,7 +96,7 @@ public class SessionTokenFactory {
 
         // Step 2. Parse well known
         log.debug("##Step 2. Parse well known ##");
-        URL wellKnownUrl = new URL(interopClientConfigs.getRemoteWellknownUrl());
+        URL wellKnownUrl = new URL(getRemoteWellknownUrl());
         Map<String, String> wellKnownData = fetchWellKnown(wellKnownUrl.toString());
         if (!wellKnownData.containsKey("kid") || !wellKnownData.containsKey("alg")) {
             throw new IllegalStateException("Kid or alg not found.");
@@ -152,7 +138,7 @@ public class SessionTokenFactory {
         log.debug("ST Payload Compiled: {}", stPayloadCompiled);
 
         log.debug("## Step 5. Generate unsigned STs ##");
-        Map<String, Map<String, String>> unsignedSTs = unsignedStsGeneration(stHeaderCompiled, stPayloadCompiled, configFile, environment);
+        Map<String, Map<String, String>> unsignedSTs = unsignedStsGeneration(stHeaderCompiled, stPayloadCompiled, configFileReader.getTenantList(), environment);
         log.debug("Unsigned STs: {}", unsignedSTs);
 
         log.debug("## Step 6. Generate signed STs ##");
@@ -191,9 +177,8 @@ public class SessionTokenFactory {
     }
 
 
-    public  Map<String, Map<String, String>> unsignedStsGeneration(
-            Map<String, String> stHeaderCompiled, HashMap<String, Object> stPayloadCompiled, List<Tenant> stPayloadValues, String environment) {
-
+    private Map<String, Map<String, String>> unsignedStsGeneration(Map<String, String> stHeaderCompiled,
+       HashMap<String, Object> stPayloadCompiled, List<Tenant> stPayloadValues, String environment) {
         try {
             log.debug("unsignedStsGeneration::Phase1:START: Build roles dynamic substitutions");
             Map<String, Object> stsSubOutput = new HashMap<>();
@@ -290,7 +275,7 @@ public class SessionTokenFactory {
     }
 
     // Base64 URL-safe encoding function (without padding)
-    public static String b64UrlEncode(String str) {
+    private static String b64UrlEncode(String str) {
         return Base64.getUrlEncoder().withoutPadding().encodeToString(str.getBytes());
     }
 
@@ -345,6 +330,10 @@ public class SessionTokenFactory {
             }
             return response.signatureValid();
         }
+    }
+
+    public Map<String, Object> getSessionTokenPayloadTemplate() {
+        return SESSION_TOKEN_PAYLOAD_TEMPLATE;
     }
 
 }
