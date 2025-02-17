@@ -402,9 +402,7 @@ public class RicezioneNotificheWebDelegheSteps {
         sharedSteps.selectUser(recipient);
 
         try {
-            Assertions.assertDoesNotThrow(() -> {
-                getReceivedNotificationDocument();
-            });
+            Assertions.assertDoesNotThrow(this::getReceivedNotificationDocument);
         } catch (AssertionFailedError assertionFailedError) {
             System.out.println(assertionFailedError.getCause().toString());
             System.out.println(assertionFailedError.getCause().getMessage());
@@ -710,11 +708,7 @@ public class RicezioneNotificheWebDelegheSteps {
         setBearerToken(delegate);
         try {
             List<MandateDto> mandateList;
-            if (status.trim().equals("")) {
-                mandateList = webMandateClient.searchMandatesByDelegate(getTaxIdByUser(delegator), null);
-            } else if (delegator.trim().equals("")) {
-                mandateList = webMandateClient.searchMandatesByDelegateStatusFilter("", List.of(status), null);
-            } else {
+            if (!status.trim().isEmpty() && !delegator.trim().isEmpty()) {
                 mandateList = webMandateClient.searchMandatesByDelegateStatusFilter(getTaxIdByUser(delegator), List.of(status), null);
                 Assertions.assertNotNull(mandateList, "La lista mandateList è null");
                 Assertions.assertFalse(mandateList.isEmpty(), "La lista mandateList è vuota");

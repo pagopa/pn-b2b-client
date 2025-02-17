@@ -421,7 +421,6 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
     @And("si {string} un gruppo allo stream creat(o)(i) con versione {string} per il comune {string} e apiKey aggiornata")
     public void updateGroupsStreamUpadateApiKey(String action, String version, String pa) {
-        Object streamRequest;
         updateApiKeyForStream();
         if (sharedSteps.getRequestNewApiKey() != null) {
             switch (version) {
@@ -874,6 +873,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             switch (version) {
                 case "V23" -> webhookB2bClient.consumeEventStreamV23(streamId, null);
                 case "V25" -> webhookB2bClient.consumeEventStreamV25(streamId, null);
+                default -> throw new IllegalConfigurationException("Unsupported API Webhook version: " + version);
             }
         } catch (HttpStatusCodeException e) {
             this.notificationError = e;
@@ -1238,7 +1238,6 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
         try {
             Assertions.assertNotNull(progressResponseElement);
-            ProgressResponseElementV26 finalProgressResponseElement = new ProgressResponseElementV26();
             Assertions.assertFalse(sharedSteps.getSentNotification()
                     .getTimeline()
                     .stream()
@@ -1283,7 +1282,6 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
         try {
             Assertions.assertNotNull(progressResponseElement);
-            ProgressResponseElement finalProgressResponseElement = progressResponseElement;
             Assertions.assertFalse(sharedSteps.getSentNotification()
                     .getTimeline()
                     .stream()
@@ -1504,13 +1502,13 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
     @Then("Si verifica che l'elemento di timeline REFINEMENT abbia il timestamp uguale a quella presente nel webhook con la versione V23")
     public void readStreamTimelineElementAndVerifyDateV23() {
-        OffsetDateTime EventTimestamp;
-        OffsetDateTime NotificationTimestamp;
+        OffsetDateTime eventTimestamp;
+        OffsetDateTime notificationTimestamp;
         try {
             Assertions.assertNotNull(progressResponseElementListV23);
             //TODO Verificare...
-            EventTimestamp = progressResponseElementListV23.stream().filter(elem -> elem.getElement().getCategory().equals(TimelineElementCategoryV23.REFINEMENT)).findAny().get().getElement().getTimestamp();
-            //EventTimestamp = progressResponseElementListV23.stream().filter(elem -> elem.getTimelineEventCategory().equals(TimelineElementCategoryV23.REFINEMENT)).findAny().get().getTimestamp();
+            eventTimestamp = progressResponseElementListV23.stream().filter(elem -> elem.getElement().getCategory().equals(TimelineElementCategoryV23.REFINEMENT)).findAny().get().getElement().getTimestamp();
+            //eventTimestamp = progressResponseElementListV23.stream().filter(elem -> elem.getTimelineEventCategory().equals(TimelineElementCategoryV23.REFINEMENT)).findAny().get().getTimestamp();
             TimelineElementV26 timelineToCheck = sharedSteps.getSentNotification().getTimeline().stream()
                     .filter(elem -> elem.getCategory().getValue().equals(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23.SCHEDULE_REFINEMENT.getValue()))
                     .findAny()
@@ -1519,11 +1517,11 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             Assertions.assertNotNull(timelineToCheck);
             Assertions.assertNotNull(timelineToCheck.getDetails());
 
-            NotificationTimestamp = timelineToCheck.getDetails().getSchedulingDate();
-            log.info("event timestamp : {}", EventTimestamp);
-            log.info("notification timestamp : {}", NotificationTimestamp);
+            notificationTimestamp = timelineToCheck.getDetails().getSchedulingDate();
+            log.info("event timestamp : {}", eventTimestamp);
+            log.info("notification timestamp : {}", notificationTimestamp);
 
-            Assertions.assertEquals(EventTimestamp, NotificationTimestamp);
+            Assertions.assertEquals(eventTimestamp, notificationTimestamp);
 
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
@@ -1777,6 +1775,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 List<ProgressResponseElementV25> progressResponseElementV25s = webhookB2bClient.consumeEventStreamV25(streamId, null);
                 log.info("progressResponseElementV25s: " + progressResponseElementV25s);
             }
+            default -> throw new IllegalConfigurationException("Unsupported API Webhook version: " + version);
         }
     }
 
@@ -2507,6 +2506,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                             Assertions.assertNotNull(result);
                             Assertions.assertNotNull(result.getDisabledDate());
                         });
+                default -> throw new IllegalConfigurationException("Unsupported API Webhook version: " + version);
             }
         } catch (HttpStatusCodeException e) {
             this.notificationError = e;
@@ -2710,7 +2710,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             checkTimelineElement(this.sharedSteps.getNotificationResponseCompleteV24());
         } else if (version.equalsIgnoreCase("V23")) {
             Assertions.assertNotNull(this.sharedSteps.getNotificationResponseCompleteV23());
-            this.sharedSteps.getNotificationResponseCompleteV23().getTimeline().forEach(te -> checkTimelineElement(te));
+            this.sharedSteps.getNotificationResponseCompleteV23().getTimeline().forEach(this::checkTimelineElement);
         }
     }
 

@@ -14,7 +14,6 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class ClientListingSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;

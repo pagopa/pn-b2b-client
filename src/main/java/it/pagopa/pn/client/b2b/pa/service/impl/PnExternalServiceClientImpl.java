@@ -601,7 +601,7 @@ public class PnExternalServiceClientImpl {
         StringBuilder queryBuilder = new StringBuilder();
         queryParams.forEach((name, values) -> {
             try {
-                final String encodedName = URLEncoder.encode(name.toString(), "UTF-8");
+                final String encodedName = URLEncoder.encode(name, "UTF-8");
                 if (CollectionUtils.isEmpty(values)) {
                     if (queryBuilder.length() != 0) {
                         queryBuilder.append('&');

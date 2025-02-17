@@ -3,19 +3,18 @@ package it.pagopa.pn.interop.cucumber.steps.authorization;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.domain.KeyPairPEM;
-import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.interop.generated.openapi.clients.bff.model.KeyUse;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
-import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
+import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 
 public class ClientKeyReadSteps {
     private static final long MAX_SAFE_INTEGER = 9007199254740991L;
 
-    private ClientTokenConfigurator clientTokenConfigurator;
+    private final ClientTokenConfigurator clientTokenConfigurator;
     private final IAuthorizationClient authorizationClient;
     private final SharedStepsContext sharedStepsContext;
     private final IdentityService identityService;

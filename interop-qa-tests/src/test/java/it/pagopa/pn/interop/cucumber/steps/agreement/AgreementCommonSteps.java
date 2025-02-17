@@ -11,7 +11,6 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data

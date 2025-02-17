@@ -77,7 +77,6 @@ import org.springframework.http.HttpStatus;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class DataPreparationService {
     private static final ClientSeed DEFAULT_CLIENT_SEED = new ClientSeed();
-    private final ClientTokenConfigurator clientTokenConfigurator;
     private final IAuthorizationClient authorizationClient;
     private final IAgreementClient agreementClient;
     private final IAttributeApiClient attributeApiClient;
@@ -97,10 +96,8 @@ public class DataPreparationService {
     }
 
     public DataPreparationService(ClientTokenConfigurator clientTokenConfigurator,
-                                  PollingService pollingService,
                                   RiskAnalysisDataInitializer riskAnalysisDataInitializer,
                                   SharedStepsContext sharedStepsContext) {
-        this.clientTokenConfigurator = clientTokenConfigurator;
         this.authorizationClient = clientTokenConfigurator.getAuthorizationClient();
         this.agreementClient = clientTokenConfigurator.getAgreementClient();
         this.attributeApiClient = clientTokenConfigurator.getAttributeApiClient();

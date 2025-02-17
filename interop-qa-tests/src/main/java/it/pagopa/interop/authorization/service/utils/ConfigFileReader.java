@@ -2,8 +2,6 @@ package it.pagopa.interop.authorization.service.utils;
 
 import it.pagopa.interop.authorization.domain.Tenant;
 import lombok.Getter;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;

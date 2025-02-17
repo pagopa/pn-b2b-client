@@ -2,7 +2,6 @@ package it.pagopa.pn.interop.cucumber.steps.authorization;
 
 import java.util.List;
 
-import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import org.junit.jupiter.api.Assertions;

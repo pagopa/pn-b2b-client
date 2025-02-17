@@ -14,9 +14,13 @@ import it.pagopa.pn.client.b2b.pa.parsing.dto.implDestinatario.PnDestinatarioAna
 import it.pagopa.pn.client.b2b.pa.parsing.dto.implResponse.PnParserLegalFactResponse;
 import it.pagopa.pn.client.b2b.pa.parsing.parser.IPnParserLegalFact;
 import it.pagopa.pn.client.b2b.pa.parsing.service.impl.PnParserService;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactDownloadMetadataResponse;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactListElementV20;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.Loader;
@@ -24,12 +28,6 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 
 @Slf4j
@@ -253,10 +251,7 @@ public class LegalFactContentVerifySteps {
         Assertions.assertNotNull(this.legalFactUrl);
         Assertions.assertEquals(legalFactCategory, this.legalFactType);
         switch (version) {
-            case 1 -> {
-                LegalFactDownloadMetadataResponse response = sharedSteps.getWebRecipientClient().getLegalFact(iun, null, this.legalFactUrl);
-                sharedSteps.getWebRecipientClient().downloadLegalFactById(iun, this.legalFactUrl, null);
-            }
+            case 1 -> sharedSteps.getWebRecipientClient().downloadLegalFactById(iun, this.legalFactUrl, null);
             case 20 -> {
                 List<LegalFactListElementV20> legalFactV20list = sharedSteps.getWebRecipientClient().getLegalFactsV20(iun, null);
                 assertThat(legalFactV20list).isNotEmpty();

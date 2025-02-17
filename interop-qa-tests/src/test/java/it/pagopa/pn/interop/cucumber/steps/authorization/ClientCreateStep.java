@@ -7,15 +7,9 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
-import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import java.util.List;
 import java.util.Random;
 

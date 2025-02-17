@@ -118,7 +118,7 @@ public enum NotificationValue {
         String timeNano = String.valueOf(System.nanoTime());
         String randomClassePagamento = String.valueOf(new Random().nextInt(14));
         randomClassePagamento = randomClassePagamento.length() < 2 ? "0" + randomClassePagamento : randomClassePagamento;
-        String finalNumber = String.format("302" + randomClassePagamento + numberOfThread + timeNano.substring(0, timeNano.length() - 4));
+        String finalNumber = "302" + randomClassePagamento + numberOfThread + timeNano.substring(0, timeNano.length() - 4);
         if (finalNumber.length() > NOTICE_CODE_LENGTH) {
             finalNumber = finalNumber.substring(0, NOTICE_CODE_LENGTH);
         } else {

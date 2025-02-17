@@ -1,7 +1,6 @@
 package it.pagopa.pn.client.b2b.pa.mapper.impl;
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactCategory;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26;
 import it.pagopa.pn.client.b2b.pa.mapper.model.PnTimelineLegalFactV26;
 import it.pagopa.pn.client.b2b.pa.service.IPnTimelineLegalFactService;

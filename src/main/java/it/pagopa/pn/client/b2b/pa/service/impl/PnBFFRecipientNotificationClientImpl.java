@@ -41,8 +41,6 @@ public class PnBFFRecipientNotificationClientImpl implements IPnBFFRecipientNoti
                                                 @Value("${pn.bearer-token.user1}") String marioCucumberBearerToken,
                                                 @Value("${pn.bearer-token.user2}") String marioGherkinBearerToken,
                                                 @Value("${pn.bearer-token.user3}") String leonardoBearerToken,
-                                                @Value("${pn.bearer-token.user5}") String dinoBearerToken,
-                                                @Value("${pn.bearer-token.scaduto}") String userBearerTokenScaduto,
                                                 @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
                                                 @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken,
                                                 @Value("${pn.webapi.external.base-url}") String basePath,

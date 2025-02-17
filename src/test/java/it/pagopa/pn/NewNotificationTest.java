@@ -146,9 +146,6 @@ class NewNotificationTest {
     @Test
     @Disabled("To reviewed")
     void insertNewNotificationMulti() {
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-
         NewNotificationRequestV24 request = new NewNotificationRequestV24()
                 .cancelledIun(null)
                 ._abstract("Abstract della notifica")

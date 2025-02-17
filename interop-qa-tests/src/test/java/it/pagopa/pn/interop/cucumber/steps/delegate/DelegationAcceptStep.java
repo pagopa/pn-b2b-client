@@ -21,8 +21,6 @@ public class DelegationAcceptStep {
     private final HttpCallExecutor httpCallExecutor;
 
     public DelegationAcceptStep(ClientTokenConfigurator clientTokenConfigurator,
-                                IProducerDelegationsApiClient producerDelegationsApiClient,
-                                IDelegationApiClient delegationApiClient,
                                 SharedStepsContext sharedStepsContext) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.producerDelegationsApiClient = clientTokenConfigurator.getProducerDelegationsApiClient();
