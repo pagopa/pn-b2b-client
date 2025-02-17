@@ -21,7 +21,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -233,24 +232,10 @@ public class TracingSteps {
                         .anyMatch(tracingState -> tracingState.equals(state)),
                 ""
         );
-//
-//
-//
-//
-//
-//        PnPollingInteropTracing interopTracing = (PnPollingInteropTracing) pnPollingFactory.getPollingService(PnPollingStrategy.INTEROP_TRACING);
-//        PnTracingResponse pnTracingResponse = interopTracing.waitForEvent(null,
-//                PnPollingParameter.builder()
-//                        .value(PnPollingStrategy.INTEROP_TRACING)
-//                        .pollingType(PnPollingParameter.PollingType.RAPID)
-//                        .pnPollingInterop(new PnPollingInterop(submitTracingResponse.getTracingId().toString(), TracingState.fromValue(status)))
-//                        .build());
-//        Assertions.assertTrue(pnTracingResponse.getResult());
     }
 
     @Then("viene recuperato il file di tracing appena caricato e si verifica che lo stato sia {string}")
     public void retrieveTracingAndVerifyStatus(String status) {
-        List<GetTracingsResponseResults> results = new ArrayList<>();
         GetTracingsResponseResults result;
         int attempt = 0;
         int totalPages;
