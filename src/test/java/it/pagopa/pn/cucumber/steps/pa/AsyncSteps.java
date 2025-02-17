@@ -70,12 +70,13 @@ public class AsyncSteps {
     @And("viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore {string} e amount {string} per {string} con (CF)(Piva) {string}")
     public void vieneCreataUnaPosizioneDebitoria(String organizationCode, String amount, String name, String taxId) {
         String iuv = generateRandomIuv();
-        log.info("IUPD generate: " + organizationCode + "-64c8e41bfec846e04" + iuv, System.currentTimeMillis());
+        log.info("IUPD generate: {}-64c8e41bfec846e04{}{}", organizationCode, iuv,
+            System.currentTimeMillis());
         sharedSteps.addIuvGPD(iuv);
 
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         PaymentPositionModel paymentPositionModelSend = new PaymentPositionModel()
-                .iupd(String.format("%s-64c8e41bfec846e04%s", organizationCode, iuv, System.currentTimeMillis()))
+                .iupd(String.format("%s-64c8e41bfec846e04%s%s", organizationCode, iuv, System.currentTimeMillis()))
                 .type(PaymentPositionModel.TypeEnum.F)
                 .companyName("Automation")
                 .fullName(name)

@@ -1,5 +1,7 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
@@ -257,7 +259,8 @@ public class LegalFactContentVerifySteps {
             }
             case 20 -> {
                 List<LegalFactListElementV20> legalFactV20list = sharedSteps.getWebRecipientClient().getLegalFactsV20(iun, null);
-                Assertions.assertNotNull(legalFactV20list);
+                assertThat(legalFactV20list).isNotEmpty();
+
                 LegalFactListElementV20 target = legalFactV20list.stream().filter(
                         x -> x.getLegalFactsId().getCategory().getValue().equals(legalFactCategory)).findFirst().orElse(null);
                 if (isPresent) {

@@ -32,7 +32,7 @@ Feature: apiKey manager
     And l'apiKey creata è presente tra quelle lette
     When viene modificato lo stato dell'apiKey in "BLOCK"
     And vengono lette le apiKey esistenti
-    Then si verifica lo stato dell'apikey "BLOCKED"
+    Then si verifica lo stato dell'apiKey "BLOCKED"
     And l'apiKey viene cancellata
 
   @apiKeyManager
@@ -40,7 +40,7 @@ Feature: apiKey manager
     Given Viene creata una nuova apiKey
     And vengono lette le apiKey esistenti
     And l'apiKey creata è presente tra quelle lette
-    Then si verifica lo stato dell'apikey "ENABLED"
+    Then si verifica lo stato dell'apiKey "ENABLED"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
@@ -51,7 +51,7 @@ Feature: apiKey manager
     And l'apiKey creata è presente tra quelle lette
     When viene modificato lo stato dell'apiKey in "ROTATE"
     And vengono lette le apiKey esistenti
-    Then si verifica lo stato dell'apikey "ROTATED"
+    Then si verifica lo stato dell'apiKey "ROTATED"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
@@ -60,13 +60,13 @@ Feature: apiKey manager
     Given Viene creata una nuova apiKey
     And vengono lette le apiKey esistenti
     And l'apiKey creata è presente tra quelle lette
-    Then si verifica lo stato dell'apikey "ENABLED"
+    Then si verifica lo stato dell'apiKey "ENABLED"
     When viene modificato lo stato dell'apiKey in "BLOCK"
     And vengono lette le apiKey esistenti
-    Then si verifica lo stato dell'apikey "BLOCKED"
+    Then si verifica lo stato dell'apiKey "BLOCKED"
     Then viene modificato lo stato dell'apiKey in "ENABLE"
     And vengono lette le apiKey esistenti
-    Then si verifica lo stato dell'apikey "ENABLED"
+    Then si verifica lo stato dell'apiKey "ENABLED"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
@@ -75,7 +75,7 @@ Feature: apiKey manager
     Given Viene creata una nuova apiKey
     And vengono lette le apiKey esistenti
     And l'apiKey creata è presente tra quelle lette
-    And si verifica lo stato dell'apikey "ENABLED"
+    And si verifica lo stato dell'apiKey "ENABLED"
     When viene impostata l'apikey appena generata
     And viene generata una nuova notifica
       | subject | invio notifica con cucumber |

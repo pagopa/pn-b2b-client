@@ -1114,12 +1114,10 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     public void readStreamEventsStateRefusedV23(String pa) {
 
         setPaWebhook(pa);
-        NotificationStatus notificationStatus;
-        notificationStatus = NotificationStatus.REFUSED;
         ProgressResponseElementV23 progressResponseElement = null;
 
         for (int i = 0; i < 4; i++) {
-            progressResponseElement = searchInWebhookFileNotFoundV23(notificationStatus, null, 0);
+            progressResponseElement = searchInWebhookFileNotFoundV23(null, 0);
             log.debug("PROGRESS-ELEMENT: " + progressResponseElement);
 
             if (progressResponseElement != null) {
@@ -1697,13 +1695,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         return progressResponseElement;
     }//searchInWebhookTimelineElement
 
-    private <T> ProgressResponseElementV23 searchInWebhookFileNotFoundV23(T timeLineOrStatus, String lastEventId, int deepCount) {
-
-        if (timeLineOrStatus instanceof TimelineElementCategoryV23) {
-        } else if (timeLineOrStatus instanceof NotificationStatus) {
-        } else {
-            throw new IllegalArgumentException();
-        }
+    private <T> ProgressResponseElementV23 searchInWebhookFileNotFoundV23(String lastEventId, int deepCount) {
         ProgressResponseElementV23 progressResponseElement = null;
         ResponseEntity<List<ProgressResponseElementV23>> listResponseEntity = webhookB2bClient.consumeEventStreamHttpV23(this.eventStreamListV23.get(0).getStreamId(), lastEventId);
         List<ProgressResponseElementV23> progressResponseElementV23List = listResponseEntity.getBody();
@@ -2857,32 +2849,6 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         int numCheck = statusEventForStream.getNumCheck();
         int waiting = statusEventForStream.getWaiting();
 
-
-        /*
-
-
-        UUID uuid;
-        uuid = this.eventStreamListV23.get(0).getStreamId();
-
-        PnPollingResponseV25 pnPollingResponse = new PnPollingResponseV25();
-        NewNotificationRequestStatusResponseV23 statusResponseV23 = b2bClient.getNotificationRequestStatusV23();
-        pnPollingResponse.setStatusResponse(statusResponseV23);
-
-
-        if (pnPollingResponse.getStatusResponse().getIun() != null) {
-            FullSentNotificationV25 fullSentNotification;
-            try {
-                fullSentNotification = b2bClient.getSentNotificationV25(pnPollingResponse.getStatusResponse().getIun());
-            } catch (Exception exception) {
-                log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", pnPollingResponse.getStatusResponse().getIun(), b2bClient.getApiKeySetted().name(), exception.getMessage());
-                throw new PnPollingException(exception.getMessage());
-            }
-            pnPollingResponse.setNotification(fullSentNotification);
-
-        }
-
-        */
-
         ProgressResponseElementV24 progressResponseElement = null;
         boolean finded = false;
         for (int i = 0; i < numCheck; i++) {
@@ -2984,6 +2950,5 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         this.progressResponseElementsV25 = progressResponseElementV25List;
 
     }
-
 
 }

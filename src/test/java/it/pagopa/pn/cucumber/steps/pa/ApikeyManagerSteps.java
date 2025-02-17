@@ -42,7 +42,7 @@ public class ApikeyManagerSteps {
 
 
     @Then("la lettura è avvenuta correttamente")
-    public void laLetturaIsAvvenutaCorrettamente() {
+    public void letturaAvvenutaCorrettamente() {
         Assertions.assertNotNull(apiKeys);
     }
 
@@ -56,7 +56,7 @@ public class ApikeyManagerSteps {
 
 
     @And("l'apiKey creata è presente tra quelle lette")
-    public void lApiKeyCreataIsPresenteTraQuelleLette() {
+    public void apiKeyCreataPresenteTraQuelleLette() {
         Assertions.assertNotNull(
                 apiKeys.getItems().stream()
                         .filter(elem -> elem.getId().equals(responseNewApiKey.getId())).findAny().orElse(null));
@@ -228,7 +228,7 @@ public class ApikeyManagerSteps {
         this.sharedSteps.getNotificationRequest().setSenderTaxId(this.responseNewApiKeyTaxId);
     }
 
-    @When("viene modificato lo stato dell'apikey in {string} per il {string}")
+    @When("viene modificato lo stato dell'apiKey in {string} per il {string}")
     public void vieneModificatoLoStatoDellApiKeyIn(String state, String setPa) {
         setBearerToken(setPa);
         RequestApiKeyStatus requestApiKeyStatus = getRequestApiKeyStatus(state);
