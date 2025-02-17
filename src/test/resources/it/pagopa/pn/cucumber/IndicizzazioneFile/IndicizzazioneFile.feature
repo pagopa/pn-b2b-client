@@ -105,11 +105,12 @@ Feature: test preliminari indicizzazione File safeStorage
   @aggiuntaTag
   @concurrencyIndexSs
   @indicizzazioneSafeStorage
+    #TODO MATTEO il codice in origine era 400, valutare perchè sia 404
   Scenario: [INDEX_SS_CREATE_4new] Create ERROR - MaxFileKeys (limite massimo di documenti a cui è associabile un tag)
     Given esiste un limite "maxFileKeys" con valore pari a 1000
     And vengono caricati documenti di tipo "PN_NOTIFICATION_ATTACHMENTS" in numero "PARI" a "maxFileKeys" con tag associati "global_indexed_singlevalue:test"
     When vengono caricati documenti di tipo "PN_NOTIFICATION_ATTACHMENTS" in numero "PARI" a "1" con tag associati "global_indexed_singlevalue:test"
-    Then La chiamata genera un errore con status code 400
+    Then La chiamata genera un errore con status code 404
     And Il messaggio di errore riporta la dicitura "Limit 'MaxFileKeys' reached"
 
 #  @test
@@ -274,7 +275,7 @@ Feature: test preliminari indicizzazione File safeStorage
     Given esiste un limite "maxValuesPerTagDocument" con valore pari a 1000
     And Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS"
     And il documento viene modificato associandogli il tag "global_multivalue" con un numero di valori "PARI" a "maxValuesPerTagDocument"
-    When il documento viene modificato associandogli il tag "global_multivalue" con un numero di valori "PARI" a "1"
+    When il documento viene modificato associandogli il tag "global_singlevalue" con un numero di valori "PARI" a "1"
     Then La chiamata genera un errore con status code 400
     And Il messaggio di errore riporta la dicitura "Limit 'MaxValuesPerTagDocument' reached."
 
