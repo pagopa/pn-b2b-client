@@ -83,6 +83,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -1909,7 +1910,6 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
     public <T> void verifyIncrementalEventId(List<T> progressResponseElements, Function<T, String> eventIdExtractor) {
         Assertions.assertNotNull(progressResponseElements);
-        boolean counterIncrement = true;
         int lastEventID = 0;
         for (T elem : progressResponseElements) {
             int currentEventId = Integer.parseInt(eventIdExtractor.apply(elem));
