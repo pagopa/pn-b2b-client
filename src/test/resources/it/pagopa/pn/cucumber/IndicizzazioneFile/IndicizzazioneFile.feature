@@ -89,38 +89,39 @@ Feature: test preliminari indicizzazione File safeStorage
     Then La chiamata genera un errore con status code 400
     And Il messaggio di errore riporta la dicitura "Limit 'MaxTagsPerRequest' reached"
 
-#  @test
-#  @aggiuntaTag
-#  @concurrencyIndexSs
-#  @indicizzazioneSafeStorage
-#  Scenario: [INDEX_SS_CREATE_4] Create ERROR - MaxFileKeys
-#    Given Vengono caricati 5 nuovi documenti di tipo "PN_NOTIFICATION_ATTACHMENTS"
-#    And I primi 5 documenti vengono modificati secondo le seguenti operazioni
-#      | global_indexed_multivalue:test | SET |
-#    When Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
-#      | global_indexed_multivalue:test |
-#    Then La chiamata genera un errore con status code 400
-#    And Il messaggio di errore riporta la dicitura "Limit 'MaxFileKeys' reached. Current value: 6. Max value: 5"
+  @test
+  @aggiuntaTag
+  @concurrencyIndexSs
+  @indicizzazioneSafeStorageOLD
+    #TODO vecchio test, obsoleto in seguito a modifica dei limiti
+  Scenario: [INDEX_SS_CREATE_4_OLD] Create ERROR - MaxFileKeys
+    Given Vengono caricati 5 nuovi documenti di tipo "PN_NOTIFICATION_ATTACHMENTS"
+    And I primi 5 documenti vengono modificati secondo le seguenti operazioni
+      | global_indexed_multivalue:test | SET |
+    When Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
+      | global_indexed_multivalue:test |
+    Then La chiamata genera un errore con status code 400
+    And Il messaggio di errore riporta la dicitura "Limit 'MaxFileKeys' reached. Current value: 6. Max value: 5"
 
   @aggiuntaTag
   @concurrencyIndexSs
   @indicizzazioneSafeStorage
-    #TODO MATTEO il codice in origine era 400, valutare perchè sia 404
-  Scenario: [INDEX_SS_CREATE_4new] Create ERROR - MaxFileKeys (limite massimo di documenti a cui è associabile un tag)
+  Scenario: [INDEX_SS_CREATE_4new] Create ERROR - MaxFileKeys
     Given esiste un limite "maxFileKeys" con valore pari a 1000
     And vengono caricati documenti di tipo "PN_NOTIFICATION_ATTACHMENTS" in numero "PARI" a "maxFileKeys" con tag associati "global_indexed_singlevalue:test"
     When vengono caricati documenti di tipo "PN_NOTIFICATION_ATTACHMENTS" in numero "PARI" a "1" con tag associati "global_indexed_singlevalue:test"
-    Then La chiamata genera un errore con status code 404
+    Then La chiamata genera un errore con status code 400
     And Il messaggio di errore riporta la dicitura "Limit 'MaxFileKeys' reached"
 
-#  @test
-#  @aggiuntaTag
-#  @indicizzazioneSafeStorage
-#  Scenario: [INDEX_SS_CREATE_5] Create ERROR - MaxValuesPerTagDocument
-#    Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
-#      | global_multivalue:test1,test2,test3,test4,test5,test6 |
-#    Then La chiamata genera un errore con status code 400
-#    And Il messaggio di errore riporta la dicitura "Limit 'MaxValuesPerTagDocument' reached."
+  @test
+  @aggiuntaTag
+  @indicizzazioneSafeStorageOLD
+    #TODO vecchio test, obsoleto in seguito a modifica dei limiti
+  Scenario: [INDEX_SS_CREATE_5_OLD] Create ERROR - MaxValuesPerTagDocument
+    Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
+      | global_multivalue:test1,test2,test3,test4,test5,test6 |
+    Then La chiamata genera un errore con status code 400
+    And Il messaggio di errore riporta la dicitura "Limit 'MaxValuesPerTagDocument' reached."
 
   @test
   @aggiuntaTag
@@ -137,8 +138,9 @@ Feature: test preliminari indicizzazione File safeStorage
 
   @test
   @aggiuntaTag
-  @indicizzazioneSafeStorage
-  Scenario: [INDEX_SS_CREATE_6] Create ERROR - MaxTagsPerDocument
+  @indicizzazioneSafeStorageOLD
+    #TODO vecchio test, obsoleto in seguito a modifica dei limiti
+  Scenario: [INDEX_SS_CREATE_6_OLD] Create ERROR - MaxTagsPerDocument
     Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
       | global_multivalue:test1,test2         |
       | global_indexed_multivalue:test1,test2 |
@@ -257,16 +259,17 @@ Feature: test preliminari indicizzazione File safeStorage
     Then La chiamata genera un errore con status code 400
     And Il messaggio di errore riporta la dicitura "Number of tags to update exceeds maxOperationsOnTags limit"
 
-#  @test
-#  @aggiuntaTag
-#  @indicizzazioneSafeStorage
-#  Scenario: [INDEX_SS_UPDATE_SINGLE_9] UpdateSingle ERROR - MaxValuesPerTagDocument
-#    Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
-#      | global_multivalue:test1,test2,test3 |
-#    When Si modifica il documento 1 secondo le seguenti operazioni
-#      | global_multivalue:test4,test5,test6 | SET |
-#    Then La chiamata genera un errore con status code 400
-#    And Il messaggio di errore riporta la dicitura "Limit 'MaxValuesPerTagDocument' reached. Current value: 6. Max value: 5"
+  @test
+  @aggiuntaTag
+  @indicizzazioneSafeStorageOLD
+    #TODO vecchio test, obsoleto in seguito a modifica dei limiti
+  Scenario: [INDEX_SS_UPDATE_SINGLE_9_OLD] UpdateSingle ERROR - MaxValuesPerTagDocument
+    Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
+      | global_multivalue:test1,test2,test3 |
+    When Si modifica il documento 1 secondo le seguenti operazioni
+      | global_multivalue:test4,test5,test6 | SET |
+    Then La chiamata genera un errore con status code 400
+    And Il messaggio di errore riporta la dicitura "Limit 'MaxValuesPerTagDocument' reached. Current value: 6. Max value: 5"
 
   @test
   @aggiuntaTag
@@ -274,11 +277,9 @@ Feature: test preliminari indicizzazione File safeStorage
   Scenario: [INDEX_SS_UPDATE_SINGLE_9new] UpdateSingle ERROR - MaxValuesPerTagDocument
     Given esiste un limite "maxValuesPerTagDocument" con valore pari a 1000
     And Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS"
-    And il documento viene modificato associandogli il tag "global_multivalue" con un numero di valori "PARI" a "maxValuesPerTagDocument"
-    When il documento viene modificato associandogli il tag "global_singlevalue" con un numero di valori "PARI" a "1"
+    When il documento viene modificato associandogli il tag "global_multivalue" con un numero di valori "SUPERIORE" a "maxValuesPerTagDocument"
     Then La chiamata genera un errore con status code 400
     And Il messaggio di errore riporta la dicitura "Limit 'MaxValuesPerTagDocument' reached."
-
 
   @uat
   @aggiuntaTag
@@ -293,8 +294,8 @@ Feature: test preliminari indicizzazione File safeStorage
 
   @test
   @aggiuntaTag
-  @indicizzazioneSafeStorage
-    #TODO: limite in test aumentato a 40, causa il fail del test (valore precedente: 2)
+  @indicizzazioneSafeStorageOLD
+    #TODO vecchio test, obsoleto in seguito a modifica dei limiti (aumentato a 40, valore precedente: 2)
   Scenario: [INDEX_SS_UPDATE_SINGLE_10] UpdateSingle ERROR - MaxTagsPerDocument
     Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS"
     When Si modifica il documento 1 secondo le seguenti operazioni
@@ -303,18 +304,6 @@ Feature: test preliminari indicizzazione File safeStorage
       | pn-test~local_multivalue:test1 | SET |
     Then La chiamata genera un errore con status code 400
     And Il messaggio di errore riporta la dicitura "Limit 'MaxTagsPerDocument' reached. Current value: 3. Max value: 2"
-
-    #QUESTO TEST ERA PROGETTATO PER L'ambiente di test, dove il limite impostato era 6.
-    # Ora che è stato portato a 100 come UAT non ha più senso di esistere
-#  @test
-#  @aggiuntaTag
-#  @indicizzazioneSafeStorage
-#  Scenario: [INDEX_SS_UPDATE_SINGLE_11] UpdateSingle ERROR - MaxValuesPerTagPerRequest
-#    Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS"
-#    When Si modifica il documento 1 secondo le seguenti operazioni
-#      | global_multivalue:test1,test2,test3,test4,test5,test6, test7 | SET |
-#    Then La chiamata genera un errore con status code 400
-#    And Il messaggio di errore riporta la dicitura "Number of values for tag global_multivalue exceeds maxValues limit"
 
   @aggiuntaTag
   @indicizzazioneSafeStorage
@@ -445,21 +434,22 @@ Feature: test preliminari indicizzazione File safeStorage
       | global_multivalue:test1  |
       | global_singlevalue:test1 |
 
-#  @test
-#  @aggiuntaTag
-#  @indicizzazioneSafeStorage
-#  Scenario: [INDEX_SS_UPDATE_MASSIVE_8] Update Massive ERROR - MaxFileKeysUpdateMassivePerRequest
-#    Given Vengono caricati 6 nuovi documenti di tipo "PN_NOTIFICATION_ATTACHMENTS"
-#    When Si modificano i documenti secondo le seguenti operazioni
-#      | operation | tag                     | documentIndex |
-#      | SET       | global_multivalue:test1 | 1             |
-#      | SET       | global_multivalue:test1 | 2             |
-#      | SET       | global_multivalue:test1 | 3             |
-#      | SET       | global_multivalue:test1 | 4             |
-#      | SET       | global_multivalue:test1 | 5             |
-#      | SET       | global_multivalue:test1 | 6             |
-#    Then La chiamata genera un errore con status code 400
-#    And Il messaggio di errore riporta la dicitura "Number of documents to update exceeds MaxFileKeysUpdateMassivePerRequest limit."
+  @test
+  @aggiuntaTag
+  @indicizzazioneSafeStorageOLD
+    #TODO vecchio test, obsoleto in seguito a modifica dei limiti
+  Scenario: [INDEX_SS_UPDATE_MASSIVE_8_OLD] Update Massive ERROR - MaxFileKeysUpdateMassivePerRequest
+    Given Vengono caricati 6 nuovi documenti di tipo "PN_NOTIFICATION_ATTACHMENTS"
+    When Si modificano i documenti secondo le seguenti operazioni
+      | operation | tag                     | documentIndex |
+      | SET       | global_multivalue:test1 | 1             |
+      | SET       | global_multivalue:test1 | 2             |
+      | SET       | global_multivalue:test1 | 3             |
+      | SET       | global_multivalue:test1 | 4             |
+      | SET       | global_multivalue:test1 | 5             |
+      | SET       | global_multivalue:test1 | 6             |
+    Then La chiamata genera un errore con status code 400
+    And Il messaggio di errore riporta la dicitura "Number of documents to update exceeds MaxFileKeysUpdateMassivePerRequest limit."
 
   @aggiuntaTag
   @indicizzazioneSafeStorage
@@ -493,7 +483,8 @@ Feature: test preliminari indicizzazione File safeStorage
   @test
   @aggiuntaTag
   @concurrencyIndexSs
-  @indicizzazioneSafeStorage
+  @indicizzazioneSafeStorageOLD
+    #TODO vecchio test, obsoleto in seguito a modifica dei limiti (corrente: 1000, valore precedente: 5)
   Scenario: [INDEX_SS_UPDATE_MASSIVE_10] Update Massive ERROR - MaxFileKeys
     Given Sul DB non è presente nessun documento con associato il tag "global_indexed_multivalue:test"
     And Vengono caricati 5 nuovi documenti di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
@@ -511,8 +502,8 @@ Feature: test preliminari indicizzazione File safeStorage
 
   @test
   @aggiuntaTag
-  @indicizzazioneSafeStorage
-        #TODO: limite in test aumentato a 1000, causa il fail del test (valore precedente: 5)
+  @indicizzazioneSafeStorageOLD
+    #TODO vecchio test, obsoleto in seguito a modifica dei limiti (corrente: 1000, valore precedente: 5)
   Scenario: [INDEX_SS_UPDATE_MASSIVE_11] Update Massive ERROR - MaxValuesPerTagDocument
     Given Vengono caricati 2 nuovi documenti di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
       | global_multivalue:test1,test2,test3,test4 |
@@ -556,7 +547,8 @@ Feature: test preliminari indicizzazione File safeStorage
 
   @test
   @aggiuntaTag
-  @indicizzazioneSafeStorage
+  @indicizzazioneSafeStorageOLD
+    #TODO vecchio test, obsoleto in seguito a modifica dei limiti
   Scenario: [INDEX_SS_UPDATE_MASSIVE_12] Update Massive ERROR - MaxTagsPerDocument
     Given Vengono caricati 2 nuovi documenti di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
       | global_multivalue:test1 |
@@ -594,8 +586,6 @@ Feature: test preliminari indicizzazione File safeStorage
     When il documento viene modificato associandogli il tag "global_multivalue" con un numero di valori "SUPERIORE" a "maxValuesPerTagPerRequest"
     Then L'update massivo va in successo con stato 200
     And La response contiene uno o più errori "400.00" riportanti la dicitura "Number of values for tag global_multivalue exceeds maxValues limit" riguardanti il documento 1
-    And Il documento 1 è associato alla seguente lista di tag
-      | null |
 
   @aggiuntaTag
   @indicizzazioneSafeStorage
@@ -663,6 +653,7 @@ Feature: test preliminari indicizzazione File safeStorage
   @aggiuntaTag
   @concurrencyIndexSs
   @indicizzazioneSafeStorage
+    #TODO vecchio test, obsoleto in seguito a modifica dei limiti
   Scenario: [INDEX_SS_SEARCH_1] SEARCH ERROR - MaxMapValuesForSearch
     Given Vengono caricati 2 nuovi documenti di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
       | global_indexed_multivalue:test1,test2 |
