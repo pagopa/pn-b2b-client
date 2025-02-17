@@ -34,12 +34,6 @@ public class AgreementActivateSteps {
         dataPreparationService.activateAgreement(sharedStepsContext.getAgreementId(), null);
     }
 
-//    @Given("il {delegationRole} ha già approvato quella richiesta di fruizione")
-//    public void tenantHasAlreadyAcceptedThatRequest(DelegationRole delegationRole) {
-//        String tenantType = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
-//        tenantHasAlreadyAcceptedThatRequest(tenantType);
-//    }
-
     @Given("{string} ha già creato un e-service in stato {string} che richiede quegli attributi con approvazione {string}")
     public void tenantHasAlreadyCreateEservice(String tenantType, String descriptorState, String approvalAgreementPolicy) {
 

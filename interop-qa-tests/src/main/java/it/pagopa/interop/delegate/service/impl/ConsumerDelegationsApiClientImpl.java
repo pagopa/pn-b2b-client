@@ -46,30 +46,25 @@ public class ConsumerDelegationsApiClientImpl implements IConsumerDelegationsApi
     @Override
     public CompactEServices getConsumerDelegatedEservices(String xCorrelationId, UUID delegatorId,
         Integer offset, Integer limit, String q) throws RestClientException {
-        return consumerDelegationsApi.getConsumerDelegatedEservices(xCorrelationId, delegatorId,
-            offset,
-            limit, q);
+        return consumerDelegationsApi.getConsumerDelegatedEservices(xCorrelationId, delegatorId, offset, limit, q);
     }
 
     @Override
     public DelegationTenants getConsumerDelegators(String xCorrelationId, Integer offset,
         Integer limit, String q, List<UUID> eserviceIds) throws RestClientException {
-        return consumerDelegationsApi.getConsumerDelegators(xCorrelationId, offset, limit, q,
-            eserviceIds);
+        return consumerDelegationsApi.getConsumerDelegators(xCorrelationId, offset, limit, q, eserviceIds);
     }
 
     @Override
     public DelegationTenants getConsumerDelegatorsWithAgreements(String xCorrelationId,
         Integer offset, Integer limit, String q) throws RestClientException {
-        return consumerDelegationsApi.getConsumerDelegatorsWithAgreements(xCorrelationId, offset,
-            limit, q);
+        return consumerDelegationsApi.getConsumerDelegatorsWithAgreements(xCorrelationId, offset, limit, q);
     }
 
     @Override
     public void rejectConsumerDelegation(String xCorrelationId, UUID delegationId,
         RejectDelegationPayload rejectDelegationPayload) throws RestClientException {
-        consumerDelegationsApi.rejectConsumerDelegation(xCorrelationId, delegationId,
-            rejectDelegationPayload);
+        consumerDelegationsApi.rejectConsumerDelegation(xCorrelationId, delegationId, rejectDelegationPayload);
     }
 
     @Override

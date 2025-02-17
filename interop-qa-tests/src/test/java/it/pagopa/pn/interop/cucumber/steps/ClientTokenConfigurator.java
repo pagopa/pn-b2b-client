@@ -38,7 +38,6 @@ public class ClientTokenConfigurator {
         tenantsApi.setBearerToken(token);
         eServiceClient.setBearerToken(token);
         producerClient.setBearerToken(token);
-        consumerDelegationsApiClient.setBearerToken(token);
         purposeApiClient.setBearerToken(token);
         producerDelegationsApiClient.setBearerToken(token);
         consumerDelegationsApiClient.setBearerToken(token);

@@ -24,7 +24,6 @@ import it.pagopa.interop.purpose.service.impl.PurposeApiClientImpl;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import it.pagopa.interop.tenant.service.impl.TenantsApiClientImpl;
 import it.pagopa.interop.tracing.config.TracingClientConfigs;
-import it.pagopa.interop.tracing.service.TracingRetriever;
 import it.pagopa.interop.tracing.service.impl.DevAbstractInteropTracingClient;
 import it.pagopa.interop.tracing.service.impl.QAAbstractInteropTracingClient;
 import it.pagopa.interop.utils.HttpCallExecutor;
@@ -62,7 +61,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
     InteropClientConfigs.class,
     TracingFileUtils.class,
     TracingClientConfigs.class,
-    TracingRetriever.class,
     DevAbstractInteropTracingClient.class,
     QAAbstractInteropTracingClient.class
 })

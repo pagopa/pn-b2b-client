@@ -13,7 +13,6 @@ import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.mo
 import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.SubmitTracingResponse;
 import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.TracingState;
 import it.pagopa.interop.tracing.service.IInteropTracingClient;
-import it.pagopa.interop.tracing.service.TracingRetriever;
 import it.pagopa.pn.interop.cucumber.utility.TracingFileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
@@ -31,7 +30,6 @@ public class TracingSteps {
     private final IInteropTracingClient interopTracingClient;
     private final TracingFileUtils tracingFileUtils;
     private final PollingService pollingService;
-    private final TracingRetriever tracingRetriever;
 
     private SubmitTracingResponse submitTracingResponse;
     private GetTracingsResponse getTracingsResponse;
@@ -47,19 +45,16 @@ public class TracingSteps {
      * @param pollingService {@link PollingService}
      */
     public TracingSteps(IInteropTracingClient interopTracingClient,
-                        TracingFileUtils tracingFileUtils, PollingService pollingService, TracingRetriever tracingRetriever) {
+                        TracingFileUtils tracingFileUtils, PollingService pollingService) {
         this.interopTracingClient = interopTracingClient;
         this.tracingFileUtils = tracingFileUtils;
         this.pollingService = pollingService;
-        this.tracingRetriever = tracingRetriever;
     }
 
     @Given("l'utenza {string} effettua le chiamate")
     public void selectOperator(String operator) {
         switch (operator.trim().toLowerCase()) {
-            case "tenant1" -> {
-                interopTracingClient.setBearerToken(SettableBearerToken.BearerTokenType.TENANT_1.toString());
-            }
+            case "tenant1" -> interopTracingClient.setBearerToken(SettableBearerToken.BearerTokenType.TENANT_1.toString());
             case "tenant2" -> interopTracingClient.setBearerToken(SettableBearerToken.BearerTokenType.TENANT_2.toString());
             default -> throw new IllegalStateException("Unexpected value: " + operator.trim().toLowerCase());
         }

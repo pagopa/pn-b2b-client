@@ -1,8 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.delegate;
 
 import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
-import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
@@ -15,7 +13,6 @@ import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Assertions;
 import org.springframework.http.HttpStatus;
 
 @Slf4j
@@ -101,26 +98,6 @@ public class DelegationDenyStep {
         consumerDelegationIsRevokedByTenantWithRole(tenantType, role);
     }
 
-    // FIXME 21/01/2025 revisionare i seguenti metodi ed eventualmente rimuovere
-
-    @Given("l'ente qualificato come PA su Interoperabilità di tipo amministratore")
-    public void tenantIsQualifiedAsPA() {
-        // Logic to qualify the tenant as PA with administrator privileges
-        clientTokenConfigurator.setBearerToken(identityService.getToken("PA_ADMIN", null));
-    }
-    
-    @When("Richiamare l’API di disponibilità in fruizione di un e-service")
-    public void callAvailabilityAPI() {
-        // Logic to call the API for availability
-       // httpCallExecutor.performCall(() -> producerDelegationsApiClient.checkAvailability());
-    }
-    
-    @Then("La disponibilità viene correttamente data e in risposta si ottiene codice 200")
-    public void verifyAvailabilityResponse() {
-        // Verify that the response status code is 200
-        Assertions.assertEquals(200, httpCallExecutor.getClientResponse().value());
-    }
-
     private void waitForDelegationState(DelegationState delegationState) {
         // wait until delegation is correctly rejected
         pollingService.makePolling(
@@ -129,7 +106,6 @@ public class DelegationDenyStep {
                 res ->  res.getState().equals(delegationState),
                 "There was an error while revoking the delegation!"
         );
-
     }
 
 }
