@@ -17,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -41,6 +43,134 @@ public class SafeStorageSteps {
         } catch (IOException e) {
             throw new IllegalStateException(e.getMessage() + " NON è stato possibile computare lo sha");
         }
+    }
+
+    @Given("esiste un limite {string} con valore pari a {int}")
+    public void setLimit(String limitName, int limitValue) {
+        try {
+            Field field = this.indicizzazioneStepsPojo.getClass().getDeclaredField(limitName);
+            field.setAccessible(true);
+            field.setInt(this.indicizzazioneStepsPojo, limitValue);
+        } catch (Exception e) {
+            log.info(e.getMessage());
+        }
+    }
+
+    private Integer eseguiGetterDelLimite(IndicizzazioneStepsPojo pojo, String fieldName) {
+        try {
+            String getterName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+            Method getter = pojo.getClass().getMethod(getterName);
+            return (int) getter.invoke(pojo);
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            return 0;
+        }
+    }
+
+    @Given("vengono caricati documenti di tipo {string} in numero {string} a {string}")
+    public void uploadMultipleDocuments(String type, String comparator, String limit) {
+        int quantity = getLimitValue(comparator, limit);
+        for (int i = 0; i < quantity; i++) {
+            uploadNewDocument(type);
+        }
+    }
+
+    @Given("vengono caricati documenti di tipo {string} in numero {string} a {string} con tag associati {string}")
+    public void uploadMultipleDocumentsWithAssociatedTags(String type, String comparator, String limit, String tagList) {
+        int quantity = getLimitValue(comparator, limit);
+        Map<String, List<String>> tagMap = new HashMap<>();
+        tagMap.put(tagList.split(":")[0], Arrays.asList(tagList.split(":")[1].split(",")));
+        uploadDocumentsWithTags(type, tagMap, quantity);
+    }
+
+    @Given("vengono caricati documenti di tipo {string} in numero {string} a {string} con associato il tag {string} avente {int} valori diversi")
+    public void uploadMultipleDocumentsWithAssociatedTagsWithValues(String type, String comparator, String limit, String tagName, Integer valueNumber) {
+        int quantity = getLimitValue(comparator, limit);
+        String tagList = impostaTagPerRequest(tagName, valueNumber);
+        Map<String, List<String>> tagMap = new HashMap<>();
+        tagMap.put(tagList.split(":")[0], Arrays.asList(tagList.split(":")[1].split(",")));
+        uploadDocumentsWithTags(type, tagMap, quantity);
+    }
+
+    @Given("il documento viene aggiornato aggiungendo {string} valori per volta al tag {string}, fino a raggiungere il limite di {string}")
+    public void addDocumentsUntilMax(String maxValuesPerTagPerRequest, String tagName, String maxValuesPerTagDocument) {
+        int maxValuesPerTagPerRequestInt = eseguiGetterDelLimite(this.indicizzazioneStepsPojo, maxValuesPerTagPerRequest);
+        int maxValuesPerTagDocumentInt = eseguiGetterDelLimite(this.indicizzazioneStepsPojo, maxValuesPerTagDocument);
+        int counterTagsAdded = 0;
+        while (counterTagsAdded < maxValuesPerTagDocumentInt) {
+            for (int i = 0; i < maxValuesPerTagPerRequestInt; i++) {
+                if (counterTagsAdded < maxValuesPerTagDocumentInt) {
+                    updateSingle(tagName, "PARI", maxValuesPerTagPerRequest);
+                    counterTagsAdded += 1;
+                }
+            }
+        }
+    }
+
+    private void uploadDocumentsWithTags(String type, Map<String, List<String>> tagMap, Integer quantity) {
+        String resourcePath = type.equals("PN_LEGAL_FACTS_ST") ? "classpath:/long_file.pdf" : "classpath:/multa.pdf";
+        String sha256 = computeSha(resourcePath);
+        FileCreationRequest request = new FileCreationRequest();
+        request.setContentType("application/pdf");
+        request.setStatus("SAVED");
+        request.setDocumentType(type);
+        request.setTags(tagMap);
+        for (int i = 0; i < quantity; i++) {
+            try {
+                FileCreationResponse fileCreationResponse = this.safeStorageClient.createFile(sha256, "SHA256", request);
+                loadToPresignedUrl(fileCreationResponse, sha256, resourcePath);
+            } catch (HttpClientErrorException httpExc) {
+                this.indicizzazioneStepsPojo.setHttpException(httpExc);
+            }
+        }
+    }
+
+    private String impostaTagPerRequest(String tagName, int iterations) {
+        tagName += ":";
+        StringBuilder tagNameBuilder = new StringBuilder(tagName);
+        for (int i = 0; i < iterations; i++) {
+            tagNameBuilder.append("test").append(i + 1).append(",");
+        }
+        tagName = tagNameBuilder.toString();
+        return tagName.substring(0, tagName.length() - 1);
+    }
+
+    @When("il documento viene modificato associandogli il tag {string} con un numero di valori {string} a {string}")
+    public void updateSingle(String tagName, String comparator, String limit) {
+        int quantity = getLimitValue(comparator, limit);
+        String fileKey = this.indicizzazioneStepsPojo.getCreatedFiles().get(0).getKey();
+        List<String> tagValues = new LinkedList<>();
+        for (int i = 0; i < quantity; i++) {
+            tagValues.add("test" + (i + 1));
+        }
+        AdditionalFileTagsUpdateRequest request = new AdditionalFileTagsUpdateRequest();
+        request.putSETItem(tagName, tagValues);
+        try {
+            this.indicizzazioneStepsPojo.setUpdateSingleResponseEntity(safeStorageClient.additionalFileTagsUpdateWithHttpInfo(
+                    fileKey, "pn-test", request));
+        } catch (HttpClientErrorException e) {
+            log.info("Errore durante l'aggiornamento del documento: {}", e.getMessage());
+            this.indicizzazioneStepsPojo.setHttpException(e);
+        }
+    }
+
+    /**
+     * Qualora venga passato "PARI" come comparator e una stringa avente valore numerico come "limit", verrà usato tale valore
+     * Altrimenti provvederà a impostare una quantità in accordo al valore settato nel pojo
+     */
+    private int getLimitValue(String comparator, String limit) {
+        int quantity;
+        try {
+            quantity = Integer.parseInt(limit);
+        } catch (Exception e) {
+            quantity = eseguiGetterDelLimite(this.indicizzazioneStepsPojo, limit);
+            if (comparator.equalsIgnoreCase("SUPERIORE")) {
+                quantity += 1;
+            } else if (comparator.equalsIgnoreCase("INFERIORE")) {
+                quantity -= 1;
+            }
+        }
+        return quantity;
     }
 
     @Given("Viene caricato un nuovo documento di tipo {string}")
@@ -228,6 +358,30 @@ public class SafeStorageSteps {
             this.indicizzazioneStepsPojo.setHttpException(e);
         }
     }
+
+    @When("tali documenti vengono modificati simultaneamente associando a ciascuno il tag {string}")
+    public void updateAllDocumentsWithSameTag(String tagName) {
+        Assertions.assertFalse(this.indicizzazioneStepsPojo.getCreatedFiles().isEmpty());
+        AdditionalFileTagsMassiveUpdateRequest request = new AdditionalFileTagsMassiveUpdateRequest();
+        List<Tags> tagsList = new LinkedList<>();
+        for (int i = 0; i < this.indicizzazioneStepsPojo.getCreatedFiles().size(); i++) {
+            String fileKey = this.indicizzazioneStepsPojo.getCreatedFiles().get(i).getKey();
+            Tags newTag = new Tags();
+            newTag.setFileKey(fileKey);
+            newTag.putSETItem(tagName, List.of("test" + (i + 1)));
+            tagsList.add(newTag);
+        }
+        request.setTags(tagsList);
+        try {
+            ResponseEntity<AdditionalFileTagsMassiveUpdateResponse> response =
+                    safeStorageClient.additionalFileTagsMassiveUpdateWithHttpInfo("pn-test", request);
+            this.indicizzazioneStepsPojo.setUpdateMassiveResponseEntity(response);
+        } catch (HttpClientErrorException e) {
+            log.info("Errore durante l'aggiornamento del documento: {}", e.getMessage());
+            this.indicizzazioneStepsPojo.setHttpException(e);
+        }
+    }
+
 
     @When("Si modificano i documenti secondo le seguenti operazioni")
     public void updateDocuments(DataTable dataTable) {

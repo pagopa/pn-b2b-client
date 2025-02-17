@@ -26,4 +26,13 @@ public class IndicizzazioneStepsPojo {
     private ResponseEntity<AdditionalFileTagsUpdateResponse> updateSingleResponseEntity;
     private ResponseEntity<AdditionalFileTagsMassiveUpdateResponse> updateMassiveResponseEntity;
     private HttpClientErrorException httpException;
+    //Limiti test
+    private int maxTagsPerRequest;
+    private int maxOperationsOnTagsPerRequest;
+    private int maxFileKeys;
+    private int maxMapValuesForSearch;
+    private int maxFileKeysUpdateMassivePerRequest;
+    private int maxTagsPerDocument;
+    private int maxValuesPerTagDocument;
+    private int maxValuesPerTagPerRequest;
 }
