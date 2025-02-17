@@ -153,21 +153,21 @@ Feature: test preliminari indicizzazione File safeStorage
 
   @test
   @aggiuntaTag
-  @indicizzazioneSafeStorage
-  Scenario: [INDEX_SS_CREATE_7] Create ERROR - MaxValuesPerTagPerRequest
+  @indicizzazioneSafeStorageOLD
+    #TODO vecchio test, obsoleto in seguito a modifica dei limiti
+  Scenario: [INDEX_SS_CREATE_7_OLD] Create ERROR - MaxValuesPerTagPerRequest
     Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
       | global_multivalue:test1,test2,test3,test4,test5,test6, test7, test8, test9, test10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101 |
     Then La chiamata genera un errore con status code 400
     And Il messaggio di errore riporta la dicitura "Limit 'MaxValuesPerTagPerRequest' reached"
 
-  @uat
   @aggiuntaTag
   @indicizzazioneSafeStorage
-  Scenario: [INDEX_SS_CREATE_7.2] Create ERROR - MaxValuesPerTagPerRequest
-    Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS" con un tag avente 101 valori associati
+  Scenario: [INDEX_SS_CREATE_7new] Create ERROR - MaxValuesPerTagPerRequest
+    Given esiste un limite "maxValuesPerTagPerRequest" con valore pari a "100"
+    When vengono caricati documenti di tipo "PN_NOTIFICATION_ATTACHMENTS" in numero "PARI" a "1" con associato il tag "global_multivalue" avente 101 valori diversi
     Then La chiamata genera un errore con status code 400
     And Il messaggio di errore riporta la dicitura "Limit 'MaxValuesPerTagPerRequest' reached"
-
 
   ########################################################### UPDATE SINGLE ###################################################################
 
@@ -234,8 +234,8 @@ Feature: test preliminari indicizzazione File safeStorage
 
   @test
   @aggiuntaTag
-  @indicizzazioneSafeStorage
-  Scenario: [INDEX_SS_UPDATE_SINGLE_7] UpdateSingle ERROR - MaxFileKeys
+  @indicizzazioneSafeStorageOLD
+  Scenario: [INDEX_SS_UPDATE_SINGLE_7_OLD] UpdateSingle ERROR - MaxFileKeys
     Given Vengono caricati 6 nuovi documenti di tipo "PN_NOTIFICATION_ATTACHMENTS"
     And I primi 5 documenti vengono modificati secondo le seguenti operazioni
       | global_indexed_multivalue:test | SET |
@@ -243,6 +243,18 @@ Feature: test preliminari indicizzazione File safeStorage
       | global_indexed_multivalue:test | SET |
     Then La chiamata genera un errore con status code 400
     And Il messaggio di errore riporta la dicitura "Limit 'MaxFileKeys' reached. Current value: 6. Max value: 5"
+
+    #TODO MATTEO FINIRE
+  @aggiuntaTag
+  @indicizzazioneSafeStorage
+  Scenario: [INDEX_SS_UPDATE_SINGLE_7new] UpdateSingle ERROR - MaxFileKeys
+    Given esiste un limite "maxFileKeys" con valore pari a 1000
+    And vengono caricati documenti di tipo "PN_NOTIFICATION_ATTACHMENTS" in numero "PARI" a "maxFileKeys" con tag associati "global_indexed_multivalue:test"
+    And Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS"
+    When Si modifica il documento 1001 secondo le seguenti operazioni
+      | global_indexed_multivalue:test | SET |
+    Then La chiamata genera un errore con status code 400
+    And Il messaggio di errore riporta la dicitura "Limit 'MaxFileKeys' reached"
 
   @test
   @aggiuntaTag
