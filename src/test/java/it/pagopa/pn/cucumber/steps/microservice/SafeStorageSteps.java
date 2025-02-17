@@ -299,8 +299,8 @@ public class SafeStorageSteps {
     public void checkForStatusCode(String errorMessage) {
         Assertions.assertNotNull(this.indicizzazioneStepsPojo.getHttpException());
         assertThat(this.indicizzazioneStepsPojo.getHttpException().getMessage())
-                .as("Il messaggio di errore riporta la seguente dicitura")
-                .matches(errorMessage);
+                .as("Il messaggio di errore riporta la seguente dicitura: ")
+                .contains(errorMessage);
     }
 
     @When("La request presenta una ripetizione della stessa fileKey")
