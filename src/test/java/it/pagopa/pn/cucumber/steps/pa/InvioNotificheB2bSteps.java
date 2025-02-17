@@ -1163,9 +1163,10 @@ public class InvioNotificheB2bSteps {
     @Given("viene cancellata la notifica con IUN {string}")
     public void vieneCancellataLaNotificaConIUN(String iun) {
         b2bClient.setApiKeys(SettableApiKey.ApiKeyType.GA);
-        Assertions.assertDoesNotThrow(() -> {
+       Assertions.assertDoesNotThrow(() -> {
             RequestStatus resp = Assertions.assertDoesNotThrow(() ->
                     b2bClient.notificationCancellation(iun));
+
 
             Assertions.assertNotNull(resp);
             Assertions.assertNotNull(resp.getDetails());
@@ -1229,9 +1230,20 @@ public class InvioNotificheB2bSteps {
                 for (String documentPecKey : documentPec.getDigitalNotificationRequest().getAttachmentUrls()) {
                     if (documentPecKey.contains(tipoAttachment)) {
                         PnExternalServiceClientImpl.SafeStorageResponse safeStorageResponse = safeStorageClient.safeStorageInfo(documentPecKey.substring(14, documentPecKey.length()));
-                        Assertions.assertNotNull(safeStorageResponse);
-                        Assertions.assertNotNull(safeStorageResponse.getChecksum());
-                        Assertions.assertNotNull(sharedSteps.getMapAllegatiNotificaSha256().get(safeStorageResponse.getKey()));
+                        assertSoftly(softly -> {
+
+                            softly.assertThat(safeStorageResponse)
+                                    .as("Il safeStorageResponse non dovrebbe essere nullo")
+                                    .isNotNull();
+
+                            softly.assertThat(safeStorageResponse.getChecksum())
+                                    .as("Il checksum non dovrebbe essere nullo")
+                                    .isNotNull();
+
+                            softly.assertThat(sharedSteps.getMapAllegatiNotificaSha256().get(safeStorageResponse.getKey()))
+                                    .as("Il valore per la chiave %s non dovrebbe essere nullo", safeStorageResponse.getKey())
+                                    .isNotNull();
+                        });
                         if (!safeStorageResponse.getChecksum().equals(sharedSteps.getMapAllegatiNotificaSha256().get(safeStorageResponse.getKey()))) {
                             checkAllegati = false;
                             break;
@@ -1269,7 +1281,6 @@ public class InvioNotificheB2bSteps {
                     sharedSteps.getIunVersionamento(), destinatario
             );
 
-            // Prevenzione NullPointerException
             assertThat(documentiPec)
                     .as("La lista dei documenti analogici non dovrebbe essere nulla")
                     .isNotNull()
@@ -1277,7 +1288,6 @@ public class InvioNotificheB2bSteps {
 
             log.info("documenti analogici : {}", documentiPec);
 
-            // Prevenzione NullPointerException
             ReceivedMessage firstDocument = documentiPec.get(0);
             assertThat(firstDocument)
                     .as("Il primo documento ricevuto non dovrebbe essere nullo")
@@ -1300,41 +1310,16 @@ public class InvioNotificheB2bSteps {
 
     @And("si verifica che il contenuto degli attachments da inviare in via cartacea abbia {int} attachment di tipo {string}")
     public void presenceAttachmentAnalogicFlow(Integer numeroDocumenti, String tipologia) {
+        List<String> attachmentsUri = Optional.ofNullable(documentiPec.get(0))
+                .map(ReceivedMessage::getPaperEngageRequest)
+                .map(PaperEngageRequest::getAttachments)
+                .orElse(List.of())
+                .stream()
+                .map(PaperEngageRequestAttachments::getUri)
+                .filter(uri -> uri.contains(tipologia))
+                .toList();
         try {
-
-            assertThat(documentiPec)
-                    .as("La lista dei documenti PEC non dovrebbe essere nulla")
-                    .isNotNull()
-                    .isNotEmpty();
-
-            ReceivedMessage firstDocument = documentiPec.get(0);
-            assertThat(firstDocument)
-                    .as("Il primo documento ricevuto non dovrebbe essere nullo")
-                    .isNotNull();
-
-            PaperEngageRequest paperEngageRequest = firstDocument.getPaperEngageRequest();
-            assertThat(paperEngageRequest)
-                    .as("Il PaperEngageRequest non dovrebbe essere nullo")
-                    .isNotNull();
-
-            List<PaperEngageRequestAttachments> attachments = paperEngageRequest.getAttachments();
-            assertThat(attachments)
-                    .as("La lista degli allegati non dovrebbe essere nulla")
-                    .isNotNull();
-
-            List<String> attachmentsUri = Optional.ofNullable(documentiPec.get(0))
-                    .map(ReceivedMessage::getPaperEngageRequest)
-                    .map(PaperEngageRequest::getAttachments)
-                    .orElse(List.of())
-                    .stream()
-                    .map(PaperEngageRequestAttachments::getUri)
-                    .filter(uri -> uri.contains(tipologia))
-                    .toList();
-
-            assertThat(attachmentsUri)
-                    .as("Il numero di allegati ottenuto non corrisponde al valore atteso", tipologia, numeroDocumenti)
-                    .hasSize(numeroDocumenti);
-
+            Assertions.assertEquals(numeroDocumenti, attachmentsUri.size());
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() + " - Verifica Allegati Cartacei in errore.";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
@@ -1354,7 +1339,7 @@ public class InvioNotificheB2bSteps {
                 .isNotNull();
 
         assertThat(firstDocumentReceived.getPaperEngageRequest().getAttachments())
-                .as("L'indice fornito (%d) è fuori dai limiti della lista degli allegati", documentIndex)
+                .as("L'indice fornito è fuori dai limiti della lista degli allegati", documentIndex)
                 .hasSizeGreaterThanOrEqualTo(documentIndex);
 
         assertThat(firstDocumentReceived.getPaperEngageRequest().getAttachments().get(documentIndex - 1).getDocumentType())
@@ -1390,8 +1375,15 @@ public class InvioNotificheB2bSteps {
         BffPaymentRequest requestCheckout = creationPaymentRequest(dataCheckout);
      try {
          BffPaymentResponse responseCheckout = pnPaymentInfoClientImpl.checkoutCart(requestCheckout);
-            Assertions.assertNotNull(responseCheckout);
-            Assertions.assertNotNull(responseCheckout.getCheckoutUrl());
+
+         assertThat(responseCheckout)
+                 .as("Il responseCheckout non dovrebbe essere nullo")
+                 .isNotNull();
+
+         assertThat(responseCheckout.getCheckoutUrl())
+                 .as("La checkoutUrl non dovrebbe essere nulla")
+                 .isNotNull();
+
             log.info("response checkout: {}", responseCheckout);
         } catch (AssertionFailedError error) {
             throw error;

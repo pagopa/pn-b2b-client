@@ -143,34 +143,13 @@ public class AvanzamentoNotificheB2bSteps {
         PnPollingServiceStatusRapidV26 statusRapidV26 =
                 (PnPollingServiceStatusRapidV26) pnPollingFactory.getPollingService(PnPollingStrategy.STATUS_RAPID_V26);
 
-        // Prevenzione NullPointerException
-        assertThat(sharedSteps.getSentNotification())
-                .as("La notifica inviata non dovrebbe essere nulla")
-                .isNotNull();
-
-        PnPollingResponseV26 pnPollingResponseV26 = statusRapidV26.waitForEvent(
-                sharedSteps.getSentNotification().getIun(),
+       //NPE
+        PnPollingResponseV26 pnPollingResponseV26 = statusRapidV26.waitForEvent(sharedSteps.getSentNotification().getIun(),
                 PnPollingParameter.builder()
                         .value(status)
                         .pnPollingPredicate(pnPollingPredicate)
-                        .build()
-        );
-
-        // Prevenzione NullPointerException
-        assertThat(pnPollingResponseV26)
-                .as("La risposta di polling non dovrebbe essere nulla")
-                .isNotNull();
-
-        assertThat(pnPollingResponseV26.getNotification())
-                .as("La notifica nella risposta di polling non dovrebbe essere nulla")
-                .isNotNull();
-
-        assertThat(pnPollingResponseV26.getNotification().getNotificationStatusHistory())
-                .as("Lo storico degli stati della notifica non dovrebbe essere nullo")
-                .isNotNull();
-
-        log.info("NOTIFICATION_STATUS_HISTORY: {}", pnPollingResponseV26.getNotification().getNotificationStatusHistory());
-
+                        .build());
+        log.info("NOTIFICATION_STATUS_HISTORY: " + pnPollingResponseV26.getNotification().getNotificationStatusHistory());
         try {
             assertThat(pnPollingResponseV26.getResult())
                     .as("Il risultato del polling deve essere valorizzato")
@@ -719,24 +698,9 @@ public class AvanzamentoNotificheB2bSteps {
                 sharedSteps.getIunVersionamento(),
                 PnPollingParameter.builder()
                         .value(timelineEventCategory)
-                        .build()
-        );
-
-        // Controllo NullPointerException
-        assertThat(pnPollingResponseV26)
-                .as("La risposta di polling non dovrebbe essere nulla")
-                .isNotNull();
-
-        assertThat(pnPollingResponseV26.getNotification())
-                .as("La notifica nella risposta di polling non dovrebbe essere nulla")
-                .isNotNull();
-
-        assertThat(pnPollingResponseV26.getNotification().getTimeline())
-                .as("La timeline della notifica non dovrebbe essere nulla")
-                .isNotNull();
-
+                        .build());
         log.info("NOTIFICATION_TIMELINE: " + pnPollingResponseV26.getNotification().getTimeline());
-
+//NPE
         try {
             assertThat(pnPollingResponseV26.getResult())
                     .as("Il risultato del polling dovrebbe essere valorizzato")
@@ -950,13 +914,11 @@ public class AvanzamentoNotificheB2bSteps {
     public void readingEventUpToTheTimelineElementOfNotificationWithDeliveryDetailCode(String timelineEventCategory, String deliveryDetailCode) {
         PnPollingResponseV26 pnPollingResponseV26 = getPollingResponse(timelineEventCategory, deliveryDetailCode);
 
-        assertThat(pnPollingResponseV26)
-                .as("La risposta del polling non deve essere nulla")
-                .isNotNull();
 
-        if (pnPollingResponseV26.getNotification() != null) {
+
+      Objects.requireNonNull( pnPollingResponseV26.getNotification(), "La notifica  non può essere null");
             log.info("NOTIFICATION_TIMELINE: {}", pnPollingResponseV26.getNotification().getTimeline());
-        }
+
 
         try {
             assertSoftly(softly -> {
@@ -3722,14 +3684,7 @@ public class AvanzamentoNotificheB2bSteps {
 
         TimelineElementV26 event = readingEventUpToTheTimelineElementOfNotificationForCategoryUser(timelineEventCategory, destinatario);
 
-        // Prevenzione NullPointerException
-        assertThat(event)
-                .as("L'evento della timeline non dovrebbe essere nullo per la categoria '%s' e destinatario '%d'", timelineEventCategory, destinatario)
-                .isNotNull();
-
-        assertThat(event.getDetails())
-                .as("I dettagli dell'evento non dovrebbero essere nulli per la categoria '%s' e destinatario '%d'", timelineEventCategory, destinatario)
-                .isNotNull();
+    //NPE
 
         Long notificationCost = event.getDetails().getNotificationCost();
 
