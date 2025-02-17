@@ -257,9 +257,6 @@ Feature: avanzamento b2b notifica digitale con indirizzo speciale
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
 
-
-    #TODO Chiedere se conviene spostare...
-
   @workflowDigitale
    #[B2B-PA-PAY_1]
   Scenario: [B2B_TIMELINE_DIGITAL_SPECIAL_34] Invio e visualizzazione notifica e verifica amount e effectiveDate

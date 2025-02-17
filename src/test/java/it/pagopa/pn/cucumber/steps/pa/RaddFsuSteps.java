@@ -1,5 +1,8 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
+import static it.pagopa.pn.cucumber.utils.FiscalCodeGenerator.generateCF;
+import static it.pagopa.pn.cucumber.utils.NotificationValue.generateRandomNumber;
+
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -7,19 +10,31 @@ import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.service.IPnRaddFsuClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
-import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.*;
+import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.AORInquiryResponse;
+import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.AbortTransactionRequest;
+import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.AbortTransactionResponse;
+import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.ActInquiryResponse;
+import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.ActInquiryResponseStatus;
+import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.ActStartTransactionRequest;
+import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.AorStartTransactionRequest;
+import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.CompleteTransactionRequest;
+import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.CompleteTransactionResponse;
+import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.DocumentUploadRequest;
+import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.DocumentUploadResponse;
+import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.ResponseStatus;
+import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.StartTransactionResponse;
+import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.StartTransactionResponseStatus;
+import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.TransactionResponseStatus;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Assertions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.client.HttpStatusCodeException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
-import static it.pagopa.pn.cucumber.utils.FiscalCodeGenerator.generateCF;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.generateRandomNumber;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.client.HttpStatusCodeException;
 
 
 @Slf4j
@@ -202,7 +217,6 @@ public class RaddFsuSteps {
                         .operationId(operationid)
                         .recipientTaxId(this.currentUserCf)
                         .recipientType(ActStartTransactionRequest.RecipientTypeEnum.PF)
-                        //.operationDate(OffsetDateTime.now()) TODO: controllare
                         .checksum(this.documentUploadResponse.getValue2());
         System.out.println("actStartTransactionRequest: "+actStartTransactionRequest);
         this.startTransactionResponse = raddFsuClient.startActTransaction(uid, actStartTransactionRequest);

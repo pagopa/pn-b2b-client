@@ -1476,7 +1476,6 @@ public class AvanzamentoNotificheB2bSteps {
             LegalFactCategory categorySearch = LegalFactCategory.fromValue(timelineElement.getLegalFactsIds().get(0).getCategory());
             String key = timelineElement.getLegalFactsIds().get(0).getKey();
             String keySearch = null;
-            //TODO Verificare....
             if (key.contains("PN_LEGAL_FACTS")) {
                 keySearch = key.substring(key.indexOf("PN_LEGAL_FACTS"));
             } else if (key.contains("PN_NOTIFICATION_ATTACHMENTS")) {

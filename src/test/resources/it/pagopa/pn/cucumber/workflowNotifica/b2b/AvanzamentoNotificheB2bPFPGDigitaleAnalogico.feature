@@ -28,7 +28,6 @@ Feature: avanzamento b2b notifica analogico difgitale
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED" per il destinatario 0 e presente l'evento "DIGITAL_FAILURE_WORKFLOW"
     And la PA richiede il download dell'attestazione opponibile "DIGITAL_DELIVERY_FAILURE"
  # 2	monodestinatario PG -> insuccesso e verifica nuovo WF  (con controllo date perfezionamento per decorrenza termini)
-  #TODO Repererire una PG per cui fallisce l'invio digitale
 
   @dev @mockNR
   Scenario: [B2B_TIMELINE_FIX_7179_2] Notifica mono destinatario con workflow digitale fallito - Destinatario PG
@@ -165,7 +164,6 @@ Feature: avanzamento b2b notifica analogico difgitale
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi e verifico che l'utente 0 non abbia associato un evento "COMPLETELY_UNREACHABLE"
     And vengono letti gli eventi e verifico che l'utente 1 non abbia associato un evento "COMPLETELY_UNREACHABLE"
-    #TODO Controllare non arriva lo stato COMPLETELY_UNREACHABLE arriva   ACCEPTED-DELIVERING-EFFECTIVE_DATE
     #Ritardare Il Perfezionamento per lo stato DELIVERED
     And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
 

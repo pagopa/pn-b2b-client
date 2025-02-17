@@ -300,7 +300,6 @@ public class PnPaB2bUtils {
     }
 
     public NewNotificationResponse uploadNotificationNotFindAllegato(NewNotificationRequestV24 request, boolean noUpload) throws IOException {
-//TODO Modificare.............
         NotificationDocument notificationDocument = null;
         if (!request.getDocuments().isEmpty() && !noUpload) {
             notificationDocument = request.getDocuments().get(0);
@@ -322,7 +321,6 @@ public class PnPaB2bUtils {
     }
 
     public NewNotificationResponse uploadNotificationNotEqualSha(NewNotificationRequestV24 request) throws IOException {
-//TODO Modificare.............
         NotificationDocument notificationDocument = null;
         if (!request.getDocuments().isEmpty()) {
             notificationDocument = request.getDocuments().get(0);
@@ -336,7 +334,6 @@ public class PnPaB2bUtils {
     }
 
     public NewNotificationResponse uploadNotificationNotEqualShaJson(NewNotificationRequestV24 request) throws IOException {
-//TODO Modificare.............
         NotificationDocument notificationDocument = null;
         if (!request.getRecipients().isEmpty()) {
             // the document uploaded to safe storage is multa.pdf
@@ -349,7 +346,6 @@ public class PnPaB2bUtils {
     }
 
     public NewNotificationResponse uploadNotificationWrongExtension(NewNotificationRequestV24 request) throws IOException {
-//TODO Modificare.............
         NotificationDocument notificationDocument = null;
         if (!request.getDocuments().isEmpty()) {
             notificationDocument = request.getDocuments().get(0);
@@ -360,21 +356,18 @@ public class PnPaB2bUtils {
     }
 
     public NewNotificationResponse uploadNotificationOver15Allegato(NewNotificationRequestV24 request) throws IOException {
-//TODO Modificare.............
         NotificationDocument notificationDocument = newDocument("classpath:/sample.pdf");
         composeNewNotification(request, notificationDocument, false, false, 20);
         return sendNewNotification(request);
     }
 
     public NewNotificationResponse uploadNotificationOverSizeAllegato(NewNotificationRequestV24 request) throws IOException {
-//TODO Modificare.............
         NotificationDocument notificationDocument = newDocument("classpath:/200MB_PDF.pdf");
         composeNewNotification(request, notificationDocument, false, false, 1);
         return sendNewNotification(request);
     }
 
     public NewNotificationResponse uploadNotificationInjectionAllegato(NewNotificationRequestV24 request) throws IOException {
-//TODO Modificare.............
         NotificationDocument notificationDocument = newDocument("classpath:/sample_injection.xml.pdf");
         composeNewNotification(request, notificationDocument, false, false, 1);
         return sendNewNotification(request);

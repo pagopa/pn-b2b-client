@@ -246,7 +246,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
-  #TODO Vecchio Requisito
+  #Nota: Vecchio Requisito
   #28  PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA]
   @pagamentiMultipli @ignore
   Scenario: [B2B-PA-PAY_MULTI_28] PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA]
@@ -593,13 +593,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When viene richiesto il download del documento "PAGOPA"
     Then il download si conclude correttamente
 
-
-   #TODO CHIEDERE INFO.............Vecchio Requisito
-  #37 PA - inserimento notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: ad ogni avviso pagoPA corrisponde un F24 [TA]
-
-
-
-
   #38 PA - inserimento notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA]
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_38] PA - inserimento notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA] costi inclusi
@@ -624,9 +617,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then viene verificato il costo = "100" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
 
-
-
- #TODO CHIEDERE INFO.............
   #39 PA - inserimento notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include il modello F24 ma non l’avviso pagoPA [TA]
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_39] PA - inserimento notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include il modello F24 ma non l’avviso pagoPA [TA]  costi inclusi
@@ -650,16 +640,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
-
-#TODO VECCHIO REQUISITO
-  #40 Destinatario - pagamento notifica mono destinatario con un solo avviso pagoPA: verifica stato “In elaborazione”
-
-
- #TODO VECCHIO REQUISITO
-  #41 Destinatario - visualizzazione box di pagamento su notifica mono destinatario pagata - verifica della presenza stato “Pagato”
-
-
-
   #42 Notifica mono destinatario pagata - verifica posizione debitoria (IUV) dopo aver effettuato il pagamento [TA]
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_42] Notifica mono destinatario pagata - verifica posizione debitoria (IUV) dopo aver effettuato il pagamento [TA] costi inclusi
@@ -677,8 +657,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica
 
-
-  #TODO TEST MANUALE
   #43 Destinatario - notifica mono destinatario con più avvisi pagoPA: pagamento di un avviso
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_43] Destinatario - notifica mono destinatario con più avvisi pagoPA: pagamento di un avviso costi inclusi
@@ -714,7 +692,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And si attende il corretto pagamento della notifica con l' avviso 0 dal destinatario 0
     And si attende il corretto pagamento della notifica con l' avviso 1 dal destinatario 0
 
-  #TODO TEST MANUALE
   #44 Destinatario - notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: pagamento di uno degli avvisi (PagoPa)
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_44] Destinatario - notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: pagamento di uno degli avvisi (PagoPa) costi inclusi
@@ -734,8 +711,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica
 
-
-    #TODO Non è possibile effettuare il pagamento lato Destinatario accertare il pagamento di un solo avviso...Chiudere la posizione debitoria
   @pagamentiMultipli @ignore
   Scenario: [B2B-PA-PAY_MULTI_44_1] Destinatario - notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: pagamento di uno degli avvisi (PagoPa)
     Given viene generata una nuova notifica
@@ -751,7 +726,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    #TODO parametrizzare lo step per avviso di pagamento.......
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica
 
@@ -795,7 +769,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
   #47 Destinatario 1 - pagamento notifica multi destinatario con un solo avviso pagoPA
-  #TODO Non è possibile effettuare il pagamento lato Destinatario quindi si può solo lato PA verificare la posizione Debitoria del Destinatario
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_47] Destinatario 1 - pagamento notifica multi destinatario con un solo avviso pagoPA e costi inclusi
     Given viene generata una nuova notifica
@@ -904,8 +877,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
   #49 Destinatario 1 - notifica multi destinatario con più avvisi pagoPA: pagamento di un avviso
-  #TODO Modificare il metodo che verifica il pagamento di un solo avviso......
-  #TODO Non è possibile effettuare il pagamento lato Destinatario
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_49] Destinatario 1 - notifica multi destinatario con più avvisi pagoPA: verifica costo della notifica del destinatario 1 e costi inclusi
     Given viene generata una nuova notifica
@@ -931,7 +902,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then viene verificato il costo = "100" della notifica per l'utente 0
 
   #50 Destinatario 1 - notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: pagamento di uno degli avvisi (PagoPa)
-  #TODO Non è possibile effettuare il pagamento lato Destinatario
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_50] Destinatario 1 - notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: verifica costo della notifica del destinatario 1/2 e costi inclusi
     Given viene generata una nuova notifica
@@ -1187,20 +1157,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica dell'utente 0
 
-
-
-
-#TODO SOLO TM
-  #61 Destinatario - visualizzazione box di pagamento su notifica mono destinatario pagata (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)
-
-#TODO SOLO TM
-  #62 Documento PagoPa: Inserimento dati pagamento e relativa verifica dei dati nel documento generato di avviso PagoPA (es. amount, description, expirationDate, status, ecc.) [TA]
-
-#TODO SOLO TM
-  #63 Documento F24: Inserimento dati pagamento e costruzione del documento F24 e relativa verifica dei dati nel documento generato F24 [TA]
-
-
-
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_64_3] Test di Validazione degli oggetti di pagamento ricevuti multidestinatario: istanze di pagamento non coerenti feePolicy DELIVERY_MODE e destinatario1 con applyCost false -  destinatario2 con applyCost true
     Given viene generata una nuova notifica
@@ -1248,14 +1204,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
-
-
-
-#TODO NO TEST...
-  #65 Timeline: Verifica F24 (scenario negativo: deve essere riscontrata assenza di eventi di pagamento in timeline).. NO TEST...
-
-#TODO NO TEST....
-  #66 Timeline: Verifica PagoPa con più di un pagamento effettuato (presenza di più istanze di pagamento) [TA] .. NO TEST...
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_66] PA Timeline: Esecuzione di più pagamenti, PagoPa -> Verifica in timeline presenza solo dei pagamenti PagoPa [TA]  e costi inclusi
     Given viene generata una nuova notifica
@@ -1308,10 +1256,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And si attende il corretto pagamento della notifica dell'utente 1
     And verifica presenza in Timeline dei solo pagamenti di avvisi PagoPA del destinatario 0
 
-
-#TODO da Verificare........
-  #68 Pagamenti in FAILURE: Verifica di tutti i possibili KO [TA]:
-
  # 'PAYMENT_UNAVAILABLE', // Technical Error
  # 'PAYMENT_UNKNOWN', // Payment data error
  # 'DOMAIN_UNKNOWN', // Creditor institution error
@@ -1329,7 +1273,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_noticeCode    | 302000100000019421 |
     Then verifica stato pagamento di una notifica con status "REQUIRED"
 
-  #TODO al momento non è possibile effettuare pagamenti..
   @pagamentiMultipli @ignore @mockCheckout
   Scenario: [B2B-PA-PAY_MULTI_68_1] Pagamenti in FAILURE: Verifica di tutti i possibili KO [TA] - Pagamento effettuato  errore 409 PAGAMENTO_DUPLICATO
     Given viene generata una nuova notifica
@@ -1361,7 +1304,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
   #69 Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante paga avviso1 e delegato paga avviso2
-  #TODO Modificare lo scenario..................
   #Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante e delegato possono scaricare l'avviso
   @pagamentiMultipli @deleghe1 @ignore
   Scenario: [B2B-PA-PAY_MULTI_69] Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante e Delegato scaricano correttamenta l'avviso pagoPA e F24
@@ -1582,11 +1524,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     #viene fatta la stessa verifica sullo Sha256
     Then l'allegato "F24" può essere correttamente recuperato da "Mario Cucumber"
 
-#TODO SOLO TM....
-  #75 PA -  Visualizzazione Box Allegati Modelli F24
-
-
-   #76 Destinatario -  Download PAGOPA/F24 con AppIO
+  #76 Destinatario -  Download PAGOPA/F24 con AppIO
   @pagamentiMultipli @appIo
   Scenario: [B2B-PA-PAY_MULTI_76] Invio notifica con api b2b e recupero documento di pagamento PAGOPA con AppIO
     Given viene generata una nuova notifica

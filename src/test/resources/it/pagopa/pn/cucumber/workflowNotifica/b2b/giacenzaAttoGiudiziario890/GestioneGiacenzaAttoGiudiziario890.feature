@@ -399,7 +399,6 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | details_sentAttemptMade | 0 |
       | details_physicalAddress    | {"at": "Presso", "address": "VIA@FAIL-GIACENZA-GT10_890", "addressDetails": "SCALA B", "zip": "87100", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "province": "CS", "foreignState": "ITALIA"} |
       | details_responseStatus | OK |
-    # TODO come fa lo status a essere OK e non KO se la sequenza è di tipo fail?
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -626,7 +625,6 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | details_sentAttemptMade | 0 |
       | details_physicalAddress    | {"at": "Presso", "address": "@FAIL-GIACENZA-GT10_890_NO_RECAG012", "addressDetails": "SCALA B", "zip": "87100", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "province": "CS", "foreignState": "ITALIA"} |
       | details_responseStatus | OK |
-    # TODO come fa a essere OK e non KO il risultato atteso, se è una sequenza di tipo fail?
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |

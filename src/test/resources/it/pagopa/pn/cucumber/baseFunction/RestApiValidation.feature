@@ -16,7 +16,7 @@ Feature: verifica funzionamento api rest
     Given si tenta il recupero della notifica dal sistema tramite codice IUN "UGYD-XHEZ-KLRM-202208-X-0"
     Then l'operazione ha prodotto un errore con status code "404"
 
-    #TODO: da spostare ?
+    #nota: da spostare ?
   @restApiValidation
   Scenario: [REST_VALIDATION_3] Invio notifica digitale_scenario negativo
     Given viene generata una nuova notifica

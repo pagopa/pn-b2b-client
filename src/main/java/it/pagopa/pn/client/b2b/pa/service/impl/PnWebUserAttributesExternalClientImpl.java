@@ -199,12 +199,6 @@ public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttribut
     }
 
     public void consentAction(ConsentType consentType, ConsentAction consentAction, String version) throws RestClientException {
-        //TODO: problema da verificare
-        /*
-        consentAction(ConsentType consentType,
-                          String consentAction,
-                          ConsentAction version) ???
-         */
         this.consentsApi.consentAction(consentType, version, consentAction);
     }
 
