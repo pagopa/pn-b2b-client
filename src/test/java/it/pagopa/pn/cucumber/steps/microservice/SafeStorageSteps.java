@@ -300,7 +300,7 @@ public class SafeStorageSteps {
         Assertions.assertNotNull(this.indicizzazioneStepsPojo.getHttpException());
         assertThat(this.indicizzazioneStepsPojo.getHttpException().getMessage())
                 .as("Il messaggio di errore riporta la seguente dicitura")
-                .matches(".+" + errorMessage + ".+");
+                .matches(errorMessage);
     }
 
     @When("La request presenta una ripetizione della stessa fileKey")
