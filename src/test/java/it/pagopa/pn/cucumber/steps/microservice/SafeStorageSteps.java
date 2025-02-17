@@ -22,6 +22,8 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
 @Slf4j
 public class SafeStorageSteps {
 
@@ -296,7 +298,9 @@ public class SafeStorageSteps {
     @And("Il messaggio di errore riporta la dicitura {string}")
     public void checkForStatusCode(String errorMessage) {
         Assertions.assertNotNull(this.indicizzazioneStepsPojo.getHttpException());
-        Assertions.assertTrue(this.indicizzazioneStepsPojo.getHttpException().getMessage().contains(errorMessage));
+        assertThat(this.indicizzazioneStepsPojo.getHttpException().getMessage())
+                .as("Il messaggio di errore riporta la seguente dicitura")
+                .matches(".+" + errorMessage + ".+");
     }
 
     @When("La request presenta una ripetizione della stessa fileKey")
