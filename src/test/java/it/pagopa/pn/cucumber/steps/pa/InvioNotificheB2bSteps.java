@@ -1203,7 +1203,7 @@ public class InvioNotificheB2bSteps {
             throw new RuntimeException(exc);
         }
 
-        TimelineElementCategoryV23 timelineElementInternalCategory = TimelineElementCategoryV23.AAR_GENERATION;
+        TimelineElementCategoryV26 timelineElementInternalCategory = TimelineElementCategoryV26.AAR_GENERATION;
         TimelineElementV26 timelineElement = null;
 
         for (TimelineElementV26 element : sharedSteps.getSentNotification().getTimeline()) {

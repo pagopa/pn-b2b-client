@@ -1,6 +1,6 @@
 package it.pagopa.interop.delegate.service.impl;
 
-import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
+import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.delegate.service.IProducerDelegationsApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.ProducerDelegationsApi;
@@ -41,12 +41,12 @@ public class ProducerDelegationsApiClientImpl implements IProducerDelegationsApi
 
     @Override
     public void approveDelegation(String xCorrelationId, UUID delegationId) {
-        producerDelegationsApi.approveDelegation(xCorrelationId, delegationId);
+        producerDelegationsApi.approveProducerDelegation(xCorrelationId, delegationId);
     }
 
     @Override
     public void rejectDelegation(String xCorrelationId, UUID delegationId, RejectDelegationPayload rejectDelegationPayload) {
-        producerDelegationsApi.rejectDelegation(xCorrelationId, delegationId, rejectDelegationPayload);
+        producerDelegationsApi.rejectProducerDelegation(xCorrelationId, delegationId, rejectDelegationPayload);
     }
 
     @Override

@@ -1,5 +1,14 @@
 package it.pagopa.pn.cucumber.steps;
 
+import static it.pagopa.pn.cucumber.utils.FiscalCodeGenerator.generateCF;
+import static it.pagopa.pn.cucumber.utils.NotificationValue.DOCUMENT;
+import static it.pagopa.pn.cucumber.utils.NotificationValue.PAYMENT;
+import static it.pagopa.pn.cucumber.utils.NotificationValue.PAYMENT_PAGOPA_FORM;
+import static it.pagopa.pn.cucumber.utils.NotificationValue.getDefaultValue;
+import static it.pagopa.pn.cucumber.utils.NotificationValue.getValue;
+import static java.util.Objects.nonNull;
+import static org.awaitility.Awaitility.await;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -16,13 +25,42 @@ import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
 import it.pagopa.pn.client.b2b.pa.exception.IllegalConfigurationException;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.DigitalAddress;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.DigitalAddressSource;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV23;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV24;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV25;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV26;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NewNotificationRequestV24;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NewNotificationResponse;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationDigitalAddress;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationFeePolicy;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationPaymentItem;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationRecipientV23;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.ProgressResponseElementV24;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.ProgressResponseElementV25;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.RequestStatus;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.StreamMetadataResponseV24;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.StreamMetadataResponseV25;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementDetailsV23;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
-import it.pagopa.pn.client.b2b.pa.service.impl.*;
+import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.IPnTosPrivacyClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnGPDClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnServiceDeskClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnWebRecipientExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.ProgressResponseElement;
@@ -36,7 +74,25 @@ import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalAndUnverifiedDigitalAddress;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.UserAddresses;
-import it.pagopa.pn.cucumber.utils.*;
+import it.pagopa.pn.cucumber.utils.DataTest;
+import it.pagopa.pn.cucumber.utils.EventId;
+import it.pagopa.pn.cucumber.utils.GroupPosition;
+import it.pagopa.pn.cucumber.utils.NotificationValue;
+import it.pagopa.pn.cucumber.utils.TimelineEventId;
+import java.io.IOException;
+import java.security.SecureRandom;
+import java.time.Duration;
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Random;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.TimeUnit;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -52,18 +108,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpStatusCodeException;
-
-import java.io.IOException;
-import java.security.SecureRandom;
-import java.time.Duration;
-import java.time.OffsetDateTime;
-import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.TimeUnit;
-
-import static it.pagopa.pn.cucumber.utils.FiscalCodeGenerator.generateCF;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
-import static org.awaitility.Awaitility.await;
 
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -283,11 +327,9 @@ public class SharedSteps {
     @Setter
     private FullSentNotificationV26 notificationResponseComplete;
 
-
     private String settedPa = "Comune_1";
     private boolean groupToSet = true;
     private String errorCode = null;
-    public static Integer lastEventID = 0;
     private final SecureRandom secureRandom = new SecureRandom();
     private final PnB2bClientTimingConfigs timingConfigs;
     private final Duration schedulingDaysSuccessDigitalRefinementDefault = DurationStyle.detectAndParse("6m");
@@ -299,7 +341,7 @@ public class SharedSteps {
     private final Duration waitingForReadCourtesyMessageDefault = DurationStyle.detectAndParse("5m");
     private final String gherkinSpaTaxID = "12666810299";
     private final String cucumberSrlTaxID = "20517490320";
-    private final String cucumberSocietyTaxID = "20517490320";//
+    private final String cucumberSocietyTaxID = "20517490320";// "DNNGRL83A01C352D";
     private final String gherkinIrreperibileTaxID = "00749900049";
     private final ObjectMapper objMapper = JsonMapper.builder()
             .addModule(new JavaTimeModule())
@@ -1990,9 +2032,18 @@ public class SharedSteps {
     }
 
     public void throwAssertFailerWithIUN(AssertionFailedError assertionFailedError) {
-        String message = assertionFailedError.getMessage() +
-                "{IUN: " + notificationResponseComplete.getIun() + " }";
+        String message = decorateErrorMsg(assertionFailedError.getMessage());
         throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+    }
+
+    public void throwAssertFailerWithIUN(AssertionError assertionError) {
+        String message = decorateErrorMsg(assertionError.getMessage());
+        throw new AssertionError(message, assertionError.getCause());
+    }
+
+    private String decorateErrorMsg(String originalMessage) {
+        return originalMessage +
+            " {IUN: " + notificationResponseComplete.getIun() + " }";
     }
 
     public void throwAssertFailerWithAmountGDPAndIUN(AssertionFailedError assertionFailedError, Integer amountGDP) {
@@ -2171,8 +2222,49 @@ public class SharedSteps {
         };
     }
 
-    public TimelineElementV26 getTimelineElementByEventId(String timelineEventCategory, DataTest dataFromTest) {
+    /** Get all timeline elements that match the given event category and data from test
+     * @param timelineEventCategory the category of the timeline event
+     * @param dataFromTest the data filters
+     * @return a list of timeline elements that match the given event category and data from test */
+    public List<TimelineElementV26> getTimelineElementsByEventId(String timelineEventCategory, DataTest dataFromTest) {
         List<TimelineElementV26> timelineElementList = notificationResponseComplete.getTimeline();
+        String iun = getIun(timelineEventCategory);
+        if (dataFromTest != null && dataFromTest.getTimelineElement() != null) {
+            // get timeline event id
+            String timelineEventId = getTimelineEventId(timelineEventCategory, iun, dataFromTest);
+            if (timelineEventCategory.equals(TimelineElementCategoryV26.SEND_ANALOG_PROGRESS.getValue()) || timelineEventCategory.equals(TimelineElementCategoryV26.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS.getValue())) {
+                TimelineElementV23 timelineElementFromTest = dataFromTest.getTimelineElement();
+                TimelineElementDetailsV23 timelineElementDetails = timelineElementFromTest.getDetails();
+                return timelineElementList.stream()
+                    .filter(
+                        elem -> Objects.requireNonNull(elem.getElementId()).startsWith(timelineEventId)
+                            && Objects.equals(Objects.requireNonNull(elem.getDetails()).getDeliveryDetailCode(), Objects.requireNonNull(timelineElementDetails).getDeliveryDetailCode()))
+                    .toList();
+            }
+            return timelineElementList.stream().filter(elem -> Objects.requireNonNull(elem.getElementId()).contains(timelineEventId)).toList();
+        }
+        return timelineElementList.stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).getValue().equals(timelineEventCategory)).toList();
+    }
+
+    /** Get all timeline elements having attempt index less or equal to the given one
+     * @param attemptIndex the index of the attempt (starting from 0)
+     * @return a list of timeline elements that match the given event category and data from test */
+    public List<TimelineElementV26> getTimelineElementsToAttempt(int attemptIndex) {
+        List<TimelineElementV26> timelineElementList = notificationResponseComplete.getTimeline();
+        return timelineElementList.stream()
+            .filter(elem -> nonNull(elem.getDetails()))
+            .filter(elem -> nonNull(elem.getDetails().getSentAttemptMade()))
+            .filter(elem -> elem.getDetails().getSentAttemptMade() <= attemptIndex)
+            .toList();
+    }
+
+    public TimelineElementV26 getTimelineElementByEventId(String timelineEventCategory, DataTest dataFromTest) {
+        return getTimelineElementsByEventId(timelineEventCategory, dataFromTest).stream()
+            .findAny()
+            .orElse(null);
+    }
+
+    private String getIun(String timelineEventCategory) {
         String iun;
         if (timelineEventCategory.equals(TimelineElementCategoryV26.REQUEST_REFUSED.getValue())) {
             String requestId = newNotificationResponse.getNotificationRequestId();
@@ -2182,17 +2274,7 @@ public class SharedSteps {
             // proceed with default flux
             iun = notificationResponseComplete.getIun();
         }
-        if (dataFromTest != null && dataFromTest.getTimelineElement() != null) {
-            // get timeline event id
-            String timelineEventId = getTimelineEventId(timelineEventCategory, iun, dataFromTest);
-            if (timelineEventCategory.equals(TimelineElementCategoryV26.SEND_ANALOG_PROGRESS.getValue()) || timelineEventCategory.equals(TimelineElementCategoryV26.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS.getValue())) {
-                TimelineElementV23 timelineElementFromTest = dataFromTest.getTimelineElement();
-                TimelineElementDetailsV23 timelineElementDetails = timelineElementFromTest.getDetails();
-                return timelineElementList.stream().filter(elem -> Objects.requireNonNull(elem.getElementId()).startsWith(timelineEventId) && Objects.equals(Objects.requireNonNull(elem.getDetails()).getDeliveryDetailCode(), Objects.requireNonNull(timelineElementDetails).getDeliveryDetailCode())).findAny().orElse(null);
-            }
-            return timelineElementList.stream().filter(elem -> Objects.requireNonNull(elem.getElementId()).contains(timelineEventId)).findAny().orElse(null);
-        }
-        return timelineElementList.stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).getValue().equals(timelineEventCategory)).findAny().orElse(null);
+        return iun;
     }
 
     public String getSchedulingDelta() {

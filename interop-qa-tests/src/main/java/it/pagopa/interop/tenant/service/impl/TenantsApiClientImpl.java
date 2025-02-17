@@ -1,6 +1,6 @@
 package it.pagopa.interop.tenant.service.impl;
 
-import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
+import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.TenantsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedAttributesResponse;

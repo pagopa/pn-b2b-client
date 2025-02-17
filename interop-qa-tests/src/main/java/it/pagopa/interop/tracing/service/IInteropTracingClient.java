@@ -1,7 +1,12 @@
-package it.pagopa.pn.client.b2b.pa.interop;
+package it.pagopa.interop.tracing.service;
 
-import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.model.*;
-import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
+import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.GetTracingErrorsResponse;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.GetTracingsResponse;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.RecoverTracingResponse;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.ReplaceTracingResponse;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.SubmitTracingResponse;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.TracingState;
 import org.springframework.web.client.RestClientException;
 
 import java.util.List;
