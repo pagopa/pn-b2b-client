@@ -1,7 +1,7 @@
 package it.pagopa.interop.attribute.service.impl;
 
 import it.pagopa.interop.attribute.service.IAttributeApiClient;
-import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
+import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.AttributesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Attribute;

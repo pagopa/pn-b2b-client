@@ -12,6 +12,7 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
 import java.util.List;
@@ -29,7 +30,7 @@ public class PurposeCommonStep {
 
 
     public PurposeCommonStep(ClientTokenConfigurator clientTokenConfigurator,
-                             IdentityService identityService,
+                             @Qualifier("interopIdentityService") IdentityService identityService,
                              DataPreparationService dataPreparationService,
                              SharedStepsContext sharedStepsContext) {
         this.clientTokenConfigurator = clientTokenConfigurator;

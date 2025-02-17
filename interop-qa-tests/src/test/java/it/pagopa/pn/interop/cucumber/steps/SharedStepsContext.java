@@ -11,6 +11,7 @@ import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
@@ -37,7 +38,7 @@ public class SharedStepsContext {
 
     public SharedStepsContext(
         HttpCallExecutor httpCallExecutor,
-        IdentityService identityService,
+        @Qualifier("interopIdentityService") IdentityService identityService,
         PollingService pollingService) {
         this.httpCallExecutor = httpCallExecutor;
         this.identityService = identityService;

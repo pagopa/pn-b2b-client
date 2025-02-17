@@ -1,14 +1,13 @@
 package it.pagopa.interop.authorization.service.utils;
 
 import it.pagopa.interop.authorization.domain.Tenant;
+import it.pagopa.interop.authorization.service.factory.InteropTokenFactory;
 import it.pagopa.interop.authorization.service.factory.SessionTokenFactory;
+import it.pagopa.interop.authorization.service.factory.TracingTokenFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
 
 import java.util.List;
 import java.util.Objects;
@@ -16,8 +15,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
-@Component
-@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class IdentityService {
     private final SessionTokenFactory sessionTokenFactory;
     private final List<Tenant> tenantList;
@@ -29,7 +26,7 @@ public class IdentityService {
     }
 
     public String getToken(String tenantType, String role) {
-        String token = Optional.ofNullable(sessionTokenFactory.getCachedTokens())
+        String token = Optional.ofNullable(sessionTokenFactory.loadToken())
                 .map(m -> m.get(tenantType))
                 .map(m -> (role == null) ? m.get("admin") : m.get(role))
                 .filter(Objects::nonNull)

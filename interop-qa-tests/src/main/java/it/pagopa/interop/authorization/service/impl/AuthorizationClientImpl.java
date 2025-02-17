@@ -1,7 +1,7 @@
 package it.pagopa.interop.authorization.service.impl;
 
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
-import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
+import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.ClientsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Client;

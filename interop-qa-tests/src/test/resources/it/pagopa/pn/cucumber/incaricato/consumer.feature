@@ -28,12 +28,12 @@ Feature: Test API Availability in Use of E-Service
       | api,security|        403 |
       | support     |        403 |
 
-  Scenario: [TC_INCARICATO_46] Verificare che il richiamo dell’API di disponibilità in fruizione di un e-service, per il quale è già stata data disponibilità, non possa essere compiuto da un utente di tipo amministratore
+  Scenario: [TC_INCARICATO_46] Verificare che il richiamo dell’API di disponibilità in fruizione di un e-service, per il quale è già stata data disponibilità, possa essere effettuato nuovamente
     Given l'ente delegato "PA2"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
     When l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
-    Then si ottiene status code 409
+    Then si ottiene status code 200
 
   Scenario Outline: [TC_INCARICATO_47] Richiamare l’API di creazione di una delega da parte di un fruitore delegante verso un altro ente delegato
     Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione

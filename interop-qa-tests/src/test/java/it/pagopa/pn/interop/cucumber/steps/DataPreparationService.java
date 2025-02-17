@@ -234,7 +234,6 @@ public class DataPreparationService {
 
     public Optional<UUID> createAgreement(UUID eServiceID, UUID descriptorId, @Nullable UUID delegationId) {
         httpCallExecutor.performCall(() -> agreementClient.createAgreement(
-            sharedStepsContext.getXCorrelationId(),
             new AgreementPayload().eserviceId(eServiceID).descriptorId(descriptorId).delegationId(delegationId)));
         return httpCallExecutor.getClientResponse().is2xxSuccessful()
             ? Optional.of(((CreatedResource) httpCallExecutor.getResponse()).getId())
