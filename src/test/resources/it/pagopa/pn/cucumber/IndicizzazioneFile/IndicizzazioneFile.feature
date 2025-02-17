@@ -104,8 +104,8 @@ Feature: test preliminari indicizzazione File safeStorage
 
   @aggiuntaTag
   @concurrencyIndexSs
-  @indicizzazioneSafeStorageNew
-  Scenario: [INDEX_SS_CREATE_4] Create ERROR - MaxFileKeys (limite massimo di documenti a cui è associabile un tag)
+  @indicizzazioneSafeStorage
+  Scenario: [INDEX_SS_CREATE_4new] Create ERROR - MaxFileKeys (limite massimo di documenti a cui è associabile un tag)
     Given esiste un limite "maxFileKeys" con valore pari a 1000
     And vengono caricati documenti di tipo "PN_NOTIFICATION_ATTACHMENTS" in numero "PARI" a "maxFileKeys" con tag associati "global_indexed_singlevalue:test"
     When vengono caricati documenti di tipo "PN_NOTIFICATION_ATTACHMENTS" in numero "PARI" a "1" con tag associati "global_indexed_singlevalue:test"
@@ -123,8 +123,8 @@ Feature: test preliminari indicizzazione File safeStorage
 
   @test
   @aggiuntaTag
-  @indicizzazioneSafeStorageNew
-  Scenario: [INDEX_SS_CREATE_5] Create ERROR - MaxValuesPerTagDocument
+  @indicizzazioneSafeStorage
+  Scenario: [INDEX_SS_CREATE_5new] Create ERROR - MaxValuesPerTagDocument
     Given esiste un limite "maxValuesPerTagDocument" con valore pari a 1000
     And esiste un limite "maxValuesPerTagPerRequest" con valore pari a 100
     And Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS"
@@ -269,7 +269,7 @@ Feature: test preliminari indicizzazione File safeStorage
 
   @test
   @aggiuntaTag
-  @indicizzazioneSafeStorageNew
+  @indicizzazioneSafeStorage
   Scenario: [INDEX_SS_UPDATE_SINGLE_9new] UpdateSingle ERROR - MaxValuesPerTagDocument
     Given esiste un limite "maxValuesPerTagDocument" con valore pari a 1000
     And Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS"
@@ -461,8 +461,8 @@ Feature: test preliminari indicizzazione File safeStorage
 #    And Il messaggio di errore riporta la dicitura "Number of documents to update exceeds MaxFileKeysUpdateMassivePerRequest limit."
 
   @aggiuntaTag
-  @indicizzazioneSafeStorageNew
-  Scenario: [INDEX_SS_UPDATE_MASSIVE_8] Update Massive ERROR - MaxFileKeysUpdateMassivePerRequest
+  @indicizzazioneSafeStorage
+  Scenario: [INDEX_SS_UPDATE_MASSIVE_8New] Update Massive ERROR - MaxFileKeysUpdateMassivePerRequest
     Given esiste un limite "maxFileKeysUpdateMassivePerRequest" con valore pari a 100
     And vengono caricati documenti di tipo "PN_NOTIFICATION_ATTACHMENTS" in numero "SUPERIORE" a "maxFileKeysUpdateMassivePerRequest"
     When tali documenti vengono modificati simultaneamente associando a ciascuno il tag "global_multivalue"
@@ -586,8 +586,8 @@ Feature: test preliminari indicizzazione File safeStorage
 
   @test
   @aggiuntaTag
-  @indicizzazioneSafeStorageNew
-  Scenario: [INDEX_SS_UPDATE_MASSIVE_13.2] Update Massive ERROR - MaxValuesPerTagPerRequest
+  @indicizzazioneSafeStorage
+  Scenario: [INDEX_SS_UPDATE_MASSIVE_13.2New] Update Massive ERROR - MaxValuesPerTagPerRequest
     Given esiste un limite "MaxValuesPerTagPerRequest" con valore pari a 100
     And Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS"
     When il documento viene modificato associandogli il tag "global_multivalue" con un numero di valori "SUPERIORE" a "maxValuesPerTagPerRequest"
