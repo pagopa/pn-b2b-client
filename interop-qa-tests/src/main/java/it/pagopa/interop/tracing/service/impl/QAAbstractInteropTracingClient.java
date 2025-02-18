@@ -1,8 +1,6 @@
 package it.pagopa.interop.tracing.service.impl;
 
 import it.pagopa.interop.authorization.service.utils.IdentityService;
-import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.api.HealthApi;
-import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.api.TracingsApi;
 import it.pagopa.interop.tracing.config.TracingClientConfigs;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -18,7 +16,7 @@ public class QAAbstractInteropTracingClient extends AbstractInteropTracingClient
     private IdentityService identityService;
 
     public QAAbstractInteropTracingClient(RestTemplate restTemplate, TracingClientConfigs tracingClientConfigs, @Qualifier("tracingIdentityService") IdentityService identityService) {
-        super(restTemplate, tracingClientConfigs, identityService.getToken("PA1", null));
+        super(restTemplate, tracingClientConfigs);
         this.bearerTokenSetted = BearerTokenType.TENANT_1;
         this.identityService = identityService;
     }

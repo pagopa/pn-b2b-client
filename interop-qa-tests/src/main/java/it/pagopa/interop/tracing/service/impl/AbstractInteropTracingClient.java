@@ -25,11 +25,11 @@ public abstract class AbstractInteropTracingClient implements IInteropTracingCli
     private final TracingClientConfigs tracingClientConfigs;
     protected BearerTokenType bearerTokenSetted;
 
-    public AbstractInteropTracingClient(RestTemplate restTemplate, TracingClientConfigs tracingClientConfigs, String bearerToken) {
+    public AbstractInteropTracingClient(RestTemplate restTemplate, TracingClientConfigs tracingClientConfigs) {
         this.restTemplate = restTemplate;
         this.tracingClientConfigs = tracingClientConfigs;
-        this.tracingsApi = new TracingsApi(createApiClient(tracingClientConfigs.getBaseUrl(), bearerToken));
-        this.healthApi = new HealthApi(createApiClient(tracingClientConfigs.getBaseUrl(), bearerToken));
+        this.tracingsApi = new TracingsApi(createApiClient(tracingClientConfigs.getBaseUrl(), "dummyBearer"));
+        this.healthApi = new HealthApi(createApiClient(tracingClientConfigs.getBaseUrl(), "dummyBearer"));
     }
 
     protected ApiClient createApiClient(String basePath, String bearerToken) {

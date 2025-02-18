@@ -1,12 +1,5 @@
 package it.pagopa.interop.authorization.service.impl;
 
-import java.util.List;
-import java.util.UUID;
-
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
@@ -24,6 +17,9 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKeys;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeAdditionDetailsSeed;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 @Component

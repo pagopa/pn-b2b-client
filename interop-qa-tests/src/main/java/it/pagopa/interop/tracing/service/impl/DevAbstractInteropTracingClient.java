@@ -18,7 +18,7 @@ public class DevAbstractInteropTracingClient extends AbstractInteropTracingClien
     private BearerTokenType bearerTokenSetted;
 
     public DevAbstractInteropTracingClient(RestTemplate restTemplate, TracingClientConfigs tracingClientConfigs) {
-        super(restTemplate, tracingClientConfigs, tracingClientConfigs.getBearerToken1());
+        super(restTemplate, tracingClientConfigs);
         this.bearerTokenSetted = BearerTokenType.TENANT_1;
     }
 

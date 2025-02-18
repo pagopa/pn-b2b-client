@@ -15,6 +15,7 @@ import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.config.springconfig.springconfig.InteropRestTemplateConfiguration;
+import it.pagopa.interop.delegate.service.impl.ConsumerDelegationsApiClientImpl;
 import it.pagopa.interop.config.springconfig.springconfig.JwtTokenServiceConfiguration;
 import it.pagopa.interop.delegate.service.impl.DelegationApiClientImpl;
 import it.pagopa.interop.delegate.service.impl.ProducerDelegationsApiClientImpl;
@@ -23,7 +24,6 @@ import it.pagopa.interop.purpose.service.impl.PurposeApiClientImpl;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import it.pagopa.interop.tenant.service.impl.TenantsApiClientImpl;
 import it.pagopa.interop.tracing.config.TracingClientConfigs;
-import it.pagopa.interop.tracing.service.TracingRetriever;
 import it.pagopa.interop.tracing.service.impl.DevAbstractInteropTracingClient;
 import it.pagopa.interop.tracing.service.impl.QAAbstractInteropTracingClient;
 import it.pagopa.interop.utils.HttpCallExecutor;
@@ -55,12 +55,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
     RiskAnalysisDataInitializer.class,
     ClientTokenConfigurator.class,
     ProducerDelegationsApiClientImpl.class,
+    ConsumerDelegationsApiClientImpl.class,
     DelegationApiClientImpl.class,
     ConfigFileReader.class,
     InteropClientConfigs.class,
     TracingFileUtils.class,
     TracingClientConfigs.class,
-    TracingRetriever.class,
     DevAbstractInteropTracingClient.class,
     QAAbstractInteropTracingClient.class
 })
