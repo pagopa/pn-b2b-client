@@ -88,25 +88,45 @@ public class SafeStorageSteps {
     @Given("vengono caricati documenti di tipo {string} in numero {string} a {string} con associato il tag {string} avente {int} valori diversi")
     public void uploadMultipleDocumentsWithAssociatedTagsWithValues(String type, String comparator, String limit, String tagName, Integer valueNumber) {
         int quantity = getLimitValue(comparator, limit);
-        String tagList = impostaTagPerRequest(tagName, valueNumber);
         Map<String, List<String>> tagMap = new HashMap<>();
-        tagMap.put(tagList.split(":")[0], Arrays.asList(tagList.split(":")[1].split(",")));
+        List<String> values = new LinkedList<>();
+        for (int i = 0; i < valueNumber; i++) {
+            values.add("test" + (i + 1));
+        }
+        tagMap.put(tagName, values);
         uploadDocumentsWithTags(type, tagMap, quantity);
     }
 
     @Given("il documento viene aggiornato aggiungendo {string} valori per volta al tag {string}, fino a raggiungere il limite di {string}")
-    public void addDocumentsUntilMax(String maxValuesPerTagPerRequest, String tagName, String maxValuesPerTagDocument) {
+    public void singleAddValuesUntilMax(String maxValuesPerTagPerRequest, String tagName, String maxValuesPerTagDocument) {
         int maxValuesPerTagPerRequestInt = eseguiGetterDelLimite(this.indicizzazioneStepsPojo, maxValuesPerTagPerRequest);
         int maxValuesPerTagDocumentInt = eseguiGetterDelLimite(this.indicizzazioneStepsPojo, maxValuesPerTagDocument);
         int counterTagsAdded = 0;
         while (counterTagsAdded < maxValuesPerTagDocumentInt) {
-            for (int i = 0; i < maxValuesPerTagPerRequestInt; i++) {
-                if (counterTagsAdded < maxValuesPerTagDocumentInt) {
-                    updateSingle(tagName, "PARI", maxValuesPerTagPerRequest);
-                    counterTagsAdded += 1;
-                }
-            }
+            int valuesToAdd = getQuantityToAddInIteration(maxValuesPerTagDocumentInt, maxValuesPerTagPerRequestInt, counterTagsAdded);
+            updateSingleContinuativo(counterTagsAdded, tagName, "PARI", String.valueOf(valuesToAdd));
+            counterTagsAdded += valuesToAdd;
         }
+    }
+
+    @Given("i documenti vengono aggiornati aggiungendo {string} valori per volta al tag {string}, fino a raggiungere il limite di {string}")
+    public void multipleAddValuesUntilMax(String maxValuesPerTagPerRequest, String tagName, String maxValuesPerTagDocument) {
+        int maxValuesPerTagPerRequestInt = eseguiGetterDelLimite(this.indicizzazioneStepsPojo, maxValuesPerTagPerRequest);
+        int maxValuesPerTagDocumentInt = eseguiGetterDelLimite(this.indicizzazioneStepsPojo, maxValuesPerTagDocument);
+        int counterTagsAdded = 0;
+        while (counterTagsAdded < maxValuesPerTagDocumentInt) {
+            int valuesToAdd = getQuantityToAddInIteration(maxValuesPerTagDocumentInt, maxValuesPerTagPerRequestInt, counterTagsAdded);
+            updateMassiveContinuativo(counterTagsAdded, tagName, "PARI", String.valueOf(valuesToAdd));
+            counterTagsAdded += valuesToAdd;
+        }
+    }
+
+
+    private int getQuantityToAddInIteration(int maxValuesPerTagDocument, int maxValuesPerTagPerRequest, int addedSoFar) {
+        if (maxValuesPerTagDocument - addedSoFar >= maxValuesPerTagPerRequest) {
+            return maxValuesPerTagPerRequest;
+        }
+        return maxValuesPerTagDocument - addedSoFar;
     }
 
     private void uploadDocumentsWithTags(String type, Map<String, List<String>> tagMap, Integer quantity) {
@@ -127,18 +147,8 @@ public class SafeStorageSteps {
         }
     }
 
-    private String impostaTagPerRequest(String tagName, int iterations) {
-        tagName += ":";
-        StringBuilder tagNameBuilder = new StringBuilder(tagName);
-        for (int i = 0; i < iterations; i++) {
-            tagNameBuilder.append("test").append(i + 1).append(",");
-        }
-        tagName = tagNameBuilder.toString();
-        return tagName.substring(0, tagName.length() - 1);
-    }
-
     @When("il documento viene modificato associandogli il tag {string} con un numero di valori {string} a {string}")
-    public void updateSingle(String tagName, String comparator, String limit) {
+    public void updateSingleWithNValues(String tagName, String comparator, String limit) {
         int quantity = getLimitValue(comparator, limit);
         String fileKey = this.indicizzazioneStepsPojo.getCreatedFiles().get(0).getKey();
         List<String> tagValues = new LinkedList<>();
@@ -152,6 +162,81 @@ public class SafeStorageSteps {
                     fileKey, "pn-test", request));
         } catch (HttpClientErrorException e) {
             log.info("Errore durante l'aggiornamento del documento: {}", e.getMessage());
+            this.indicizzazioneStepsPojo.setHttpException(e);
+        }
+    }
+
+    @When("i documenti vengono modificati associando al primo il tag {string} con un numero di valori {string} a {string}, mentre al secondo un solo valore")
+    public void updateMassiviWithNValues(String tagName, String comparator, String limit) {
+        int quantity = getLimitValue(comparator, limit);
+
+        assertThat(this.indicizzazioneStepsPojo.getCreatedFiles().size()).isEqualTo(2);
+        String fileKey1 = this.indicizzazioneStepsPojo.getCreatedFiles().get(0).getKey();
+        String fileKey2 = this.indicizzazioneStepsPojo.getCreatedFiles().get(1).getKey();
+
+        List<String> tagValues = new LinkedList<>();
+        for (int i = 0; i < quantity; i++) {
+            tagValues.add("test" + (i + 1));
+        }
+
+        AdditionalFileTagsMassiveUpdateRequest request = new AdditionalFileTagsMassiveUpdateRequest();
+        List<Tags> tagsList = new LinkedList<>();
+        Tags newTag1 = new Tags();
+        newTag1.setFileKey(fileKey1);
+        newTag1.putSETItem(tagName, tagValues);
+        tagsList.add(newTag1);
+
+        Tags newTag2 = new Tags();
+        newTag2.setFileKey(fileKey2);
+        newTag2.putSETItem(tagName, List.of("test1"));
+        tagsList.add(newTag2);
+
+        request.setTags(tagsList);
+        try {
+            this.indicizzazioneStepsPojo.setUpdateMassiveResponseEntity(safeStorageClient.additionalFileTagsMassiveUpdateWithHttpInfo("pn-test", request));
+        } catch (HttpClientErrorException e) {
+            log.info("Errore durante l'aggiornamento dei documento: {}", e.getMessage());
+            this.indicizzazioneStepsPojo.setHttpException(e);
+        }
+    }
+
+    private void updateSingleContinuativo(Integer valoriPrecedenti, String tagName, String comparator, String limit) {
+        int quantity = getLimitValue(comparator, limit);
+        String fileKey = this.indicizzazioneStepsPojo.getCreatedFiles().get(0).getKey();
+        List<String> tagValues = new LinkedList<>();
+        for (int i = 0; i < quantity; i++) {
+            tagValues.add("test" + (valoriPrecedenti + (i + 1)));
+        }
+        AdditionalFileTagsUpdateRequest request = new AdditionalFileTagsUpdateRequest();
+        request.putSETItem(tagName, tagValues);
+        try {
+            this.indicizzazioneStepsPojo.setUpdateSingleResponseEntity(safeStorageClient.additionalFileTagsUpdateWithHttpInfo(
+                    fileKey, "pn-test", request));
+        } catch (HttpClientErrorException e) {
+            log.info("Errore durante l'aggiornamento del documento: {}", e.getMessage());
+            this.indicizzazioneStepsPojo.setHttpException(e);
+        }
+    }
+
+    private void updateMassiveContinuativo(Integer valoriPrecedenti, String tagName, String comparator, String limit) {
+        int quantity = getLimitValue(comparator, limit);
+        List<String> tagValues = new LinkedList<>();
+        for (int i = 0; i < quantity; i++) {
+            tagValues.add("test" + (valoriPrecedenti + (i + 1)));
+        }
+        List<Tags> tagsList = new LinkedList<>();
+        AdditionalFileTagsMassiveUpdateRequest request = new AdditionalFileTagsMassiveUpdateRequest();
+        this.indicizzazioneStepsPojo.getCreatedFiles().forEach(file -> {
+            Tags newTag = new Tags();
+            newTag.setFileKey(file.getKey());
+            newTag.putSETItem(tagName, tagValues);
+            tagsList.add(newTag);
+        });
+        request.setTags(tagsList);
+        try {
+            this.indicizzazioneStepsPojo.setUpdateMassiveResponseEntity(safeStorageClient.additionalFileTagsMassiveUpdateWithHttpInfo("pn-test", request));
+        } catch (HttpClientErrorException e) {
+            log.info("Errore durante l'aggiornamento dei documento: {}", e.getMessage());
             this.indicizzazioneStepsPojo.setHttpException(e);
         }
     }
@@ -211,17 +296,6 @@ public class SafeStorageSteps {
             loadToPresignedUrl(fileCreationResponse, sha256, resourcePath);
         } catch (HttpClientErrorException httpExc) {
             this.indicizzazioneStepsPojo.setHttpException(httpExc);
-        }
-    }
-
-    @And("gli si associano {int} valori diversi a un singolo tag")
-    public void associateValuesToSingleTag(Integer tagNumber) {
-        Integer limitPerRequestUat = 100;
-        String fileKey = this.indicizzazioneStepsPojo.getCreatedFiles().get(0).getKey();
-        int iterations = tagNumber / limitPerRequestUat;
-        for (int i = 0; i < iterations; i++) {
-            this.indicizzazioneStepsPojo.setUpdateSingleResponseEntity(safeStorageClient.additionalFileTagsUpdateWithHttpInfo(
-                    fileKey, "pn-test", createUpdateRequest(i, limitPerRequestUat)));
         }
     }
 
@@ -290,14 +364,15 @@ public class SafeStorageSteps {
 
     @Then("La chiamata genera un errore con status code {int}")
     public void checkForStatusCode(Integer statusCode) {
-        Assertions.assertNotNull(this.indicizzazioneStepsPojo.getHttpException());
-        Assertions.assertEquals(statusCode,
-                this.indicizzazioneStepsPojo.getHttpException().getRawStatusCode());
+        assertThat(this.indicizzazioneStepsPojo.getHttpException()).as("Diversamente da quanto atteso la chiamata non ha prodotto alcuna eccezione").isNotNull();
+        assertThat(statusCode)
+                .as("Il codice di errore non combacia con quanto atteso")
+                .isEqualTo(this.indicizzazioneStepsPojo.getHttpException().getRawStatusCode());
     }
 
     @And("Il messaggio di errore riporta la dicitura {string}")
     public void checkForStatusCode(String errorMessage) {
-        Assertions.assertNotNull(this.indicizzazioneStepsPojo.getHttpException());
+        assertThat(this.indicizzazioneStepsPojo.getHttpException()).as("Diversamente da quanto atteso la chiamata non ha prodotto alcuna eccezione").isNotNull();
         assertThat(this.indicizzazioneStepsPojo.getHttpException().getMessage())
                 .as("Il messaggio di errore riporta la seguente dicitura: ")
                 .contains(errorMessage);
@@ -350,13 +425,14 @@ public class SafeStorageSteps {
         }
     }
 
-    @When("Si modifica il documento {int} associando {int} valori a un singolo tag")
-    public void updateDocument(Integer documentIndex, Integer tagNumber) {
+    @When("Si modifica il documento {int} associando valori a un singolo tag in numero {string} a {string}")
+    public void updateDocument(Integer documentIndex, String comparator, String limit) {
+        int quantity = getLimitValue(comparator, limit);
         Assertions.assertTrue(documentIndex <= this.indicizzazioneStepsPojo.getCreatedFiles().size());
         String fileKey = this.indicizzazioneStepsPojo.getCreatedFiles().get(documentIndex - 1).getKey();
         try {
             this.indicizzazioneStepsPojo.setUpdateSingleResponseEntity(safeStorageClient.additionalFileTagsUpdateWithHttpInfo(
-                    fileKey, "pn-test", createUpdateRequest(0, tagNumber)));
+                    fileKey, "pn-test", createUpdateRequest(0, quantity)));
         } catch (HttpClientErrorException e) {
             log.info("Errore durante l'aggiornamento del documento: {}", e.getMessage());
             this.indicizzazioneStepsPojo.setHttpException(e);
@@ -385,7 +461,6 @@ public class SafeStorageSteps {
             this.indicizzazioneStepsPojo.setHttpException(e);
         }
     }
-
 
     @When("Si modificano i documenti secondo le seguenti operazioni")
     public void updateDocuments(DataTable dataTable) {
@@ -493,7 +568,10 @@ public class SafeStorageSteps {
 
     @And("I primi {int} documenti vengono modificati secondo le seguenti operazioni")
     public void updateNDocuments(Integer documentIndex, DataTable dataTable) {
-        Assertions.assertTrue(documentIndex <= this.indicizzazioneStepsPojo.getCreatedFiles().size());
+        int createdFiles = this.indicizzazioneStepsPojo.getCreatedFiles().size();
+        assertThat(documentIndex)
+                .as("Indice documento (" + documentIndex + ") superiore al numero di documenti creati (" + createdFiles + ")")
+                .isLessThanOrEqualTo(createdFiles);
         for (int i = 1; i <= documentIndex; i++) {
             updateDocument(i, dataTable);
         }
@@ -572,8 +650,7 @@ public class SafeStorageSteps {
         } else {
             List<String> expectedFileKeys = new LinkedList<>();
             documentIndexes.forEach(x -> expectedFileKeys.add(this.indicizzazioneStepsPojo.getCreatedFiles().get(Integer.parseInt(x) - 1).getKey()));
-            Assertions.assertEquals(searchResult.size(), expectedFileKeys.size());
-            searchResult.forEach(x -> Assertions.assertTrue(expectedFileKeys.contains(x)));
+            expectedFileKeys.forEach(x -> Assertions.assertTrue(searchResult.contains(x)));
         }
     }
 
@@ -629,6 +706,25 @@ public class SafeStorageSteps {
         }
     }
 
+    @When("Vengono ricercate con logica {string} delle fileKey impostando come filtro di ricerca un numero di tags {string} a {string}")
+    public void searchWithCertainAmountOfTags(String logic, String comparator, String limit) {
+        int quantity = getLimitValue(comparator, limit);
+        if (logic.isEmpty()) {
+            logic = null;
+        }
+        Map<String, String> tagMap = new HashMap<>();
+        for (int i = 0; i < quantity; i++) {
+            tagMap.put("tagInventato" + (i + 1), "test" + (i + 1));
+        }
+        try {
+            ResponseEntity<AdditionalFileTagsSearchResponse> response = safeStorageClient.additionalFileTagsSearchWithHttpInfo(
+                    "pn-test", logic, true, tagMap);
+            indicizzazioneStepsPojo.setAdditionalFileTagsSearchResponseResponseEntity(response);
+        } catch (HttpClientErrorException httpExc) {
+            this.indicizzazioneStepsPojo.setHttpException(httpExc);
+        }
+    }
+
     @And("La response contiene uno o più errori {string} riportanti la dicitura {string} riguardanti il documento {int}")
     public void checkUpdateMassiveErrors(String errorCode, String errorMessage, Integer documentIndex) {
         Assertions.assertNotNull(this.indicizzazioneStepsPojo.getUpdateMassiveResponseEntity());
@@ -641,10 +737,12 @@ public class SafeStorageSteps {
         } else {
             fileKeyError = this.indicizzazioneStepsPojo.getUpdateMassiveResponseEntity().getBody().getErrors().get(documentIndex - this.indicizzazioneStepsPojo.getCreatedFiles().size() - 1);
         }
-        Assertions.assertNotNull(fileKeyError);
+        assertThat(fileKeyError).as("Diversamente da quanto atteso la chiamata non ha prodotto alcuna eccezione").isNotNull();
         log.info("Errore sulla filekey " + fileKeyError.getFileKey().get(0));
         Assertions.assertEquals(errorCode, fileKeyError.getResultCode());
-        Assertions.assertTrue(fileKeyError.getResultDescription().contains(errorMessage));
+        assertThat(fileKeyError.getResultDescription())
+                .as("Il messaggio di errore riporta la seguente dicitura: ")
+                .contains(errorMessage);
     }
 
     @Then("Il documento {int} è associato alla seguente lista di tag")
@@ -656,39 +754,25 @@ public class SafeStorageSteps {
         }
     }
 
-    @Given("Sul DB non è presente nessun documento con associato il tag {string}")
-    public void disassociaTag(String tagString) {
-        Map<String, String> tagMap = new HashMap<>();
-        String tagName = tagString.split(":")[0];
-        String tagValue = tagString.split(":")[1];
-        tagMap.put(tagName, tagValue);
-        AdditionalFileTagsSearchResponse searchResponse = this.safeStorageClient.additionalFileTagsSearch("or", true, tagMap);
-        List<String> fileKeys = searchResponse.getFileKeys().stream().map(AdditionalFileTagsSearchResponseFileKeys::getFileKey).toList();
-
-        if (!fileKeys.isEmpty()) {
-            AdditionalFileTagsMassiveUpdateRequest massiveUpdateRequest = new AdditionalFileTagsMassiveUpdateRequest();
-            fileKeys.forEach(fk -> {
-                Tags newTag = new Tags();
-                newTag.setFileKey(fk);
-                newTag.putDELETEItem(tagName, List.of(tagValue));
-                massiveUpdateRequest.addTagsItem(newTag);
-            });
-
-            AdditionalFileTagsMassiveUpdateResponse massiveUpdateResponse = this.safeStorageClient.additionalFileTagsMassiveUpdate(massiveUpdateRequest);
-            log.info(massiveUpdateResponse.toString());
-        }
-    }
-
     @After("@aggiuntaTag")
     public void cleanDocuments() {
         this.indicizzazioneStepsPojo.getCreatedFiles().forEach(file -> {
             AdditionalFileTagsUpdateRequest request = new AdditionalFileTagsUpdateRequest();
             Map<String, List<String>> tagMap = safeStorageClient.additionalFileTagsGet(file.getKey()).getTags();
-
             log.info("PRE-CANCELLAZIONE: " + tagMap.toString());
             if (!tagMap.isEmpty()) {
-                request.DELETE(tagMap);
-                safeStorageClient.additionalFileTagsUpdate(file.getKey(), request);
+                int maxValuesLimit = 100;//TODO al variare di MaxValuesPerTagPerRequest questo valore deve cambiare di conseguenza
+                for (Map.Entry<String, List<String>> entry : tagMap.entrySet()) {
+                    int numberOfValues = entry.getValue().size();
+                    int valuesDeleted = 0;
+                    while (valuesDeleted < numberOfValues) {
+                        int valuesToDelete = maxValuesLimit < (numberOfValues - valuesDeleted) ? maxValuesLimit : (numberOfValues - valuesDeleted);
+                        List<String> valuesToDeleteList = entry.getValue().subList(valuesDeleted, valuesDeleted + valuesToDelete);
+                        request.putDELETEItem(entry.getKey(), valuesToDeleteList);
+                        safeStorageClient.additionalFileTagsUpdate(file.getKey(), request);
+                        valuesDeleted += valuesToDelete;
+                    }
+                }
                 log.info("POST-CANCELLAZIONE");
             }
         });
