@@ -1156,10 +1156,25 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertTrue(pnPollingResponseV26.getResult());
             Assertions.assertNotNull(pnPollingResponseV26.getTimelineElement());
             sharedSteps.setSentNotification(pnPollingResponseV26.getNotification());
+            this.lastTimelineElement = pnPollingResponseV26.getTimelineElement();
             log.info("TIMELINE_ELEMENT: " + pnPollingResponseV26.getTimelineElement());
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
+    }
+
+
+    @Then("viene verificato che nell'elemento di timeline della notifica {string} sia presente il campo Digital Address da National Registry per l utente {int}")
+    public void vieneVerificatoCheNellElementoDiTimelineDellaNotificaSiaPresenteIlCampoDigitalAddressDaNationalRegistryPerLUtente(String timelineEventCategory, Integer destinatario) {
+        readingEventUpToTheTimelineElementOfNotificationPerUtente(timelineEventCategory, destinatario);
+        Assertions.assertNotNull(lastTimelineElement);
+        Assertions.assertNotNull(lastTimelineElement.getDetails());
+        Assertions.assertNotNull(lastTimelineElement.getDetails().getDigitalAddress());
+    }
+
+    @Then("viene verificato che nell'elemento di timeline della notifica {string} sia presente il campo Digital Address da National Registry")
+    public void vieneVerificatoCheElementoTimelineSianoConfiguratoCampoDigitalAddressNationalRegistry(String timelineEventCategory) {
+        vieneVerificatoCheNellElementoDiTimelineDellaNotificaSiaPresenteIlCampoDigitalAddressDaNationalRegistryPerLUtente(timelineEventCategory, null);
     }
 
     @Then("esiste l'elemento di timeline della notifica {string} per l'utente {int}")
@@ -3071,27 +3086,6 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
-    @Then("viene verificato che nell'elemento di timeline della notifica {string} sia presente il campo Digital Address da National Registry")
-    public void vieneVerificatoCheElementoTimelineSianoConfiguratoCampoDigitalAddressNationalRegistry(String timelineEventCategory) {
-        PnPollingServiceTimelineRapidV26 timelineRapidV25 = (PnPollingServiceTimelineRapidV26) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_RAPID_V26);
-
-        PnPollingResponseV26 pnPollingResponseV26 = timelineRapidV25.waitForEvent(sharedSteps.getSentNotification().getIun(),
-                PnPollingParameter.builder()
-                        .value(timelineEventCategory)
-                        .build());
-        log.info("NOTIFICATION_TIMELINE: " + pnPollingResponseV26.getNotification().getTimeline());
-        try {
-            Assertions.assertTrue(pnPollingResponseV26.getResult());
-            Assertions.assertNotNull(pnPollingResponseV26.getTimelineElement());
-            sharedSteps.setSentNotification(pnPollingResponseV26.getNotification());
-            TimelineElementV26 timelineElement = pnPollingResponseV26.getTimelineElement();
-            log.info("TIMELINE_ELEMENT: " + timelineElement);
-            Assertions.assertNotNull(Objects.requireNonNull(timelineElement.getDetails()).getDigitalAddress());
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
-        }
-    }
-
     //Notifica Annullata
 
     //Annullamento Notifica
@@ -3768,12 +3762,16 @@ public class AvanzamentoNotificheB2bSteps {
 
         int minsToCheck = getMinsToCheck(notificationType);
 
-        long differenceInMinutes = Duration.between(getFirstElementTime(firstElementToCheck, firstElement, iun), secondElementToCheck.getDetails().getSchedulingDate()).toMinutes();
+        long differenceInMinutes = Duration.between(getFirstElementTime(firstElementToCheck, firstElement, addressType,  iun), secondElementToCheck.getDetails().getSchedulingDate()).toMinutes();
         Assertions.assertEquals(minsToCheck, differenceInMinutes, "Time between first and second element not correct: " + iun + " expected wait " + minsToCheck + " actual wait " + differenceInMinutes);
     }
 
-    private OffsetDateTime getFirstElementTime(TimelineElementV26 firstElementToCheck, String firstElement, String iun) {
-        if (firstElement.equalsIgnoreCase("DIGITAL_DELIVERY_CREATION_REQUEST")) {
+    private OffsetDateTime getFirstElementTime(TimelineElementV26 firstElementToCheck, String firstElement, String addressType, String iun) {
+        if(firstElement.equalsIgnoreCase("SEND_DIGITAL_FEEDBACK") && addressType.equals("SERCQ")) {
+            Assertions.assertNotNull(firstElementToCheck.getDetails(), "Details for first element to check not found iun: " + iun);
+            Assertions.assertNotNull(firstElementToCheck.getDetails().getNotificationDate(), "NotificationDate for first element to check not found iun: " + iun);
+            return firstElementToCheck.getDetails().getNotificationDate();
+        } else if (firstElement.equalsIgnoreCase("DIGITAL_DELIVERY_CREATION_REQUEST")) {
             Assertions.assertNotNull(firstElementToCheck.getDetails(), "Details for first element to check not found iun: " + iun);
             Assertions.assertNotNull(firstElementToCheck.getDetails().getCompletionWorkflowDate(), "CompletionWorkflowDate for first element to check not found iun: " + iun);
             return firstElementToCheck.getDetails().getCompletionWorkflowDate();
