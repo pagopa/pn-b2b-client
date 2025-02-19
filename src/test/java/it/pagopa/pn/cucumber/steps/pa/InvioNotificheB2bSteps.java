@@ -134,7 +134,7 @@ public class InvioNotificheB2bSteps {
                     .isNotNull();
 
         } catch (AssertionError assertionError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionError);//note
+            sharedSteps.throwAssertFailerWithIUN(assertionError);
         }
     }
 
@@ -570,7 +570,7 @@ public class InvioNotificheB2bSteps {
 
     @When("viene richiesto il download del documento {string} inesistente")
     public void documentAbsentDownload(String type) {
-        getDownloadFile(type, sharedSteps.getSentNotification().getIun(), 0);//note
+        getDownloadFile(type, sharedSteps.getSentNotification().getIun(), 0);
     }
 
     @When("viene richiesto il download del documento {string} inesistente per il destinatario {int}")
@@ -633,7 +633,7 @@ public class InvioNotificheB2bSteps {
         assertSoftly(softly -> {
 
             softly.assertThat(httpStatusCodeException)
-                    .as("Verifica che l'eccezione non sia nulla")
+                    .as("Verifica che l' http status code dell'eccezione in SharedSteps non sia nulla")
                     .isNotNull();
 
             if (httpStatusCodeException != null) {
