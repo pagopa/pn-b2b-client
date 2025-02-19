@@ -134,7 +134,7 @@ public class InvioNotificheB2bSteps {
                     .isNotNull();
 
         } catch (AssertionError assertionError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionError);
+            sharedSteps.throwAssertFailerWithIUN(assertionError);//note
         }
     }
 
@@ -183,8 +183,8 @@ public class InvioNotificheB2bSteps {
                         .isNotNull();
             });
 
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionError);
         }
     }
 
@@ -227,10 +227,10 @@ public class InvioNotificheB2bSteps {
 
             sharedSteps.setSentNotification(notifica120);
 
-        } catch (AssertionFailedError assertionFailedError) {
-            String message = assertionFailedError.getMessage() +
+        } catch (AssertionError assertionError) {
+            String message = assertionError.getMessage() +
                     "{notifica : " + (notifica120 == null ? "NULL" : notifica120) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+            throw new AssertionError(message, assertionError);
         }
     }
 
@@ -267,11 +267,10 @@ public class InvioNotificheB2bSteps {
             notifica.setVat(22);
             sharedSteps.setSentNotification(notifica);
 
-        } catch (AssertionFailedError assertionFailedError) {
-
-            String message = assertionFailedError.getMessage() +
+        } catch (AssertionError assertionError) {
+            String message = assertionError.getMessage() +
                     "{notifica : " + (notifica == null ? "NULL" : notifica) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+            throw new AssertionError(message, assertionError);
         }
     }
 
@@ -345,9 +344,10 @@ public class InvioNotificheB2bSteps {
                         .as("La notifica recuperata non deve essere nulla")
                         .isNotNull();
             });
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionError);
         }
+
     }
 
 
@@ -437,8 +437,10 @@ public class InvioNotificheB2bSteps {
         if (documentType.equals("ATTACHMENTS")) {
             for (int i = 0; i < sharedSteps.getSentNotification().getDocuments().size(); i++) {
                 String key = sharedSteps.getSentNotification().getDocuments().get(i).getRef().getKey();
+
                 assertThat(checkRetention(key, retentionTimeLoad, timelineElement.getTimestamp()))
-                        .as("La verifica della retention ha fallito per la chiave '%s'", key)
+                        .as("La verifica della retention ha fallito per la chiave '%s'. retentionTimeLoad: %d, timelineElement.getTimestamp: %s",
+                                key, retentionTimeLoad, timelineElement.getTimestamp())
                         .isTrue();
             }
         } else {
@@ -568,7 +570,7 @@ public class InvioNotificheB2bSteps {
 
     @When("viene richiesto il download del documento {string} inesistente")
     public void documentAbsentDownload(String type) {
-        getDownloadFile(type, sharedSteps.getSentNotification().getIun(), 0);
+        getDownloadFile(type, sharedSteps.getSentNotification().getIun(), 0);//note
     }
 
     @When("viene richiesto il download del documento {string} inesistente per il destinatario {int}")
@@ -911,11 +913,10 @@ public class InvioNotificheB2bSteps {
                     .isEqualToIgnoringCase(codiceErrore);
 
 
-        } catch (AssertionFailedError assertionFailedError) {
-
-            String message = assertionFailedError.getMessage() +
-                    "{Informazioni sullo stato del Pagamento: " + (paymentInfoResponse == null ? "NULL" : paymentInfoResponse.toString()) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        } catch (AssertionError assertionError) {
+            String message = assertionError.getMessage() +
+                    "{Informazioni sullo stato del Pagamento: " + (paymentInfoResponse == null ? "NULL" : paymentInfoResponse) + " }";
+            throw new AssertionError(message, assertionError);
         }
     }
 
@@ -948,11 +949,10 @@ public class InvioNotificheB2bSteps {
                     .as("Lo stato nella risposta dovrebbe essere uguale a "+status , status)
                     .isEqualToIgnoringCase(status);
 
-        } catch (AssertionFailedError assertionFailedError) {
-
-            String message = assertionFailedError.getMessage() +
+        } catch (AssertionError assertionError) {
+            String message = assertionError.getMessage() +
                     "{Informazioni sullo stato del Pagamento: " + (paymentInfoResponse == null ? "NULL" : paymentInfoResponse.toString()) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+            throw new AssertionError(message, assertionError);
         }
     }
 
@@ -1006,9 +1006,10 @@ public class InvioNotificheB2bSteps {
                     .as("Il pagamento del primo destinatario della notifica non dovrebbe essere nullo")
                     .isNotNull();
 
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionError);
         }
+
     }
 
     @And("la notifica a 2 avvisi di pagamento con OpenApi V2")
@@ -1032,9 +1033,10 @@ public class InvioNotificheB2bSteps {
                     .as("Il codice alternativo della notifica del pagamento non dovrebbe essere nullo")
                     .isNotNull();
 
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionError);
         }
+
     }
 
     @And("la notifica a 1 avvisi di pagamento con OpenApi V1")
@@ -1057,9 +1059,10 @@ public class InvioNotificheB2bSteps {
                     .isNotNull();
 
 
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionError);
         }
+
     }
 
     @And("Si effettua la chiamata su external-reg per ricevere l'url di checkout con noticeCode {string} e creditorTaxId {string}")
@@ -1095,11 +1098,12 @@ public class InvioNotificheB2bSteps {
                 Assertions.assertTrue(codiceErrore.equalsIgnoreCase(paymentInfoResponse.get(0).getErrorCode()));
                 Assertions.assertTrue(codiceErrore.equalsIgnoreCase(paymentResponse.getCheckoutUrl()));
             }
-        } catch (AssertionFailedError assertionFailedError) {
-            String message = assertionFailedError.getMessage() +
+        } catch (AssertionError assertionError) {
+            String message = assertionError.getMessage() +
                     "{la posizione debitoria " + (paymentResponse == null ? "NULL" : paymentResponse.toString()) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+            throw new AssertionError(message, assertionError);
         }
+
     }
 
     @Then("si verifica che il phyicalAddress sia stato normalizzato correttamente con rimozione caratteri isoLatin1")
@@ -1154,9 +1158,10 @@ public class InvioNotificheB2bSteps {
             softly.assertAll();
 
 
-        } catch (AssertionFailedError error) {
+        } catch (AssertionError error) {
             sharedSteps.throwAssertFailerWithIUN(error);
         }
+
     }
 
     private BffPaymentRequest getPaymentRequest(NotificationPriceResponseV23 notificationPrice, String noticeNumber, String fiscalCode, String companyName, Integer amount, String description, String returnUrl) {
@@ -1270,11 +1275,12 @@ public class InvioNotificheB2bSteps {
             }
             Assertions.assertTrue(checkAllegati);
 
-        } catch (AssertionFailedError assertionFailedError) {
-            String message = assertionFailedError.getMessage() +
-                    "Verifica Allegati pec in errore ";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        } catch (AssertionError assertionError) {
+            String message = assertionError.getMessage() +
+                    " Verifica Allegati pec in errore.";
+            throw new AssertionError(message, assertionError);
         }
+
     }
 
     @And("si verifica il contenuto della pec abbia {int} attachment di tipo {string}")
@@ -1294,33 +1300,18 @@ public class InvioNotificheB2bSteps {
     @And("si verifica il contenuto degli attachments da inviare in via cartacea al destinatario {int} con {int} allegati")
     public void checkDocumentInviatiPaper(Integer destinatario, Integer allegati) {
         try {
-            this.documentiPec = pnExternalChannelsServiceClientImpl.getReceivedMessagesAnalogico(
-                    sharedSteps.getIunVersionamento(), destinatario
-            );
+            this.documentiPec = pnExternalChannelsServiceClientImpl.getReceivedMessagesAnalogico(sharedSteps.getIunVersionamento(), destinatario);
 
-            assertThat(documentiPec)
-                    .as("La lista dei documenti analogici non dovrebbe essere nulla, l'API con Endpoint: /historical/received-message/"+sharedSteps.getIunVersionamento() +"/" +allegati)
-                    .isNotNull()
-                    .isNotEmpty();
+
+            Assertions.assertNotNull(documentiPec, "La lista dei documenti PEC ricevuti è nulla o vuota per il destinatario " + destinatario+" l'API con Endpoint: /historical/received-message/"+sharedSteps.getIunVersionamento() +"/"+destinatario+" Non ha restituito risultati");
 
             log.info("documenti analogici : {}", documentiPec);
 
-            ReceivedMessage firstDocument = documentiPec.get(0);
-            assertThat(firstDocument)
-                    .as("Il primo documento ricevuto non dovrebbe essere nullo")
-                    .isNotNull();
-
-            assertThat(firstDocument.getPaperEngageRequest())
-                    .as("Il PaperEngageRequest del primo documento non dovrebbe essere nullo")
-                    .isNotNull();
-
-            assertThat(firstDocument.getPaperEngageRequest().getAttachments())
-                    .as("Gli allegati del PaperEngageRequest non dovrebbero essere nulli")
-                    .isNotNull()
-                    .hasSize(allegati);
+            Assertions.assertEquals(allegati, documentiPec.get(0).getPaperEngageRequest().getAttachments().size(),
+                    "Il numero di allegati ricevuti è diverso da quello atteso. Expected: " + allegati + ", Actual: " + documentiPec.get(0).getPaperEngageRequest().getAttachments().size());
 
         } catch (AssertionFailedError assertionFailedError) {
-            String message = assertionFailedError.getMessage() + " - Verifica Allegati analogici in errore.";
+            String message = assertionFailedError.getMessage() + " Verifica Allegati analogici in errore ";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
     }
@@ -1336,7 +1327,8 @@ public class InvioNotificheB2bSteps {
                 .filter(uri -> uri.contains(tipologia))
                 .toList();
         try {
-            Assertions.assertEquals(numeroDocumenti, attachmentsUri.size());
+            Assertions.assertEquals(numeroDocumenti, attachmentsUri.size(),
+                    "Il numero di allegati di tipo '" + tipologia + "' è diverso da quello atteso. Expected: " + numeroDocumenti + ", Actual: " + attachmentsUri.size());
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() + " - Verifica Allegati Cartacei in errore.";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
@@ -1402,9 +1394,10 @@ public class InvioNotificheB2bSteps {
                  .isNotNull();
 
             log.info("response checkout: {}", responseCheckout);
-        } catch (AssertionFailedError error) {
-            throw error;
-        }
+        } catch (AssertionError error) {
+         throw error;
+     }
+
     }
 
     @Given("si richiama checkout con restituzione errore")

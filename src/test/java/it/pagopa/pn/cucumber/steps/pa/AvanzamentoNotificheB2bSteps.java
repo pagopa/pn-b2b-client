@@ -143,7 +143,6 @@ public class AvanzamentoNotificheB2bSteps {
         PnPollingServiceStatusRapidV26 statusRapidV26 =
                 (PnPollingServiceStatusRapidV26) pnPollingFactory.getPollingService(PnPollingStrategy.STATUS_RAPID_V26);
 
-       //NPE
         PnPollingResponseV26 pnPollingResponseV26 = statusRapidV26.waitForEvent(sharedSteps.getSentNotification().getIun(),
                 PnPollingParameter.builder()
                         .value(status)
@@ -163,8 +162,8 @@ public class AvanzamentoNotificheB2bSteps {
 
             log.info("NOTIFICATION_STATUS_HISTORY_ELEMENT: {}", pnPollingResponseV26.getNotificationStatusHistoryElement());
 
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionError);
         }
     }
 
@@ -700,7 +699,7 @@ public class AvanzamentoNotificheB2bSteps {
                         .value(timelineEventCategory)
                         .build());
         log.info("NOTIFICATION_TIMELINE: " + pnPollingResponseV26.getNotification().getTimeline());
-//NPE
+
         try {
             assertThat(pnPollingResponseV26.getResult())
                     .as("Il risultato del polling dovrebbe essere valorizzato")
@@ -718,8 +717,8 @@ public class AvanzamentoNotificheB2bSteps {
 
             return timelineElement;
 
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionError);
         }
 
         return null;
@@ -939,8 +938,8 @@ public class AvanzamentoNotificheB2bSteps {
                 log.info("TIMELINE_ELEMENT: {}", pnPollingResponseV26.getTimelineElement());
             }
 
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionError);
         }
     }
 
@@ -3684,7 +3683,7 @@ public class AvanzamentoNotificheB2bSteps {
 
         TimelineElementV26 event = readingEventUpToTheTimelineElementOfNotificationForCategoryUser(timelineEventCategory, destinatario);
 
-    //NPE
+
 
         Long notificationCost = event.getDetails().getNotificationCost();
 
