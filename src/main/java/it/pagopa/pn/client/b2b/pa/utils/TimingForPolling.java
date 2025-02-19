@@ -86,6 +86,12 @@ public class TimingForPolling {
         SEND_DIGITAL_PROGRESS(6, 3),
         SEND_DIGITAL_FEEDBACK(6, 3),
         REFINEMENT(15, 1),
+
+        /* Elemento NON realmente esistente. Utilizzato per mettere in atto volutamente un'attesa
+         * attiva che verosimilmente darà il tempo di concludere l'intero corso di una notifica
+         * analogica. */
+        $_WAIT_ANALOG_NOTIFICATION(5, 1), // TODO valore temporaneo, mettere per esempio numcheck 15
+
         SCHEDULE_REFINEMENT(15, 1),
         DIGITAL_DELIVERY_CREATION_REQUEST(15, 1),
         DIGITAL_SUCCESS_WORKFLOW(8, 3),

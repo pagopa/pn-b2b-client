@@ -118,7 +118,12 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza AR
       | digitalDomicile         | NULL                   |
       | physicalAddress_address | Via@FAIL_CompiutaGiacenza_AR_ERR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN005B"
+    And si attende un tempo verosimilmente sufficiente affinché la notifica faccia il suo corso
+    And si effettuerà un solo tentativo per tutte gli step che seguiranno
+
+    # TODO bisogna accertarsi che questo passo sia effettivamente l'ultimo
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN005B"
+
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details | NOT_NULL |
       | details_deliveryDetailCode | CON080 |
@@ -140,7 +145,13 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza AR
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_attachments | [{"documentType": "Plico"}] |
+    And viene verificato che l'elemento di timeline di categoria "SEND_ANALOG_FEEDBACK" non esista
     And viene verificato che l'ultimo tentativo effettuato abbia indice 0
+
+    # FIXME 14/02/2025 usato per sperimentazioniu locali, rimuovere
+  Scenario: prova polling
+    #And si effettuerà un solo tentativo per tutte gli step che seguiranno
+    Then vengono letti tutti gli elementi di timeline
 
   @dev @workflowAnalogico
   Scenario: [B2B_TIMELINE_ANALOG_GIACENZA_AR_4] Invio Notifica Mono destinatario workflow cartaceo - Caso OK-Giacenza-gt10_AR PN-5927

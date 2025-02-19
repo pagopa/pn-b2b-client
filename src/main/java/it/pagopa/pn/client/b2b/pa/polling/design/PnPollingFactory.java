@@ -10,22 +10,32 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PnPollingFactory implements SettableApiKey {
     private final ApplicationContext context;
     private String apiKey;
     private ApiKeyType apiKeyType;
-
+    private boolean pollingActive = true;
 
     public PnPollingFactory(ApplicationContext context) {
         this.context = context;
     }
 
+    public void turnOnPolling() {
+        this.pollingActive = true;
+    }
+
+    public void turnOffPolling() {
+        this.pollingActive = false;
+    }
+
     public IPnPollingService<?> getPollingService(String pollingType) {
         try{
             IPnPollingService<?> iPnPollingService = context.getBean(pollingType, IPnPollingService.class);
+            if (!pollingActive) {
+                iPnPollingService.turnOffPolling();
+            }
             if(apiKeyType != null){
                 iPnPollingService.setApiKeys(apiKeyType);
             }else if(apiKey != null){

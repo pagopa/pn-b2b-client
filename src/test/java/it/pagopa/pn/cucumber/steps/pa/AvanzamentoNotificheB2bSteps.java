@@ -11,6 +11,7 @@ import static org.awaitility.Awaitility.await;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.AttachmentDetails;
@@ -41,8 +42,10 @@ import it.pagopa.pn.client.b2b.pa.mapper.impl.PnTimelineAndLegalFactV26;
 import it.pagopa.pn.client.b2b.pa.mapper.model.PnTimelineLegalFactV26;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
+import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingTemplate;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingPredicate;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponse;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV1;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV20;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV21;
@@ -125,6 +128,8 @@ public class AvanzamentoNotificheB2bSteps {
 
     private TimelineElementV26 lastTimelineElement;
 
+    private IPnPaB2bClient pnPaB2bClient;
+
     @Autowired
     public AvanzamentoNotificheB2bSteps(SharedSteps sharedSteps,
                                         TimingForPolling timingForPolling,
@@ -139,6 +144,33 @@ public class AvanzamentoNotificheB2bSteps {
         this.pnPollingFactory = sharedSteps.getPollingFactory();
         this.timingForPolling = timingForPolling;
         this.legalFactContentVerifySteps = legalFactContentVerifySteps;
+        this.pnPaB2bClient = sharedSteps.getB2bClient();
+    }
+
+    // 19/02/2025 WORK IN PROGRESSO...
+    @And("vengono letti tutti gli elementi di timeline")
+    public void readingAllTimelineElements() {
+        PnPollingServiceTimelineRapidV26 timelineRapidV26 = (PnPollingServiceTimelineRapidV26) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_RAPID_V26);
+
+        //String iun = sharedSteps.getSentNotification().getIun();
+        String iun = "XTXD-URDQ-ZXUG-202502-E-1";  // FIXME per test, usare invece lo IUN preso da sharedSteps
+        FullSentNotificationV26 sentNotification = pnPaB2bClient.getSentNotification(iun);
+        log.info("TIMELINE: {}", sentNotification);
+        try {
+            assertThat(sentNotification)
+                .as("Il reperimento della notifica ha prodotto un risultato nullo. "
+                    + "Se da un check manuale risultasse che la notifica ha seguito correttamente "
+                    + "il suo corso, verificare il corretto uso delle APIs.")
+                .isNotNull()
+                .extracting(FullSentNotificationV26::getTimeline)
+                .as("La timeline della notifica è vuota. Se da un check manuale risultasse "
+                    + "che la notifica ha seguito correttamente il suo corso, verificare il corretto uso delle APIs.")
+                .asList()
+                .isNotEmpty();
+            sharedSteps.setSentNotification(sentNotification);
+        } catch (AssertionError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
     }
 
     @Then("vengono letti gli eventi fino allo stato della notifica {string} dalla PA {string}")
@@ -881,6 +913,42 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
+    // FIXME  19/02/2025 per test temporanei, rimuovere
+    @Given("prova polling di {int} millisecondi")
+    public void provaPollingDiMillisecondi(Integer wait) {
+        PnPollingServiceTimelineRapidV26 timelineRapidV26 = (PnPollingServiceTimelineRapidV26) pnPollingFactory.getPollingService(
+            PnPollingStrategy.TIMELINE_RAPID_V26);
+
+        PnPollingResponseV26 pnPollingResponseV26 = timelineRapidV26.waitForEvent("PHYJ-RYLV-XQLX-202502-H-1",
+            PnPollingParameter.builder()
+                .value(wait.toString())
+                .build());
+    }
+
+    @Then("viene controllato che l'elemento di timeline della notifica {string} con deliveryDetailCode {string} non esiste")
+    public void checkTimelineEventAndDeliveryDetailCodeNotExists(String timelineEventCategory, String deliveryDetailCode) {
+        PnPollingResponseV26 pnPollingResponseV26 = getPollingResponse(timelineEventCategory, deliveryDetailCode);
+
+        log.info("NOTIFICATION_TIMELINE: " + pnPollingResponseV26.getNotification().getTimeline());
+        try {
+            assertPollingFailed(
+                pnPollingResponseV26,
+                "L'elemento di timeline '%s' con deliveryDetailCode '%s' esiste quando non dovrebbe", timelineEventCategory, deliveryDetailCode);
+            sharedSteps.setSentNotification(pnPollingResponseV26.getNotification());
+            log.info("TIMELINE_ELEMENT: " + pnPollingResponseV26.getTimelineElement());
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
+    /* NOTA 14/02/2025: se viene confermato che basta solo il controllo di pollingResponse.getResult() sarà oppourtuno
+    * fare il rework di tutti i check di questo tipo utilizzando questo metodo */
+    public void assertPollingFailed(PnPollingResponse pollingResponse, String errorMsg, Object... args) {
+        assertThat(pollingResponse.getResult())
+            .as(errorMsg, args)
+            .isFalse();
+    }
+
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} e successivamente annullata")
     public void readingEventUpToTheTimelineElementOfNotificationAndCancel(String timelineEventCategory) {
         PnPollingServiceTimelineRapidV26 timelineRapidV25 = (PnPollingServiceTimelineRapidV26) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_RAPID_V26);
@@ -916,6 +984,32 @@ public class AvanzamentoNotificheB2bSteps {
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
+    }
+
+    @And("si attende un tempo verosimilmente sufficiente affinché la notifica faccia il suo corso")
+    public void waitForNotification() {
+        PnPollingTemplate<?> pollingService = (PnPollingTemplate<?>) pnPollingFactory.getPollingService(
+            PnPollingStrategy.TIMELINE_SLOW_V26);
+
+        /* Lo scopo è restare in attesa attiva per il tempo che normalmente si impiegherebbe per
+        il check di un elemento di timeline */
+        String category = "$_WAIT_ANALOG_NOTIFICATION";
+        PnPollingResponse pollingResponse = pollingService.waitForEvent(sharedSteps.getSentNotification().getIun(),
+            PnPollingParameter.builder()
+                .value(category)
+                .build());
+
+        assertThat(pollingResponse.getResult())
+            .withFailMessage("Allo scopo di restare in attesa attiva per un tempo "
+                + "sufficiente è stato volutamente cercato un elemento di timeline che non dovrebbe "
+                + "esistere, ma che è stato invece accidentalmente trovato. Verificare suddetto elemento"
+                + "ed eventualmente correggere il test cambiando elemento atteso.")
+            .isFalse();
+    }
+
+    @And("si effettuerà un solo tentativo per tutte gli step che seguiranno")
+    public void deactivatePolling() {
+        this.pnPollingFactory.turnOffPolling();
     }
 
     @Then("viene verificato che lato utente l'elemento di timeline {string} con deliveryDetailCode {string} non esista")
@@ -2715,6 +2809,11 @@ public class AvanzamentoNotificheB2bSteps {
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
+    }
+
+    @And("viene verificato che l'elemento di timeline di categoria {string} non esista")
+    public void vieneVerificatoCheElementoTimelineNonEsista(String timelineEventCategory) {
+        vieneVerificatoCheElementoTimelineNonEsista(timelineEventCategory, null);
     }
 
     @And("viene verificato che l'elemento di timeline {string} non esista")
