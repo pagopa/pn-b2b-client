@@ -1,10 +1,13 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.payment.*;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.PaperEngageRequest;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.PaperEngageRequestAttachments;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.ReceivedMessage;
@@ -16,7 +19,6 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalChannelsServiceClientIm
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.payment_info.model.*;
 import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchResponse;
 import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchRow;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
@@ -49,6 +51,10 @@ public class InvioNotificheB2bSteps {
     private Integer retentionTimePreLoad;
     @Value("${pn.retention.time.load}")
     private Integer retentionTimeLoad;
+
+    @Value("${pn.blacklist.tax-ids}")
+    private String blackListTaxIdsProperties;
+
     private final PnPaB2bUtils b2bUtils;
     private final IPnWebPaClient webPaClient;
     private final IPnPaB2bClient b2bClient;
@@ -57,8 +63,8 @@ public class InvioNotificheB2bSteps {
     private final PnPaymentInfoClientImpl pnPaymentInfoClientImpl;
     private final PnExternalChannelsServiceClientImpl pnExternalChannelsServiceClientImpl;
 
-    private PaymentResponse paymentResponse;
-    private List<PaymentInfoV21> paymentInfoResponse;
+    private BffPaymentResponse paymentResponse;
+    private List<BffPaymentInfoItem> paymentInfoResponse;
     private NotificationDocument notificationDocumentPreload;
     private NotificationPaymentAttachment notificationPaymentAttachmentPreload;
     private NotificationMetadataAttachment notificationMetadataAttachment;
@@ -69,6 +75,7 @@ public class InvioNotificheB2bSteps {
 
     private final JavaMailSender emailSender;
 
+    private List<String> blackListTaxIds;
 
     @Autowired
     public InvioNotificheB2bSteps(PnExternalServiceClientImpl safeStorageClient, SharedSteps sharedSteps,PnExternalChannelsServiceClientImpl pnExternalChannelsServiceClientImpl, JavaMailSender emailSender) {
@@ -526,13 +533,14 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
     @Then("l'operazione ha prodotto un errore con status code {string} con messaggio di errore {string}")
     public void operationProducedAnErrorWithMessage(String statusCode, String errore) {
         HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
-        Assertions.assertTrue((httpStatusCodeException != null) &&
-                (httpStatusCodeException.getStatusCode().toString().substring(0, 3).equals(statusCode)));
+        Assertions.assertNotNull(httpStatusCodeException, "Cannot find any expected exception");
+        Assertions.assertNotNull(httpStatusCodeException.getStatusCode(), "Cannot find the status exception code");
+        Assertions.assertEquals(String.valueOf(httpStatusCodeException.getStatusCode().value()), statusCode);
 
         byte[] responseBody = httpStatusCodeException.getResponseBodyAsByteArray();
         String responseBodyText = new String(responseBody, StandardCharsets.UTF_8);
 
-        Assertions.assertTrue(responseBodyText.contains(errore)) ;
+        Assertions.assertTrue(responseBodyText.contains(errore));
     }
 
     @Then("l'operazione non ha prodotto errori")
@@ -723,7 +731,7 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
         NotificationPriceResponseV23 notificationPrice = this.b2bClient.getNotificationPriceV23(Objects.requireNonNull(Objects.requireNonNull(sharedSteps.getSentNotification().getRecipients().get(0).getPayments()).get(0).getPagoPa()).getCreditorTaxId(),
                 Objects.requireNonNull(Objects.requireNonNull(sharedSteps.getSentNotification().getRecipients().get(0).getPayments()).get(0).getPagoPa()).getNoticeCode());
 
-        PaymentRequest paymentRequest = getPaymentRequest(notificationPrice,
+        BffPaymentRequest paymentRequest = getPaymentRequest(notificationPrice,
                 Objects.requireNonNull(Objects.requireNonNull(sharedSteps.getSentNotification().getRecipients().get(0).getPayments()).get(0).getPagoPa()).getNoticeCode(),
                 Objects.requireNonNull(Objects.requireNonNull(sharedSteps.getSentNotification().getRecipients().get(0).getPayments()).get(0).getPagoPa()).getCreditorTaxId(),
                 "Test Automation",
@@ -792,7 +800,7 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
 
     @And("l'avviso pagopa viene pagato correttamente su checkout con errore {string}")
     public void laNotificaVienePagatasuCheckoutError(String codiceErrore) {
-        PaymentRequest paymentRequest = getPaymentRequest(null,
+        BffPaymentRequest paymentRequest = getPaymentRequest(null,
                 Objects.requireNonNull(Objects.requireNonNull(sharedSteps.getNotificationRequest().getRecipients().get(0).getPayments()).get(0).getPagoPa()).getNoticeCode(),
                 Objects.requireNonNull(Objects.requireNonNull(sharedSteps.getNotificationRequest().getRecipients().get(0).getPayments()).get(0).getPagoPa()).getCreditorTaxId(),
                 "Test Automation",
@@ -805,7 +813,7 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
 
     @And("l'avviso pagopa viene pagato correttamente su checkout creditorTaxID {string} noticeCode {string} con errore {string}")
     public void laNotificaVienePagatasuCheckoutError(String creditorTaxID , String noticeCode,String codiceErrore) {
-        PaymentRequest paymentRequest = getPaymentRequest(null,
+        BffPaymentRequest paymentRequest = getPaymentRequest(null,
                 noticeCode,
                 creditorTaxID,
                 "Test Automation",
@@ -872,8 +880,8 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
                 .creditorTaxId(creditorTaxId)
                 .noticeCode(noticeCode);
 
-        List<PaymentInfoV21> getPaymentInfoV21 = Assertions.assertDoesNotThrow(() -> pnPaymentInfoClientImpl.getPaymentInfoV21(Collections.singletonList(paymentInfoRequest)));
-        PaymentRequest paymentRequest = getPaymentRequest(null,
+        List<BffPaymentInfoItem> getPaymentInfoV21 = Assertions.assertDoesNotThrow(() -> pnPaymentInfoClientImpl.getPaymentInfoV21(Collections.singletonList(paymentInfoRequest)));
+        BffPaymentRequest paymentRequest = getPaymentRequest(null,
                 noticeCode,
                 creditorTaxId,
                 "Test Automation",
@@ -886,7 +894,7 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
         verifyCheckoutCart(paymentRequest, null);
     }
 
-    private void verifyCheckoutCart(PaymentRequest paymentRequest, String codiceErrore) {
+    private void verifyCheckoutCart(BffPaymentRequest paymentRequest, String codiceErrore) {
 
         try {
             Assertions.assertDoesNotThrow(() -> {
@@ -945,8 +953,8 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
         }
     }
 
-    private PaymentRequest getPaymentRequest(NotificationPriceResponseV23 notificationPrice, String noticeNumber, String fiscalCode, String companyName, Integer amount, String description, String returnUrl) {
-        PaymentRequest paymentRequest= new PaymentRequest();
+    private BffPaymentRequest getPaymentRequest(NotificationPriceResponseV23 notificationPrice, String noticeNumber, String fiscalCode, String companyName, Integer amount, String description, String returnUrl) {
+        BffPaymentRequest paymentRequest= new BffPaymentRequest();
         PaymentNotice paymentNotice= new PaymentNotice();
         paymentNotice.noticeNumber(noticeNumber);
         paymentNotice.fiscalCode(fiscalCode);
@@ -1128,9 +1136,9 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
 
     @Given("si richiama checkout con dati:")
     public void siRichiamaCheckoutConDati(Map<String, String> dataCheckout) {
-        PaymentRequest requestCheckout = creationPaymentRequest(dataCheckout);
+        BffPaymentRequest requestCheckout = creationPaymentRequest(dataCheckout);
      try {
-            PaymentResponse responseCheckout = pnPaymentInfoClientImpl.checkoutCart(requestCheckout);
+         BffPaymentResponse responseCheckout = pnPaymentInfoClientImpl.checkoutCart(requestCheckout);
             Assertions.assertNotNull(responseCheckout);
             Assertions.assertNotNull(responseCheckout.getCheckoutUrl());
             log.info("response checkout: {}", responseCheckout);
@@ -1141,7 +1149,7 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
 
     @Given("si richiama checkout con restituzione errore")
     public void siRichiamaCheckoutConDatiConErrore(Map<String, String> dataCheckout) {
-        PaymentRequest requestCheckout = creationPaymentRequest(dataCheckout);
+        BffPaymentRequest requestCheckout = creationPaymentRequest(dataCheckout);
         try {
             pnPaymentInfoClientImpl.checkoutCart(requestCheckout);
         } catch (HttpStatusCodeException e) {
@@ -1149,9 +1157,9 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
         }
     }
 
-    public PaymentRequest creationPaymentRequest(Map<String, String> dataCheckout) {
+    public BffPaymentRequest creationPaymentRequest(Map<String, String> dataCheckout) {
 
-        PaymentRequest requestCheckout = new PaymentRequest()
+        BffPaymentRequest requestCheckout = new BffPaymentRequest()
                 .paymentNotice(new PaymentNotice()
                         .noticeNumber(dataCheckout.get("noticeCode")!=null? dataCheckout.get("noticeCode"):
                                 sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(0).getPagoPa().getNoticeCode())
@@ -1245,6 +1253,46 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
     public void verificaContentTypeAttestazione(String contentType) {
         LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse = getLegalFactIdAAR("PN_AAR");
         Assertions.assertTrue(b2bUtils.downloadUrlAndCheckContent(legalFactDownloadMetadataResponse.getUrl(), contentType));
+    }
+
+    @When("invio una notifica ad ogni taxId della blackList e ricevo un errore {string} con con messaggio di errore {string}")
+    public void invioUnaNotificaAdOgniTaxIdDellaBlackListERicevoUnErroreConConMessaggioDiErrore(String errorCode, String errorMessage) {
+        blackListTaxIds.forEach(data -> {
+            resetNotificationRequest();
+            HashMap<String, String> map = new HashMap<>();
+            map.put("taxId", data);
+            sharedSteps.destinatario(map);
+            sharedSteps.laNotificaVieneInviataDallaPA("Comune_1");
+            operationProducedAnErrorWithMessage(errorCode, errorMessage);
+        });
+    }
+
+    private void resetNotificationRequest() {
+        sharedSteps.getNotificationRequest().setRecipients(new ArrayList<>());
+        NotificationAttachmentBodyRef ref = new NotificationAttachmentBodyRef()
+                .key("classpath:/sample.pdf");
+        NotificationDocument document = new NotificationDocument()
+                .contentType("application/pdf")
+                        .ref(ref);
+        sharedSteps.getNotificationRequest().setDocuments(List.of(document));
+    }
+
+    @And("riprendo tutti i taxId presenti nella blacklist")
+    public void riprendoTuttiITaxIdPresentiNellaBlacklist() {
+        Assertions.assertNotNull(blackListTaxIdsProperties);
+        blackListTaxIds = retrieveTaxIdsFromProperties();
+        Assertions.assertNotNull(blackListTaxIds);
+        Assertions.assertFalse(blackListTaxIds.isEmpty());
+    }
+
+    private List<String> retrieveTaxIdsFromProperties() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode rootNode = Assertions.assertDoesNotThrow(() -> objectMapper.readTree(blackListTaxIdsProperties));
+        List<String> taxIds = new ArrayList<>();
+        for (JsonNode node : rootNode) {
+            taxIds.add(node.get("taxId").asText());
+        }
+        return taxIds;
     }
 
 }

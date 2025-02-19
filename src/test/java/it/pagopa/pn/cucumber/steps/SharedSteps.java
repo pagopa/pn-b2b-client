@@ -82,14 +82,7 @@ import java.io.IOException;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 import lombok.Getter;
@@ -2040,7 +2033,8 @@ public class SharedSteps {
 
     private String decorateErrorMsg(String originalMessage) {
         return originalMessage +
-            " {IUN: " + notificationResponseComplete.getIun() + " }";
+            " {IUN: " + Optional.ofNullable(getIunVersionamento())
+                .orElse("not found") + " }";
     }
 
     public void throwAssertFailerWithAmountGDPAndIUN(AssertionFailedError assertionFailedError, Integer amountGDP) {
