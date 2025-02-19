@@ -88,9 +88,9 @@ public class TimingForPolling {
         REFINEMENT(15, 1),
 
         /* Elemento NON realmente esistente. Utilizzato per mettere in atto volutamente un'attesa
-         * attiva che verosimilmente darà il tempo di concludere l'intero corso di una notifica
-         * analogica. */
-        $_WAIT_ANALOG_NOTIFICATION(5, 1), // TODO valore temporaneo, mettere per esempio numcheck 15
+         * attiva fino al limite previsto, che verosimilmente darà il tempo di concludere l'intero
+         * corso di una notifica analogica. */
+        $_WAIT_ANALOG_NOTIFICATION(16, 2),
 
         SCHEDULE_REFINEMENT(15, 1),
         DIGITAL_DELIVERY_CREATION_REQUEST(15, 1),
