@@ -24,6 +24,7 @@ Feature: verifica feature aoo/uo
   @AOO_UO @addressBook1
   Scenario: [B2B-AOO-UO_3] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo
     Given si predispone addressbook per l'utente "Galileo Galilei"
+    And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserito un recapito legale "example@OK-pecFirstFailSecondSuccess.it" per il comune "Comune_Root"
     And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |

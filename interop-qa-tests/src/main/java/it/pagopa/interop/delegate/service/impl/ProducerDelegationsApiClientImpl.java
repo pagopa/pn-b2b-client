@@ -40,12 +40,12 @@ public class ProducerDelegationsApiClientImpl implements IProducerDelegationsApi
     }
 
     @Override
-    public void approveDelegation(String xCorrelationId, UUID delegationId) {
+    public void approveProducerDelegation(String xCorrelationId, UUID delegationId) {
         producerDelegationsApi.approveProducerDelegation(xCorrelationId, delegationId);
     }
 
     @Override
-    public void rejectDelegation(String xCorrelationId, UUID delegationId, RejectDelegationPayload rejectDelegationPayload) {
+    public void rejectProducerDelegation(String xCorrelationId, UUID delegationId, RejectDelegationPayload rejectDelegationPayload) {
         producerDelegationsApi.rejectProducerDelegation(xCorrelationId, delegationId, rejectDelegationPayload);
     }
 

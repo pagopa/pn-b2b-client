@@ -11,10 +11,14 @@ import java.util.UUID;
 
 public interface ITenantsApi extends SettableBearerToken {
     void addCertifiedAttribute(UUID tenantId, CertifiedTenantAttributeSeed certifiedTenantAttributeSeed);
+
     CertifiedAttributesResponse getCertifiedAttributes(UUID tenantId);
+
     void addDeclaredAttribute(DeclaredTenantAttributeSeed declaredTenantAttributeSeed);
+
     DeclaredAttributesResponse getDeclaredAttributes(String xCorrelationId, UUID tenantId);
-    void assignTenantDelegatedProducerFeature();
-    void deleteTenantDelegatedProducerFeature();
+
+    void updateTenantDelegatedFeatures(boolean isProducerFeatureEnabled, boolean isConsumerFeatureEnabled);
+
     Tenant getTenant(String xCorrelationId, UUID tenantId);
 }
