@@ -43,6 +43,12 @@ jobs:
       ST_VERBOSE_MODE: ${{ vars.ST_VERBOSE_MODE }}
 
     steps:
+      - name: Debug AWS Role
+        run: |
+          echo "Role ARN length: ${#ECS_IAM_ROLE_ARN}"
+        env:
+          ECS_IAM_ROLE_ARN: ${{ secrets.ECS_IAM_ROLE_ARN }}
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v3
         with:
