@@ -58,7 +58,7 @@ public class SafeStorageSteps {
         }
     }
 
-    private Integer eseguiGetterDelLimite(IndicizzazioneStepsPojo pojo, String fieldName) {
+    private Integer retriveLimitFromPojo(IndicizzazioneStepsPojo pojo, String fieldName) {
         try {
             String getterName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
             Method getter = pojo.getClass().getMethod(getterName);
@@ -97,36 +97,25 @@ public class SafeStorageSteps {
         uploadDocumentsWithTags(type, tagMap, quantity);
     }
 
-    @Given("il documento viene aggiornato aggiungendo {string} valori per volta al tag {string}, fino a raggiungere il limite di {string}")
+    @Given("(il documento viene aggiornato)(i documenti vengono aggiornati) aggiungendo {string} valori per volta al tag {string}, fino a raggiungere il limite di {string}")
     public void singleAddValuesUntilMax(String maxValuesPerTagPerRequest, String tagName, String maxValuesPerTagDocument) {
-        int maxValuesPerTagPerRequestInt = eseguiGetterDelLimite(this.indicizzazioneStepsPojo, maxValuesPerTagPerRequest);
-        int maxValuesPerTagDocumentInt = eseguiGetterDelLimite(this.indicizzazioneStepsPojo, maxValuesPerTagDocument);
+        int maxValuesPerTagPerRequestInt = retriveLimitFromPojo(this.indicizzazioneStepsPojo, maxValuesPerTagPerRequest);
+        int maxValuesPerTagDocumentInt = retriveLimitFromPojo(this.indicizzazioneStepsPojo, maxValuesPerTagDocument);
         int counterTagsAdded = 0;
         while (counterTagsAdded < maxValuesPerTagDocumentInt) {
             int valuesToAdd = getQuantityToAddInIteration(maxValuesPerTagDocumentInt, maxValuesPerTagPerRequestInt, counterTagsAdded);
-            updateSingleContinuativo(counterTagsAdded, tagName, "PARI", String.valueOf(valuesToAdd));
+            List<String> tagValues = createTagValues(counterTagsAdded, "PARI", String.valueOf(valuesToAdd));
+            if (this.indicizzazioneStepsPojo.getCreatedFiles().size() == 1) {
+                updateSingleContinuativo(tagName, tagValues);
+            } else {
+                updateMassiveContinuativo(tagName, tagValues);
+            }
             counterTagsAdded += valuesToAdd;
         }
     }
-
-    @Given("i documenti vengono aggiornati aggiungendo {string} valori per volta al tag {string}, fino a raggiungere il limite di {string}")
-    public void multipleAddValuesUntilMax(String maxValuesPerTagPerRequest, String tagName, String maxValuesPerTagDocument) {
-        int maxValuesPerTagPerRequestInt = eseguiGetterDelLimite(this.indicizzazioneStepsPojo, maxValuesPerTagPerRequest);
-        int maxValuesPerTagDocumentInt = eseguiGetterDelLimite(this.indicizzazioneStepsPojo, maxValuesPerTagDocument);
-        int counterTagsAdded = 0;
-        while (counterTagsAdded < maxValuesPerTagDocumentInt) {
-            int valuesToAdd = getQuantityToAddInIteration(maxValuesPerTagDocumentInt, maxValuesPerTagPerRequestInt, counterTagsAdded);
-            updateMassiveContinuativo(counterTagsAdded, tagName, "PARI", String.valueOf(valuesToAdd));
-            counterTagsAdded += valuesToAdd;
-        }
-    }
-
 
     private int getQuantityToAddInIteration(int maxValuesPerTagDocument, int maxValuesPerTagPerRequest, int addedSoFar) {
-        if (maxValuesPerTagDocument - addedSoFar >= maxValuesPerTagPerRequest) {
-            return maxValuesPerTagPerRequest;
-        }
-        return maxValuesPerTagDocument - addedSoFar;
+        return Math.min(maxValuesPerTagDocument - addedSoFar, maxValuesPerTagPerRequest);
     }
 
     private void uploadDocumentsWithTags(String type, Map<String, List<String>> tagMap, Integer quantity) {
@@ -200,30 +189,20 @@ public class SafeStorageSteps {
         }
     }
 
-    private void updateSingleContinuativo(Integer valoriPrecedenti, String tagName, String comparator, String limit) {
-        int quantity = getLimitValue(comparator, limit);
-        String fileKey = this.indicizzazioneStepsPojo.getCreatedFiles().get(0).getKey();
-        List<String> tagValues = new LinkedList<>();
-        for (int i = 0; i < quantity; i++) {
-            tagValues.add("test" + (valoriPrecedenti + (i + 1)));
-        }
+    private void updateSingleContinuativo(String tagName, List<String> tagValues) {
         AdditionalFileTagsUpdateRequest request = new AdditionalFileTagsUpdateRequest();
         request.putSETItem(tagName, tagValues);
+        String fileKey = this.indicizzazioneStepsPojo.getCreatedFiles().get(0).getKey();
         try {
-            this.indicizzazioneStepsPojo.setUpdateSingleResponseEntity(safeStorageClient.additionalFileTagsUpdateWithHttpInfo(
-                    fileKey, "pn-test", request));
+            this.indicizzazioneStepsPojo.setUpdateSingleResponseEntity(
+                    safeStorageClient.additionalFileTagsUpdateWithHttpInfo(fileKey, "pn-test", request));
         } catch (HttpClientErrorException e) {
             log.info("Errore durante l'aggiornamento del documento: {}", e.getMessage());
             this.indicizzazioneStepsPojo.setHttpException(e);
         }
     }
 
-    private void updateMassiveContinuativo(Integer valoriPrecedenti, String tagName, String comparator, String limit) {
-        int quantity = getLimitValue(comparator, limit);
-        List<String> tagValues = new LinkedList<>();
-        for (int i = 0; i < quantity; i++) {
-            tagValues.add("test" + (valoriPrecedenti + (i + 1)));
-        }
+    private void updateMassiveContinuativo(String tagName, List<String> tagValues) {
         List<Tags> tagsList = new LinkedList<>();
         AdditionalFileTagsMassiveUpdateRequest request = new AdditionalFileTagsMassiveUpdateRequest();
         this.indicizzazioneStepsPojo.getCreatedFiles().forEach(file -> {
@@ -234,28 +213,34 @@ public class SafeStorageSteps {
         });
         request.setTags(tagsList);
         try {
-            this.indicizzazioneStepsPojo.setUpdateMassiveResponseEntity(safeStorageClient.additionalFileTagsMassiveUpdateWithHttpInfo("pn-test", request));
+            this.indicizzazioneStepsPojo.setUpdateMassiveResponseEntity(
+                    safeStorageClient.additionalFileTagsMassiveUpdateWithHttpInfo("pn-test", request));
         } catch (HttpClientErrorException e) {
             log.info("Errore durante l'aggiornamento dei documento: {}", e.getMessage());
             this.indicizzazioneStepsPojo.setHttpException(e);
         }
     }
 
+    private List<String> createTagValues(Integer valoriPrecedenti, String comparator, String limit) {
+        int quantity = getLimitValue(comparator, limit);
+        List<String> tagValues = new LinkedList<>();
+        for (int i = 0; i < quantity; i++) {
+            tagValues.add("test" + (valoriPrecedenti + (i + 1)));
+        }
+        return tagValues;
+    }
+
     /**
-     * Qualora venga passato "PARI" come comparator e una stringa avente valore numerico come "limit", verrà usato tale valore
-     * Altrimenti provvederà a impostare una quantità in accordo al valore settato nel pojo
+     * Se limit ha valore numerico viene usato il suo valore, se è una stringa viene usato il valore del campo corrispondente settato nel Pojo.
+     * Tale valore viene poi aumentato o decrementato di uno a seconda del valore di comparator ("PARI" lo tiene immutato)
      */
     private int getLimitValue(String comparator, String limit) {
-        int quantity;
-        try {
-            quantity = Integer.parseInt(limit);
-        } catch (Exception e) {
-            quantity = eseguiGetterDelLimite(this.indicizzazioneStepsPojo, limit);
-            if (comparator.equalsIgnoreCase("SUPERIORE")) {
-                quantity += 1;
-            } else if (comparator.equalsIgnoreCase("INFERIORE")) {
-                quantity -= 1;
-            }
+        int quantity = limit.matches("[0-9]+") ?
+                Integer.parseInt(limit) : retriveLimitFromPojo(this.indicizzazioneStepsPojo, limit);
+        if (comparator.equalsIgnoreCase("SUPERIORE")) {
+            quantity += 1;
+        } else if (comparator.equalsIgnoreCase("INFERIORE")) {
+            quantity -= 1;
         }
         return quantity;
     }
@@ -766,7 +751,7 @@ public class SafeStorageSteps {
                     int numberOfValues = entry.getValue().size();
                     int valuesDeleted = 0;
                     while (valuesDeleted < numberOfValues) {
-                        int valuesToDelete = maxValuesLimit < (numberOfValues - valuesDeleted) ? maxValuesLimit : (numberOfValues - valuesDeleted);
+                        int valuesToDelete = Math.min(maxValuesLimit, (numberOfValues - valuesDeleted));
                         List<String> valuesToDeleteList = entry.getValue().subList(valuesDeleted, valuesDeleted + valuesToDelete);
                         request.putDELETEItem(entry.getKey(), valuesToDeleteList);
                         safeStorageClient.additionalFileTagsUpdate(file.getKey(), request);
