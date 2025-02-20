@@ -10,7 +10,7 @@ on:
       testSuite:
         description: 'Choose the test suite to run'
         required: false
-        default: NrtTest
+        default: InteropTracingTest
         type: string
 
 defaults:
@@ -37,9 +37,8 @@ jobs:
   run_test:
     name: Run Cucumber Test Suite
     runs-on: ubuntu-22.04
-    environment: ${{ inputs.environment }}
+    environment: test
     env: 
-      ENVIRONMENT: ${{ inputs.environment }}
       ST_VERBOSE_MODE: ${{ vars.ST_VERBOSE_MODE }}
 
     steps:
