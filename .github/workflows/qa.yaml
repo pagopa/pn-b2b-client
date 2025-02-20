@@ -46,7 +46,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v3
         with:
-          role-to-assume: arn:aws:iam::xxx:role/zzz
+          role-to-assume: ${{ secrets.ECS_IAM_ROLE_ARN }}
           role-session-name: pn-b2b-client-${{ github.job }}-${{ github.run_id }}
           aws-region: eu-south-1
 
