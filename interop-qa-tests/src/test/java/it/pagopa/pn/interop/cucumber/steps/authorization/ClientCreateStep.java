@@ -8,7 +8,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.DelegationRole;
+import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
 import java.util.List;
 import java.util.Random;
 import lombok.extern.slf4j.Slf4j;

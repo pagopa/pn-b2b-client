@@ -35,7 +35,7 @@ public class AsyncSteps {
     private final PnPaymentInfoClientImpl pnPaymentInfoClientImpl;
     private final List<PaymentPositionModel> paymentPositionModel;
     private List<BffPaymentInfoItem> paymentInfoResponse;
-    private String deleteGDPresponse;
+    private String deleteGdpResponse;
     private Integer amountGPD;
     private final List<Integer> amountNotifica;
     private static final Integer NUM_CHECK_PAYMENT_INFO = 32;

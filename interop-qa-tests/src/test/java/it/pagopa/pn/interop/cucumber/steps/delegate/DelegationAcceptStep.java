@@ -10,7 +10,6 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationState;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.DelegationRole;
 import org.springframework.http.HttpStatus;
 
 public class DelegationAcceptStep {

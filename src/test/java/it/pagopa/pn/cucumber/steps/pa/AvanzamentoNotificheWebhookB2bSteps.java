@@ -1706,7 +1706,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }
 
     private <T> ProgressResponseElement searchInWebhookFileNotFound(T timeLineOrStatus, String lastEventId, int deepCount) {
-        if(!(timeLineOrStatus instanceof TimelineElementCategoryV23) && (!(timeLineOrStatus instanceof NotificationStatus)) {
+        if(!(timeLineOrStatus instanceof TimelineElementCategoryV23) && (!(timeLineOrStatus instanceof NotificationStatus))) {
             throw new IllegalArgumentException();
         }
         ProgressResponseElement progressResponseElement = null;
@@ -1727,7 +1727,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }//searchInWebhookTimelineElement
 
     private <T> ProgressResponseElementV23 searchInWebhookFileNotFoundV23(T timeLineOrStatus, String lastEventId, int deepCount) {
-        if(!(timeLineOrStatus instanceof TimelineElementCategoryV23) && (!(timeLineOrStatus instanceof NotificationStatus)) {
+        if(!(timeLineOrStatus instanceof TimelineElementCategoryV23) && (!(timeLineOrStatus instanceof NotificationStatus))) {
             throw new IllegalArgumentException();
         }
 

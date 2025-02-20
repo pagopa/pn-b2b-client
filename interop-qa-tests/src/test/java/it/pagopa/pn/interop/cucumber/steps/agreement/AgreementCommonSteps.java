@@ -16,7 +16,7 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
-import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.DelegationRole;
+import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;

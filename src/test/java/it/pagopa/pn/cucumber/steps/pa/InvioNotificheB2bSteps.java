@@ -36,8 +36,6 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalChannelsServiceClientIm
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.payment_info.model.PaymentInfoRequest;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.payment_info.model.PaymentNotice;
 import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchResponse;
 import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchRow;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
@@ -71,7 +69,8 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpStatusCodeException;
-
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.payment.PaymentInfoRequest;
 
 @Slf4j
 public class InvioNotificheB2bSteps {
@@ -99,7 +98,6 @@ public class InvioNotificheB2bSteps {
     private String sha256DocumentDownload;
     private NotificationAttachmentDownloadMetadataResponse downloadResponse;
     private List<ReceivedMessage> documentiPec;
-    private FullSentNotificationV23 notificationRetrieved;
 
     private final JavaMailSender emailSender;
 
