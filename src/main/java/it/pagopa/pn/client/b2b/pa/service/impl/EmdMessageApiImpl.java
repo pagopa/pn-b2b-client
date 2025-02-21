@@ -10,13 +10,12 @@ public class EmdMessageApiImpl {
     private final MessageApi messageApi;
     private ApiClient apiClient;
 
-    public EmdMessageApiImpl(RestTemplate restTemplate) {
-        this.messageApi = new MessageApi(createApiClient(restTemplate, "basePath", "dummyBearer"));
+    public EmdMessageApiImpl(RestTemplate restTemplate,
+                             @Value("${pn.delivery.base-url}") String basePath) {
+        this.messageApi = new MessageApi(createApiClient(restTemplate, basePath, "dummyBearer"));
     }
 
-    private ApiClient createApiClient(RestTemplate restTemplate,
-                                      @Value("${pn.external.base-url}") String basePath,
-                                      String bearerToken) {
+    private ApiClient createApiClient(RestTemplate restTemplate, String basePath, String bearerToken) {
         ApiClient newApiClient = new ApiClient(restTemplate);
         newApiClient.setBasePath(basePath);
         newApiClient.addDefaultHeader("Authorization","Bearer " + bearerToken);
