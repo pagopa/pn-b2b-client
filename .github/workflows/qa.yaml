@@ -43,12 +43,6 @@ jobs:
       ST_VERBOSE_MODE: ${{ vars.ST_VERBOSE_MODE }}
 
     steps:
-      - name: Debug AWS Role
-        run: |
-          echo "Role ARN length: ${#ECS_IAM_ROLE_ARN}"
-        env:
-          ECS_IAM_ROLE_ARN: ${{ vars.ECS_IAM_ROLE_ARN }}
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v3
         with:
@@ -62,25 +56,12 @@ jobs:
           java-version: 17
           maven-version: 3.9.8
 
-      - name: Debug Branch Name
-        run: |
-          echo "branch name: $branchName"
-        env:
-          branchName: ${{ github.ref_name }}
-
       - name: Clone the pn-b2b-client repo
         id: clone_pn-b2b-client
         uses: actions/checkout@v2
         with:
           ref: ${{ github.ref_name }} # Branch name to clone
           fetch-depth: 1  # Clone only the last commit
-
-      - name: Print current directory
-        run: |
-          echo "Current working directory:"
-          pwd
-          echo "Contents of the directory:"
-          ls -la
 
       - name: Run QA tests
         id: run_qa_tests
