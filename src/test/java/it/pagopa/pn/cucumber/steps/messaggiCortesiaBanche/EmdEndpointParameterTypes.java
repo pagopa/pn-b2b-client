@@ -7,8 +7,8 @@ import static it.pagopa.pn.cucumber.steps.messaggiCortesiaBanche.EmdCheckTppEndp
 
 public class EmdEndpointParameterTypes {
 
-    @ParameterType("tokenCheckTPP | emdCheckTPP")
-    public EmdCheckTppEndpoint emdEndpoint(String emdEndpoint) {
+    @ParameterType("tokenCheckTPP|emdCheckTPP")
+    public EmdCheckTppEndpoint emdCheckTppEndpoint(String emdEndpoint) {
         return switch (emdEndpoint) {
             case "tokenCheckTPP" -> TOKEN_CHECK_TPP;
             case "emdCheckTPP" -> EMD_CHECK_TPP;

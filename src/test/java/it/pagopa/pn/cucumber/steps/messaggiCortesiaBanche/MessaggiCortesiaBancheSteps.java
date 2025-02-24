@@ -29,7 +29,7 @@ public class MessaggiCortesiaBancheSteps {
         }
     }
 
-    @When("viene invocato l'endpoint {emdEndpoint} con retrievalId: {string}")
+    @When("viene invocato l'endpoint {emdCheckTppEndpoint} con retrievalId: {string}")
     public void callEmdCheckTPP(EmdCheckTppEndpoint emdCheckTppEndpoint, String retrievalId) {
         try {
             if (emdCheckTppEndpoint == EmdCheckTppEndpoint.TOKEN_CHECK_TPP)
