@@ -1,35 +1,37 @@
-package it.pagopa.pn.cucumber.steps.pa;
+package it.pagopa.pn.interop.cucumber.steps.tracing;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.model.*;
-import it.pagopa.pn.client.b2b.pa.interop.IInteropTracingClient;
-import it.pagopa.pn.client.b2b.pa.interop.polling.dto.PnPollingInterop;
-import it.pagopa.pn.client.b2b.pa.interop.polling.dto.PnTracingResponse;
-import it.pagopa.pn.client.b2b.pa.interop.service.impl.PnPollingInteropTracing;
-import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
-import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
-import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
-import it.pagopa.pn.cucumber.interop.utility.TracingFileUtils;
+import it.pagopa.interop.authorization.service.utils.PollingService;
+import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.GetTracingErrorsResponse;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.GetTracingErrorsResponseResults;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.GetTracingsResponse;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.GetTracingsResponseResults;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.SubmitTracingResponse;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.TracingState;
+import it.pagopa.interop.tracing.service.IInteropTracingClient;
+import it.pagopa.interop.tracing.service.TracingRetriever;
+import it.pagopa.pn.interop.cucumber.utility.TracingFileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
-import org.springframework.core.io.*;
+import org.springframework.core.io.Resource;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.time.LocalDate;
-import java.util.*;
-
-import static it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy.INTEROP_TRACING;
-import static org.assertj.core.api.Assertions.assertThat;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 public class TracingSteps {
     private static final int OFFSET_VALUE = 0;
     private static final int LIMIT_VALUE = 50;
-    private final PnPollingFactory pnPollingFactory;
     private final IInteropTracingClient interopTracingClient;
     private final TracingFileUtils tracingFileUtils;
+    private final PollingService pollingService;
+    private final TracingRetriever tracingRetriever;
 
     private SubmitTracingResponse submitTracingResponse;
     private GetTracingsResponse getTracingsResponse;
@@ -42,29 +44,34 @@ public class TracingSteps {
      * @param pnPollingFactory {@link PnPollingFactory}
      * @param interopTracingClient {@link IInteropTracingClient}
      * @param tracingFileUtils {@link TracingFileUtils}
+     * @param pollingService {@link PollingService}
      */
-    public TracingSteps(PnPollingFactory pnPollingFactory, IInteropTracingClient interopTracingClient, TracingFileUtils tracingFileUtils) {
-        this.pnPollingFactory = pnPollingFactory;
+    public TracingSteps(IInteropTracingClient interopTracingClient,
+                        TracingFileUtils tracingFileUtils, PollingService pollingService, TracingRetriever tracingRetriever) {
         this.interopTracingClient = interopTracingClient;
         this.tracingFileUtils = tracingFileUtils;
+        this.pollingService = pollingService;
+        this.tracingRetriever = tracingRetriever;
     }
 
     @Given("l'utenza {string} effettua le chiamate")
     public void selectOperator(String operator) {
         switch (operator.trim().toLowerCase()) {
-            case "tenant1" -> interopTracingClient.setBearerToken(SettableBearerToken.BearerTokenType.TENANT_1);
-            case "tenant2" -> interopTracingClient.setBearerToken(SettableBearerToken.BearerTokenType.TENANT_2);
+            case "tenant1" -> interopTracingClient.setBearerToken(SettableBearerToken.BearerTokenType.TENANT_1.toString());
+            case "tenant2" -> interopTracingClient.setBearerToken(SettableBearerToken.BearerTokenType.TENANT_2.toString());
             default -> throw new IllegalStateException("Unexpected value: " + operator.trim().toLowerCase());
         }
     }
 
     @Given("viene aggiornato il file CSV con la prima data disponibile")
     public void updateCsv() {
-        submissionDate = interopTracingClient.getTracings(OFFSET_VALUE, LIMIT_VALUE, null).getResults().stream()
+        GetTracingsResponse tracingsResponse = interopTracingClient.getTracings(OFFSET_VALUE, LIMIT_VALUE, null);
+        submissionDate = tracingsResponse.getResults().stream()
                 .map(GetTracingsResponseResults::getDate)
                 .min(LocalDate::compareTo)
-                .get().minusDays(1);
-        tracingFileUtils.updateCsv(submissionDate.toString());
+                .map(date -> date.minusDays(1))
+                .orElseGet(() -> LocalDate.now().minusDays(1));
+        tracingFileUtils.updateCsv(submissionDate);
     }
 
     @When("viene sottomesso il file CSV {string}")
@@ -147,7 +154,7 @@ public class TracingSteps {
                 createExpectedResponse("INVALID_PURPOSE", "purpose_id: Invalid uuid", "", 2),
                 createExpectedResponse("INVALID_DATE", String.format("date: Date field (2024-08-25) in csv is different from tracing date (%s).", submissionDate.toString()), "", 2)
         );
-        assertThat(getTracingErrorsResponse.getResults()).containsAll(expectedResult);
+        org.assertj.core.api.Assertions.assertThat(getTracingErrorsResponse.getResults()).containsAll(expectedResult);
     }
 
     @When("gli errori riscontrati vengono corretti passando il csv {string}")
@@ -210,26 +217,25 @@ public class TracingSteps {
         Assertions.assertNotNull(getTracingsResponse, "There was an error while retrieving the tracing with MISSING status!");
         Assertions.assertFalse(getTracingsResponse.getResults().isEmpty(), "No tracing with MISSING status found!");
         GetTracingsResponseResults tracingsResponseResults = getTracingsResponse.getResults().get(0);
-        tracingFileUtils.updateCsv(tracingsResponseResults.getDate().toString());
+        tracingFileUtils.updateCsv(tracingsResponseResults.getDate());
         submissionDate = tracingsResponseResults.getDate();
         uploadCsv(fileType);
     }
 
     @And("si attende che il file di tracing caricato passi in stato {string}")
-    public void waitForStatus(String status) {
-        PnPollingInteropTracing interopTracing = (PnPollingInteropTracing) pnPollingFactory.getPollingService(INTEROP_TRACING);
-        PnTracingResponse pnTracingResponse = interopTracing.waitForEvent(null,
-                PnPollingParameter.builder()
-                        .value(INTEROP_TRACING)
-                        .pollingType(PnPollingParameter.PollingType.RAPID)
-                        .pnPollingInterop(new PnPollingInterop(submitTracingResponse.getTracingId().toString(), TracingState.fromValue(status)))
-                        .build());
-        Assertions.assertTrue(pnTracingResponse.getResult());
+    public void waitForStatus(String state) {
+        pollingService.makePolling(
+                () -> tracingRetriever.retrieve(0, List.of(TracingState.fromValue(state))),
+                res -> res.getResults().stream()
+                        .filter(x -> x.getTracingId().equals(submitTracingResponse.getTracingId().toString()))
+                        .map(GetTracingsResponseResults::getState)
+                        .anyMatch(tracingState -> tracingState.equals(state)),
+                ""
+        );
     }
 
     @Then("viene recuperato il file di tracing appena caricato e si verifica che lo stato sia {string}")
     public void retrieveTracingAndVerifyStatus(String status) {
-        List<GetTracingsResponseResults> results = new ArrayList<>();
         GetTracingsResponseResults result;
         int attempt = 0;
         int totalPages;

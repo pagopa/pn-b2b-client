@@ -1,6 +1,6 @@
 package it.pagopa.interop.delegate.service.impl;
 
-import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
+import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.delegate.service.IDelegationApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.DelegationsApi;

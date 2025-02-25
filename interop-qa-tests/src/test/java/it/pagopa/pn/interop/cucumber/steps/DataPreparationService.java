@@ -227,7 +227,7 @@ public class DataPreparationService {
     }
 
     public UUID createAgreement(UUID eServiceID, UUID descriptorId) {
-        httpCallExecutor.performCall(() -> agreementClient.createAgreement(sharedStepsContext.getXCorrelationId(), new AgreementPayload().eserviceId(eServiceID).descriptorId(descriptorId)));
+        httpCallExecutor.performCall(() -> agreementClient.createAgreement(new AgreementPayload().eserviceId(eServiceID).descriptorId(descriptorId)));
         assertValidResponse();
         UUID agreementId = ((CreatedResource) httpCallExecutor.getResponse()).getId();
         pollingService.makePolling(
