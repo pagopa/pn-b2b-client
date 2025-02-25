@@ -218,7 +218,6 @@
                 <version>5.4.0</version>
                 <inherited>false</inherited>
                 <executions>
-
                     <execution>
                         <id>generate-internal-emd-api-private</id>
                         <goals>
@@ -251,15 +250,6 @@
                             <modelPackage>it.pagopa.pn.client.b2b.radd.generated.openapi.clients.emd.model</modelPackage>
                         </configuration>
                     </execution>
-
-
-
-
-
-
-
-
-
                     <execution>
                         <id>generate-internal-client-radd</id>
                         <goals>
