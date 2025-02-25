@@ -42,9 +42,9 @@ public class MessaggiCortesiaBancheSteps {
     }
 
     @When("viene invocato l'endpoint paymentUrl con i seguenti parametri")
-    public void callEmdPaymentUrl(List<String> requestBodyList) {
+    public void callEmdPaymentUrl(Map<String, String> row) {
         try {
-            emdResponseEntity = emdIntegrationApi.getPaymentUrl(requestBodyList.get(0), requestBodyList.get(1), requestBodyList.get(2));
+            emdResponseEntity = emdIntegrationApi.getPaymentUrl(row.get("retrievalId"), row.get("noticeCode"), row.get("paTaxId"));
         } catch (HttpStatusCodeException e) {
             emdResponseEntity = new ResponseEntity<>(e.getStatusCode());
         }
@@ -65,12 +65,4 @@ public class MessaggiCortesiaBancheSteps {
                 .associatedPayment(Boolean.parseBoolean(row.get("associatedPayment")));
     }
 
-    @DataTableType
-    public List<String> getPaymentUrlParameter(Map<String, String> row) {
-        return List.of(
-                row.get("retrievalId"),
-                row.get("noticeCode"),
-                row.get("paTaxId")
-        );
-    }
 }

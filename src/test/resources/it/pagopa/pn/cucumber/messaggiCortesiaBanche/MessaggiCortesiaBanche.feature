@@ -19,7 +19,7 @@ Feature: Messaggi di cortesia Banche
     Then si ottiene status code <statusCode>
     Examples:
       | retrievalId                                           | statusCode  |
-      | YTWY-GAWU-XAGD-202502-E-1_OK_00aaa-0-bbccc222dddee    | 200         |
+      | YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa    | 200         |
       |                                                       | 400         |
 
   Scenario Outline: Viene invocato l'endpoint EMD di /emd/check-tpp
@@ -27,17 +27,18 @@ Feature: Messaggi di cortesia Banche
     Then si ottiene status code <statusCode>
     Examples:
       | retrievalId                                           | statusCode  |
-      | YTWY-GAWU-XAGD-202502-E-1_OK_00aaa-0-bbccc222dddee    | 200         |
+      | YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa    | 200         |
       |                                                       | 400         |
 
   Scenario Outline: Viene invocato l'endpoint EMD di /payment-url
     When viene invocato l'endpoint paymentUrl con i seguenti parametri
-      | retrievalId    | noticeCode    | paTaxId    |
-      | <retrievalId>  | <noticeCode>  | <paTaxId>  |
+      | retrievalId |  <retrievalId> |
+      | noticeCode  |  <noticeCode>  |
+      | paTaxId     |  <paTaxId>     |
     Then si ottiene status code <statusCode>
     Examples:
       | retrievalId                                           | noticeCode              | paTaxId             | statusCode  |
-      | YTWY-GAWU-XAGD-202502-E-1_OK_00aaa-0-bbccc222dddee    | 302000100000019421      | 77777777777         | 200         |
+      | YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa    | 302000100000019421      | 77777777777         | 200         |
       |                                                       | 302000100000019421      | 77777777777         | 400         |
-      | YTWY-GAWU-XAGD-202502-E-1_OK_00aaa-0-bbccc222dddee    |                         | 77777777777         | 400         |
-      | YTWY-GAWU-XAGD-202502-E-1_OK_00aaa-0-bbccc222dddee    | 302000100000019421      |                     | 400         |
+      | YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa    |                         | 77777777777         | 400         |
+      | YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa    | 302000100000019421      |                     | 400         |
