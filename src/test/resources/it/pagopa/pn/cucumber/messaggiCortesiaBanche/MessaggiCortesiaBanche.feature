@@ -12,7 +12,7 @@ Feature: Messaggi di cortesia Banche
       | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr    |                         | Comune di Milano    | VEAJ-PTPD-NZDQ-202501-Y-1     | true              | 400         |
       | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr    | RSSMRA85T10A562S        |                     | VEAJ-PTPD-NZDQ-202501-Y-1     | true              | 400         |
       | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr    | RSSMRA85T10A562S        | Comune di Milano    |                               | true              | 400         |
-      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr    | RSSMRA85T10A562S        | Comune di Milano    | VEAJ-PTPD-NZDQ-202501-Y-1     |                   | 200         |
+      | 5b334d4a-0gt7-24ac-9c7b-354e2d44w5tr    | RSSMRA85T10A562S        | Comune di Milano    | VEAJ-PTPD-NZDQ-202501-Y-1     |                   | 400         |
 
   Scenario Outline: Viene invocato l'endpoint EMD di /token/check-tpp
     When viene invocato l'endpoint tokenCheckTPP con retrievalId: "<retrievalId>"

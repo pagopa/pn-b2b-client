@@ -11,6 +11,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class MessaggiCortesiaBancheSteps {
     private final EmdIntegrationApiImpl emdIntegrationApi;
@@ -62,7 +63,7 @@ public class MessaggiCortesiaBancheSteps {
                 .recipientId(row.get("recipientId"))
                 .senderDescription(row.get("senderDescription"))
                 .originId(row.get("originId"))
-                .associatedPayment(Boolean.parseBoolean(row.get("associatedPayment")));
+                .associatedPayment(Optional.ofNullable(row.get("associatedPayment")).map(Boolean::parseBoolean).orElse(null));
     }
 
 }
