@@ -1,9 +1,9 @@
-package it.pagopa.pn.cucumber.steps.messaggiCortesiaBanche;
+package it.pagopa.pn.cucumber.steps.messaggiCortesiaBanche.domain;
 
 import io.cucumber.java.ParameterType;
 
-import static it.pagopa.pn.cucumber.steps.messaggiCortesiaBanche.EmdCheckTppEndpoint.TOKEN_CHECK_TPP;
-import static it.pagopa.pn.cucumber.steps.messaggiCortesiaBanche.EmdCheckTppEndpoint.EMD_CHECK_TPP;
+import static it.pagopa.pn.cucumber.steps.messaggiCortesiaBanche.domain.EmdCheckTppEndpoint.TOKEN_CHECK_TPP;
+import static it.pagopa.pn.cucumber.steps.messaggiCortesiaBanche.domain.EmdCheckTppEndpoint.EMD_CHECK_TPP;
 
 public class EmdEndpointParameterTypes {
 

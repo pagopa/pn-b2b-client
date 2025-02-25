@@ -1,4 +1,4 @@
-package it.pagopa.pn.cucumber.steps.messaggiCortesiaBanche;
+package it.pagopa.pn.cucumber.steps.messaggiCortesiaBanche.domain;
 
 public enum EmdCheckTppEndpoint {
     TOKEN_CHECK_TPP,
