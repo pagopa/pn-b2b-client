@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template;
 
+import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
@@ -34,8 +35,19 @@ public class EServiceTemplateSteps {
         this.pollingService = sharedStepsContext.getPollingService();
     }
 
-    @When("l'utente effettua la creazione di un e-service template")
-    public void createEServiceTemplate() {
+    @ParameterType("erogazione|ricezione")
+    public EServiceMode eServiceMode(String validityString) {
+        return switch (validityString) {
+            case "erogazione" -> EServiceMode.DELIVER;
+            case "ricezione" -> EServiceMode.RECEIVE;
+            default -> throw new IllegalArgumentException("Unsupported %s value: %s".formatted(
+                EServiceMode.class.getSimpleName(),
+                validityString));
+        };
+    }
+
+    @When("l'utente effettua la creazione di un e-service template in modalità {eServiceMode}")
+    public void createEServiceTemplate(EServiceMode eServiceMode) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         int randomInt = ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE);
         String templateName = String.format("eservice-template-%d-%d", sharedStepsContext.getTestSeed(), randomInt);
@@ -45,7 +57,7 @@ public class EServiceTemplateSteps {
             .audienceDescription("Audience description per il template " + templateName)
             .name(templateName)
             .eserviceDescription("Descrizione del servizio associato al template " + templateName)
-            .mode(EServiceMode.DELIVER)
+            .mode(eServiceMode)
             .version(version)
             .technology(EServiceTechnology.REST);
         dataPreparationService.createEServiceTemplate(templateSeed);

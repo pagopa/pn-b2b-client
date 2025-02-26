@@ -6,29 +6,35 @@ Feature: Test API of e-service template
   #  And l'ente "GSP2" rimuove la disponibilità a ricevere deleghe in fruizione
 
   Scenario Outline: [INCARICATO-EST-001] La creazione di un e-service template NON può essere fatta da parte un ente NON erogatore di e-service
-    Given l'utente è un "<ruolo>" di "PA1"
-    When l'utente effettua la creazione di un e-service template
-    Then si ottiene status code <statusCode>
+    Given l'utente è un "admin" di "PA1"
+    When l'utente effettua la creazione di un e-service template in modalità <modalità>
+    Then si ottiene status code 403
     Examples:
-      | ruolo       | statusCode |
-      | admin       |        403 |
-      | api         |        403 |
-      | security    |        403 |
-      | api,security|        403 |
-      | support     |        403 |
+      | modalità     |
+      | erogazione   |
+      | ricezione    |
 
   Scenario Outline: [INCARICATO-EST-002] La creazione di un e-service template può essere fatta da parte un ente erogatore di e-service in veste di ADMIN o API
     Given l'utente è un "<ruolo>" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
-    When l'utente effettua la creazione di un e-service template
+    When l'utente effettua la creazione di un e-service template in modalità <modalità>
     Then si ottiene status code <statusCode>
+
+    # TODO
+    And l'e-service template è in stato di DRAFT
+
     Examples:
-      | ruolo       | statusCode |
-      | admin       |        200 |
-      | api         |        200 |
-      | security    |        403 |
-      | api,security|        403 |
-      | support     |        403 |
+      | ruolo       | statusCode | modalità     |
+      | admin       |        200 | erogazione   |
+      | api         |        200 | erogazione   |
+      | security    |        403 | erogazione   |
+      | api,security|        403 | erogazione   |
+      | support     |        403 | erogazione   |
+      | admin       |        200 | ricezione    |
+      | api         |        200 | ricezione    |
+      | security    |        403 | ricezione    |
+      | api,security|        403 | ricezione    |
+      | support     |        403 | ricezione    |
 
     #TODO: test in cui vengono specificati tutti i campi nella api di creazione
     #TODO: test dove vengono specificati meno dei campi obbligatori nella api di creazione
