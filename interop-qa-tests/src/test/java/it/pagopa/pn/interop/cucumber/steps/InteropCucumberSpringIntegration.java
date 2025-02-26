@@ -15,10 +15,11 @@ import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.config.springconfig.springconfig.InteropRestTemplateConfiguration;
-import it.pagopa.interop.delegate.service.impl.ConsumerDelegationsApiClientImpl;
 import it.pagopa.interop.config.springconfig.springconfig.JwtTokenServiceConfiguration;
+import it.pagopa.interop.delegate.service.impl.ConsumerDelegationsApiClientImpl;
 import it.pagopa.interop.delegate.service.impl.DelegationApiClientImpl;
 import it.pagopa.interop.delegate.service.impl.ProducerDelegationsApiClientImpl;
+import it.pagopa.interop.e_service_template.impl.EServiceTemplateApiClientImpl;
 import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
 import it.pagopa.interop.purpose.service.impl.PurposeApiClientImpl;
 import it.pagopa.interop.tenant.service.ITenantsApi;
@@ -52,6 +53,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
     PurposeApiClientImpl.class,
     IEServiceClient.class,
     EServiceApiClientImpl.class,
+    EServiceTemplateApiClientImpl.class,
     RiskAnalysisDataInitializer.class,
     ClientTokenConfigurator.class,
     ProducerDelegationsApiClientImpl.class,

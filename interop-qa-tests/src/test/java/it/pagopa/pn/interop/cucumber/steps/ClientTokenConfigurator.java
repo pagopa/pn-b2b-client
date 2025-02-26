@@ -9,6 +9,7 @@ import it.pagopa.interop.authorization.service.IProducerClient;
 import it.pagopa.interop.delegate.service.IConsumerDelegationsApiClient;
 import it.pagopa.interop.delegate.service.IDelegationApiClient;
 import it.pagopa.interop.delegate.service.IProducerDelegationsApiClient;
+import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import lombok.AllArgsConstructor;
@@ -25,6 +26,7 @@ public class ClientTokenConfigurator {
     private IAttributeApiClient attributeApiClient;
     private ITenantsApi tenantsApi;
     private IEServiceClient eServiceClient;
+    private IEServiceTemplateClient eServiceTemplateClient;
     private IProducerClient producerClient;
     private IPurposeApiClient purposeApiClient;
     private IProducerDelegationsApiClient producerDelegationsApiClient;
@@ -37,6 +39,7 @@ public class ClientTokenConfigurator {
         attributeApiClient.setBearerToken(token);
         tenantsApi.setBearerToken(token);
         eServiceClient.setBearerToken(token);
+        eServiceTemplateClient.setBearerToken(token);
         producerClient.setBearerToken(token);
         purposeApiClient.setBearerToken(token);
         producerDelegationsApiClient.setBearerToken(token);

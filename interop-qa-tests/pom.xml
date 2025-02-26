@@ -158,10 +158,19 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
+                            <!-- FIXME 25/02/2025 al momento le APIs di e-service template non risultano ben formate
+                              (feature non ancora rilasciata in dev), questa config serve per forzare ugualmente
+                              la generazione del codice-->
+                            <skipValidateSpec>true</skipValidateSpec>
+
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/develop/packages/api-clients/open-api/bffApi.yml</inputSpec>
+
+                            <!-- FIXME 25/02/2025 puntamento originale da ripristinare dopo il rilascio in DEVELOP -->
+                            <!-- <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/develop/packages/api-clients/open-api/bffApi.yml</inputSpec> -->
+
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/feature/pin-4901_e-service-template/packages/api-clients/open-api/bffApi.yml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>

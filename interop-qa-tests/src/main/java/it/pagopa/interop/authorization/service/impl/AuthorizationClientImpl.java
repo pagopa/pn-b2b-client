@@ -84,7 +84,11 @@ public class AuthorizationClientImpl implements IAuthorizationClient {
 
     @Override
     public void createKeys(String xCorrelationId, UUID clientId, List<KeySeed> keySeed) {
-        clientsApi.createKeys(xCorrelationId, clientId, keySeed);
+        keySeed.forEach(ks -> createKey(xCorrelationId, clientId, ks));
+    }
+
+    private void createKey(String xCorrelationId, UUID clientId, KeySeed keySeed) {
+        clientsApi.createKey(xCorrelationId, clientId, keySeed);
     }
 
     @Override

@@ -12,6 +12,7 @@ import it.pagopa.interop.attribute.service.IAttributeApiClient;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.IProducerClient;
 import it.pagopa.interop.authorization.service.utils.PollingService;
+import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementRejectionPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
@@ -24,12 +25,15 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedTenantAttr
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactUser;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceDescriptor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTechnology;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject3;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
@@ -83,6 +87,7 @@ public class DataPreparationService {
     private final IAttributeApiClient attributeApiClient;
     private final ITenantsApi tenantsApi;
     private final IEServiceClient eServiceClient;
+    private final IEServiceTemplateClient eServiceTemplateClient;
     private final IProducerClient producerClient;
     private final IPurposeApiClient purposeApiClient;
     private final PollingService pollingService;
@@ -104,6 +109,7 @@ public class DataPreparationService {
         this.attributeApiClient = clientTokenConfigurator.getAttributeApiClient();
         this.tenantsApi = clientTokenConfigurator.getTenantsApi();
         this.eServiceClient = clientTokenConfigurator.getEServiceClient();
+        this.eServiceTemplateClient = clientTokenConfigurator.getEServiceTemplateClient();
         this.producerClient = clientTokenConfigurator.getProducerClient();
         this.purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
         this.sharedStepsContext = sharedStepsContext;
@@ -323,6 +329,20 @@ public class DataPreparationService {
                 res -> res.getAttributes().stream().anyMatch(attr -> attr.getId().equals(attributeId)),
                 "There was an error while retrieving the attributes"
         );
+    }
+
+    public EServiceTemplateVersionDetails createEServiceTemplate(EServiceTemplateSeed templateSeed) {
+        httpCallExecutor.performCall(() -> eServiceTemplateClient.createEServiceTemplate(sharedStepsContext.getXCorrelationId(), templateSeed));
+        pollingService.makePolling(
+                () -> httpCallExecutor.performCall(
+                    () -> eServiceTemplateClient.getEServiceTemplateVersion(
+                        sharedStepsContext.getXCorrelationId(),
+                        ((CreatedEServiceTemplateVersion) httpCallExecutor.getResponse()).getId(),
+                        ((CreatedEServiceTemplateVersion) httpCallExecutor.getResponse()).getVersionId())),
+                res -> res != HttpStatus.NOT_FOUND,
+                "There was an error while retrieving the e-service template"
+        );
+        return (EServiceTemplateVersionDetails) httpCallExecutor.getResponse();
     }
 
     public EServiceDescriptor createEServiceAndDraftDescriptor(EServiceSeed partialEserviceSeed, UpdateEServiceDescriptorSeed partialDescriptorSeed) {
