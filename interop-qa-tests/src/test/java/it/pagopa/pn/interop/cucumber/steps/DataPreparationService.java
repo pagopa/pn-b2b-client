@@ -333,12 +333,13 @@ public class DataPreparationService {
 
     public EServiceTemplateVersionDetails createEServiceTemplate(EServiceTemplateSeed templateSeed) {
         httpCallExecutor.performCall(() -> eServiceTemplateClient.createEServiceTemplate(sharedStepsContext.getXCorrelationId(), templateSeed));
+        CreatedEServiceTemplateVersion creationResponse = (CreatedEServiceTemplateVersion) httpCallExecutor.getResponse();
         pollingService.makePolling(
                 () -> httpCallExecutor.performCall(
                     () -> eServiceTemplateClient.getEServiceTemplateVersion(
                         sharedStepsContext.getXCorrelationId(),
-                        ((CreatedEServiceTemplateVersion) httpCallExecutor.getResponse()).getId(),
-                        ((CreatedEServiceTemplateVersion) httpCallExecutor.getResponse()).getVersionId())),
+                        creationResponse.getId(),
+                        creationResponse.getVersionId())),
                 res -> res != HttpStatus.NOT_FOUND,
                 "There was an error while retrieving the e-service template"
         );
