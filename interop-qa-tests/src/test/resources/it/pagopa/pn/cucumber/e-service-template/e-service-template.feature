@@ -30,6 +30,19 @@ Feature: Test API of e-service template
       | admin       | ricezione    |
       | api         | ricezione    |
 
+  Scenario Outline: [INCARICATO-EST-003] La creazione di un e-service template NON può riuscire se viene specificato il nome di un template già esistente
+    Given l'utente è un "admin" di "PA1"
+    When l'utente effettua la creazione di un e-service template in modalità <modalità>
+    And l'utente effettua la creazione di un e-service template in modalità <modalità> usando lo stesso nome
+    Then si ottiene status code 403
+    Examples:
+      | modalità     |
+      | erogazione   |
+      | erogazione   |
+      | ricezione    |
+      | ricezione    |
+
+
     #TODO: test in cui vengono specificati tutti i campi nella api di creazione
     #TODO: test dove vengono specificati meno dei campi obbligatori nella api di creazione
 

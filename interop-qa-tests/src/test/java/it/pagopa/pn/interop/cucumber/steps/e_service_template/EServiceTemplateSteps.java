@@ -69,22 +69,42 @@ public class EServiceTemplateSteps {
 
     @When("l'utente effettua la creazione di un e-service template in modalità {eServiceMode}")
     public void createEServiceTemplate(EServiceMode eServiceMode) {
-        String userToken = requireNonNull(
-            sharedStepsContext.getUserToken(),
-            "Il token dell'utente non è stato precedentemente impostato");
-        clientTokenConfigurator.setBearerToken(userToken);
+        EServiceTemplateSeed templateSeed = getEServiceTemplateSeed(eServiceMode);
+        createEServiceTemplate(templateSeed);
+    }
+
+    /** Return a new {@link EServiceTemplateSeed} with only the mandatory fields set
+     * @param eServiceMode the risk analysis mode of the e-service
+     * @return a new {@link EServiceTemplateSeed} instance
+     */
+    private EServiceTemplateSeed getEServiceTemplateSeed(EServiceMode eServiceMode) {
         int randomInt = ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE);
         String templateName = String.format("eservice-template-%d-%d", sharedStepsContext.getTestSeed(), randomInt);
         VersionSeedForEServiceTemplateCreation version = new VersionSeedForEServiceTemplateCreation()
             .voucherLifespan(86400);
-        EServiceTemplateSeed templateSeed = new EServiceTemplateSeed()
+        return new EServiceTemplateSeed()
             .audienceDescription("Audience description per il template " + templateName)
             .name(templateName)
             .eserviceDescription("Descrizione del servizio associato al template " + templateName)
             .mode(eServiceMode)
             .version(version)
             .technology(EServiceTechnology.REST);
+    }
+
+    private void createEServiceTemplate(EServiceTemplateSeed templateSeed) {
+        String userToken = requireNonNull(
+            sharedStepsContext.getUserToken(),
+            "Il token dell'utente non è stato precedentemente impostato");
+        clientTokenConfigurator.setBearerToken(userToken);
         this.lastTemplateManaged = dataPreparationService.createEServiceTemplate(templateSeed);
+    }
+
+    @When("l'utente effettua la creazione di un e-service template in modalità {eServiceMode} usando lo stesso nome")
+    public void createEServiceTemplateWithSameName(EServiceMode eServiceMode) {
+        String lastTemplateNameUsed = this.lastTemplateManaged.getEserviceTemplate().getName();
+        EServiceTemplateSeed sameNameTemplateSeed = this.getEServiceTemplateSeed(eServiceMode)
+            .name(lastTemplateNameUsed);
+        createEServiceTemplate(sameNameTemplateSeed);
     }
 
     @Then("l'e-service template è in stato di {eServiceTemplateVersionState}")
