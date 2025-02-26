@@ -8,6 +8,7 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 
+import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;

@@ -1,9 +1,12 @@
 Feature: avanzamento b2b notifica digitale con indirizzo piattaforma
 
-  @workflowDigitale @mockPec
+  @workflowDigitale @mockPec @addressBook1
   #B2B_TIMELINE_20
   Scenario: [B2B_TIMELINE_DIGITAL_PLATTAFORM_1] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_FEEDBACK e controllo campi deliveryDetailCode e deliveryFailureCause positivo
-    Given viene generata una nuova notifica
+    Given si predispone addressbook per l'utente "Galileo Galilei"
+    And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserito un recapito legale "example@pecSuccess.it"
+    And viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
     And destinatario

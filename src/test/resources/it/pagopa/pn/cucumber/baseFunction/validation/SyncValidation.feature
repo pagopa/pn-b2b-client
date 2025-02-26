@@ -1195,3 +1195,11 @@ Feature: verifica validazione sincrona
       | 120101P      |
       | 120102P      |
       | 120103P      |
+
+  @blackListCF
+  Scenario: [B2B_TIMELINE_RECAPITI_BLACKLIST_1] validazione sincrona campo taxId per la blackList
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And riprendo tutti i taxId presenti nella blacklist
+    When invio una notifica ad ogni taxId della blackList e ricevo un errore "400" con con messaggio di errore "Invalid taxId for recipient"

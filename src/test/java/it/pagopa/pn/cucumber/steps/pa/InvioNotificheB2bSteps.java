@@ -1,5 +1,7 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -54,6 +56,10 @@ public class InvioNotificheB2bSteps {
     private Integer retentionTimePreLoad;
     @Value("${pn.retention.time.load}")
     private Integer retentionTimeLoad;
+
+    @Value("${pn.blacklist.tax-ids}")
+    private String blackListTaxIdsProperties;
+
     private final PnPaB2bUtils b2bUtils;
     private final IPnWebPaClient webPaClient;
     private final IPnPaB2bClient b2bClient;
@@ -74,16 +80,17 @@ public class InvioNotificheB2bSteps {
 
     private final JavaMailSender emailSender;
 
+    private List<String> blackListTaxIds;
 
     @Autowired
-    public InvioNotificheB2bSteps(PnExternalServiceClientImpl safeStorageClient, SharedSteps sharedSteps, PnExternalChannelsServiceClientImpl pnExternalChannelsServiceClientImpl, JavaMailSender emailSender) {
+    public InvioNotificheB2bSteps(PnExternalServiceClientImpl safeStorageClient, SharedSteps sharedSteps,PnExternalChannelsServiceClientImpl pnExternalChannelsServiceClientImpl, JavaMailSender emailSender) {
         this.safeStorageClient = safeStorageClient;
         this.sharedSteps = sharedSteps;
         this.b2bUtils = sharedSteps.getB2bUtils();
         this.b2bClient = sharedSteps.getB2bClient();
         this.webPaClient = sharedSteps.getWebPaClient();
-        this.pnPaymentInfoClientImpl = sharedSteps.getPnPaymentInfoClientImpl();
-        this.pnExternalChannelsServiceClientImpl = pnExternalChannelsServiceClientImpl;
+        this.pnPaymentInfoClientImpl =sharedSteps.getPnPaymentInfoClientImpl();
+        this.pnExternalChannelsServiceClientImpl=pnExternalChannelsServiceClientImpl;
 
         this.emailSender = emailSender;
     }
@@ -195,15 +202,15 @@ public class InvioNotificheB2bSteps {
 
         FullSentNotificationV26 notifica120 = null;
 
-        for (NotificationSearchRow notifiche : serarchedNotification) {
+            for(NotificationSearchRow notifiche :serarchedNotification){
 
-            notifica120 = b2bClient.getSentNotification(notifiche.getIun());
+                notifica120 = b2bClient.getSentNotification(notifiche.getIun());
 
-            if (notifica120.getRecipients().get(0).getPayments() != null && notifica120.getRecipients().get(0).getPayments().get(0).getPagoPa() != null && notifica120.getRecipients().get(0).getPayments().get(0).getPagoPa().getNoticeCode() != null) {
-                break;
-            } else {
-                notifica120 = null;
-            }
+                if(notifica120.getRecipients().get(0).getPayments() != null && notifica120.getRecipients().get(0).getPayments().get(0).getPagoPa() != null && notifica120.getRecipients().get(0).getPayments().get(0).getPagoPa().getNoticeCode() != null){
+                    break;
+                }else{
+                    notifica120=null;
+                }
 
 
             try {
@@ -347,7 +354,6 @@ public class InvioNotificheB2bSteps {
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertFailerWithIUN(assertionError);
         }
-
     }
 
 
@@ -507,6 +513,7 @@ public class InvioNotificheB2bSteps {
     }
 
 
+
     @Given("viene letta la notifica {string} dal {string}")
     public void vieneLettaLaNotificaDal(String IUN, String pa) {
         sharedSteps.selectPA(pa);
@@ -585,7 +592,7 @@ public class InvioNotificheB2bSteps {
                 List<NotificationDocument> documents = sharedSteps.getSentNotification().getDocuments();
                 this.downloadResponse = b2bClient
                         .getSentNotificationDocument(sharedSteps.getSentNotification().getIun(), Integer.parseInt(documents.get(0).getDocIdx()));
-            } else {
+            }else {
                 this.downloadResponse = b2bClient
                         .getSentNotificationAttachment(iun, destinatario, type, 0);
 
@@ -696,11 +703,11 @@ public class InvioNotificheB2bSteps {
 
     private void verifyNotificationVersioning(String version) {
         try {
-            if (version.equalsIgnoreCase("V1")) {
+            if (version.equalsIgnoreCase("V1")){
                 b2bUtils.verifyNotificationV1(sharedSteps.getSentNotificationV1());
-            } else if (version.equalsIgnoreCase("V2")) {
+            }else if (version.equalsIgnoreCase("V2")){
                 b2bUtils.verifyNotificationV2(sharedSteps.getSentNotificationV2());
-            } else if (version.equalsIgnoreCase("V23")) {
+            }else if (version.equalsIgnoreCase("V23")){
                 b2bUtils.verifyNotification(sharedSteps.getSentNotification());
             }
         } catch (AssertionFailedError assertionFailedError) {
@@ -727,6 +734,7 @@ public class InvioNotificheB2bSteps {
                     .as("Il taxonomyCode nella richiesta di notifica dovrebbe essere uguale al taxonomyCode nella notifica inviata")
                     .isEqualTo(this.sharedSteps.getSentNotification().getTaxonomyCode());
         }
+
     }
 
 
@@ -1009,7 +1017,6 @@ public class InvioNotificheB2bSteps {
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertFailerWithIUN(assertionError);
         }
-
     }
 
     @And("la notifica a 2 avvisi di pagamento con OpenApi V2")
@@ -1036,7 +1043,6 @@ public class InvioNotificheB2bSteps {
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertFailerWithIUN(assertionError);
         }
-
     }
 
     @And("la notifica a 1 avvisi di pagamento con OpenApi V1")
@@ -1062,7 +1068,6 @@ public class InvioNotificheB2bSteps {
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertFailerWithIUN(assertionError);
         }
-
     }
 
     @And("Si effettua la chiamata su external-reg per ricevere l'url di checkout con noticeCode {string} e creditorTaxId {string}")
@@ -1103,7 +1108,6 @@ public class InvioNotificheB2bSteps {
                     "{la posizione debitoria " + (paymentResponse == null ? "NULL" : paymentResponse.toString()) + " }";
             throw new AssertionError(message, assertionError);
         }
-
     }
 
     @Then("si verifica che il phyicalAddress sia stato normalizzato correttamente con rimozione caratteri isoLatin1")
@@ -1161,7 +1165,6 @@ public class InvioNotificheB2bSteps {
         } catch (AssertionError error) {
             sharedSteps.throwAssertFailerWithIUN(error);
         }
-
     }
 
     private BffPaymentRequest getPaymentRequest(NotificationPriceResponseV23 notificationPrice, String noticeNumber, String fiscalCode, String companyName, Integer amount, String description, String returnUrl) {
@@ -1188,7 +1191,6 @@ public class InvioNotificheB2bSteps {
        Assertions.assertDoesNotThrow(() -> {
             RequestStatus resp = Assertions.assertDoesNotThrow(() ->
                     b2bClient.notificationCancellation(iun));
-
 
             Assertions.assertNotNull(resp);
             Assertions.assertNotNull(resp.getDetails());
@@ -1280,7 +1282,6 @@ public class InvioNotificheB2bSteps {
                     " Verifica Allegati pec in errore.";
             throw new AssertionError(message, assertionError);
         }
-
     }
 
     @And("si verifica il contenuto della pec abbia {int} attachment di tipo {string}")
@@ -1427,6 +1428,8 @@ public class InvioNotificheB2bSteps {
     }
 
 
+
+
     @And("si verifica che negli url non contenga il docTag nel {string}")
     public void verificaNonPresenzaDocType(String type) {
 
@@ -1506,6 +1509,46 @@ public class InvioNotificheB2bSteps {
     public void verificaContentTypeAttestazione(String contentType) {
         LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse = getLegalFactIdAAR("PN_AAR");
         Assertions.assertTrue(b2bUtils.downloadUrlAndCheckContent(legalFactDownloadMetadataResponse.getUrl(), contentType));
+    }
+
+    @When("invio una notifica ad ogni taxId della blackList e ricevo un errore {string} con con messaggio di errore {string}")
+    public void invioUnaNotificaAdOgniTaxIdDellaBlackListERicevoUnErroreConConMessaggioDiErrore(String errorCode, String errorMessage) {
+        blackListTaxIds.forEach(data -> {
+            resetNotificationRequest();
+            HashMap<String, String> map = new HashMap<>();
+            map.put("taxId", data);
+            sharedSteps.destinatario(map);
+            sharedSteps.laNotificaVieneInviataDallaPA("Comune_1");
+            operationProducedAnErrorWithMessage(errorCode, errorMessage);
+        });
+    }
+
+    private void resetNotificationRequest() {
+        sharedSteps.getNotificationRequest().setRecipients(new ArrayList<>());
+        NotificationAttachmentBodyRef ref = new NotificationAttachmentBodyRef()
+                .key("classpath:/sample.pdf");
+        NotificationDocument document = new NotificationDocument()
+                .contentType("application/pdf")
+                        .ref(ref);
+        sharedSteps.getNotificationRequest().setDocuments(List.of(document));
+    }
+
+    @And("riprendo tutti i taxId presenti nella blacklist")
+    public void riprendoTuttiITaxIdPresentiNellaBlacklist() {
+        Assertions.assertNotNull(blackListTaxIdsProperties);
+        blackListTaxIds = retrieveTaxIdsFromProperties();
+        Assertions.assertNotNull(blackListTaxIds);
+        Assertions.assertFalse(blackListTaxIds.isEmpty());
+    }
+
+    private List<String> retrieveTaxIdsFromProperties() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode rootNode = Assertions.assertDoesNotThrow(() -> objectMapper.readTree(blackListTaxIdsProperties));
+        List<String> taxIds = new ArrayList<>();
+        for (JsonNode node : rootNode) {
+            taxIds.add(node.get("taxId").asText());
+        }
+        return taxIds;
     }
 
 }

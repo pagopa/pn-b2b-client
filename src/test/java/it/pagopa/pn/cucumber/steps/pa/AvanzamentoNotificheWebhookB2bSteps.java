@@ -1,7 +1,6 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -78,15 +77,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 import java.lang.reflect.Field;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 
 import static it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps.StreamVersion.V10;
@@ -851,10 +842,10 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 .filter(Objects::nonNull)
                 .filter(x -> x.getIun() != null && x.getIun().equals(sharedSteps.getSentNotification().getIun()))
                 .map(ProgressResponseElementV23::getElement)
-                .filter(x -> x.getElementId().contains(timelineEvent))
+                .filter(x -> x.getElementId() != null && x.getElementId().contains(timelineEvent))
                 .map(TimelineElementV23::getDetails)
                 .filter(Objects::nonNull)
-                .anyMatch(x -> x.getDeliveryDetailCode().equals(deliveryDetailCode));
+                .anyMatch(x -> x.getDeliveryDetailCode() != null && x.getDeliveryDetailCode().equals(deliveryDetailCode));
     }
 
     @And("viene verificato che gli eventi dello stream non contengono l'elemento di timeline {string} con deliveryDetailCode {string}")
@@ -905,7 +896,12 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             sleepTest(waiting);
 
             sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
-            NotificationStatusHistoryElementV26 notificationStatusHistoryElement = sharedSteps.getSentNotification().getNotificationStatusHistory().stream().filter(elem -> elem.getStatus().equals(notificationInternalStatus)).findAny().orElse(null);
+            NotificationStatusHistoryElementV26 notificationStatusHistoryElement = sharedSteps.getSentNotification()
+                    .getNotificationStatusHistory().stream()
+                    .filter(elem -> elem.getStatus().getValue()
+                            .equals(notificationInternalStatus.getValue()))
+                    .findAny()
+                    .orElse(null);
 
             if (notificationStatusHistoryElement != null) {
                 finded = true;
@@ -984,10 +980,17 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             log.info("EventProgress: " + progressResponseElement);
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
-                    " {IUN: " + sharedSteps.getSentNotification().getIun() + " -WEBHOOK: " + this.eventStreamList.get(0).getStreamId() + " }";
-            throw new AssertionFailedError("message", assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+                    " {IUN: " + sharedSteps.getSentNotification().getIun() + " -WEBHOOK: " + getStreamId() + " }";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
+    }
 
+    private UUID getStreamId() {
+        return Optional.ofNullable(this.eventStreamList)
+                .flatMap(data -> data.stream()
+                        .map(StreamMetadataResponse::getStreamId)
+                        .findFirst())
+                .orElse(null);
     }
 
     @And("vengono letti gli eventi dello stream del {string} fino allo stato {string} con la versione V23")
@@ -1090,7 +1093,12 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             log.debug("PROGRESS-ELEMENT: " + progressResponseElement);
 
             sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
-            NotificationStatusHistoryElementV26 notificationStatusHistoryElement = sharedSteps.getSentNotification().getNotificationStatusHistory().stream().filter(elem -> elem.getStatus().equals(notificationInternalStatus)).findAny().orElse(null);
+            NotificationStatusHistoryElementV26 notificationStatusHistoryElement = sharedSteps.getSentNotification()
+                    .getNotificationStatusHistory().stream()
+                    .filter(elem -> elem.getStatus().getValue().equals(notificationInternalStatus.getValue()))
+                    .findAny()
+                    .orElse(null);
+
             if (notificationStatusHistoryElement != null && !finded) {
                 wait = i + 4;
                 finded = true;
@@ -1200,8 +1208,12 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             Assertions.assertFalse(sharedSteps.getSentNotification()
                     .getTimeline()
                     .stream()
-                    .filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)
-                            && elem.getTimestamp().truncatedTo(ChronoUnit.SECONDS).equals(finalProgressResponseElement.getTimestamp().truncatedTo(ChronoUnit.SECONDS)))
+                    .filter(data -> data.getCategory() != null)
+                    .filter(elem -> elem.getCategory().getValue().equals(timelineElementInternalCategory.getValue()))
+                    .filter(elem -> elem.getTimestamp() != null)
+                    .filter( elem -> elem.getTimestamp().truncatedTo(ChronoUnit.SECONDS).equals(finalProgressResponseElement
+                            .getTimestamp()
+                            .truncatedTo(ChronoUnit.SECONDS)))
                     .findAny()
                     .isEmpty());
             log.info("EventProgress: " + progressResponseElement);
@@ -1241,12 +1253,11 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
         try {
             Assertions.assertNotNull(progressResponseElement);
-            ProgressResponseElementV26 finalProgressResponseElement = new ProgressResponseElementV26();
             Assertions.assertFalse(sharedSteps.getSentNotification()
                     .getTimeline()
                     .stream()
-                    .filter(elem -> elem.getCategory().equals(timelineElementInternalCategory))
-                    // && elem.getTimestamp().truncatedTo(ChronoUnit.SECONDS).equals(finalProgressResponseElement.getTimestamp().truncatedTo(ChronoUnit.SECONDS)))
+                    .filter(elem -> elem.getCategory() != null)
+                    .filter(elem -> elem.getCategory().getValue().equals(timelineElementInternalCategory.getValue()))
                     .findAny()
                     .isEmpty());
             log.info("EventProgress: " + progressResponseElement);
@@ -1286,13 +1297,13 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
         try {
             Assertions.assertNotNull(progressResponseElement);
-            ProgressResponseElement finalProgressResponseElement = progressResponseElement;
             Assertions.assertFalse(sharedSteps.getSentNotification()
                     .getTimeline()
                     .stream()
-                    .filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)
-                            //&& elem.getTimestamp().truncatedTo(ChronoUnit.SECONDS).equals(finalProgressResponseElement.getTimestamp().truncatedTo(ChronoUnit.SECONDS)))
-                            && elem.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode))
+                    .filter(data -> data.getCategory() != null)
+                    .filter(elem -> elem.getCategory().getValue().equals(timelineElementInternalCategory.getValue()))
+                    .filter(elem -> elem.getDetails() != null && elem.getDetails().getDeliveryDetailCode() != null)
+                    .filter(elem -> elem.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode))
                     .findAny()
                     .isEmpty());
             log.info("EventProgress: " + progressResponseElement);
@@ -1328,7 +1339,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             if (progressResponseElement != null) {
                 break;
             }
-            //sleepTest();
+            sleepTest();
         }
         try {
             Assertions.assertNotNull(progressResponseElement);
@@ -1341,6 +1352,8 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
             Assertions.assertNotNull(elementToCheck);
             Assertions.assertNotNull(elementToCheck.getTimestamp());
+            Assertions.assertNotNull(progressResponseElement.getElement());
+            Assertions.assertNotNull(progressResponseElement.getElement().getTimestamp());
             Assertions.assertEquals(progressResponseElement.getElement().getTimestamp().truncatedTo(ChronoUnit.SECONDS),
                     elementToCheck.getTimestamp().truncatedTo(ChronoUnit.SECONDS));
 
@@ -1405,8 +1418,10 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     public void verifySercqPresent() {
         Assertions.assertTrue(sharedSteps.getProgressResponseElementsV23().stream()
                 .map(ProgressResponseElementV23::getElement)
+                .filter(data -> data.getElementId() != null)
                 .filter(timelineElementV23 -> timelineElementV23.getElementId().contains("SEND_DIGITAL_FEEDBACK"))
                 .map(TimelineElementV23::getDetails)
+                .filter(Objects::nonNull)
                 .allMatch(elementDetailsV23 -> "OK".equals(elementDetailsV23.getResponseStatus().toString()) && "SERCQ".equals(elementDetailsV23.getDigitalAddress().getType())
                 ));
     }
@@ -1414,9 +1429,9 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     @Then("verifica la non presenza di SERCQ")
     public void verifySercqIsNotPresent() {
         Assertions.assertTrue(sharedSteps.getProgressResponseElements().stream()
+                .filter(data -> data.getTimelineEventCategory() != null)
                 .filter(progressResponseElement -> progressResponseElement.getTimelineEventCategory().getValue().contains("SEND_DIGITAL_FEEDBACK"))
-                .allMatch(progressResponseElement -> "PEC".equals(progressResponseElement.getChannel())
-                ));
+                .allMatch(progressResponseElement -> "PEC".equals(progressResponseElement.getChannel())));
     }
 
     @Then("si verifica che non siano presenti eventi nello stream {string} del {string}")
@@ -1469,6 +1484,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                     .orElse(null);
 
             Assertions.assertNotNull(elementToCheck);
+            Assertions.assertNotNull(elementToCheck.getTimestamp());
             Assertions.assertEquals(progressResponseElement.getElement().getTimestamp().truncatedTo(ChronoUnit.SECONDS),
                     elementToCheck.getTimestamp().truncatedTo(ChronoUnit.SECONDS));
             log.info("EventProgress: " + progressResponseElement);
@@ -1489,17 +1505,32 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
     @Then("Si verifica che l'elemento di timeline REFINEMENT abbia il timestamp uguale a quella presente nel webhook")
     public void readStreamTimelineElementAndVerifyDate() {
-        OffsetDateTime EventTimestamp;
-        OffsetDateTime NotificationTimestamp;
+        OffsetDateTime eventTimestamp;
+        OffsetDateTime notificationTimestamp;
         try {
             Assertions.assertNotNull(progressResponseElementList);
 
-            EventTimestamp = progressResponseElementList.stream().filter(elem -> elem.getTimelineEventCategory().equals(it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.TimelineElementCategoryV20.REFINEMENT)).findAny().get().getTimestamp();
-            NotificationTimestamp = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23.SCHEDULE_REFINEMENT)).findAny().get().getDetails().getSchedulingDate();
-            log.info("event timestamp : {}", EventTimestamp);
-            log.info("notification timestamp : {}", NotificationTimestamp);
+            eventTimestamp = progressResponseElementList.stream()
+                    .filter(data -> data.getTimelineEventCategory() != null)
+                    .filter(elem -> elem.getTimelineEventCategory().equals(it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.TimelineElementCategoryV20.REFINEMENT))
+                    .findAny()
+                    .map(ProgressResponseElement::getTimestamp)
+                    .orElse(null);
 
-            Assertions.assertEquals(EventTimestamp, NotificationTimestamp);
+            notificationTimestamp = sharedSteps.getSentNotification().getTimeline().stream()
+                    .filter(data -> data.getCategory() != null)
+                    .filter(elem -> elem.getCategory().getValue().equals(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23.SCHEDULE_REFINEMENT.getValue()))
+                    .findAny()
+                    .map(TimelineElementV26::getDetails)
+                    .map(TimelineElementDetailsV26::getSchedulingDate)
+                    .orElse(null);
+
+            Assertions.assertNotNull(eventTimestamp);
+            Assertions.assertNotNull(notificationTimestamp);
+            log.info("event timestamp : {}", eventTimestamp);
+            log.info("notification timestamp : {}", notificationTimestamp);
+
+            Assertions.assertEquals(eventTimestamp, notificationTimestamp);
 
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
@@ -2855,6 +2886,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     public void checkForError(Integer errorCode, String errorMessage) {
         Assertions.assertNotNull(this.notificationError);
         Assertions.assertEquals(errorCode, this.notificationError.getRawStatusCode());
+        Assertions.assertNotNull(this.notificationError.getMessage());
         Assertions.assertTrue(this.notificationError.getMessage().contains(errorMessage));
     }
 
@@ -2881,7 +2913,11 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             sleepTest(waiting);
 
             sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
-            NotificationStatusHistoryElementV26 notificationStatusHistoryElement = sharedSteps.getSentNotification().getNotificationStatusHistory().stream().filter(elem -> elem.getStatus().equals(notificationInternalStatus)).findAny().orElse(null);
+            NotificationStatusHistoryElementV26 notificationStatusHistoryElement = sharedSteps.getSentNotification()
+                    .getNotificationStatusHistory().stream()
+                    .filter(elem -> elem.getStatus().getValue().equals(notificationInternalStatus.getValue()))
+                    .findAny()
+                    .orElse(null);
 
             if (notificationStatusHistoryElement != null) {
                 finded = true;
@@ -2906,8 +2942,8 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             log.info("EventProgress: " + progressResponseElement);
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
-                    " {IUN: " + sharedSteps.getSentNotification().getIun() + " -WEBHOOK: " + this.eventStreamList.get(0).getStreamId() + " }";
-            throw new AssertionFailedError("message", assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+                    " {IUN: " + sharedSteps.getSentNotification().getIun() + " -WEBHOOK: " + getStreamId() + " }";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
 
     }
@@ -2960,8 +2996,8 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             log.info("EventProgress: " + progressResponseElement);
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
-                    " {IUN: " + sharedSteps.getSentNotification().getIun() + " -WEBHOOK: " + this.eventStreamList.get(0).getStreamId() + " }";
-            throw new AssertionFailedError("message", assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+                    " {IUN: " + sharedSteps.getSentNotification().getIun() + " -WEBHOOK: " + getStreamId() + " }";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
 
     }

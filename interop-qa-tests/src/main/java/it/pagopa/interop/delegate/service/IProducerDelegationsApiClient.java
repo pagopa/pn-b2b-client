@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public interface IProducerDelegationsApiClient extends SettableBearerToken {
     CreatedResource createProducerDelegation(String xCorrelationId, DelegationSeed delegationSeed);
-    void approveDelegation(String xCorrelationId, UUID delegationId);
-    void rejectDelegation(String xCorrelationId, UUID delegationId, RejectDelegationPayload rejectDelegationPayload);
+    void approveProducerDelegation(String xCorrelationId, UUID delegationId);
+    void rejectProducerDelegation(String xCorrelationId, UUID delegationId, RejectDelegationPayload rejectDelegationPayload);
     void revokeProducerDelegation(String xCorrelationId, String delegationId);
 }

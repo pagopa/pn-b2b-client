@@ -60,11 +60,12 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
-import lombok.AllArgsConstructor;
+import javax.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -77,7 +78,6 @@ import org.springframework.http.HttpStatus;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class DataPreparationService {
     private static final ClientSeed DEFAULT_CLIENT_SEED = new ClientSeed();
-    private final ClientTokenConfigurator clientTokenConfigurator;
     private final IAuthorizationClient authorizationClient;
     private final IAgreementClient agreementClient;
     private final IAttributeApiClient attributeApiClient;
@@ -97,10 +97,8 @@ public class DataPreparationService {
     }
 
     public DataPreparationService(ClientTokenConfigurator clientTokenConfigurator,
-                                  PollingService pollingService,
                                   RiskAnalysisDataInitializer riskAnalysisDataInitializer,
                                   SharedStepsContext sharedStepsContext) {
-        this.clientTokenConfigurator = clientTokenConfigurator;
         this.authorizationClient = clientTokenConfigurator.getAuthorizationClient();
         this.agreementClient = clientTokenConfigurator.getAgreementClient();
         this.attributeApiClient = clientTokenConfigurator.getAttributeApiClient();
@@ -202,8 +200,12 @@ public class DataPreparationService {
     }
 
     public UUID createAgreementWithGivenState(AgreementState agreementState, UUID eServiceID, UUID descriptorId, File doc) {
+        return createAgreementWithGivenState(agreementState, eServiceID, descriptorId, null, doc);
+    }
+
+    public UUID createAgreementWithGivenState(AgreementState agreementState, UUID eServiceID, UUID descriptorId, UUID delegationId, File doc) {
         // agreement in state DRAFT
-        UUID agreementId = createAgreement(eServiceID, descriptorId);
+        UUID agreementId = createAndCheckAgreement(eServiceID, descriptorId, delegationId);
         if (doc != null) addConsumerDocumentToAgreement(agreementId, doc);
         return switch (agreementState) {
             case DRAFT -> agreementId;
@@ -226,14 +228,26 @@ public class DataPreparationService {
         };
     }
 
-    public UUID createAgreement(UUID eServiceID, UUID descriptorId) {
-        httpCallExecutor.performCall(() -> agreementClient.createAgreement(new AgreementPayload().eserviceId(eServiceID).descriptorId(descriptorId)));
+    public UUID createAndCheckAgreement(UUID eServiceID, UUID descriptorId) {
+        return createAndCheckAgreement(eServiceID, descriptorId, null);
+    }
+
+    public Optional<UUID> createAgreement(UUID eServiceID, UUID descriptorId, @Nullable UUID delegationId) {
+        httpCallExecutor.performCall(() -> agreementClient.createAgreement(
+            new AgreementPayload().eserviceId(eServiceID).descriptorId(descriptorId).delegationId(delegationId)));
+        return httpCallExecutor.getClientResponse().is2xxSuccessful()
+            ? Optional.of(((CreatedResource) httpCallExecutor.getResponse()).getId())
+            : Optional.empty();
+    }
+
+    public UUID createAndCheckAgreement(UUID eServiceID, UUID descriptorId, UUID delegationId) {
+        UUID agreementId = createAgreement(eServiceID, descriptorId, delegationId).orElseThrow(
+            () -> new NoSuchElementException("Failed to create an agreement: result of agreement creation API is '%s'".formatted(httpCallExecutor.getClientResponse())));
         assertValidResponse();
-        UUID agreementId = ((CreatedResource) httpCallExecutor.getResponse()).getId();
         pollingService.makePolling(
-                () ->  httpCallExecutor.performCall(() -> agreementClient.getAgreementById(sharedStepsContext.getXCorrelationId(), agreementId)),
-                res -> res != HttpStatus.NOT_FOUND,
-                "There was an error while retrieving the agreement by ID!"
+            () ->  httpCallExecutor.performCall(() -> agreementClient.getAgreementById(sharedStepsContext.getXCorrelationId(), agreementId)),
+            res -> res != HttpStatus.NOT_FOUND,
+            "There was an error while retrieving the agreement by ID!"
         );
         return agreementId;
     }
@@ -316,7 +330,9 @@ public class DataPreparationService {
                 .name(String.format("e-service %d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)))
                 .description("Descrizione e-service")
                 .technology(EServiceTechnology.REST)
-                .mode(EServiceMode.DELIVER);
+                .mode(EServiceMode.DELIVER)
+                .isConsumerDelegable(false)
+                .isClientAccessDelegable(false);
         EServiceSeed eServiceSeed = merge(DEFAULT_ESERVICE_SEED, partialEserviceSeed);
 
         httpCallExecutor.performCall(() -> eServiceClient.createEService(sharedStepsContext.getXCorrelationId(), eServiceSeed));
@@ -381,7 +397,7 @@ public class DataPreparationService {
 
         if (descriptorState == EServiceDescriptorState.DEPRECATED) {
             // Optional. Create an agreement
-            UUID agreementId = createAgreement(eServiceId, descriptorId);
+            UUID agreementId = createAndCheckAgreement(eServiceId, descriptorId);
             submitAgreement(agreementId, AgreementState.ACTIVE);
         }
 
@@ -688,6 +704,8 @@ public class DataPreparationService {
         eServiceSeed.setDescription(useOrDefault(partialClientSeed.getDescription(), defaultClientSeed.getDescription()));
         eServiceSeed.setTechnology(useOrDefault(partialClientSeed.getTechnology(), defaultClientSeed.getTechnology()));
         eServiceSeed.setMode(useOrDefault(partialClientSeed.getMode(), defaultClientSeed.getMode()));
+        eServiceSeed.setIsConsumerDelegable(useOrDefault(partialClientSeed.getIsConsumerDelegable(), defaultClientSeed.getIsConsumerDelegable()));
+        eServiceSeed.setIsClientAccessDelegable(useOrDefault(partialClientSeed.getIsClientAccessDelegable(), defaultClientSeed.getIsClientAccessDelegable()));
         return eServiceSeed;
     }
 
