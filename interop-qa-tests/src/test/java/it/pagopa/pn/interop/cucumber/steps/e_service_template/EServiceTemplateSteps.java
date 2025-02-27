@@ -9,28 +9,36 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTechnology;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.VersionSeedForEServiceTemplateCreation;
+import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import lombok.Data;
+import org.springframework.http.HttpStatus;
 
 @Data
 public class EServiceTemplateSteps {
-    private ClientTokenConfigurator clientTokenConfigurator;
-    private DataPreparationService dataPreparationService;
-    private IdentityService identityService;
-    private SharedStepsContext sharedStepsContext;
-    private IEServiceTemplateClient eServiceTemplateClient;
-    private PollingService pollingService;
+    /** Stores data on an e-service template useful for testing */
+    record EServiceTemplateInfo(String name, UUID id, UUID lastVersionId){}
 
-    private EServiceTemplateVersionDetails lastTemplateManaged;
+    private final ClientTokenConfigurator clientTokenConfigurator;
+    private final DataPreparationService dataPreparationService;
+    private final IdentityService identityService;
+    private final SharedStepsContext sharedStepsContext;
+    private final IEServiceTemplateClient eServiceTemplateClient;
+    private final HttpCallExecutor httpCallExecutor;
+    private final PollingService pollingService;
+
+    private EServiceTemplateInfo lastTemplateManaged;
 
     public EServiceTemplateSteps(ClientTokenConfigurator clientTokenConfigurator,
                                 DataPreparationService dataPreparationService,
@@ -40,6 +48,7 @@ public class EServiceTemplateSteps {
         this.sharedStepsContext = sharedStepsContext;
         this.identityService = sharedStepsContext.getIdentityService();
         this.eServiceTemplateClient = clientTokenConfigurator.getEServiceTemplateClient();
+        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
     }
 
@@ -92,16 +101,20 @@ public class EServiceTemplateSteps {
     }
 
     private void createEServiceTemplate(EServiceTemplateSeed templateSeed) {
-        String userToken = requireNonNull(
-            sharedStepsContext.getUserToken(),
-            "Il token dell'utente non è stato precedentemente impostato");
+        String userToken = getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);
-        this.lastTemplateManaged = dataPreparationService.createEServiceTemplate(templateSeed);
+
+        CreatedEServiceTemplateVersion creationResponse = this.dataPreparationService.createEServiceTemplate(
+            templateSeed);
+        this.lastTemplateManaged = new EServiceTemplateInfo(
+            templateSeed.getName(),
+            creationResponse.getId(),
+            creationResponse.getVersionId());
     }
 
     @When("l'utente effettua la creazione di un e-service template in modalità {eServiceMode} usando lo stesso nome")
     public void createEServiceTemplateWithSameName(EServiceMode eServiceMode) {
-        String lastTemplateNameUsed = this.lastTemplateManaged.getEserviceTemplate().getName();
+        String lastTemplateNameUsed = this.lastTemplateManaged.name();
         EServiceTemplateSeed sameNameTemplateSeed = this.getEServiceTemplateSeed(eServiceMode)
             .name(lastTemplateNameUsed);
         createEServiceTemplate(sameNameTemplateSeed);
@@ -109,9 +122,60 @@ public class EServiceTemplateSteps {
 
     @Then("l'e-service template è in stato di {eServiceTemplateVersionState}")
     public void checkEServiceTemplateState(EServiceTemplateVersionState expectedState) {
-        EServiceTemplateVersionState actualState = this.lastTemplateManaged.getState();
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        UUID eServiceTemplateVersionId = lastTemplateManaged.lastVersionId();
+
+        /* Attende qualora eventuali chiamate precedenti (creazione, pubblicazione, sospensine...)
+         * non abbiano ancora completato il proprio corso */
+        pollingService.makePolling(
+                () -> httpCallExecutor.performCall(
+                    () -> eServiceTemplateClient.getEServiceTemplateVersion(
+                        sharedStepsContext.getXCorrelationId(),
+                        eServiceTemplateId,
+                        eServiceTemplateVersionId)),
+                res -> res != HttpStatus.NOT_FOUND,
+                "There was an error while retrieving the e-service template"
+        );
+
+        EServiceTemplateVersionDetails retrievedTemplateVersion = (EServiceTemplateVersionDetails) this.httpCallExecutor.getResponse();
+        EServiceTemplateVersionState actualState = retrievedTemplateVersion.getState();
+
         assertThat(actualState)
-            .as("Lo stato dell'e-service template creato deve corrispondere a quanto atteso dal test")
+            .as("Lo stato dell'e-service template deve corrispondere a quanto atteso dal test")
             .isEqualTo(expectedState);
+    }
+
+    @When("l'utente effettua la pubblicazione dell'e-service template")
+    public void publishEServiceTemplate() {
+        String userToken = getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+        this.dataPreparationService.publishEServiceTemplate(
+            lastTemplateManaged.id(),
+            lastTemplateManaged.lastVersionId());
+    }
+
+    @When("l'utente effettua la sospensione dell'e-service template")
+    public void suspendEServiceTemplate() {
+        String userToken = getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+        this.dataPreparationService.suspendEServiceTemplate(
+            lastTemplateManaged.id(),
+            lastTemplateManaged.lastVersionId());
+    }
+
+
+    @When("l'utente effettua la riattivazione dell'e-service template")
+    public void activateEServiceTemplate() {
+        String userToken = getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+        this.dataPreparationService.activateEServiceTemplate(
+            lastTemplateManaged.id(),
+            lastTemplateManaged.lastVersionId());
+    }
+
+    private String getUserToken() {
+        return requireNonNull(
+            sharedStepsContext.getUserToken(),
+            "Il token dell'utente non è stato precedentemente impostato");
     }
 }

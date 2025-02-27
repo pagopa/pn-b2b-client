@@ -10,6 +10,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVer
 import java.util.UUID;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -40,9 +41,44 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
     }
 
     @Override
+    public void publishEServiceTemplate(String xCorrelationId, UUID eServiceTemplateId,
+        UUID eServiceTemplateVersionId) {
+        eserviceTemplatesApi.publishEServiceTemplateVersion(
+            xCorrelationId,
+            eServiceTemplateId,
+            eServiceTemplateVersionId);
+    }
+
+    @Override
+    public void suspendEServiceTemplate(String xCorrelationId, UUID eServiceTemplateId,
+        UUID eServiceTemplateVersionId) {
+        eserviceTemplatesApi.suspendEServiceTemplateVersion(
+            xCorrelationId,
+            eServiceTemplateId,
+            eServiceTemplateVersionId);
+    }
+
+    @Override
+    public void activateEServiceTemplate(String xCorrelationId, UUID eServiceTemplateId,
+        UUID eServiceTemplateVersionId) {
+        eserviceTemplatesApi.activateEServiceTemplateVersion(
+            xCorrelationId,
+            eServiceTemplateId,
+            eServiceTemplateVersionId);
+    }
+
+    @Override
     public EServiceTemplateVersionDetails getEServiceTemplateVersion(String xCorrelationId,
         UUID eServiceTemplateId, UUID eServiceTemplateVersionId) {
         return eserviceTemplatesApi.getEServiceTemplateVersion(xCorrelationId, eServiceTemplateId,
+            eServiceTemplateVersionId);
+    }
+
+    @Override
+    public ResponseEntity<EServiceTemplateVersionDetails> getEServiceTemplateVersionWithHttpInfo(
+        String xCorrelationId,
+        UUID eServiceTemplateId, UUID eServiceTemplateVersionId) {
+        return eserviceTemplatesApi.getEServiceTemplateVersionWithHttpInfo(xCorrelationId, eServiceTemplateId,
             eServiceTemplateVersionId);
     }
 
