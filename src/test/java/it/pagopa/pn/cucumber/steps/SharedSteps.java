@@ -2400,4 +2400,9 @@ public class SharedSteps {
         addRecipientToNotification(this.notificationRequest,
                 notificationRecipientV23, new HashMap<>());
     }
+
+    @Then("stampa log dello IUN della notifica")
+    public void stampaLogDelloIUNDellaNotifica() {
+        log.info("notifica STAMPA COLORI IUN: {}", getSentNotification().getIun());
+    }
 }
