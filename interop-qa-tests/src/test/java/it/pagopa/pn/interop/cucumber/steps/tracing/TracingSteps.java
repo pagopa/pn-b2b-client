@@ -92,6 +92,7 @@ public class TracingSteps {
     @When("viene recuperata la lista di tracing con stato {string}")
     public void retrieveTracingByStatus(String status) {
         retrieveTracing(List.of(TracingState.fromValue(status)));
+        Assertions.assertFalse(getTracingsResponse.getResults().isEmpty(), String.format("No Tracings were retrieved for the desired status: %s", status));
     }
 
     public void retrieveTracing(List<TracingState> statusList) {
@@ -228,28 +229,37 @@ public class TracingSteps {
                         .filter(x -> x.getTracingId().equals(submitTracingResponse.getTracingId().toString()))
                         .map(GetTracingsResponseResults::getState)
                         .anyMatch(tracingState -> tracingState.equals(state)),
-                ""
+                String.format("The TracingId: %s did not reach the desired status: %s", submitTracingResponse.getTracingId().toString(), state)
         );
     }
 
     @Then("viene recuperato il file di tracing appena caricato e si verifica che lo stato sia {string}")
-    public void retrieveTracingAndVerifyStatus(String status) {
+    public void retrieveTracingAndVerifyStatus(String state) {
         GetTracingsResponseResults result;
         int attempt = 0;
         int totalPages;
         try  {
             do {
-                GetTracingsResponse getTracingsResponse = interopTracingClient.getTracings(attempt, LIMIT_VALUE, List.of(TracingState.fromValue(status)));
-                result = getTracingsResponse.getResults().stream()
+                GetTracingsResponse tracingsResponse = interopTracingClient.getTracings(attempt, LIMIT_VALUE, List.of());
+                totalPages = tracingsResponse.getTotalCount().intValue();
+                result = tracingsResponse.getResults().stream()
                         .filter(x -> x.getTracingId().equals(submitTracingResponse.getTracingId().toString()))
                         .findFirst()
                         .orElse(null);
-                totalPages = getTracingsResponse.getTotalCount().intValue();
-                if (result != null || getTracingsResponse.getResults().isEmpty()) break;
-                attempt++;
-            } while (attempt < totalPages);
+
+                if (result != null) {
+                    int finalAttempt = attempt;
+                    pollingService.makePolling(
+                            () -> interopTracingClient.getTracings(finalAttempt, LIMIT_VALUE, List.of()),
+                            res -> res.getResults().stream().anyMatch(x -> x.getTracingId().equals(submitTracingResponse.getTracingId().toString()) && x.getState().equals(state)),
+                            String.format("The TracingId: %s did not reach the desired status: %s", submitTracingResponse.getTracingId().toString(), state)
+                    );
+                    break;
+                } else attempt++;
+
+            } while (attempt < totalPages / LIMIT_VALUE + 1);
             if (result == null) {
-                throw new RuntimeException("Tracing ID not found after " + totalPages + " attempts!");
+                throw new RuntimeException("Tracing ID not found after " + attempt + " attempts!");
             }
         } catch (Exception e) {
             throw new RuntimeException("There was an error while retrieving the tracing file!");
