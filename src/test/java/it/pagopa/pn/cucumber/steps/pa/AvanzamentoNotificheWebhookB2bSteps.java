@@ -66,6 +66,7 @@ import java.lang.reflect.Field;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps.StreamVersion.*;
@@ -2764,24 +2765,51 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         paStreamOwner.add(pa);
     }
 
+    private List<?> getEventStreamListByVersion(StreamVersion version) {
+        return switch (version) {
+            case V23 -> eventStreamListV23;
+            case V24 -> eventStreamListV24;
+            case V25 -> eventStreamListV25;
+            case V26 -> eventStreamListV26;
+            case V27 -> eventStreamListV27;
+            default -> throw new IllegalArgumentException("Version not supported!: " + version);
+        };
+    }
 
-    //TODO MATTEO: perchè non sono previsti casi per le altre versioni dello stream???
-    private void disableStreamInternal(StreamVersion streamVersion) {
+    private void disableStreamInternal(StreamVersion version) {
+        Map<StreamVersion, Function<Object, UUID>> getStreamIdFunction = Map.of(
+                V23, streamRequestV23 -> ((StreamMetadataResponseV23) streamRequestV23).getStreamId(),
+                V24, streamRequestV24 -> ((StreamMetadataResponseV24) streamRequestV24).getStreamId(),
+                V25, streamRequestV25 -> ((StreamMetadataResponseV25) streamRequestV25).getStreamId(),
+                V26, streamRequestV26 -> ((StreamMetadataResponseV26) streamRequestV26).getStreamId(),
+                V27, streamRequestV27 -> ((StreamMetadataResponseV27) streamRequestV27).getStreamId()
+        );
+        Map<StreamVersion, Consumer<Object>> verifyDisableDateFunction = Map.of(
+                V23, streamRequestV23 -> Assertions.assertNotNull(((StreamMetadataResponseV23) streamRequestV23).getDisabledDate()),
+                V24, streamRequestV24 -> Assertions.assertNotNull(((StreamMetadataResponseV24) streamRequestV24).getDisabledDate()),
+                V25, streamRequestV25 -> Assertions.assertNotNull(((StreamMetadataResponseV25) streamRequestV25).getDisabledDate()),
+                V26, streamRequestV26 -> Assertions.assertNotNull(((StreamMetadataResponseV26) streamRequestV26).getDisabledDate()),
+                V27, streamRequestV27 -> Assertions.assertNotNull(((StreamMetadataResponseV27) streamRequestV27).getDisabledDate())
+        );
+
+        Map<StreamVersion, Function<UUID, ?>> disableFunctions = Map.of(
+                V23, webhookB2bClient::disableEventStreamV23,
+                V24, webhookB2bClient::disableEventStreamV24,
+                V25, webhookB2bClient::disableEventStreamV25,
+                V26, webhookB2bClient::disableEventStreamV26,
+                V27, webhookB2bClient::disableEventStreamV27
+        );
+
         try {
-            switch (streamVersion) {
-                case V23 -> eventStreamListV23.stream()
-                        .map(item -> webhookB2bClient.disableEventStreamV23(item.getStreamId()))
-                        .forEach(result -> {
-                            Assertions.assertNotNull(result);
-                            Assertions.assertNotNull(result.getDisabledDate());
-                        });
-                case V25 -> eventStreamListV25.stream()
-                        .map(item -> webhookB2bClient.disableEventStreamV25(item.getStreamId()))
-                        .forEach(result -> {
-                            Assertions.assertNotNull(result);
-                            Assertions.assertNotNull(result.getDisabledDate());
-                        });
-            }
+            getEventStreamListByVersion(version).stream()
+                    .map(item -> {
+                        UUID streamId = getStreamIdFunction.get(version).apply(item);
+                        return disableFunctions.get(version).apply(streamId);
+                    })
+                    .forEach(result -> {
+                        Assertions.assertNotNull(result);
+                        verifyDisableDateFunction.get(version).accept(result);
+                    });
         } catch (HttpStatusCodeException e) {
             this.notificationError = e;
             sharedSteps.setNotificationError(e);

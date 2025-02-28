@@ -66,7 +66,7 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
     private final InteropTokenSingleton interopTokenSingleton;
 
 
-    public PnWebhookB2bExternalClientImpl(RestTemplate restTemplate, it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.api_v27.StreamsApi streamsApiV27, InteropTokenSingleton interopTokenSingleton,
+    public PnWebhookB2bExternalClientImpl(RestTemplate restTemplate, InteropTokenSingleton interopTokenSingleton,
                                           @Value("${pn.external.base-url}") String devBasePath,
                                           @Value("${pn.external.api-key}") String apiKeyMvp1,
                                           @Value("${pn.external.api-key-2}") String apiKeyMvp2,
