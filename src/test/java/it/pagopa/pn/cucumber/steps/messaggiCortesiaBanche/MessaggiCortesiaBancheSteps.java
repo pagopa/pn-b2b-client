@@ -58,8 +58,8 @@ public class MessaggiCortesiaBancheSteps {
         Assertions.assertEquals(statusCode, emdResponseEntity.getStatusCode().value());
     }
 
-    @And("la risposta contiene {string}")
-    public void verifyStatusCode(String outcome) {
+    @And("la risposta contiene outcome uguale a {string}")
+    public void verifyOutcomeResponse(String outcome) {
         Assertions.assertEquals(outcome, emdResponseEntity.getBody());
     }
 
