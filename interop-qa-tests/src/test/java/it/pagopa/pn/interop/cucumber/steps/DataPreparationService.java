@@ -388,15 +388,21 @@ public class DataPreparationService {
         UUID templateId,
         UUID templateVersionId,
         Runnable templateStateMutator,
-        Predicate<ResponseEntity<EServiceTemplateVersionDetails>> pollingStopPredicate) {
+        Predicate<ResponseEntity<EServiceTemplateVersionDetails>> pollingStopPredicate)
+    {
         httpCallExecutor.performCall(templateStateMutator);
+        if (!httpCallExecutor.getClientResponse().isError()) {
+            return;
+        }
         pollingService.makePolling(
-            () -> httpCallExecutor.performCall(
-                () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
-                    sharedStepsContext.getXCorrelationId(),
-                    templateId,
-                    templateVersionId),
-                ResponseEntity::getStatusCode),
+            /* NOTE: in questa chiamata NON si sta usando HttpCallExecutor perché la chiamata
+             * "principale" - quella il cui esito dovrà eventualmente essere verificato dai
+             * test - è quella appena effettuata, non questa, che serve solo ad attendere
+             * l'effettivo mutamento di stato. */
+            () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
+                sharedStepsContext.getXCorrelationId(),
+                templateId,
+                templateVersionId),
             pollingStopPredicate,
             "There was an error while retrieving the e-service template"
         );
