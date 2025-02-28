@@ -1,6 +1,7 @@
 package it.pagopa.pn.cucumber.steps.messaggiCortesiaBanche;
 
 import io.cucumber.java.DataTableType;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.service.impl.EmdIntegrationApiImpl;
@@ -55,6 +56,11 @@ public class MessaggiCortesiaBancheSteps {
     @Then("si ottiene status code {int}")
     public void verifyStatusCode(int statusCode) {
         Assertions.assertEquals(statusCode, emdResponseEntity.getStatusCode().value());
+    }
+
+    @And("la risposta contiene {string}")
+    public void verifyStatusCode(String outcome) {
+        Assertions.assertEquals(outcome, emdResponseEntity.getBody());
     }
 
     @DataTableType

@@ -14,6 +14,6 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.cucumber.steps"),
         @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
 })
-@IncludeTags({"bankCourtesyMessage"})
-public class MessaggiCortesiaBancheTest {
+@IncludeTags({"bankCourtesyMessageDisabled"})
+public class BankCourtesyMessageDisabledTest {
 }
