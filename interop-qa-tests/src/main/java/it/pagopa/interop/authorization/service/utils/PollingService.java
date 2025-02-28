@@ -31,6 +31,6 @@ public class PollingService {
             throw new IllegalArgumentException("Error during shouldStop polling logic evaluation: " + e.getMessage());
         }
 
-        throw new IllegalArgumentException("Eventual consistency error: " + errorMessage);
+        throw new PollingPredicateException("Eventual consistency error: " + errorMessage);
     }
 }

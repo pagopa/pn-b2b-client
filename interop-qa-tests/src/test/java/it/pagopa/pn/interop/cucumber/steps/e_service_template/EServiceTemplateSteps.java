@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template;
 
+import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -7,14 +8,17 @@ import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
+import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTechnology;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.VersionSeedForEServiceTemplateCreation;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
@@ -23,7 +27,9 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import lombok.Data;
+import org.assertj.core.api.Assertions;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 @Data
 public class EServiceTemplateSteps {
@@ -39,6 +45,7 @@ public class EServiceTemplateSteps {
     private final PollingService pollingService;
 
     private EServiceTemplateInfo lastTemplateManaged;
+    private UpdateEServiceTemplateSeed lastTemplateUpdateSeed;
 
     public EServiceTemplateSteps(ClientTokenConfigurator clientTokenConfigurator,
                                 DataPreparationService dataPreparationService,
@@ -80,6 +87,94 @@ public class EServiceTemplateSteps {
     public void createEServiceTemplate(EServiceMode eServiceMode) {
         EServiceTemplateSeed templateSeed = getEServiceTemplateSeed(eServiceMode);
         createEServiceTemplate(templateSeed);
+    }
+
+    @When("l'utente effettua la creazione di un e-service template in modalità {eServiceMode} in stato di {eServiceTemplateVersionState}")
+    public void createEServiceTemplate(EServiceMode eServiceMode, EServiceTemplateVersionState desiredState) {
+        createEServiceTemplate(eServiceMode);
+        switch (desiredState) {
+            case DRAFT -> { /* no-op: un template appena creato è automaticamente in questo stato */ }
+            case PUBLISHED -> publishEServiceTemplate();
+            case SUSPENDED -> suspendEServiceTemplate();
+            default -> throw new IllegalArgumentException("Stato non supportato: " + desiredState);
+        }
+    }
+
+    @When("l'utente tenta delle modifiche all'e-service template")
+    public void updateEServiceTemplate() {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        lastTemplateUpdateSeed = new UpdateEServiceTemplateSeed()
+            .name(lastTemplateManaged.name() + " - modificato")
+            .audienceDescription("Nuova audience description")
+            .eserviceDescription("Nuova descrizione del servizio")
+            .technology(EServiceTechnology.SOAP)
+            .mode(EServiceMode.RECEIVE);
+        updateEServiceTemplate(eServiceTemplateId, lastTemplateUpdateSeed);
+    }
+
+    @Then("le modifiche al template sono state applicate correttamente")
+    public void checkEServiceTemplateUpdate() {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        UUID eServiceTemplateVersionId = lastTemplateManaged.lastVersionId();
+
+        try {
+            pollingService.makePolling(
+                    () -> httpCallExecutor.performCall(
+                        () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
+                            sharedStepsContext.getXCorrelationId(),
+                            eServiceTemplateId,
+                            eServiceTemplateVersionId),
+                        ResponseEntity::getStatusCode),
+                    res -> nonNull(res.getBody()) && this.areConsistent(lastTemplateUpdateSeed, res.getBody().getEserviceTemplate()),
+                    "L'e-service template non corrisponde alle modifiche apportate"
+            );
+        } catch (PollingPredicateException e) {
+            Assertions.fail("Le modifiche all'e-service template non sono state "
+                    + "applicate correttamente: le modifiche apportate '{}' non sono compatibili con il risultato ricevuto '{}'",
+                lastTemplateUpdateSeed, httpCallExecutor.getResponse());
+        }
+    }
+
+    @When("l'utente tenta di modificare l'e-service template specificando lo stesso nome")
+    public void updateEServiceTemplateWithSameName() {
+        UpdateEServiceTemplateSeed sameNameUpdateSeed = new UpdateEServiceTemplateSeed()
+            .name(lastTemplateManaged.name())
+            .audienceDescription("Nuova audience description")
+            .eserviceDescription("Nuova descrizione del servizio")
+            .technology(EServiceTechnology.SOAP)
+            .mode(EServiceMode.RECEIVE);
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        updateEServiceTemplate(eServiceTemplateId, sameNameUpdateSeed);
+    }
+
+    @When("l'utente tenta delle modifiche a un e-service template inesistente")
+    public void updateNonExistentEServiceTemplate() {
+        UUID eServiceTemplateId = UUID.randomUUID();
+        UpdateEServiceTemplateSeed updateSeed = new UpdateEServiceTemplateSeed()
+            .name("Nuovo nome")
+            .audienceDescription("Nuova audience description")
+            .eserviceDescription("Nuova descrizione del servizio")
+            .technology(EServiceTechnology.SOAP)
+            .mode(EServiceMode.RECEIVE);
+        updateEServiceTemplate(eServiceTemplateId, updateSeed);
+    }
+
+    private void updateEServiceTemplate(UUID eServiceTemplateId, UpdateEServiceTemplateSeed sameNameUpdateSeed) {
+        String userToken = getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+        httpCallExecutor.performCall(
+            () -> eServiceTemplateClient.updateEServiceTemplate(
+                sharedStepsContext.getXCorrelationId(),
+                eServiceTemplateId,
+                sameNameUpdateSeed));
+    }
+
+    private boolean areConsistent(UpdateEServiceTemplateSeed lastUpdate, EServiceTemplateDetails retrievedTemplate) {
+        return lastUpdate.getName().equals(retrievedTemplate.getName()) &&
+            lastUpdate.getAudienceDescription().equals(retrievedTemplate.getAudienceDescription()) &&
+            lastUpdate.getEserviceDescription().equals(retrievedTemplate.getEserviceDescription()) &&
+            lastUpdate.getTechnology().equals(retrievedTemplate.getTechnology()) &&
+            lastUpdate.getMode().equals(retrievedTemplate.getMode());
     }
 
     /** Return a new {@link EServiceTemplateSeed} with only the mandatory fields set
