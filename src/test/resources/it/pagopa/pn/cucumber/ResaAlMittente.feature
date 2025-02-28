@@ -23,7 +23,7 @@ Feature: Resa al mittente di una notifica
       | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
-      | digitalDomicile         | NULL                   |
+      | digitalDomicile         | NULL              |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then "Mario Cucumber" legge la notifica
     And vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
@@ -79,7 +79,7 @@ Feature: Resa al mittente di una notifica
       | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | @FAIL_DECEDUTO_SLOW_AR |
-      | digitalDomicile         | NULL              |
+      | digitalDomicile         | NULL                   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And esiste l'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" per l'utente 0
     When la notifica può essere annullata dal sistema tramite codice IUN
@@ -343,7 +343,7 @@ Feature: Resa al mittente di una notifica
     And "Mario Cucumber" legge la notifica
     Then vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
 
- @returnedToSender
+  @returnedToSender
   Scenario: [RETURNED-TO-SENDER_19] Invio notifica 890 multi-destinatario aventi stati Deceduto e Visualizzato che poi sarà Deceduto e macro stato mostrato RETURNED_TO_SENDER
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -361,7 +361,7 @@ Feature: Resa al mittente di una notifica
     And esiste l'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" per l'utente 1
     And "Mario Cucumber" legge la notifica
     And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost uguale a "null" per l'utente 1
-   Then vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
+    Then vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
 
 
   @returnedToSender
@@ -641,7 +641,7 @@ Feature: Resa al mittente di una notifica
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
     And si invoca l'api Webhook versione "V25" per ottenere gli elementi di timeline di tale notifica
-    Then si controlla che tra gli elementi dello stream "V25" ritornati non ci sia l'elemento "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
+    Then si controlla che tra gli elementi dello stream con versione "V25" ritornati non ci sia l'elemento "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
 
   @returnedToSender @cleanWebhook @webhook1
   Scenario: [RETURNED-TO-SENDER_STREAM_V25_WITHOUT_FILTER] Invio notifica e controllo che stream con eventType vuoto e versione differente da V26 non contenga elemento ANALOG_WORKFLOW_RECIPIENT_DECEASED
@@ -659,7 +659,7 @@ Feature: Resa al mittente di una notifica
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
     And si invoca l'api Webhook versione "V25" per ottenere gli elementi di timeline di tale notifica
-    Then si controlla che tra gli elementi dello stream "V25" ritornati non ci sia l'elemento "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
+    Then si controlla che tra gli elementi dello stream con versione "V25" ritornati non ci sia l'elemento "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
 
 
 
@@ -746,8 +746,6 @@ Feature: Resa al mittente di una notifica
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "ANALOG_SUCCESS_WORKFLOW"
     And  vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SCHEDULE_REFINEMENT_WORKFLOW"
-
-
 
 
   @activationDeceaseAfter @cleanWebhook @precondition
