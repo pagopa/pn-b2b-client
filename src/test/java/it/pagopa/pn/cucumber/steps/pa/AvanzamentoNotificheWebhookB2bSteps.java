@@ -10,7 +10,6 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.ProgressResponseElementV24;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.ProgressResponseElementV25;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.StreamCreationRequestV24;
@@ -53,6 +52,7 @@ import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebh
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.TimelineElementDetailsV23;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.TimelineElementV23;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
+import it.pagopa.pn.cucumber.steps.pa.v27.WebhookPojoV27;
 import it.pagopa.pn.cucumber.utils.GroupPosition;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -102,12 +102,13 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     private HttpStatusCodeException notificationError;
     private final PnPollingFactory pollingFactory;
     private final TimingForPolling timingForPolling;
-    private List<ProgressResponseElement> progressResponseElements;
-    private List<ProgressResponseElementV23> progressResponseElementsV23;
-    private List<ProgressResponseElementV24> progressResponseElementsV24;
-    private List<ProgressResponseElementV25> progressResponseElementsV25;
-    private List<ProgressResponseElementV26> progressResponseElementsV26;
-    private List<ProgressResponseElementV27> progressResponseElementsV27;
+    private List<ProgressResponseElement> progressResponseElements = new LinkedList<>();
+    private List<ProgressResponseElementV23> progressResponseElementsV23 = new LinkedList<>();
+    private List<ProgressResponseElementV24> progressResponseElementsV24 = new LinkedList<>();
+    private List<ProgressResponseElementV25> progressResponseElementsV25 = new LinkedList<>();
+    private List<ProgressResponseElementV26> progressResponseElementsV26 = new LinkedList<>();
+    private List<ProgressResponseElementV27> progressResponseElementsV27 = new LinkedList<>();
+    private final WebhookPojoV27 webhookPojoV27 = new WebhookPojoV27(this); //TODO MATTEO: finire per pulire un po' questa classe
 
 
     @And("viene verificato che il campo legalfactIds sia valorizzato nel EventStream")
@@ -120,14 +121,6 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     public enum StreamVersion {V23, V10, V10_V23, V24, V25, V26, V27}
 
     private final Set<String> paStreamOwner = new HashSet<>();
-
-    //TODO: rimuovere
-    private final LinkedList<ProgressResponseElement> progressResponseElementList = new LinkedList<>();
-    private final LinkedList<ProgressResponseElementV23> progressResponseElementListV23 = new LinkedList<>();
-    private final LinkedList<ProgressResponseElementV24> progressResponseElementListV24 = new LinkedList<>();
-    private final LinkedList<ProgressResponseElementV25> progressResponseElementListV25 = new LinkedList<>();
-    private final LinkedList<ProgressResponseElementV26> progressResponseElementListV26 = new LinkedList<>();
-    private final LinkedList<ProgressResponseElementV27> progressResponseElementListV27 = new LinkedList<>();
     private ProgressResponseElementV23 progressResponseElementResultV23;
     private static IPnWebhookB2bClient webhookClientForClean;
     private static boolean webhookTestLaunch;
@@ -324,7 +317,6 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         createStreamRequest(streamVersion, new LinkedList<>(), number, title, eventType);
     }
 
-    //TODO MATTEO parametrizzare??? di diverso rispetto a quello di sopra ha i filteredValues, che cambia?
     @Given("si predispo(ngono)(ne) {int} nuov(i)(o) stream V2 denominat(i)(o) {string} con eventType {string}")
     public void setUpStreamsWithEventTypeV2(int number, String title, String eventType) {
         this.requestNumber = number;
@@ -428,6 +420,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                     deleteStreamWrapper(V26, pa, eventStream.getStreamId());
                 }
             }
+//            case V27 -> this.webhookPojoV27.deleteStreams(pa);//TODO MATTEO, valutare fattibilità
             case V27 -> {
                 for (StreamMetadataResponseV27 eventStream : eventStreamListV27) {
                     deleteStreamWrapper(V27, pa, eventStream.getStreamId());
@@ -461,6 +454,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                     streamRequestV26 = new StreamRequestV26();
                     initializeRequest(streamVersion, action, pa);
                 }
+//                case V27 -> webhookPojoV27.initializeStreamRequest(action, pa);//TODO MATTEO valutare fattibilità
                 case V27 -> {
                     streamRequestV27 = new StreamRequestV27();
                     initializeRequest(streamVersion, action, pa);
@@ -471,7 +465,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         updateStream(streamVersion.toString());
     }
 
-    private void initializeRequest(StreamVersion streamVersion, String action, String pa) {
+    public void initializeRequest(StreamVersion streamVersion, String action, String pa) {
         Map<StreamVersion, Supplier<List<String>>> groupGetSupplier = Map.of(
                 V23, () -> eventStreamListV23.stream().findFirst().map(StreamMetadataResponseV23::getGroups).orElse(null),
                 V24, () -> eventStreamListV24.stream().findFirst().map(StreamMetadataResponseV24::getGroups).orElse(null),
@@ -816,19 +810,19 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }
 
     private void initializeStreamRequest(Object streamRequest) {
-        if (streamRequest instanceof StreamRequestV23 streamRequestV23) {
+        if (streamRequest instanceof StreamRequestV23) {
             streamRequestV23.setTitle("Stream Update");
             streamRequestV23.setEventType(StreamRequestV23.EventTypeEnum.TIMELINE);
-        } else if (streamRequest instanceof StreamRequestV24 streamRequestV24) {
+        } else if (streamRequest instanceof StreamRequestV24) {
             streamRequestV24.setTitle("Stream Update");
             streamRequestV24.setEventType(StreamRequestV24.EventTypeEnum.TIMELINE);
-        } else if (streamRequest instanceof StreamRequestV25 streamRequestV25) {
+        } else if (streamRequest instanceof StreamRequestV25) {
             streamRequestV25.setTitle("Stream Update");
             streamRequestV25.setEventType(StreamRequestV25.EventTypeEnum.TIMELINE);
-        } else if (streamRequest instanceof StreamRequestV26 streamRequestV26) {
+        } else if (streamRequest instanceof StreamRequestV26) {
             streamRequestV26.setTitle("Stream Update");
             streamRequestV26.setEventType(StreamRequestV26.EventTypeEnum.TIMELINE);
-        } else if (streamRequest instanceof StreamRequestV27 streamRequestV27) {
+        } else if (streamRequest instanceof StreamRequestV27) {
             streamRequestV27.setTitle("Stream Update");
             streamRequestV27.setEventType(StreamRequestV27.EventTypeEnum.TIMELINE);
         }
@@ -1208,7 +1202,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             sleepTest(waiting);
             sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
             NotificationStatusHistoryElementV26 notificationStatusHistoryElement = sharedSteps.getSentNotification().getNotificationStatusHistory().
-                    stream().filter(elem -> elem.getStatus().equals(notificationInternalStatus)).findAny().orElse(null);
+                    stream().filter(elem -> elem.getStatus().getValue().equals(notificationInternalStatus.getValue())).findAny().orElse(null);
             if (notificationStatusHistoryElement != null) {
                 finded = true;
                 break;
@@ -1799,9 +1793,9 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         OffsetDateTime eventTimestamp;
         OffsetDateTime notificationTimestamp;
         try {
-            Assertions.assertNotNull(progressResponseElementList);
+            Assertions.assertNotNull(progressResponseElements);
 
-            eventTimestamp = progressResponseElementList.stream()
+            eventTimestamp = progressResponseElements.stream()
                     .filter(data -> data.getTimelineEventCategory() != null)
                     .filter(elem -> elem.getTimelineEventCategory().equals(it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.TimelineElementCategoryV20.REFINEMENT))
                     .findAny()
@@ -1835,9 +1829,9 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         OffsetDateTime EventTimestamp;
         OffsetDateTime NotificationTimestamp;
         try {
-            Assertions.assertNotNull(progressResponseElementListV23);
+            Assertions.assertNotNull(progressResponseElementsV23);
             //TODO Verificare...
-            EventTimestamp = progressResponseElementListV23.stream().filter(elem -> elem.getElement().getCategory().equals(TimelineElementCategoryV23.REFINEMENT)).findAny().get().getElement().getTimestamp();
+            EventTimestamp = progressResponseElementsV23.stream().filter(elem -> elem.getElement().getCategory().equals(TimelineElementCategoryV23.REFINEMENT)).findAny().get().getElement().getTimestamp();
             //EventTimestamp = progressResponseElementListV23.stream().filter(elem -> elem.getTimelineEventCategory().equals(TimelineElementCategoryV23.REFINEMENT)).findAny().get().getTimestamp();
             TimelineElementV26 timelineToCheck = sharedSteps.getSentNotification().getTimeline().stream()
                     .filter(elem -> elem.getCategory().getValue().equals(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23.SCHEDULE_REFINEMENT.getValue()))
@@ -1865,8 +1859,8 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         OffsetDateTime EventTimestamp;
         OffsetDateTime NotificationTimestamp;
         try {
-            Assertions.assertNotNull(progressResponseElementListV27);
-            EventTimestamp = progressResponseElementListV27.stream().filter(
+            Assertions.assertNotNull(progressResponseElementsV27);
+            EventTimestamp = progressResponseElementsV27.stream().filter(
                             elem -> elem.getElement().getCategory().getValue().equals(TimelineElementCategoryV26.REFINEMENT.getValue()))
                     .findAny().get().getElement().getTimestamp();
             TimelineElementV26 timelineToCheck = sharedSteps.getSentNotification().getTimeline().stream()
@@ -1908,47 +1902,47 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
         if (timeLineOrStatus instanceof TimelineElementCategoryV20) {
             pnPollingWebhook.setTimelineElementCategoryV20((TimelineElementCategoryV20) timeLineOrStatus);
-            progressResponseElementList.clear();
-            pnPollingWebhook.setProgressResponseElementListV20(progressResponseElementList);
+            progressResponseElements.clear();
+            pnPollingWebhook.setProgressResponseElementsV20(progressResponseElements);
 
         } else if (timeLineOrStatus instanceof it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.NotificationStatus) {
             pnPollingWebhook.setNotificationStatusV20((it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.NotificationStatus) timeLineOrStatus);
-            progressResponseElementList.clear();
-            pnPollingWebhook.setProgressResponseElementListV20(progressResponseElementList);
+            progressResponseElements.clear();
+            pnPollingWebhook.setProgressResponseElementsV20(progressResponseElements);
 
         } else if (timeLineOrStatus instanceof TimelineElementCategoryV23) {
             pnPollingWebhook.setTimelineElementCategoryV23((TimelineElementCategoryV23) timeLineOrStatus);
-            progressResponseElementListV23.clear();
-            pnPollingWebhook.setProgressResponseElementListV23(progressResponseElementListV23);
+            progressResponseElementsV23.clear();
+            pnPollingWebhook.setProgressResponseElementsV23(progressResponseElementsV23);
 
         } else if (timeLineOrStatus instanceof it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.NotificationStatus) {
             pnPollingWebhook.setNotificationStatusV23((NotificationStatus) timeLineOrStatus);
-            progressResponseElementListV23.clear();
-            pnPollingWebhook.setProgressResponseElementListV23(progressResponseElementListV23);
+            progressResponseElementsV23.clear();
+            pnPollingWebhook.setProgressResponseElementsV23(progressResponseElementsV23);
 
         } else if (timeLineOrStatus instanceof TimelineElementCategoryV26) {
             pnPollingWebhook.setTimelineElementCategoryV26((TimelineElementCategoryV26) timeLineOrStatus);
-            progressResponseElementListV26.clear();
-            pnPollingWebhook.setProgressResponseElementListV26(progressResponseElementListV26);
+            progressResponseElementsV26.clear();
+            pnPollingWebhook.setProgressResponseElementsV26(progressResponseElementsV26);
 
         } else if (timeLineOrStatus instanceof it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.NotificationStatus) {
             pnPollingWebhook.setNotificationStatus_noVersionV26((it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.NotificationStatus) timeLineOrStatus);
-            progressResponseElementListV26.clear();
-            pnPollingWebhook.setProgressResponseElementListV26(progressResponseElementListV26);
+            progressResponseElementsV26.clear();
+            pnPollingWebhook.setProgressResponseElementsV26(progressResponseElementsV26);
 
         } else if (timeLineOrStatus instanceof it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.NotificationStatusV26) {
             pnPollingWebhook.setNotificationStatusV26((it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.NotificationStatusV26) timeLineOrStatus);
-            progressResponseElementListV26.clear();
-            pnPollingWebhook.setProgressResponseElementListV26(progressResponseElementListV26);
+            progressResponseElementsV26.clear();
+            pnPollingWebhook.setProgressResponseElementsV26(progressResponseElementsV26);
         } else if (timeLineOrStatus instanceof it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v27.NotificationStatus) {
             pnPollingWebhook.setNotificationStatus_noVersionV27((it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v27.NotificationStatus) timeLineOrStatus);
-            progressResponseElementListV27.clear();
-            pnPollingWebhook.setProgressResponseElementListV27(progressResponseElementListV27);
+            progressResponseElementsV27.clear();
+            pnPollingWebhook.setProgressResponseElementsV27(progressResponseElementsV27);
 
         } else if (timeLineOrStatus instanceof it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v27.NotificationStatusV26) {
             pnPollingWebhook.setNotificationStatusV27((it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v27.NotificationStatusV26) timeLineOrStatus);
-            progressResponseElementListV27.clear();
-            pnPollingWebhook.setProgressResponseElementListV27(progressResponseElementListV27);
+            progressResponseElementsV27.clear();
+            pnPollingWebhook.setProgressResponseElementsV27(progressResponseElementsV27);
 
         } else {
             throw new IllegalArgumentException();
@@ -1989,8 +1983,8 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                         .build());
 
         log.info("WEBHOOK_PROGRESS_RESPONSE_ELEMENT_V23: " + pnPollingResponseV23.getProgressResponseElementV23());
-        if (pnPollingResponseV23.getProgressResponseElementListV23() != null) {
-            sharedSteps.setProgressResponseElementsV23(pnPollingResponseV23.getProgressResponseElementListV23());
+        if (pnPollingResponseV23.getProgressResponseElementsV23() != null) {
+            sharedSteps.setProgressResponseElementsV23(pnPollingResponseV23.getProgressResponseElementsV23());
             return pnPollingResponseV23.getProgressResponseElementV23();
         }
         return null;
@@ -2299,7 +2293,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         log.info("METADATI: " + '\n' + sharedSteps.getNewNotificationResponse());
         log.info("REQUEST-ID: " + '\n' + sharedSteps.getNewNotificationResponse().getNotificationRequestId());
         log.info("IUN: " + '\n' + sharedSteps.getSentNotification().getIun());
-        for (ProgressResponseElement element : progressResponseElementList) {
+        for (ProgressResponseElement element : progressResponseElements) {
             log.info("EVENT: " + '\n' + element.getTimelineEventCategory() + " " + element.getTimestamp());
         }
 
@@ -2972,7 +2966,6 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 V26, streamRequestV26 -> Assertions.assertNotNull(((StreamMetadataResponseV26) streamRequestV26).getDisabledDate()),
                 V27, streamRequestV27 -> Assertions.assertNotNull(((StreamMetadataResponseV27) streamRequestV27).getDisabledDate())
         );
-
         Map<StreamVersion, Function<UUID, ?>> disableFunctions = Map.of(
                 V23, webhookB2bClient::disableEventStreamV23,
                 V24, webhookB2bClient::disableEventStreamV24,
@@ -2980,7 +2973,6 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 V26, webhookB2bClient::disableEventStreamV26,
                 V27, webhookB2bClient::disableEventStreamV27
         );
-
         try {
             getEventStreamListByVersion(version).stream()
                     .map(item -> {
@@ -2998,7 +2990,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
     }
 
-    private void deleteStreamWrapper(StreamVersion streamVersion, String pa, UUID streamID) {
+    public void deleteStreamWrapper(StreamVersion streamVersion, String pa, UUID streamID) {
         deleteStreamWrapperWithoutReleaseStreamCreationSlot(streamVersion, pa, streamID);
 //        if(deleteStreamWrapperWithoutReleaseStreamCreationSlot(streamVersion,pa,streamID)){
 //            //releaseStreamCreationSlotInternal(pa);
@@ -3421,18 +3413,6 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             String message = assertionFailedError.getMessage() +
                     " {IUN: " + sharedSteps.getSentNotification().getIun() + " -WEBHOOK: " + getStreamId() + " }";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-        }
-    }
-
-    private <T> T deepCopy(Object obj, Class<T> toClass) {
-        ObjectMapper objMapper = JsonMapper.builder()
-                .addModule(new JavaTimeModule())
-                .build();
-        try {
-            String json = objMapper.writeValueAsString(obj);
-            return objMapper.readValue(json, toClass);
-        } catch (JsonProcessingException exc) {
-            throw new PnB2bException(exc.getMessage());
         }
     }
 }
