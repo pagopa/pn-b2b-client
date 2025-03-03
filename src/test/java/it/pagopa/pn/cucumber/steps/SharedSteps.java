@@ -152,6 +152,10 @@ public class SharedSteps {
 
     @Getter
     @Setter
+    private ProgressResponseElementV27 progressResponseElementV27;
+
+    @Getter
+    @Setter
     private it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamMetadataResponse eventStream;
 
     @Getter
@@ -288,6 +292,11 @@ public class SharedSteps {
     @Getter
     @Setter
     private FullSentNotificationV25 notificationResponseCompleteV25;
+
+    //V26
+    @Getter
+    @Setter
+    private FullSentNotificationV26 notificationResponseCompleteV26;
 
     @Getter
     @Setter
@@ -1749,6 +1758,9 @@ public class SharedSteps {
             case "v21" -> this.notificationRequestV21.setSenderTaxId(getSenderTaxIdFromProperties(settedPa));
             case "v23" -> this.notificationRequest.setSenderTaxId(getSenderTaxIdFromProperties(settedPa));
             case "v24" -> this.notificationRequestV24.setSenderTaxId(getSenderTaxIdFromProperties(settedPa));
+//            case "v25" -> this.notificationRequestV25.setSenderTaxId(getSenderTaxIdFromProperties(settedPa));
+//            case "v26" -> this.notificationRequestV26.setSenderTaxId(getSenderTaxIdFromProperties(settedPa));
+//            case "v27" -> this.notificationRequestV27.setSenderTaxId(getSenderTaxIdFromProperties(settedPa));
 
         }
     }
@@ -1825,12 +1837,12 @@ public class SharedSteps {
         return notificationResponseCompleteV21;
     }
 
-    public FullSentNotificationV25 getSentNotificationV25() {
-        return notificationResponseCompleteV25;
-    }
-
     public FullSentNotificationV23 getSentNotificationV23() {
         return notificationResponseCompleteV23;
+    }
+
+    public FullSentNotificationV25 getSentNotificationV25() {
+        return notificationResponseCompleteV25;
     }
 
     public void setSentNotification(FullSentNotificationV26 notificationResponseComplete) {
@@ -1849,13 +1861,14 @@ public class SharedSteps {
         this.notificationResponseCompleteV21 = notificationResponseCompleteV21;
     }
 
+    public void setSentNotificationV23(FullSentNotificationV23 notificationResponseCompleteV23) {
+        this.notificationResponseCompleteV23 = notificationResponseCompleteV23;
+    }
+
     public void setSentNotificationV25(FullSentNotificationV25 notificationResponseCompleteV25) {
         this.notificationResponseCompleteV25 = notificationResponseCompleteV25;
     }
 
-    public void setSentNotificationV23(FullSentNotificationV23 notificationResponseCompleteV23) {
-        this.notificationResponseCompleteV23 = notificationResponseCompleteV23;
-    }
 
     public void selectPA(String apiKey) {
         switch (apiKey) {
