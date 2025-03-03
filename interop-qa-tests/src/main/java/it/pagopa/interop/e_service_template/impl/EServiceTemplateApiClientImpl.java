@@ -8,6 +8,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemp
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionSeed;
 import java.util.UUID;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -46,6 +47,24 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
         UpdateEServiceTemplateSeed updateEServiceTemplateSeed) {
         // TODO 28/02/2025: il template id, a differenza di altre api, se lo aspetta in semplice formato stringa e non UUID, va segnalato
         eserviceTemplatesApi.updateEServiceTemplate(xCorrelationId, eServiceTemplateId.toString(), updateEServiceTemplateSeed);
+    }
+
+
+    @Override
+    public void updateEServiceTemplateVersion(
+        String xCorrelationId,
+        UUID eServiceTemplateId,
+        UUID eServiceTemplateVersionId,
+        UpdateEServiceTemplateVersionSeed seed)
+    {
+        eserviceTemplatesApi.updateDraftTemplateVersion(
+            xCorrelationId,
+
+            // TODO 28/02/2025: gli id, a differenza di altre api, se li aspetta in semplice formato stringa e non UUID, va segnalato
+            eServiceTemplateId.toString(),
+            eServiceTemplateVersionId.toString(),
+
+            seed);
     }
 
     @Override

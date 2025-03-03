@@ -11,6 +11,7 @@ import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTechnology;
@@ -19,6 +20,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSee
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.VersionSeedForEServiceTemplateCreation;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
@@ -33,6 +35,8 @@ import org.springframework.http.ResponseEntity;
 
 @Data
 public class EServiceTemplateSteps {
+
+
     /** Stores data on an e-service template useful for testing */
     record EServiceTemplateInfo(String name, UUID id, UUID lastVersionId){}
 
@@ -46,6 +50,7 @@ public class EServiceTemplateSteps {
 
     private EServiceTemplateInfo lastTemplateManaged;
     private UpdateEServiceTemplateSeed lastTemplateUpdateSeed;
+    private UpdateEServiceTemplateVersionSeed lastTemplateVersionUpdateSeed;
 
     public EServiceTemplateSteps(ClientTokenConfigurator clientTokenConfigurator,
                                 DataPreparationService dataPreparationService,
@@ -108,7 +113,8 @@ public class EServiceTemplateSteps {
             .audienceDescription("Nuova audience description")
             .eserviceDescription("Nuova descrizione del servizio")
             .technology(EServiceTechnology.SOAP)
-            .mode(EServiceMode.RECEIVE);
+            .mode(EServiceMode.RECEIVE)
+            .isSignalHubEnabled(false);
         updateEServiceTemplate(eServiceTemplateId, lastTemplateUpdateSeed);
     }
 
@@ -119,7 +125,7 @@ public class EServiceTemplateSteps {
 
         try {
             pollingService.makePolling(
-                    () -> httpCallExecutor.performCall(
+                    () -> httpCallExecutor.performCall( // TODO è stata introdotta la API specifica per i template, refattorizzare usando quella (non solo qui) per i check che riguardano solo i template
                         () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
                             sharedStepsContext.getXCorrelationId(),
                             eServiceTemplateId,
@@ -130,7 +136,7 @@ public class EServiceTemplateSteps {
             );
         } catch (PollingPredicateException e) {
             Assertions.fail("Le modifiche all'e-service template non sono state "
-                    + "applicate correttamente: le modifiche apportate '{}' non sono compatibili con il risultato ricevuto '{}'",
+                    + "applicate correttamente: le modifiche apportate '%s' non sono compatibili con il risultato ricevuto '%s'",
                 lastTemplateUpdateSeed, httpCallExecutor.getResponse());
         }
     }
@@ -175,6 +181,76 @@ public class EServiceTemplateSteps {
             lastUpdate.getEserviceDescription().equals(retrievedTemplate.getEserviceDescription()) &&
             lastUpdate.getTechnology().equals(retrievedTemplate.getTechnology()) &&
             lastUpdate.getMode().equals(retrievedTemplate.getMode());
+    }
+
+    @When("l'utente tenta delle modifiche alla versione dell'e-service template")
+    public void updateEServiceTemplateVersion() {
+        lastTemplateVersionUpdateSeed = new UpdateEServiceTemplateVersionSeed()
+            .agreementApprovalPolicy(AgreementApprovalPolicy.AUTOMATIC)
+            //.attributes() <-- TODO costoso da implementare, rimandato
+            .dailyCallsPerConsumer(100)
+            .dailyCallsTotal(1000)
+            .voucherLifespan(86400)
+            .description("Nuova descrizione della versione");
+        updateEServiceTemplateVersion(
+            this.lastTemplateManaged.id(),
+            this.lastTemplateManaged.lastVersionId(),
+            lastTemplateVersionUpdateSeed);
+    }
+
+    @Then("le modifiche alla versione sono state applicate correttamente")
+    public void checkEServiceTemplateVersionUpdate() {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        UUID eServiceTemplateVersionId = lastTemplateManaged.lastVersionId();
+        try {
+            pollingService.makePolling(
+                () -> httpCallExecutor.performCall(
+                    () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
+                        sharedStepsContext.getXCorrelationId(),
+                        eServiceTemplateId,
+                        eServiceTemplateVersionId),
+                    ResponseEntity::getStatusCode),
+                res -> nonNull(res.getBody()) && this.areConsistent(lastTemplateVersionUpdateSeed, res.getBody()),
+                "La versione dell'e-service template non corrisponde alle modifiche apportate"
+            );
+        } catch (PollingPredicateException e) {
+            Assertions.fail("Le modifiche alla versione dell'e-service template non sono state "
+                    + "applicate correttamente: le modifiche apportate '%s' non sono compatibili con il risultato ricevuto '%s'",
+                lastTemplateUpdateSeed, httpCallExecutor.getResponse());
+        }
+    }
+
+    @When("l'utente tenta delle modifiche alla versione di un e-service template inesistente")
+    public void updateNonExistentEServiceTemplateVersion() {
+        UpdateEServiceTemplateVersionSeed updateSeed = new UpdateEServiceTemplateVersionSeed()
+            .agreementApprovalPolicy(AgreementApprovalPolicy.AUTOMATIC)
+            //.attributes() <-- TODO costoso da implementare, rimandato
+            .dailyCallsPerConsumer(500)
+            .dailyCallsTotal(5000)
+            .voucherLifespan(586400)
+            .description("Nuova descrizione della versione");
+        updateEServiceTemplateVersion(UUID.randomUUID(), UUID.randomUUID(), updateSeed);
+    }
+
+    private void updateEServiceTemplateVersion(UUID eServiceTemplateId, UUID eServiceTemplateVersionId, UpdateEServiceTemplateVersionSeed sameNameUpdateSeed) {
+        String userToken = getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+        httpCallExecutor.performCall(
+            () -> eServiceTemplateClient.updateEServiceTemplateVersion(
+                sharedStepsContext.getXCorrelationId(),
+                eServiceTemplateId,
+                eServiceTemplateVersionId,
+                sameNameUpdateSeed));
+    }
+
+    // TODO diverse NPE possibili, agire di conseguenza
+    private boolean areConsistent(UpdateEServiceTemplateVersionSeed lastUpdate, EServiceTemplateVersionDetails retrievedTemplate) {
+        return //lastUpdate.getAttributes().equals(retrievedTemplate.getAttributes()) &&  <- TODO costoso da implementare, rimandato
+            lastUpdate.getDescription().equals(retrievedTemplate.getDescription()) &&
+            lastUpdate.getAgreementApprovalPolicy().equals(retrievedTemplate.getAgreementApprovalPolicy()) &&
+            lastUpdate.getVoucherLifespan().equals(retrievedTemplate.getVoucherLifespan()) &&
+            lastUpdate.getDailyCallsTotal().equals(retrievedTemplate.getDailyCallsTotal()) &&
+            lastUpdate.getDailyCallsPerConsumer().equals(retrievedTemplate.getDailyCallsPerConsumer());
     }
 
     /** Return a new {@link EServiceTemplateSeed} with only the mandatory fields set
