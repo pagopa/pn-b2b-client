@@ -17,6 +17,7 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.StreamCreationRequestV25;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.StreamMetadataResponseV24;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.StreamMetadataResponseV25;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.StreamRequestV24;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.StreamRequestV25;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementDetailsV26;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV24;
@@ -66,8 +67,10 @@ import java.lang.reflect.Field;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps.StreamVersion.*;
 
@@ -91,6 +94,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     private List<StreamMetadataResponseV26> eventStreamListV26;
     private List<StreamMetadataResponseV27> eventStreamListV27;
     private StreamRequestV23 streamRequestV23;
+    private StreamRequestV24 streamRequestV24;
     private StreamRequestV25 streamRequestV25;
     private StreamRequestV26 streamRequestV26;
     private StreamRequestV27 streamRequestV27;
@@ -767,28 +771,36 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
     @And("si aggiorna(no) (lo)(gli) stream che non esiste e apiKey aggiornata con versione {string}")
     public void updateStreamNotExist(String version) {
+        Map<StreamVersion, Supplier<Object>> streamRequestSupplier = Map.of(
+                V23, () -> (streamRequestV23 == null) ? new StreamRequestV23() : streamRequestV23,
+                V24, () -> (streamRequestV24 == null) ? new StreamRequestV24() : streamRequestV24,
+                V25, () -> (streamRequestV25 == null) ? new StreamRequestV25() : streamRequestV25,
+                V26, () -> (streamRequestV26 == null) ? new StreamRequestV26() : streamRequestV26,
+                V27, () -> (streamRequestV27 == null) ? new StreamRequestV27() : streamRequestV27
+        );
+        Map<StreamVersion, Supplier<UUID>> eventStreamSupplier = Map.of(
+                V23, () -> this.eventStreamListV23.get(0).getStreamId(),
+                V24, () -> this.eventStreamListV24.get(0).getStreamId(),
+                V25, () -> this.eventStreamListV25.get(0).getStreamId(),
+                V26, () -> this.eventStreamListV26.get(0).getStreamId(),
+                V27, () -> this.eventStreamListV27.get(0).getStreamId()
+        );
+        Map<StreamVersion, BiFunction<UUID, Object, Object>> updateStreamFunction = Map.of(
+                V23, (streamId, streamRequest) -> webhookB2bClient.updateEventStreamV23(streamId, (StreamRequestV23) streamRequest),
+                V24, (streamId, streamRequest) -> webhookB2bClient.updateEventStreamV24(streamId, (StreamRequestV24) streamRequest),
+                V25, (streamId, streamRequest) -> webhookB2bClient.updateEventStreamV25(streamId, (StreamRequestV25) streamRequest),
+                V26, (streamId, streamRequest) -> webhookB2bClient.updateEventStreamV26(streamId, (StreamRequestV26) streamRequest),
+                V27, (streamId, streamRequest) -> webhookB2bClient.updateEventStreamV27(streamId, (StreamRequestV27) streamRequest)
+        );
         Object streamRequest;
         UUID streamId;
         updateApiKeyForStream();
         try {
             StreamVersion streamVersion = getStreamVersion(version);
-            switch (streamVersion) {
-                case V23 -> {
-                    streamRequest = (streamRequestV23 == null) ? new StreamRequestV23() : streamRequestV23;
-                    streamId = this.eventStreamListV23.get(0).getStreamId();
-                }
-                case V25 -> {
-                    streamRequest = (streamRequestV25 == null) ? new StreamRequestV25() : streamRequestV25;
-                    streamId = this.eventStreamListV25.get(0).getStreamId();
-                }
-                default -> throw new IllegalArgumentException("Not supported version: " + version);
-            }
+            streamRequest = streamRequestSupplier.get(streamVersion).get();
+            streamId = eventStreamSupplier.get(streamVersion).get();
             initializeStreamRequest(streamRequest);
-            if (streamVersion.equals(V23)) {
-                webhookB2bClient.updateEventStreamV23(streamId, (StreamRequestV23) streamRequest);
-            } else {
-                webhookB2bClient.updateEventStreamV25(streamId, (StreamRequestV25) streamRequest);
-            }
+            updateStreamFunction.get(streamVersion).apply(streamId, streamRequest);
         } catch (HttpStatusCodeException e) {
             this.notificationError = e;
             sharedSteps.setNotificationError(e);
