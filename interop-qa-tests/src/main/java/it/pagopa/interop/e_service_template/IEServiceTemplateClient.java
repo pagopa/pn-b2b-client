@@ -2,6 +2,7 @@ package it.pagopa.interop.e_service_template;
 
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateSeed;
@@ -35,4 +36,7 @@ public interface IEServiceTemplateClient extends SettableBearerToken {
     ResponseEntity<EServiceTemplateVersionDetails> getEServiceTemplateVersionWithHttpInfo(
         String xCorrelationId,
         UUID eServiceTemplateId, UUID eServiceTemplateVersionId);
+
+    void addRiskAnalysis(String xCorrelationId, UUID eServiceTemplateId,
+        EServiceRiskAnalysisSeed seed);
 }

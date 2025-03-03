@@ -5,6 +5,7 @@ import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EserviceTemplatesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateSeed;
@@ -107,6 +108,15 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
         UUID eServiceTemplateId, UUID eServiceTemplateVersionId) {
         return eserviceTemplatesApi.getEServiceTemplateVersionWithHttpInfo(xCorrelationId, eServiceTemplateId,
             eServiceTemplateVersionId);
+    }
+
+    @Override
+    public void addRiskAnalysis(
+        String xCorrelationId,
+        UUID eServiceTemplateId,
+        EServiceRiskAnalysisSeed seed)
+    {
+        this.eserviceTemplatesApi.createEServiceTemplateRiskAnalysis(xCorrelationId, eServiceTemplateId, seed);
     }
 
     @Override

@@ -1,10 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template;
 
-import static java.util.Objects.nonNull;
-import static java.util.Objects.requireNonNull;
-import static org.assertj.core.api.Assertions.assertThat;
-
 import io.cucumber.java.ParameterType;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
@@ -14,11 +11,14 @@ import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysis;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTechnology;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.VersionSeedForEServiceTemplateCreation;
@@ -26,17 +26,25 @@ import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import static java.util.Objects.nonNull;
+import static java.util.Objects.requireNonNull;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import lombok.Data;
 import org.assertj.core.api.Assertions;
+import static org.assertj.core.api.Assertions.assertThat;
+import org.jeasy.random.EasyRandom;
+import org.jeasy.random.EasyRandomParameters;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 @Data
 public class EServiceTemplateSteps {
-
-
     /** Stores data on an e-service template useful for testing */
     record EServiceTemplateInfo(String name, UUID id, UUID lastVersionId){}
 
@@ -51,6 +59,21 @@ public class EServiceTemplateSteps {
     private EServiceTemplateInfo lastTemplateManaged;
     private UpdateEServiceTemplateSeed lastTemplateUpdateSeed;
     private UpdateEServiceTemplateVersionSeed lastTemplateVersionUpdateSeed;
+    private EServiceRiskAnalysisSeed lastAddedRiskAnalysis;
+
+    // TODO farne un bean centralizzato riutilizzabile ovunque
+    private static EasyRandomParameters easyRandomParameters = new EasyRandomParameters()
+        .seed(123L)
+        .objectPoolSize(20)
+        .randomizationDepth(5)
+        .charset(StandardCharsets.UTF_8)
+        .stringLengthRange(5, 30)
+        .collectionSizeRange(1, 10)
+        .scanClasspathForConcreteTypes(true)
+        .overrideDefaultInitialization(true)
+        .ignoreRandomizationErrors(false)
+        .randomize(EServiceTemplateSteps::isAnswersFieldInRiskAnalysisFormSeed, EServiceTemplateSteps::randomAnswers);
+    private static EasyRandom easyRandom = new EasyRandom(easyRandomParameters);
 
     public EServiceTemplateSteps(ClientTokenConfigurator clientTokenConfigurator,
                                 DataPreparationService dataPreparationService,
@@ -62,6 +85,24 @@ public class EServiceTemplateSteps {
         this.eServiceTemplateClient = clientTokenConfigurator.getEServiceTemplateClient();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
+    }
+
+    private static boolean isAnswersFieldInRiskAnalysisFormSeed(Field field) {
+        return field.getName().equals("answers") && field.getDeclaringClass().equals(
+            RiskAnalysisFormSeed.class);
+    }
+
+    private static Map<String, List<String>> randomAnswers() {
+        int mapCapacity = 10;
+        EasyRandom easyRandom = new EasyRandom();
+        Map<String, List<String>> map = new HashMap<>(mapCapacity);
+        for (int i = 0; i < mapCapacity; i++) {
+            map.put(
+                easyRandom.nextObject(String.class),
+                easyRandom.objects(String.class, 5).toList());
+        }
+
+        return map;
     }
 
     @ParameterType("erogazione|ricezione")
@@ -232,6 +273,66 @@ public class EServiceTemplateSteps {
         updateEServiceTemplateVersion(UUID.randomUUID(), UUID.randomUUID(), updateSeed);
     }
 
+    @When("l'utente tenta l'aggiunta di una risk analysis all'e-service template")
+    public void addRiskAnalysisToEServiceTemplate() {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        lastAddedRiskAnalysis = easyRandom.nextObject(EServiceRiskAnalysisSeed.class);
+        addRiskAnalysisToEServiceTemplate(eServiceTemplateId, lastAddedRiskAnalysis);
+    }
+
+    private void addRiskAnalysisToEServiceTemplate(UUID eServiceTemplateId, EServiceRiskAnalysisSeed riskAnalysisSeed) {
+        String userToken = getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+        httpCallExecutor.performCall(
+            () -> eServiceTemplateClient.addRiskAnalysis(
+                sharedStepsContext.getXCorrelationId(),
+                eServiceTemplateId,
+                riskAnalysisSeed));
+    }
+
+    @Then("l'aggiunta della risk analysis all'e-service è stata effettuata correttamente")
+    public void checkRiskAnalysisAddedToEServiceTemplate() {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        UUID eServiceTemplateVersionId = lastTemplateManaged.lastVersionId();
+
+        try {
+            pollingService.makePolling(
+                () -> httpCallExecutor.performCall(
+                    () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
+                        sharedStepsContext.getXCorrelationId(),
+                        eServiceTemplateId,
+                        eServiceTemplateVersionId),
+                    ResponseEntity::getStatusCode),
+                res ->
+                    nonNull(res.getBody()) &&
+                    this.areConsistent(lastAddedRiskAnalysis, res.getBody().getEserviceTemplate().getRiskAnalysis().get(0)),
+                "La risk analysis non è stata aggiunta correttamente all'e-service template"
+            );
+        } catch (PollingPredicateException e) {
+            Assertions.fail("La risk analysis non è stata aggiunta correttamente all'e-service template");
+        }
+    }
+
+    @When("l'utente tenta l'aggiunta di una risk analysis a un e-service template inesistente")
+    public void addRiskAnalysisToNonExistentEServiceTemplate() {
+        EServiceRiskAnalysisSeed riskAnalysisSeed = easyRandom.nextObject(EServiceRiskAnalysisSeed.class);
+        addRiskAnalysisToEServiceTemplate(UUID.randomUUID(), riskAnalysisSeed);
+    }
+
+    @Given("l'utente effettua l'aggiunta di una risk analysis all'e-service template con successo")
+    public void addRiskAnalysisToEServiceTemplateSuccessfully() {
+        addRiskAnalysisToEServiceTemplate();
+        checkRiskAnalysisAddedToEServiceTemplate();
+    }
+
+    @When("l'utente tenta l'aggiunta di una risk analysis all'e-service template specificando lo stesso nome")
+    public void addRiskAnalysisToEServiceTemplateWithSameName() {
+        EServiceRiskAnalysisSeed sameNameRiskAnalysisSeed = easyRandom
+            .nextObject(EServiceRiskAnalysisSeed.class)
+            .name(lastAddedRiskAnalysis.getName());
+        addRiskAnalysisToEServiceTemplate(lastTemplateManaged.id(), sameNameRiskAnalysisSeed);
+    }
+
     private void updateEServiceTemplateVersion(UUID eServiceTemplateId, UUID eServiceTemplateVersionId, UpdateEServiceTemplateVersionSeed sameNameUpdateSeed) {
         String userToken = getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);
@@ -251,6 +352,17 @@ public class EServiceTemplateSteps {
             lastUpdate.getVoucherLifespan().equals(retrievedTemplate.getVoucherLifespan()) &&
             lastUpdate.getDailyCallsTotal().equals(retrievedTemplate.getDailyCallsTotal()) &&
             lastUpdate.getDailyCallsPerConsumer().equals(retrievedTemplate.getDailyCallsPerConsumer());
+    }
+
+    private boolean areConsistent(EServiceRiskAnalysisSeed lastRiskAnalysis, EServiceRiskAnalysis retrievedAnalysis) {
+        return lastRiskAnalysis.getName().equals(retrievedAnalysis.getName()) &&
+            lastRiskAnalysis.getRiskAnalysisForm().equals(retrievedAnalysis.getRiskAnalysisForm());
+
+
+        /* TODO retrievedAnalysis ha il campo "createdAt" che però è di tipo stringa: stando
+         * a https://stackoverflow.com/questions/49379006/what-is-the-correct-way-to-declare-a-date-in-an-openapi-swagger-file#:~:text=In%20OpenAPI%2C%20the%20date-time%20format%20is%20used%20to,a%20breakdown%3A%20Regex%20for%20this%3A%20%5Ed%7B4%7D-d%7B2%7D-d%7B2%7DTd%7B2%7D%3Ad%7B2%7D%3Ad%7B2%7DZ%24%20CODE%20%22fmt%22
+         * dovrebbe trattarsi dello standard ISO 8601; arricchire il test così da verificare anche questo dato
+         */
     }
 
     /** Return a new {@link EServiceTemplateSeed} with only the mandatory fields set

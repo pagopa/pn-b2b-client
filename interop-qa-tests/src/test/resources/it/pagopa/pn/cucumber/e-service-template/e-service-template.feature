@@ -261,6 +261,80 @@ Feature: Test API of e-service template
     When l'utente tenta delle modifiche alla versione di un e-service template inesistente
     Then si ottiene status code 404
 
+  Scenario Outline: [INCARICATO-EST-021] L'aggiunta di una risk analysis a un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta l'aggiunta di una risk analysis all'e-service template
+    Then si ottiene status code 403
+    Examples:
+      | ruolo         | stato     |
+      | security      | DRAFT     |
+      | api,security  | DRAFT     |
+      | support       | DRAFT     |
+      | security      | PUBLISHED |
+      | api,security  | PUBLISHED |
+      | support       | PUBLISHED |
+      | security      | SUSPENDED |
+      | api,security  | SUSPENDED |
+      | support       | SUSPENDED |
+
+  Scenario Outline: [INCARICATO-EST-022] L'aggiunta di una risk analysis a un e-service template in stato DRAFT può essere fatta da un ente in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta l'aggiunta di una risk analysis all'e-service template
+    Then si ottiene status code 200
+    And l'aggiunta della risk analysis all'e-service è stata effettuata correttamente
+    Examples:
+      | ruolo   |
+      | admin   |
+      | api     |
+
+  Scenario Outline: [INCARICATO-EST-023] L'aggiunta di una risk analysis a un e-service template in stato PUBLISHED o SUSPENDED non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta l'aggiunta di una risk analysis all'e-service template
+    Then si ottiene status code 403
+    Examples:
+      | ruolo   | stato |
+      | admin   | PUBLISHED |
+      | api     | PUBLISHED |
+      | admin   | SUSPENDED |
+      | api     | SUSPENDED |
+
+  Scenario Outline: [INCARICATO-EST-024] L'aggiunta di una risk analysis a un e-service template in modalità erogazione non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta l'aggiunta di una risk analysis all'e-service template
+    Then si ottiene status code 403
+    Examples:
+      | ruolo   |
+      | admin   |
+      | api     |
+
+  Scenario: [INCARICATO-EST-025] L'aggiunta di una risk analysis a un e-service template in stato DRAFT non può essere fatta da una PA diversa da quella creatrice del template
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    When l'utente è un "admin" di "PA2"
+    And l'utente tenta l'aggiunta di una risk analysis all'e-service template
+    Then si ottiene status code 403
+
+    #TODO scenario non presente fra i test richiesti, avvisare Stefano Netti
+  Scenario: [INCARICATO-EST-026] L'aggiunta di una risk analysis a un e-service template inesistente non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    When l'utente tenta l'aggiunta di una risk analysis a un e-service template inesistente
+    Then si ottiene status code 404
+
+  Scenario: [INCARICATO-EST-027] L'aggiunta di una risk analysis a un e-service template in stato DRAFT non può essere fatta specificando lo stesso nome di una risk analysis precedentemente creata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    And l'utente effettua l'aggiunta di una risk analysis all'e-service template con successo
+    When l'utente tenta l'aggiunta di una risk analysis all'e-service template specificando lo stesso nome
+    Then si ottiene status code 409
+
     #TODO smistare gli scenari in file .feature più piccoli. Possibili divisioni:
       # test che rigurdano il ciclo di vita del template (creazione, pubblicazione, sospensione, riattivazione, cancellazione)
       # test che riguardano le modifiche a risorse esistenti
