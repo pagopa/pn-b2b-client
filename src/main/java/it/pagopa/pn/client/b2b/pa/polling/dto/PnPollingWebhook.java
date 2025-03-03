@@ -9,7 +9,7 @@ import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebh
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
+import java.util.LinkedList;
 
 
 @Getter
@@ -24,10 +24,10 @@ public class PnPollingWebhook {
     private it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.NotificationStatusV26 notificationStatusV26;
     private it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v27.NotificationStatus notificationStatus_noVersionV27;
     private it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v27.NotificationStatusV26 notificationStatusV27;
-    private List<ProgressResponseElement> progressResponseElementsV20;
-    private List<ProgressResponseElementV23> progressResponseElementsV23;
-    private List<ProgressResponseElementV24> progressResponseElementsV24;
-    private List<ProgressResponseElementV25> progressResponseElementsV25;
-    private List<ProgressResponseElementV26> progressResponseElementsV26;
-    private List<ProgressResponseElementV27> progressResponseElementsV27;
+    private LinkedList<ProgressResponseElement> progressResponseElementListV20;
+    private LinkedList<ProgressResponseElementV23> progressResponseElementListV23;
+    private LinkedList<ProgressResponseElementV24> progressResponseElementListV24;
+    private LinkedList<ProgressResponseElementV25> progressResponseElementListV25;
+    private LinkedList<ProgressResponseElementV26> progressResponseElementListV26;
+    private LinkedList<ProgressResponseElementV27> progressResponseElementListV27;
 }
