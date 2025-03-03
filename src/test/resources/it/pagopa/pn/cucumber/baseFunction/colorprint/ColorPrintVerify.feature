@@ -19,18 +19,16 @@ Feature: Verifica delle stampe a colori con successivo controllo manuale delle c
       | physicalAddress_addressDetails      | 0_CHAR                       |
       | physicalAddress_municipalityDetails | 0_CHAR                       |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then stampa log dello IUN della notifica
+    Then stampa log dello IUN della notifica "<physicalCommunication>" con allegato "<documentType>" su comune "<municipality>"
     Examples:
     | documentType      | zip   | municipality | province | physicalCommunication |
     | ALLEGATO_1_BN     | 10124 | Torino       | TO       | AR_REGISTERED_LETTER  |
     | ALLEGATO_3_COLORI | 10124 | Torino       | TO       | REGISTERED_LETTER_890 |
-    | ALLEGATO_1_BN     | 80124 | Napoli       | NA       | AR_REGISTERED_LETTER  |
-    | ALLEGATO_3_COLORI | 80124 | Napoli       | NA       | REGISTERED_LETTER_890 |
+    | ALLEGATO_2_BN     | 80124 | Napoli       | NA       | AR_REGISTERED_LETTER  |
+    | ALLEGATO_4_COLORI | 80124 | Napoli       | NA       | REGISTERED_LETTER_890 |
     | ALLEGATO_1_BN     | 00124 | Roma         | RM       | AR_REGISTERED_LETTER  |
     | ALLEGATO_3_COLORI | 00124 | Roma         | RM       | REGISTERED_LETTER_890 |
-    | ALLEGATO_1_BN     | 30124 | Venezia      | VE       | AR_REGISTERED_LETTER  |
-    | ALLEGATO_3_COLORI | 30124 | Venezia      | VE       | REGISTERED_LETTER_890 |
-    | ALLEGATO_3_COLORI | 70124 | Bari         | BA       | AR_REGISTERED_LETTER  |
-    | ALLEGATO_3_COLORI | 70124 | Venezia      | BA       | REGISTERED_LETTER_890 |
-    #| ALLEGATO_2_BN     |       |              |          |      |
-    #| ALLEGATO_4_COLORI |       |              |          |      |
+    | ALLEGATO_2_BN     | 30124 | Venezia      | VE       | AR_REGISTERED_LETTER  |
+    | ALLEGATO_4_COLORI | 30124 | Venezia      | VE       | REGISTERED_LETTER_890 |
+    | ALLEGATO_1_BN     | 70124 | Bari         | BA       | AR_REGISTERED_LETTER  |
+    | ALLEGATO_3_COLORI | 70124 | Bari         | BA       | REGISTERED_LETTER_890 |

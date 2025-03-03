@@ -2401,8 +2401,8 @@ public class SharedSteps {
                 notificationRecipientV23, new HashMap<>());
     }
 
-    @Then("stampa log dello IUN della notifica")
-    public void stampaLogDelloIUNDellaNotifica() {
-        log.info("notifica STAMPA COLORI IUN: {}", getSentNotification().getIun());
+    @Then("stampa log dello IUN della notifica {string} con allegato {string} su comune {string}")
+    public void stampaLogDelloIUNDellaNotificaConAllegatoSuComune(String notificationType, String attachment, String municipality) {
+        log.info("notifica STAMPA COLORI IUN: {}, notifica: {}, allegato: {}, comune: {}", getSentNotification().getIun(), notificationType, attachment, municipality);
     }
 }
