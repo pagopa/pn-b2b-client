@@ -451,19 +451,19 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             switch (streamVersion) {
                 case V23 -> {
                     streamRequestV23 = new StreamRequestV23();
-                    initializeRequest(streamRequestV23, action, pa);
+                    initializeRequest(streamVersion, action, pa);
                 }
                 case V25 -> {
                     streamRequestV25 = new StreamRequestV25();
-                    initializeRequest(streamRequestV25, action, pa);
+                    initializeRequest(streamVersion, action, pa);
                 }
                 case V26 -> {
                     streamRequestV26 = new StreamRequestV26();
-                    initializeRequest(streamRequestV26, action, pa);
+                    initializeRequest(streamVersion, action, pa);
                 }
                 case V27 -> {
                     streamRequestV27 = new StreamRequestV27();
-                    initializeRequest(streamRequestV27, action, pa);
+                    initializeRequest(streamVersion, action, pa);
                 }
                 default -> throw new IllegalArgumentException("Version not supported!: " + version);
             }
@@ -471,23 +471,31 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         updateStream(streamVersion.toString());
     }
 
-    private void initializeRequest(Object streamRequest, String action, String pa) {
+    private void initializeRequest(StreamVersion streamVersion, String action, String pa) {
+        Map<StreamVersion, Supplier<List<String>>> groupGetSupplier = Map.of(
+                V23, () -> eventStreamListV23.stream().findFirst().map(StreamMetadataResponseV23::getGroups).orElse(null),
+                V24, () -> eventStreamListV24.stream().findFirst().map(StreamMetadataResponseV24::getGroups).orElse(null),
+                V25, () -> eventStreamListV25.stream().findFirst().map(StreamMetadataResponseV25::getGroups).orElse(null),
+                V26, () -> eventStreamListV26.stream().findFirst().map(StreamMetadataResponseV26::getGroups).orElse(null),
+                V27, () -> eventStreamListV27.stream().findFirst().map(StreamMetadataResponseV27::getGroups).orElse(null)
+        );
         List<String> groups = switch (action.toLowerCase()) {
             case "rimuove" ->
                     (sharedSteps.getRequestNewApiKey() != null && sharedSteps.getRequestNewApiKey().getGroups().size() >= 2)
                             ? sharedSteps.getRequestNewApiKey().getGroups().subList(0, 0)
                             : null;
             case "aggiunge" -> sharedSteps.getGroupAllActiveByPa(pa);
-            case "stesso" -> (streamRequest instanceof StreamRequestV23)
-                    ? eventStreamListV23.stream().findFirst().map(StreamMetadataResponseV23::getGroups).orElse(null)
-                    : eventStreamListV25.stream().findFirst().map(StreamMetadataResponseV25::getGroups).orElse(null);
-            default -> null;
+            case "stesso" -> groupGetSupplier.get(streamVersion).get();
+            default -> throw new IllegalArgumentException("Action not supported!: " + action);
         };
-        if (streamRequest instanceof StreamRequestV23) {
-            streamRequestV23.setGroups(groups);
-        } else if (streamRequest instanceof StreamRequestV25) {
-            streamRequestV25.setGroups(groups);
-        }
+        Map<StreamVersion, Consumer<List<String>>> groupSetSupplier = Map.of(
+                V23, groupList -> streamRequestV23.setGroups(groupList),
+                V24, groupList -> streamRequestV24.setGroups(groupList),
+                V25, groupList -> streamRequestV25.setGroups(groupList),
+                V26, groupList -> streamRequestV26.setGroups(groupList),
+                V27, groupList -> streamRequestV27.setGroups(groupList)
+        );
+        groupSetSupplier.get(streamVersion).accept(groups);
     }
 
 
@@ -810,16 +818,19 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     private void initializeStreamRequest(Object streamRequest) {
         if (streamRequest instanceof StreamRequestV23 streamRequestV23) {
             streamRequestV23.setTitle("Stream Update");
-            if (streamRequestV23.getGroups() == null) {
-                streamRequestV23.setGroups(sharedSteps.getRequestNewApiKey().getGroups());
-            }
             streamRequestV23.setEventType(StreamRequestV23.EventTypeEnum.TIMELINE);
+        } else if (streamRequest instanceof StreamRequestV24 streamRequestV24) {
+            streamRequestV24.setTitle("Stream Update");
+            streamRequestV24.setEventType(StreamRequestV24.EventTypeEnum.TIMELINE);
         } else if (streamRequest instanceof StreamRequestV25 streamRequestV25) {
             streamRequestV25.setTitle("Stream Update");
-            if (streamRequestV25.getGroups() == null) {
-                streamRequestV25.setGroups(sharedSteps.getRequestNewApiKey().getGroups());
-            }
             streamRequestV25.setEventType(StreamRequestV25.EventTypeEnum.TIMELINE);
+        } else if (streamRequest instanceof StreamRequestV26 streamRequestV26) {
+            streamRequestV26.setTitle("Stream Update");
+            streamRequestV26.setEventType(StreamRequestV26.EventTypeEnum.TIMELINE);
+        } else if (streamRequest instanceof StreamRequestV27 streamRequestV27) {
+            streamRequestV27.setTitle("Stream Update");
+            streamRequestV27.setEventType(StreamRequestV27.EventTypeEnum.TIMELINE);
         }
     }
 
