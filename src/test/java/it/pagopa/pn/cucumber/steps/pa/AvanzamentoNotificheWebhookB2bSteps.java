@@ -808,13 +808,13 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }
 
     private void initializeStreamRequest(Object streamRequest) {
-        if (streamRequest instanceof StreamRequestV23) {
+        if (streamRequest instanceof StreamRequestV23 streamRequestV23) {
             streamRequestV23.setTitle("Stream Update");
             if (streamRequestV23.getGroups() == null) {
                 streamRequestV23.setGroups(sharedSteps.getRequestNewApiKey().getGroups());
             }
             streamRequestV23.setEventType(StreamRequestV23.EventTypeEnum.TIMELINE);
-        } else if (streamRequest instanceof StreamRequestV25) {
+        } else if (streamRequest instanceof StreamRequestV25 streamRequestV25) {
             streamRequestV25.setTitle("Stream Update");
             if (streamRequestV25.getGroups() == null) {
                 streamRequestV25.setGroups(sharedSteps.getRequestNewApiKey().getGroups());
