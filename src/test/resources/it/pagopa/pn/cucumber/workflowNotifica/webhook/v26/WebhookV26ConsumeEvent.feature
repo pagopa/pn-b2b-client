@@ -55,8 +55,7 @@ Feature: avanzamento notifiche webhook b2b V23
     And viene aggiornata la apiKey utilizzata per gli stream
     And si crea il nuovo stream con versione "V26" per il "Comune_1" con un gruppo disponibile "FIRST"
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi dello stream del "Comune_1" fino allo stato "ACCEPTED" con la versione V23
-    And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "REQUEST_ACCEPTED" con la versione "V23"
+    And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "REQUEST_ACCEPTED" con la versione "V26"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 

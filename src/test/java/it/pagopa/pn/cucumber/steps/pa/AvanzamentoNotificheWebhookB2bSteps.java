@@ -1520,7 +1520,6 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     public void readStreamTimelineElement(String pa, String timelineEventCategory, String version) {
         StreamVersion streamVersion = StreamVersion.valueOf(version);
         setPaWebhook(pa);
-
         TimelineElementSearchResult<?> timelineForStream = getTimelineEventForStream(streamVersion, timelineEventCategory);
         Map<StreamVersion, Supplier<String>> getTimelineElementCategoryName = Map.of(
                 V23, () -> ((TimelineElementCategoryV23) timelineForStream.getTimelineElementCategory()).name(),
