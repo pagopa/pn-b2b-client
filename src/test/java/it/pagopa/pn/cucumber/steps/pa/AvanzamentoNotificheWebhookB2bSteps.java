@@ -2575,22 +2575,46 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
     }
 
+    private void consumeEventForTheStreamVersionCreated() {
+        List<List<?>> eventStreams = Arrays.asList(eventStreamListV23, eventStreamListV24, eventStreamListV25, eventStreamListV26);
+        for (List<?> event : eventStreams) {
+            if (event != null && !event.isEmpty()) {
+                UUID streamId = extractStreamId(event.get(0));
+                if (streamId != null) {
+                    webhookB2bClient.consumeEventStreamHttp(streamId, null);
+                    break;
+                }
+            }
+        }
+    }
+
 
     @When("vengono letti gli eventi di timeline dello stream con versione {string} -Cross Versioning")
     public void vengonoLettiGliEventiDiTimelineDelloStreamDel(String versione) {
         updateApiKeyForStream();
         try {
             switch (versione) {
-                case "V10" ->
-                        webhookB2bClient.consumeEventStreamHttp(this.eventStreamListV23.get(0).getStreamId(), null);
-                case "V23" ->
-                        webhookB2bClient.consumeEventStreamHttpV23(this.eventStreamList.get(0).getStreamId(), null);
+                case "V10" -> consumeEventForTheStreamVersionCreated();
+                case "V23", "V26" -> webhookB2bClient.consumeEventStreamHttpV23(this.eventStreamList.get(0).getStreamId(), null);
                 default -> throw new IllegalArgumentException();
             }
         } catch (HttpStatusCodeException e) {
             this.notificationError = e;
             sharedSteps.setNotificationError(e);
         }
+    }
+
+    private UUID extractStreamId(Object stream) {
+        if (stream instanceof StreamMetadataResponseV23) {
+            return ((StreamMetadataResponseV23) stream).getStreamId();
+        } else if (stream instanceof StreamMetadataResponseV24) {
+            return ((StreamMetadataResponseV24) stream).getStreamId();
+        } else if (stream instanceof StreamMetadataResponseV25) {
+            return ((StreamMetadataResponseV25) stream).getStreamId();
+        } else if (stream instanceof StreamMetadataResponseV26) {
+            return ((StreamMetadataResponseV26) stream).getStreamId();
+        }
+        return null;
     }
 
     /*********************************************************************
