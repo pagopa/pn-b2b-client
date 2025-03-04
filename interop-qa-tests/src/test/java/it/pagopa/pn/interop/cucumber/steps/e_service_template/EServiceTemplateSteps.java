@@ -629,6 +629,37 @@ public class EServiceTemplateSteps {
             : null;
     }
 
+    @When("l'utente tenta il reperimento del documento dalla versione dell'e-service template")
+    public void getDocumentFromEServiceTemplateVersion() {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        UUID eServiceTemplateVersionId = lastTemplateManaged.lastVersionId();
+        getDocumentFromEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, lastAddedDocument.id());
+    }
+
+    @When("l'utente tenta il reperimento di un documento da un e-service template inesistente")
+    public void getDocumentFromNonExistentEServiceTemplate() {
+        getDocumentFromEServiceTemplateVersion(UUID.randomUUID(), UUID.randomUUID(), lastAddedDocument.id());
+    }
+
+    @When("l'utente tenta il reperimento di un documento inesistente dalla versione dell'e-service template")
+    public void getNonExistentDocumentFromEServiceTemplateVersion() {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        UUID eServiceTemplateVersionId = lastTemplateManaged.lastVersionId();
+        getDocumentFromEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, UUID.randomUUID());
+    }
+
+    private void getDocumentFromEServiceTemplateVersion(UUID eServiceTemplateId, UUID eServiceTemplateVersionId, UUID documentId) {
+        String userToken = getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+        httpCallExecutor.performCall(
+            () -> eServiceTemplateClient.getDocumentWithHttpInfo(
+                sharedStepsContext.getXCorrelationId(),
+                eServiceTemplateId,
+                eServiceTemplateVersionId,
+                documentId),
+            ResponseEntity::getStatusCode);
+    }
+
     /* TODO un'alternativa all'uso di metodi come "areConsistent" - che confrontano i campi uno a uno - potrebbe essere
      * l'uso di una libreria di mapping, da usare per mappare un oggetto nell'altro tipo, e quindi procedere con
      * un normale equals(...).

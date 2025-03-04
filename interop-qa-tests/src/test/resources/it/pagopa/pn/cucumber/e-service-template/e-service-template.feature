@@ -538,7 +538,6 @@ Feature: Test API of e-service template
       | DOCUMENT  |
       | INTERFACE |
 
-
   Scenario Outline: [INCARICATO-EST-045] L'aggiunta di un documento/interfaccia a una versione inesistente di un e-service template non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
@@ -548,6 +547,104 @@ Feature: Test API of e-service template
       | kind      |
       | DOCUMENT  |
       | INTERFACE |
+
+  Scenario Outline: [INCARICATO-EST-046] Il reperimento di un documento/interfaccia di un e-service template NON può essere fatto da un ente NON in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
+    And l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta il reperimento del documento dalla versione dell'e-service template
+    Then si ottiene status code 403
+    Examples:
+      | ruolo       | stato     | kind      |
+      | security    | DRAFT     | DOCUMENT  |
+      | api,security| DRAFT     | DOCUMENT  |
+      | support     | DRAFT     | DOCUMENT  |
+      | security    | PUBLISHED | DOCUMENT  |
+      | api,security| PUBLISHED | DOCUMENT  |
+      | support     | PUBLISHED | DOCUMENT  |
+      | security    | SUSPENDED | DOCUMENT  |
+      | api,security| SUSPENDED | DOCUMENT  |
+      | support     | SUSPENDED | DOCUMENT  |
+      | security    | DRAFT     | INTERFACE |
+      | api,security| DRAFT     | INTERFACE |
+      | support     | DRAFT     | INTERFACE |
+      | security    | PUBLISHED | INTERFACE |
+      | api,security| PUBLISHED | INTERFACE |
+      | support     | PUBLISHED | INTERFACE |
+      | security    | SUSPENDED | INTERFACE |
+      | api,security| SUSPENDED | INTERFACE |
+      | support     | SUSPENDED | INTERFACE |
+
+  Scenario Outline: [INCARICATO-EST-047-DRA] Il reperimento di un documento/interfaccia di un e-service template in stato DRAFT può essere fatto da un ente in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta il reperimento del documento dalla versione dell'e-service template
+    Then si ottiene status code 200
+    Examples:
+      | ruolo   | kind      |
+      | admin   | DOCUMENT  |
+      | api     | DOCUMENT  |
+      | admin   | INTERFACE |
+      | api     | INTERFACE |
+
+  Scenario Outline: [INCARICATO-EST-047-PUB] Il reperimento di un documento/interfaccia di un e-service template in stato DRAFT può essere fatto da un ente in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo
+    And l'utente effettua la pubblicazione dell'e-service template
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta il reperimento del documento dalla versione dell'e-service template
+    Then si ottiene status code 200
+    Examples:
+      | ruolo   | kind      |
+      | admin   | DOCUMENT  |
+      | api     | DOCUMENT  |
+      | admin   | INTERFACE |
+      | api     | INTERFACE |
+
+  Scenario Outline: [INCARICATO-EST-047-SUS] Il reperimento di un documento/interfaccia di un e-service template in stato DRAFT può essere fatto da un ente in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo
+    And l'utente effettua la pubblicazione dell'e-service template
+    And l'utente effettua la sospensione dell'e-service template
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta il reperimento del documento dalla versione dell'e-service template
+    Then si ottiene status code 200
+    Examples:
+      | ruolo   | kind      |
+      | admin   | DOCUMENT  |
+      | api     | DOCUMENT  |
+      | admin   | INTERFACE |
+      | api     | INTERFACE |
+
+  Scenario Outline: [INCARICATO-EST-048] Il reperimento di un documento/interfaccia di un e-service template non può essere fatto da una PA diversa da quella creatrice del template
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo
+    When l'utente è un "admin" di "PA2"
+    And l'utente tenta il reperimento del documento dalla versione dell'e-service template
+    Then si ottiene status code 403
+    Examples:
+      | kind      |
+      | DOCUMENT  |
+      | INTERFACE |
+
+  Scenario: [INCARICATO-EST-049] Il reperimento di un documento da un e-service template inesistente non può essere fatto
+    Given l'utente è un "admin" di "PA1"
+    When l'utente tenta il reperimento di un documento da un e-service template inesistente
+    Then si ottiene status code 404
+
+  Scenario: [INCARICATO-EST-050] Il reperimento di un documento/interfaccia inesistente da un e-service template non può essere fatto
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    When l'utente tenta il reperimento di un documento inesistente dalla versione dell'e-service template
+    Then si ottiene status code 404
+
+
 
     #TODO smistare gli scenari in file .feature più piccoli e/o i relativi step in classi più piccole. Possibili divisioni:
       # test che rigurdano il ciclo di vita del template (creazione, pubblicazione, sospensione, riattivazione, cancellazione)
@@ -561,6 +658,7 @@ Feature: Test API of e-service template
       # test che riguardano il template
       # test che riguardano la versione
       # test che riguardano la risk anlysis
+      # test che riguardano i documenti (nota: test di caricamento e lettura sono inter-dipendenti, la creazione non può essere verificata senza la lettura, e viceversa)
       # ...
 
     #TODO associare un tag per ogni risorsa testata: template, version, riskAnalysis, document...
