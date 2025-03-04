@@ -72,7 +72,7 @@ public class DelegationDenyStep {
                 () -> consumerDelegationsApiClient.rejectConsumerDelegation(sharedStepsContext.getXCorrelationId(),
                         sharedStepsContext.getDelegationCommonContext().getDelegationId(),
                         new RejectDelegationPayload().rejectionReason("Missing all required data!")));
-        if (httpCallExecutor.getClientResponse() == HttpStatus.OK) waitForDelegationState(DelegationState.REJECTED);
+        if (httpCallExecutor.getResponseStatus() == HttpStatus.OK) waitForDelegationState(DelegationState.REJECTED);
     }
 
     @And("l'ente {string} con ruolo {string} revoca la delega")
@@ -89,7 +89,7 @@ public class DelegationDenyStep {
         httpCallExecutor.performCall(
                 () -> consumerDelegationsApiClient.revokeConsumerDelegation(sharedStepsContext.getXCorrelationId(),
                         String.valueOf(sharedStepsContext.getDelegationCommonContext().getDelegationId())));
-        if (httpCallExecutor.getClientResponse() == HttpStatus.OK) waitForDelegationState(DelegationState.REVOKED);
+        if (httpCallExecutor.getResponseStatus() == HttpStatus.OK) waitForDelegationState(DelegationState.REVOKED);
     }
 
     @And("l'ente {delegationRole} con ruolo {string} revoca la delega in fruizione")

@@ -15,28 +15,29 @@ import org.springframework.web.client.HttpStatusCodeException;
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class HttpCallExecutor {
-    private HttpStatus clientResponse;
+    private HttpStatus responseStatus;
     private Object response;
 
     public <T> HttpStatus performCall(Supplier<T> promise) {
         try {
             response = promise.get();
             log.trace("Response: {}", response);
-            clientResponse = HttpStatus.OK;
+            responseStatus = HttpStatus.OK;
         } catch (HttpStatusCodeException e) {
-            clientResponse = e.getStatusCode();
+            responseStatus = e.getStatusCode();
         }
-        return clientResponse;
+        return responseStatus;
     }
 
     public <T> T performCall(Supplier<T> promise, Function<T, HttpStatus> httpStatusMapper) {
         T promiseResponse = null;
         try {
             promiseResponse = promise.get();
+            log.debug("Response: {}", promiseResponse);
             response = promiseResponse;
-            clientResponse = httpStatusMapper.apply(promiseResponse);
+            responseStatus = httpStatusMapper.apply(promiseResponse);
         } catch (HttpStatusCodeException e) {
-            clientResponse = e.getStatusCode();
+            responseStatus = e.getStatusCode();
         }
         return promiseResponse;
     }
@@ -44,11 +45,11 @@ public class HttpCallExecutor {
     public HttpStatus performCall(Runnable promise) {
         try {
             promise.run();
-            clientResponse = HttpStatus.OK;
+            responseStatus = HttpStatus.OK;
         } catch (HttpStatusCodeException e) {
-            clientResponse = e.getStatusCode();
+            responseStatus = e.getStatusCode();
         }
-        return clientResponse;
+        return responseStatus;
     }
 
 

@@ -245,14 +245,14 @@ public class DataPreparationService {
     public Optional<UUID> createAgreement(UUID eServiceID, UUID descriptorId, @Nullable UUID delegationId) {
         httpCallExecutor.performCall(() -> agreementClient.createAgreement(
             new AgreementPayload().eserviceId(eServiceID).descriptorId(descriptorId).delegationId(delegationId)));
-        return httpCallExecutor.getClientResponse().is2xxSuccessful()
+        return httpCallExecutor.getResponseStatus().is2xxSuccessful()
             ? Optional.of(((CreatedResource) httpCallExecutor.getResponse()).getId())
             : Optional.empty();
     }
 
     public UUID createAndCheckAgreement(UUID eServiceID, UUID descriptorId, UUID delegationId) {
         UUID agreementId = createAgreement(eServiceID, descriptorId, delegationId).orElseThrow(
-            () -> new NoSuchElementException("Failed to create an agreement: result of agreement creation API is '%s'".formatted(httpCallExecutor.getClientResponse())));
+            () -> new NoSuchElementException("Failed to create an agreement: result of agreement creation API is '%s'".formatted(httpCallExecutor.getResponseStatus())));
         assertValidResponse();
         pollingService.makePolling(
             () ->  httpCallExecutor.performCall(() -> agreementClient.getAgreementById(sharedStepsContext.getXCorrelationId(), agreementId)),
@@ -391,7 +391,7 @@ public class DataPreparationService {
         Predicate<ResponseEntity<EServiceTemplateVersionDetails>> pollingStopPredicate)
     {
         httpCallExecutor.performCall(templateStateMutator);
-        if (!httpCallExecutor.getClientResponse().isError()) {
+        if (!httpCallExecutor.getResponseStatus().isError()) {
             return;
         }
         pollingService.makePolling(
@@ -769,8 +769,8 @@ public class DataPreparationService {
     }
 
     private void assertValidResponse() {
-        Assertions.assertFalse(httpCallExecutor.getClientResponse().isError(),
-                "Something went wrong: " + httpCallExecutor.getClientResponse().getReasonPhrase());
+        Assertions.assertFalse(httpCallExecutor.getResponseStatus().isError(),
+                "Something went wrong: " + httpCallExecutor.getResponseStatus().getReasonPhrase());
     }
 
     private ClientSeed merge(ClientSeed defaultClientSeed, ClientSeed partialClientSeed) {

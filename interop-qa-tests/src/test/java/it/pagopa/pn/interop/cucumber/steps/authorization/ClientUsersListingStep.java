@@ -2,7 +2,6 @@ package it.pagopa.pn.interop.cucumber.steps.authorization;
 
 import java.util.List;
 
-import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import org.junit.jupiter.api.Assertions;
@@ -37,7 +36,7 @@ public class ClientUsersListingStep {
 
     @Then("si ottiene status code 200 e la lista di {int} utenti")
     public void verifyStatusCodeAndListLength(int userListSize) {
-        Assertions.assertEquals(200, httpCallExecutor.getClientResponse().value());
+        Assertions.assertEquals(200, httpCallExecutor.getResponseStatus().value());
         Assertions.assertEquals(userListSize, ((List<CompactUser>) httpCallExecutor.getResponse()).size());
     }
 

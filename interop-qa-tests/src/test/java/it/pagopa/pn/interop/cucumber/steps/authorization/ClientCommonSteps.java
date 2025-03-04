@@ -7,11 +7,9 @@ import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactClients;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeAdditionDetailsSeed;
-import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.interop.utils.HttpCallExecutor;
-import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
 import lombok.Getter;
@@ -24,10 +22,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
-import lombok.Getter;
-import lombok.Setter;
-import org.junit.jupiter.api.Assertions;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Getter
 @Setter
@@ -78,7 +72,7 @@ public class ClientCommonSteps {
 
     @Then("si ottiene status code {int} e la lista di {int} client(s)")
     public void verifyStatusCodeAndClientList(int statusCode, int count) {
-        Assertions.assertEquals(statusCode, httpCallExecutor.getClientResponse().value());
+        Assertions.assertEquals(statusCode, httpCallExecutor.getResponseStatus().value());
         Assertions.assertEquals(count, ((CompactClients) httpCallExecutor.getResponse()).getResults().size());
     }
 
@@ -94,8 +88,8 @@ public class ClientCommonSteps {
 
     @Then("si ottiene status code {int}")
     public void verifyStatusCode(int statusCode) {
-        if (List.of(200, 204).contains(statusCode)) Assertions.assertEquals(200, httpCallExecutor.getClientResponse().value());
-        else Assertions.assertEquals(statusCode, httpCallExecutor.getClientResponse().value());
+        if (List.of(200, 204).contains(statusCode)) Assertions.assertEquals(200, httpCallExecutor.getResponseStatus().value());
+        else Assertions.assertEquals(statusCode, httpCallExecutor.getResponseStatus().value());
     }
 
     private ClientSeed createClientSeed(int index) {

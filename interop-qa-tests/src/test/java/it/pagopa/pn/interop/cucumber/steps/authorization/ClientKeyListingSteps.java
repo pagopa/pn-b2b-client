@@ -35,7 +35,7 @@ public class ClientKeyListingSteps {
 
     @Then("si ottiene status code {int} e la lista di {int} chiavi")
     public void verifyStatusCodeAndListLength(int statusCode, int keyListSize) {
-        Assertions.assertEquals(statusCode, httpCallExecutor.getClientResponse().value());
+        Assertions.assertEquals(statusCode, httpCallExecutor.getResponseStatus().value());
         Assertions.assertEquals(keyListSize, ((PublicKeys) httpCallExecutor.getResponse()).getKeys().size());
     }
 

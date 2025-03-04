@@ -70,7 +70,7 @@ public class DelegationCommonStep {
 
     @Then("si ottiene lo status code {int}")
     public void thenStatusCodeIs(int statusCode) {
-        int actualStatusCode = httpCallExecutor.getClientResponse().value();
+        int actualStatusCode = httpCallExecutor.getResponseStatus().value();
         if (isSuccessful(statusCode)) Assertions.assertEquals(200, actualStatusCode);
         else Assertions.assertEquals(statusCode, actualStatusCode);
     }
