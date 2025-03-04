@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template;
 
+import com.google.common.io.Files;
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -8,8 +9,12 @@ import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
+import it.pagopa.interop.e_service_template.IEServiceTemplateClient.EServiceTemplateDocumentKind;
+import static it.pagopa.interop.e_service_template.IEServiceTemplateClient.EServiceTemplateDocumentKind.DOCUMENT;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysis;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
@@ -26,6 +31,7 @@ import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -41,15 +47,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 @Data
 public class EServiceTemplateSteps {
-
-
     /** Stores data on an e-service template useful for testing */
     record EServiceTemplateInfo(String name, UUID id, UUID lastVersionId){}
+
+    /** Stores data on an e-service template document useful for testing */
+    record EServiceTemplateDocumentInfo(UUID id, String prettyName, String body){}
 
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final DataPreparationService dataPreparationService;
@@ -64,6 +72,7 @@ public class EServiceTemplateSteps {
     private UpdateEServiceTemplateVersionSeed lastTemplateVersionUpdateSeed;
     private EServiceRiskAnalysisSeed lastAddedRiskAnalysis;
     private int lastAddedRiskAnalysisIndex = -1; // -1 means no risk analysis has been added yet
+    private EServiceTemplateDocumentInfo lastAddedDocument;
 
     // TODO farne un bean centralizzato riutilizzabile ovunque
     private static EasyRandomParameters easyRandomParameters = new EasyRandomParameters()
@@ -130,6 +139,17 @@ public class EServiceTemplateSteps {
             default             -> throw new IllegalArgumentException("Unsupported %s value: %s".formatted(
                                         EServiceTemplateVersionState.class.getSimpleName(),
                                         state));
+        };
+    }
+
+    @ParameterType("DOCUMENT|INTERFACE")
+    public EServiceTemplateDocumentKind eServiceTemplateDocumentKind(String kind) {
+        return switch (kind) {
+            case "DOCUMENT"     -> DOCUMENT;
+            case "INTERFACE"    -> EServiceTemplateDocumentKind.INTERFACE;
+            default             -> throw new IllegalArgumentException("Unsupported %s value: %s".formatted(
+                                        EServiceTemplateDocumentKind.class.getSimpleName(),
+                                        kind));
         };
     }
 
@@ -495,6 +515,119 @@ public class EServiceTemplateSteps {
             ResponseEntity::getStatusCode);
     }
 
+    @When("l'utente tenta l'aggiunta di un documento di tipo {eServiceTemplateDocumentKind} alla versione dell'e-service template")
+    public void addDocumentToEServiceTemplateVersion(EServiceTemplateDocumentKind kind) {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        UUID eServiceTemplateVersionId = lastTemplateManaged.lastVersionId();
+        addDocumentToEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, kind);
+    }
+
+    @Then("l'aggiunta del documento di tipo {eServiceTemplateDocumentKind} alla versione dell'e-service template è stata effettuata correttamente")
+    public void checkDocumentAddedToEServiceTemplateVersion(EServiceTemplateDocumentKind kind) {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        UUID eServiceTemplateVersionId = lastTemplateManaged.lastVersionId();
+
+        try {
+            // controlla la coerenza con quanto contenuto nel template
+            pollingService.makePolling(
+                () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
+                    sharedStepsContext.getXCorrelationId(),
+                    eServiceTemplateId,
+                    eServiceTemplateVersionId),
+                res -> {
+                    if(res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody())) {
+                        EServiceDoc doc = switch (kind) {
+                            case DOCUMENT -> res.getBody().getDocs().stream().filter(d -> d.getId().equals(lastAddedDocument.id())).findFirst().orElse(null);
+                            case INTERFACE -> res.getBody().getInterface();
+                            default -> throw new IllegalArgumentException("Unsupported %s value: %s".formatted(
+                                EServiceTemplateDocumentKind.class.getSimpleName(),
+                                kind));
+                        };
+                        return doc.getPrettyName().equals(lastAddedDocument.prettyName());
+                    }
+                    return false;
+
+                },
+                "Lo stato del documento restituito dalla API GET degli e-service templates non corrisponde a quello atteso"
+            );
+
+            // controlla la coerenza del documento stesso
+            pollingService.makePolling(
+                () -> eServiceTemplateClient.getDocumentWithHttpInfo(
+                    sharedStepsContext.getXCorrelationId(),
+                    eServiceTemplateId,
+                    eServiceTemplateVersionId,
+                    lastAddedDocument.id()),
+                res -> {
+                    try {
+                        return res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody()) && Files.readLines(res.getBody(), StandardCharsets.UTF_8).get(0).equals(lastAddedDocument.body());
+                    } catch (IOException e) {
+                        throw new RuntimeException("Errore nella lettura del body binario della risposta HTTP: %s".formatted(res), e);
+                    }
+                },
+                "Lo stato del documento restituito dalla API GET dei documenti non corrisponde a quello atteso"
+            );
+        } catch (PollingPredicateException e) {
+            // TODO altrove non si è stati così precisi nei messaggi di errore, adeguare
+            fail("Il documento non è stato aggiunto correttamente alla versione dell'e-service template: " + e.getMessage());
+        }
+    }
+
+    @Given("l'utente effettua l'aggiunta di un documento di tipo {eServiceTemplateDocumentKind} alla versione dell'e-service template con successo")
+    public void addDocumentToEServiceTemplateVersionSuccessfully(EServiceTemplateDocumentKind kind) {
+        addDocumentToEServiceTemplateVersion(kind);
+        checkDocumentAddedToEServiceTemplateVersion(kind);
+    }
+
+    @When("l'utente tenta l'aggiunta di un documento di tipo {eServiceTemplateDocumentKind} alla versione dell'e-service template specificando lo stesso nome")
+    public void addDocumentToEServiceTemplateVersionWithSameName(EServiceTemplateDocumentKind kind) {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        UUID eServiceTemplateVersionId = lastTemplateManaged.lastVersionId();
+        addDocumentToEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, kind, lastAddedDocument.prettyName());
+    }
+
+    @When("l'utente tenta l'aggiunta di un documento di tipo {eServiceTemplateDocumentKind} a un e-service template inesistente")
+    public void addDocumentToNonExistentEServiceTemplate(EServiceTemplateDocumentKind kind) {
+        addDocumentToEServiceTemplateVersion(UUID.randomUUID(), UUID.randomUUID(), kind);
+    }
+
+    @When("l'utente tenta l'aggiunta di un documento di tipo {eServiceTemplateDocumentKind} a una versione inesistente dell'e-service template")
+    public void addDocumentToNonExistentEServiceTemplateVersion(EServiceTemplateDocumentKind kind) {
+        addDocumentToEServiceTemplateVersion(lastTemplateManaged.id(), UUID.randomUUID(), kind);
+    }
+
+    private void addDocumentToEServiceTemplateVersion(UUID eServiceTemplateId,
+        UUID eServiceTemplateVersionId, EServiceTemplateDocumentKind kind) {
+        String prettyName = "e-service-template-%s-%s".formatted(kind.toString(),
+            nextTestResourceNameSuffix());
+        addDocumentToEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, kind, prettyName);
+    }
+
+    private void addDocumentToEServiceTemplateVersion(UUID eServiceTemplateId,
+        UUID eServiceTemplateVersionId, EServiceTemplateDocumentKind kind, String prettyName) {
+        String userToken = getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+
+        String docBody = "Hello, I'm a document of type %s".formatted(kind);
+        httpCallExecutor.performCall(
+            () -> eServiceTemplateClient.addDocumentWithHttpInfo(
+                sharedStepsContext.getXCorrelationId(),
+                eServiceTemplateId,
+                eServiceTemplateVersionId,
+                kind,
+                prettyName,
+                new ByteArrayResource(docBody.getBytes(StandardCharsets.UTF_8))),
+
+            /* TODO altrove non è stata usata questa variante del metodo che permette di conservare il codice di risposta originale,
+             * modificare anche gli altri scenari così che si possa effettuare un check preciso dello status restituito
+             */
+            ResponseEntity::getStatusCode);
+
+        ResponseEntity<CreatedResource> response = (ResponseEntity<CreatedResource>) httpCallExecutor.getResponse();
+        this.lastAddedDocument = response.getStatusCode().is2xxSuccessful()
+            ? new EServiceTemplateDocumentInfo(response.getBody().getId(), prettyName, docBody)
+            : null;
+    }
 
     /* TODO un'alternativa all'uso di metodi come "areConsistent" - che confrontano i campi uno a uno - potrebbe essere
      * l'uso di una libreria di mapping, da usare per mappare un oggetto nell'altro tipo, e quindi procedere con
@@ -527,8 +660,7 @@ public class EServiceTemplateSteps {
      * @return a new {@link EServiceTemplateSeed} instance
      */
     private EServiceTemplateSeed getEServiceTemplateSeed(EServiceMode eServiceMode) {
-        int randomInt = ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE);
-        String templateName = String.format("eservice-template-%d-%d", sharedStepsContext.getTestSeed(), randomInt);
+        String templateName = String.format("eservice-template-%s", nextTestResourceNameSuffix());
         VersionSeedForEServiceTemplateCreation version = new VersionSeedForEServiceTemplateCreation()
             .voucherLifespan(86400);
         return new EServiceTemplateSeed()
@@ -538,6 +670,11 @@ public class EServiceTemplateSteps {
             .mode(eServiceMode)
             .version(version)
             .technology(EServiceTechnology.REST);
+    }
+
+    private String nextTestResourceNameSuffix() {
+        int randomInt = ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE);
+        return String.format("%d-%d", sharedStepsContext.getTestSeed(), randomInt);
     }
 
     private void createEServiceTemplate(EServiceTemplateSeed templateSeed) {

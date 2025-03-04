@@ -446,8 +446,110 @@ Feature: Test API of e-service template
     When l'utente tenta la modifica di una risk analysis inserendo il nome di un'altra risk analysis
     Then si ottiene status code 404
 
+  Scenario Outline: [INCARICATO-EST-038] L'aggiunta di un documento/interfaccia a una versione di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template
+    Then si ottiene status code 403
+    Examples:
+      | ruolo         | stato     | kind      |
+      | security      | DRAFT     | DOCUMENT  |
+      | api,security  | DRAFT     | DOCUMENT  |
+      | support       | DRAFT     | DOCUMENT  |
+      | security      | PUBLISHED | DOCUMENT  |
+      | api,security  | PUBLISHED | DOCUMENT  |
+      | support       | PUBLISHED | DOCUMENT  |
+      | security      | SUSPENDED | DOCUMENT  |
+      | api,security  | SUSPENDED | DOCUMENT  |
+      | support       | SUSPENDED | DOCUMENT  |
+      | security      | DRAFT     | INTERFACE |
+      | api,security  | DRAFT     | INTERFACE |
+      | support       | DRAFT     | INTERFACE |
+      | security      | PUBLISHED | INTERFACE |
+      | api,security  | PUBLISHED | INTERFACE |
+      | support       | PUBLISHED | INTERFACE |
+      | security      | SUSPENDED | INTERFACE |
+      | api,security  | SUSPENDED | INTERFACE |
+      | support       | SUSPENDED | INTERFACE |
 
-    #TODO smistare gli scenari in file .feature più piccoli. Possibili divisioni:
+  Scenario Outline: [INCARICATO-EST-039] L'aggiunta di un documento/interfaccia a una versione di un e-service template in stato DRAFT può essere fatta da un ente in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template
+    Then si ottiene status code 200
+    And l'aggiunta del documento alla versione dell'e-service template è stata effettuata correttamente
+    Examples:
+      | ruolo   | kind      |
+      | admin   | DOCUMENT  |
+      | api     | DOCUMENT  |
+      | admin   | INTERFACE |
+      | api     | INTERFACE |
+
+  Scenario Outline: [INCARICATO-EST-040] L'aggiunta di un'interfaccia a una versione di un e-service template in stato PUBLISHED o SUSPENDED non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template
+    Then si ottiene status code 403
+    Examples:
+      | ruolo   | stato |
+      | admin   | PUBLISHED |
+      | api     | PUBLISHED |
+      | admin   | SUSPENDED |
+      | api     | SUSPENDED |
+
+  Scenario: [INCARICATO-EST-041] L'aggiunta di una seconda interfaccia a una versione di un e-service template in stato DRAFT non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
+    When l'utente tenta l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template
+    Then si ottiene status code 409
+
+  Scenario: [INCARICATO-EST-042] L'aggiunta di un documento a una versione di un e-service template in stato DRAFT non può essere fatta specificando lo stesso nome di un documento precedentemente aggiunto
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    And l'utente effettua l'aggiunta di un documento di tipo DOCUMENT alla versione dell'e-service template con successo
+
+    # ATTENZIONE 04/03/2025: al momento per "nome" si sta intendendo il parametro "prettyName"
+    When l'utente tenta l'aggiunta di un documento di tipo DOCUMENT alla versione dell'e-service template specificando lo stesso nome
+
+    Then si ottiene status code 409
+
+  Scenario Outline: [INCARICATO-EST-043] L'aggiunta di un documento/interfaccia a una versione di un e-service template in stato DRAFT non può essere fatta da una PA diversa da quella creatrice del template
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    When l'utente è un "admin" di "PA2"
+    And l'utente tenta l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template
+    Then si ottiene status code 403
+    Examples:
+      | kind      |
+      | DOCUMENT  |
+      | INTERFACE |
+
+    #TODO scenario non presente fra i test richiesti, avvisare Stefano Netti
+  Scenario Outline: [INCARICATO-EST-044] L'aggiunta di un documento/interfaccia a una versione di un e-service template inesistente non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    When l'utente tenta l'aggiunta di un documento di tipo <kind> a un e-service template inesistente
+    Then si ottiene status code 404
+    Examples:
+      | kind      |
+      | DOCUMENT  |
+      | INTERFACE |
+
+
+  Scenario Outline: [INCARICATO-EST-045] L'aggiunta di un documento/interfaccia a una versione inesistente di un e-service template non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    When l'utente tenta l'aggiunta di un documento di tipo <kind> a una versione inesistente dell'e-service template
+    Then si ottiene status code 404
+    Examples:
+      | kind      |
+      | DOCUMENT  |
+      | INTERFACE |
+
+    #TODO smistare gli scenari in file .feature più piccoli e/o i relativi step in classi più piccole. Possibili divisioni:
       # test che rigurdano il ciclo di vita del template (creazione, pubblicazione, sospensione, riattivazione, cancellazione)
       # altro da definire...
 
@@ -461,3 +563,4 @@ Feature: Test API of e-service template
       # test che riguardano la risk anlysis
       # ...
 
+    #TODO associare un tag per ogni risorsa testata: template, version, riskAnalysis, document...

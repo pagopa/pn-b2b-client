@@ -5,15 +5,18 @@ import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EserviceTemplatesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionSeed;
+import java.io.File;
 import java.util.UUID;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -162,6 +165,54 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
         EServiceRiskAnalysisSeed seed
     ) {
         return this.eserviceTemplatesApi.updateEServiceTemplateRiskAnalysisWithHttpInfo(xCorrelationId, eServiceTemplateId, riskAnalysisId, seed);
+    }
+
+    @Override
+    public CreatedResource addDocument(
+        String xCorrelationId,
+        UUID eServiceTemplateId,
+        UUID eServiceTemplateVersionId,
+        EServiceTemplateDocumentKind kind,
+        String prettyName,
+        Resource doc
+    ) {
+        return this.eserviceTemplatesApi.createEServiceTemplateDocument(xCorrelationId, eServiceTemplateId, eServiceTemplateVersionId,
+            kind.name(), prettyName, doc);
+    }
+
+    @Override
+    public ResponseEntity<CreatedResource> addDocumentWithHttpInfo(
+        String xCorrelationId,
+        UUID eServiceTemplateId,
+        UUID eServiceTemplateVersionId,
+        EServiceTemplateDocumentKind kind,
+        String prettyName,
+        Resource doc
+    ) {
+        return this.eserviceTemplatesApi.createEServiceTemplateDocumentWithHttpInfo(xCorrelationId, eServiceTemplateId, eServiceTemplateVersionId,
+            kind.name(), prettyName, doc);
+    }
+
+    @Override
+    public File getDocument(
+        String xCorrelationId,
+        UUID eServiceTemplateId,
+        UUID eServiceTemplateVersionId,
+        UUID documentId
+    ) {
+        // TODO 04/03/2025: gli id, a differenza di altre api, se li aspetta in semplice formato stringa e non UUID, va segnalato
+        return this.eserviceTemplatesApi.getEServiceTemplateDocumentById(xCorrelationId, eServiceTemplateId.toString(), eServiceTemplateVersionId.toString(), documentId.toString());
+    }
+
+    @Override
+    public ResponseEntity<File> getDocumentWithHttpInfo(
+        String xCorrelationId,
+        UUID eServiceTemplateId,
+        UUID eServiceTemplateVersionId,
+        UUID documentId
+    ) {
+        // TODO 04/03/2025: gli id, a differenza di altre api, se li aspetta in semplice formato stringa e non UUID, va segnalato
+        return this.eserviceTemplatesApi.getEServiceTemplateDocumentByIdWithHttpInfo(xCorrelationId, eServiceTemplateId.toString(), eServiceTemplateVersionId.toString(), documentId.toString());
     }
 
     @Override
