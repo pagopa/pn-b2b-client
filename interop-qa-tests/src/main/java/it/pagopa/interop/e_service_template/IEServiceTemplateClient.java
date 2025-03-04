@@ -3,6 +3,7 @@ package it.pagopa.interop.e_service_template;
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateSeed;
@@ -31,6 +32,11 @@ public interface IEServiceTemplateClient extends SettableBearerToken {
     void activateEServiceTemplate(String xCorrelationId, UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId);
 
+    ResponseEntity<EServiceTemplateDetails> getEServiceTemplateWithHttpInfo(String xCorrelationId,
+        UUID eServiceTemplateId);
+
+    EServiceTemplateDetails getEServiceTemplate(String xCorrelationId, UUID eServiceTemplateId);
+
     EServiceTemplateVersionDetails getEServiceTemplateVersion(String xCorrelationId, UUID eServiceTemplateId, UUID eServiceTemplateVersionId);
 
     ResponseEntity<EServiceTemplateVersionDetails> getEServiceTemplateVersionWithHttpInfo(
@@ -39,4 +45,9 @@ public interface IEServiceTemplateClient extends SettableBearerToken {
 
     void addRiskAnalysis(String xCorrelationId, UUID eServiceTemplateId,
         EServiceRiskAnalysisSeed seed);
+
+    void deleteRiskAnalysis(
+        String xCorrelationId,
+        UUID eServiceTemplateId,
+        UUID riskAnalysisId);
 }

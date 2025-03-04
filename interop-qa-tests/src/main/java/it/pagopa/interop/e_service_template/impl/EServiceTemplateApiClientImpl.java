@@ -6,6 +6,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EserviceTemplatesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateSeed;
@@ -96,6 +97,21 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
     }
 
     @Override
+    public ResponseEntity<EServiceTemplateDetails> getEServiceTemplateWithHttpInfo(
+        String xCorrelationId,
+        UUID eServiceTemplateId) {
+        // TODO 04/03/2025: gli id, a differenza di altre api, se li aspetta in semplice formato stringa e non UUID, va segnalato
+        return eserviceTemplatesApi.getEServiceTemplateWithHttpInfo(xCorrelationId, eServiceTemplateId.toString());
+    }
+
+    @Override
+    public EServiceTemplateDetails getEServiceTemplate(String xCorrelationId,
+        UUID eServiceTemplateId) {
+        // TODO 04/03/2025: gli id, a differenza di altre api, se li aspetta in semplice formato stringa e non UUID, va segnalato
+        return eserviceTemplatesApi.getEServiceTemplate(xCorrelationId, eServiceTemplateId.toString());
+    }
+
+    @Override
     public EServiceTemplateVersionDetails getEServiceTemplateVersion(String xCorrelationId,
         UUID eServiceTemplateId, UUID eServiceTemplateVersionId) {
         return eserviceTemplatesApi.getEServiceTemplateVersion(xCorrelationId, eServiceTemplateId,
@@ -117,6 +133,15 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
         EServiceRiskAnalysisSeed seed)
     {
         this.eserviceTemplatesApi.createEServiceTemplateRiskAnalysis(xCorrelationId, eServiceTemplateId, seed);
+    }
+
+    @Override
+    public void deleteRiskAnalysis(
+        String xCorrelationId,
+        UUID eServiceTemplateId,
+        UUID riskAnalysisId)
+    {
+        this.eserviceTemplatesApi.deleteEServiceTemplateRiskAnalysis(xCorrelationId, eServiceTemplateId, riskAnalysisId);
     }
 
     @Override

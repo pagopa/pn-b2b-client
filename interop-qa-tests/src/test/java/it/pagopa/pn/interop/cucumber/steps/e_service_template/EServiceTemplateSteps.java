@@ -36,6 +36,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import lombok.Data;
+import static org.apache.commons.collections4.IterableUtils.isEmpty;
 import org.assertj.core.api.Assertions;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.jeasy.random.EasyRandom;
@@ -333,6 +334,53 @@ public class EServiceTemplateSteps {
         addRiskAnalysisToEServiceTemplate(lastTemplateManaged.id(), sameNameRiskAnalysisSeed);
     }
 
+    @When("l'utente tenta la cancellazione della risk analysis dell'e-service template")
+    public void deleteRiskAnalysisFromEServiceTemplate() {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+
+        UUID riskAnalysisId = eServiceTemplateClient.getEServiceTemplate(
+            sharedStepsContext.getXCorrelationId(),
+            eServiceTemplateId).getRiskAnalysis().get(0).getId();
+        deleteRiskAnalysisFromEServiceTemplate(eServiceTemplateId, riskAnalysisId);
+    }
+
+    @Then("la cancellazione della risk analysis dell'e-service è stata effettuata correttamente")
+    public void checkRiskAnalysisDeletedFromEServiceTemplate() {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        try {
+            pollingService.makePolling(
+                () -> eServiceTemplateClient.getEServiceTemplateWithHttpInfo(
+                    sharedStepsContext.getXCorrelationId(),
+                    eServiceTemplateId),
+                res -> res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody()) && isEmpty(res.getBody().getRiskAnalysis()),
+                "La risk analysis non è stata cancellata correttamente dall'e-service template, oppure l'e-service template risulta nullo."
+            );
+        } catch (PollingPredicateException e) {
+            Assertions.fail("La risk analysis non è stata cancellata correttamente dall'e-service template");
+        }
+    }
+
+    @When("l'utente tenta la cancellazione di una risk analysis inesistente nell'e-service template")
+    public void deleteNonExistentRiskAnalysisFromEServiceTemplate() {
+        deleteRiskAnalysisFromEServiceTemplate(lastTemplateManaged.id(), UUID.randomUUID());
+    }
+
+    @Given("l'utente effettua la cancellazione della risk analysis dell'e-service template con successo")
+    public void deleteRiskAnalysisFromEServiceTemplateSuccessfully() {
+        deleteRiskAnalysisFromEServiceTemplate();
+        checkRiskAnalysisDeletedFromEServiceTemplate();
+    }
+
+    private void deleteRiskAnalysisFromEServiceTemplate(UUID eServiceTemplateId, UUID riskAnalysisId) {
+        String userToken = getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+        httpCallExecutor.performCall(
+            () -> eServiceTemplateClient.deleteRiskAnalysis(
+                sharedStepsContext.getXCorrelationId(),
+                eServiceTemplateId,
+                riskAnalysisId));
+    }
+
     private void updateEServiceTemplateVersion(UUID eServiceTemplateId, UUID eServiceTemplateVersionId, UpdateEServiceTemplateVersionSeed sameNameUpdateSeed) {
         String userToken = getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);
@@ -343,6 +391,11 @@ public class EServiceTemplateSteps {
                 eServiceTemplateVersionId,
                 sameNameUpdateSeed));
     }
+
+    /* TODO un'alternativa all'uso di metodi come "areConsistent" - che confrontano i campi uno a uno - potrebbe essere
+     * l'uso di una libreria di mapping, da usare per mappare un oggetto nell'altro tipo, e quindi procedere con
+     * un normale equals(...).
+     */
 
     // TODO diverse NPE possibili, agire di conseguenza
     private boolean areConsistent(UpdateEServiceTemplateVersionSeed lastUpdate, EServiceTemplateVersionDetails retrievedTemplate) {
