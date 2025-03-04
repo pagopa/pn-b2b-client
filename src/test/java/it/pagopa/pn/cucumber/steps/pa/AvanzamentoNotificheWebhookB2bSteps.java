@@ -2433,6 +2433,21 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         verifyIncrementalEventId(sharedSteps.getProgressResponseElementsV23(), ProgressResponseElementV23::getEventId);
     }
 
+    @Then("viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati V24")
+    public void verifyIncrementalAndUniqueProgressResponseElementIdV24() {
+        verifyIncrementalEventId(sharedSteps.getProgressResponseElementsV24(), ProgressResponseElementV24::getEventId);
+    }
+
+    @Then("viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati V25")
+    public void verifyIncrementalAndUniqueProgressResponseElementIdV25() {
+        verifyIncrementalEventId(sharedSteps.getProgressResponseElementsV25(), ProgressResponseElementV25::getEventId);
+    }
+
+    @Then("viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati V26")
+    public void verifyIncrementalAndUniqueProgressResponseElementIdV26() {
+        verifyIncrementalEventId(sharedSteps.getProgressResponseElementsV26(), ProgressResponseElementV26::getEventId);
+    }
+
     @Then("viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati V27")
     public void verifyIncrementalAndUniqueProgressResponseElementIdV27() {
         verifyIncrementalEventId(sharedSteps.getProgressResponseElementsV27(), ProgressResponseElementV27::getEventId);
