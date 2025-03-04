@@ -50,4 +50,18 @@ public interface IEServiceTemplateClient extends SettableBearerToken {
         String xCorrelationId,
         UUID eServiceTemplateId,
         UUID riskAnalysisId);
+
+    void editRiskAnalysis(
+        String xCorrelationId,
+        UUID eServiceTemplateId,
+        UUID riskAnalysisId,
+        EServiceRiskAnalysisSeed seed
+    );
+
+    ResponseEntity<Void> editRiskAnalysisWithHttpInfo(
+        String xCorrelationId,
+        UUID eServiceTemplateId,
+        UUID riskAnalysisId,
+        EServiceRiskAnalysisSeed seed
+    );
 }

@@ -37,8 +37,8 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import lombok.Data;
 import static org.apache.commons.collections4.IterableUtils.isEmpty;
-import org.assertj.core.api.Assertions;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 import org.springframework.http.HttpStatus;
@@ -46,6 +46,8 @@ import org.springframework.http.ResponseEntity;
 
 @Data
 public class EServiceTemplateSteps {
+
+
     /** Stores data on an e-service template useful for testing */
     record EServiceTemplateInfo(String name, UUID id, UUID lastVersionId){}
 
@@ -61,6 +63,7 @@ public class EServiceTemplateSteps {
     private UpdateEServiceTemplateSeed lastTemplateUpdateSeed;
     private UpdateEServiceTemplateVersionSeed lastTemplateVersionUpdateSeed;
     private EServiceRiskAnalysisSeed lastAddedRiskAnalysis;
+    private int lastAddedRiskAnalysisIndex = -1; // -1 means no risk analysis has been added yet
 
     // TODO farne un bean centralizzato riutilizzabile ovunque
     private static EasyRandomParameters easyRandomParameters = new EasyRandomParameters()
@@ -177,7 +180,7 @@ public class EServiceTemplateSteps {
                     "L'e-service template non corrisponde alle modifiche apportate"
             );
         } catch (PollingPredicateException e) {
-            Assertions.fail("Le modifiche all'e-service template non sono state "
+            fail("Le modifiche all'e-service template non sono state "
                     + "applicate correttamente: le modifiche apportate '%s' non sono compatibili con il risultato ricevuto '%s'",
                 lastTemplateUpdateSeed, httpCallExecutor.getResponse());
         }
@@ -256,7 +259,7 @@ public class EServiceTemplateSteps {
                 "La versione dell'e-service template non corrisponde alle modifiche apportate"
             );
         } catch (PollingPredicateException e) {
-            Assertions.fail("Le modifiche alla versione dell'e-service template non sono state "
+            fail("Le modifiche alla versione dell'e-service template non sono state "
                     + "applicate correttamente: le modifiche apportate '%s' non sono compatibili con il risultato ricevuto '%s'",
                 lastTemplateUpdateSeed, httpCallExecutor.getResponse());
         }
@@ -278,6 +281,7 @@ public class EServiceTemplateSteps {
     public void addRiskAnalysisToEServiceTemplate() {
         UUID eServiceTemplateId = lastTemplateManaged.id();
         lastAddedRiskAnalysis = easyRandom.nextObject(EServiceRiskAnalysisSeed.class);
+        lastAddedRiskAnalysisIndex++;
         addRiskAnalysisToEServiceTemplate(eServiceTemplateId, lastAddedRiskAnalysis);
     }
 
@@ -306,11 +310,11 @@ public class EServiceTemplateSteps {
                     ResponseEntity::getStatusCode),
                 res ->
                     nonNull(res.getBody()) &&
-                    this.areConsistent(lastAddedRiskAnalysis, res.getBody().getEserviceTemplate().getRiskAnalysis().get(0)),
+                    this.areConsistent(lastAddedRiskAnalysis, res.getBody().getEserviceTemplate().getRiskAnalysis().get(lastAddedRiskAnalysisIndex)),
                 "La risk analysis non è stata aggiunta correttamente all'e-service template"
             );
         } catch (PollingPredicateException e) {
-            Assertions.fail("La risk analysis non è stata aggiunta correttamente all'e-service template");
+            fail("La risk analysis non è stata aggiunta correttamente all'e-service template");
         }
     }
 
@@ -356,7 +360,7 @@ public class EServiceTemplateSteps {
                 "La risk analysis non è stata cancellata correttamente dall'e-service template, oppure l'e-service template risulta nullo."
             );
         } catch (PollingPredicateException e) {
-            Assertions.fail("La risk analysis non è stata cancellata correttamente dall'e-service template");
+            fail("La risk analysis non è stata cancellata correttamente dall'e-service template");
         }
     }
 
@@ -391,6 +395,106 @@ public class EServiceTemplateSteps {
                 eServiceTemplateVersionId,
                 sameNameUpdateSeed));
     }
+
+    @When("l'utente tenta la modifica della risk analysis dell'e-service template")
+    public void editRiskAnalysisFromEServiceTemplate() {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+
+        List<EServiceRiskAnalysis> riskAnalysis = eServiceTemplateClient.getEServiceTemplate(
+            sharedStepsContext.getXCorrelationId(),
+            eServiceTemplateId).getRiskAnalysis();
+        if(isEmpty(riskAnalysis)) { // TODO aggiungere controlli simili anche nei passi di cancellazione risk analysis
+            throw new IllegalStateException("Nessuna risk analysis presente nell'e-service template");
+        }
+
+        UUID riskAnalysisId = riskAnalysis.get(lastAddedRiskAnalysisIndex).getId();
+        EServiceRiskAnalysisSeed editedRiskAnalysisSeed = easyRandom.nextObject(EServiceRiskAnalysisSeed.class);
+        editRiskAnalysisFromEServiceTemplate(eServiceTemplateId, riskAnalysisId, editedRiskAnalysisSeed);
+    }
+
+    @Then("la modifica della risk analysis dell'e-service è stata effettuata correttamente")
+    public void checkRiskAnalysisEditedFromEServiceTemplate() {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+
+        try {
+            pollingService.makePolling(
+                () -> httpCallExecutor.performCall(
+                    () -> eServiceTemplateClient.getEServiceTemplateWithHttpInfo(
+                        sharedStepsContext.getXCorrelationId(),
+                        eServiceTemplateId),
+                    ResponseEntity::getStatusCode),
+                res -> res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody()) && this.areConsistent(lastAddedRiskAnalysis, res.getBody().getRiskAnalysis().get(lastAddedRiskAnalysisIndex)),
+                "La risk analysis non è stata modificata correttamente nell'e-service template"
+            );
+        } catch (PollingPredicateException e) {
+
+            // TODO altrove non si è stati così precisi nei messaggi di errore, adeguare
+
+            List<EServiceRiskAnalysis> riskAnalysis = requireNonNull(
+                requireNonNull(
+                    ((ResponseEntity<EServiceTemplateDetails>) httpCallExecutor.getResponse()),
+                    "La response HTTP è nulla, possibile errore silenzioso di comunicazione con interop")
+                    .getBody(),
+                "Il body della response HTTP è nullo, possibile errore silenzioso di comunicazione con interop o cambiamento dell'API"
+            ).getRiskAnalysis();
+            if(isEmpty(riskAnalysis)) {
+                throw new IllegalStateException("Nessuna risk analysis presente nell'e-service template, possibile uso errato di questo step o precedente inserimento di risk analysis non riuscito");
+            }
+
+            fail("La risk analysis non è stata modificata correttamente nell'e-service template: lo stato attuale è %s, quello atteso era %s", riskAnalysis.get(0), lastAddedRiskAnalysis);
+        }
+    }
+
+    @When("l'utente tenta la modifica di una risk analysis inesistente nell'e-service template")
+    public void editNonExistentRiskAnalysisFromEServiceTemplate() {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        EServiceRiskAnalysisSeed editedRiskAnalysisSeed = easyRandom.nextObject(EServiceRiskAnalysisSeed.class);
+        editRiskAnalysisFromEServiceTemplate(eServiceTemplateId, UUID.randomUUID(), editedRiskAnalysisSeed);
+    }
+
+    @When("l'utente tenta la modifica di una risk analysis inserendo il nome di un'altra risk analysis")
+    public void editRiskAnalysisFromEServiceTemplateWithSameName() {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+
+        pollingService.makePolling(
+            () -> httpCallExecutor.performCall(
+                () -> eServiceTemplateClient.getEServiceTemplateWithHttpInfo(
+                    sharedStepsContext.getXCorrelationId(),
+                    eServiceTemplateId),
+                ResponseEntity::getStatusCode),
+            res -> res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody()) && res.getBody().getRiskAnalysis().size() >= 2,
+            "Condizioni di polling non rispettate. NOTA: questo step prevede l'esistenza di almeno 2 risk analysis nell'e-service template"
+        );
+
+        @SuppressWarnings("unchecked, DataFlowIssue")
+        List<EServiceRiskAnalysis> riskAnalysis = ((ResponseEntity<EServiceTemplateDetails>) httpCallExecutor.getResponse()).getBody().getRiskAnalysis();
+
+        UUID riskAnalysisId = riskAnalysis.get(0).getId();
+        EServiceRiskAnalysisSeed editedRiskAnalysisSeed = easyRandom.nextObject(EServiceRiskAnalysisSeed.class)
+            .name(riskAnalysis.get(1).getName());
+        editRiskAnalysisFromEServiceTemplate(eServiceTemplateId, riskAnalysisId, editedRiskAnalysisSeed);
+    }
+
+    private void editRiskAnalysisFromEServiceTemplate(
+        UUID eServiceTemplateId,
+        UUID riskAnalysisId,
+        EServiceRiskAnalysisSeed editedRiskAnalysisSeed
+    ) {
+        String userToken = getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+        httpCallExecutor.performCall(
+            () -> eServiceTemplateClient.editRiskAnalysisWithHttpInfo(
+                sharedStepsContext.getXCorrelationId(),
+                eServiceTemplateId,
+                riskAnalysisId,
+                editedRiskAnalysisSeed),
+
+            /* TODO altrove non è stata usata questa variante del metodo che permette di conservare il codice di risposta originale,
+             * modificare anche gli altri scenari così che si possa effettuare un check preciso dello status restituito
+             */
+            ResponseEntity::getStatusCode);
+    }
+
 
     /* TODO un'alternativa all'uso di metodi come "areConsistent" - che confrontano i campi uno a uno - potrebbe essere
      * l'uso di una libreria di mapping, da usare per mappare un oggetto nell'altro tipo, e quindi procedere con

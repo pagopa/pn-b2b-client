@@ -130,8 +130,8 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
     public void addRiskAnalysis(
         String xCorrelationId,
         UUID eServiceTemplateId,
-        EServiceRiskAnalysisSeed seed)
-    {
+        EServiceRiskAnalysisSeed seed
+    ) {
         this.eserviceTemplatesApi.createEServiceTemplateRiskAnalysis(xCorrelationId, eServiceTemplateId, seed);
     }
 
@@ -139,9 +139,29 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
     public void deleteRiskAnalysis(
         String xCorrelationId,
         UUID eServiceTemplateId,
-        UUID riskAnalysisId)
-    {
+        UUID riskAnalysisId
+    ) {
         this.eserviceTemplatesApi.deleteEServiceTemplateRiskAnalysis(xCorrelationId, eServiceTemplateId, riskAnalysisId);
+    }
+
+    @Override
+    public void editRiskAnalysis(
+        String xCorrelationId,
+        UUID eServiceTemplateId,
+        UUID riskAnalysisId,
+        EServiceRiskAnalysisSeed seed
+    ) {
+        this.eserviceTemplatesApi.updateEServiceTemplateRiskAnalysis(xCorrelationId, eServiceTemplateId, riskAnalysisId, seed);
+    }
+
+    @Override
+    public ResponseEntity<Void> editRiskAnalysisWithHttpInfo(
+        String xCorrelationId,
+        UUID eServiceTemplateId,
+        UUID riskAnalysisId,
+        EServiceRiskAnalysisSeed seed
+    ) {
+        return this.eserviceTemplatesApi.updateEServiceTemplateRiskAnalysisWithHttpInfo(xCorrelationId, eServiceTemplateId, riskAnalysisId, seed);
     }
 
     @Override
