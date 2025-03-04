@@ -30,8 +30,8 @@ Feature: avanzamento notifiche webhook b2b V23
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
     And destinatario
-      | denomination  | Galileo galileo   |
-      | taxId         | GLLGLL64B15G702I  |
+      | denomination | Galileo galileo  |
+      | taxId        | GLLGLL64B15G702I |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
 
 
@@ -44,8 +44,8 @@ Feature: avanzamento notifiche webhook b2b V23
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
     And destinatario
-      | denomination  | Galileo galileo   |
-      | taxId         | GLLGLL64B15G702I  |
+      | denomination | Galileo galileo  |
+      | taxId        | GLLGLL64B15G702I |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V23"
     And Viene creata una nuova apiKey per il comune "Comune_1" senza gruppo
     And viene impostata l'apikey appena generata
@@ -59,7 +59,7 @@ Feature: avanzamento notifiche webhook b2b V23
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "REQUEST_ACCEPTED" con la versione "V23"
     #TEST LETTURA DIGITAL_SUCCESS_WORKFLOW
     Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" con la versione "V23"
-    And viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati V23
+    And viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati "V23"
     #TEST VERIFICA CORRISPONDENZA ELEMENTO DI TIMELINE STREAM
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "SEND_COURTESY_MESSAGE" con versione V23 e apiKey aggiornata con position 0
@@ -86,8 +86,8 @@ Feature: avanzamento notifiche webhook b2b V23
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
     And destinatario
-      | denomination  | Galileo galileo   |
-      | taxId         | GLLGLL64B15G702I  |
+      | denomination | Galileo galileo  |
+      | taxId        | GLLGLL64B15G702I |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V23"
     And Viene creata una nuova apiKey per il comune "Comune_1" senza gruppo
     And viene impostata l'apikey appena generata
@@ -102,7 +102,7 @@ Feature: avanzamento notifiche webhook b2b V23
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "REQUEST_ACCEPTED" con la versione "V23"
     #TEST LETTURA DIGITAL_SUCCESS_WORKFLOW
     Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" con la versione "V23"
-    And viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati V23
+    And viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati "V23"
     #TEST VERIFICA CORRISPONDENZA ELEMENTO DI TIMELINE STREAM
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "SEND_COURTESY_MESSAGE" con versione V23 e apiKey aggiornata con position 0
@@ -119,7 +119,6 @@ Feature: avanzamento notifiche webhook b2b V23
     And Si verifica che l'elemento di timeline REFINEMENT abbia il timestamp uguale a quella presente nel webhook con la versione V23
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
-
 
 
   @webhookV23 @precondition @cleanWebhook @webhook1
@@ -167,9 +166,9 @@ Feature: avanzamento notifiche webhook b2b V23
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Verona            |
     And destinatario
-      | denomination  | Galileo galileo   |
-      | taxId         | GLLGLL64B15G702I  |
-      | payment       | NULL              |
+      | denomination | Galileo galileo  |
+      | taxId        | GLLGLL64B15G702I |
+      | payment      | NULL             |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V23"
     And Viene creata una nuova apiKey per il comune "Comune_2" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
@@ -261,14 +260,14 @@ Feature: avanzamento notifiche webhook b2b V23
   @webhookV23 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.3_50_1] Consumo di uno stream notifica analogica senza gruppo, con eventType "TIMELINE"  utilizzando un apikey master e verifica corrispondenza tra i detail del webhook e quelli della timeline.
     Given viene generata una nuova notifica
-      | subject | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo |
-      | physicalCommunication |  AR_REGISTERED_LETTER |
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
-      | denomination | Giovanna D'Arco |
-      | taxId | DRCGNN12A46A326K |
-      | digitalDomicile | NULL |
-      | physicalAddress_address | Via@ok_AR |
+      | denomination            | Giovanna D'Arco  |
+      | taxId                   | DRCGNN12A46A326K |
+      | digitalDomicile         | NULL             |
+      | physicalAddress_address | Via@ok_AR        |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V23"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
@@ -289,14 +288,14 @@ Feature: avanzamento notifiche webhook b2b V23
   @webhookV23 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES3.1_146_2]  Lettura e verifica de-anonimizzazione con un apiKey con gruppo degli eventi di timeline di una notifica analogica inviata con un apikey con gruppo e salvati in uno stream dell'ente con gruppo (Stesso gruppo)
     Given viene generata una nuova notifica
-      | subject | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo |
-      | physicalCommunication |  AR_REGISTERED_LETTER |
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
-      | denomination | Giovanna D'Arco |
-      | taxId | DRCGNN12A46A326K |
-      | digitalDomicile | NULL |
-      | physicalAddress_address | Via@ok_AR |
+      | denomination            | Giovanna D'Arco  |
+      | taxId                   | DRCGNN12A46A326K |
+      | digitalDomicile         | NULL             |
+      | physicalAddress_address | Via@ok_AR        |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V23"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
@@ -343,8 +342,8 @@ Feature: avanzamento notifiche webhook b2b V23
   @webhookV23 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.3_162] Creazione di uno stream senza gruppo con la V10 e  lettura Eventi di timeline o di cambio di stato con la versione V10 utilizzando un apikey con gruppi. -PN-10218.
     Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
     And destinatario Mario Gherkin
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
@@ -421,7 +420,7 @@ Feature: avanzamento notifiche webhook b2b V23
   Scenario: [B2B-STREAM_ES3.1_145] Creazione di uno stream senza gruppo con la V10 e  lettura di nuovi eventi di timeline con un apikey abilitata.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo            |
+      | senderDenomination | Comune di Palermo           |
     And destinatario Mario Gherkin
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_1" con versione "V10" e filtro di timeline "NOTIFICATION_RADD_RETRIEVED"

@@ -9,8 +9,8 @@ Feature: avanzamento notifiche webhook b2b V26
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
     And destinatario
-      | denomination  | Galileo galileo   |
-      | taxId         | GLLGLL64B15G702I  |
+      | denomination | Galileo galileo  |
+      | taxId        | GLLGLL64B15G702I |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V26"
     And Viene creata una nuova apiKey per il comune "Comune_1" senza gruppo
     And viene impostata l'apikey appena generata
@@ -22,7 +22,7 @@ Feature: avanzamento notifiche webhook b2b V26
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "REQUEST_ACCEPTED" con la versione "V26"
     #TEST LETTURA DIGITAL_SUCCESS_WORKFLOW
     Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" con la versione "V26"
-    And viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati V26
+    And viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati "V26"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
@@ -68,9 +68,9 @@ Feature: avanzamento notifiche webhook b2b V26
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Verona            |
     And destinatario
-      | denomination  | Galileo galileo   |
-      | taxId         | GLLGLL64B15G702I  |
-      | payment       | NULL              |
+      | denomination | Galileo galileo  |
+      | taxId        | GLLGLL64B15G702I |
+      | payment      | NULL             |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V26"
     And Viene creata una nuova apiKey per il comune "Comune_2" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata

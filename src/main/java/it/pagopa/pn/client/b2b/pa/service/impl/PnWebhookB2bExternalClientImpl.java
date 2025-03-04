@@ -468,5 +468,7 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
         this.streamsApiV25.setApiClient(newApiClientV25(restTemplate, devBasePath, apiKey, bearerTokenInterop, enableInterop));
         this.eventsApiV26.setApiClient(newApiClientV26(restTemplate, devBasePath, apiKey, bearerTokenInterop, enableInterop));
         this.streamsApiV26.setApiClient(newApiClientV26(restTemplate, devBasePath, apiKey, bearerTokenInterop, enableInterop));
+        this.eventsApiV27.setApiClient(newApiClientV27(restTemplate, devBasePath, apiKey, bearerTokenInterop, enableInterop));
+        this.streamsApiV27.setApiClient(newApiClientV27(restTemplate, devBasePath, apiKey, bearerTokenInterop, enableInterop));
     }
 }

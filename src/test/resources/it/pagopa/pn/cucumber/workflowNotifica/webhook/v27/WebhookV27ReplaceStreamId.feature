@@ -224,7 +224,7 @@ Feature: replace streamID webhook
     And l'apiKey viene cancellata
 
   @webhookV27 @precondition @cleanWebhook @webhook2
-  Scenario: [B2B-STREAM_ES1.5_142] Creazione di uno stream notifica con gruppo, con eventType "TIMELINE" con V27 e repleceId di uno stream V10 senza gruppo e utilizzando un apikey con gruppo con la versione V27.(replacedStreamId di uno stream creato con la versione V10 settato).
+  Scenario: [B2B-STREAM_ES1.5_142] Creazione di uno stream notifica con gruppo, con eventType "TIMELINE" con V27 e replaceId di uno stream V10 senza gruppo e utilizzando un apikey con gruppo con la versione V27.(replacedStreamId di uno stream creato con la versione V10 settato).
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
@@ -234,6 +234,6 @@ Feature: replace streamID webhook
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    Then si crea il nuovo stream con versione "V10_V27" per il "Comune_Multi" con replaceId con un gruppo disponibile "NO_GROUPS"
+    Then si crea il nuovo stream con versione "V27" per il "Comune_Multi" con replaceId con un gruppo disponibile "NO_GROUPS"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata

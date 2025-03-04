@@ -75,7 +75,7 @@ Feature: tentativo consumo stream
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
     And si crea il nuovo stream per il "Comune_Multi" con versione "V27"
-    When vengono letti gli eventi di timeline dello stream con versione "V10" -Cross Versioning
+    When vengono letti gli eventi di timeline dello stream con versione "V10" nonostante sia stato creato con la "V27" -Cross Versioning
     Then l'operazione ha prodotto un errore con status code "400"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
@@ -86,7 +86,7 @@ Feature: tentativo consumo stream
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
-    When vengono letti gli eventi di timeline dello stream con versione "V27" -Cross Versioning
+    When vengono letti gli eventi di timeline dello stream con versione "V27" nonostante sia stato creato con la "V10" -Cross Versioning
     Then l'operazione ha prodotto un errore con status code "403"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata

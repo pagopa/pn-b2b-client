@@ -1,38 +1,38 @@
 Feature: avanzamento notifiche webhook b2b V27
 
   ##ONLY FOR DUBUG AND STRESS TEST
-  Scenario: [ONLY_FOR_STRESS] Cancellazione stream notifica
-    Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V27"
-    Given vengono cancellati tutti gli stream presenti del "Comune_1" con versione "V27"
-    Given vengono cancellati tutti gli stream presenti del "Comune_2" con versione "V27"
+#  Scenario: [ONLY_FOR_STRESS] Cancellazione stream notifica
+#    Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V27"
+#    Given vengono cancellati tutti gli stream presenti del "Comune_1" con versione "V27"
+#    Given vengono cancellati tutti gli stream presenti del "Comune_2" con versione "V27"
+#
+#  Scenario: [1] test lettura
+#    And vengono letti gli eventi dello stream con id "6c71596e-666d-4e63-9a20-777b0b95ad34" e versione "V27"
+#
+#
+#  Scenario: [2] creazione stream
+#    Given si predispongono 700 nuovi stream denominati "stream-test" con eventType "TIMELINE" con versione "V27"
+#    And si crea il nuovo stream con versione "V27" per il "Comune_Multi" con un gruppo disponibile "NO_GROUPS"
+#    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V27"
+#
+#
+#  Scenario: [3] creazione stream e consumo stream
+#    Given si predispongono 1400 nuovi stream denominati "stream-test" con eventType "TIMELINE" con versione "V27"
+#    And si crea il nuovo stream con versione "V27" per il "Comune_Multi" con un gruppo disponibile "NO_GROUPS"
+#    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V27"
+#    And vengono letti tutti gli eventi degli stream V27 creati per il test di carico per 800 minuti
+#
+#  Scenario: [4] test lettura multi stream
+#    And vengono letti tutti gli eventi degli stream V27 hardcodati per il test di carico per 800 minuti
 
-  Scenario: [1] test lettura
-    And vengono letti gli eventi dello stream con id "6c71596e-666d-4e63-9a20-777b0b95ad34" e versione "V27"
-
-
-  Scenario: [2] creazione stream
-    Given si predispongono 700 nuovi stream denominati "stream-test" con eventType "TIMELINE" con versione "V27"
-    And si crea il nuovo stream con versione "V27" per il "Comune_Multi" con un gruppo disponibile "NO_GROUPS"
-    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V27"
-
-
-  Scenario: [3] creazione stream e consumo stream
-    Given si predispongono 1400 nuovi stream denominati "stream-test" con eventType "TIMELINE" con versione "V27"
-    And si crea il nuovo stream con versione "V27" per il "Comune_Multi" con un gruppo disponibile "NO_GROUPS"
-    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V27"
-    And vengono letti tutti gli eventi degli stream V27 creati per il test di carico per 800 minuti
-
-  Scenario: [4] test lettura multi stream
-    And vengono letti tutti gli eventi degli stream V27 hardcodati per il test di carico per 800 minuti
-
-  Scenario: [B2B-STREAM_ES123123124] test lettura
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di milano            |
-    And destinatario
-      | denomination | Galileo galileo  |
-      | taxId        | GLLGLL64B15G702I |
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+#  Scenario: [B2B-STREAM_ES123123124] test lettura
+#    Given viene generata una nuova notifica
+#      | subject            | invio notifica con cucumber |
+#      | senderDenomination | Comune di milano            |
+#    And destinatario
+#      | denomination | Galileo galileo  |
+#      | taxId        | GLLGLL64B15G702I |
+#    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
 
 
 #COMUNE 1
@@ -59,7 +59,7 @@ Feature: avanzamento notifiche webhook b2b V27
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "REQUEST_ACCEPTED" con la versione V27
     #TEST LETTURA DIGITAL_SUCCESS_WORKFLOW
     Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" con la versione V27
-    And viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati V27
+    And viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati "V27"
     #TEST VERIFICA CORRISPONDENZA ELEMENTO DI TIMELINE STREAM
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "SEND_COURTESY_MESSAGE" con versione V27 e apiKey aggiornata con position 0
@@ -102,7 +102,7 @@ Feature: avanzamento notifiche webhook b2b V27
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "REQUEST_ACCEPTED" con la versione V27
     #TEST LETTURA DIGITAL_SUCCESS_WORKFLOW
     Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" con la versione V27
-    And viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati V27
+    And viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati "V27"
     #TEST VERIFICA CORRISPONDENZA ELEMENTO DI TIMELINE STREAM
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "SEND_COURTESY_MESSAGE" con versione V27 e apiKey aggiornata con position 0
