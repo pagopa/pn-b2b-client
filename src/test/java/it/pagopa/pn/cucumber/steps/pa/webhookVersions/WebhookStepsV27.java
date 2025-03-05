@@ -1,5 +1,11 @@
 package it.pagopa.pn.cucumber.steps.pa.webhookVersions;
 
+import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV27;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingWebhook;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceWebhookV27;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.ProgressResponseElementV26;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v27.*;
 import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps;
 import it.pagopa.pn.cucumber.steps.pa.WebhookStepsInterface;
@@ -8,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.web.client.HttpStatusCodeException;
 
+import java.time.temporal.ChronoUnit;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -15,7 +22,6 @@ import java.util.UUID;
 @Data
 @Slf4j
 public class WebhookStepsV27 implements WebhookStepsInterface {
-
     private List<StreamCreationRequestV27> streamCreationRequestListV27;
     private List<StreamMetadataResponseV27> eventStreamListV27;
     private StreamRequestV27 streamRequestV27;
@@ -24,6 +30,7 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
 
     public WebhookStepsV27(AvanzamentoNotificheWebhookB2bSteps webhookSteps) {
         this.webhookSteps = webhookSteps;
+        this.progressResponseElementsV27 = new LinkedList<>();
     }
 
     @Override
@@ -236,5 +243,79 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
             StreamMetadataResponseV27 response = this.webhookSteps.getWebhookB2bClient().disableEventStreamV27(streamId);
             Assertions.assertNotNull(response);
         });
+    }
+
+    @Override
+    public Object searchInWebhook(String lastEventId, int deepCount, int position, AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream) {
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26 timeLineOrStatus = ((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26) timelineForStream.getTimelineElementCategory());
+        PnPollingWebhook pnPollingWebhook = getPnPollingWebhook(timeLineOrStatus);
+        PnPollingServiceWebhookV27 webhookV27 = (PnPollingServiceWebhookV27) this.webhookSteps.getSharedSteps().getPollingFactory().getPollingService(PnPollingStrategy.WEBHOOK_V27);
+        PnPollingResponseV27 pnPollingResponseV27 = webhookV27.waitForEvent(this.webhookSteps.getSharedSteps().getSentNotification().getIun(),
+                PnPollingParameter.builder()
+                        .value("WEBHOOK")
+                        .pnPollingWebhook(pnPollingWebhook)
+                        .deepCount(deepCount)
+                        .lastEventId(lastEventId)
+                        .streamId(eventStreamListV27.get(position).getStreamId())
+                        .build());
+
+        log.info("WEBHOOK_PROGRESS_RESPONSE_ELEMENT_V26: " + pnPollingResponseV27.getProgressResponseElementV27());
+        if (pnPollingResponseV27.getProgressResponseElementListV27() != null) {
+            this.webhookSteps.getSharedSteps().setProgressResponseElementsV27(pnPollingResponseV27.getProgressResponseElementListV27());
+            return pnPollingResponseV27.getProgressResponseElementV27();
+        }
+        return null;
+    }
+
+    private PnPollingWebhook getPnPollingWebhook(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26 timeLineOrStatus) {
+        PnPollingWebhook pnPollingWebhook = new PnPollingWebhook();
+        pnPollingWebhook.setTimelineElementCategoryV27(timeLineOrStatus);
+        progressResponseElementsV27.clear();
+        pnPollingWebhook.setProgressResponseElementListV27((LinkedList<ProgressResponseElementV27>) progressResponseElementsV27);
+        return pnPollingWebhook;
+    }
+
+    @Override
+    public boolean checkInternalTimeline(AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream) {
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26 timelineElementInternalCategory = it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26.valueOf(((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26) timelineForStream.getTimelineElementCategory()).name());
+        boolean finish = false;
+        for (int i = 0; i < timelineForStream.getNumCheck(); i++) {
+            try {
+                Thread.sleep(timelineForStream.getWaiting());
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
+            }
+            this.webhookSteps.getSharedSteps().setSentNotification(this.webhookSteps.getB2bClient().getSentNotification(this.webhookSteps.getSharedSteps().getSentNotification().getIun()));
+            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 timelineElement = this.webhookSteps.getSharedSteps()
+                    .getSentNotification().getTimeline().stream()
+                    .filter(elem -> elem.getCategory().equals(timelineElementInternalCategory))
+                    .findAny()
+                    .orElse(null);
+            if (timelineElement != null) {
+                finish = true;
+                break;
+            }
+        }
+        return finish;
+    }
+
+    @Override
+    public <T> void verifyAssertions(AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream, T progressResponseElement) {
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26 timelineElementInternalCategory =
+                it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26.valueOf(((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26) timelineForStream.getTimelineElementCategory()).name());
+
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 elementToCheck = this.webhookSteps.getSharedSteps().getSentNotification().getTimeline().stream()
+                .filter(elem -> elem.getCategory() != null)
+                .filter(elem -> elem.getCategory().getValue().equals(timelineElementInternalCategory.getValue()))
+                .findAny()
+                .orElse(null);
+        ProgressResponseElementV26 convertedProgressResponseElement = ((ProgressResponseElementV26) progressResponseElement);
+        Assertions.assertNotNull(elementToCheck);
+        Assertions.assertNotNull(elementToCheck.getTimestamp());
+        Assertions.assertNotNull(convertedProgressResponseElement.getElement());
+        Assertions.assertNotNull(convertedProgressResponseElement.getElement().getTimestamp());
+        Assertions.assertEquals(convertedProgressResponseElement.getElement().getTimestamp().truncatedTo(ChronoUnit.SECONDS),
+                elementToCheck.getTimestamp().truncatedTo(ChronoUnit.SECONDS));
+        log.info("EventProgress: " + progressResponseElement);
     }
 }

@@ -1,6 +1,11 @@
 package it.pagopa.pn.cucumber.steps.pa.webhookVersions;
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
+import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV25;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingWebhook;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceWebhookV25;
 import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps;
 import it.pagopa.pn.cucumber.steps.pa.WebhookStepsInterface;
 import lombok.Data;
@@ -8,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.web.client.HttpStatusCodeException;
 
+import java.time.temporal.ChronoUnit;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -24,6 +30,7 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
 
     public WebhookStepsV25(AvanzamentoNotificheWebhookB2bSteps webhookSteps) {
         this.webhookSteps = webhookSteps;
+        this.progressResponseElementsV25 = new LinkedList<>();
     }
 
     @Override
@@ -232,4 +239,78 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
             Assertions.assertNotNull(response);
         });
     }
+
+    @Override
+    public Object searchInWebhook(String lastEventId, int deepCount, int position, AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream) {
+        TimelineElementCategoryV23 timeLineOrStatus = ((TimelineElementCategoryV23) timelineForStream.getTimelineElementCategory());
+        PnPollingWebhook pnPollingWebhook = getPnPollingWebhook(timeLineOrStatus);
+        PnPollingServiceWebhookV25 webhookV25 = (PnPollingServiceWebhookV25) this.webhookSteps.getSharedSteps().getPollingFactory().getPollingService(PnPollingStrategy.WEBHOOK_V25);
+        PnPollingResponseV25 pnPollingResponseV25 = webhookV25.waitForEvent(this.webhookSteps.getSharedSteps().getSentNotification().getIun(),
+                PnPollingParameter.builder()
+                        .value("WEBHOOK")
+                        .pnPollingWebhook(pnPollingWebhook)
+                        .deepCount(deepCount)
+                        .lastEventId(lastEventId)
+                        .streamId(eventStreamListV25.get(position).getStreamId())
+                        .build());
+
+        log.info("WEBHOOK_PROGRESS_RESPONSE_ELEMENT_V25: " + pnPollingResponseV25.getProgressResponseElementV25());
+        if (pnPollingResponseV25.getProgressResponseElementListV25() != null) {
+            this.webhookSteps.getSharedSteps().setProgressResponseElementsV25(pnPollingResponseV25.getProgressResponseElementListV25());
+            return pnPollingResponseV25.getProgressResponseElementV25();
+        }
+        return null;
+    }
+
+    private PnPollingWebhook getPnPollingWebhook(TimelineElementCategoryV23 timeLineOrStatus) {
+        PnPollingWebhook pnPollingWebhook = new PnPollingWebhook();
+        pnPollingWebhook.setTimelineElementCategoryV25(timeLineOrStatus);
+        progressResponseElementsV25.clear();
+        pnPollingWebhook.setProgressResponseElementListV25((LinkedList<ProgressResponseElementV25>) progressResponseElementsV25);
+        return pnPollingWebhook;
+    }
+
+    @Override
+    public boolean checkInternalTimeline(AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream) {
+        TimelineElementCategoryV23 timelineElementInternalCategory = TimelineElementCategoryV23.valueOf(((TimelineElementCategoryV23) timelineForStream.getTimelineElementCategory()).name());
+        boolean finish = false;
+        for (int i = 0; i < timelineForStream.getNumCheck(); i++) {
+            try {
+                Thread.sleep(timelineForStream.getWaiting());
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
+            }
+            this.webhookSteps.getSharedSteps().setSentNotificationV25(this.webhookSteps.getB2bClient().getSentNotificationV25(this.webhookSteps.getSharedSteps().getSentNotification().getIun()));
+            TimelineElementV25 timelineElement = this.webhookSteps.getSharedSteps()
+                    .getSentNotificationV25().getTimeline().stream()
+                    .filter(elem -> elem.getCategory().equals(timelineElementInternalCategory))
+                    .findAny()
+                    .orElse(null);
+            if (timelineElement != null) {
+                finish = true;
+                break;
+            }
+        }
+        return finish;
+    }
+
+    @Override
+    public <T> void verifyAssertions(AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream, T progressResponseElement) {
+        TimelineElementCategoryV23 timelineElementInternalCategory = TimelineElementCategoryV23.valueOf(((TimelineElementCategoryV23) timelineForStream.getTimelineElementCategory()).name());
+
+        TimelineElementV25 elementToCheck = this.webhookSteps.getSharedSteps().getSentNotificationV25().getTimeline().stream()
+                .filter(elem -> elem.getCategory() != null)
+                .filter(elem -> elem.getCategory().getValue().equals(timelineElementInternalCategory.getValue()))
+                .findAny()
+                .orElse(null);
+        ProgressResponseElementV25 convertedProgressResponseElement = ((ProgressResponseElementV25) progressResponseElement);
+        Assertions.assertNotNull(elementToCheck);
+        Assertions.assertNotNull(elementToCheck.getTimestamp());
+        Assertions.assertNotNull(convertedProgressResponseElement.getElement());
+        Assertions.assertNotNull(convertedProgressResponseElement.getElement().getTimestamp());
+        Assertions.assertEquals(convertedProgressResponseElement.getElement().getTimestamp().truncatedTo(ChronoUnit.SECONDS),
+                elementToCheck.getTimestamp().truncatedTo(ChronoUnit.SECONDS));
+        log.info("EventProgress: " + progressResponseElement);
+    }
+
 }

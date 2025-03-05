@@ -43,4 +43,14 @@ public interface WebhookStepsInterface {
 
     void disableStreams();
 
+    default Object searchInWebhook(String lastEventId, int deepCount, int position, AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream) {
+        return null;
+    }
+
+    default boolean checkInternalTimeline(AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream) {
+        return false;
+    }
+
+    default <T> void verifyAssertions(AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream, T progressResponseElement) {}
+
 }

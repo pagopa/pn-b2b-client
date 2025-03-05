@@ -1841,6 +1841,10 @@ public class SharedSteps {
         return notificationResponseCompleteV23;
     }
 
+    public FullSentNotificationV24 getSentNotificationV24() {
+        return notificationResponseCompleteV24;
+    }
+
     public FullSentNotificationV25 getSentNotificationV25() {
         return notificationResponseCompleteV25;
     }
@@ -1865,10 +1869,13 @@ public class SharedSteps {
         this.notificationResponseCompleteV23 = notificationResponseCompleteV23;
     }
 
+    public void setSentNotificationV24(FullSentNotificationV24 notificationResponseCompleteV24) {
+        this.notificationResponseCompleteV24 = notificationResponseCompleteV24;
+    }
+
     public void setSentNotificationV25(FullSentNotificationV25 notificationResponseCompleteV25) {
         this.notificationResponseCompleteV25 = notificationResponseCompleteV25;
     }
-
 
     public void selectPA(String apiKey) {
         switch (apiKey) {
