@@ -43,4 +43,6 @@ public interface WebhookStepsInterface {
 
     void disableStreams();
 
+    void setValueForWaitForAccepted(boolean waitForAccepted);
+
 }
