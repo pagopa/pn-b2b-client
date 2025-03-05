@@ -240,6 +240,21 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
     }
 
     @Override
+    public void deleteDocument(String xCorrelationId, UUID eServiceTemplateId,
+        UUID eServiceTemplateVersionId, UUID documentId) {
+        // TODO anche qui id in semplice formato stringa e non UUID
+        this.eserviceTemplatesApi.deleteEServiceTemplateDocumentById(xCorrelationId, eServiceTemplateId.toString(), eServiceTemplateVersionId.toString(), documentId.toString());
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteDocumentWithHttpInfo(String xCorrelationId,
+        UUID eServiceTemplateId,
+        UUID eServiceTemplateVersionId, UUID documentId) {
+        // TODO anche qui id in semplice formato stringa e non UUID
+        return this.eserviceTemplatesApi.deleteEServiceTemplateDocumentByIdWithHttpInfo(xCorrelationId, eServiceTemplateId.toString(), eServiceTemplateVersionId.toString(), documentId.toString());
+    }
+
+    @Override
     public void setBearerToken(String bearerToken) {
         this.eserviceTemplatesApi.setApiClient(createApiClient(bearerToken));
     }

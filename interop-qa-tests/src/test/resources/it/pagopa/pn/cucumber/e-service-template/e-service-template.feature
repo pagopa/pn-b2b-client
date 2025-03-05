@@ -739,18 +739,125 @@ Feature: Test API of e-service template
       | DOCUMENT  | INTERFACE |
       | INTERFACE | DOCUMENT  |
 
+  Scenario Outline: [INCARICATO-EST-058] La cancellazione di un documento/interfaccia di un e-service template NON può essere effettuata da un ente NON in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
+    And l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la cancellazione del documento dell'e-service template
+    Then si ottiene status code 403
+    Examples:
+      | ruolo         | stato     | kind      |
+      | security      | DRAFT     | DOCUMENT  |
+      | api,security  | DRAFT     | DOCUMENT  |
+      | support       | DRAFT     | DOCUMENT  |
+      | security      | PUBLISHED | DOCUMENT  |
+      | api,security  | PUBLISHED | DOCUMENT  |
+      | support       | PUBLISHED | DOCUMENT  |
+      | security      | SUSPENDED | DOCUMENT  |
+      | api,security  | SUSPENDED | DOCUMENT  |
+      | support       | SUSPENDED | DOCUMENT  |
+      | security      | DRAFT     | INTERFACE |
+      | api,security  | DRAFT     | INTERFACE |
+      | support       | DRAFT     | INTERFACE |
+      | security      | PUBLISHED | INTERFACE |
+      | api,security  | PUBLISHED | INTERFACE |
+      | support       | PUBLISHED | INTERFACE |
+      | security      | SUSPENDED | INTERFACE |
+      | api,security  | SUSPENDED | INTERFACE |
+      | support       | SUSPENDED | INTERFACE |
+
+  Scenario Outline: [INCARICATO-EST-059] La cancellazione di un documento/interfaccia di un e-service template può essere effettuata da un ente in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
+    And l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la cancellazione del documento dell'e-service template
+    Then si ottiene status code 200
+    And la cancellazione del documento dell'e-service template è stata effettuata correttamente
+    Examples:
+      | ruolo   | stato     | kind      |
+      | admin   | DRAFT     | DOCUMENT  |
+      | api     | DRAFT     | DOCUMENT  |
+      | admin   | PUBLISHED | DOCUMENT  |
+      | api     | PUBLISHED | DOCUMENT  |
+      | admin   | SUSPENDED | DOCUMENT  |
+      | api     | SUSPENDED | DOCUMENT  |
+      | admin   | DRAFT     | INTERFACE |
+      | api     | DRAFT     | INTERFACE |
+      # la cancellazione di INTERFACE in stato published o suspended non può essere effettuata
+
+  Scenario Outline: [INCARICATO-EST-060] La cancellazione di un documento/interfaccia di un e-service template non può essere effettuata da una PA diversa da quella creatrice del template
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    And l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo
+    When l'utente è un "admin" di "PA2"
+    And l'utente tenta la cancellazione del documento dell'e-service template
+    Then si ottiene status code 403
+    Examples:
+      | kind      |
+      | DOCUMENT  |
+      | INTERFACE |
+
+  Scenario Outline: [INCARICATO-EST-061] La cancellazione di un'interfaccia di un e-service template in stato PUBLISHED o SUSPENDED non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
+    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
+    When l'utente tenta la cancellazione del documento dell'e-service template
+    Then si ottiene status code 403
+    Examples:
+      | stato     |
+      | PUBLISHED |
+      | SUSPENDED |
+
+  Scenario Outline: [INCARICATO-EST-062] La cancellazione di un documento/interfaccia inesistente non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
+    When l'utente tenta la cancellazione di un documento inesistente nell'e-service template
+    Then si ottiene status code 404
+    Examples:
+      | stato     |
+      | DRAFT     |
+      | PUBLISHED |
+      | SUSPENDED |
+
+  Scenario: [INCARICATO-EST-063] La cancellazione di un documento/interfaccia da un e-service template inesistente non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    When l'utente tenta la cancellazione di un documento da un e-service template inesistente
+    Then si ottiene status code 404
+
+  Scenario Outline: [INCARICATO-EST-064] La cancellazione di un documento/interfaccia da una versione inesistente di un e-service template non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    And l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo
+    When l'utente tenta la cancellazione del documento da una versione inesistente nell'e-service template
+    Then si ottiene status code 404
+    Examples:
+      | kind      |
+      | DOCUMENT  |
+      | INTERFACE |
+
+  Scenario Outline: [INCARICATO-EST-065] La cancellazione di un documento/interfaccia già eliminato non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
+    And l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo
+    And l'utente effettua la cancellazione del documento dall'e-service template con successo
+    When l'utente tenta la cancellazione del documento dell'e-service template
+    Then si ottiene status code 404
+    Examples:
+      | stato     | kind      |
+      | DRAFT     | DOCUMENT  |
+      | DRAFT     | INTERFACE |
+      | PUBLISHED | DOCUMENT  |
+      | SUSPENDED | DOCUMENT  |
 
 
-    #TODO smistare gli scenari in file .feature più piccoli e/o i relativi step in classi più piccole. Possibili divisioni:
+
+  #TODO la maggior parte dei test sono fatti su template in mod. RICEZIONE. Valutare che non sia il caso di testare per entrambe le modalità.
+
+    #TODO smistare gli scenari in file .feature più piccoli e/o i relativi step in classi più piccole. Possibile divisione:
       # test che rigurdano il ciclo di vita del template (creazione, pubblicazione, sospensione, riattivazione, cancellazione)
-      # altro da definire...
-
-      # test che riguardano la creazione di risorse
-      # test che riguardano le modifiche a risorse esistenti
-      # test che riguardano la cancellazione di risorse
-      # ...
-
-      # test che riguardano il template
       # test che riguardano la versione
       # test che riguardano la risk anlysis
       # test che riguardano i documenti (nota: test di caricamento e lettura sono inter-dipendenti, la creazione non può essere verificata senza la lettura, e viceversa)

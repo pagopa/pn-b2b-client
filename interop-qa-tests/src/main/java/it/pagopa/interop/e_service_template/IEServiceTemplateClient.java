@@ -121,4 +121,10 @@ public interface IEServiceTemplateClient extends SettableBearerToken {
         UUID documentId,
         UpdateEServiceTemplateVersionDocumentSeed updateEServiceTemplateVersionDocumentSeed
     );
+
+    void deleteDocument(String xCorrelationId, UUID eServiceTemplateId,
+        UUID eServiceTemplateVersionId, UUID documentId);
+
+    ResponseEntity<Void> deleteDocumentWithHttpInfo(String xCorrelationId, UUID eServiceTemplateId,
+        UUID eServiceTemplateVersionId, UUID documentId);
 }

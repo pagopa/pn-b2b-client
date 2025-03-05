@@ -752,6 +752,73 @@ public class EServiceTemplateSteps {
             ResponseEntity::getStatusCode);
     }
 
+    @When("l'utente tenta la cancellazione del documento dell'e-service template")
+    public void deleteDocumentFromEServiceTemplateVersion() {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        UUID eServiceTemplateVersionId = lastTemplateManaged.lastVersionId();
+        UUID documentId = lastAddedDocument.id();
+        deleteDocumentFromEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, documentId);
+    }
+
+    @Then("la cancellazione del documento dell'e-service template è stata effettuata correttamente")
+    public void checkDocumentDeletedFromEServiceTemplateVersion() {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        UUID eServiceTemplateVersionId = lastTemplateManaged.lastVersionId();
+        UUID documentId = lastAddedDocument.id();
+
+        try {
+            pollingService.makePolling(
+                () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
+                    sharedStepsContext.getXCorrelationId(),
+                    eServiceTemplateId,
+                    eServiceTemplateVersionId),
+                res -> {
+                    if(res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody())) {
+                        return res.getBody().getDocs().stream().noneMatch(d -> d.getId().equals(documentId));
+                    }
+                    return false;
+                },
+                "Il documento risulta ancora presente nell'e-service template"
+            );
+        } catch (PollingPredicateException e) {
+            fail("Il documento non è stato cancellato correttamente dalla versione dell'e-service template: " + e.getMessage());
+        }
+    }
+
+    @Given("l'utente effettua la cancellazione del documento dall'e-service template con successo")
+    public void deleteDocumentFromEServiceTemplateVersionSuccessfully() {
+        deleteDocumentFromEServiceTemplateVersion();
+        checkDocumentDeletedFromEServiceTemplateVersion();
+    }
+
+    @When("l'utente tenta la cancellazione di un documento inesistente nell'e-service template")
+    public void deleteNonExistentDocumentFromEServiceTemplateVersion() {
+        deleteDocumentFromEServiceTemplateVersion(lastTemplateManaged.id(), lastTemplateManaged.lastVersionId(), UUID.randomUUID());
+    }
+
+    @When("l'utente tenta la cancellazione del documento da una versione inesistente nell'e-service template")
+    public void deleteDocumentFromNonExistentEServiceTemplateVersion() {
+        deleteDocumentFromEServiceTemplateVersion(lastTemplateManaged.id(), UUID.randomUUID(), lastAddedDocument.id());
+    }
+
+    @When("l'utente tenta la cancellazione di un documento da un e-service template inesistente")
+    public void deleteDocumentFromNonExistentEServiceTemplate() {
+        deleteDocumentFromEServiceTemplateVersion(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID());
+    }
+
+    private void deleteDocumentFromEServiceTemplateVersion(UUID eServiceTemplateId,
+        UUID eServiceTemplateVersionId, UUID documentId) {
+        String userToken = getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+        httpCallExecutor.performCall(
+            () -> eServiceTemplateClient.deleteDocumentWithHttpInfo(
+                sharedStepsContext.getXCorrelationId(),
+                eServiceTemplateId,
+                eServiceTemplateVersionId,
+                documentId),
+            ResponseEntity::getStatusCode);
+    }
+
 
 
     /* TODO un'alternativa all'uso di metodi come "areConsistent" - che confrontano i campi uno a uno - potrebbe essere
