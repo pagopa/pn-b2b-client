@@ -25,6 +25,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVer
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionDocumentSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.VersionSeedForEServiceTemplateCreation;
 import it.pagopa.interop.utils.HttpCallExecutor;
@@ -39,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import lombok.Data;
@@ -73,6 +75,7 @@ public class EServiceTemplateSteps {
     private EServiceRiskAnalysisSeed lastAddedRiskAnalysis;
     private int lastAddedRiskAnalysisIndex = -1; // -1 means no risk analysis has been added yet
     private EServiceTemplateDocumentInfo lastAddedDocument;
+    private UpdateEServiceTemplateVersionDocumentSeed lastDocumentUpdateSeed;
 
     // TODO farne un bean centralizzato riutilizzabile ovunque
     private static EasyRandomParameters easyRandomParameters = new EasyRandomParameters()
@@ -660,6 +663,97 @@ public class EServiceTemplateSteps {
             ResponseEntity::getStatusCode);
     }
 
+    @When("l'utente tenta la modifica del documento dell'e-service template")
+    public void editDocumentFromEServiceTemplateVersion() {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        UUID eServiceTemplateVersionId = lastTemplateManaged.lastVersionId();
+        lastDocumentUpdateSeed = easyRandom.nextObject(UpdateEServiceTemplateVersionDocumentSeed.class);
+        editDocumentFromEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, lastAddedDocument.id(), lastDocumentUpdateSeed);
+    }
+
+    @Then("la modifica del documento dell'e-service template è stata effettuata correttamente")
+    public void checkDocumentEditedFromEServiceTemplateVersion() {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        UUID eServiceTemplateVersionId = lastTemplateManaged.lastVersionId();
+        UUID documentId = lastAddedDocument.id();
+
+        try {
+            pollingService.makePolling(
+                    // 05/03/2025 Viene chiamata sola questa API perché l'unica che contiene info utili per la verifica della modifica effettuata
+                    () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
+                        sharedStepsContext.getXCorrelationId(),
+                        eServiceTemplateId,
+                        eServiceTemplateVersionId),
+                res -> {
+                    if(res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody())) {
+                        Optional<EServiceDoc> foundDoc = res.getBody().getDocs().stream()
+                            .filter(d -> d.getId().equals(documentId)).findFirst();
+                        return foundDoc.isPresent() && this.areConsistent(lastDocumentUpdateSeed, foundDoc.get());
+                    }
+                    return false;
+                },
+                "Lo stato del documento restituito dalla API GET dei documenti non corrisponde a quello atteso"
+            );
+        } catch (PollingPredicateException e) {
+            fail("Il documento non è stato modificato correttamente dalla versione dell'e-service template: " + e.getMessage());
+        }
+    }
+
+    @When("l'utente tenta la modifica di un documento da un e-service template inesistente")
+    public void editDocumentFromNonExistentEServiceTemplate() {
+        editDocumentFromEServiceTemplateVersion(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), easyRandom.nextObject(UpdateEServiceTemplateVersionDocumentSeed.class));
+    }
+
+    @When("l'utente tenta la modifica del documento da una versione inesistente dell'e-service template")
+    public void editDocumentFromNonExistentEServiceTemplateVersion() {
+        editDocumentFromEServiceTemplateVersion(lastTemplateManaged.id(), UUID.randomUUID(), lastAddedDocument.id(), easyRandom.nextObject(UpdateEServiceTemplateVersionDocumentSeed.class));
+    }
+
+    @When("l'utente tenta la modifica di un documento inesistente nell'e-service template")
+    public void editNonExistentDocumentFromEServiceTemplateVersion() {
+        editDocumentFromEServiceTemplateVersion(lastTemplateManaged.id(), lastTemplateManaged.lastVersionId(), UUID.randomUUID(), easyRandom.nextObject(UpdateEServiceTemplateVersionDocumentSeed.class));
+    }
+
+    @When("l'utente tenta la modifica di un documento inserendo il nome di un altro documento")
+    public void editDocumentFromEServiceTemplateVersionWithSameName() {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        UUID eServiceTemplateVersionId = lastTemplateManaged.lastVersionId();
+
+        pollingService.makePolling(
+            () -> httpCallExecutor.performCall(
+                () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
+                    sharedStepsContext.getXCorrelationId(),
+                    eServiceTemplateId,
+                    eServiceTemplateVersionId),
+                ResponseEntity::getStatusCode),
+            res -> res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody()) && res.getBody().getDocs().size() >= 2,
+            "Condizioni di polling non rispettate. NOTA: questo step prevede l'esistenza di almeno 2 documenti nell'e-service template"
+        );
+
+        @SuppressWarnings("unchecked, DataFlowIssue")
+        List<EServiceDoc> docs = ((ResponseEntity<EServiceTemplateVersionDetails>) httpCallExecutor.getResponse()).getBody().getDocs();
+
+        UUID documentId = docs.get(0).getId();
+        UpdateEServiceTemplateVersionDocumentSeed updateSeed = easyRandom.nextObject(UpdateEServiceTemplateVersionDocumentSeed.class)
+            .prettyName(docs.get(1).getPrettyName());
+        editDocumentFromEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, documentId, updateSeed);
+    }
+
+    private void editDocumentFromEServiceTemplateVersion(UUID eServiceTemplateId, UUID eServiceTemplateVersionId, UUID documentId, UpdateEServiceTemplateVersionDocumentSeed seed) {
+        String userToken = getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+        httpCallExecutor.performCall(
+            () -> eServiceTemplateClient.updateDocumentWithHttpInfo(
+                sharedStepsContext.getXCorrelationId(),
+                eServiceTemplateId,
+                eServiceTemplateVersionId,
+                documentId,
+                seed),
+            ResponseEntity::getStatusCode);
+    }
+
+
+
     /* TODO un'alternativa all'uso di metodi come "areConsistent" - che confrontano i campi uno a uno - potrebbe essere
      * l'uso di una libreria di mapping, da usare per mappare un oggetto nell'altro tipo, e quindi procedere con
      * un normale equals(...).
@@ -684,6 +778,10 @@ public class EServiceTemplateSteps {
          * a https://stackoverflow.com/questions/49379006/what-is-the-correct-way-to-declare-a-date-in-an-openapi-swagger-file#:~:text=In%20OpenAPI%2C%20the%20date-time%20format%20is%20used%20to,a%20breakdown%3A%20Regex%20for%20this%3A%20%5Ed%7B4%7D-d%7B2%7D-d%7B2%7DTd%7B2%7D%3Ad%7B2%7D%3Ad%7B2%7DZ%24%20CODE%20%22fmt%22
          * dovrebbe trattarsi dello standard ISO 8601; arricchire il test così da verificare anche questo dato
          */
+    }
+
+    private boolean areConsistent(UpdateEServiceTemplateVersionDocumentSeed updateSeed, EServiceDoc doc) {
+        return updateSeed.getPrettyName().equals(doc.getPrettyName());
     }
 
     /** Return a new {@link EServiceTemplateSeed} with only the mandatory fields set

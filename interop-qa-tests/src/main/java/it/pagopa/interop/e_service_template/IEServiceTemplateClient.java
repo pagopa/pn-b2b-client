@@ -3,11 +3,13 @@ package it.pagopa.interop.e_service_template;
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionDocumentSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionSeed;
 import java.io.File;
 import java.util.UUID;
@@ -102,5 +104,21 @@ public interface IEServiceTemplateClient extends SettableBearerToken {
         EServiceTemplateDocumentKind kind,
         String prettyName,
         Resource doc
+    );
+
+    EServiceDoc updateDocument(
+        String xCorrelationId,
+        UUID eServiceTemplateId,
+        UUID eServiceTemplateVersionId,
+        UUID documentId,
+        UpdateEServiceTemplateVersionDocumentSeed updateEServiceTemplateVersionDocumentSeed
+    );
+
+    ResponseEntity<EServiceDoc> updateDocumentWithHttpInfo(
+        String xCorrelationId,
+        UUID eServiceTemplateId,
+        UUID eServiceTemplateVersionId,
+        UUID documentId,
+        UpdateEServiceTemplateVersionDocumentSeed updateEServiceTemplateVersionDocumentSeed
     );
 }

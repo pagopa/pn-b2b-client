@@ -479,7 +479,7 @@ Feature: Test API of e-service template
     When l'utente è un "<ruolo>" di "PA1"
     And l'utente tenta l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template
     Then si ottiene status code 200
-    And l'aggiunta del documento alla versione dell'e-service template è stata effettuata correttamente
+    And l'aggiunta del documento di tipo <kind> alla versione dell'e-service template è stata effettuata correttamente
     Examples:
       | ruolo   | kind      |
       | admin   | DOCUMENT  |
@@ -643,6 +643,101 @@ Feature: Test API of e-service template
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
     When l'utente tenta il reperimento di un documento inesistente dalla versione dell'e-service template
     Then si ottiene status code 404
+
+  Scenario Outline: [INCARICATO-EST-051] La modifica di un documento/interfaccia di un e-service template in qualsiasi stato NON può essere fatta da un ente NON in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
+    And l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la modifica del documento dell'e-service template
+    Then si ottiene status code 403
+    Examples:
+      | ruolo         | stato     | kind      |
+      | security      | DRAFT     | DOCUMENT  |
+      | api,security  | DRAFT     | DOCUMENT  |
+      | support       | DRAFT     | DOCUMENT  |
+      | security      | PUBLISHED | DOCUMENT  |
+      | api,security  | PUBLISHED | DOCUMENT  |
+      | support       | PUBLISHED | DOCUMENT  |
+      | security      | SUSPENDED | DOCUMENT  |
+      | api,security  | SUSPENDED | DOCUMENT  |
+      | support       | SUSPENDED | DOCUMENT  |
+      | security      | DRAFT     | INTERFACE |
+      | api,security  | DRAFT     | INTERFACE |
+      | support       | DRAFT     | INTERFACE |
+      | security      | PUBLISHED | INTERFACE |
+      | api,security  | PUBLISHED | INTERFACE |
+      | support       | PUBLISHED | INTERFACE |
+      | security      | SUSPENDED | INTERFACE |
+      | api,security  | SUSPENDED | INTERFACE |
+      | support       | SUSPENDED | INTERFACE |
+
+  Scenario Outline: [INCARICATO-EST-052] La modifica di un documento/interfaccia di un e-service template in qualsiasi stato può essere fatta da un ente in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
+    And l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la modifica del documento dell'e-service template
+    Then si ottiene status code 200
+    And la modifica del documento dell'e-service template è stata effettuata correttamente
+    Examples:
+      | ruolo   | stato     | kind      |
+      | admin   | DRAFT     | DOCUMENT  |
+      | api     | DRAFT     | DOCUMENT  |
+      | admin   | PUBLISHED | DOCUMENT  |
+      | api     | PUBLISHED | DOCUMENT  |
+      | admin   | SUSPENDED | DOCUMENT  |
+      | api     | SUSPENDED | DOCUMENT  |
+      | admin   | DRAFT     | INTERFACE |
+      | api     | DRAFT     | INTERFACE |
+      | admin   | PUBLISHED | INTERFACE |
+      | api     | PUBLISHED | INTERFACE |
+      | admin   | SUSPENDED | INTERFACE |
+      | api     | SUSPENDED | INTERFACE |
+
+  Scenario Outline: [INCARICATO-EST-053] La modifica di un documento/interfaccia di un e-service template non può essere fatta da una PA diversa da quella creatrice del template
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    And l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo
+    When l'utente è un "admin" di "PA2"
+    And l'utente tenta la modifica del documento dell'e-service template
+    Then si ottiene status code 403
+    Examples:
+      | kind      |
+      | DOCUMENT  |
+      | INTERFACE |
+
+  Scenario: [INCARICATO-EST-054] La modifica di un documento/interfaccia da un e-service template inesistente non può essere fatta
+    Given l'utente è un "admin" di "PA1"
+    When l'utente tenta la modifica di un documento da un e-service template inesistente
+    Then si ottiene status code 404
+
+  Scenario: [INCARICATO-EST-055] La modifica di un documento da una versione inesistente di un e-service template non può essere fatta
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    And l'utente effettua l'aggiunta di un documento di tipo DOCUMENT alla versione dell'e-service template con successo
+    When l'utente tenta la modifica del documento da una versione inesistente dell'e-service template
+    Then si ottiene status code 404
+
+  Scenario: [INCARICATO-EST-056] La modifica di un documento/interfaccia inesistente non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    When l'utente tenta la modifica di un documento inesistente nell'e-service template
+    Then si ottiene status code 404
+
+  Scenario Outline: [INCARICATO-EST-057] La modifica di un documento inserendo il nome di un altro documento esistente nell'e-service template non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    And l'utente effettua l'aggiunta di un documento di tipo <kind1> alla versione dell'e-service template con successo
+    And l'utente effettua l'aggiunta di un documento di tipo <kind2> alla versione dell'e-service template con successo
+    When l'utente tenta la modifica di un documento inserendo il nome di un altro documento
+    Then si ottiene status code 409
+    Examples:
+      | kind1     | kind2     |
+      | DOCUMENT  | DOCUMENT  |
+      #| INTERFACE | INTERFACE |  <-- combinazione impossibile, testata in uno scenartio precedente
+      | DOCUMENT  | INTERFACE |
+      | INTERFACE | DOCUMENT  |
 
 
 

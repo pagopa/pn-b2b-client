@@ -6,11 +6,13 @@ import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EserviceTemplatesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionDocumentSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionSeed;
 import java.io.File;
 import java.util.UUID;
@@ -213,6 +215,28 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
     ) {
         // TODO 04/03/2025: gli id, a differenza di altre api, se li aspetta in semplice formato stringa e non UUID, va segnalato
         return this.eserviceTemplatesApi.getEServiceTemplateDocumentByIdWithHttpInfo(xCorrelationId, eServiceTemplateId.toString(), eServiceTemplateVersionId.toString(), documentId.toString());
+    }
+
+    @Override
+    public EServiceDoc updateDocument(
+        String xCorrelationId,
+        UUID eServiceTemplateId,
+        UUID eServiceTemplateVersionId,
+        UUID documentId,
+        UpdateEServiceTemplateVersionDocumentSeed updateEServiceTemplateVersionDocumentSeed
+    ) {
+        return this.eserviceTemplatesApi.updateEServiceTemplateDocumentById(xCorrelationId, eServiceTemplateId, eServiceTemplateVersionId, documentId, updateEServiceTemplateVersionDocumentSeed);
+    }
+
+    @Override
+    public ResponseEntity<EServiceDoc> updateDocumentWithHttpInfo(
+        String xCorrelationId,
+        UUID eServiceTemplateId,
+        UUID eServiceTemplateVersionId,
+        UUID documentId,
+        UpdateEServiceTemplateVersionDocumentSeed updateEServiceTemplateVersionDocumentSeed
+    ) {
+        return this.eserviceTemplatesApi.updateEServiceTemplateDocumentByIdWithHttpInfo(xCorrelationId, eServiceTemplateId, eServiceTemplateVersionId, documentId, updateEServiceTemplateVersionDocumentSeed);
     }
 
     @Override
