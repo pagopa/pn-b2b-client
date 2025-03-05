@@ -1028,6 +1028,56 @@ public class EServiceTemplateSteps {
             ResponseEntity::getStatusCode);
     }
 
+    @When("l'utente tenta la riattivazione della versione dell'e-service template")
+    public void reactivateEServiceTemplateVersion() {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        UUID eServiceTemplateVersionId = lastTemplateManaged.lastVersionId();
+        reactivateEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId);
+    }
+
+    @When("l'utente tenta la riattivazione di una versione di un e-service template inesistente")
+    public void reactivateNonExistentEServiceTemplate() {
+        reactivateEServiceTemplateVersion(UUID.randomUUID(), UUID.randomUUID());
+    }
+
+    @When("l'utente tenta la riattivazione di una versione inesistente nell'e-service template")
+    public void reactivateNonExistentEServiceTemplateVersion() {
+        reactivateEServiceTemplateVersion(lastTemplateManaged.id(), UUID.randomUUID());
+    }
+
+    // TODO gli step della classe andrebbero ordinati per Given -> When -> Then, rinominando gli And in modo da rendere chiaro il contesto
+
+    @Then("la riattivazione della versione dell'e-service template è stata effettuata correttamente")
+    public void checkEServiceTemplateVersionReactivated() {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        UUID eServiceTemplateVersionId = lastTemplateManaged.lastVersionId();
+        try {
+            pollingService.makePolling(
+                () -> httpCallExecutor.performCall(
+                    () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
+                        sharedStepsContext.getXCorrelationId(),
+                        eServiceTemplateId,
+                        eServiceTemplateVersionId),
+                    ResponseEntity::getStatusCode),
+                res -> nonNull(res.getBody()) && res.getBody().getState() == EServiceTemplateVersionState.PUBLISHED,
+                "La versione dell'e-service template non è stata riattivata correttamente"
+            );
+        } catch (PollingPredicateException e) {
+            fail("La versione dell'e-service template non è stata riattivata correttamente");
+        }
+    }
+
+    private void reactivateEServiceTemplateVersion(UUID eServiceTemplateId,
+        UUID eServiceTemplateVersionId) {
+        String userToken = getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+        httpCallExecutor.performCall(
+            () -> eServiceTemplateClient.activateEServiceTemplateWithHttpInfo(
+                sharedStepsContext.getXCorrelationId(),
+                eServiceTemplateId,
+                eServiceTemplateVersionId),
+            ResponseEntity::getStatusCode);
+    }
 
     /* TODO un'alternativa all'uso di metodi come "areConsistent" - che confrontano i campi uno a uno - potrebbe essere
      * l'uso di una libreria di mapping, da usare per mappare un oggetto nell'altro tipo, e quindi procedere con

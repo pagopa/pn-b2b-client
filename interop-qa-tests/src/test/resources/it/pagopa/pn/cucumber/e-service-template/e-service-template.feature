@@ -1056,11 +1056,57 @@ Feature: Test API of e-service template
     When l'utente tenta la sospensione di una versione inesistente nell'e-service template
     Then si ottiene status code 404
 
+  Scenario Outline: [INTEROP-EST-091] La riattivazione di una versione di un e-service template in stato SUSPENDED può essere effettuata da un ente in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di SUSPENDED
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la riattivazione della versione dell'e-service template
+    Then si ottiene status code 200
+    And la riattivazione della versione dell'e-service template è stata effettuata correttamente
+    Examples:
+      | ruolo   |
+      | admin   |
+      | api     |
 
-  # TODO scenari di riattivazione...
-  #Scenario Outline: La riattivazione di una versione di un e-service template in stato SUSPENDED può essere effettuata da un ente in veste di ADMIN o API
+  Scenario Outline: [INTEROP-EST-092] La riattivazione di una versione di un e-service template in stato DRAFT o PUBLISHED non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
+    When l'utente tenta la riattivazione della versione dell'e-service template
+    Then si ottiene status code 403
+    Examples:
+      | stato     |
+      | DRAFT     |
+      | PUBLISHED |
 
-  #Scenario Outline:
+  Scenario Outline: [INTEROP-EST-093] La riattivazione di una versione di un e-service template in stato SUSPENDED NON può essere effettuata da un ente NON in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di SUSPENDED
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la riattivazione della versione dell'e-service template
+    Then si ottiene status code 403
+    Examples:
+      | ruolo         |
+      | security      |
+      | api,security  |
+      | support       |
+
+  Scenario: [INTEROP-EST-094] La riattivazione di una versione di un e-service template in stato SUSPENDED non può essere effettuata da un ente diverso dal creatore del template
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di SUSPENDED
+    When l'utente è un "admin" di "PA2"
+    And l'utente tenta la riattivazione della versione dell'e-service template
+    Then si ottiene status code 403
+
+  Scenario: [INTEROP-EST-095] La riattivazione di una versione di un e-service template inesistente non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    When l'utente tenta la riattivazione di una versione di un e-service template inesistente
+    Then si ottiene status code 404
+
+  Scenario: [INTEROP-EST-096] La riattivazione di una versione inesistente nell'e-service template non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di SUSPENDED
+    When l'utente tenta la riattivazione di una versione inesistente nell'e-service template
+    Then si ottiene status code 404
 
 
 

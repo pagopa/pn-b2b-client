@@ -61,6 +61,10 @@ public interface IEServiceTemplateClient extends SettableBearerToken {
     void activateEServiceTemplate(String xCorrelationId, UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId);
 
+    ResponseEntity<Void> activateEServiceTemplateWithHttpInfo(String xCorrelationId,
+        UUID eServiceTemplateId,
+        UUID eServiceTemplateVersionId);
+
     ResponseEntity<EServiceTemplateDetails> getEServiceTemplateWithHttpInfo(String xCorrelationId,
         UUID eServiceTemplateId);
 

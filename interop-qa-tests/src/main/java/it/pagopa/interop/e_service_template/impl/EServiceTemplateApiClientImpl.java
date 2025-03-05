@@ -153,6 +153,16 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
     }
 
     @Override
+    public ResponseEntity<Void> activateEServiceTemplateWithHttpInfo(String xCorrelationId,
+        UUID eServiceTemplateId,
+        UUID eServiceTemplateVersionId) {
+        return eserviceTemplatesApi.activateEServiceTemplateVersionWithHttpInfo(
+            xCorrelationId,
+            eServiceTemplateId,
+            eServiceTemplateVersionId);
+    }
+
+    @Override
     public ResponseEntity<EServiceTemplateDetails> getEServiceTemplateWithHttpInfo(
         String xCorrelationId,
         UUID eServiceTemplateId) {
