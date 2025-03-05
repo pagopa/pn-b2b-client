@@ -359,7 +359,7 @@ Feature: avanzamento notifiche webhook b2b V27
 
   #SERVE INTEGRAZIONE CON RADD
   @webhookV27 @precondition @cleanWebhook @ignore
-  Scenario: [B2B-STREAM_ES1.4_136] Lettura degli eventi di timeline  dello stream senza gruppo con visualizzazione del nuovo evento di timeline utilzzando un apikey abilitata.
+  Scenario: [B2B-STREAM_ES1.4_136] Lettura degli eventi di timeline  dello stream senza gruppo con visualizzazione del nuovo evento di timeline utilizzando un apikey abilitata.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
@@ -386,7 +386,7 @@ Feature: avanzamento notifiche webhook b2b V27
 
  #SERVE INTEGRAZIONE CON RADD
   @webhookV27 @precondition @cleanWebhook @ignore
-  Scenario: [B2B-STREAM_ES1.4_137] Lettura degli eventi di timeline  dello stream con gruppo con visualizzazione  del nuovo evento di timeline utilzzando un apikey abilitata.
+  Scenario: [B2B-STREAM_ES1.4_137] Lettura degli eventi di timeline  dello stream con gruppo con visualizzazione  del nuovo evento di timeline utilizzando un apikey abilitata.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |

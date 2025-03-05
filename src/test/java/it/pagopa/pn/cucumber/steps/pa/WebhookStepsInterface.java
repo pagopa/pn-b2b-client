@@ -1,14 +1,46 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface WebhookStepsInterface {
 
-    void deleteStreams(String pa);
-
     void initializeStreamRequest(String action, String pa);
 
-    void updateStream(UUID idStream);
+    void createStreamRequest(List<String> filterValues, int number, String title, String eventType);
 
-    void verifyEventNotInStream();
+    void deleteStreams(String pa);
+
+    void deleteStreamsBeforeTest(String pa);
+
+    void updateStreamCreatingNewRequest(UUID idStream);
+
+    void updateStreamWithExistingRequest(UUID idStream);
+
+    void updateStreams();
+
+    void verifySpecificEventNotInStream(String elementType);
+
+    void createStreamRequestWithGroupsPA(List<String> groupIdByPa);
+
+    UUID getStreamId();
+
+    Object getStreamRequest();
+
+    Object initStreamRequest(Object streamRequest);
+
+    void checkCorrectCancellation();
+
+    void getStreamById(UUID streamId);
+
+    void consumeEventStream(UUID streamId);
+
+    void consumeEventStreamAndCheckNumEvents(int numEvents);
+
+    void verifyNoEventInStream();
+
+    void createEventStream(String pa, List<String> listGroups, boolean replaceId, List<String> filteredValues, boolean forced);
+
+    void disableStreams();
+
 }

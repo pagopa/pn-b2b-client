@@ -69,7 +69,7 @@ Feature: tentativo consumo stream
 
     #Verificare se corretto che restituisce un 400 invece di un 403
   @webhookV27 @precondition @cleanWebhook @webhook2
-  Scenario: [B2B-STREAM_ES1.5_139] Creazione di uno stream senza gruppo con la V27 e lettura Eventi di timeline o di cambio di stato con la versione V10  utilzzando un apikey abilitata
+  Scenario: [B2B-STREAM_ES1.5_139] Creazione di uno stream senza gruppo con la V27 e lettura Eventi di timeline o di cambio di stato con la versione V10  utilizzando un apikey abilitata
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V27"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
@@ -81,7 +81,7 @@ Feature: tentativo consumo stream
     And l'apiKey viene cancellata
 
   @webhookV27 @precondition @cleanWebhook @webhook2
-  Scenario: [B2B-STREAM_ES1.5_141] Creazione di uno stream senza gruppo con la V10 e  lettura Eventi di timeline o di cambio di stato con la versione V27 utilzzando un apikey abilitata.
+  Scenario: [B2B-STREAM_ES1.5_141] Creazione di uno stream senza gruppo con la V10 e  lettura Eventi di timeline o di cambio di stato con la versione V27 utilizzando un apikey abilitata.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
@@ -110,7 +110,7 @@ Feature: tentativo consumo stream
 
 
   @webhookV27 @precondition @cleanWebhook @webhook2
-  Scenario: [B2B-STREAM_ES1.1_159] Consumo di uno stream notifica con gruppi non appartenenti ad un sottinsieme dei gruppi dell'apikey utilizzata.
+  Scenario: [B2B-STREAM_ES1.1_159] Consumo di uno stream notifica con gruppi non appartenenti ad un sottoinsieme dei gruppi dell'apikey utilizzata.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V27"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con due gruppi
     And viene impostata l'apikey appena generata
