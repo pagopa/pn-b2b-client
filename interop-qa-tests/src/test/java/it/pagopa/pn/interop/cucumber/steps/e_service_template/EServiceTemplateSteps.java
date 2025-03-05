@@ -974,6 +974,59 @@ public class EServiceTemplateSteps {
             ResponseEntity::getStatusCode);
     }
 
+    @Given("l'utente effettua la sospensione della versione dell'e-service template con successo")
+    public void suspendEServiceTemplateVersionSuccessfully() {
+        suspendEServiceTemplateVersion();
+        checkEServiceTemplateVersionSuspended();
+    }
+
+    @When("l'utente tenta la sospensione della versione dell'e-service template")
+    public void suspendEServiceTemplateVersion() {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        UUID eServiceTemplateVersionId = lastTemplateManaged.lastVersionId();
+        suspendEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId);
+    }
+
+    @When("l'utente tenta la sospensione della versione di un e-service template inesistente")
+    public void suspendNonExistentEServiceTemplate() {
+        suspendEServiceTemplateVersion(UUID.randomUUID(), UUID.randomUUID());
+    }
+
+    @When("l'utente tenta la sospensione di una versione inesistente nell'e-service template")
+    public void suspendNonExistentEServiceTemplateVersion() {
+        suspendEServiceTemplateVersion(lastTemplateManaged.id(), UUID.randomUUID());
+    }
+
+    @Then("la sospensione della versione dell'e-service template è stata effettuata correttamente")
+    public void checkEServiceTemplateVersionSuspended() {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        UUID eServiceTemplateVersionId = lastTemplateManaged.lastVersionId();
+        try {
+            pollingService.makePolling(
+                () -> httpCallExecutor.performCall(
+                    () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
+                        sharedStepsContext.getXCorrelationId(),
+                        eServiceTemplateId,
+                        eServiceTemplateVersionId),
+                    ResponseEntity::getStatusCode),
+                res -> nonNull(res.getBody()) && res.getBody().getState() == EServiceTemplateVersionState.SUSPENDED,
+                "La versione dell'e-service template non è stata sospesa correttamente"
+            );
+        } catch (PollingPredicateException e) {
+            fail("La versione dell'e-service template non è stata sospesa correttamente");
+        }
+    }
+
+    private void suspendEServiceTemplateVersion(UUID eServiceTemplateId, UUID eServiceTemplateVersionId) {
+        String userToken = getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+        httpCallExecutor.performCall(
+            () -> eServiceTemplateClient.suspendEServiceTemplateWithHttpInfo(
+                sharedStepsContext.getXCorrelationId(),
+                eServiceTemplateId,
+                eServiceTemplateVersionId),
+            ResponseEntity::getStatusCode);
+    }
 
 
     /* TODO un'alternativa all'uso di metodi come "areConsistent" - che confrontano i campi uno a uno - potrebbe essere

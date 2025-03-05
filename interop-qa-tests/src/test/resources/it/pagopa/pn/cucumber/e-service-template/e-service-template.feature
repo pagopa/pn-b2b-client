@@ -1004,8 +1004,67 @@ Feature: Test API of e-service template
     When l'utente tenta la cancellazione della versione dell'e-service template
     Then si ottiene status code 403
 
+  Scenario Outline: [INTEROP-EST-085] La sospensione di una versione di un e-service template in stato PUBLISHED può essere effettuata da un ente in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la sospensione della versione dell'e-service template
+    Then si ottiene status code 200
+    And la sospensione della versione dell'e-service template è stata effettuata correttamente
+    Examples:
+      | ruolo   |
+      | admin   |
+      | api     |
 
-  # TODO continua da 112...
+  Scenario Outline: [INTEROP-EST-086] La sospensione di una versione di un e-service template in stato DRAFT o SUSPENDED non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
+    When l'utente tenta la sospensione della versione dell'e-service template
+    Then si ottiene status code <status>
+    Examples:
+      | stato     | status |
+      | DRAFT     | 403    |
+      | SUSPENDED | 409    |
+
+  Scenario Outline: [INTEROP-EST-087] La sospensione di una versione di un e-service template in stato PUBLISHED NON può essere effettuata da un ente NON in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la sospensione della versione dell'e-service template
+    Then si ottiene status code 403
+    Examples:
+      | ruolo         |
+      | security      |
+      | api,security  |
+      | support       |
+
+  Scenario: [INTEROP-EST-088] La sospensione di una versione di un e-service template in stato PUBLISHED non può essere effettuata da un ente diverso dal creatore del template
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    When l'utente è un "admin" di "PA2"
+    And l'utente tenta la sospensione della versione dell'e-service template
+    Then si ottiene status code 403
+
+  Scenario: [INTEROP-EST-089] La sospensione di una versione di un e-service template inesistente non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    When l'utente tenta la sospensione della versione di un e-service template inesistente
+    Then si ottiene status code 404
+
+  Scenario: [INTEROP-EST-090] La sospensione di una versione inesistente nell'e-service template non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    When l'utente tenta la sospensione di una versione inesistente nell'e-service template
+    Then si ottiene status code 404
+
+
+  # TODO scenari di riattivazione...
+  #Scenario Outline: La riattivazione di una versione di un e-service template in stato SUSPENDED può essere effettuata da un ente in veste di ADMIN o API
+
+  #Scenario Outline:
+
+
+
+  # TODO continua da 124...
 
 
   #TODO la maggior parte dei test sono fatti su template in mod. RICEZIONE. Valutare che non sia il caso di testare per entrambe le modalità.
