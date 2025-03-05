@@ -313,4 +313,9 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
         log.info("EventProgress: " + progressResponseElement);
     }
 
+
+    @Override
+    public void setValueForWaitForAccepted(boolean waitForAccepted) {
+        //Funzionalità prevista dalla versione 27 in poi
+    }
 }

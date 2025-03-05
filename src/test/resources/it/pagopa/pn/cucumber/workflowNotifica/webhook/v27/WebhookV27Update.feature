@@ -70,6 +70,37 @@ Feature: aggiornamento stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
+        # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
+  @webhookV27 @precondition @cleanWebhook @webhook2
+  Scenario: [B2B-STREAM_ES1.1_89waitForAccepted] Aggiornamento di uno stream notifica con gruppo, con eventType "STATUS"  utilizzando un apikey con stesso gruppo.
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V27"
+    And allo stream versione "V27" si setta il campo waitForAccepted introdotto con la versione 27 a "true"
+    And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
+    And viene impostata l'apikey appena generata
+    And viene aggiornata la apiKey utilizzata per gli stream
+    And si crea il nuovo stream con versione "V27" per il "Comune_Multi" con un gruppo disponibile "FIRST"
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V27"
+    When si aggiorna lo stream creato con versione "V27" e apiKey aggiornata
+    Then l'operazione non ha prodotto errori
+    And viene modificato lo stato dell'apiKey in "BLOCK"
+    And l'apiKey viene cancellata
+
+    # identico al test sopra, ma stavolta waitForAccepted viene impostato a true e poi riportato a false
+  @webhookV27 @precondition @cleanWebhook @webhook2
+  Scenario: [B2B-STREAM_ES1.1_89waitForAcceptedChanged] Aggiornamento di uno stream notifica con gruppo, con eventType "STATUS"  utilizzando un apikey con stesso gruppo.
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V27"
+    And allo stream versione "V27" si setta il campo waitForAccepted introdotto con la versione 27 a "true"
+    And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
+    And viene impostata l'apikey appena generata
+    And viene aggiornata la apiKey utilizzata per gli stream
+    And si crea il nuovo stream con versione "V27" per il "Comune_Multi" con un gruppo disponibile "FIRST"
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V27"
+    When allo stream versione "V27" si setta il campo waitForAccepted introdotto con la versione 27 a "false"
+    And si aggiorna lo stream creato con versione "V27" e apiKey aggiornata
+    Then l'operazione non ha prodotto errori
+    And viene modificato lo stato dell'apiKey in "BLOCK"
+    And l'apiKey viene cancellata
+
 
   @webhookV27 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_42] Aggiornamento di uno stream notifica da due gruppi ad un gruppo, con eventType "STATUS".
@@ -93,6 +124,37 @@ Feature: aggiornamento stream
     When si crea il nuovo stream con versione "V27" per il "Comune_Multi" con un gruppo disponibile "UGUALI"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V27"
     When si "aggiunge" un gruppo allo stream creato con versione "V27" per il comune "Comune_Multi" e apiKey aggiornata
+    Then l'operazione non ha prodotto errori
+    And viene modificato lo stato dell'apiKey in "BLOCK"
+    And l'apiKey viene cancellata
+
+        # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
+  @webhookV27 @precondition @cleanWebhook @webhook2
+  Scenario: [B2B-STREAM_ES1.1_43waitForAccepted] Aggiornamento di uno stream notifica da un gruppo a più gruppi, con eventType "STATUS".
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V27"
+    And allo stream versione "V27" si setta il campo waitForAccepted introdotto con la versione 27 a "true"
+    And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
+    And viene impostata l'apikey appena generata
+    And viene aggiornata la apiKey utilizzata per gli stream
+    When si crea il nuovo stream con versione "V27" per il "Comune_Multi" con un gruppo disponibile "UGUALI"
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V27"
+    When si "aggiunge" un gruppo allo stream creato con versione "V27" per il comune "Comune_Multi" e apiKey aggiornata
+    Then l'operazione non ha prodotto errori
+    And viene modificato lo stato dell'apiKey in "BLOCK"
+    And l'apiKey viene cancellata
+
+        # identico al test sopra, ma stavolta waitForAccepted viene impostato a true e poi riportato a false
+  @webhookV27 @precondition @cleanWebhook @webhook2
+  Scenario: [B2B-STREAM_ES1.1_43waitForAcceptedChanged] Aggiornamento di uno stream notifica da un gruppo a più gruppi, con eventType "STATUS".
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V27"
+    And allo stream versione "V27" si setta il campo waitForAccepted introdotto con la versione 27 a "true"
+    And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
+    And viene impostata l'apikey appena generata
+    And viene aggiornata la apiKey utilizzata per gli stream
+    When si crea il nuovo stream con versione "V27" per il "Comune_Multi" con un gruppo disponibile "UGUALI"
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V27"
+    When allo stream versione "V27" si setta il campo waitForAccepted introdotto con la versione 27 a "false"
+    And si "aggiunge" un gruppo allo stream creato con versione "V27" per il comune "Comune_Multi" e apiKey aggiornata
     Then l'operazione non ha prodotto errori
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata

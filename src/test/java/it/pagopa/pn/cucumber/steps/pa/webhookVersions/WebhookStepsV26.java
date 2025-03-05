@@ -215,6 +215,7 @@ public class WebhookStepsV26 implements WebhookStepsInterface {
             if (replaceId) {
                 request.setReplacedStreamId(this.webhookSteps.getSharedSteps().getEventStreamV26().getStreamId());
             }
+
             StreamMetadataResponseV26 eventStream = this.webhookSteps.getWebhookB2bClient().createEventStreamV26(request);
             if (replaceId) {
                 StreamMetadataResponseV26 eventStreamV26 =
@@ -312,5 +313,10 @@ public class WebhookStepsV26 implements WebhookStepsInterface {
         Assertions.assertEquals(convertedProgressResponseElement.getElement().getTimestamp().truncatedTo(ChronoUnit.SECONDS),
                 elementToCheck.getTimestamp().truncatedTo(ChronoUnit.SECONDS));
         log.info("EventProgress: " + progressResponseElement);
+    }
+
+    @Override
+    public void setValueForWaitForAccepted(boolean waitForAccepted) {
+        //Funzionalità prevista dalla versione 27 in poi
     }
 }

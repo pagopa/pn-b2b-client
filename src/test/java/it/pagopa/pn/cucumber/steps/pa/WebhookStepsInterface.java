@@ -53,4 +53,6 @@ public interface WebhookStepsInterface {
 
     default <T> void verifyAssertions(AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream, T progressResponseElement) {}
 
+    void setValueForWaitForAccepted(boolean waitForAccepted);
+
 }

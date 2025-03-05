@@ -27,6 +27,7 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
     private StreamRequestV27 streamRequestV27;
     private List<ProgressResponseElementV27> progressResponseElementsV27;
     private AvanzamentoNotificheWebhookB2bSteps webhookSteps;
+    private boolean waitForAccepted;
 
     public WebhookStepsV27(AvanzamentoNotificheWebhookB2bSteps webhookSteps) {
         this.webhookSteps = webhookSteps;
@@ -58,7 +59,6 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
                     StreamCreationRequestV27.EventTypeEnum.STATUS : StreamCreationRequestV27.EventTypeEnum.TIMELINE);
             streamRequest.setFilterValues(filterValues);
             streamCreationRequestListV27.add(streamRequest);
-            streamRequest.setWaitForAccepted(true);//Campo introdotto con la V27
         }
     }
 
@@ -122,12 +122,11 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
         }
         streamRequestV27.setTitle("Update Stream V27");
         streamRequestV27.setEventType(StreamRequestV27.EventTypeEnum.TIMELINE);
-        streamRequestV27.setWaitForAccepted(true);//campo introdotto con la V27
+        streamRequestV27.setWaitForAccepted(waitForAccepted);
         for (StreamMetadataResponseV27 eventStreamV27 : eventStreamListV27) {
             StreamMetadataResponseV27 result = this.webhookSteps.getWebhookB2bClient().updateEventStreamV27(eventStreamV27.getStreamId(), streamRequestV27);
             Assertions.assertNotNull(result);
             Assertions.assertTrue(streamRequestV27.getTitle().equalsIgnoreCase(result.getTitle()));
-            Assertions.assertEquals(Boolean.TRUE, eventStreamV27.getWaitForAccepted());//campo introdotto con la V27
             log.info("EVENTSTREAM update : {}", result);
         }
     }
@@ -181,7 +180,7 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
         this.webhookSteps.getSharedSteps().setEventStreamV27(eventStreamV27);
         Assertions.assertNotNull(eventStreamV27);
         Assertions.assertNotNull(eventStreamV27.getStreamId());
-        Assertions.assertEquals(Boolean.TRUE, eventStreamV27.getWaitForAccepted());//campo introdotto con la V27
+        Assertions.assertEquals(waitForAccepted, eventStreamV27.getWaitForAccepted());
         log.info("EVENTSTREAM: {}", eventStreamV27);
     }
 
@@ -219,7 +218,7 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
             if (replaceId) {
                 request.setReplacedStreamId(this.webhookSteps.getSharedSteps().getEventStreamV27().getStreamId());
             }
-            request.setWaitForAccepted(true);//campo introdotto con la V27
+            request.setWaitForAccepted(waitForAccepted);
             StreamMetadataResponseV27 eventStream = this.webhookSteps.getWebhookB2bClient().createEventStreamV27(request);
             if (replaceId) {
                 StreamMetadataResponseV27 eventStreamV27 =
@@ -317,5 +316,10 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
         Assertions.assertEquals(convertedProgressResponseElement.getElement().getTimestamp().truncatedTo(ChronoUnit.SECONDS),
                 elementToCheck.getTimestamp().truncatedTo(ChronoUnit.SECONDS));
         log.info("EventProgress: " + progressResponseElement);
+    }
+
+    @Override
+    public void setValueForWaitForAccepted(boolean bool) {
+        waitForAccepted = bool;
     }
 }

@@ -220,4 +220,9 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
 //            Assertions.assertNotNull(response);
 //        });
     }
+
+    @Override
+    public void setValueForWaitForAccepted(boolean waitForAccepted) {
+        //Funzionalità prevista dalla versione 27 in poi
+    }
 }

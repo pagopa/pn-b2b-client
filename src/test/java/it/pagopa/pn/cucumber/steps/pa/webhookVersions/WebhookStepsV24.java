@@ -312,4 +312,9 @@ public class WebhookStepsV24 implements WebhookStepsInterface {
                 elementToCheck.getTimestamp().truncatedTo(ChronoUnit.SECONDS));
         log.info("EventProgress: " + progressResponseElement);
     }
+
+    @Override
+    public void setValueForWaitForAccepted(boolean waitForAccepted) {
+        //Funzionalità prevista dalla versione 27 in poi
+    }
 }
