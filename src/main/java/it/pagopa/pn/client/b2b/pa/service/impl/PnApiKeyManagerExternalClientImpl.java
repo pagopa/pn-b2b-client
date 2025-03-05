@@ -79,6 +79,7 @@ public class PnApiKeyManagerExternalClientImpl implements IPnApiKeyManagerClient
         return apiKeysApi.newApiKey(requestNewApiKey);
     }
 
+    //TODO: indagare l'utilizzo di questo metodo
     @Override
     public boolean setApiKeys(ApiKeyType apiKey) {
         return switch (apiKey) {

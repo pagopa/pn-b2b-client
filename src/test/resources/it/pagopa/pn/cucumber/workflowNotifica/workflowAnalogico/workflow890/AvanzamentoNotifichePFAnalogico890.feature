@@ -339,6 +339,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
       | details_physicalAddress | {"address": "via@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG003D[FAILCAUSE:M03].5s-RECAG003E[DOC:Plico].5s-RECAG003F", "municipality": "Milano", "municipalityDetails": null, "at": null, "addressDetails": null, "province": "MI", "zip": "20121", "foreignState": "Italia"} |
       | details_responseStatus | KO |
     #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG003D[DISCOVERY;FAILCAUSE:M03].5s-RECAG003E[DOC:Plico;DOC:Indagine].5s-RECAG003F@discovered.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG003D[FAILCAUSE:M03].5s-RECAG003E[DOC:Plico].5s-RECAG003F"
+  # TODO 21/11/2024 questo è il physicalAddress restituito dalla pittaforma; verificare che sia effettivamente il risultato atteso
 
   @workflowAnalogico
   Scenario: [B2B_TIMELINE_ANALOG_890_15] Attesa elemento di timeline REFINEMENT con physicalAddress OK-WO-011B

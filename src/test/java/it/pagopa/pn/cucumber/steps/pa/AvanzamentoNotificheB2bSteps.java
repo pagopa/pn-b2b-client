@@ -387,6 +387,11 @@ public class AvanzamentoNotificheB2bSteps {
                     Assertions.assertNotNull(elementFromNotification.getLegalFactsIds().get(i).getKey());
                 }
                 break;
+            case "REFINEMENT":
+                if (detailsFromTest != null) {
+                    Assertions.assertEquals(detailsFromNotification.getRecIndex(), detailsFromTest.getRecIndex());
+                }
+                break;
             default: throw new IllegalArgumentException("Unsupported timeline event category '%s'".formatted(timelineEventCategory));
         }
     }

@@ -110,7 +110,7 @@ Feature: Radd fsu
     When Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR utilizzando il precedente operationId
     Then l'operazione di download degli atti genera un errore "transazione già esistente o con stato completed o aborted" con codice 99
 
-  @radd
+  @radd #TODO: al momento viene accettato il comportamento
   Scenario: [B2B_RADD_ACT-8] start transaction utilizzando i documenti associati alla transazione di altro cittadino
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |

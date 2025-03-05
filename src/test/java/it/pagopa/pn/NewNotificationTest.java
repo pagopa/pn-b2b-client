@@ -257,6 +257,16 @@ class NewNotificationTest {
                 ));
 
         await().atMost(10, SECONDS);
+        //TODO Modificare.....
+        //  .payments( new NotificationPaymentInfo()
+        //                 .creditorTaxId("77777777777")
+        //                   .noticeCode( String.format("30201%13d", epochMillis ) )
+        //                   .noticeCodeAlternative( String.format("30201%13d", epochMillis+1 ) )
+        //                    .pagoPaForm( newAttachment( resourcePath ))
+        //                        .f24flatRate( newAttachment( resourcePath ) )
+        //                        .f24standard( newAttachment( resourcePath ) )
+        //  );
+
         return recipient;
     }
 }

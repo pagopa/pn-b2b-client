@@ -5,6 +5,8 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+//TODO: Usare ovunque è necessario il timing e verificare se parametrizzare da propertiesFile
+
 @Component
 public class TimingForPolling {
     private final PnB2bClientTimingConfigs timingConfigs;

@@ -19,7 +19,8 @@ components:
     ############################################################################################
     ###                      PARAMETRI DOWNLOAD ATTI OPPONIBILI A TERZI                      ###
     ############################################################################################
-    
+
+    #TODO INSERIRE COMMIT ID CORRETTO UNA VOLTA EFFETTUATO IL MERGE
     pathLegalFactType:
       $ref: 'https://raw.githubusercontent.com/pagopa/pn-delivery-push/c8b449ac03503aa67e0bbd699c416b6c8266aeea/docs/openapi/api-internal-pn-delivery-push-v1.yaml#/components/parameters/pathLegalFactType'
     pathLegalFactId:

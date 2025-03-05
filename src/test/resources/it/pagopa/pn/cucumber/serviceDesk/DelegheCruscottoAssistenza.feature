@@ -68,7 +68,7 @@ Feature: Deleghe Cruscotto Assitenza
     Then come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come "delegato" di una persona fisica o di una persona giuridica con taxId "Mario Cucumber" recipientType  "PF" e con searchPageSize "1" searchNextPagesKey "NULL" startDate "NULL" endDate "NULL" searchMandateId "NO_SET" searchInternalId "NULL"
     And il servizio risponde con errore "400"
 
-  @deleghe1  @cruscottoAssistenza
+  @deleghe1  @cruscottoAssistenza #TODO Verificare il comportamento corretto...
   Scenario: [API-SERVICE-CA_CE02.9_67] Invocazione del servizio con IUN esistente, recipientType corretto, recipientTaxId corrispondente al destinatario della notifica, ma con searchMandateId non coerente con il searchDelegateInternalId
     Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
     And "Mario Gherkin" viene delegato da "Mario Cucumber"
