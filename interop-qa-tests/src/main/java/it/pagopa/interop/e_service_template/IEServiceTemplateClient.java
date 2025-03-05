@@ -26,11 +26,23 @@ public interface IEServiceTemplateClient extends SettableBearerToken {
     void updateEServiceTemplate(String xCorrelationId, UUID eServiceTemplateId,
         UpdateEServiceTemplateSeed updateEServiceTemplateSeed);
 
+    CreatedResource createEServiceTemplateVersion(String xCorrelationId, UUID eServiceTemplateId);
+
+    ResponseEntity<CreatedResource> createEServiceTemplateVersionWithHttpInfo(String xCorrelationId,
+        UUID eServiceTemplateId);
+
     void updateEServiceTemplateVersion(
         String xCorrelationId,
         UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId,
         UpdateEServiceTemplateVersionSeed seed);
+
+    void deleteEServiceTemplateVersion(String xCorrelationId, UUID eServiceTemplateId,
+        UUID eServiceTemplateVersionId);
+
+    ResponseEntity<Void> deleteEServiceTemplateVersionWithHttpInfo(String xCorrelationId,
+        UUID eServiceTemplateId,
+        UUID eServiceTemplateVersionId);
 
     void publishEServiceTemplate(String xCorrelationId, UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId);

@@ -76,6 +76,7 @@ public class EServiceTemplateSteps {
     private int lastAddedRiskAnalysisIndex = -1; // -1 means no risk analysis has been added yet
     private EServiceTemplateDocumentInfo lastAddedDocument;
     private UpdateEServiceTemplateVersionDocumentSeed lastDocumentUpdateSeed;
+    private UUID lastDeletedVersion;
 
     // TODO farne un bean centralizzato riutilizzabile ovunque
     private static EasyRandomParameters easyRandomParameters = new EasyRandomParameters()
@@ -876,6 +877,101 @@ public class EServiceTemplateSteps {
                 sharedStepsContext.getXCorrelationId(),
                 eServiceTemplateId,
                 eServiceTemplateVersionId));
+    }
+
+    @Given("l'utente effettua la creazione di una ulteriore versione nell'e-service template")
+    public void createAnotherEServiceTemplateVersion() {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        createAnotherEServiceTemplateVersion(eServiceTemplateId);
+    }
+
+    private void createAnotherEServiceTemplateVersion(UUID eServiceTemplateId) {
+        String userToken = getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+        httpCallExecutor.performCall(
+            () -> eServiceTemplateClient.createEServiceTemplateVersion(
+                sharedStepsContext.getXCorrelationId(),
+                eServiceTemplateId));
+    }
+
+    @When("l'utente tenta la cancellazione della versione dell'e-service template")
+    public void deleteEServiceTemplateVersion() {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        UUID eServiceTemplateVersionId = lastTemplateManaged.lastVersionId();
+        deleteEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId);
+    }
+
+    // TODO questa classe è piena di pattern ricorrenti, questo step ne è un'esempio. Andrebbero astratti e portati in classi di utility esterne.
+    @Then("la cancellazione dell'e-service template è stata effettuata correttamente")
+    public void checkEServiceTemplateDeleted() {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        try {
+            pollingService.makePolling(
+                () -> httpCallExecutor.performCall(
+                    () -> eServiceTemplateClient.getEServiceTemplateWithHttpInfo(
+                        sharedStepsContext.getXCorrelationId(),
+                        eServiceTemplateId),
+                    ResponseEntity::getStatusCode),
+                res -> res.getStatusCode().equals(HttpStatus.NOT_FOUND),
+                "L'e-service template non è stato cancellato correttamente"
+            );
+        } catch (PollingPredicateException e) {
+            fail("L'e-service template non è stato cancellato correttamente");
+        }
+    }
+
+    @Then("la cancellazione della versione dell'e-service template è stata effettuata correttamente")
+    public void checkEServiceTemplateVersionDeleted() {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        try {
+            pollingService.makePolling(
+                () -> httpCallExecutor.performCall(
+                    () -> eServiceTemplateClient.getEServiceTemplateWithHttpInfo(
+                        sharedStepsContext.getXCorrelationId(),
+                        eServiceTemplateId),
+                    ResponseEntity::getStatusCode),
+                res -> res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody()) && res.getBody().getVersions().size() == 1,
+                "La versione dell'e-service template non è stata cancellata correttamente"
+            );
+        } catch (PollingPredicateException e) {
+            fail("La versione dell'e-service template non è stata cancellata correttamente: il numero di versioni presenti è diverso da 1");
+        }
+    }
+
+    @When("l'utente tenta la cancellazione di una versione di un e-service template inesistente")
+    public void deleteNonExistentEServiceTemplate() {
+        deleteEServiceTemplateVersion(UUID.randomUUID(), UUID.randomUUID());
+    }
+
+    @When("l'utente tenta la cancellazione di una versione inesistente dell'e-service template")
+    public void deleteNonExistentEServiceTemplateVersion() {
+        deleteEServiceTemplateVersion(lastTemplateManaged.id(), UUID.randomUUID());
+    }
+
+    @Given("l'utente effettua la cancellazione della versione dell'e-service template con successo")
+    public void deleteEServiceTemplateVersionSuccessfully() {
+        deleteEServiceTemplateVersion();
+        checkEServiceTemplateVersionDeleted();
+        this.lastDeletedVersion = lastTemplateManaged.lastVersionId();
+    }
+
+    @When("l'utente tenta la cancellazione della versione dell'e-service template già cancellata")
+    public void deleteAlreadyDeletedEServiceTemplateVersion() {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        UUID eServiceTemplateVersionId = this.lastDeletedVersion;
+        deleteEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId);
+    }
+
+    private void deleteEServiceTemplateVersion(UUID eServiceTemplateId,
+        UUID eServiceTemplateVersionId) {
+        String userToken = getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+        httpCallExecutor.performCall(
+            () -> eServiceTemplateClient.deleteEServiceTemplateVersionWithHttpInfo(
+                sharedStepsContext.getXCorrelationId(),
+                eServiceTemplateId,
+                eServiceTemplateVersionId),
+            ResponseEntity::getStatusCode);
     }
 
 

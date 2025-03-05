@@ -56,6 +56,18 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
         eserviceTemplatesApi.updateEServiceTemplate(xCorrelationId, eServiceTemplateId.toString(), updateEServiceTemplateSeed);
     }
 
+    @Override
+    public CreatedResource createEServiceTemplateVersion(String xCorrelationId,
+        UUID eServiceTemplateId) {
+        return eserviceTemplatesApi.createEServiceTemplateVersion(xCorrelationId, eServiceTemplateId);
+    }
+
+    @Override
+    public ResponseEntity<CreatedResource> createEServiceTemplateVersionWithHttpInfo(
+        String xCorrelationId,
+        UUID eServiceTemplateId) {
+        return eserviceTemplatesApi.createEServiceTemplateVersionWithHttpInfo(xCorrelationId, eServiceTemplateId);
+    }
 
     @Override
     public void updateEServiceTemplateVersion(
@@ -72,6 +84,25 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
             eServiceTemplateVersionId.toString(),
 
             seed);
+    }
+
+    @Override
+    public void deleteEServiceTemplateVersion(String xCorrelationId, UUID eServiceTemplateId,
+        UUID eServiceTemplateVersionId) {
+        eserviceTemplatesApi.deleteDraftTemplateVersion(
+            xCorrelationId,
+            eServiceTemplateId,
+            eServiceTemplateVersionId);
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteEServiceTemplateVersionWithHttpInfo(String xCorrelationId,
+        UUID eServiceTemplateId,
+        UUID eServiceTemplateVersionId) {
+        return eserviceTemplatesApi.deleteDraftTemplateVersionWithHttpInfo(
+            xCorrelationId,
+            eServiceTemplateId,
+            eServiceTemplateVersionId);
     }
 
     @Override

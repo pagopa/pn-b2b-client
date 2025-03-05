@@ -930,6 +930,84 @@ Feature: Test API of e-service template
     Then si ottiene status code 409
 
 
+  # NOTA: per molti degli scenari di cancellazione di una versione è necessario creare almeno 2 versioni, perché la cancellazione dell'unica versione presente comporta la cancellazione del template stesso
+
+  Scenario Outline: [INTEROP-EST-077] La cancellazione di una versione di un e-service template in stato DRAFT può essere effettuata da un ente in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente effettua la creazione di una ulteriore versione nell'e-service template
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la cancellazione della versione dell'e-service template
+    Then si ottiene status code 200
+    And la cancellazione della versione dell'e-service template è stata effettuata correttamente
+    Examples:
+      | ruolo   |
+      | admin   |
+      | api     |
+
+  Scenario Outline: [INTEROP-EST-078] La cancellazione dell'unica versione presente in un e-service template comporta l'eliminazione del template stesso
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la cancellazione della versione dell'e-service template
+    Then si ottiene status code 200
+    And la cancellazione dell'e-service template è stata effettuata correttamente
+    Examples:
+      | ruolo   |
+      | admin   |
+      | api     |
+
+  Scenario Outline: [INTEROP-EST-079] La cancellazione di una versione di un e-service template in stato DRAFT non può essere effettuata da un ente NON in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente effettua la creazione di una ulteriore versione nell'e-service template
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la cancellazione della versione dell'e-service template
+    Then si ottiene status code 403
+      # TODO in realtà sarebbe sensata anche la verifica di casi negativi come questo, del tipo: And la cancellazione della versione dell'e-service template non è stata effettuata
+
+    Examples:
+      | ruolo   |
+      | security      |
+      | api,security  |
+      | support       |
+
+  Scenario: [INTEROP-EST-080] La cancellazione di una versione di un e-service template in stato DRAFT non può essere effettuata da un ente diverso dal creatore del template
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    When l'utente è un "admin" di "PA2"
+    And l'utente tenta la cancellazione della versione dell'e-service template
+    Then si ottiene status code 403
+
+  Scenario: [INTEROP-EST-081] La cancellazione di una versione di un e-service template inesistente non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    When l'utente tenta la cancellazione di una versione di un e-service template inesistente
+    Then si ottiene status code 404
+
+  Scenario: [INTEROP-EST-082] La cancellazione di una versione inesistente di un e-service template non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    When l'utente tenta la cancellazione di una versione inesistente dell'e-service template
+    Then si ottiene status code 404
+
+  Scenario: [INTEROP-EST-083] La cancellazione di una versione già cancellata di un e-service template non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente effettua la creazione di una ulteriore versione nell'e-service template
+    And l'utente effettua la cancellazione della versione dell'e-service template con successo
+    When l'utente tenta la cancellazione della versione dell'e-service template già cancellata
+    Then si ottiene status code 404
+
+  Scenario: [INTEROP-EST-084] La cancellazione di una versione di un e-service template in stato PUBLISHED o SUSPENDED non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    When l'utente tenta la cancellazione della versione dell'e-service template
+    Then si ottiene status code 403
+
+
+  # TODO continua da 112...
+
+
   #TODO la maggior parte dei test sono fatti su template in mod. RICEZIONE. Valutare che non sia il caso di testare per entrambe le modalità.
 
     #TODO smistare gli scenari in file .feature più piccoli e/o i relativi step in classi più piccole. Possibile divisione:
