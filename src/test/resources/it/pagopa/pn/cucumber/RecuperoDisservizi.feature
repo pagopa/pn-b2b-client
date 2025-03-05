@@ -44,7 +44,7 @@ Feature: Recupero Disservizi
     | null   |
     | ERRATO |
 
-  @recuperoDisservizi
+  @recuperoDisservizi @ignore #Il test non sempre va in ok in quanto non è detto che trovi il disservizio nei 365 giorni, può essere lanciato all' occorrenza.
   Scenario: [RECUPERO_DISSERVIZI_9] Richiamare l’API per il download dell'atto opponibile ai terzi di malfunzionamento e ripristino trascorsi 365 giorni
     Given viene chiamata l’API per il download dell'atto opponibile prodotto piu di 365 giorni precedenti
     Then la chiamata va con successo e la risposta contiene il campo retryAfter popolato
