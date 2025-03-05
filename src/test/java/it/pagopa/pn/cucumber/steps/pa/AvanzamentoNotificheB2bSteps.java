@@ -718,7 +718,7 @@ public class AvanzamentoNotificheB2bSteps {
 
         try {
             assertThat(pnPollingResponseV26.getResult())
-                    .as("Il risultato del polling dovrebbe essere valorizzato")
+                    .as("Il risultato del polling dovrebbe essere valorizzato, Primo controllo: Verificare che l'elemento sia presente in timeline e le tempistiche con cui viene prodotto")
                     .isTrue();
 
             assertThat(pnPollingResponseV26.getTimelineElement())
