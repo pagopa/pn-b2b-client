@@ -5,7 +5,7 @@ Feature: Test API of e-service template
   #  And l'ente "PA1" rimuove la disponibilità a ricevere deleghe in fruizione
   #  And l'ente "GSP2" rimuove la disponibilità a ricevere deleghe in fruizione
 
-  Scenario Outline: [INCARICATO-EST-001] La creazione di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
+  Scenario Outline: [INTEROP-EST-001] La creazione di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
     Given l'utente è un "<ruolo>" di "PA1"
     When l'utente effettua la creazione di un e-service template in modalità <modalità>
     Then si ottiene status code 403
@@ -18,7 +18,7 @@ Feature: Test API of e-service template
       | api,security| ricezione    |
       | support     | ricezione    |
 
-  Scenario Outline: [INCARICATO-EST-002] La creazione di un e-service template può essere fatta da un ente in veste di ADMIN o API portando ad un template in stato DRAFT
+  Scenario Outline: [INTEROP-EST-002] La creazione di un e-service template può essere fatta da un ente in veste di ADMIN o API portando ad un template in stato DRAFT
     Given l'utente è un "<ruolo>" di "PA1"
     When l'utente effettua la creazione di un e-service template in modalità <modalità>
     Then si ottiene status code 200
@@ -30,7 +30,7 @@ Feature: Test API of e-service template
       | admin       | ricezione    |
       | api         | ricezione    |
 
-  Scenario Outline: [INCARICATO-EST-003] La creazione di un e-service template NON può riuscire se viene specificato il nome di un template già esistente
+  Scenario Outline: [INTEROP-EST-003] La creazione di un e-service template NON può riuscire se viene specificato il nome di un template già esistente
     Given l'utente è un "admin" di "PA1"
     When l'utente effettua la creazione di un e-service template in modalità <modalità>
     And l'utente effettua la creazione di un e-service template in modalità <modalità> usando lo stesso nome
@@ -42,35 +42,7 @@ Feature: Test API of e-service template
       | ricezione    |
       | ricezione    |
 
-  # La modalità di erogazione è ininfluente in questi scenari, si è scelto di porre "erogazione"
-  Scenario Outline: [INCARICATO-EST-004] La pubblicazione di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
-    Given l'utente è un "admin" di "PA1"
-    And l'utente effettua la creazione di un e-service template in modalità erogazione
-    When l'utente è un "<ruolo>" di "PA1"
-    And l'utente effettua la pubblicazione dell'e-service template
-    Then si ottiene status code 403
-    Examples:
-      | ruolo       |
-      | security    |
-      | api,security|
-      | support     |
-      | security    |
-      | api,security|
-      | support     |
-
-  Scenario Outline: [INCARICATO-EST-005] La pubblicazione di un e-service template può essere fatta da un ente in veste di ADMIN o API
-    Given l'utente è un "admin" di "PA1"
-    And l'utente effettua la creazione di un e-service template in modalità erogazione
-    When l'utente è un "<ruolo>" di "PA1"
-    And l'utente effettua la pubblicazione dell'e-service template
-    Then si ottiene status code 200
-    And l'e-service template è in stato di PUBLISHED
-    Examples:
-      | ruolo       |
-      | admin       |
-      | api         |
-
-  Scenario Outline: [INCARICATO-EST-006] La sospensione di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
+  Scenario Outline: [INTEROP-EST-006] La sospensione di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione
     And l'utente effettua la pubblicazione dell'e-service template
@@ -86,7 +58,7 @@ Feature: Test API of e-service template
       | api,security|
       | support     |
 
-  Scenario Outline: [INCARICATO-EST-007] La sospensione di un e-service template può essere fatta da un ente in veste di ADMIN o API
+  Scenario Outline: [INTEROP-EST-007] La sospensione di un e-service template può essere fatta da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione
     And l'utente effettua la pubblicazione dell'e-service template
@@ -99,7 +71,7 @@ Feature: Test API of e-service template
       | admin       |
       | api         |
 
-  Scenario Outline: [INCARICATO-EST-008] La riattivazione di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
+  Scenario Outline: [INTEROP-EST-008] La riattivazione di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione
     And l'utente effettua la pubblicazione dell'e-service template
@@ -116,7 +88,7 @@ Feature: Test API of e-service template
       | api,security|
       | support     |
 
-  Scenario Outline: [INCARICATO-EST-009] La riattivazione di un e-service template può essere fatta da un ente in veste di ADMIN o API
+  Scenario Outline: [INTEROP-EST-009] La riattivazione di un e-service template può essere fatta da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione
     And l'utente effettua la pubblicazione dell'e-service template
@@ -137,7 +109,7 @@ Feature: Test API of e-service template
       | admin       |
       | api         |
 
-  Scenario Outline: [INCARICATO-EST-010] La modifica di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
+  Scenario Outline: [INTEROP-EST-010] La modifica di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
     When l'utente è un "<ruolo>" di "PA1"
@@ -155,7 +127,7 @@ Feature: Test API of e-service template
       | api,security| SUSPENDED |
       | support     | SUSPENDED |
 
-  Scenario Outline: [INCARICATO-EST-011] La modifica di un e-service template in stato DRAFT può essere fatta da un ente in veste di ADMIN o API
+  Scenario Outline: [INTEROP-EST-011] La modifica di un e-service template in stato DRAFT può essere fatta da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
     When l'utente è un "<ruolo>" di "PA1"
@@ -167,7 +139,7 @@ Feature: Test API of e-service template
       | admin   |
       | api     |
 
-  Scenario Outline: [INCARICATO-EST-012] La modifica di un e-service template in stato PUBLISHED o SUSPENDED non può essere fatta attraverso l'uso della api generica
+  Scenario Outline: [INTEROP-EST-012] La modifica di un e-service template in stato PUBLISHED o SUSPENDED non può essere fatta attraverso l'uso della api generica
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
     When l'utente è un "<ruolo>" di "PA1"
@@ -183,26 +155,26 @@ Feature: Test API of e-service template
       | admin   | SUSPENDED |
       | api     | SUSPENDED |
 
-  Scenario: [INCARICATO-EST-013] La modifica di un e-service template in stato DRAFT non può essere fatta specificando lo stesso nome
+  Scenario: [INTEROP-EST-013] La modifica di un e-service template in stato DRAFT non può essere fatta specificando lo stesso nome
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
     When l'utente è un "admin" di "PA1"
     And l'utente tenta di modificare l'e-service template specificando lo stesso nome
     Then si ottiene status code 403
 
-  Scenario: [INCARICATO-EST-014] La modifica di un e-service template in stato DRAFT non può essere fatta da una PA diversa da quella creatrice del template
+  Scenario: [INTEROP-EST-014] La modifica di un e-service template in stato DRAFT non può essere fatta da una PA diversa da quella creatrice del template
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
     When l'utente è un "admin" di "PA2"
     And l'utente tenta delle modifiche all'e-service template
     Then si ottiene status code 403
 
-  Scenario: [INCARICATO-EST-015] La modifica di un e-service template inesistente non può essere effettuata
+  Scenario: [INTEROP-EST-015] La modifica di un e-service template inesistente non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     When l'utente tenta delle modifiche a un e-service template inesistente
     Then si ottiene status code 404
 
-  Scenario Outline: [INCARICATO-EST-016] La modifica di una versione di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
+  Scenario Outline: [INTEROP-EST-016] La modifica di una versione di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
     When l'utente è un "<ruolo>" di "PA1"
@@ -220,7 +192,7 @@ Feature: Test API of e-service template
       | api,security| SUSPENDED |
       | support     | SUSPENDED |
 
-  Scenario Outline: [INCARICATO-EST-017] La modifica di una versione di un e-service template in stato DRAFT può essere fatta da un ente in veste di ADMIN o API
+  Scenario Outline: [INTEROP-EST-017] La modifica di una versione di un e-service template in stato DRAFT può essere fatta da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
     When l'utente è un "<ruolo>" di "PA1"
@@ -233,7 +205,7 @@ Feature: Test API of e-service template
       | api     |
 
     # TODO il testo "attraverso l'uso della api generica" è stato copiato da uno scenario precedente, assicurarsi che abbia senso anche qui
-  Scenario Outline: [INCARICATO-EST-018] La modifica di una versione un e-service template in stato PUBLISHED o SUSPENDED non può essere fatta attraverso l'uso della api generica
+  Scenario Outline: [INTEROP-EST-018] La modifica di una versione un e-service template in stato PUBLISHED o SUSPENDED non può essere fatta attraverso l'uso della api generica
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
     When l'utente è un "<ruolo>" di "PA1"
@@ -249,19 +221,19 @@ Feature: Test API of e-service template
       | admin   | SUSPENDED |
       | api     | SUSPENDED |
 
-  Scenario: [INCARICATO-EST-019] La modifica della versione di un e-service template in stato DRAFT non può essere fatta da una PA diversa da quella creatrice del template
+  Scenario: [INTEROP-EST-019] La modifica della versione di un e-service template in stato DRAFT non può essere fatta da una PA diversa da quella creatrice del template
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
     When l'utente è un "admin" di "PA2"
     And l'utente tenta delle modifiche alla versione dell'e-service template
     Then si ottiene status code 403
 
-  Scenario: [INCARICATO-EST-020] La modifica della versione di un e-service template inesistente non può essere effettuata
+  Scenario: [INTEROP-EST-020] La modifica della versione di un e-service template inesistente non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     When l'utente tenta delle modifiche alla versione di un e-service template inesistente
     Then si ottiene status code 404
 
-  Scenario Outline: [INCARICATO-EST-021] L'aggiunta di una risk analysis a un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
+  Scenario Outline: [INTEROP-EST-021] L'aggiunta di una risk analysis a un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
     When l'utente è un "<ruolo>" di "PA1"
@@ -279,7 +251,7 @@ Feature: Test API of e-service template
       | api,security  | SUSPENDED |
       | support       | SUSPENDED |
 
-  Scenario Outline: [INCARICATO-EST-022] L'aggiunta di una risk analysis a un e-service template in stato DRAFT può essere fatta da un ente in veste di ADMIN o API
+  Scenario Outline: [INTEROP-EST-022] L'aggiunta di una risk analysis a un e-service template in stato DRAFT può essere fatta da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
     When l'utente è un "<ruolo>" di "PA1"
@@ -291,7 +263,7 @@ Feature: Test API of e-service template
       | admin   |
       | api     |
 
-  Scenario Outline: [INCARICATO-EST-023] L'aggiunta di una risk analysis a un e-service template in stato PUBLISHED o SUSPENDED non può essere effettuata
+  Scenario Outline: [INTEROP-EST-023] L'aggiunta di una risk analysis a un e-service template in stato PUBLISHED o SUSPENDED non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
     When l'utente è un "<ruolo>" di "PA1"
@@ -304,7 +276,7 @@ Feature: Test API of e-service template
       | admin   | SUSPENDED |
       | api     | SUSPENDED |
 
-  Scenario Outline: [INCARICATO-EST-024] L'aggiunta di una risk analysis a un e-service template in modalità erogazione non può essere effettuata
+  Scenario Outline: [INTEROP-EST-024] L'aggiunta di una risk analysis a un e-service template in modalità erogazione non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
     When l'utente è un "<ruolo>" di "PA1"
@@ -315,7 +287,7 @@ Feature: Test API of e-service template
       | admin   |
       | api     |
 
-  Scenario: [INCARICATO-EST-025] L'aggiunta di una risk analysis a un e-service template in stato DRAFT non può essere fatta da una PA diversa da quella creatrice del template
+  Scenario: [INTEROP-EST-025] L'aggiunta di una risk analysis a un e-service template in stato DRAFT non può essere fatta da una PA diversa da quella creatrice del template
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
     When l'utente è un "admin" di "PA2"
@@ -323,19 +295,19 @@ Feature: Test API of e-service template
     Then si ottiene status code 403
 
     #TODO scenario non presente fra i test richiesti, avvisare Stefano Netti
-  Scenario: [INCARICATO-EST-026] L'aggiunta di una risk analysis a un e-service template inesistente non può essere effettuata
+  Scenario: [INTEROP-EST-026] L'aggiunta di una risk analysis a un e-service template inesistente non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     When l'utente tenta l'aggiunta di una risk analysis a un e-service template inesistente
     Then si ottiene status code 404
 
-  Scenario: [INCARICATO-EST-027] L'aggiunta di una risk analysis a un e-service template in stato DRAFT non può essere fatta specificando lo stesso nome di una risk analysis precedentemente creata
+  Scenario: [INTEROP-EST-027] L'aggiunta di una risk analysis a un e-service template in stato DRAFT non può essere fatta specificando lo stesso nome di una risk analysis precedentemente creata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
     And l'utente effettua l'aggiunta di una risk analysis all'e-service template con successo
     When l'utente tenta l'aggiunta di una risk analysis all'e-service template specificando lo stesso nome
     Then si ottiene status code 409
 
-  Scenario Outline: [INCARICATO-EST-028] La cancellazione di una risk analysis di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
+  Scenario Outline: [INTEROP-EST-028] La cancellazione di una risk analysis di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
     And l'utente effettua l'aggiunta di una risk analysis all'e-service template con successo
@@ -354,7 +326,7 @@ Feature: Test API of e-service template
       | api,security  | SUSPENDED |
       | support       | SUSPENDED |
 
-  Scenario Outline: [INCARICATO-EST-029] La cancellazione di una risk analysis di un e-service template in stato DRAFT può essere fatta da un ente in veste di ADMIN o API
+  Scenario Outline: [INTEROP-EST-029] La cancellazione di una risk analysis di un e-service template in stato DRAFT può essere fatta da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
     And l'utente effettua l'aggiunta di una risk analysis all'e-service template con successo
@@ -367,7 +339,7 @@ Feature: Test API of e-service template
       | admin   |
       | api     |
 
-  Scenario: [INCARICATO-EST-030] La cancellazione di una risk analysis di un e-service template in stato DRAFT non può essere fatta da una PA diversa da quella creatrice del template
+  Scenario: [INTEROP-EST-030] La cancellazione di una risk analysis di un e-service template in stato DRAFT non può essere fatta da una PA diversa da quella creatrice del template
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
     And l'utente effettua l'aggiunta di una risk analysis all'e-service template con successo
@@ -375,13 +347,13 @@ Feature: Test API of e-service template
     And l'utente tenta la cancellazione della risk analysis dell'e-service template
     Then si ottiene status code 403
 
-  Scenario: [INCARICATO-EST-031] La cancellazione di una risk analysis inesistente non può essere effettuata
+  Scenario: [INTEROP-EST-031] La cancellazione di una risk analysis inesistente non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
     When l'utente tenta la cancellazione di una risk analysis inesistente nell'e-service template
     Then si ottiene status code 404
 
-  Scenario: [INCARICATO-EST-032] La cancellazione di una risk analysis già eliminata non può essere effettuata
+  Scenario: [INTEROP-EST-032] La cancellazione di una risk analysis già eliminata non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
     And l'utente effettua l'aggiunta di una risk analysis all'e-service template con successo
@@ -389,7 +361,7 @@ Feature: Test API of e-service template
     When l'utente tenta la cancellazione della risk analysis dell'e-service template
     Then si ottiene status code 404
 
-  Scenario Outline: [INCARICATO-EST-033] La modifica di una risk analysis di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
+  Scenario Outline: [INTEROP-EST-033] La modifica di una risk analysis di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
     And l'utente effettua l'aggiunta di una risk analysis all'e-service template con successo
@@ -408,7 +380,7 @@ Feature: Test API of e-service template
       | api,security  | SUSPENDED |
       | support       | SUSPENDED |
 
-  Scenario Outline: [INCARICATO-EST-034] La modifica di una risk analysis di un e-service template in stato DRAFT può essere fatta da un ente in veste di ADMIN o API
+  Scenario Outline: [INTEROP-EST-034] La modifica di una risk analysis di un e-service template in stato DRAFT può essere fatta da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
     And l'utente effettua l'aggiunta di una risk analysis all'e-service template con successo
@@ -424,7 +396,7 @@ Feature: Test API of e-service template
       | admin   |
       | api     |
 
-  Scenario: [INCARICATO-EST-035] La modifica di una risk analysis di un e-service template in stato DRAFT non può essere fatta da una PA diversa da quella creatrice del template
+  Scenario: [INTEROP-EST-035] La modifica di una risk analysis di un e-service template in stato DRAFT non può essere fatta da una PA diversa da quella creatrice del template
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
     And l'utente effettua l'aggiunta di una risk analysis all'e-service template con successo
@@ -432,13 +404,13 @@ Feature: Test API of e-service template
     And l'utente tenta la modifica della risk analysis dell'e-service template
     Then si ottiene status code 403
 
-  Scenario: [INCARICATO-EST-036] La modifica di una risk analysis inesistente non può essere effettuata
+  Scenario: [INTEROP-EST-036] La modifica di una risk analysis inesistente non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
     When l'utente tenta la modifica di una risk analysis inesistente nell'e-service template
     Then si ottiene status code 404
 
-  Scenario: [INCARICATO-EST-037] La modifica di una risk analysis inserendo il nome di un'altra risk analysis esistente nell'e-service template non può essere effettuata
+  Scenario: [INTEROP-EST-037] La modifica di una risk analysis inserendo il nome di un'altra risk analysis esistente nell'e-service template non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
     And l'utente effettua l'aggiunta di una risk analysis all'e-service template con successo
@@ -446,7 +418,7 @@ Feature: Test API of e-service template
     When l'utente tenta la modifica di una risk analysis inserendo il nome di un'altra risk analysis
     Then si ottiene status code 404
 
-  Scenario Outline: [INCARICATO-EST-038] L'aggiunta di un documento/interfaccia a una versione di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
+  Scenario Outline: [INTEROP-EST-038] L'aggiunta di un documento/interfaccia a una versione di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
     When l'utente è un "<ruolo>" di "PA1"
@@ -473,7 +445,7 @@ Feature: Test API of e-service template
       | api,security  | SUSPENDED | INTERFACE |
       | support       | SUSPENDED | INTERFACE |
 
-  Scenario Outline: [INCARICATO-EST-039] L'aggiunta di un documento/interfaccia a una versione di un e-service template in stato DRAFT può essere fatta da un ente in veste di ADMIN o API
+  Scenario Outline: [INTEROP-EST-039] L'aggiunta di un documento/interfaccia a una versione di un e-service template in stato DRAFT può essere fatta da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
     When l'utente è un "<ruolo>" di "PA1"
@@ -487,7 +459,7 @@ Feature: Test API of e-service template
       | admin   | INTERFACE |
       | api     | INTERFACE |
 
-  Scenario Outline: [INCARICATO-EST-040] L'aggiunta di un'interfaccia a una versione di un e-service template in stato PUBLISHED o SUSPENDED non può essere effettuata
+  Scenario Outline: [INTEROP-EST-040] L'aggiunta di un'interfaccia a una versione di un e-service template in stato PUBLISHED o SUSPENDED non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
     When l'utente è un "<ruolo>" di "PA1"
@@ -500,14 +472,14 @@ Feature: Test API of e-service template
       | admin   | SUSPENDED |
       | api     | SUSPENDED |
 
-  Scenario: [INCARICATO-EST-041] L'aggiunta di una seconda interfaccia a una versione di un e-service template in stato DRAFT non può essere effettuata
+  Scenario: [INTEROP-EST-041] L'aggiunta di una seconda interfaccia a una versione di un e-service template in stato DRAFT non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
     And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
     When l'utente tenta l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template
     Then si ottiene status code 409
 
-  Scenario: [INCARICATO-EST-042] L'aggiunta di un documento a una versione di un e-service template in stato DRAFT non può essere fatta specificando lo stesso nome di un documento precedentemente aggiunto
+  Scenario: [INTEROP-EST-042] L'aggiunta di un documento a una versione di un e-service template in stato DRAFT non può essere fatta specificando lo stesso nome di un documento precedentemente aggiunto
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
     And l'utente effettua l'aggiunta di un documento di tipo DOCUMENT alla versione dell'e-service template con successo
@@ -517,7 +489,7 @@ Feature: Test API of e-service template
 
     Then si ottiene status code 409
 
-  Scenario Outline: [INCARICATO-EST-043] L'aggiunta di un documento/interfaccia a una versione di un e-service template in stato DRAFT non può essere fatta da una PA diversa da quella creatrice del template
+  Scenario Outline: [INTEROP-EST-043] L'aggiunta di un documento/interfaccia a una versione di un e-service template in stato DRAFT non può essere fatta da una PA diversa da quella creatrice del template
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
     When l'utente è un "admin" di "PA2"
@@ -529,7 +501,7 @@ Feature: Test API of e-service template
       | INTERFACE |
 
     #TODO scenario non presente fra i test richiesti, avvisare Stefano Netti
-  Scenario Outline: [INCARICATO-EST-044] L'aggiunta di un documento/interfaccia a una versione di un e-service template inesistente non può essere effettuata
+  Scenario Outline: [INTEROP-EST-044] L'aggiunta di un documento/interfaccia a una versione di un e-service template inesistente non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     When l'utente tenta l'aggiunta di un documento di tipo <kind> a un e-service template inesistente
     Then si ottiene status code 404
@@ -538,7 +510,7 @@ Feature: Test API of e-service template
       | DOCUMENT  |
       | INTERFACE |
 
-  Scenario Outline: [INCARICATO-EST-045] L'aggiunta di un documento/interfaccia a una versione inesistente di un e-service template non può essere effettuata
+  Scenario Outline: [INTEROP-EST-045] L'aggiunta di un documento/interfaccia a una versione inesistente di un e-service template non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
     When l'utente tenta l'aggiunta di un documento di tipo <kind> a una versione inesistente dell'e-service template
@@ -548,7 +520,7 @@ Feature: Test API of e-service template
       | DOCUMENT  |
       | INTERFACE |
 
-  Scenario Outline: [INCARICATO-EST-046] Il reperimento di un documento/interfaccia di un e-service template NON può essere fatto da un ente NON in veste di ADMIN o API
+  Scenario Outline: [INTEROP-EST-046] Il reperimento di un documento/interfaccia di un e-service template NON può essere fatto da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
     And l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo
@@ -576,7 +548,7 @@ Feature: Test API of e-service template
       | api,security| SUSPENDED | INTERFACE |
       | support     | SUSPENDED | INTERFACE |
 
-  Scenario Outline: [INCARICATO-EST-047-DRA] Il reperimento di un documento/interfaccia di un e-service template in stato DRAFT può essere fatto da un ente in veste di ADMIN o API
+  Scenario Outline: [INTEROP-EST-047-DRA] Il reperimento di un documento/interfaccia di un e-service template in stato DRAFT può essere fatto da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
     And l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo
@@ -590,7 +562,7 @@ Feature: Test API of e-service template
       | admin   | INTERFACE |
       | api     | INTERFACE |
 
-  Scenario Outline: [INCARICATO-EST-047-PUB] Il reperimento di un documento/interfaccia di un e-service template in stato DRAFT può essere fatto da un ente in veste di ADMIN o API
+  Scenario Outline: [INTEROP-EST-047-PUB] Il reperimento di un documento/interfaccia di un e-service template in stato DRAFT può essere fatto da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
     And l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo
@@ -605,7 +577,7 @@ Feature: Test API of e-service template
       | admin   | INTERFACE |
       | api     | INTERFACE |
 
-  Scenario Outline: [INCARICATO-EST-047-SUS] Il reperimento di un documento/interfaccia di un e-service template in stato DRAFT può essere fatto da un ente in veste di ADMIN o API
+  Scenario Outline: [INTEROP-EST-047-SUS] Il reperimento di un documento/interfaccia di un e-service template in stato DRAFT può essere fatto da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
     And l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo
@@ -621,7 +593,7 @@ Feature: Test API of e-service template
       | admin   | INTERFACE |
       | api     | INTERFACE |
 
-  Scenario Outline: [INCARICATO-EST-048] Il reperimento di un documento/interfaccia di un e-service template non può essere fatto da una PA diversa da quella creatrice del template
+  Scenario Outline: [INTEROP-EST-048] Il reperimento di un documento/interfaccia di un e-service template non può essere fatto da una PA diversa da quella creatrice del template
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
     And l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo
@@ -633,18 +605,18 @@ Feature: Test API of e-service template
       | DOCUMENT  |
       | INTERFACE |
 
-  Scenario: [INCARICATO-EST-049] Il reperimento di un documento da un e-service template inesistente non può essere fatto
+  Scenario: [INTEROP-EST-049] Il reperimento di un documento da un e-service template inesistente non può essere fatto
     Given l'utente è un "admin" di "PA1"
     When l'utente tenta il reperimento di un documento da un e-service template inesistente
     Then si ottiene status code 404
 
-  Scenario: [INCARICATO-EST-050] Il reperimento di un documento/interfaccia inesistente da un e-service template non può essere fatto
+  Scenario: [INTEROP-EST-050] Il reperimento di un documento/interfaccia inesistente da un e-service template non può essere fatto
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
     When l'utente tenta il reperimento di un documento inesistente dalla versione dell'e-service template
     Then si ottiene status code 404
 
-  Scenario Outline: [INCARICATO-EST-051] La modifica di un documento/interfaccia di un e-service template in qualsiasi stato NON può essere fatta da un ente NON in veste di ADMIN o API
+  Scenario Outline: [INTEROP-EST-051] La modifica di un documento/interfaccia di un e-service template in qualsiasi stato NON può essere fatta da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
     And l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo
@@ -672,7 +644,7 @@ Feature: Test API of e-service template
       | api,security  | SUSPENDED | INTERFACE |
       | support       | SUSPENDED | INTERFACE |
 
-  Scenario Outline: [INCARICATO-EST-052] La modifica di un documento/interfaccia di un e-service template in qualsiasi stato può essere fatta da un ente in veste di ADMIN o API
+  Scenario Outline: [INTEROP-EST-052] La modifica di un documento/interfaccia di un e-service template in qualsiasi stato può essere fatta da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
     And l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo
@@ -695,7 +667,7 @@ Feature: Test API of e-service template
       | admin   | SUSPENDED | INTERFACE |
       | api     | SUSPENDED | INTERFACE |
 
-  Scenario Outline: [INCARICATO-EST-053] La modifica di un documento/interfaccia di un e-service template non può essere fatta da una PA diversa da quella creatrice del template
+  Scenario Outline: [INTEROP-EST-053] La modifica di un documento/interfaccia di un e-service template non può essere fatta da una PA diversa da quella creatrice del template
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
     And l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo
@@ -707,25 +679,25 @@ Feature: Test API of e-service template
       | DOCUMENT  |
       | INTERFACE |
 
-  Scenario: [INCARICATO-EST-054] La modifica di un documento/interfaccia da un e-service template inesistente non può essere fatta
+  Scenario: [INTEROP-EST-054] La modifica di un documento/interfaccia da un e-service template inesistente non può essere fatta
     Given l'utente è un "admin" di "PA1"
     When l'utente tenta la modifica di un documento da un e-service template inesistente
     Then si ottiene status code 404
 
-  Scenario: [INCARICATO-EST-055] La modifica di un documento da una versione inesistente di un e-service template non può essere fatta
+  Scenario: [INTEROP-EST-055] La modifica di un documento da una versione inesistente di un e-service template non può essere fatta
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
     And l'utente effettua l'aggiunta di un documento di tipo DOCUMENT alla versione dell'e-service template con successo
     When l'utente tenta la modifica del documento da una versione inesistente dell'e-service template
     Then si ottiene status code 404
 
-  Scenario: [INCARICATO-EST-056] La modifica di un documento/interfaccia inesistente non può essere effettuata
+  Scenario: [INTEROP-EST-056] La modifica di un documento/interfaccia inesistente non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
     When l'utente tenta la modifica di un documento inesistente nell'e-service template
     Then si ottiene status code 404
 
-  Scenario Outline: [INCARICATO-EST-057] La modifica di un documento inserendo il nome di un altro documento esistente nell'e-service template non può essere effettuata
+  Scenario Outline: [INTEROP-EST-057] La modifica di un documento inserendo il nome di un altro documento esistente nell'e-service template non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
     And l'utente effettua l'aggiunta di un documento di tipo <kind1> alla versione dell'e-service template con successo
@@ -739,7 +711,7 @@ Feature: Test API of e-service template
       | DOCUMENT  | INTERFACE |
       | INTERFACE | DOCUMENT  |
 
-  Scenario Outline: [INCARICATO-EST-058] La cancellazione di un documento/interfaccia di un e-service template NON può essere effettuata da un ente NON in veste di ADMIN o API
+  Scenario Outline: [INTEROP-EST-058] La cancellazione di un documento/interfaccia di un e-service template NON può essere effettuata da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
     And l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo
@@ -767,7 +739,7 @@ Feature: Test API of e-service template
       | api,security  | SUSPENDED | INTERFACE |
       | support       | SUSPENDED | INTERFACE |
 
-  Scenario Outline: [INCARICATO-EST-059] La cancellazione di un documento/interfaccia di un e-service template può essere effettuata da un ente in veste di ADMIN o API
+  Scenario Outline: [INTEROP-EST-059] La cancellazione di un documento/interfaccia di un e-service template può essere effettuata da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
     And l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo
@@ -787,7 +759,7 @@ Feature: Test API of e-service template
       | api     | DRAFT     | INTERFACE |
       # la cancellazione di INTERFACE in stato published o suspended non può essere effettuata
 
-  Scenario Outline: [INCARICATO-EST-060] La cancellazione di un documento/interfaccia di un e-service template non può essere effettuata da una PA diversa da quella creatrice del template
+  Scenario Outline: [INTEROP-EST-060] La cancellazione di un documento/interfaccia di un e-service template non può essere effettuata da una PA diversa da quella creatrice del template
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
     And l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo
@@ -799,7 +771,7 @@ Feature: Test API of e-service template
       | DOCUMENT  |
       | INTERFACE |
 
-  Scenario Outline: [INCARICATO-EST-061] La cancellazione di un'interfaccia di un e-service template in stato PUBLISHED o SUSPENDED non può essere effettuata
+  Scenario Outline: [INTEROP-EST-061] La cancellazione di un'interfaccia di un e-service template in stato PUBLISHED o SUSPENDED non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
     And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
@@ -810,7 +782,7 @@ Feature: Test API of e-service template
       | PUBLISHED |
       | SUSPENDED |
 
-  Scenario Outline: [INCARICATO-EST-062] La cancellazione di un documento/interfaccia inesistente non può essere effettuata
+  Scenario Outline: [INTEROP-EST-062] La cancellazione di un documento/interfaccia inesistente non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
     When l'utente tenta la cancellazione di un documento inesistente nell'e-service template
@@ -821,13 +793,13 @@ Feature: Test API of e-service template
       | PUBLISHED |
       | SUSPENDED |
 
-  Scenario: [INCARICATO-EST-063] La cancellazione di un documento/interfaccia da un e-service template inesistente non può essere effettuata
+  Scenario: [INTEROP-EST-063] La cancellazione di un documento/interfaccia da un e-service template inesistente non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
     When l'utente tenta la cancellazione di un documento da un e-service template inesistente
     Then si ottiene status code 404
 
-  Scenario Outline: [INCARICATO-EST-064] La cancellazione di un documento/interfaccia da una versione inesistente di un e-service template non può essere effettuata
+  Scenario Outline: [INTEROP-EST-064] La cancellazione di un documento/interfaccia da una versione inesistente di un e-service template non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
     And l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo
@@ -838,7 +810,7 @@ Feature: Test API of e-service template
       | DOCUMENT  |
       | INTERFACE |
 
-  Scenario Outline: [INCARICATO-EST-065] La cancellazione di un documento/interfaccia già eliminato non può essere effettuata
+  Scenario Outline: [INTEROP-EST-065] La cancellazione di un documento/interfaccia già eliminato non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
     And l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo
@@ -852,6 +824,110 @@ Feature: Test API of e-service template
       | PUBLISHED | DOCUMENT  |
       | SUSPENDED | DOCUMENT  |
 
+
+  # TODO scenari di pubblicazione template...
+  Scenario Outline: [INTEROP-EST-066] La pubblicazione di una versione di un e-service template in stato DRAFT, in modalità erogazione e con annesso un documento di interfaccia NON può essere effettuata da un ente NON in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la pubblicazione della versione dell'e-service template
+    Then si ottiene status code 403
+    Examples:
+      | ruolo         |
+      | security      |
+      | api,security  |
+      | support       |
+
+  Scenario Outline: [INTEROP-EST-067] La pubblicazione di una versione di un e-service template in stato DRAFT, in modalità erogazione e con annesso un documento di interfaccia può essere effettuata da un ente in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la pubblicazione della versione dell'e-service template
+    Then si ottiene status code 200
+    And la pubblicazione della versione dell'e-service template è stata effettuata correttamente
+    Examples:
+      | ruolo         |
+      | admin         |
+      | api           |
+
+  Scenario Outline: [INTEROP-EST-068] La pubblicazione di una versione di un e-service template in stato DRAFT, in modalità ricezione, con annesso un documento di interfaccia e di una risk analysis NON può essere effettuata da un ente NON in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
+    And l'utente effettua l'aggiunta di una risk analysis all'e-service template con successo
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la pubblicazione della versione dell'e-service template
+    Then si ottiene status code 403
+    Examples:
+      | ruolo         |
+      | security      |
+      | api,security  |
+      | support       |
+
+  Scenario Outline: [INTEROP-EST-069] La pubblicazione di una versione di un e-service template in stato DRAFT, in modalità ricezione, con annesso un documento di interfaccia e di una risk analysis può essere effettuata da un ente in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
+    And l'utente effettua l'aggiunta di una risk analysis all'e-service template con successo
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la pubblicazione della versione dell'e-service template
+    Then si ottiene status code 200
+    And la pubblicazione della versione dell'e-service template è stata effettuata correttamente
+    Examples:
+      | ruolo         |
+      | admin         |
+      | api           |
+
+  Scenario: [INTEROP-EST-070] La pubblicazione di una versione di un e-service template in stato DRAFT, in modalità ricezione, con annesso un documento di interfaccia ma SENZA una risk analysis non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
+    When l'utente tenta la pubblicazione della versione dell'e-service template
+    Then si ottiene status code 403
+
+  Scenario: [INTEROP-EST-071] La pubblicazione di una versione di un e-service template in stato DRAFT, in modalità erogazione e SENZA un documento di interfaccia non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    When l'utente tenta la pubblicazione della versione dell'e-service template
+    Then si ottiene status code 403
+
+  Scenario Outline: [INTEROP-EST-072] La pubblicazione di una versione di un e-service template in stato PUBLISHED o SUSPENDED non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
+    When l'utente tenta la pubblicazione della versione dell'e-service template
+    Then si ottiene status code 403
+    Examples:
+      | stato     |
+      | PUBLISHED |
+      | SUSPENDED |
+
+  Scenario: [INTEROP-EST-073] La pubblicazione di una versione di un e-service template non può essere effettuata da un ente diverso dal creatore del template
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
+    When l'utente è un "admin" di "PA2"
+    And l'utente tenta la pubblicazione della versione dell'e-service template
+    Then si ottiene status code 403
+
+  Scenario: [INTEROP-EST-074] La pubblicazione di una versione di un e-service template inesistente non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    When l'utente tenta la pubblicazione di una versione di un e-service template inesistente
+    Then si ottiene status code 404
+
+  Scenario: [INTEROP-EST-075] La pubblicazione di una versione inesistente di un e-service template non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
+    When l'utente tenta la pubblicazione di una versione inesistente di un e-service template
+    Then si ottiene status code 404
+
+  Scenario: [INTEROP-EST-076] La pubblicazione di una versione di un e-service template già pubblicata non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    When l'utente tenta la pubblicazione della versione dell'e-service template
+    Then si ottiene status code 409
 
 
   #TODO la maggior parte dei test sono fatti su template in mod. RICEZIONE. Valutare che non sia il caso di testare per entrambe le modalità.

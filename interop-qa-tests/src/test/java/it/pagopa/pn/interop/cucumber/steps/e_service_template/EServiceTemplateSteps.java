@@ -165,10 +165,21 @@ public class EServiceTemplateSteps {
     @When("l'utente effettua la creazione di un e-service template in modalità {eServiceMode} in stato di {eServiceTemplateVersionState}")
     public void createEServiceTemplate(EServiceMode eServiceMode, EServiceTemplateVersionState desiredState) {
         createEServiceTemplate(eServiceMode);
+        Runnable publisher = () -> {
+            if (eServiceMode == EServiceMode.RECEIVE) {
+                this.addRiskAnalysisToEServiceTemplateSuccessfully(); // perché ogni template in RECEIVE deve avere una risk analysis
+            }
+
+            this.addDocumentToEServiceTemplateVersionSuccessfully(EServiceTemplateDocumentKind.INTERFACE); // perché ogni template deve avere almeno un'interfaccia
+            publishEServiceTemplate();
+        };
         switch (desiredState) {
             case DRAFT -> { /* no-op: un template appena creato è automaticamente in questo stato */ }
-            case PUBLISHED -> publishEServiceTemplate();
-            case SUSPENDED -> suspendEServiceTemplate();
+            case PUBLISHED -> publisher.run();
+            case SUSPENDED -> {
+                publisher.run();    // perché prima di essere sospeso deve essere pubblicato
+                suspendEServiceTemplate();
+            }
             default -> throw new IllegalArgumentException("Stato non supportato: " + desiredState);
         }
     }
@@ -817,6 +828,54 @@ public class EServiceTemplateSteps {
                 eServiceTemplateVersionId,
                 documentId),
             ResponseEntity::getStatusCode);
+    }
+
+    @When("l'utente tenta la pubblicazione della versione dell'e-service template")
+    public void publishEServiceTemplateVersion() {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        UUID eServiceTemplateVersionId = lastTemplateManaged.lastVersionId();
+        publishEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId);
+    }
+
+    @Then("la pubblicazione della versione dell'e-service template è stata effettuata correttamente")
+    public void checkEServiceTemplateVersionPublished() {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        UUID eServiceTemplateVersionId = lastTemplateManaged.lastVersionId();
+        try {
+            pollingService.makePolling(
+                () -> httpCallExecutor.performCall(
+                    () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
+                        sharedStepsContext.getXCorrelationId(),
+                        eServiceTemplateId,
+                        eServiceTemplateVersionId),
+                    ResponseEntity::getStatusCode),
+                res -> nonNull(res.getBody()) && res.getBody().getState() == EServiceTemplateVersionState.PUBLISHED,
+                "La versione dell'e-service template non è stata pubblicata correttamente"
+            );
+        } catch (PollingPredicateException e) {
+            fail("La versione dell'e-service template non è stata pubblicata correttamente");
+        }
+    }
+
+    @When("l'utente tenta la pubblicazione di una versione di un e-service template inesistente")
+    public void publishNonExistentEServiceTemplate() {
+        publishEServiceTemplateVersion(UUID.randomUUID(), UUID.randomUUID());
+    }
+
+    @When("l'utente tenta la pubblicazione di una versione inesistente di un e-service template")
+    public void publishNonExistentEServiceTemplateVersion() {
+        publishEServiceTemplateVersion(lastTemplateManaged.id(), UUID.randomUUID());
+    }
+
+    private void publishEServiceTemplateVersion(UUID eServiceTemplateId,
+        UUID eServiceTemplateVersionId) {
+        String userToken = getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+        httpCallExecutor.performCall(
+            () -> eServiceTemplateClient.publishEServiceTemplateWithHttpInfo(
+                sharedStepsContext.getXCorrelationId(),
+                eServiceTemplateId,
+                eServiceTemplateVersionId));
     }
 
 
