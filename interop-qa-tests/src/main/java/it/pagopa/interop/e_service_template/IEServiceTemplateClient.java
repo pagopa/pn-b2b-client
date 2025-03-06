@@ -10,6 +10,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDet
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateNameUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionQuotasUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionDocumentSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionSeed;
@@ -177,4 +178,11 @@ public interface IEServiceTemplateClient extends SettableBearerToken {
         String xCorrelationId,
         UUID eServiceTemplateId,
         EServiceTemplateDescriptionUpdateSeed seed);
+
+    void updateEServiceTemplateVersionQuotas(String xCorrelationId, UUID eServiceTemplateId,
+        UUID eServiceTemplateVersionId, EServiceTemplateVersionQuotasUpdateSeed seed);
+
+    ResponseEntity<Void> updateEServiceTemplateVersionQuotasWithHttpInfo(String xCorrelationId,
+        UUID eServiceTemplateId, UUID eServiceTemplateVersionId,
+        EServiceTemplateVersionQuotasUpdateSeed seed);
 }
