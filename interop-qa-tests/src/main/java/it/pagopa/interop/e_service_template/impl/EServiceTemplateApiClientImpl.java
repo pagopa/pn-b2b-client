@@ -8,6 +8,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemp
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDescriptionUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateNameUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
@@ -330,6 +331,21 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
         UUID eServiceTemplateId,
         EServiceTemplateNameUpdateSeed eserviceTemplateNameUpdateSeed) {
         return this.eserviceTemplatesApi.updateEServiceTemplateNameWithHttpInfo(xCorrelationId, eServiceTemplateId, eserviceTemplateNameUpdateSeed);
+    }
+
+    @Override
+    public void updateEServiceTemplateAudienceDescription(String xCorrelationId,
+        UUID eServiceTemplateId,
+        EServiceTemplateDescriptionUpdateSeed seed) {
+        this.eserviceTemplatesApi.updateEServiceTemplateAudienceDescription(xCorrelationId, eServiceTemplateId, seed);
+    }
+
+    @Override
+    public ResponseEntity<Void> updateEServiceTemplateAudienceDescriptionWithHttpInfo(
+        String xCorrelationId,
+        UUID eServiceTemplateId,
+        EServiceTemplateDescriptionUpdateSeed seed) {
+        return this.eserviceTemplatesApi.updateEServiceTemplateAudienceDescriptionWithHttpInfo(xCorrelationId, eServiceTemplateId, seed);
     }
 
     @Override

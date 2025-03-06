@@ -5,6 +5,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemp
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDescriptionUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateNameUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
@@ -159,4 +160,12 @@ public interface IEServiceTemplateClient extends SettableBearerToken {
     ResponseEntity<Void> updateEServiceTemplateNameWithHttpInfo(String xCorrelationId,
         UUID eServiceTemplateId,
         EServiceTemplateNameUpdateSeed eserviceTemplateNameUpdateSeed);
+
+    void updateEServiceTemplateAudienceDescription(String xCorrelationId, UUID eServiceTemplateId,
+        EServiceTemplateDescriptionUpdateSeed seed);
+
+    ResponseEntity<Void> updateEServiceTemplateAudienceDescriptionWithHttpInfo(
+        String xCorrelationId,
+        UUID eServiceTemplateId,
+        EServiceTemplateDescriptionUpdateSeed seed);
 }
