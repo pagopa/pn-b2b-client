@@ -4,6 +4,7 @@ import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingTemplate;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV26;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingWebhook;
 import it.pagopa.pn.client.b2b.pa.polling.exception.PnPollingException;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebhookB2bClient;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 
@@ -151,9 +153,13 @@ public class PnPollingServiceWebhookV26 extends PnPollingTemplate<PnPollingRespo
     private Predicate<ProgressResponseElementV26> toCheckCondition(PnPollingParameter pnPollingParameter) {
         return progressResponseElementV26 ->
                 progressResponseElementV26.getIun() != null && progressResponseElementV26.getIun().equals(iun)
-                        && progressResponseElementV26.getElement().getCategory() != null && progressResponseElementV26.getElement().getCategory().getValue().equals(pnPollingParameter.getPnPollingWebhook().getTimelineElementCategoryV26().getValue())
+                        && progressResponseElementV26.getElement().getCategory() != null && progressResponseElementV26.getElement().getCategory().getValue().equals(
+                                Optional.ofNullable(pnPollingParameter.getPnPollingWebhook())
+                                        .map(PnPollingWebhook::getTimelineElementCategoryV26)
+                                        .map(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26::getValue)
+                                        .orElse(null))
                         ||
                         progressResponseElementV26.getIun() != null && progressResponseElementV26.getIun().equals(iun)
-                                && (progressResponseElementV26.getNewStatus() != null && (progressResponseElementV26.getNewStatus().getValue().equals(pnPollingParameter.getPnPollingWebhook().getNotificationStatusV26().getValue())));
+                                && (progressResponseElementV26.getNewStatus() != null && (progressResponseElementV26.getNewStatus().equals(pnPollingParameter.getPnPollingWebhook().getNotificationStatusV26())));
     }
 }

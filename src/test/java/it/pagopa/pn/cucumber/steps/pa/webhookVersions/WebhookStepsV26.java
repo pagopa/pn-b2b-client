@@ -11,6 +11,7 @@ import it.pagopa.pn.cucumber.steps.pa.WebhookStepsInterface;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
+import org.opentest4j.AssertionFailedError;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.time.temporal.ChronoUnit;
@@ -297,22 +298,31 @@ public class WebhookStepsV26 implements WebhookStepsInterface {
 
     @Override
     public <T> void verifyAssertions(AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream, T progressResponseElement) {
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26 timelineElementInternalCategory =
-                it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26.valueOf(((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26) timelineForStream.getTimelineElementCategory()).name());
+        try {
+            Assertions.assertNotNull(progressResponseElement);
+            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26 timelineElementInternalCategory =
+                    it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26.valueOf(((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26) timelineForStream.getTimelineElementCategory()).name());
 
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 elementToCheck = this.webhookSteps.getSharedSteps().getSentNotification().getTimeline().stream()
-                .filter(elem -> elem.getCategory() != null)
-                .filter(elem -> elem.getCategory().getValue().equals(timelineElementInternalCategory.getValue()))
-                .findAny()
-                .orElse(null);
-        ProgressResponseElementV26 convertedProgressResponseElement = ((ProgressResponseElementV26) progressResponseElement);
-        Assertions.assertNotNull(elementToCheck);
-        Assertions.assertNotNull(elementToCheck.getTimestamp());
-        Assertions.assertNotNull(convertedProgressResponseElement.getElement());
-        Assertions.assertNotNull(convertedProgressResponseElement.getElement().getTimestamp());
-        Assertions.assertEquals(convertedProgressResponseElement.getElement().getTimestamp().truncatedTo(ChronoUnit.SECONDS),
-                elementToCheck.getTimestamp().truncatedTo(ChronoUnit.SECONDS));
-        log.info("EventProgress: " + progressResponseElement);
+            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 elementToCheck = this.webhookSteps.getSharedSteps().getSentNotification().getTimeline().stream()
+                    .filter(elem -> elem.getCategory() != null)
+                    .filter(elem -> elem.getCategory().getValue().equals(timelineElementInternalCategory.getValue()))
+                    .findAny()
+                    .orElse(null);
+            ProgressResponseElementV26 convertedProgressResponseElement = ((ProgressResponseElementV26) progressResponseElement);
+            Assertions.assertNotNull(elementToCheck);
+            Assertions.assertNotNull(elementToCheck.getTimestamp());
+            Assertions.assertNotNull(convertedProgressResponseElement.getElement());
+            Assertions.assertNotNull(convertedProgressResponseElement.getElement().getTimestamp());
+            Assertions.assertEquals(convertedProgressResponseElement.getElement().getTimestamp().truncatedTo(ChronoUnit.SECONDS),
+                    elementToCheck.getTimestamp().truncatedTo(ChronoUnit.SECONDS));
+            log.info("EventProgress: " + progressResponseElement);
+
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = String.format("%s {IUN: %s -WEBHOOK %s }", assertionFailedError.getMessage(),
+                    this.webhookSteps.getSharedSteps().getSentNotification().getIun(), this.eventStreamListV26.get(0).getStreamId());
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+
     }
 
     @Override

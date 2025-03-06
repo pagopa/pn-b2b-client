@@ -222,6 +222,20 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
     }
 
     @Override
+    public Object searchInWebhook(String lastEventId, int deepCount, int position, AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream) {
+        return null;
+    }
+
+    @Override
+    public boolean checkInternalTimeline(AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream) {
+        return false;
+    }
+
+    @Override
+    public <T> void verifyAssertions(AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream, T progressResponseElement) {
+    }
+
+    @Override
     public void setValueForWaitForAccepted(boolean waitForAccepted) {
         //Funzionalità prevista dalla versione 27 in poi
     }

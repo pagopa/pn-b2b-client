@@ -1193,20 +1193,9 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             sleepTest();
         }
 
-        try {
-            Assertions.assertNotNull(progressResponseElement);
+
             webhookStepsInterface.verifyAssertions(timelineForStream, progressResponseElement);
-        } catch (AssertionFailedError assertionFailedError) {
-            Map<StreamVersion, String> getErrorMessageLog = Map.of(
-                    V23, String.format("{IUN: %s -WEBHOOK %s }", sharedSteps.getSentNotificationV23().getIun(), this.eventStreamListV23.get(0).getStreamId()),
-                    V24, String.format("{IUN: %s -WEBHOOK %s }", sharedSteps.getSentNotificationV24().getIun(), this.eventStreamListV24.get(0).getStreamId()),
-                    V25, String.format("{IUN: %s -WEBHOOK %s }", sharedSteps.getSentNotificationV25().getIun(), this.eventStreamListV25.get(0).getStreamId()),
-                    V26, String.format("{IUN: %s -WEBHOOK %s }", sharedSteps.getSentNotification().getIun(), this.eventStreamListV26.get(0).getStreamId()),
-                    V27, String.format("{IUN: %s -WEBHOOK %s }", sharedSteps.getSentNotification().getIun(), this.eventStreamListV27.get(0).getStreamId())
-            );
-            String message = assertionFailedError.getMessage() + getErrorMessageLog.get(streamVersion);
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-        }
+
 
 //
 //        TimelineElementSearchResult<TimelineElementCategoryV23> timelineForStream = getTimelineEventForStream(StreamVersion.V23, timelineEventCategory);

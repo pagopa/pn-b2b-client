@@ -86,7 +86,7 @@ Feature: Resa al mittente di una notifica
     Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
 
 
-  @returnedToSender  @cleanWebhook @webhook1
+  @returnedToSender  @webhookV26 @cleanWebhook @webhook1
   Scenario: [RETURNED-TO-SENDER_6] Invio notifica AR multi-destinatario aventi stati Inviata, Irreperibile, Deceduto e macro stato mostrato DELIVERED e controllo costo
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -109,7 +109,7 @@ Feature: Resa al mittente di una notifica
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "DELIVERED" con versione V26
     And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost uguale a "NotNull" per l'utente 0
 
-  @returnedToSender  @cleanWebhook @precondition @webhook1
+  @returnedToSender @webhookV26  @cleanWebhook @precondition @webhook1
   Scenario: [RETURNED-TO-SENDER_7_TEST] Invio notifica AR multi-destinatario aventi stati Irreperibile, Deceduto e macro stato mostrato UNREACHABLE
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V26"
     Given viene generata una nuova notifica
@@ -130,7 +130,7 @@ Feature: Resa al mittente di una notifica
     And  si invoca l'api Webhook versione "V26" per ottenere gli elementi di timeline di tale notifica
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "COMPLETELY_UNREACHABLE" con versione V26
 
-  @returnedToSender  @cleanWebhook @precondition @webhook1
+  @returnedToSender @webhookV26  @cleanWebhook @precondition @webhook1
   Scenario: [RETURNED-TO-SENDER_8_TEST] Invio notifica 890 multi-destinatario entrambi deceduti e macro stato mostrato RETURNED_TO_SENDER
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -544,7 +544,7 @@ Feature: Resa al mittente di una notifica
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "DELIVERING" con la versione V23
 
-  @returnedToSender @cleanWebhook @precondition @webhook1
+  @returnedToSender @webhookV23 @cleanWebhook @precondition @webhook1
   Scenario: [RETURNED-TO-SENDER_21-FLAG-TRUE] Invio notifica AR multi-destinatario di cui un Deceduto con VersioningModeFlag=true, atteso stato DELIVERING
     And vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V23"
     Given viene generata una nuova notifica
@@ -595,7 +595,7 @@ Feature: Resa al mittente di una notifica
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "RETURNED_TO_SENDER"
     Then l'operazione ha prodotto un errore con status code "400"
 
-  @returnedToSender @cleanWebhook @webhook1
+  @returnedToSender @webhookV26 @cleanWebhook @webhook1
   Scenario: [RETURNED-TO-SENDER_STREAM_WITH_FILTER] Invio notifica e controllo che stream con eventType DEFAULT e versione da V26 contenga elemento ANALOG_WORKFLOW_RECIPIENT_DECEASED
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V26"
     Given viene generata una nuova notifica
@@ -610,7 +610,7 @@ Feature: Resa al mittente di una notifica
     And si crea il nuovo stream per il "Comune_Multi" con versione "V26" e filtro status "DEFAULT"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "ANALOG_WORKFLOW_RECIPIENT_DECEASED" con versione V26
 
-  @returnedToSender @cleanWebhook @webhook1
+  @returnedToSender @webhookV26 @cleanWebhook @webhook1
   Scenario: [RETURNED-TO-SENDER_STREAM_WITHOUT_FILTER] Invio notifica e controllo che stream con eventType vuoto e versione da V26 contenga elemento ANALOG_WORKFLOW_RECIPIENT_DECEASED
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V26"
     Given viene generata una nuova notifica
@@ -625,7 +625,7 @@ Feature: Resa al mittente di una notifica
     And si crea il nuovo stream per il "Comune_Multi" con versione "V26"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "ANALOG_WORKFLOW_RECIPIENT_DECEASED" con versione V26
 
-  @returnedToSender @cleanWebhook @webhook1
+  @returnedToSender @webhookV25 @cleanWebhook @webhook1
   Scenario: [RETURNED-TO-SENDER_STREAM_V25_WITH_FILTER] Invio notifica e controllo che stream con eventType DEFAULT e versione differente da V26 non contenga elemento ANALOG_WORKFLOW_RECIPIENT_DECEASED
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V25"
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V25"
@@ -643,7 +643,7 @@ Feature: Resa al mittente di una notifica
     And si invoca l'api Webhook versione "V25" per ottenere gli elementi di timeline di tale notifica
     Then si controlla che tra gli elementi dello stream con versione "V25" ritornati non ci sia l'elemento "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
 
-  @returnedToSender @cleanWebhook @webhook1
+  @returnedToSender @webhookV25 @cleanWebhook @webhook1
   Scenario: [RETURNED-TO-SENDER_STREAM_V25_WITHOUT_FILTER] Invio notifica e controllo che stream con eventType vuoto e versione differente da V26 non contenga elemento ANALOG_WORKFLOW_RECIPIENT_DECEASED
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V25"
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V25"
@@ -770,7 +770,7 @@ Feature: Resa al mittente di una notifica
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "ANALOG_SUCCESS_WORKFLOW"
     And  vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SCHEDULE_REFINEMENT_WORKFLOW"
 
-  @activationDeceaseAfter @cleanWebhook @precondition @webhook1
+  @activationDeceaseAfter @webhookV26 @cleanWebhook @precondition @webhook1
   Scenario: [RETURNED-TO-SENDER_41] Invio notifica AR multi-destinatario aventi stati Visualizzata e Deceduto e stato mostrato VIEWED con controllo costo
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -789,7 +789,7 @@ Feature: Resa al mittente di una notifica
     And  vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SCHEDULE_REFINEMENT_WORKFLOW"
 
 
-  @returnedToSender  @cleanWebhook @webhook1
+  @returnedToSender  @webhookV26 @cleanWebhook @webhook1
   Scenario: [RETURNED-TO-SENDER_6] Invio notifica AR multi-destinatario aventi stati Inviata, Irreperibile, Deceduto e macro stato mostrato DELIVERED e controllo costo
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
