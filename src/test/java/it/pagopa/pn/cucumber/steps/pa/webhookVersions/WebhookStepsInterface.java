@@ -1,4 +1,8 @@
-package it.pagopa.pn.cucumber.steps.pa;
+package it.pagopa.pn.cucumber.steps.pa.webhookVersions;
+
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingWebhook;
+import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
+import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps;
 
 import java.util.List;
 import java.util.UUID;
@@ -53,4 +57,11 @@ public interface WebhookStepsInterface {
 
     String getSentNotificationIun();
 
+    void verifyIncrementalEventId();
+
+    <T> AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<T> getTimelineEventForStream(String timelineEventCategory, TimingForPolling.TimingResult timingForElement);
+
+    <T> AvanzamentoNotificheWebhookB2bSteps.StatusElementSearchResult<T> getStatusEventForStream(String notificationStatusName, TimingForPolling.TimingResult timingForElement);
+
+    <T> PnPollingWebhook getPnPollingWebhook(T timeLineOrStatus);
 }

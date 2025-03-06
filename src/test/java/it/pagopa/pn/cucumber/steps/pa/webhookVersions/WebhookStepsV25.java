@@ -6,8 +6,8 @@ import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV25;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingWebhook;
 import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceWebhookV25;
+import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps;
-import it.pagopa.pn.cucumber.steps.pa.WebhookStepsInterface;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -31,17 +31,17 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
 
     public WebhookStepsV25(AvanzamentoNotificheWebhookB2bSteps webhookSteps) {
         this.webhookSteps = webhookSteps;
-        this.progressResponseElementsV25 = new LinkedList<>();
+        progressResponseElementsV25 = new LinkedList<>();
     }
 
     @Override
     public void initializeStreamRequest(String action, String pa) {
         streamRequestV25 = new StreamRequestV25();
         List<String> groups = switch (action.toLowerCase()) {
-            case "rimuove" -> (this.webhookSteps.getSharedSteps().getRequestNewApiKey() != null
-                    && this.webhookSteps.getSharedSteps().getRequestNewApiKey().getGroups().size() >= 2) ?
-                    this.webhookSteps.getSharedSteps().getRequestNewApiKey().getGroups().subList(0, 0) : null;
-            case "aggiunge" -> this.webhookSteps.getSharedSteps().getGroupAllActiveByPa(pa);
+            case "rimuove" -> (webhookSteps.getSharedSteps().getRequestNewApiKey() != null
+                    && webhookSteps.getSharedSteps().getRequestNewApiKey().getGroups().size() >= 2) ?
+                    webhookSteps.getSharedSteps().getRequestNewApiKey().getGroups().subList(0, 0) : null;
+            case "aggiunge" -> webhookSteps.getSharedSteps().getGroupAllActiveByPa(pa);
             case "stesso" ->
                     eventStreamListV25.stream().findFirst().map(StreamMetadataResponseV25::getGroups).orElse(null);
             default -> throw new IllegalArgumentException("Action not supported!: " + action);
@@ -51,7 +51,7 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
 
     @Override
     public void createStreamRequest(List<String> filterValues, int number, String title, String eventType) {
-        this.streamCreationRequestListV25 = new LinkedList<>();
+        streamCreationRequestListV25 = new LinkedList<>();
         for (int i = 0; i < number; i++) {
             StreamCreationRequestV25 streamRequest = new StreamCreationRequestV25();
             streamRequest.setTitle(title + "_" + i);
@@ -90,9 +90,9 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
 
     private boolean handleException(HttpStatusCodeException e, String pa, UUID streamID) {
         try {
-            this.webhookSteps.getWebhookB2bClient().retrieveEventStreamV25(streamID);
-            this.webhookSteps.setNotificationError(e);
-            this.webhookSteps.getSharedSteps().setNotificationError(e);
+            webhookSteps.getWebhookB2bClient().retrieveEventStreamV25(streamID);
+            webhookSteps.setNotificationError(e);
+            webhookSteps.getSharedSteps().setNotificationError(e);
             log.error("ERROR IN DELETE STREAM id {} streamVersion V25 pa {}", streamID, pa);
             return false;
         } catch (HttpStatusCodeException ex) {
@@ -106,24 +106,24 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
         streamRequestV25 = new StreamRequestV25();
         streamRequestV25.setTitle("Update Stream V25");
         streamRequestV25.setEventType(StreamRequestV25.EventTypeEnum.TIMELINE);
-        this.webhookSteps.getWebhookB2bClient().updateEventStreamV25(idStream, streamRequestV25);
+        webhookSteps.getWebhookB2bClient().updateEventStreamV25(idStream, streamRequestV25);
     }
 
     @Override
     public void updateStreamWithExistingRequest(UUID idStream) {
-        this.webhookSteps.getWebhookB2bClient().updateEventStreamV25(idStream, streamRequestV25);
+        webhookSteps.getWebhookB2bClient().updateEventStreamV25(idStream, streamRequestV25);
     }
 
     @Override
     public void updateStreams() {
         if (streamRequestV25 == null) {
             streamRequestV25 = new StreamRequestV25();
-            streamRequestV25.setGroups(this.webhookSteps.getSharedSteps().getRequestNewApiKey().getGroups());
+            streamRequestV25.setGroups(webhookSteps.getSharedSteps().getRequestNewApiKey().getGroups());
         }
         streamRequestV25.setTitle("Update Stream V25");
         streamRequestV25.setEventType(StreamRequestV25.EventTypeEnum.TIMELINE);
         for (StreamMetadataResponseV25 eventStreamV25 : eventStreamListV25) {
-            StreamMetadataResponseV25 result = this.webhookSteps.getWebhookB2bClient().updateEventStreamV25(eventStreamV25.getStreamId(), streamRequestV25);
+            StreamMetadataResponseV25 result = webhookSteps.getWebhookB2bClient().updateEventStreamV25(eventStreamV25.getStreamId(), streamRequestV25);
             Assertions.assertNotNull(result);
             Assertions.assertTrue(streamRequestV25.getTitle().equalsIgnoreCase(result.getTitle()));
             log.info("EVENTSTREAM update : {}", result);
@@ -164,7 +164,7 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
 
     @Override
     public void checkCorrectCancellation() {
-        List<StreamListElement> streamListElementsV25 = this.webhookSteps.getWebhookB2bClient().listEventStreamsV25();
+        List<StreamListElement> streamListElementsV25 = webhookSteps.getWebhookB2bClient().listEventStreamsV25();
         for (StreamMetadataResponseV25 eventStream : eventStreamListV25) {
             StreamListElement streamListElementV25 = streamListElementsV25.stream().filter(
                     elem -> elem.getStreamId() == eventStream.getStreamId()).findAny().orElse(null);
@@ -175,8 +175,8 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
     @Override
     public void getStreamById(UUID streamId) {
         StreamMetadataResponseV25 eventStreamV25 = Assertions.assertDoesNotThrow(() ->
-                this.webhookSteps.getWebhookB2bClient().retrieveEventStreamV25(streamId));
-        this.webhookSteps.getSharedSteps().setEventStreamV25(eventStreamV25);
+                webhookSteps.getWebhookB2bClient().retrieveEventStreamV25(streamId));
+        webhookSteps.getSharedSteps().setEventStreamV25(eventStreamV25);
         Assertions.assertNotNull(eventStreamV25);
         Assertions.assertNotNull(eventStreamV25.getStreamId());
         log.info("EVENTSTREAM: {}", eventStreamV25);
@@ -184,14 +184,14 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
 
     @Override
     public void consumeEventStream(UUID streamId) {
-        this.progressResponseElementsV25 = this.webhookSteps.getWebhookB2bClient().consumeEventStreamV25(streamId, null);
+        progressResponseElementsV25 = webhookSteps.getWebhookB2bClient().consumeEventStreamV25(streamId, null);
         log.info("progressResponseElementsV25: " + progressResponseElementsV25);
     }
 
     @Override
     public void consumeEventStreamAndCheckNumEvents(int numEvents) {
-        UUID streamId = this.eventStreamListV25.get(0).getStreamId();
-        this.progressResponseElementsV25 = this.webhookSteps.getWebhookB2bClient().consumeEventStreamV25(streamId, null);
+        UUID streamId = eventStreamListV25.get(0).getStreamId();
+        progressResponseElementsV25 = webhookSteps.getWebhookB2bClient().consumeEventStreamV25(streamId, null);
         log.info("progressResponseElementsV25: " + progressResponseElementsV25);
         Assertions.assertEquals(progressResponseElementsV25.size(), numEvents);
         System.out.println("ELEMENTI NEL WEBHOOK: " + progressResponseElementsV25.size());
@@ -200,12 +200,12 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
     @Override
     public void verifyNoEventInStream() {
         UUID streamId = getStreamId();
-        Assertions.assertTrue(this.webhookSteps.getWebhookB2bClient().consumeEventStreamV25(streamId, null).isEmpty());
+        Assertions.assertTrue(webhookSteps.getWebhookB2bClient().consumeEventStreamV25(streamId, null).isEmpty());
     }
 
     @Override
     public void createEventStream(String pa, List<String> listGroups, boolean replaceId, List<String> filteredValues, boolean forced) {
-        if (this.eventStreamListV25 == null) this.eventStreamListV25 = new LinkedList<>();
+        if (eventStreamListV25 == null) eventStreamListV25 = new LinkedList<>();
         for (StreamCreationRequestV25 request : streamCreationRequestListV25) {
             if (filteredValues != null && !filteredValues.isEmpty()) {
                 request.setFilterValues(filteredValues);
@@ -214,29 +214,29 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
                 request.setGroups(listGroups);
             }
             if (replaceId) {
-                request.setReplacedStreamId(this.webhookSteps.getSharedSteps().getEventStreamV25().getStreamId());
+                request.setReplacedStreamId(webhookSteps.getSharedSteps().getEventStreamV25().getStreamId());
             }
-            StreamMetadataResponseV25 eventStream = this.webhookSteps.getWebhookB2bClient().createEventStreamV25(request);
+            StreamMetadataResponseV25 eventStream = webhookSteps.getWebhookB2bClient().createEventStreamV25(request);
             if (replaceId) {
                 StreamMetadataResponseV25 eventStreamV25 =
-                        this.webhookSteps.getWebhookB2bClient().retrieveEventStreamV25(this.eventStreamListV25.get(0).getStreamId());
-                this.webhookSteps.getSharedSteps().setEventStreamV25(eventStreamV25);
+                        webhookSteps.getWebhookB2bClient().retrieveEventStreamV25(eventStreamListV25.get(0).getStreamId());
+                webhookSteps.getSharedSteps().setEventStreamV25(eventStreamV25);
                 Assertions.assertNotNull(eventStreamV25);
                 Assertions.assertNotNull(eventStreamV25.getStreamId());
                 Assertions.assertNotNull(eventStreamV25.getDisabledDate());
                 log.info("EVENTSTREAM REPLACED: {}", eventStreamV25);
-                this.eventStreamListV25 = new LinkedList<>();
+                eventStreamListV25 = new LinkedList<>();
             }
-            this.eventStreamListV25.add(eventStream);
-            this.webhookSteps.getPaStreamOwner().add(pa);
+            eventStreamListV25.add(eventStream);
+            webhookSteps.getPaStreamOwner().add(pa);
         }
     }
 
     @Override
     public void disableStreams() {
-        this.eventStreamListV25.forEach(s -> {
+        eventStreamListV25.forEach(s -> {
             UUID streamId = s.getStreamId();
-            StreamMetadataResponseV25 response = this.webhookSteps.getWebhookB2bClient().disableEventStreamV25(streamId);
+            StreamMetadataResponseV25 response = webhookSteps.getWebhookB2bClient().disableEventStreamV25(streamId);
             Assertions.assertNotNull(response);
         });
     }
@@ -245,8 +245,8 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
     public Object searchInWebhook(String lastEventId, int deepCount, int position, AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream) {
         TimelineElementCategoryV23 timeLineOrStatus = ((TimelineElementCategoryV23) timelineForStream.getTimelineElementCategory());
         PnPollingWebhook pnPollingWebhook = getPnPollingWebhook(timeLineOrStatus);
-        PnPollingServiceWebhookV25 webhookV25 = (PnPollingServiceWebhookV25) this.webhookSteps.getSharedSteps().getPollingFactory().getPollingService(PnPollingStrategy.WEBHOOK_V25);
-        PnPollingResponseV25 pnPollingResponseV25 = webhookV25.waitForEvent(this.webhookSteps.getSharedSteps().getSentNotification().getIun(),
+        PnPollingServiceWebhookV25 webhookV25 = (PnPollingServiceWebhookV25) webhookSteps.getSharedSteps().getPollingFactory().getPollingService(PnPollingStrategy.WEBHOOK_V25);
+        PnPollingResponseV25 pnPollingResponseV25 = webhookV25.waitForEvent(webhookSteps.getSharedSteps().getSentNotification().getIun(),
                 PnPollingParameter.builder()
                         .value("WEBHOOK")
                         .pnPollingWebhook(pnPollingWebhook)
@@ -257,7 +257,7 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
 
         log.info("WEBHOOK_PROGRESS_RESPONSE_ELEMENT_V25: " + pnPollingResponseV25.getProgressResponseElementV25());
         if (pnPollingResponseV25.getProgressResponseElementListV25() != null) {
-            this.webhookSteps.getSharedSteps().setProgressResponseElementsV25(pnPollingResponseV25.getProgressResponseElementListV25());
+            webhookSteps.getSharedSteps().setProgressResponseElementsV25(pnPollingResponseV25.getProgressResponseElementListV25());
             return pnPollingResponseV25.getProgressResponseElementV25();
         }
         return null;
@@ -281,8 +281,8 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
             } catch (InterruptedException exc) {
                 throw new RuntimeException(exc);
             }
-            this.webhookSteps.getSharedSteps().setSentNotificationV25(this.webhookSteps.getB2bClient().getSentNotificationV25(this.webhookSteps.getSharedSteps().getSentNotification().getIun()));
-            TimelineElementV25 timelineElement = this.webhookSteps.getSharedSteps()
+            webhookSteps.getSharedSteps().setSentNotificationV25(webhookSteps.getB2bClient().getSentNotificationV25(webhookSteps.getSharedSteps().getSentNotification().getIun()));
+            TimelineElementV25 timelineElement = webhookSteps.getSharedSteps()
                     .getSentNotificationV25().getTimeline().stream()
                     .filter(elem -> elem.getCategory().equals(timelineElementInternalCategory))
                     .findAny()
@@ -301,7 +301,7 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
             Assertions.assertNotNull(progressResponseElement);
             TimelineElementCategoryV23 timelineElementInternalCategory = TimelineElementCategoryV23.valueOf(((TimelineElementCategoryV23) timelineForStream.getTimelineElementCategory()).name());
 
-            TimelineElementV25 elementToCheck = this.webhookSteps.getSharedSteps().getSentNotificationV25().getTimeline().stream()
+            TimelineElementV25 elementToCheck = webhookSteps.getSharedSteps().getSentNotificationV25().getTimeline().stream()
                     .filter(elem -> elem.getCategory() != null)
                     .filter(elem -> elem.getCategory().getValue().equals(timelineElementInternalCategory.getValue()))
                     .findAny()
@@ -316,7 +316,7 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
             log.info("EventProgress: " + progressResponseElement);
         } catch (AssertionFailedError assertionFailedError) {
             String message = String.format("%s {IUN: %s -WEBHOOK %s }", assertionFailedError.getMessage(),
-                    this.webhookSteps.getSharedSteps().getSentNotification().getIun(), this.eventStreamListV25.get(0).getStreamId());
+                    webhookSteps.getSharedSteps().getSentNotification().getIun(), eventStreamListV25.get(0).getStreamId());
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
     }
@@ -329,6 +329,46 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
 
     @Override
     public String getSentNotificationIun() {
-        return this.webhookSteps.getSharedSteps().getSentNotificationV25().getIun();
+        return webhookSteps.getSharedSteps().getSentNotificationV25().getIun();
+    }
+
+    @Override
+    public void verifyIncrementalEventId() {
+        List<ProgressResponseElementV25> progressResponseElements = webhookSteps.getSharedSteps().getProgressResponseElementsV25();
+        Assertions.assertNotNull(progressResponseElements);
+        int lastEventID = 0;
+        for (ProgressResponseElementV25 elem : progressResponseElements) {
+            int currentEventId = Integer.parseInt(elem.getEventId());
+            if (lastEventID != 0 && currentEventId <= lastEventID) {
+                Assertions.fail(String.format("EventId is not incremental: %d <= %d", currentEventId, lastEventID));
+            }
+            lastEventID = currentEventId;
+        }
+    }
+
+    @Override
+    public <T> AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<T> getTimelineEventForStream(String timelineEventCategory, TimingForPolling.TimingResult timingForElement) {
+        AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<TimelineElementCategoryV23> result = new AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<>();
+        result.setTimelineElementCategory(TimelineElementCategoryV23.valueOf(timelineEventCategory));
+        result.setWaiting(timingForElement.waiting());
+        result.setNumCheck(timingForElement.numCheck());
+        return (AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<T>) result;
+    }
+
+    //TODO MATTEO CHECK, inizialmente non era previsto per la V25, immagino vada bene l'ultima versione di NotificationStatus pre V26
+    @Override
+    public <T> AvanzamentoNotificheWebhookB2bSteps.StatusElementSearchResult<T> getStatusEventForStream(String notificationStatusName, TimingForPolling.TimingResult timingForElement) {
+        AvanzamentoNotificheWebhookB2bSteps.StatusElementSearchResult<NotificationStatus> result = new AvanzamentoNotificheWebhookB2bSteps.StatusElementSearchResult<>();
+        result.setNotificationStatus(NotificationStatus.valueOf(notificationStatusName));
+        result.setWaiting(timingForElement.waiting());
+        result.setNumCheck(timingForElement.numCheck());
+        return (AvanzamentoNotificheWebhookB2bSteps.StatusElementSearchResult<T>) result;
+    }
+
+    @Override
+    public <T> PnPollingWebhook getPnPollingWebhook(T timeLineOrStatus) {
+        PnPollingWebhook pnPollingWebhook = new PnPollingWebhook();
+        //TODO MATTEO
+        return pnPollingWebhook;
     }
 }
