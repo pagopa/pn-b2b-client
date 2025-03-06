@@ -51,4 +51,6 @@ public interface WebhookStepsInterface {
 
     void setValueForWaitForAccepted(boolean waitForAccepted);
 
+    String getSentNotificationIun();
+
 }

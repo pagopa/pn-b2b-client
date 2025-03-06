@@ -326,4 +326,9 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
     public void setValueForWaitForAccepted(boolean waitForAccepted) {
         //Funzionalità prevista dalla versione 27 in poi
     }
+
+    @Override
+    public String getSentNotificationIun() {
+        return this.webhookSteps.getSharedSteps().getSentNotificationV25().getIun();
+    }
 }
