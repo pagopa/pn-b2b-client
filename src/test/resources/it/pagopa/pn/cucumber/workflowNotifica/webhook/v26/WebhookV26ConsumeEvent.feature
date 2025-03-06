@@ -1,7 +1,7 @@
 Feature: avanzamento notifiche webhook b2b V26
 
   #COMUNE 1
-  @webhookV26 @precondition @webhook1
+  @webhookV26 @precondition @cleanWebhook @webhook1
   Scenario: [B2B-STREAM_ES1.1_112] Creazione con replaceID di uno stream notifica senza gruppo uguale al precedente stream con eventType "TIMELINE" utilizzando un apikey master. (replacedStreamId settato) con controllo EventId incrementale e senza duplicati.
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
