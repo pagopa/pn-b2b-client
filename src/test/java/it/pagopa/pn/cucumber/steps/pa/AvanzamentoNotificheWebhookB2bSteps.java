@@ -2245,7 +2245,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
             sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
             it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 timelineElement =
-                    sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().orElse(null);
+                    sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().getValue().equals(timelineElementInternalCategory.getValue())).findAny().orElse(null);
             if (timelineElement != null) {
                 finish = true;
                 break;
