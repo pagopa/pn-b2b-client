@@ -9,6 +9,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDetails;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateNameUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateSeed;
@@ -23,6 +24,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+/* TODO considerato che le varianti con HTTP info conservano lo stato di errore senza
+ *  - presumibilmente - lanciare alcuna eccezione, potrebbe essere preferibile utilizzare solo
+ *  quelle, rimuovere le altre e adattare gli utilizzi di conseguenza */
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
@@ -313,6 +317,19 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
         UUID eServiceTemplateVersionId, UUID documentId) {
         // TODO anche qui id in semplice formato stringa e non UUID
         return this.eserviceTemplatesApi.deleteEServiceTemplateDocumentByIdWithHttpInfo(xCorrelationId, eServiceTemplateId.toString(), eServiceTemplateVersionId.toString(), documentId.toString());
+    }
+
+    @Override
+    public void updateEServiceTemplateName(String xCorrelationId, UUID eServiceTemplateId,
+        EServiceTemplateNameUpdateSeed eserviceTemplateNameUpdateSeed) {
+        this.eserviceTemplatesApi.updateEServiceTemplateName(xCorrelationId, eServiceTemplateId, eserviceTemplateNameUpdateSeed);
+    }
+
+    @Override
+    public ResponseEntity<Void> updateEServiceTemplateNameWithHttpInfo(String xCorrelationId,
+        UUID eServiceTemplateId,
+        EServiceTemplateNameUpdateSeed eserviceTemplateNameUpdateSeed) {
+        return this.eserviceTemplatesApi.updateEServiceTemplateNameWithHttpInfo(xCorrelationId, eServiceTemplateId, eserviceTemplateNameUpdateSeed);
     }
 
     @Override

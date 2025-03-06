@@ -20,6 +20,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysi
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTechnology;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDetails;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateNameUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionState;
@@ -77,6 +78,7 @@ public class EServiceTemplateSteps {
     private EServiceTemplateDocumentInfo lastAddedDocument;
     private UpdateEServiceTemplateVersionDocumentSeed lastDocumentUpdateSeed;
     private UUID lastDeletedVersion;
+    private EServiceTemplateNameUpdateSeed lastTemplateNameUpdateSeed;
 
     // TODO farne un bean centralizzato riutilizzabile ovunque
     private static EasyRandomParameters easyRandomParameters = new EasyRandomParameters()
@@ -1079,10 +1081,84 @@ public class EServiceTemplateSteps {
             ResponseEntity::getStatusCode);
     }
 
+    @When("l'utente tenta la modifica del nome dell'e-service template")
+    public void editEServiceTemplateName() {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        lastTemplateNameUpdateSeed = easyRandom.nextObject(EServiceTemplateNameUpdateSeed.class);
+        editEServiceTemplateName(eServiceTemplateId, lastTemplateNameUpdateSeed);
+    }
+
+    @When("l'utente tenta la modifica del nome dell'e-service template specificando lo stesso nome")
+    public void editEServiceTemplateNameWithSameName() {
+        editEServiceTemplateNameWithEmptyName(lastTemplateManaged.name());
+    }
+
+    @When("l'utente tenta la modifica del nome dell'e-service template specificando la stringa vuota")
+    public void editEServiceTemplateNameWithEmptyName() {
+        editEServiceTemplateNameWithEmptyName("");
+    }
+
+    @When("l'utente tenta la modifica del nome dell'e-service template specificando null")
+    public void editEServiceTemplateNameWithNullName() {
+        editEServiceTemplateNameWithEmptyName(null);
+    }
+
+    @When("l'utente tenta la modifica del nome di un e-service template inesistente")
+    public void editNonExistentEServiceTemplateName() {
+        editEServiceTemplateName(UUID.randomUUID(), easyRandom.nextObject(EServiceTemplateNameUpdateSeed.class));
+    }
+
+    private void editEServiceTemplateNameWithEmptyName(String name) {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        lastTemplateNameUpdateSeed = easyRandom.nextObject(EServiceTemplateNameUpdateSeed.class)
+            .name(name);
+        editEServiceTemplateName(eServiceTemplateId, lastTemplateNameUpdateSeed);
+    }
+
+    private void editEServiceTemplateName(UUID eServiceTemplateId,
+        EServiceTemplateNameUpdateSeed lastTemplateNameUpdateSeed) {
+        String userToken = getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+        httpCallExecutor.performCall(
+            () -> eServiceTemplateClient.updateEServiceTemplateNameWithHttpInfo(
+                sharedStepsContext.getXCorrelationId(),
+                eServiceTemplateId,
+                lastTemplateNameUpdateSeed),
+            ResponseEntity::getStatusCode);
+    }
+
+    @Then("la modifica del nome dell'e-service template è stata effettuata correttamente")
+    public void checkEServiceTemplateNameEdited() {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        try {
+            pollingService.makePolling(
+                () -> httpCallExecutor.performCall(
+                    () -> eServiceTemplateClient.getEServiceTemplateWithHttpInfo(
+                        sharedStepsContext.getXCorrelationId(),
+                        eServiceTemplateId),
+                    ResponseEntity::getStatusCode),
+                res -> {
+                    if(res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody())) {
+                        return this.areConsistent(res.getBody(), lastTemplateNameUpdateSeed);
+                    }
+                    return false;
+                },
+                "Il nome dell'e-service template non è stato modificato correttamente"
+            );
+        } catch (PollingPredicateException e) {
+            fail("Il nome dell'e-service template non è stato modificato correttamente");
+        }
+    }
+
+
     /* TODO un'alternativa all'uso di metodi come "areConsistent" - che confrontano i campi uno a uno - potrebbe essere
      * l'uso di una libreria di mapping, da usare per mappare un oggetto nell'altro tipo, e quindi procedere con
      * un normale equals(...).
      */
+
+    private boolean areConsistent(EServiceTemplateDetails template, EServiceTemplateNameUpdateSeed lastUpdate) {
+        return template.getName().equals(lastUpdate.getName());
+    }
 
     // TODO diverse NPE possibili, agire di conseguenza
     private boolean areConsistent(UpdateEServiceTemplateVersionSeed lastUpdate, EServiceTemplateVersionDetails retrievedTemplate) {

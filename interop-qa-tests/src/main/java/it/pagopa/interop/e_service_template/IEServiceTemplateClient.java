@@ -6,6 +6,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDetails;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateNameUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateSeed;
@@ -151,4 +152,11 @@ public interface IEServiceTemplateClient extends SettableBearerToken {
 
     ResponseEntity<Void> deleteDocumentWithHttpInfo(String xCorrelationId, UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId, UUID documentId);
+
+    void updateEServiceTemplateName(String xCorrelationId, UUID eServiceTemplateId,
+        EServiceTemplateNameUpdateSeed eserviceTemplateNameUpdateSeed);
+
+    ResponseEntity<Void> updateEServiceTemplateNameWithHttpInfo(String xCorrelationId,
+        UUID eServiceTemplateId,
+        EServiceTemplateNameUpdateSeed eserviceTemplateNameUpdateSeed);
 }
