@@ -266,15 +266,27 @@ Feature: aggiornamento stream
 
     #DA VERIFICARE SE CORRETTO IL 400....
   @webhookV24 @precondition @cleanWebhook @webhook2
-  Scenario: [B2B-STREAM_ES1.5.138] Aggiornamento di uno stream notifica V25 senza gruppo, con  la versione V10.
+  Scenario: [B2B-STREAM_ES1.5.138] Aggiornamento di uno stream notifica V24 senza gruppo, con  la versione V10.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V24"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
     And si crea il nuovo stream per il "Comune_Multi" con versione "V24"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V24"
-    When si aggiorna lo stream creato con versione "V10" -Cross Versioning
+    When si aggiorna lo stream creato con versione "V24" invocando la versione "V10" - Cross Versioning
     Then l'operazione ha prodotto un errore con status code "400"
+    And viene modificato lo stato dell'apiKey in "BLOCK"
+    And l'apiKey viene cancellata
+
+  @webhookV24 @precondition @cleanWebhook @webhook2
+  Scenario: [B2B-STREAM_ES1.5.140] Aggiornamento di uno stream notifica V10 senza gruppo, con  la versione V24.
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V10"
+    And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
+    And viene impostata l'apikey appena generata
+    When si aggiorna lo stream creato con versione "V10" invocando la versione "V24" - Cross Versioning
+    Then l'operazione ha prodotto un errore con status code "403"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
