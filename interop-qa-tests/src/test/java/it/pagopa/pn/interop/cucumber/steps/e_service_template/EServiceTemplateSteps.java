@@ -1098,7 +1098,7 @@ public class EServiceTemplateSteps {
         editEServiceTemplateNameWithEmptyName("");
     }
 
-    @When("l'utente tenta la modifica del nome dell'e-service template specificando null")
+    @When("l'utente tenta la modifica del nome dell'e-service template specificando NULL")
     public void editEServiceTemplateNameWithNullName() {
         editEServiceTemplateNameWithEmptyName(null);
     }

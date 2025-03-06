@@ -1163,7 +1163,17 @@ Feature: Test API of e-service template
       | PUBLISHED |
       | SUSPENDED |
 
-  Scenario Outline: [INTEROP-EST-102] La modifica del nome di un e-service template in stato PUBLISHED o SUSPENDED non può essere effettuata da un ente diverso dal creatore del template
+  Scenario Outline: [INTEROP-EST-102] La modifica del nome di un e-service template in stato PUBLISHED o SUSPENDED specificando NULL non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
+    When l'utente tenta la modifica del nome dell'e-service template specificando NULL
+    Then si ottiene status code 400
+    Examples:
+      | stato     |
+      | PUBLISHED |
+      | SUSPENDED |
+
+  Scenario Outline: [INTEROP-EST-103] La modifica del nome di un e-service template in stato PUBLISHED o SUSPENDED non può essere effettuata da un ente diverso dal creatore del template
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
     When l'utente è un "admin" di "PA2"
@@ -1174,14 +1184,16 @@ Feature: Test API of e-service template
       | PUBLISHED |
       | SUSPENDED |
 
-  Scenario: [INTEROP-EST-103] La modifica del nome di un e-service template inesistente non può essere effettuata
+  Scenario: [INTEROP-EST-104] La modifica del nome di un e-service template inesistente non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     When l'utente tenta la modifica del nome di un e-service template inesistente
     Then si ottiene status code 404
 
 
-  # TODO continua da 131...
+  # TODO scenari modifica descrizione da 131...
 
+
+  # TODO continua da 137...
 
   #TODO la maggior parte dei test sono fatti su template in mod. RICEZIONE. Valutare che non sia il caso di testare per entrambe le modalità.
 
