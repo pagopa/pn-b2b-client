@@ -349,6 +349,21 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
     }
 
     @Override
+    public void updateEServiceTemplateDescription(String xCorrelationId,
+        UUID eServiceTemplateId,
+        EServiceTemplateDescriptionUpdateSeed seed) {
+        this.eserviceTemplatesApi.updateEServiceTemplateEServiceDescription(xCorrelationId, eServiceTemplateId, seed);
+    }
+
+    @Override
+    public ResponseEntity<Void> updateEServiceTemplateDescriptionWithHttpInfo(
+        String xCorrelationId,
+        UUID eServiceTemplateId,
+        EServiceTemplateDescriptionUpdateSeed seed) {
+        return this.eserviceTemplatesApi.updateEServiceTemplateEServiceDescriptionWithHttpInfo(xCorrelationId, eServiceTemplateId, seed);
+    }
+
+    @Override
     public void setBearerToken(String bearerToken) {
         this.eserviceTemplatesApi.setApiClient(createApiClient(bearerToken));
     }

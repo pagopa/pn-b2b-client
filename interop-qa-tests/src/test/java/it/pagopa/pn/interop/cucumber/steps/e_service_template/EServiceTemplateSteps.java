@@ -58,7 +58,7 @@ import org.springframework.http.ResponseEntity;
 @Data
 public class EServiceTemplateSteps {
     /** Stores data on an e-service template useful for testing */
-    record EServiceTemplateInfo(String name, String audienceDescription, UUID id, UUID lastVersionId){}
+    record EServiceTemplateInfo(String name, String audienceDescription, String eServiceDescription, UUID id, UUID lastVersionId){}
 
     /** Stores data on an e-service template document useful for testing */
     record EServiceTemplateDocumentInfo(UUID id, String prettyName, String body){}
@@ -71,6 +71,7 @@ public class EServiceTemplateSteps {
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
 
+    // TODO alcune di queste variabili andranno incapsulate in un bean di tipo Context
     private EServiceTemplateInfo lastTemplateManaged;
     private UpdateEServiceTemplateSeed lastTemplateUpdateSeed;
     private UpdateEServiceTemplateVersionSeed lastTemplateVersionUpdateSeed;
@@ -81,6 +82,7 @@ public class EServiceTemplateSteps {
     private UUID lastDeletedVersion;
     private EServiceTemplateNameUpdateSeed lastTemplateNameUpdateSeed;
     private EServiceTemplateDescriptionUpdateSeed lastTemplateAudienceDescriptionUpdateSeed;
+    private EServiceTemplateDescriptionUpdateSeed lastTemplateDescriptionUpdateSeed;
 
     // TODO farne un bean centralizzato riutilizzabile ovunque
     private static EasyRandomParameters easyRandomParameters = new EasyRandomParameters()
@@ -1092,17 +1094,17 @@ public class EServiceTemplateSteps {
 
     @When("l'utente tenta la modifica del nome dell'e-service template specificando lo stesso nome")
     public void editEServiceTemplateNameWithSameName() {
-        editEServiceTemplateNameWithEmptyName(lastTemplateManaged.name());
+        editEServiceTemplateNameWith(lastTemplateManaged.name());
     }
 
     @When("l'utente tenta la modifica del nome dell'e-service template specificando la stringa vuota")
     public void editEServiceTemplateNameWithEmptyName() {
-        editEServiceTemplateNameWithEmptyName("");
+        editEServiceTemplateNameWith("");
     }
 
     @When("l'utente tenta la modifica del nome dell'e-service template specificando NULL")
     public void editEServiceTemplateNameWithNullName() {
-        editEServiceTemplateNameWithEmptyName(null);
+        editEServiceTemplateNameWith(null);
     }
 
     @When("l'utente tenta la modifica del nome di un e-service template inesistente")
@@ -1110,7 +1112,7 @@ public class EServiceTemplateSteps {
         editEServiceTemplateName(UUID.randomUUID(), easyRandom.nextObject(EServiceTemplateNameUpdateSeed.class));
     }
 
-    private void editEServiceTemplateNameWithEmptyName(String name) {
+    private void editEServiceTemplateNameWith(String name) {
         UUID eServiceTemplateId = lastTemplateManaged.id();
         lastTemplateNameUpdateSeed = easyRandom.nextObject(EServiceTemplateNameUpdateSeed.class)
             .name(name);
@@ -1210,7 +1212,9 @@ public class EServiceTemplateSteps {
                     ResponseEntity::getStatusCode),
                 res -> {
                     if(res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody())) {
-                        return this.areConsistent(res.getBody(), lastTemplateAudienceDescriptionUpdateSeed);
+                        EServiceTemplateDetails template = res.getBody();
+                        return template.getAudienceDescription().equals(
+                            lastTemplateAudienceDescriptionUpdateSeed.getDescription());
                     }
                     return false;
                 },
@@ -1221,15 +1225,81 @@ public class EServiceTemplateSteps {
         }
     }
 
+    // TODO steps modifica descrizione template...
+    @When("l'utente tenta la modifica della descrizione dell'e-service template")
+    public void editEServiceTemplateDescription() {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        lastTemplateDescriptionUpdateSeed = easyRandom.nextObject(EServiceTemplateDescriptionUpdateSeed.class);
+        editEServiceTemplateDescription(eServiceTemplateId, lastTemplateDescriptionUpdateSeed);
+    }
 
+    @When("l'utente tenta la modifica della descrizione dell'e-service template specificando la stessa descrizione")
+    public void editEServiceTemplateDescriptionWithSameDescription() {
+        editEServiceTemplateDescriptionWith(lastTemplateManaged.eServiceDescription());
+    }
+
+    @When("l'utente tenta la modifica della descrizione dell'e-service template specificando la stringa vuota")
+    public void editEServiceTemplateDescriptionWith() {
+        editEServiceTemplateDescriptionWith("");
+    }
+
+    @When("l'utente tenta la modifica della descrizione dell'e-service template specificando NULL")
+    public void editEServiceTemplateDescriptionWithNullDescription() {
+        editEServiceTemplateDescriptionWith(null);
+    }
+
+    @When("l'utente tenta la modifica della descrizione di un e-service template inesistente")
+    public void editNonExistentEServiceTemplateDescription() {
+        editEServiceTemplateDescription(UUID.randomUUID(), easyRandom.nextObject(EServiceTemplateDescriptionUpdateSeed.class));
+    }
+
+    private void editEServiceTemplateDescriptionWith(String description) {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        lastTemplateDescriptionUpdateSeed = easyRandom.nextObject(EServiceTemplateDescriptionUpdateSeed.class)
+            .description(description);
+        editEServiceTemplateDescription(eServiceTemplateId, lastTemplateDescriptionUpdateSeed);
+    }
+
+    private void editEServiceTemplateDescription(UUID eServiceTemplateId,
+        EServiceTemplateDescriptionUpdateSeed lastTemplateDescriptionUpdateSeed) {
+        String userToken = getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+        httpCallExecutor.performCall(
+            () -> eServiceTemplateClient.updateEServiceTemplateDescriptionWithHttpInfo(
+                sharedStepsContext.getXCorrelationId(),
+                eServiceTemplateId,
+                lastTemplateDescriptionUpdateSeed),
+            ResponseEntity::getStatusCode);
+    }
+
+    @Then("la modifica della descrizione dell'e-service template è stata effettuata correttamente")
+    public void checkEServiceTemplateDescriptionEdited() {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        try {
+            pollingService.makePolling(
+                () -> httpCallExecutor.performCall(
+                    () -> eServiceTemplateClient.getEServiceTemplateWithHttpInfo(
+                        sharedStepsContext.getXCorrelationId(),
+                        eServiceTemplateId),
+                    ResponseEntity::getStatusCode),
+                res -> {
+                    if(res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody())) {
+                        EServiceTemplateDetails template = res.getBody();
+                        return template.getEserviceDescription().equals(
+                            lastTemplateDescriptionUpdateSeed.getDescription());
+                    }
+                    return false;
+                },
+                "Il nome dell'e-service template non è stato modificato correttamente"
+            );
+        } catch (PollingPredicateException e) {
+            fail("Il nome dell'e-service template non è stato modificato correttamente");
+        }
+    }
     /* TODO un'alternativa all'uso di metodi come "areConsistent" - che confrontano i campi uno a uno - potrebbe essere
      * l'uso di una libreria di mapping, da usare per mappare un oggetto nell'altro tipo, e quindi procedere con
      * un normale equals(...).
      */
-
-    private boolean areConsistent(EServiceTemplateDetails template, EServiceTemplateDescriptionUpdateSeed lastUpdate) {
-        return template.getAudienceDescription().equals(lastUpdate.getDescription());
-    }
 
     private boolean areConsistent(EServiceTemplateDetails template, EServiceTemplateNameUpdateSeed lastUpdate) {
         return template.getName().equals(lastUpdate.getName());
@@ -1291,6 +1361,7 @@ public class EServiceTemplateSteps {
         this.lastTemplateManaged = new EServiceTemplateInfo(
             templateSeed.getName(),
             templateSeed.getAudienceDescription(),
+            templateSeed.getEserviceDescription(),
             creationResponse.getId(),
             creationResponse.getVersionId());
     }

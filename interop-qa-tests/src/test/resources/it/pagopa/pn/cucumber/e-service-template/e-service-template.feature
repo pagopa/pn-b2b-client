@@ -1224,7 +1224,7 @@ Feature: Test API of e-service template
     When l'utente tenta la modifica della descrizione dello scopo dell'e-service template
     Then si ottiene status code 403
 
-  Scenario Outline: [INTEROP-EST-108] La modifica della descrizione dello scopo di un e-service template in stato PUBLISHED o SUSPENDED specificando il nome già presente non può essere effettuata
+  Scenario Outline: [INTEROP-EST-108] La modifica della descrizione dello scopo di un e-service template in stato PUBLISHED o SUSPENDED specificando la descrizione già presente non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
     When l'utente tenta la modifica della descrizione dello scopo dell'e-service template specificando la stessa descrizione
@@ -1270,8 +1270,90 @@ Feature: Test API of e-service template
     When l'utente tenta la modifica della descrizione dello scopo di un e-service template inesistente
     Then si ottiene status code 404
 
+  Scenario Outline: [INTEROP-EST-113] La modifica della descrizione di un e-service template in stato PUBLISHED o SUSPENDED può essere effettuata da un ente in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la modifica della descrizione dell'e-service template
+    Then si ottiene status code 200
+    And la modifica della descrizione dell'e-service template è stata effettuata correttamente
+    Examples:
+      | ruolo   | stato     |
+      | admin   | PUBLISHED |
+      | api     | PUBLISHED |
+      | admin   | SUSPENDED |
+      | api     | SUSPENDED |
 
-  # TODO continua da 137...
+  Scenario Outline: [INTEROP-EST-114] La modifica della descrizione di un e-service template in stato PUBLISHED o SUSPENDED NON può essere effettuata da un ente NON in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la modifica della descrizione dell'e-service template
+    Then si ottiene status code 403
+    Examples:
+      | ruolo         | stato     |
+      | security      | PUBLISHED |
+      | api,security  | PUBLISHED |
+      | support       | PUBLISHED |
+      | security      | SUSPENDED |
+      | api,security  | SUSPENDED |
+      | support       | SUSPENDED |
+
+  Scenario: [INTEROP-EST-115] La modifica della descrizione di un e-service template in stato DRAFT non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    When l'utente tenta la modifica della descrizione dell'e-service template
+    Then si ottiene status code 403
+
+  Scenario Outline: [INTEROP-EST-116] La modifica della descrizione di un e-service template in stato PUBLISHED o SUSPENDED specificando la descrizione già presente non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
+    When l'utente tenta la modifica della descrizione dell'e-service template specificando la stessa descrizione
+    Then si ottiene status code 409
+    Examples:
+      | stato     |
+      | PUBLISHED |
+      | SUSPENDED |
+
+  Scenario Outline: [INTEROP-EST-117] La modifica della descrizione di un e-service template in stato PUBLISHED o SUSPENDED specificando la stringa vuota non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
+    When l'utente tenta la modifica della descrizione dell'e-service template specificando la stringa vuota
+    Then si ottiene status code 400
+    Examples:
+      | stato     |
+      | PUBLISHED |
+      | SUSPENDED |
+
+  Scenario Outline: [INTEROP-EST-118] La modifica della descrizione di un e-service template in stato PUBLISHED o SUSPENDED specificando NULL non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
+    When l'utente tenta la modifica della descrizione dell'e-service template specificando NULL
+    Then si ottiene status code 400
+    Examples:
+      | stato     |
+      | PUBLISHED |
+      | SUSPENDED |
+
+  Scenario Outline: [INTEROP-EST-119] La modifica della descrizione di un e-service template in stato PUBLISHED o SUSPENDED non può essere effettuata da un ente diverso dal creatore del template
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
+    When l'utente è un "admin" di "PA2"
+    And l'utente tenta la modifica della descrizione dell'e-service template
+    Then si ottiene status code 403
+    Examples:
+      | stato     |
+      | PUBLISHED |
+      | SUSPENDED |
+
+  Scenario: [INTEROP-EST-120] La modifica della descrizione di un e-service template inesistente non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    When l'utente tenta la modifica della descrizione di un e-service template inesistente
+    Then si ottiene status code 404
+
+
+  #TODO continua da 143...
+
 
   #TODO la maggior parte dei test sono fatti su template in mod. RICEZIONE. Valutare che non sia il caso di testare per entrambe le modalità.
 
