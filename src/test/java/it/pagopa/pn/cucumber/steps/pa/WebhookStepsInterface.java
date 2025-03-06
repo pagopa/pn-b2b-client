@@ -51,8 +51,11 @@ public interface WebhookStepsInterface {
         return false;
     }
 
-    default <T> void verifyAssertions(AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream, T progressResponseElement) {}
+    default <T> void verifyAssertions(AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream, T progressResponseElement) {
+    }
 
     void setValueForWaitForAccepted(boolean waitForAccepted);
+
+    String getSentNotificationIun();
 
 }
