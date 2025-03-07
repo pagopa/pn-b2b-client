@@ -279,7 +279,7 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
         return null;
     }
 
-    private PnPollingWebhook getPnPollingWebhook(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26 timeLineOrStatus) {
+    private PnPollingWebhook getPnPollingWebhook(TimelineElementCategoryV26 timeLineOrStatus) {
         PnPollingWebhook pnPollingWebhook = new PnPollingWebhook();
         pnPollingWebhook.setTimelineElementCategoryV27(timeLineOrStatus);
         progressResponseElementsV27.clear();
@@ -388,8 +388,8 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
     @Override
     public <T> PnPollingWebhook getPnPollingWebhook(T timeLineOrStatus) {
         PnPollingWebhook pnPollingWebhook = new PnPollingWebhook();
-        if (timeLineOrStatus instanceof it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26) {
-            pnPollingWebhook.setTimelineElementCategoryV27((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26) timeLineOrStatus);
+        if (timeLineOrStatus instanceof TimelineElementCategoryV26) {
+            pnPollingWebhook.setTimelineElementCategoryV27((TimelineElementCategoryV26) timeLineOrStatus);
             progressResponseElementsV27.clear();
             pnPollingWebhook.setProgressResponseElementListV27((LinkedList<ProgressResponseElementV27>) progressResponseElementsV27);
         } else if (timeLineOrStatus instanceof NotificationStatusV26) {
