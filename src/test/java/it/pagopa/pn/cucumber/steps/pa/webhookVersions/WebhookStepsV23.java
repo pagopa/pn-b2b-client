@@ -275,14 +275,6 @@ public class WebhookStepsV23 implements WebhookStepsInterface {
         return null;
     }
 
-    private PnPollingWebhook getPnPollingWebhook(TimelineElementCategoryV23 timeLineOrStatus) {
-        PnPollingWebhook pnPollingWebhook = new PnPollingWebhook();
-        pnPollingWebhook.setTimelineElementCategoryV23(timeLineOrStatus);
-        progressResponseElementsV23.clear();
-        pnPollingWebhook.setProgressResponseElementListV23((LinkedList<ProgressResponseElementV23>) progressResponseElementsV23);
-        return pnPollingWebhook;
-    }
-
     @Override
     public boolean checkInternalTimeline(AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream) {
         TimelineElementCategoryV23 timelineElementInternalCategory = TimelineElementCategoryV23.valueOf(((TimelineElementCategoryV23) timelineForStream.getTimelineElementCategory()).name());
@@ -379,7 +371,16 @@ public class WebhookStepsV23 implements WebhookStepsInterface {
     @Override
     public <T> PnPollingWebhook getPnPollingWebhook(T timeLineOrStatus) {
         PnPollingWebhook pnPollingWebhook = new PnPollingWebhook();
-        //TODO MATTEO
+        if (timeLineOrStatus instanceof TimelineElementCategoryV23) {
+            pnPollingWebhook.setTimelineElementCategoryV23((TimelineElementCategoryV23) timeLineOrStatus);
+            progressResponseElementsV23.clear();
+            pnPollingWebhook.setProgressResponseElementListV23((LinkedList<ProgressResponseElementV23>) progressResponseElementsV23);
+        } else if (timeLineOrStatus instanceof NotificationStatus) {
+            pnPollingWebhook.setNotificationStatusV23((NotificationStatus) timeLineOrStatus);
+            progressResponseElementsV23.clear();
+            pnPollingWebhook.setProgressResponseElementListV23((LinkedList<ProgressResponseElementV23>) progressResponseElementsV23);
+        }
         return pnPollingWebhook;
     }
+
 }

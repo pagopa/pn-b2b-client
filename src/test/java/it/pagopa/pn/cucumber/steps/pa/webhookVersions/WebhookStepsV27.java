@@ -388,21 +388,19 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
     @Override
     public <T> PnPollingWebhook getPnPollingWebhook(T timeLineOrStatus) {
         PnPollingWebhook pnPollingWebhook = new PnPollingWebhook();
-//        if (timeLineOrStatus instanceof TimelineElementCategoryV26) {
-//            pnPollingWebhook.setTimelineElementCategoryV27((TimelineElementCategoryV26) timeLineOrStatus);
-//            progressResponseElementsV27.clear();
-//            pnPollingWebhook.setProgressResponseElementListV27((LinkedList<ProgressResponseElementV27>) progressResponseElementsV27);
-//        } else if (timeLineOrStatus instanceof NotificationStatus) {
-//            pnPollingWebhook.setNotificationStatus_noVersionV27((NotificationStatus) timeLineOrStatus);
-//            progressResponseElementsV27.clear();
-//            pnPollingWebhook.setProgressResponseElementListV27((LinkedList<ProgressResponseElementV27>) progressResponseElementsV27);
-//        } else if (timeLineOrStatus instanceof NotificationStatusV26) {
-//            pnPollingWebhook.setNotificationStatusV27((NotificationStatusV26) timeLineOrStatus);
-//            progressResponseElementsV27.clear();
-//            pnPollingWebhook.setProgressResponseElementListV27((LinkedList<ProgressResponseElementV27>) progressResponseElementsV27);
-//        } else {
-//            throw new IllegalArgumentException();
-//        }
+        if (timeLineOrStatus instanceof it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26) {
+            pnPollingWebhook.setTimelineElementCategoryV27((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26) timeLineOrStatus);
+            progressResponseElementsV27.clear();
+            pnPollingWebhook.setProgressResponseElementListV27((LinkedList<ProgressResponseElementV27>) progressResponseElementsV27);
+        } else if (timeLineOrStatus instanceof NotificationStatusV26) {
+            pnPollingWebhook.setNotificationStatusV27((NotificationStatusV26) timeLineOrStatus);
+            progressResponseElementsV27.clear();
+            pnPollingWebhook.setProgressResponseElementListV27((LinkedList<ProgressResponseElementV27>) progressResponseElementsV27);
+        } else if (timeLineOrStatus instanceof NotificationStatus) {
+            pnPollingWebhook.setNotificationStatus_noVersionV27((NotificationStatus) timeLineOrStatus);
+            progressResponseElementsV27.clear();
+            pnPollingWebhook.setProgressResponseElementListV27((LinkedList<ProgressResponseElementV27>) progressResponseElementsV27);
+        }
         return pnPollingWebhook;
     }
 }
