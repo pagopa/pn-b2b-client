@@ -1626,8 +1626,48 @@ Feature: Test API of e-service template
     Then si ottiene status code 200
     And i dettagli dell'e-service template contengono esattamente 0 versioni
 
+  Scenario Outline: [INTEROP-EST-148] La visualizzazione dei dettagli della versione di un e-service template da parte dell'ente creatore può essere effettuata quale che sia lo stato della versione in questione, se l'ente è in veste di ADMIN o API
+    Given l'utente è un "<ruolo>" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
+    When l'utente tenta la visualizzazione dei dettagli della versione dell'e-service template
+    Then si ottiene status code 200
+    And i dettagli della versione dell'e-service template sono coerenti con quelli inseriti
+    Examples:
+      | ruolo   | stato     |
+      | admin   | PUBLISHED |
+      | api     | PUBLISHED |
+      | admin   | SUSPENDED |
+      | api     | SUSPENDED |
+      | admin   | DRAFT     |
+      | api     | DRAFT     |
 
-  #TODO continua da 168...
+  Scenario Outline: [INTEROP-EST-149] La visualizzazione dei dettagli della versione di un e-service template da parte di un ente diverso dal creatore può essere effettuata solo se lo stato della versione è PUBLISHED o SUSPENDED, se l'ente è in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
+    When l'utente è un "admin" di "PA2"
+    And l'utente tenta la visualizzazione dei dettagli della versione dell'e-service template
+    Then si ottiene status code 200
+    And i dettagli della versione dell'e-service template sono coerenti con quelli inseriti
+    Examples:
+      | stato     |
+      | PUBLISHED |
+      | SUSPENDED |
+
+  Scenario: [INTEROP-EST-150] La visualizzazione dei dettagli della versione di un e-service template inesistente non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    When l'utente tenta la visualizzazione dei dettagli di una versione di un e-service template inesistente
+    Then si ottiene status code 404
+
+  Scenario: [INTEROP-EST-151] La visualizzazione dei dettagli della versione di un e-service template da parte di un ente diverso dal creatore NON può essere effettuata se lo stato della versione è DRAFT
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    When l'utente è un "admin" di "PA2"
+    And l'utente tenta la visualizzazione dei dettagli della versione dell'e-service template
+    Then si ottiene status code 404
+
+
+
+  #TODO continua da 172...
 
 
   #TODO la maggior parte dei test sono fatti su template in mod. RICEZIONE. Valutare che non sia il caso di testare per entrambe le modalità.

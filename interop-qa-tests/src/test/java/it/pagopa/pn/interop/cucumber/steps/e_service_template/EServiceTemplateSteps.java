@@ -1595,6 +1595,34 @@ public class EServiceTemplateSteps {
         assertThat(template.getVersions()).hasSize(expectedVersionCount);
     }
 
+    @When("l'utente tenta la visualizzazione dei dettagli della versione dell'e-service template")
+    public void getEServiceTemplateVersionDetails() {
+        getEServiceTemplateVersionDetails(lastTemplateManaged.id(), lastTemplateManaged.lastVersionId());
+    }
+
+    @When("l'utente tenta la visualizzazione dei dettagli di una versione di un e-service template inesistente")
+    public void getNonExistentEServiceTemplateVersionDetails() {
+        getEServiceTemplateVersionDetails(UUID.randomUUID(), UUID.randomUUID());
+    }
+
+    @Then("i dettagli della versione dell'e-service template sono coerenti con quelli inseriti")
+    public void checkEServiceTemplateVersionDetailsConsistent() {
+        EServiceTemplateVersionDetails version = ((ResponseEntity<EServiceTemplateVersionDetails>) httpCallExecutor.getResponse()).getBody();
+        assertThat(areConsistent(lastTemplateVersionUpdateSeed, version))
+            .withFailMessage("I dettagli della versione dell'e-service template ottenuti '%s' non sono coerenti con quelli inseriti '%s'", version, lastTemplateVersionUpdateSeed)
+            .isTrue();
+    }
+
+    private void getEServiceTemplateVersionDetails(UUID eServiceTemplateId, UUID eServiceTemplateVersionId) {
+        String userToken = getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+        httpCallExecutor.performCall(
+            () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
+                sharedStepsContext.getXCorrelationId(),
+                eServiceTemplateId,
+                eServiceTemplateVersionId),
+            ResponseEntity::getStatusCode);
+    }
 
     /* TODO un'alternativa all'uso di metodi come "areConsistent" - che confrontano i campi uno a uno - potrebbe essere
      * l'uso di una libreria di mapping, da usare per mappare un oggetto nell'altro tipo, e quindi procedere con
