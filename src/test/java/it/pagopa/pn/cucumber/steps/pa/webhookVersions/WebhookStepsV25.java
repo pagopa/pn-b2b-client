@@ -216,7 +216,7 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
     }
 
     @Override
-    public void createEventStream(String pa, List<String> listGroups, boolean replaceId, List<String> filteredValues, boolean forced) {
+    public void createEventStream(String pa, List<String> listGroups, UUID streamIdToReplace, List<String> filteredValues, boolean forced) {
         if (eventStreamListV25 == null) eventStreamListV25 = new LinkedList<>();
         for (StreamCreationRequestV25 request : streamCreationRequestListV25) {
             if (filteredValues != null && !filteredValues.isEmpty()) {
@@ -225,13 +225,13 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
             if (listGroups != null) {
                 request.setGroups(listGroups);
             }
-            if (replaceId) {
-                request.setReplacedStreamId(webhookSteps.getSharedSteps().getEventStreamV25().getStreamId());
+            if (streamIdToReplace != null) {
+                request.setReplacedStreamId(streamIdToReplace);
             }
             StreamMetadataResponseV25 eventStream = webhookSteps.getWebhookB2bClient().createEventStreamV25(request);
-            if (replaceId) {
+            if (streamIdToReplace != null) {
                 StreamMetadataResponseV25 eventStreamV25 =
-                        webhookSteps.getWebhookB2bClient().retrieveEventStreamV25(eventStreamListV25.get(0).getStreamId());
+                        webhookSteps.getWebhookB2bClient().retrieveEventStreamV25(streamIdToReplace);
                 webhookSteps.getSharedSteps().setEventStreamV25(eventStreamV25);
                 Assertions.assertNotNull(eventStreamV25);
                 Assertions.assertNotNull(eventStreamV25.getStreamId());
@@ -296,7 +296,7 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
             webhookSteps.getSharedSteps().setSentNotificationV25(webhookSteps.getB2bClient().getSentNotificationV25(webhookSteps.getSharedSteps().getSentNotification().getIun()));
             TimelineElementV25 timelineElement = webhookSteps.getSharedSteps()
                     .getSentNotificationV25().getTimeline().stream()
-                    .filter(elem -> elem.getCategory().equals(timelineElementInternalCategory))
+                    .filter(elem -> elem.getCategory().getValue().equals(timelineElementInternalCategory.getValue()))
                     .findAny()
                     .orElse(null);
             if (timelineElement != null) {

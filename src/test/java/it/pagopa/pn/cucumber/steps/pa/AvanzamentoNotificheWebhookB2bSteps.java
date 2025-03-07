@@ -23,8 +23,6 @@ import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.ProgressResponseElement;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.TimelineElementCategoryV20;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.ProgressResponseElementV26;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.StreamCreationRequestV26;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.StreamMetadataResponseV26;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.TimelineElementCategoryV26;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v27.ProgressResponseElementV27;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.NotificationStatus;
@@ -85,7 +83,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     private final WebhookStepsV26 webhookStepsV26 = new WebhookStepsV26(this);
     private final WebhookStepsV27 webhookStepsV27 = new WebhookStepsV27(this);
 
-    public enum StreamVersion {V10, V10_V23, V23, V24, V25, V26, V27}
+    public enum StreamVersion {V10, V23, V24, V25, V26, V27}
 
     @Getter
     private final Set<String> paStreamOwner = new HashSet<>();
@@ -193,9 +191,6 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             case V10 -> {
                 return this.webhookStepsV10;
             }
-            case V10_V23 -> {
-                return this.webhookStepsV10_23;
-            }
             case V23 -> {
                 return this.webhookStepsV23;
             }
@@ -294,7 +289,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     public void createdStreamByFilterValue(String pa, String version, String filter) {
         setPaWebhook(pa);
         StreamVersion streamVersion = getStreamVersion(version);
-        createStream(pa, streamVersion, null, false, List.of(filter), false);
+        createStream(pa, streamVersion, null, false, List.of(filter), false, null);
     }
 
     @When("si crea(no) i(l) nuov(o)(i) stream per il {string} con versione {string}")
@@ -302,7 +297,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         setPaWebhook(pa);
         updateApiKeyForStream();
         StreamVersion streamVersion = getStreamVersion(version);
-        createStream(pa, streamVersion, null, false, null, false);
+        createStream(pa, streamVersion, null, false, null, false, null);
     }
 
     @When("si crea(no) i(l) nuov(o)(i) stream per il {string} con versione {string} e filtro status {string}")
@@ -310,14 +305,14 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         setPaWebhook(pa);
         updateApiKeyForStream();
         StreamVersion streamVersion = getStreamVersion(version);
-        createStream(pa, streamVersion, null, false, List.of(filter), false);
+        createStream(pa, streamVersion, null, false, List.of(filter), false, null);
     }
 
     @And("si crea il nuovo stream per il {string} con versione {string} \\(caso errato)")
     public void siCreaIlNuovoStreamPerIlConVersioneFORZATOSoloPerCasoErrato(String pa, String version) {
         setPaWebhook(pa);
         StreamVersion streamVersion = getStreamVersion(version);
-        createStream(pa, streamVersion, null, false, null, true);
+        createStream(pa, streamVersion, null, false, null, true, null);
     }
 
     @When("si crea(no) i(l) nuov(o)(i) stream con versione {string} per il {string} con un gruppo disponibile {string}")
@@ -325,7 +320,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         setPaWebhook(pa);
         updateApiKeyForStream();
         StreamVersion streamVersion = getStreamVersion(version);
-        createStream(pa, streamVersion, getGruopForStream(position, pa), false, null, false);
+        createStream(pa, streamVersion, getGruopForStream(position, pa), false, null, false, null);
     }
 
     @When("si crea(no) i(l) nuov(o)(i) stream con versione {string} per il {string} con un gruppo disponibile {string} \\(caso errato)")
@@ -333,7 +328,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         setPaWebhook(pa);
         updateApiKeyForStream();
         StreamVersion streamVersion = getStreamVersion(version);
-        createStream(pa, streamVersion, getGruopForStream(position, pa), false, null, true);
+        createStream(pa, streamVersion, getGruopForStream(position, pa), false, null, true, null);
     }
 
     @When("si crea(no) i(l) nuov(o)(i) stream con versione {string} per il {string} con replaceId con un gruppo disponibile {string} \\(caso errato)")
@@ -341,7 +336,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         setPaWebhook(pa);
         updateApiKeyForStream();
         StreamVersion streamVersion = getStreamVersion(version);
-        createStream(pa, streamVersion, getGruopForStream(position, pa), true, null, true);
+        createStream(pa, streamVersion, getGruopForStream(position, pa), true, null, true, null);
     }
 
     @When("si crea(no) i(l) nuov(o)(i) stream con versione {string} per il {string} con replaceId con un gruppo disponibile {string}")
@@ -349,7 +344,16 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         setPaWebhook(pa);
         updateApiKeyForStream();
         StreamVersion streamVersion = getStreamVersion(version);
-        createStream(pa, streamVersion, getGruopForStream(position, pa), true, null, false);
+        createStream(pa, streamVersion, getGruopForStream(position, pa), true, null, false, null);
+    }
+
+    @When("si crea il nuovo stream con versione {string} per il {string} con un gruppo disponibile {string} con replaceId dello stream creato con la versione {string} - Cross Versioning")
+    public void createdStreamByGroupsWithReplaceIdCrossVersion(String version, String pa, String position, String crossVersion) {
+        setPaWebhook(pa);
+        updateApiKeyForStream();
+        StreamVersion streamVersion = getStreamVersion(version);
+        StreamVersion streamCrossVersion = getStreamVersion(crossVersion);
+        createStream(pa, streamVersion, getGruopForStream(position, pa), true, null, false, streamCrossVersion);
     }
 
     @When("viene aggiornata la apiKey utilizzata per gli stream")
@@ -1285,7 +1289,6 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             log.info("EventProgress: " + progressResponseElement);
             sharedSteps.setProgressResponseElementV27(progressResponseElement);
         } catch (AssertionFailedError assertionFailedError) {
-            //TODO MATTEO TEST
             WebhookStepsInterface webhookStepsInterface = getWebhookStep(StreamVersion.V27);
             String errorLog = String.format("{IUN: %s -WEBHOOK %s }", webhookStepsInterface.getSentNotificationIun(), webhookStepsInterface.getStreamId());
             String message = assertionFailedError.getMessage() + errorLog;
@@ -1293,8 +1296,12 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
     }
 
-    @Then("non ci sono nuovi eventi nello stream")
-    public void noyReadStreamTimelineElementV23() {
+    @Then("non ci sono nuovi eventi nello stream versione {string}")
+    public void noyReadStreamTimelineElement(String version) {
+        //TODO MATTEO VA IMPLEMENTATO PER TUTTE LE VERSIONI, PER ORA VA SOLO PER V23
+//        StreamVersion streamVersion = getStreamVersion(version);
+//        WebhookStepsInterface webhookStepsInterface = getWebhookStep(streamVersion);
+//        webhookStepsInterface.checkAbsenceOfNewEvents();
         Assertions.assertNull(progressResponseElementResultV23);
     }
 
@@ -1952,11 +1959,15 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         webhookStepsInterface.createStreamRequest(filterValues, number, title, eventType);
     }
 
-    private void createStream(String pa, StreamVersion streamVersion, List<String> listGroups, boolean replaceId, List<String> filteredValues, boolean forced) {
+    private void createStream(String pa, StreamVersion streamVersion, List<String> listGroups, boolean replaceId, List<String> filteredValues, boolean forced, StreamVersion crossVersion) {
         try {
+            UUID streamIdToReplace = null;
             WebhookStepsInterface webhookStepsInterface = getWebhookStep(streamVersion);
+            if (replaceId) {
+                streamIdToReplace = crossVersion == null ? webhookStepsInterface.getStreamId() : getWebhookStep(crossVersion).getStreamId();
+            }
             try {
-                webhookStepsInterface.createEventStream(pa, listGroups, replaceId, filteredValues, forced);
+                webhookStepsInterface.createEventStream(pa, listGroups, streamIdToReplace, filteredValues, forced);
             } catch (HttpStatusCodeException e) {
                 this.notificationError = e;
                 sharedSteps.setNotificationError(e);

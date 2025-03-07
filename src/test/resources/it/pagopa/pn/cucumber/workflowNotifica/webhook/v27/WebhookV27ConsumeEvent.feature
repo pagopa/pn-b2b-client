@@ -211,7 +211,7 @@ Feature: avanzamento notifiche webhook b2b V27
     And l'operazione non ha prodotto errori
     When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
     When si verifica che non siano presenti eventi nello stream "V27" del "Comune_2"
-    Then non ci sono nuovi eventi nello stream
+    Then non ci sono nuovi eventi nello stream versione "V27"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 

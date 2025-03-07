@@ -211,7 +211,7 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
     }
 
     @Override
-    public void createEventStream(String pa, List<String> listGroups, boolean replaceId, List<String> filteredValues, boolean forced) {
+    public void createEventStream(String pa, List<String> listGroups, UUID streamIdToReplace, List<String> filteredValues, boolean forced) {
         if (eventStreamList == null) eventStreamList = new LinkedList<>();
         for (StreamCreationRequest request : streamCreationRequestList) {
             if (filteredValues != null && !filteredValues.isEmpty()) {

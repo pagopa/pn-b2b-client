@@ -3,7 +3,9 @@ package it.pagopa.pn.cucumber.steps.pa.webhookVersions;
 
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingWebhook;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.*;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.ProgressResponseElement;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamCreationRequest;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamMetadataResponse;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamMetadataResponseV23;
 import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps;
 import lombok.Data;
@@ -122,7 +124,7 @@ public class WebhookStepsV10_23 implements WebhookStepsInterface {
     }
 
     @Override
-    public void createEventStream(String pa, List<String> listGroups, boolean replaceId, List<String> filteredValues, boolean forced) {
+    public void createEventStream(String pa, List<String> listGroups, UUID streamIdToReplace, List<String> filteredValues, boolean forced) {
         if (this.eventStreamListV23 == null) this.eventStreamListV23 = new LinkedList<>();
         it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamCreationRequestV23 request = new it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamCreationRequestV23();
         if (filteredValues != null && !filteredValues.isEmpty()) {
@@ -132,21 +134,21 @@ public class WebhookStepsV10_23 implements WebhookStepsInterface {
             request.setGroups(listGroups);
         }
 
-        if (replaceId) {
+        if (streamIdToReplace != null) {
             request.setReplacedStreamId(this.webhookSteps.getSharedSteps().getEventStream().getStreamId());
         }
-            StreamMetadataResponseV23 eventStream =  webhookSteps.getWebhookB2bClient().createEventStreamV23(request);
-            if (replaceId) {
-                StreamMetadataResponseV23 eventStreamV23 = Assertions.assertDoesNotThrow(() ->
-                        webhookSteps.getWebhookB2bClient().getEventStreamV23(this.eventStreamList.get(0).getStreamId()));
-                this.webhookSteps.getSharedSteps().setEventStreamV23(eventStreamV23);
-                Assertions.assertNotNull(eventStreamV23);
-                Assertions.assertNotNull(eventStreamV23.getStreamId());
-                Assertions.assertNotNull(eventStreamV23.getDisabledDate());
-                log.info("EVENTSTREAM REPLACED: {}", eventStreamV23);
-            }
-            this.eventStreamListV23.add(eventStream);
-            webhookSteps.getPaStreamOwner().add(pa);
+        StreamMetadataResponseV23 eventStream = webhookSteps.getWebhookB2bClient().createEventStreamV23(request);
+        if (streamIdToReplace != null) {
+            StreamMetadataResponseV23 eventStreamV23 = Assertions.assertDoesNotThrow(() ->
+                    webhookSteps.getWebhookB2bClient().getEventStreamV23(this.eventStreamList.get(0).getStreamId()));
+            this.webhookSteps.getSharedSteps().setEventStreamV23(eventStreamV23);
+            Assertions.assertNotNull(eventStreamV23);
+            Assertions.assertNotNull(eventStreamV23.getStreamId());
+            Assertions.assertNotNull(eventStreamV23.getDisabledDate());
+            log.info("EVENTSTREAM REPLACED: {}", eventStreamV23);
+        }
+        this.eventStreamListV23.add(eventStream);
+        webhookSteps.getPaStreamOwner().add(pa);
     }
 
     @Override

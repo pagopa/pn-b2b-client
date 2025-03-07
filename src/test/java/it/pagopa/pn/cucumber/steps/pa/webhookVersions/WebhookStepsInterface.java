@@ -45,7 +45,7 @@ public interface WebhookStepsInterface {
 
     void verifyNoEventInStream();
 
-    void createEventStream(String pa, List<String> listGroups, boolean replaceId, List<String> filteredValues, boolean forced);
+    void createEventStream(String pa, List<String> listGroups, UUID streamIdToReplace, List<String> filteredValues, boolean forced);
 
     void disableStreams();
 
@@ -60,6 +60,9 @@ public interface WebhookStepsInterface {
     String getSentNotificationIun();
 
     void verifyIncrementalEventId();
+
+    //TODO MATTEO IMPLEMENTARE IN TUTTE LE VERSIONI
+//    void checkAbsenceOfNewEvents();
 
     <T> AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<T> getTimelineEventForStream(String timelineEventCategory, TimingForPolling.TimingResult timingForElement);
 

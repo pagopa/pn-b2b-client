@@ -216,7 +216,7 @@ public class WebhookStepsV23 implements WebhookStepsInterface {
     }
 
     @Override
-    public void createEventStream(String pa, List<String> listGroups, boolean replaceId, List<String> filteredValues, boolean forced) {
+    public void createEventStream(String pa, List<String> listGroups, UUID streamIdToReplace, List<String> filteredValues, boolean forced) {
         if (eventStreamListV23 == null) eventStreamListV23 = new LinkedList<>();
         for (StreamCreationRequestV23 request : streamCreationRequestListV23) {
             if (filteredValues != null && !filteredValues.isEmpty()) {
@@ -225,13 +225,13 @@ public class WebhookStepsV23 implements WebhookStepsInterface {
             if (listGroups != null) {
                 request.setGroups(listGroups);
             }
-            if (replaceId) {
-                request.setReplacedStreamId(webhookSteps.getSharedSteps().getEventStreamV23().getStreamId());
+            if (streamIdToReplace != null) {
+                request.setReplacedStreamId(streamIdToReplace);
             }
             StreamMetadataResponseV23 eventStream = webhookSteps.getWebhookB2bClient().createEventStreamV23(request);
-            if (replaceId) {
+            if (streamIdToReplace != null) {
                 StreamMetadataResponseV23 eventStreamV23 =
-                        webhookSteps.getWebhookB2bClient().getEventStreamV23(eventStreamListV23.get(0).getStreamId());
+                        webhookSteps.getWebhookB2bClient().getEventStreamV23(streamIdToReplace);
                 webhookSteps.getSharedSteps().setEventStreamV23(eventStreamV23);
                 Assertions.assertNotNull(eventStreamV23);
                 Assertions.assertNotNull(eventStreamV23.getStreamId());
@@ -285,8 +285,7 @@ public class WebhookStepsV23 implements WebhookStepsInterface {
 
     @Override
     public boolean checkInternalTimeline(AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream) {
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23 timelineElementInternalCategory =
-                it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23.valueOf(((TimelineElementCategoryV23) timelineForStream.getTimelineElementCategory()).name());
+        TimelineElementCategoryV23 timelineElementInternalCategory = TimelineElementCategoryV23.valueOf(((TimelineElementCategoryV23) timelineForStream.getTimelineElementCategory()).name());
         boolean finish = false;
         for (int i = 0; i < timelineForStream.getNumCheck(); i++) {
             try {
@@ -297,7 +296,7 @@ public class WebhookStepsV23 implements WebhookStepsInterface {
             webhookSteps.getSharedSteps().setSentNotificationV23(webhookSteps.getB2bClient().getSentNotificationV23(webhookSteps.getSharedSteps().getSentNotification().getIun()));
             it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23 timelineElement = webhookSteps.getSharedSteps()
                     .getSentNotificationV23().getTimeline().stream()
-                    .filter(elem -> elem.getCategory().equals(timelineElementInternalCategory))
+                    .filter(elem -> elem.getCategory().getValue().equals(timelineElementInternalCategory.getValue()))
                     .findAny()
                     .orElse(null);
             if (timelineElement != null) {
