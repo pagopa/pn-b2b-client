@@ -1,6 +1,7 @@
 package it.pagopa.interop.e_service_template;
 
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServiceTemplates;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
@@ -15,6 +16,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTempl
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionDocumentSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionSeed;
 import java.io.File;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
@@ -194,4 +196,13 @@ public interface IEServiceTemplateClient extends SettableBearerToken {
         String xCorrelationId,
         UUID eServiceTemplateId, UUID eServiceTemplateVersionId,
         DescriptorAttributesSeed seed);
+
+    // DEV. NOTE: si cambia naming convention omettendo il suffisso "withHttpInfo", nell'intenzione di renderlo implicito da qui in avanti
+    ResponseEntity<CatalogEServiceTemplates> getAllEServiceTemplatesCatalog(String xCorrelationId);
+
+    ResponseEntity<CatalogEServiceTemplates> getUnfilteredEServiceTemplatesCatalog(
+        String xCorrelationId, Integer offset, Integer limit);
+
+    ResponseEntity<CatalogEServiceTemplates> getEServiceTemplatesCatalog(String xCorrelationId,
+        Integer offset, Integer limit, String q, List<UUID> creatorsIds);
 }

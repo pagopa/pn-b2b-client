@@ -4,6 +4,7 @@ import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EserviceTemplatesApi;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServiceTemplates;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
@@ -18,6 +19,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTempl
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionDocumentSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionSeed;
 import java.io.File;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -391,6 +393,25 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
         UUID eServiceTemplateId, UUID eServiceTemplateVersionId,
         DescriptorAttributesSeed seed) {
         return this.eserviceTemplatesApi.updateEServiceTemplateVersionAttributesWithHttpInfo(xCorrelationId, eServiceTemplateId, eServiceTemplateVersionId, seed);
+    }
+
+    // DEV. NOTE: si cambia naming convention omettendo il suffisso "withHttpInfo" rendendolo implicito da qui in avanti
+    @Override
+    public ResponseEntity<CatalogEServiceTemplates> getAllEServiceTemplatesCatalog(
+        String xCorrelationId) {
+        return this.getUnfilteredEServiceTemplatesCatalog(xCorrelationId, 0, 100);
+    }
+
+    @Override
+    public ResponseEntity<CatalogEServiceTemplates> getUnfilteredEServiceTemplatesCatalog(
+        String xCorrelationId, Integer offset, Integer limit) {
+        return this.getEServiceTemplatesCatalog(xCorrelationId, offset, limit, null, null);
+    }
+
+    @Override
+    public ResponseEntity<CatalogEServiceTemplates> getEServiceTemplatesCatalog(
+        String xCorrelationId, Integer offset, Integer limit, String q, List<UUID> creatorsIds) {
+        return this.eserviceTemplatesApi.getEServiceTemplatesCatalogWithHttpInfo(xCorrelationId, offset, limit, q, creatorsIds);
     }
 
     @Override

@@ -20,6 +20,8 @@ import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient.EServiceTemplateDocumentKind;
 import it.pagopa.interop.e_service_template.mapper.DescriptorAttributesMapper;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServiceTemplate;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServiceTemplates;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributeSeed;
@@ -58,6 +60,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import lombok.Data;
+import org.assertj.core.api.Condition;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 import org.mapstruct.Mapper;
@@ -1521,6 +1524,39 @@ public class EServiceTemplateSteps {
                 eServiceTemplateVersionId,
                 lastAttributesUpdateSeed),
             ResponseEntity::getStatusCode);
+    }
+
+    @When("l'utente tenta la visualizzazione del catalogo degli e-service template")
+    public void getEServiceTemplatesCatalog() {
+        String userToken = getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+        httpCallExecutor.performCall(
+            () -> eServiceTemplateClient.getAllEServiceTemplatesCatalog(sharedStepsContext.getXCorrelationId()),
+            ResponseEntity::getStatusCode);
+    }
+
+    @Then("il catalogo degli e-service template contiene esattamente {int} elementi tutti in stato {eServiceTemplateVersionState}")
+    public void checkEServiceTemplatesCatalogContainsElementsInState(int expectedCount, EServiceTemplateVersionState expectedState) {
+        /* TODO la precondizione di questo metodo sarebbe che lo status code sia positivo, che il body non sia null e che il catalogo non sia vuoto.
+         * Migliorare questo e altri step così che venga sempre fatto un check preventivo, eventualmente aiutandosi
+         * con un framework con le Precondition di Google Guava. Spunti: https://www.sw-engineering-candies.com/blog-1/comparison-of-ways-to-check-preconditions-in-java
+         */
+        CatalogEServiceTemplates catalog = ((ResponseEntity<CatalogEServiceTemplates>) httpCallExecutor.getResponse()).getBody();
+        List<CatalogEServiceTemplate> templatesInCatalog = catalog.getResults();
+
+        Condition<CatalogEServiceTemplate> published = new Condition<>(
+            template -> template.getPublishedVersion().getState() == expectedState,
+            "of state %s", expectedState);
+        assertThat(templatesInCatalog)
+            .hasSize(expectedCount)
+            .are(published);
+    }
+
+    @Then("il catalogo degli e-service template è vuoto")
+    public void checkEServiceTemplatesCatalogIsEmpty() {
+        CatalogEServiceTemplates catalog = ((ResponseEntity<CatalogEServiceTemplates>) httpCallExecutor.getResponse()).getBody();
+        List<CatalogEServiceTemplate> templatesInCatalog = catalog.getResults();
+        assertThat(templatesInCatalog).isEmpty();
     }
 
 
