@@ -60,6 +60,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import lombok.Data;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -67,7 +69,15 @@ import org.springframework.http.ResponseEntity;
 @Data
 public class EServiceTemplateSteps {
     /** Stores data on an e-service template useful for testing */
-    record EServiceTemplateInfo(String name, String audienceDescription, String eServiceDescription, UUID id, UUID lastVersionId){}
+    public record EServiceTemplateInfo(String name, String audienceDescription, String eServiceDescription, UUID id, UUID lastVersionId){}
+
+    @Mapper(componentModel = "spring")
+    public interface EServiceTemplateInfoMapper {
+        /* TODO 07/03/2025 overhead, se questo mapper continua a servire solo a questo bisognerebbe
+         * semplicemente mutare EServiceTemplateInfo in un pojo e ricorrere ai metodi set per modificarlo   */
+        @Mapping(source = "newVersionId", target = "lastVersionId")
+        EServiceTemplateInfo withVersionId(EServiceTemplateInfo templateInfo, UUID newVersionId);
+    }
 
     /** Stores data on an e-service template document useful for testing */
     record EServiceTemplateDocumentInfo(UUID id, String prettyName, String body){}
@@ -80,6 +90,7 @@ public class EServiceTemplateSteps {
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
     private final DescriptorAttributesMapper descriptorAttributesMapper;
+    private final EServiceTemplateInfoMapper templateInfoMapper;
 
     // TODO alcune di queste variabili andranno incapsulate in un bean di tipo Context
     private EServiceTemplateInfo lastTemplateManaged;
@@ -113,7 +124,8 @@ public class EServiceTemplateSteps {
     public EServiceTemplateSteps(ClientTokenConfigurator clientTokenConfigurator,
                                 DataPreparationService dataPreparationService,
                                 SharedStepsContext sharedStepsContext,
-                                DescriptorAttributesMapper descriptorAttributesMapper) {
+                                DescriptorAttributesMapper descriptorAttributesMapper,
+                                EServiceTemplateInfoMapper templateInfoMapper) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.dataPreparationService = dataPreparationService;
         this.sharedStepsContext = sharedStepsContext;
@@ -122,6 +134,7 @@ public class EServiceTemplateSteps {
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
         this.descriptorAttributesMapper = descriptorAttributesMapper;
+        this.templateInfoMapper = templateInfoMapper;
     }
 
     private static boolean isAnswersFieldInRiskAnalysisFormSeed(Field field) {
@@ -916,19 +929,54 @@ public class EServiceTemplateSteps {
                 eServiceTemplateVersionId));
     }
 
-    @Given("l'utente effettua la creazione di una ulteriore versione nell'e-service template")
+    @Given("l'utente effettua la creazione di una ulteriore versione nell'e-service template con successo")
+    public void createAnotherEServiceTemplateVersionSuccessfully() {
+        createAnotherEServiceTemplateVersion();
+        checkEServiceTemplateVersionCreated();
+    }
+
+    @When("l'utente tenta la creazione di una ulteriore versione in un e-service template inesistente")
+    public void createAnotherEServiceTemplateVersionInNonExistentEServiceTemplate() {
+        createAnotherEServiceTemplateVersion(UUID.randomUUID());
+    }
+
+    @When("l'utente tenta la creazione di una ulteriore versione nell'e-service template")
     public void createAnotherEServiceTemplateVersion() {
-        UUID eServiceTemplateId = lastTemplateManaged.id();
-        createAnotherEServiceTemplateVersion(eServiceTemplateId);
+        createAnotherEServiceTemplateVersion(lastTemplateManaged.id());
     }
 
     private void createAnotherEServiceTemplateVersion(UUID eServiceTemplateId) {
         String userToken = getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);
         httpCallExecutor.performCall(
-            () -> eServiceTemplateClient.createEServiceTemplateVersion(
+            () -> eServiceTemplateClient.createEServiceTemplateVersionWithHttpInfo(
                 sharedStepsContext.getXCorrelationId(),
-                eServiceTemplateId));
+                eServiceTemplateId),
+            ResponseEntity::getStatusCode);
+
+        if(httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            UUID idOfNewVersion = ((ResponseEntity<CreatedResource>) httpCallExecutor.getResponse()).getBody()
+            .getId();
+            lastTemplateManaged = this.templateInfoMapper.withVersionId(lastTemplateManaged, idOfNewVersion);
+        }
+    }
+
+    @Then("la creazione di una ulteriore versione nell'e-service template è stata effettuata correttamente")
+    public void checkEServiceTemplateVersionCreated() {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        try {
+            pollingService.makePolling(
+                () -> httpCallExecutor.performCall(
+                    () -> eServiceTemplateClient.getEServiceTemplateWithHttpInfo(
+                        sharedStepsContext.getXCorrelationId(),
+                        eServiceTemplateId),
+                    ResponseEntity::getStatusCode),
+                res -> res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody()) && res.getBody().getVersions().size() == 2,
+                "La versione dell'e-service template non è stata creata correttamente"
+            );
+        } catch (PollingPredicateException e) {
+            fail("La versione dell'e-service template non è stata creata correttamente");
+        }
     }
 
     @When("l'utente tenta la cancellazione della versione dell'e-service template")

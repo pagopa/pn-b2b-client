@@ -935,7 +935,7 @@ Feature: Test API of e-service template
   Scenario Outline: [INTEROP-EST-077] La cancellazione di una versione di un e-service template in stato DRAFT può essere effettuata da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
-    And l'utente effettua la creazione di una ulteriore versione nell'e-service template
+    And l'utente effettua la creazione di una ulteriore versione nell'e-service template con successo
     When l'utente è un "<ruolo>" di "PA1"
     And l'utente tenta la cancellazione della versione dell'e-service template
     Then si ottiene status code 200
@@ -960,7 +960,7 @@ Feature: Test API of e-service template
   Scenario Outline: [INTEROP-EST-079] La cancellazione di una versione di un e-service template in stato DRAFT non può essere effettuata da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
-    And l'utente effettua la creazione di una ulteriore versione nell'e-service template
+    And l'utente effettua la creazione di una ulteriore versione nell'e-service template con successo
     When l'utente è un "<ruolo>" di "PA1"
     And l'utente tenta la cancellazione della versione dell'e-service template
     Then si ottiene status code 403
@@ -993,7 +993,7 @@ Feature: Test API of e-service template
   Scenario: [INTEROP-EST-083] La cancellazione di una versione già cancellata di un e-service template non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
-    And l'utente effettua la creazione di una ulteriore versione nell'e-service template
+    And l'utente effettua la creazione di una ulteriore versione nell'e-service template con successo
     And l'utente effettua la cancellazione della versione dell'e-service template con successo
     When l'utente tenta la cancellazione della versione dell'e-service template già cancellata
     Then si ottiene status code 404
@@ -1494,8 +1494,58 @@ Feature: Test API of e-service template
     When l'utente tenta la modifica degli attributi di una versione inesistente dell'e-service template
     Then si ottiene status code 404
 
-  #TODO continua da 155...
+  Scenario Outline: [INTEROP-EST-135] La creazione di una nuova versione di un e-service template in stato PUBLISHED o SUSPENDED può essere effettuata da un ente in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la creazione di una ulteriore versione nell'e-service template
+    Then si ottiene status code 200
+    And la creazione di una ulteriore versione nell'e-service template è stata effettuata correttamente
+    Examples:
+      | ruolo   | stato     |
+      | admin   | PUBLISHED |
+      | api     | PUBLISHED |
+      | admin   | SUSPENDED |
+      | api     | SUSPENDED |
 
+  Scenario Outline: [INTEROP-EST-136] La creazione di una nuova versione di un e-service template NON può essere effettuata da un ente NON in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la creazione di una ulteriore versione nell'e-service template
+    Then si ottiene status code 403
+    Examples:
+      | ruolo         | stato     |
+      | security      | PUBLISHED |
+      | api,security  | PUBLISHED |
+      | support       | PUBLISHED |
+      | security      | SUSPENDED |
+      | api,security  | SUSPENDED |
+      | support       | SUSPENDED |
+
+  Scenario: [INTEROP-EST-137] La creazione di una nuova versione di un e-service template in stato DRAFT non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    When l'utente tenta la creazione di una ulteriore versione nell'e-service template
+    Then si ottiene status code 403
+
+  Scenario Outline: [INTEROP-EST-138] La creazione di una nuova versione di un e-service template in stato PUBLISHED o SUSPENDED NON può essere effettuata da un ente differente rispetto al creatore dell'e-service template
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
+    When l'utente è un "admin" di "PA2"
+    And l'utente tenta la creazione di una ulteriore versione nell'e-service template
+    Then si ottiene status code 403
+    Examples:
+      | stato     |
+      | PUBLISHED |
+      | SUSPENDED |
+
+  Scenario: [INTEROP-EST-139] La creazione di una nuova versione di un e-service template inesistente non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    When l'utente tenta la creazione di una ulteriore versione in un e-service template inesistente
+    Then si ottiene status code 404
+
+  #TODO continua da 161...
 
 
   #TODO la maggior parte dei test sono fatti su template in mod. RICEZIONE. Valutare che non sia il caso di testare per entrambe le modalità.
