@@ -72,7 +72,7 @@ import org.springframework.http.ResponseEntity;
 @Data
 public class EServiceTemplateSteps {
     /** Stores data on an e-service template useful for testing */
-    public record EServiceTemplateInfo(String name, String audienceDescription, String eServiceDescription, UUID id, UUID lastVersionId){}
+    public record EServiceTemplateInfo(String name, String intendedTarget, String eServiceDescription, UUID id, UUID lastVersionId){}
 
     @Mapper(componentModel = "spring")
     public interface EServiceTemplateInfoMapper {
@@ -105,7 +105,7 @@ public class EServiceTemplateSteps {
     private UpdateEServiceTemplateVersionDocumentSeed lastDocumentUpdateSeed;
     private UUID lastDeletedVersion;
     private EServiceTemplateNameUpdateSeed lastTemplateNameUpdateSeed;
-    private EServiceTemplateDescriptionUpdateSeed lastTemplateAudienceDescriptionUpdateSeed;
+    private EServiceTemplateDescriptionUpdateSeed lastTemplateIntendedTargetUpdateSeed;
     private EServiceTemplateDescriptionUpdateSeed lastTemplateDescriptionUpdateSeed;
     private EServiceTemplateVersionQuotasUpdateSeed lastTemplateVersionQuotasUpdateSeed;
     private DescriptorAttributesSeed lastAttributesUpdateSeed;
@@ -226,8 +226,8 @@ public class EServiceTemplateSteps {
         UUID eServiceTemplateId = lastTemplateManaged.id();
         lastTemplateUpdateSeed = new UpdateEServiceTemplateSeed()
             .name(lastTemplateManaged.name() + " - modificato")
-            .audienceDescription("Nuova audience description")
-            .eserviceDescription("Nuova descrizione del servizio")
+            .intendedTarget("Nuovo intended target")
+            .description("Nuova descrizione")
             .technology(EServiceTechnology.SOAP)
             .mode(EServiceMode.RECEIVE)
             .isSignalHubEnabled(false);
@@ -261,8 +261,8 @@ public class EServiceTemplateSteps {
     public void updateEServiceTemplateWithSameName() {
         UpdateEServiceTemplateSeed sameNameUpdateSeed = new UpdateEServiceTemplateSeed()
             .name(lastTemplateManaged.name())
-            .audienceDescription("Nuova audience description")
-            .eserviceDescription("Nuova descrizione del servizio")
+            .intendedTarget("Nuova intended target")
+            .description("Nuova descrizione del servizio")
             .technology(EServiceTechnology.SOAP)
             .mode(EServiceMode.RECEIVE);
         UUID eServiceTemplateId = lastTemplateManaged.id();
@@ -274,8 +274,8 @@ public class EServiceTemplateSteps {
         UUID eServiceTemplateId = UUID.randomUUID();
         UpdateEServiceTemplateSeed updateSeed = new UpdateEServiceTemplateSeed()
             .name("Nuovo nome")
-            .audienceDescription("Nuova audience description")
-            .eserviceDescription("Nuova descrizione del servizio")
+            .intendedTarget("Nuova intended target")
+            .description("Nuova descrizione del servizio")
             .technology(EServiceTechnology.SOAP)
             .mode(EServiceMode.RECEIVE);
         updateEServiceTemplate(eServiceTemplateId, updateSeed);
@@ -293,8 +293,8 @@ public class EServiceTemplateSteps {
 
     private boolean areConsistent(UpdateEServiceTemplateSeed lastUpdate, EServiceTemplateDetails retrievedTemplate) {
         return lastUpdate.getName().equals(retrievedTemplate.getName()) &&
-            lastUpdate.getAudienceDescription().equals(retrievedTemplate.getAudienceDescription()) &&
-            lastUpdate.getEserviceDescription().equals(retrievedTemplate.getEserviceDescription()) &&
+            lastUpdate.getIntendedTarget().equals(retrievedTemplate.getIntendedTarget()) &&
+            lastUpdate.getDescription().equals(retrievedTemplate.getDescription()) &&
             lastUpdate.getTechnology().equals(retrievedTemplate.getTechnology()) &&
             lastUpdate.getMode().equals(retrievedTemplate.getMode());
     }
@@ -1237,53 +1237,53 @@ public class EServiceTemplateSteps {
     }
 
     @When("l'utente tenta la modifica della descrizione dello scopo dell'e-service template")
-    public void editEServiceTemplateAudienceDescription() {
+    public void editEServiceTemplateIntendedTarget() {
         UUID eServiceTemplateId = lastTemplateManaged.id();
-        lastTemplateAudienceDescriptionUpdateSeed = easyRandom.nextObject(EServiceTemplateDescriptionUpdateSeed.class);
-        editEServiceTemplateAudienceDescription(eServiceTemplateId, lastTemplateAudienceDescriptionUpdateSeed);
+        lastTemplateIntendedTargetUpdateSeed = easyRandom.nextObject(EServiceTemplateDescriptionUpdateSeed.class);
+        editEServiceTemplateIntendedTarget(eServiceTemplateId, lastTemplateIntendedTargetUpdateSeed);
     }
 
     @When("l'utente tenta la modifica della descrizione dello scopo dell'e-service template specificando la stessa descrizione")
-    public void editEServiceTemplateAudienceDescriptionWithSameAudienceDescription() {
-        editEServiceTemplateAudienceDescriptionWith(lastTemplateManaged.audienceDescription());
+    public void editEServiceTemplateIntendedTargetWithSameIntendedTarget() {
+        editEServiceTemplateIntendedTargetWith(lastTemplateManaged.intendedTarget());
     }
 
     @When("l'utente tenta la modifica della descrizione dello scopo dell'e-service template specificando la stringa vuota")
-    public void editEServiceTemplateAudienceDescriptionWith() {
-        editEServiceTemplateAudienceDescriptionWith("");
+    public void editEServiceTemplateIntendedTargetWith() {
+        editEServiceTemplateIntendedTargetWith("");
     }
 
     @When("l'utente tenta la modifica della descrizione dello scopo dell'e-service template specificando NULL")
-    public void editEServiceTemplateAudienceDescriptionWithNullAudienceDescription() {
-        editEServiceTemplateAudienceDescriptionWith(null);
+    public void editEServiceTemplateIntendedTargetWithNullIntendedTarget() {
+        editEServiceTemplateIntendedTargetWith(null);
     }
 
     @When("l'utente tenta la modifica della descrizione dello scopo di un e-service template inesistente")
-    public void editNonExistentEServiceTemplateAudienceDescription() {
-        editEServiceTemplateAudienceDescription(UUID.randomUUID(), easyRandom.nextObject(EServiceTemplateDescriptionUpdateSeed.class));
+    public void editNonExistentEServiceTemplateIntendedTarget() {
+        editEServiceTemplateIntendedTarget(UUID.randomUUID(), easyRandom.nextObject(EServiceTemplateDescriptionUpdateSeed.class));
     }
 
-    private void editEServiceTemplateAudienceDescriptionWith(String description) {
+    private void editEServiceTemplateIntendedTargetWith(String description) {
         UUID eServiceTemplateId = lastTemplateManaged.id();
-        lastTemplateAudienceDescriptionUpdateSeed = easyRandom.nextObject(EServiceTemplateDescriptionUpdateSeed.class)
+        lastTemplateIntendedTargetUpdateSeed = easyRandom.nextObject(EServiceTemplateDescriptionUpdateSeed.class)
             .description(description);
-        editEServiceTemplateAudienceDescription(eServiceTemplateId, lastTemplateAudienceDescriptionUpdateSeed);
+        editEServiceTemplateIntendedTarget(eServiceTemplateId, lastTemplateIntendedTargetUpdateSeed);
     }
 
-    private void editEServiceTemplateAudienceDescription(UUID eServiceTemplateId,
-        EServiceTemplateDescriptionUpdateSeed lastTemplateAudienceDescriptionUpdateSeed) {
+    private void editEServiceTemplateIntendedTarget(UUID eServiceTemplateId,
+        EServiceTemplateDescriptionUpdateSeed lastTemplateIntendedTargetUpdateSeed) {
         String userToken = getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);
         httpCallExecutor.performCall(
-            () -> eServiceTemplateClient.updateEServiceTemplateAudienceDescriptionWithHttpInfo(
+            () -> eServiceTemplateClient.updateEServiceIntendedTargetWithHttpInfo(
                 sharedStepsContext.getXCorrelationId(),
                 eServiceTemplateId,
-                lastTemplateAudienceDescriptionUpdateSeed),
+                lastTemplateIntendedTargetUpdateSeed),
             ResponseEntity::getStatusCode);
     }
 
     @Then("la modifica della descrizione dello scopo dell'e-service template è stata effettuata correttamente")
-    public void checkEServiceTemplateAudienceDescriptionEdited() {
+    public void checkEServiceTemplateIntendedTargetEdited() {
         UUID eServiceTemplateId = lastTemplateManaged.id();
         try {
             pollingService.makePolling(
@@ -1295,8 +1295,8 @@ public class EServiceTemplateSteps {
                 res -> {
                     if(res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody())) {
                         EServiceTemplateDetails template = res.getBody();
-                        return template.getAudienceDescription().equals(
-                            lastTemplateAudienceDescriptionUpdateSeed.getDescription());
+                        return template.getIntendedTarget().equals(
+                            lastTemplateIntendedTargetUpdateSeed.getDescription());
                     }
                     return false;
                 },
@@ -1366,7 +1366,7 @@ public class EServiceTemplateSteps {
                 res -> {
                     if(res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody())) {
                         EServiceTemplateDetails template = res.getBody();
-                        return template.getEserviceDescription().equals(
+                        return template.getDescription().equals(
                             lastTemplateDescriptionUpdateSeed.getDescription());
                     }
                     return false;
@@ -1609,9 +1609,9 @@ public class EServiceTemplateSteps {
         VersionSeedForEServiceTemplateCreation version = new VersionSeedForEServiceTemplateCreation()
             .voucherLifespan(86400);
         return new EServiceTemplateSeed()
-            .audienceDescription("Audience description per il template " + templateName)
+            .intendedTarget("Audience description per il template " + templateName)
             .name(templateName)
-            .eserviceDescription("Descrizione del servizio associato al template " + templateName)
+            .description("Descrizione del servizio associato al template " + templateName)
             .mode(eServiceMode)
             .version(version)
             .technology(EServiceTechnology.REST);
@@ -1630,8 +1630,8 @@ public class EServiceTemplateSteps {
             templateSeed);
         this.lastTemplateManaged = new EServiceTemplateInfo(
             templateSeed.getName(),
-            templateSeed.getAudienceDescription(),
-            templateSeed.getEserviceDescription(),
+            templateSeed.getIntendedTarget(),
+            templateSeed.getDescription(),
             creationResponse.getId(),
             creationResponse.getVersionId());
     }

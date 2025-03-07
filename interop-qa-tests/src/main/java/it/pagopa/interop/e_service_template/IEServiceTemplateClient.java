@@ -164,10 +164,10 @@ public interface IEServiceTemplateClient extends SettableBearerToken {
         UUID eServiceTemplateId,
         EServiceTemplateNameUpdateSeed eserviceTemplateNameUpdateSeed);
 
-    void updateEServiceTemplateAudienceDescription(String xCorrelationId, UUID eServiceTemplateId,
+    void updateEServiceIntendedTarget(String xCorrelationId, UUID eServiceTemplateId,
         EServiceTemplateDescriptionUpdateSeed seed);
 
-    ResponseEntity<Void> updateEServiceTemplateAudienceDescriptionWithHttpInfo(
+    ResponseEntity<Void> updateEServiceIntendedTargetWithHttpInfo(
         String xCorrelationId,
         UUID eServiceTemplateId,
         EServiceTemplateDescriptionUpdateSeed seed);

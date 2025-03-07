@@ -337,25 +337,25 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
     }
 
     @Override
-    public void updateEServiceTemplateAudienceDescription(String xCorrelationId,
+    public void updateEServiceIntendedTarget(String xCorrelationId,
         UUID eServiceTemplateId,
         EServiceTemplateDescriptionUpdateSeed seed) {
-        this.eserviceTemplatesApi.updateEServiceTemplateAudienceDescription(xCorrelationId, eServiceTemplateId, seed);
+        this.eserviceTemplatesApi.updateEServiceIntendedTarget(xCorrelationId, eServiceTemplateId, seed);
     }
 
     @Override
-    public ResponseEntity<Void> updateEServiceTemplateAudienceDescriptionWithHttpInfo(
+    public ResponseEntity<Void> updateEServiceIntendedTargetWithHttpInfo(
         String xCorrelationId,
         UUID eServiceTemplateId,
         EServiceTemplateDescriptionUpdateSeed seed) {
-        return this.eserviceTemplatesApi.updateEServiceTemplateAudienceDescriptionWithHttpInfo(xCorrelationId, eServiceTemplateId, seed);
+        return this.eserviceTemplatesApi.updateEServiceIntendedTargetWithHttpInfo(xCorrelationId, eServiceTemplateId, seed);
     }
 
     @Override
     public void updateEServiceTemplateDescription(String xCorrelationId,
         UUID eServiceTemplateId,
         EServiceTemplateDescriptionUpdateSeed seed) {
-        this.eserviceTemplatesApi.updateEServiceTemplateEServiceDescription(xCorrelationId, eServiceTemplateId, seed);
+        this.eserviceTemplatesApi.updateEServiceTemplateDescription(xCorrelationId, eServiceTemplateId, seed);
     }
 
     @Override
@@ -363,7 +363,7 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
         String xCorrelationId,
         UUID eServiceTemplateId,
         EServiceTemplateDescriptionUpdateSeed seed) {
-        return this.eserviceTemplatesApi.updateEServiceTemplateEServiceDescriptionWithHttpInfo(xCorrelationId, eServiceTemplateId, seed);
+        return this.eserviceTemplatesApi.updateEServiceTemplateDescriptionWithHttpInfo(xCorrelationId, eServiceTemplateId, seed);
     }
 
     @Override
