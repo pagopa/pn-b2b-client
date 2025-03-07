@@ -72,7 +72,6 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     private List<ProgressResponseElement> progressResponseElements = new LinkedList<>();
     private List<ProgressResponseElementV23> progressResponseElementsV23 = new LinkedList<>();
     private List<ProgressResponseElementV24> progressResponseElementsV24 = new LinkedList<>();
-
     private List<ProgressResponseElementV26> progressResponseElementsV26 = new LinkedList<>();
     private List<ProgressResponseElementV27> progressResponseElementsV27 = new LinkedList<>();
 
@@ -1101,53 +1100,15 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             sleepTest();
         }
         webhookStepsInterface.verifyAssertions(timelineForStream, progressResponseElement);
+    }
 
-
-//
-//        TimelineElementSearchResult<TimelineElementCategoryV23> timelineForStream = getTimelineEventForStream(StreamVersion.V23, timelineEventCategory);
-//        TimelineElementCategoryV23 timelineElementCategory = timelineForStream.getTimelineElementCategory();
-//        int numCheck = timelineForStream.getNumCheck();
-//        int waiting = timelineForStream.getWaiting();
-//
-//        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23 timelineElementInternalCategory =
-//                it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23.valueOf(timelineElementCategory.name());
-//
-//        ProgressResponseElementV23 progressResponseElement = null;
-//        boolean finish = checkInternalTimeline(timelineElementCategory.name(), numCheck, waiting);
-//        Assertions.assertTrue(finish);
-//
-//        for (int i = 0; i < 4; i++) {
-//            progressResponseElement = searchInWebhookV23(timelineElementCategory, null, 0, 0);
-//            log.debug("PROGRESS-ELEMENT: " + progressResponseElement);
-//
-//            if (progressResponseElement != null) {
-//                break;
-//            }
-//            sleepTest();
-//        }
-//        try {
-//            Assertions.assertNotNull(progressResponseElement);
-//
-//            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 elementToCheck = sharedSteps.getSentNotification().getTimeline().stream()
-//                    .filter(elem -> elem.getCategory() != null)
-//                    .filter(elem -> elem.getCategory().getValue().equals(timelineElementInternalCategory.getValue()))
-//                    .findAny()
-//                    .orElse(null);
-//
-//            Assertions.assertNotNull(elementToCheck);
-//            Assertions.assertNotNull(elementToCheck.getTimestamp());
-//            Assertions.assertNotNull(progressResponseElement.getElement());
-//            Assertions.assertNotNull(progressResponseElement.getElement().getTimestamp());
-//            Assertions.assertEquals(progressResponseElement.getElement().getTimestamp().truncatedTo(ChronoUnit.SECONDS),
-//                    elementToCheck.getTimestamp().truncatedTo(ChronoUnit.SECONDS));
-//
-//            log.info("EventProgress: " + progressResponseElement);
-//
-//        } catch (AssertionFailedError assertionFailedError) {
-//            String message = assertionFailedError.getMessage() +
-//                    "{IUN: " + sharedSteps.getSentNotificationV23().getIun() + " -WEBHOOK: " + this.eventStreamListV23.get(0).getStreamId() + " }";
-//            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-//        }
+    //TODO MATTEO similmente a quanto fatto con la lettura della timeline, si dovrebbe generalizzare il metodo per la lettura degli stati
+    @Then("TODO_TEST_vengono letti gli eventi dello stream del {string} fino allo stato {string} con la versione {string}")
+    public void readStreamStatus(String pa, String timelineEventCategory, String version) {
+        WebhookStepsInterface webhookStepsInterface = getWebhookStep(StreamVersion.valueOf(version));
+        StreamVersion streamVersion = StreamVersion.valueOf(version);
+        setPaWebhook(pa);
+        //TODO COMPLETARE...
     }
 
     @Then("vengono letti gli eventi dello stream del {string} fino all'elemento di timeline {string} con la versione V24 con deliveryDetailCode {string}")
@@ -1898,7 +1859,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         TimingForPolling.TimingResult timingForElement = timingForPolling.getTimingForElement(timelineEventCategory);
         WebhookStepsInterface webhookStepsInterface = getWebhookStep(streamVersion);
         try {
-            webhookStepsInterface.getTimelineEventForStream(timelineEventCategory, timingForElement);
+            return webhookStepsInterface.getTimelineEventForStream(timelineEventCategory, timingForElement);
         } catch (ClassCastException classCastException) {
             log.error("Wrong type t for streamVersion {}, error in cast {}", streamVersion, classCastException.getMessage());
         }
