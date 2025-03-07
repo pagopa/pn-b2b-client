@@ -275,14 +275,6 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
         return null;
     }
 
-    private PnPollingWebhook getPnPollingWebhook(TimelineElementCategoryV23 timeLineOrStatus) {
-        PnPollingWebhook pnPollingWebhook = new PnPollingWebhook();
-        pnPollingWebhook.setTimelineElementCategoryV25(timeLineOrStatus);
-        progressResponseElementsV25.clear();
-        pnPollingWebhook.setProgressResponseElementListV25((LinkedList<ProgressResponseElementV25>) progressResponseElementsV25);
-        return pnPollingWebhook;
-    }
-
     @Override
     public boolean checkInternalTimeline(AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream) {
         TimelineElementCategoryV23 timelineElementInternalCategory = TimelineElementCategoryV23.valueOf(((TimelineElementCategoryV23) timelineForStream.getTimelineElementCategory()).name());
@@ -380,7 +372,16 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
     @Override
     public <T> PnPollingWebhook getPnPollingWebhook(T timeLineOrStatus) {
         PnPollingWebhook pnPollingWebhook = new PnPollingWebhook();
-        //TODO MATTEO
+        if (timeLineOrStatus instanceof TimelineElementCategoryV23) {
+            pnPollingWebhook.setTimelineElementCategoryV25((TimelineElementCategoryV23) timeLineOrStatus);
+            progressResponseElementsV25.clear();
+            pnPollingWebhook.setProgressResponseElementListV25((LinkedList<ProgressResponseElementV25>) progressResponseElementsV25);
+        }
+//        else if (timeLineOrStatus instanceof NotificationStatus) {
+//            pnPollingWebhook.setNotificationStatusV25((NotificationStatus) timeLineOrStatus);
+//            progressResponseElementsV23.clear();
+//            pnPollingWebhook.setProgressResponseElementListV23((LinkedList<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.ProgressResponseElementV23>) progressResponseElementsV23);
+//        }
         return pnPollingWebhook;
     }
 }

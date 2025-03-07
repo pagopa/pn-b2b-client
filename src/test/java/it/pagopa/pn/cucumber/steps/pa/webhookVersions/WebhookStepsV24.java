@@ -379,7 +379,16 @@ public class WebhookStepsV24 implements WebhookStepsInterface {
     @Override
     public <T> PnPollingWebhook getPnPollingWebhook(T timeLineOrStatus) {
         PnPollingWebhook pnPollingWebhook = new PnPollingWebhook();
-        //TODO MATTEO
+        if (timeLineOrStatus instanceof TimelineElementCategoryV23) {
+            pnPollingWebhook.setTimelineElementCategoryV24((TimelineElementCategoryV23) timeLineOrStatus);
+            progressResponseElementsV24.clear();
+            pnPollingWebhook.setProgressResponseElementListV24((LinkedList<ProgressResponseElementV24>) progressResponseElementsV24);
+        }
+//        else if (timeLineOrStatus instanceof NotificationStatus) {
+//            pnPollingWebhook.setNotificationStatusV2((NotificationStatus) timeLineOrStatus);
+//            progressResponseElementsV24.clear();
+//            pnPollingWebhook.setProgressResponseElementListV23((LinkedList<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.ProgressResponseElementV23>) progressResponseElementsV23);
+//        }
         return pnPollingWebhook;
     }
 }

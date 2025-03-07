@@ -291,7 +291,17 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
     @Override
     public <T> PnPollingWebhook getPnPollingWebhook(T timeLineOrStatus) {
         PnPollingWebhook pnPollingWebhook = new PnPollingWebhook();
-        //TODO MATTEO
+        if (timeLineOrStatus instanceof TimelineElementCategoryV20) {
+            pnPollingWebhook.setTimelineElementCategoryV20((TimelineElementCategoryV20) timeLineOrStatus);
+            progressResponseElements.clear();
+            pnPollingWebhook.setProgressResponseElementListV20((LinkedList<ProgressResponseElement>) progressResponseElements);
+
+        } else if (timeLineOrStatus instanceof NotificationStatus) {
+            pnPollingWebhook.setNotificationStatusV20((NotificationStatus) timeLineOrStatus);
+            progressResponseElements.clear();
+            pnPollingWebhook.setProgressResponseElementListV20((LinkedList<ProgressResponseElement>) progressResponseElements);
+
+        }
         return pnPollingWebhook;
     }
 
