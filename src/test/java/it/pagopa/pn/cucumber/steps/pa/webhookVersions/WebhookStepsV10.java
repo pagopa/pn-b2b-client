@@ -67,6 +67,18 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
     }
 
     @Override
+    public void cleanWebHookDelete() {
+        List<StreamListElement> streamList = AvanzamentoNotificheWebhookB2bSteps.getWebhookClientForClean().listEventStreams();
+        for (StreamListElement stream : streamList) {
+            try {
+                AvanzamentoNotificheWebhookB2bSteps.getWebhookClientForClean().deleteEventStream(stream.getStreamId());
+            } catch (HttpStatusCodeException statusCodeException) {
+                log.error("HTTP Error: statusCode {} message {}", statusCodeException.getStatusCode(), statusCodeException.getMessage());
+            }
+        }
+    }
+
+    @Override
     public void deleteStreamsBeforeTest(String pa) {
         List<StreamListElement> streamListElements = webhookSteps.getWebhookB2bClient().listEventStreams();
         for (StreamListElement elem : streamListElements) {

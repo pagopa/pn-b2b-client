@@ -15,6 +15,8 @@ public interface WebhookStepsInterface {
 
     void deleteStreams(String pa);
 
+    void cleanWebHookDelete();
+
     void deleteStreamsBeforeTest(String pa);
 
     void updateStreamCreatingNewRequest(UUID idStream);

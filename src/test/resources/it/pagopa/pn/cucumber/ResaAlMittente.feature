@@ -128,7 +128,7 @@ Feature: Resa al mittente di una notifica
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V26"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V26"
     And  si invoca l'api Webhook versione "V26" per ottenere gli elementi di timeline di tale notifica
-    Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "COMPLETELY_UNREACHABLE" con versione V26
+    Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "COMPLETELY_UNREACHABLE" con la versione "V26"
 
   @returnedToSender @webhookV26  @cleanWebhook @precondition @webhook1
   Scenario: [RETURNED-TO-SENDER_8_TEST] Invio notifica 890 multi-destinatario entrambi deceduti e macro stato mostrato RETURNED_TO_SENDER
@@ -608,7 +608,7 @@ Feature: Resa al mittente di una notifica
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V26"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V26" e filtro status "DEFAULT"
-    Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "ANALOG_WORKFLOW_RECIPIENT_DECEASED" con versione V26
+    Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "ANALOG_WORKFLOW_RECIPIENT_DECEASED" con la versione "V26"
 
   @returnedToSender @webhookV26 @cleanWebhook @webhook1
   Scenario: [RETURNED-TO-SENDER_STREAM_WITHOUT_FILTER] Invio notifica e controllo che stream con eventType vuoto e versione da V26 contenga elemento ANALOG_WORKFLOW_RECIPIENT_DECEASED
@@ -623,7 +623,7 @@ Feature: Resa al mittente di una notifica
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V26"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V26"
-    Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "ANALOG_WORKFLOW_RECIPIENT_DECEASED" con versione V26
+    Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "ANALOG_WORKFLOW_RECIPIENT_DECEASED" con la versione "V26"
 
   @returnedToSender @webhookV25 @cleanWebhook @webhook1
   Scenario: [RETURNED-TO-SENDER_STREAM_V25_WITH_FILTER] Invio notifica e controllo che stream con eventType DEFAULT e versione differente da V26 non contenga elemento ANALOG_WORKFLOW_RECIPIENT_DECEASED
@@ -744,7 +744,7 @@ Feature: Resa al mittente di una notifica
       | physicalAddress_address | Via@ok_AR |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
-    Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "ANALOG_SUCCESS_WORKFLOW"
+    Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" con la versione "V10"
     And  vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SCHEDULE_REFINEMENT_WORKFLOW"
 
 

@@ -57,9 +57,9 @@ Feature: avanzamento notifiche webhook b2b V27
     #TEST LETTURA ACCEPTED
     Then vengono letti gli eventi dello stream del "Comune_1" fino allo stato "ACCEPTED" con la versione V27
     #TEST LETTURA REQUEST_ACCEPTED
-    And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "REQUEST_ACCEPTED" con la versione V27
+    And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "REQUEST_ACCEPTED" con la versione "V27"
     #TEST LETTURA DIGITAL_SUCCESS_WORKFLOW
-    Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" con la versione V27
+    Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" con la versione "V27"
     And viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati "V27"
     #TEST VERIFICA CORRISPONDENZA ELEMENTO DI TIMELINE STREAM
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
@@ -100,9 +100,9 @@ Feature: avanzamento notifiche webhook b2b V27
     #TEST LETTURA ACCEPTED
     Then vengono letti gli eventi dello stream del "Comune_1" fino allo stato "ACCEPTED" con versione V27
     #TEST LETTURA REQUEST_ACCEPTED
-    And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "REQUEST_ACCEPTED" con la versione V27
+    And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "REQUEST_ACCEPTED" con la versione "V27"
     #TEST LETTURA DIGITAL_SUCCESS_WORKFLOW
-    Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" con la versione V27
+    Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" con la versione "V27"
     And viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati "V27"
     #TEST VERIFICA CORRISPONDENZA ELEMENTO DI TIMELINE STREAM
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
@@ -135,7 +135,7 @@ Feature: avanzamento notifiche webhook b2b V27
     And si crea il nuovo stream con versione "V27" per il "Comune_1" con un gruppo disponibile "FIRST"
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream del "Comune_1" fino allo stato "ACCEPTED" con la versione V27
-    And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "REQUEST_ACCEPTED" con la versione V27
+    And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "REQUEST_ACCEPTED" con la versione "V27"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
@@ -238,7 +238,7 @@ Feature: avanzamento notifiche webhook b2b V27
     And si crea il nuovo stream per il "Comune_2" con versione "V27"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V27"
     And la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "REQUEST_ACCEPTED" con la versione V27
+    And vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "REQUEST_ACCEPTED" con la versione "V27"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
