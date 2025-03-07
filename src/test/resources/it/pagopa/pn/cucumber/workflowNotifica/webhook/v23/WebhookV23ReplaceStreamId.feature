@@ -234,6 +234,6 @@ Feature: replace streamID webhook
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    Then si crea il nuovo stream con versione "V23" per il "Comune_Multi" con replaceId con un gruppo disponibile "NO_GROUPS"
+    Then si crea il nuovo stream con versione "V10_V23" per il "Comune_Multi" con replaceId con un gruppo disponibile "NO_GROUPS"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata

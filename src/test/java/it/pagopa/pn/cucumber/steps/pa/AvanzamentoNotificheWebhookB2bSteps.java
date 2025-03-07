@@ -23,6 +23,8 @@ import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.ProgressResponseElement;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.TimelineElementCategoryV20;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.ProgressResponseElementV26;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.StreamCreationRequestV26;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.StreamMetadataResponseV26;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.TimelineElementCategoryV26;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v27.ProgressResponseElementV27;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.NotificationStatus;
@@ -77,13 +79,14 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     private List<ProgressResponseElementV27> progressResponseElementsV27 = new LinkedList<>();
 
     private final WebhookStepsV10 webhookStepsV10 = new WebhookStepsV10(this);
+    private final WebhookStepsV10_23 webhookStepsV10_23 = new WebhookStepsV10_23(this);
     private final WebhookStepsV23 webhookStepsV23 = new WebhookStepsV23(this);
     private final WebhookStepsV24 webhookStepsV24 = new WebhookStepsV24(this);
     private final WebhookStepsV25 webhookStepsV25 = new WebhookStepsV25(this);
     private final WebhookStepsV26 webhookStepsV26 = new WebhookStepsV26(this);
     private final WebhookStepsV27 webhookStepsV27 = new WebhookStepsV27(this);
 
-    public enum StreamVersion {V10, V23, V24, V25, V26, V27}
+    public enum StreamVersion {V10, V10_V23, V23, V24, V25, V26, V27}
 
     @Getter
     private final Set<String> paStreamOwner = new HashSet<>();
@@ -190,6 +193,9 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         switch (streamVersion) {
             case V10 -> {
                 return this.webhookStepsV10;
+            }
+            case V10_V23 -> {
+                return this.webhookStepsV10_23;
             }
             case V23 -> {
                 return this.webhookStepsV23;
