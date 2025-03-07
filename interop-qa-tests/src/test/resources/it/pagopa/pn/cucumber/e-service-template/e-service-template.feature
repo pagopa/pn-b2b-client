@@ -1665,9 +1665,46 @@ Feature: Test API of e-service template
     And l'utente tenta la visualizzazione dei dettagli della versione dell'e-service template
     Then si ottiene status code 404
 
+  Scenario Outline: [INTEROP-EST-152] La visualizzazione dell'elenco producers degli e-service templates da parte dell'ente creatore può essere effettuata per ogni stato dei template, se l'ente è in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di SUSPENDED
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la visualizzazione dell'elenco producers degli e-service templates
+    Then si ottiene status code 200
+    And l'elenco producers degli e-service templates contiene esattamente 3 elementi
+    Examples:
+      | ruolo |
+      | admin |
+      | api   |
+
+  Scenario Outline: [INTEROP-EST-153] La visualizzazione dell'elenco dei creatori di e-service templates attivi può essere effettuata se l'ente è in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di SUSPENDED
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente è un "admin" di "PA2"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la visualizzazione dell'elenco dei creatori di e-service templates attivi
+    Then si ottiene status code 200
+    And l'unico ente presente nell'elenco dei creatori di e-service templates attivi è "PA1"
+    Examples:
+      | ruolo |
+      | admin |
+      | api   |
+
+    # TODO L'api potrebbe semplicemente restituire risultato positivo ma vuoto anziché un errore, verificare
+  Scenario: [INTEROP-EST-154] La visualizzazione dell'elenco dei creatori di e-service templates attivi non può essere effettuata se non ci sono templates attivi
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di SUSPENDED
+    When l'utente tenta la visualizzazione dell'elenco dei creatori di e-service templates attivi
+    Then si ottiene status code 404
 
 
-  #TODO continua da 172...
+  #TODO continua da 175...
 
 
   #TODO la maggior parte dei test sono fatti su template in mod. RICEZIONE. Valutare che non sia il caso di testare per entrambe le modalità.

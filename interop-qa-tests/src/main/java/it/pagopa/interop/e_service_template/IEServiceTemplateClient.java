@@ -2,6 +2,7 @@ package it.pagopa.interop.e_service_template;
 
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServiceTemplates;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganizations;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
@@ -12,6 +13,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateNam
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionQuotasUpdateSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceTemplates;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionDocumentSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionSeed;
@@ -197,11 +199,24 @@ public interface IEServiceTemplateClient extends SettableBearerToken {
         UUID eServiceTemplateId, UUID eServiceTemplateVersionId,
         DescriptorAttributesSeed seed);
 
-    // DEV. NOTE: si cambia naming convention omettendo il suffisso "withHttpInfo", nell'intenzione di renderlo implicito da qui in avanti
-    ResponseEntity<CatalogEServiceTemplates> getAllEServiceTemplatesCatalog(String xCorrelationId);
+    // DEV. NOTE: si cambia naming convention omettendo il suffisso "withHttpInfo", rendendolo implicito da qui in avanti
+    ResponseEntity<CatalogEServiceTemplates> getEServiceTemplatesCatalog(String xCorrelationId);
 
-    ResponseEntity<CatalogEServiceTemplates> getUnfilteredEServiceTemplatesCatalog(
-        String xCorrelationId, Integer offset, Integer limit);
+    ResponseEntity<ProducerEServiceTemplates> getProducerEServiceTemplates(String xCorrelationId);
+
+    ResponseEntity<ProducerEServiceTemplates> getProducerEServiceTemplates(
+        String xCorrelationId,
+        Integer offset,
+        Integer limit,
+        String q);
+
+    ResponseEntity<CompactOrganizations> getEServiceTemplateCreators(String xCorrelationId);
+
+    ResponseEntity<CompactOrganizations> getEServiceTemplateCreators(
+        String xCorrelationId,
+        Integer offset,
+        Integer limit,
+        String q);
 
     ResponseEntity<CatalogEServiceTemplates> getEServiceTemplatesCatalog(String xCorrelationId,
         Integer offset, Integer limit, String q, List<UUID> creatorsIds);

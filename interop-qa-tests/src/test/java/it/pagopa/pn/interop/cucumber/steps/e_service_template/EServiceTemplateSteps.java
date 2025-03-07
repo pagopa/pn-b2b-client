@@ -22,6 +22,8 @@ import it.pagopa.interop.e_service_template.mapper.DescriptorAttributesMapper;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServiceTemplate;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServiceTemplates;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganization;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganizations;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributeSeed;
@@ -41,6 +43,8 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVer
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionQuotasUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceTemplate;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceTemplates;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionDocumentSeed;
@@ -1534,7 +1538,7 @@ public class EServiceTemplateSteps {
         String userToken = getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);
         httpCallExecutor.performCall(
-            () -> eServiceTemplateClient.getAllEServiceTemplatesCatalog(sharedStepsContext.getXCorrelationId()),
+            () -> eServiceTemplateClient.getEServiceTemplatesCatalog(sharedStepsContext.getXCorrelationId()),
             ResponseEntity::getStatusCode);
     }
 
@@ -1623,6 +1627,42 @@ public class EServiceTemplateSteps {
                 eServiceTemplateVersionId),
             ResponseEntity::getStatusCode);
     }
+
+    @When("l'utente tenta la visualizzazione dell'elenco producers degli e-service templates")
+    public void getEServiceTemplatesProducers() {
+        String userToken = getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+        httpCallExecutor.performCall(
+            () -> eServiceTemplateClient.getProducerEServiceTemplates(sharedStepsContext.getXCorrelationId()),
+            ResponseEntity::getStatusCode);
+    }
+
+    @Then("l'elenco producers degli e-service templates contiene esattamente {int} elementi")
+    public void checkEServiceTemplatesProducersCount(int expectedCount) {
+        List<ProducerEServiceTemplate> producers = ((ResponseEntity<ProducerEServiceTemplates>) httpCallExecutor.getResponse()).getBody().getResults();
+        assertThat(producers).hasSize(expectedCount);
+    }
+
+    @When("l'utente tenta la visualizzazione dell'elenco dei creatori di e-service templates attivi")
+    public void getActiveEServiceTemplatesCreators() {
+        String userToken = getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+        httpCallExecutor.performCall(
+            () -> eServiceTemplateClient.getEServiceTemplateCreators(sharedStepsContext.getXCorrelationId()),
+            ResponseEntity::getStatusCode);
+    }
+
+    @Then("l'unico ente presente nell'elenco dei creatori di e-service templates attivi è {string}")
+    public void checkActiveEServiceTemplatesCreators(String tenant) {
+        List<CompactOrganization> creators = ((ResponseEntity<CompactOrganizations>) httpCallExecutor.getResponse()).getBody().getResults();
+        assertThat(creators)
+            .hasSize(1)
+            .first()
+            .extracting(CompactOrganization::getName)
+            .isEqualTo(tenant);
+    }
+
+
 
     /* TODO un'alternativa all'uso di metodi come "areConsistent" - che confrontano i campi uno a uno - potrebbe essere
      * l'uso di una libreria di mapping, da usare per mappare un oggetto nell'altro tipo, e quindi procedere con
