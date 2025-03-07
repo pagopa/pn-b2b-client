@@ -3,7 +3,7 @@ package it.pagopa.interop.e_service_template;
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDescriptionUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDetails;
@@ -133,7 +133,7 @@ public interface IEServiceTemplateClient extends SettableBearerToken {
         Resource doc
     );
 
-    EServiceDoc updateDocument(
+    void updateDocument(
         String xCorrelationId,
         UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId,
@@ -141,7 +141,7 @@ public interface IEServiceTemplateClient extends SettableBearerToken {
         UpdateEServiceTemplateVersionDocumentSeed updateEServiceTemplateVersionDocumentSeed
     );
 
-    ResponseEntity<EServiceDoc> updateDocumentWithHttpInfo(
+    ResponseEntity<Void> updateDocumentWithHttpInfo(
         String xCorrelationId,
         UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId,
@@ -185,4 +185,13 @@ public interface IEServiceTemplateClient extends SettableBearerToken {
     ResponseEntity<Void> updateEServiceTemplateVersionQuotasWithHttpInfo(String xCorrelationId,
         UUID eServiceTemplateId, UUID eServiceTemplateVersionId,
         EServiceTemplateVersionQuotasUpdateSeed seed);
+
+    CreatedResource updateEServiceTemplateVersionAttributes(String xCorrelationId,
+        UUID eServiceTemplateId,
+        UUID eServiceTemplateVersionId, DescriptorAttributesSeed seed);
+
+    ResponseEntity<CreatedResource> updateEServiceTemplateVersionAttributesWithHttpInfo(
+        String xCorrelationId,
+        UUID eServiceTemplateId, UUID eServiceTemplateVersionId,
+        DescriptorAttributesSeed seed);
 }

@@ -1418,8 +1418,83 @@ Feature: Test API of e-service template
     When l'utente tenta la modifica delle quote di una versione inesistente dell'e-service template
     Then si ottiene status code 404
 
+  Scenario Outline: [INTEROP-EST-128] La modifica degli attributi di una versione di un e-service template in stato PUBLISHED o SUSPENDED può essere effettuata da un ente in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
 
-  #TODO continua da 149...
+    # Necessario per l'aggiunta degli attributi in vista della loro modifica
+    And l'utente effettua delle modifiche alla versione dell'e-service template con successo
+
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la modifica degli attributi della versione dell'e-service template
+    Then si ottiene status code 200
+    And la modifica degli attributi della versione dell'e-service template è stata effettuata correttamente
+    Examples:
+      | ruolo   | stato     |
+      | admin   | PUBLISHED |
+      | api     | PUBLISHED |
+      | admin   | SUSPENDED |
+      | api     | SUSPENDED |
+
+  Scenario Outline: [INTEROP-EST-129] La modifica degli attributi di una versione di un e-service template in stato PUBLISHED o SUSPENDED NON può essere effettuata da un ente NON in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
+    And l'utente effettua delle modifiche alla versione dell'e-service template con successo
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la modifica degli attributi della versione dell'e-service template
+    Then si ottiene status code 403
+    Examples:
+      | ruolo         | stato     |
+      | security      | PUBLISHED |
+      | api,security  | PUBLISHED |
+      | support       | PUBLISHED |
+      | security      | SUSPENDED |
+      | api,security  | SUSPENDED |
+      | support       | SUSPENDED |
+
+  Scenario: [INTEROP-EST-130] La modifica degli attributi di una versione di un e-service template in stato DRAFT non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente effettua delle modifiche alla versione dell'e-service template con successo
+    When l'utente tenta la modifica degli attributi della versione dell'e-service template
+    Then si ottiene status code 403
+
+  Scenario Outline: [INTEROP-EST-131] La modifica degli attributi di una versione di un e-service template in stato PUBLISHED o SUSPENDED non può coinvolgere l'aggiunta di nuovi attributi, ma solo la modifica di quelli già presenti
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
+    And l'utente effettua delle modifiche alla versione dell'e-service template con successo
+    When l'utente tenta la modifica degli attributi della versione dell'e-service template aggiungendone di nuovi
+    Then si ottiene status code 409
+    Examples:
+      | stato     |
+      | PUBLISHED |
+      | SUSPENDED |
+
+  Scenario Outline: [INTEROP-EST-132] La modifica degli attributi di una versione di un e-service template in stato PUBLISHED o SUSPENDED non può essere effettuata da un ente diverso dal creatore del template
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
+    And l'utente effettua delle modifiche alla versione dell'e-service template con successo
+    When l'utente è un "admin" di "PA2"
+    And l'utente tenta la modifica degli attributi della versione dell'e-service template
+    Then si ottiene status code 403
+    Examples:
+      | stato     |
+      | PUBLISHED |
+      | SUSPENDED |
+
+  Scenario: [INTEROP-EST-133] La modifica degli attributi di una versione di un e-service template inesistente non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    When l'utente tenta la modifica degli attributi della versione di un e-service template inesistente
+    Then si ottiene status code 404
+
+  Scenario: [INTEROP-EST-134] La modifica degli attributi di una versione inesistente di un e-service template non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua delle modifiche alla versione dell'e-service template con successo
+    When l'utente tenta la modifica degli attributi di una versione inesistente dell'e-service template
+    Then si ottiene status code 404
+
+  #TODO continua da 155...
 
 
 

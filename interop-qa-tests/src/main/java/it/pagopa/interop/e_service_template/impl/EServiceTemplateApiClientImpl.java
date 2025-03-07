@@ -6,7 +6,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EserviceTemplatesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDescriptionUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDetails;
@@ -285,18 +285,18 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
     }
 
     @Override
-    public EServiceDoc updateDocument(
+    public void updateDocument(
         String xCorrelationId,
         UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId,
         UUID documentId,
         UpdateEServiceTemplateVersionDocumentSeed updateEServiceTemplateVersionDocumentSeed
     ) {
-        return this.eserviceTemplatesApi.updateEServiceTemplateDocumentById(xCorrelationId, eServiceTemplateId, eServiceTemplateVersionId, documentId, updateEServiceTemplateVersionDocumentSeed);
+        this.eserviceTemplatesApi.updateEServiceTemplateDocumentById(xCorrelationId, eServiceTemplateId, eServiceTemplateVersionId, documentId, updateEServiceTemplateVersionDocumentSeed);
     }
 
     @Override
-    public ResponseEntity<EServiceDoc> updateDocumentWithHttpInfo(
+    public ResponseEntity<Void> updateDocumentWithHttpInfo(
         String xCorrelationId,
         UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId,
@@ -376,6 +376,21 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
         UUID eServiceTemplateId, UUID eServiceTemplateVersionId,
         EServiceTemplateVersionQuotasUpdateSeed seed) {
         return this.eserviceTemplatesApi.updateTemplateVersionQuotasWithHttpInfo(xCorrelationId, eServiceTemplateId, eServiceTemplateVersionId, seed);
+    }
+
+    @Override
+    public CreatedResource updateEServiceTemplateVersionAttributes(String xCorrelationId,
+        UUID eServiceTemplateId,
+        UUID eServiceTemplateVersionId, DescriptorAttributesSeed seed) {
+        return this.eserviceTemplatesApi.updateEServiceTemplateVersionAttributes(xCorrelationId, eServiceTemplateId, eServiceTemplateVersionId, seed);
+    }
+
+    @Override
+    public ResponseEntity<CreatedResource> updateEServiceTemplateVersionAttributesWithHttpInfo(
+        String xCorrelationId,
+        UUID eServiceTemplateId, UUID eServiceTemplateVersionId,
+        DescriptorAttributesSeed seed) {
+        return this.eserviceTemplatesApi.updateEServiceTemplateVersionAttributesWithHttpInfo(xCorrelationId, eServiceTemplateId, eServiceTemplateVersionId, seed);
     }
 
     @Override
