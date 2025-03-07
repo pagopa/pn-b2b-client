@@ -259,8 +259,7 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
           Assertions.assertNotNull(notificationByIun.get().getResultsPage());
           Assertions.assertTrue(notificationByIun.get().getResultsPage().size()>0);
 
-          List<NotificationSearchRow> ricercaNotifiche=notificationByIun.get().getResultsPage();
-        return ricercaNotifiche;
+    return notificationByIun.get().getResultsPage();
 }
 
     @Then("la notifica può essere correttamente recuperata dal sistema tramite Stato {string} dalla web PA {string}")
@@ -419,9 +418,9 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
 
 
     @Given("viene letta la notifica {string} dal {string}")
-    public void vieneLettaLaNotificaDal(String IUN, String pa) {
+    public void vieneLettaLaNotificaDal(String iun, String pa) {
         sharedSteps.selectPA(pa);
-        FullSentNotificationV26 notificationByIun = b2bUtils.getNotificationByIun(IUN);
+        FullSentNotificationV26 notificationByIun = b2bUtils.getNotificationByIun(iun);
         sharedSteps.setSentNotification(notificationByIun);
     }
 
@@ -1066,7 +1065,7 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
             contoDocumento += attachmentUrl.contains(tipologia) ? 1 : 0;
         }
         try {
-            Assertions.assertTrue(numeroDocumenti == contoDocumento);
+            Assertions.assertEquals(numeroDocumenti, contoDocumento);
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() + "Verifica Allegati pec in errore ";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
@@ -1109,7 +1108,8 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
         ReceivedMessage firstDocumentReceived = documentiPec.get(0);
         Assertions.assertNotNull(firstDocumentReceived.getPaperEngageRequest());
         Assertions.assertNotNull(firstDocumentReceived.getPaperEngageRequest().getAttachments());
-        Assertions.assertTrue(firstDocumentReceived.getPaperEngageRequest().getAttachments().get(documentIndex - 1).getDocumentType().equals(tipologia));
+        Assertions.assertEquals(tipologia, firstDocumentReceived.getPaperEngageRequest().getAttachments()
+                .get(documentIndex - 1).getDocumentType());
         log.info(firstDocumentReceived.toString());
     }
 
@@ -1207,6 +1207,7 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
                 }
             }
             case "digitale" -> attchmentNotification= documentiPec.get(0).getDigitalNotificationRequest().getAttachmentUrls();
+            default -> throw new IllegalArgumentException("Valore di type non riconosciuto: " + type);
         }
         return attchmentNotification;
     }
