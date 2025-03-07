@@ -98,7 +98,7 @@ Feature: avanzamento notifiche webhook b2b V27
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V27"
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     #TEST LETTURA ACCEPTED
-    Then vengono letti gli eventi dello stream del "Comune_1" fino allo stato "ACCEPTED" con versione V27
+    Then vengono letti gli eventi dello stream del "Comune_1" fino allo stato "ACCEPTED" con la versione V27
     #TEST LETTURA REQUEST_ACCEPTED
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "REQUEST_ACCEPTED" con la versione "V27"
     #TEST LETTURA DIGITAL_SUCCESS_WORKFLOW
