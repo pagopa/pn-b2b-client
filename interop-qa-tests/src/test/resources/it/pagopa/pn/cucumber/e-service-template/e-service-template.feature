@@ -1579,7 +1579,7 @@ Feature: Test API of e-service template
     Then si ottiene status code 200
     And il catalogo degli e-service template contiene esattamente 2 elementi tutti in stato PUBLISHED
 
-  Scenario: [INTEROP-EST-142] La visualizzazione del catalogo degli e-service template restituisce risultato vuoto in caso ci siano solo template in stato DRAFT o SUSPENDED
+  Scenario: [INTEROP-EST-143] La visualizzazione del catalogo degli e-service template restituisce risultato vuoto in caso ci siano solo template in stato DRAFT o SUSPENDED
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di SUSPENDED
@@ -1587,9 +1587,47 @@ Feature: Test API of e-service template
     Then si ottiene status code 200
     And il catalogo degli e-service template è vuoto
 
+  Scenario Outline: [INTEROP-EST-144] La visualizzazione dei dettagli un e-service template da parte dell'ente creatore rivela tutte le versioni presenti indipendentemente dallo stato, se l'ente è in veste di ADMIN o API
+    Given l'utente è un "<ruolo>" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente aggiunge all'e-service template una versione in stato DRAFT
+    And l'utente aggiunge all'e-service template una versione in stato SUSPENDED
+    When l'utente tenta la visualizzazione dei dettagli dell'e-service template
+    Then si ottiene status code 200
+    And i dettagli dell'e-service template contengono esattamente 3 versioni
+    Examples:
+      | ruolo   |
+      | admin   |
+      | api     |
+
+  Scenario: [INTEROP-EST-145] La visualizzazione dei dettagli un e-service template da parte di un ente diverso dal creatore rivela le versioni in stato PUBLISHED o SUSPENDED, se l'ente è in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente aggiunge all'e-service template una versione in stato DRAFT
+    And l'utente aggiunge all'e-service template una versione in stato SUSPENDED
+    When l'utente è un "admin" di "PA2"
+    And l'utente tenta la visualizzazione dei dettagli dell'e-service template
+    Then si ottiene status code 200
+    And i dettagli dell'e-service template contengono esattamente 2 versioni
+
+  Scenario: [INTEROP-EST-146] La visualizzazione dei dettagli un e-service template inesistente non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    When l'utente tenta la visualizzazione dei dettagli di un e-service template inesistente
+    Then si ottiene status code 404
+
+  Scenario: [INTEROP-EST-147] La visualizzazione dei dettagli di un e-service template restituisce risultato vuoto in caso ci siano solo versioni in stato DRAFT
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+
+    # OPERAZIONE LEGALE? Verificare che possano esserci più versioni in stato DRAFT
+    And l'utente aggiunge all'e-service template una versione in stato DRAFT
+
+    When l'utente tenta la visualizzazione dei dettagli dell'e-service template
+    Then si ottiene status code 200
+    And i dettagli dell'e-service template contengono esattamente 0 versioni
 
 
-  #TODO continua da 164...
+  #TODO continua da 168...
 
 
   #TODO la maggior parte dei test sono fatti su template in mod. RICEZIONE. Valutare che non sia il caso di testare per entrambe le modalità.

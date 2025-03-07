@@ -202,19 +202,22 @@ public class EServiceTemplateSteps {
     @When("l'utente effettua la creazione di un e-service template in modalità {eServiceMode} in stato di {eServiceTemplateVersionState}")
     public void createEServiceTemplate(EServiceMode eServiceMode, EServiceTemplateVersionState desiredState) {
         createEServiceTemplate(eServiceMode);
-        Runnable publisher = () -> {
-            if (eServiceMode == EServiceMode.RECEIVE) {
-                this.addRiskAnalysisToEServiceTemplateSuccessfully(); // perché ogni template in RECEIVE deve avere una risk analysis
-            }
+        if (eServiceMode == EServiceMode.RECEIVE) {
+            this.addRiskAnalysisToEServiceTemplateSuccessfully(); // perché ogni template in RECEIVE deve avere una risk analysis
+        }
+        mutateLastVersionState(desiredState);
+    }
 
+    private void mutateLastVersionState(EServiceTemplateVersionState desiredState) {
+        Runnable publisher = () -> {
             this.addDocumentToEServiceTemplateVersionSuccessfully(EServiceTemplateDocumentKind.INTERFACE); // perché ogni template deve avere almeno un'interfaccia
             publishEServiceTemplate();
         };
         switch (desiredState) {
-            case DRAFT -> { /* no-op: un template appena creato è automaticamente in questo stato */ }
+            case DRAFT -> { /* no-op: una versione appena creata è automaticamente in questo stato */ }
             case PUBLISHED -> publisher.run();
             case SUSPENDED -> {
-                publisher.run();    // perché prima di essere sospeso deve essere pubblicato
+                publisher.run();    // perché prima di essere sospesa deve essere pubblicata
                 suspendEServiceTemplate();
             }
             default -> throw new IllegalArgumentException("Stato non supportato: " + desiredState);
@@ -974,7 +977,7 @@ public class EServiceTemplateSteps {
                         sharedStepsContext.getXCorrelationId(),
                         eServiceTemplateId),
                     ResponseEntity::getStatusCode),
-                res -> res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody()) && res.getBody().getVersions().size() == 2,
+                res -> res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody()) && res.getBody().getVersions().stream().anyMatch(v -> v.getId().equals(lastTemplateManaged.lastVersionId())),
                 "La versione dell'e-service template non è stata creata correttamente"
             );
         } catch (PollingPredicateException e) {
@@ -1557,6 +1560,39 @@ public class EServiceTemplateSteps {
         CatalogEServiceTemplates catalog = ((ResponseEntity<CatalogEServiceTemplates>) httpCallExecutor.getResponse()).getBody();
         List<CatalogEServiceTemplate> templatesInCatalog = catalog.getResults();
         assertThat(templatesInCatalog).isEmpty();
+    }
+
+    @When("l'utente aggiunge all'e-service template una versione in stato {eServiceTemplateVersionState}")
+    public void addEServiceTemplateVersion(EServiceTemplateVersionState state) {
+        createAnotherEServiceTemplateVersion(lastTemplateManaged.id());
+        mutateLastVersionState(state);
+        checkEServiceTemplateVersionCreated();
+    }
+
+    @When("l'utente tenta la visualizzazione dei dettagli dell'e-service template")
+    public void getEServiceTemplateDetails() {
+        getEServiceTemplateDetails(lastTemplateManaged.id());
+    }
+
+    @When("l'utente tenta la visualizzazione dei dettagli di un e-service template inesistente")
+    public void getNonExistentEServiceTemplateDetails() {
+        getEServiceTemplateDetails(UUID.randomUUID());
+    }
+
+    private void getEServiceTemplateDetails(UUID eServiceTemplateId) {
+        String userToken = getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+        httpCallExecutor.performCall(
+            () -> eServiceTemplateClient.getEServiceTemplateWithHttpInfo(
+                sharedStepsContext.getXCorrelationId(),
+                eServiceTemplateId),
+            ResponseEntity::getStatusCode);
+    }
+
+    @Then("i dettagli dell'e-service template contengono esattamente {int} versioni")
+    public void checkEServiceTemplateDetailsContainVersions(int expectedVersionCount) {
+        EServiceTemplateDetails template = ((ResponseEntity<EServiceTemplateDetails>) httpCallExecutor.getResponse()).getBody();
+        assertThat(template.getVersions()).hasSize(expectedVersionCount);
     }
 
 
