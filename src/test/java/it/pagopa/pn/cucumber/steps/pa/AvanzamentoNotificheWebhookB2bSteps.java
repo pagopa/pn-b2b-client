@@ -1258,10 +1258,10 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         updateApiKeyForStream();
         setPaWebhook(pa);
 
-        TimelineElementSearchResult<TimelineElementCategoryV26> timelineForStream = getTimelineEventForStream(StreamVersion.V27, timelineEventCategory);
-        TimelineElementCategoryV26 timelineElementCategory = timelineForStream.getTimelineElementCategory();
+        TimelineElementSearchResult<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v27.TimelineElementCategoryV26> timelineForStream = getTimelineEventForStream(StreamVersion.V27, timelineEventCategory);
+        it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v27.TimelineElementCategoryV26 timelineElementCategory = timelineForStream.getTimelineElementCategory();
 
-        TimelineElementCategoryV26 timelineElementInternalCategory = TimelineElementCategoryV26.valueOf(timelineElementCategory.name());
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26 timelineElementInternalCategory = it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26.valueOf(timelineElementCategory.name());
 
         ProgressResponseElementV27 progressResponseElement = null;
 
@@ -1451,6 +1451,10 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             progressResponseElementsV26.clear();
             pnPollingWebhook.setProgressResponseElementListV26((LinkedList<ProgressResponseElementV26>) progressResponseElementsV26);
 
+        } else if (timeLineOrStatus instanceof it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v27.TimelineElementCategoryV26) {
+            pnPollingWebhook.setTimelineElementCategoryV27((it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v27.TimelineElementCategoryV26) timeLineOrStatus);
+            progressResponseElementsV26.clear();
+            pnPollingWebhook.setProgressResponseElementListV27((LinkedList<ProgressResponseElementV27>) progressResponseElementsV27);
         } else if (timeLineOrStatus instanceof it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23) {
             pnPollingWebhook.setTimelineElementCategoryV24((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23) timeLineOrStatus);
             progressResponseElementsV24.clear();
@@ -1580,7 +1584,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         UUID streamId = webhookStepsInterface.getStreamId();
 
         PnPollingWebhook pnPollingWebhook = getPnPollingWebhook(timeLineOrStatus);
-        PnPollingServiceWebhookV27 webhookV27 = (PnPollingServiceWebhookV27) sharedSteps.getPollingFactory().getPollingService(PnPollingStrategy.WEBHOOK_V26);
+        PnPollingServiceWebhookV27 webhookV27 = (PnPollingServiceWebhookV27) sharedSteps.getPollingFactory().getPollingService(PnPollingStrategy.WEBHOOK_V27);
         PnPollingResponseV27 pnPollingResponseV27 = webhookV27.waitForEvent(sharedSteps.getSentNotification().getIun(),
                 PnPollingParameter.builder()
                         .value("WEBHOOK")
