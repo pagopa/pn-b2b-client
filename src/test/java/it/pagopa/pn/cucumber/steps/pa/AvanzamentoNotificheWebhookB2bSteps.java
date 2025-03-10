@@ -10,7 +10,10 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryElementV26;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV24;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV25;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
@@ -21,7 +24,6 @@ import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebh
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.NotificationStatus;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.ProgressResponseElementV23;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.TimelineElementCategoryV23;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.TimelineElementDetailsV23;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.TimelineElementV23;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.webhookVersions.*;
@@ -216,12 +218,12 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         });
     }
 
-    //versioni 23 e 27 only? TODO MATTEO, Dovrebbe fallire per V27, correggere
-    @And("viene verificato che il campo legalFactIds sia valorizzato nel EventStream")
-    public void vieneVerificatoCheIlCampoLegalfactIdsSiaValorizzato() {
-        Assertions.assertNotNull(sharedSteps.getProgressResponseElement());
-        Assertions.assertNotNull(sharedSteps.getProgressResponseElement().getLegalfactIds());
-        Assertions.assertFalse(sharedSteps.getProgressResponseElement().getLegalfactIds().isEmpty());
+    //versioni 23 e 27 only?
+    @And("viene verificato che il campo legalFactIds sia valorizzato nel EventStream con la versione {string}")
+    public void vieneVerificatoCheIlCampoLegalfactIdsSiaValorizzato(String version) {
+        StreamVersion streamVersion = getStreamVersion(version);
+        WebhookStepsInterface webhookStepsInterface = getWebhookStep(streamVersion);
+        webhookStepsInterface.checkLegalFactId();
     }
 
     @Given("si predispo(ngono)(ne) {int} nuov(i)(o) stream denominat(i)(o) {string} con eventType {string} con versione {string}")
@@ -425,7 +427,6 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         disableStreams(streamVersion);
     }
 
-    //TODO MATTEO TEST
     @And("si disabilita(no) (lo)(gli) stream che non esist(e)(ono) con la versione {string} e apiKey aggiornata")
     public void disableStreamThatNotExist(String version) {
         updateApiKeyForStream();
@@ -444,7 +445,6 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
     }
 
-    //TODO MATTEO TEST
     //Usato da tutte le versioni
     @And("si cancella(no) (lo)(gli) stream che non esist(e)(ono) con la versione {string} e apiKey aggiornata")
     public void deleteStreamThatNotExist(String version) {
@@ -460,7 +460,6 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
     }
 
-    //TODO MATTEO TEST
     //Usato da tutte le versioni
     @And("si consuma(no) (lo)(gli) stream che non esist(e)(ono) con la versione {string} e apiKey aggiornata")
     public void consumeStreamThatNotExist(String version) {
@@ -476,15 +475,15 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
     }
 
-    //TODO MATTEO TEST
     //Usato da tutte le versioni, tranne V26
     @And("si legg(e)(ono) (lo)(gli) stream che non esist(e)(ono) e apiKey aggiornata con versione {string}")
     public void readStreamThatNotExist(String version) {
         updateApiKeyForStream();
         StreamVersion streamVersion = getStreamVersion(version);
         WebhookStepsInterface webhookStepsInterface = getWebhookStep(streamVersion);
-        UUID notExistingStreamId = UUID.randomUUID();
-//        UUID streamId = webhookStepsInterface.getStreamId();//TODO MATTEO, prima era così, ma non sono convinto debba usare uno streamId esistente
+        //TODO MATTEO: qua lo stream risulta inesistente perchè è stato cancellato in precedenza in un altro step
+        // Per una maggiore consistenza sarebbe meglio -> UUID notExistingStreamId = UUID.randomUUID();
+        UUID notExistingStreamId = webhookStepsInterface.getStreamId();
         try {
             webhookStepsInterface.retrieveStreamEvent(notExistingStreamId);
         } catch (HttpStatusCodeException e) {
@@ -493,7 +492,6 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
     }
 
-    //TODO MATTEO TEST
     //Usato da tutte le versioni
     @And("si aggiorna(no) (lo)(gli) stream che non esist(e)(ono) e apiKey aggiornata con versione {string}")
     public void updateStreamNotExist(String version) {
@@ -501,8 +499,9 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         try {
             StreamVersion streamVersion = getStreamVersion(version);
             WebhookStepsInterface webhookStepsInterface = getWebhookStep(streamVersion);
-            UUID notExistingStreamId = UUID.randomUUID();
-//            UUID streamId = webhookStepsInterface.getStreamId();//TODO MATTEO, prima era così, ma non sono convinto debba usare uno streamId esistente
+            //TODO MATTEO: qua lo stream risulta inesistente perchè è stato cancellato in precedenza in un altro step
+            // Per una maggiore consistenza sarebbe meglio -> UUID notExistingStreamId = UUID.randomUUID();
+            UUID notExistingStreamId = webhookStepsInterface.getStreamId();
             Object streamRequest = webhookStepsInterface.getStreamRequest();
             webhookStepsInterface.initStreamRequest(streamRequest);
             webhookStepsInterface.updateStreamWithExistingRequest(notExistingStreamId);
@@ -589,8 +588,8 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }
 
     private boolean searchSpecificTimelineEvent(String timelineEvent, String deliveryDetailCode) {
-        Assertions.assertNotNull(webhookStepsV23.getProgressResponseElements());
-        return webhookStepsV23.getProgressResponseElements().stream()
+        Assertions.assertNotNull(webhookStepsV23.getProgressResponseElementList());
+        return webhookStepsV23.getProgressResponseElementList().stream()
                 .filter(Objects::nonNull)
                 .filter(x -> x.getIun() != null && x.getIun().equals(sharedSteps.getSentNotification().getIun()))
                 .map(ProgressResponseElementV23::getElement)
@@ -715,13 +714,11 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         readStreamTimeline(version, pa, timelineEventCategory, position, null);
     }
 
-    //TODO MATTEO TEST
     @Then("vengono letti gli eventi dello stream del {string} con la versione {string} fino all'elemento di timeline {string} con deliveryDetailCode {string}")
     public void readStreamTimelineElementWithDeliveryCode(String pa, String version, String timelineEventCategory, String deliveryDetailCode) {
         readStreamTimeline(version, pa, timelineEventCategory, 0, deliveryDetailCode);
     }
 
-    //TODO MATTEO TEST
     //V10, 23 and V27 only
     @Then("Si verifica che l'elemento di timeline {string} {string} il timestamp uguale a quello di {string} presente nel webhook con la versione {string}")
     public void compareTimestampWebhook(String timelineElementCategory, String equal, String webhookElementCategory, String version) {
@@ -761,6 +758,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
         if (deliveryDetailCode == null) {
             webhookStepsInterface.verifyAssertionsTimeline(timelineForStream, progressResponseElement);
+            webhookStepsInterface.setProgressResponseElement(progressResponseElement);
         } else {
             try {
                 Assertions.assertNotNull(progressResponseElement);
@@ -773,19 +771,18 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                         .findAny()
                         .isEmpty());
                 log.info("EventProgress: " + progressResponseElement);
+                webhookStepsInterface.setProgressResponseElement(progressResponseElement);
             } catch (AssertionFailedError assertionFailedError) {
                 logError(assertionFailedError, webhookStepsInterface.getSentNotificationIun(), webhookStepsInterface.getStreamId());
             }
         }
     }
 
-    //TODO MATTEO TEST
     @And("vengono letti gli eventi dello stream del {string} fino allo stato {string} con la versione {string}")
     public void readStreamStatusBasic(String pa, String status, String version) {
         readStreamStatus(pa, status, version, 0, false);
     }
 
-    //TODO MATTEO TEST
     @And("vengono letti gli eventi dello stream del {string} fino allo stato {string} con la versione {string} e apiKey aggiornata con position {int}")
     public void readStreamStatusWithPositionAndUpdatedApiKey(String pa, String status, String version, Integer position) {
         readStreamStatus(pa, status, version, position, true);
@@ -821,20 +818,19 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     //TODO, non c'entra nulla con webhook, sarebbe da spostare (magari in shared steps?)
     @Then("verifica presenza SERCQ")
     public void verifySercqPresent() {
-        Assertions.assertTrue(sharedSteps.getProgressResponseElementsV23().stream()
-                .map(ProgressResponseElementV23::getElement)
-                .filter(data -> data.getElementId() != null)
-                .filter(timelineElementV23 -> timelineElementV23.getElementId().contains("SEND_DIGITAL_FEEDBACK"))
-                .map(TimelineElementV23::getDetails)
+        Assertions.assertTrue(sharedSteps.getProgressResponseElementListV23().stream()
+                .filter(data -> data.getElement().getElementId() != null)
+                .filter(timelineElementV23 -> timelineElementV23.getElement().getElementId().contains("SEND_DIGITAL_FEEDBACK"))
                 .filter(Objects::nonNull)
-                .allMatch(elementDetailsV23 -> "OK".equals(elementDetailsV23.getResponseStatus().toString()) && "SERCQ".equals(elementDetailsV23.getDigitalAddress().getType())
+                .allMatch(elementDetailsV23 -> "OK".equals(elementDetailsV23.getElement().getDetails().getResponseStatus().toString())
+                        && "SERCQ".equals(elementDetailsV23.getElement().getDetails().getDigitalAddress().getType())
                 ));
     }
 
     //TODO, non c'entra nulla con webhook, sarebbe da spostare (magari in shared steps?)
     @Then("verifica la non presenza di SERCQ")
     public void verifySercqIsNotPresent() {
-        Assertions.assertTrue(sharedSteps.getProgressResponseElements().stream()
+        Assertions.assertTrue(sharedSteps.getProgressResponseElementList().stream()
                 .filter(data -> data.getTimelineEventCategory() != null)
                 .filter(progressResponseElement -> progressResponseElement.getTimelineEventCategory().getValue().contains("SEND_DIGITAL_FEEDBACK"))
                 .allMatch(progressResponseElement -> "PEC".equals(progressResponseElement.getChannel())));
@@ -876,7 +872,6 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         webhookStepsInterface.consumeEventStream(streamId);
     }
 
-    //TODO MATTEO TEST
     //usato solo da v23 per gli stress test
     @And("vengono letti tutti gli eventi degli stream con versione {string} creati per il test di carico per {int} minuti")
     public void readAllStreamEvents(String version, int minuti) {
@@ -977,43 +972,23 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         webhookStepsInterface.consumeEventStreamAndCheckNumEvents(numEventi);
     }
 
-    //TODO MATTEO usato solo da V23 e V27 (copiato paro paro dal V23)...dovrebbe fallire per V27, rendere generico per tutte le versioni
-    @And("verifica corrispondenza tra i detail del webhook e quelli della timeline")
-    public void verificaCorrispondenzaTraIDetailDelWebhookEQuelliDellaTimeline() throws JsonProcessingException {
-        StreamVersion streamVersion = getStreamVersion("V23");
+    @And("verifica corrispondenza tra i detail del webhook e quelli della timeline con la versione {string}")
+    public void verificaCorrispondenzaTraIDetailDelWebhookEQuelliDellaTimeline(String version) throws JsonProcessingException {
+        StreamVersion streamVersion = getStreamVersion(version);
         WebhookStepsInterface webhookStepsInterface = getWebhookStep(streamVersion);
 
-
-        it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.TimelineElementV23 timelineElementWebHook = sharedSteps.getProgressResponseElementV23().getElement();
-
-        Assertions.assertNotNull(timelineElementWebHook);
-        Assertions.assertNotNull(timelineElementWebHook.getCategory());
-
-        String elementId = timelineElementWebHook.getCategory().toString();
-        TimelineElementV26 timelineElement = sharedSteps.getSentNotification().getTimeline().stream()
-                .filter(data -> data.getCategory() != null)
-                .filter(data -> data.getCategory().getValue().equalsIgnoreCase(elementId))
-                .findFirst()
-                .orElse(null);
-
-        Assertions.assertNotNull(timelineElement);
-
-        TimelineElementDetailsV26 timelineElementDetails = timelineElement.getDetails();
-
-        Assertions.assertNotNull(timelineElementDetails);
-
-        it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.TimelineElementDetailsV23 timelineElementWebhookDetails = timelineElementWebHook.getDetails();
-
-        Assertions.assertNotNull(timelineElementWebhookDetails);
+        List<Object> objectsToCompare = webhookStepsInterface.verificaCorrispondenzaElementiTimelineWebhookAndB2B();
+        Object b2bElement = objectsToCompare.get(0);
+        Object webhookElement = objectsToCompare.get(1);
 
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        String json = ow.writeValueAsString(serializeObject(timelineElementDetails));
-        System.out.println(json);
-        String json1 = ow.writeValueAsString(serializeObject(timelineElementWebhookDetails));
-        System.out.println(json1);
+        String jsonB2B = ow.writeValueAsString(serializeObject(b2bElement));
+        System.out.println(jsonB2B);
+        String jsonWebhook = ow.writeValueAsString(serializeObject(webhookElement));
+        System.out.println(jsonWebhook);
 
         ObjectMapper mapper = new ObjectMapper();
-        Assertions.assertEquals(mapper.readTree(json), mapper.readTree(json1));
+        Assertions.assertEquals(mapper.readTree(jsonB2B), mapper.readTree(jsonWebhook));
     }
 
     private Object serializeObject(Object obj) {
@@ -1038,36 +1013,23 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         return result;
     }
 
-    //TODO MATTEO MANCA LA PARTE PER V27
-    @Then("verifica deanonimizzazione degli eventi di timeline con delega {string} analogico")
-    public void verificaDeanonimizzazioneDegliEventiDiTimelineAnalogico(String delega) {
-        TimelineElementDetailsV23 timelineElementWebhookDetails = sharedSteps.getProgressResponseElementV23().getElement().getDetails();
-        Assertions.assertNotNull(timelineElementWebhookDetails);
-        Assertions.assertNotNull(timelineElementWebhookDetails.getPhysicalAddress().getAddress());
-        Assertions.assertNotNull(timelineElementWebhookDetails.getPhysicalAddress().getMunicipality());
-        Assertions.assertNotNull(timelineElementWebhookDetails.getPhysicalAddress().getProvince());
-        Assertions.assertNotNull(timelineElementWebhookDetails.getPhysicalAddress().getZip());
-
-        verificaDeanonimizzazioneDegliEventiDiTimelinePresenzaDelega(timelineElementWebhookDetails, delega);
+    @Then("verifica deanonimizzazione degli eventi di timeline versione {string} con delega {string} analogico")
+    public void verificaDeanonimizzazioneDegliEventiDiTimelineAnalogico(String version, String delega) {
+        boolean withDelega = delega.trim().equalsIgnoreCase("SI");
+        StreamVersion streamVersion = getStreamVersion(version);
+        WebhookStepsInterface webhookStepsInterface = getWebhookStep(streamVersion);
+        webhookStepsInterface.verificaDeanonimizzazioneEventiTimelineAnalogica(withDelega);
     }
 
-    //TODO MATTEO MANCA LA PARTE PER V27
-    @Then("verifica deanonimizzazione degli eventi di timeline con delega {string} digitale")
-    public void verificaDeanonimizzazioneDegliEventiDiTimelineDigitale(String delega) {
-        TimelineElementDetailsV23 timelineElementWebhookDetails = sharedSteps.getProgressResponseElementV23().getElement().getDetails();
-        Assertions.assertNotNull(timelineElementWebhookDetails.getDigitalAddress());
-        verificaDeanonimizzazioneDegliEventiDiTimelinePresenzaDelega(timelineElementWebhookDetails, delega);
+    @Then("verifica deanonimizzazione degli eventi di timeline versione {string} con delega {string} digitale")
+    public void verificaDeanonimizzazioneDegliEventiDiTimelineDigitale(String version, String delega) {
+        boolean withDelega = delega.trim().equalsIgnoreCase("SI");
+        StreamVersion streamVersion = getStreamVersion(version);
+        WebhookStepsInterface webhookStepsInterface = getWebhookStep(streamVersion);
+        webhookStepsInterface.verificaDeanonimizzazioneEventiTimelineDigitale(withDelega);
     }
 
-    public void verificaDeanonimizzazioneDegliEventiDiTimelinePresenzaDelega(TimelineElementDetailsV23 timelineElementWebhookDetails, String delega) {
-        if ("SI".equalsIgnoreCase(delega)) {
-            Assertions.assertNotNull(timelineElementWebhookDetails.getDelegateInfo());
-            Assertions.assertNotNull(timelineElementWebhookDetails.getDelegateInfo().getTaxId());
-            Assertions.assertNotNull(timelineElementWebhookDetails.getDelegateInfo().getDenomination());
-        }
-    }
-
-    @When("vengono letti gli eventi di timeline dello stream con versione {string} nonostante sia stato creato con la {string} -Cross Versioning")
+    @When("vengono letti gli eventi di timeline dello stream con versione {string} nonostante sia stato creato con la {string} - Cross Versioning")
     public void vengonoLettiGliEventiDiTimelineDelloStreamDel(String versionRead, String versionCreate) {
         updateApiKeyForStream();
         StreamVersion streamVersionCreate = getStreamVersion(versionCreate);
@@ -1222,11 +1184,11 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     @Then("gli elementi di timeline restituiti dal Webhook contengono i campi attesi in accordo alla versione {string}")
     public void checkTimelineElementVersionWebHook(String version) {
         if (version.equalsIgnoreCase("V24")) {
-            Assertions.assertNotNull(webhookStepsV24.getProgressResponseElements());
-            webhookStepsV24.getProgressResponseElements().forEach(pre -> checkTimelineElement(pre.getElement()));
+            Assertions.assertNotNull(webhookStepsV24.getProgressResponseElementList());
+            webhookStepsV24.getProgressResponseElementList().forEach(pre -> checkTimelineElement(pre.getElement()));
         } else if (version.equalsIgnoreCase("V23")) {
-            Assertions.assertNotNull(webhookStepsV23.getProgressResponseElements());
-            webhookStepsV23.getProgressResponseElements().forEach(pre -> checkTimelineElement(pre.getElement()));
+            Assertions.assertNotNull(webhookStepsV23.getProgressResponseElementList());
+            webhookStepsV23.getProgressResponseElementList().forEach(pre -> checkTimelineElement(pre.getElement()));
         }
     }
 

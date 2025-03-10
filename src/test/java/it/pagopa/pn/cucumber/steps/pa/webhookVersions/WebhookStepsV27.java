@@ -8,7 +8,6 @@ import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV27;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingWebhook;
 import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceWebhookV27;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.ProgressResponseElementV26;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v27.*;
 import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps;
 import lombok.Data;
@@ -26,10 +25,12 @@ import java.util.UUID;
 @Data
 @Slf4j
 public class WebhookStepsV27 implements WebhookStepsInterface {
+
+    private ProgressResponseElementV27 progressResponseElement;
+    private List<ProgressResponseElementV27> progressResponseElementList;
     private List<StreamCreationRequestV27> streamCreationRequestList;
     private List<StreamMetadataResponseV27> eventStreamList;
     private StreamRequestV27 streamRequest;
-    private List<ProgressResponseElementV27> progressResponseElements;
     private AvanzamentoNotificheWebhookB2bSteps webhookSteps;
     private final AvanzamentoNotificheWebhookB2bSteps.StreamVersion streamVersion;
     private boolean waitForAccepted;
@@ -37,7 +38,7 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
     public WebhookStepsV27(AvanzamentoNotificheWebhookB2bSteps webhookSteps) {
         this.webhookSteps = webhookSteps;
         this.streamVersion = AvanzamentoNotificheWebhookB2bSteps.StreamVersion.V27;
-        progressResponseElements = new LinkedList<>();
+        progressResponseElementList = new LinkedList<>();
     }
 
     @Override
@@ -161,7 +162,7 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
 
     @Override
     public void verifySpecificEventNotInStream(String elementType) {
-        Assertions.assertFalse(progressResponseElements.stream().map(ProgressResponseElementV27::getElement).anyMatch(x -> x.getElementId().contains(elementType)));
+        Assertions.assertFalse(progressResponseElementList.stream().map(ProgressResponseElementV27::getElement).anyMatch(x -> x.getElementId().contains(elementType)));
     }
 
     @Override
@@ -214,18 +215,18 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
 
     @Override
     public void consumeEventStream(UUID streamId) {
-        progressResponseElements = webhookSteps.getWebhookB2bClient().consumeEventStreamV27(streamId, null);
-        log.info("progressResponseElementsV27 size: " + progressResponseElements.size());
-        log.info("progressResponseElementsV27: " + progressResponseElements);
+        progressResponseElementList = webhookSteps.getWebhookB2bClient().consumeEventStreamV27(streamId, null);
+        log.info("progressResponseElementsV27 size: " + progressResponseElementList.size());
+        log.info("progressResponseElementsV27: " + progressResponseElementList);
     }
 
     @Override
     public void consumeEventStreamAndCheckNumEvents(int numEvents) {
         UUID streamId = eventStreamList.get(0).getStreamId();
-        progressResponseElements = webhookSteps.getWebhookB2bClient().consumeEventStreamV27(streamId, null);
-        log.info("progressResponseElementsV27: " + progressResponseElements);
-        Assertions.assertEquals(progressResponseElements.size(), numEvents);
-        System.out.println("ELEMENTI NEL WEBHOOK: " + progressResponseElements.size());
+        progressResponseElementList = webhookSteps.getWebhookB2bClient().consumeEventStreamV27(streamId, null);
+        log.info("progressResponseElementsV27: " + progressResponseElementList);
+        Assertions.assertEquals(progressResponseElementList.size(), numEvents);
+        System.out.println("ELEMENTI NEL WEBHOOK: " + progressResponseElementList.size());
     }
 
     @Override
@@ -283,7 +284,7 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
         TimelineElementCategoryV26 timeLineOrStatus = ((TimelineElementCategoryV26) timelineForStream.getTimelineElementCategory());
         PnPollingWebhook pnPollingWebhook = getPnPollingWebhook(timeLineOrStatus);
         PnPollingServiceWebhookV27 webhookV27 = (PnPollingServiceWebhookV27) webhookSteps.getSharedSteps().getPollingFactory().getPollingService(PnPollingStrategy.WEBHOOK_V27);
-        PnPollingResponseV27 pnPollingResponseV27 = webhookV27.waitForEvent(webhookSteps.getSharedSteps().getSentNotification().getIun(),
+        PnPollingResponseV27 pnPollingResponse = webhookV27.waitForEvent(webhookSteps.getSharedSteps().getSentNotification().getIun(),
                 PnPollingParameter.builder()
                         .value("WEBHOOK")
                         .pnPollingWebhook(pnPollingWebhook)
@@ -292,15 +293,15 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
                         .streamId(eventStreamList.get(position).getStreamId())
                         .build());
 
-        log.info("WEBHOOK_PROGRESS_RESPONSE_ELEMENT_V26: " + pnPollingResponseV27.getProgressResponseElementV27());
-        if (pnPollingResponseV27.getProgressResponseElementListV27() != null) {
-            webhookSteps.getSharedSteps().setProgressResponseElementsV27(pnPollingResponseV27.getProgressResponseElementListV27());
-            return pnPollingResponseV27.getProgressResponseElementV27();
+        log.info("WEBHOOK_PROGRESS_RESPONSE_ELEMENT_V26: " + pnPollingResponse.getProgressResponseElementV27());
+        if (pnPollingResponse.getProgressResponseElementV27() != null) {
+            this.progressResponseElement = pnPollingResponse.getProgressResponseElementV27();
+            this.progressResponseElementList = pnPollingResponse.getProgressResponseElementListV27();
+            return progressResponseElement;
         }
         return null;
     }
 
-    //TODO MATTEO TEST
     @Override
     public Object searchStatusElementInWebhook(String lastEventId, int deepCount, int position, AvanzamentoNotificheWebhookB2bSteps.StatusElementSearchResult<?> statusForStream) {
         NotificationStatusV26 status = ((NotificationStatusV26) statusForStream.getNotificationStatus());
@@ -317,8 +318,9 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
 
         log.info("WEBHOOK_PROGRESS_RESPONSE_ELEMENT_V27: " + pnPollingResponse.getProgressResponseElementV27());
         if (pnPollingResponse.getProgressResponseElementListV27() != null) {
-            webhookSteps.getSharedSteps().setProgressResponseElementsV27(pnPollingResponse.getProgressResponseElementListV27());
-            return pnPollingResponse.getProgressResponseElementV27();
+            this.progressResponseElement = pnPollingResponse.getProgressResponseElementV27();
+            this.progressResponseElementList = pnPollingResponse.getProgressResponseElementListV27();
+            return progressResponseElement;
         }
         return null;
     }
@@ -373,15 +375,14 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
     public <T> void verifyAssertionsTimeline(AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream, T progressResponseElement) {
         try {
             Assertions.assertNotNull(progressResponseElement);
-            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26 timelineElementInternalCategory =
-                    it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26.valueOf(((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26) timelineForStream.getTimelineElementCategory()).name());
+            TimelineElementCategoryV26 timelineElementInternalCategory = TimelineElementCategoryV26.valueOf(((TimelineElementCategoryV26) timelineForStream.getTimelineElementCategory()).name());
 
             it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 elementToCheck = webhookSteps.getSharedSteps().getSentNotification().getTimeline().stream()
                     .filter(elem -> elem.getCategory() != null)
                     .filter(elem -> elem.getCategory().getValue().equals(timelineElementInternalCategory.getValue()))
                     .findAny()
                     .orElse(null);
-            ProgressResponseElementV26 convertedProgressResponseElement = ((ProgressResponseElementV26) progressResponseElement);
+            ProgressResponseElementV27 convertedProgressResponseElement = ((ProgressResponseElementV27) progressResponseElement);
             Assertions.assertNotNull(elementToCheck);
             Assertions.assertNotNull(elementToCheck.getTimestamp());
             Assertions.assertNotNull(convertedProgressResponseElement.getElement());
@@ -408,10 +409,9 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
 
     @Override
     public void verifyIncrementalEventId() {
-        List<ProgressResponseElementV27> progressResponseElements = webhookSteps.getSharedSteps().getProgressResponseElementsV27();
-        Assertions.assertNotNull(progressResponseElements);
+        Assertions.assertNotNull(progressResponseElementList);
         int lastEventID = 0;
-        for (ProgressResponseElementV27 elem : progressResponseElements) {
+        for (ProgressResponseElementV27 elem : progressResponseElementList) {
             int currentEventId = Integer.parseInt(elem.getEventId());
             if (lastEventID != 0 && currentEventId <= lastEventID) {
                 Assertions.fail(String.format("EventId is not incremental: %d <= %d", currentEventId, lastEventID));
@@ -419,11 +419,6 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
             lastEventID = currentEventId;
         }
     }
-
-//    @Override
-//    public void checkAbsenceOfNewEvents() {
-//        Assertions.assertNull(progressResponseElementResultV27);
-//    }
 
     @Override
     public <T> AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<T> getTimelineEventForStream(String timelineEventCategory, TimingForPolling.TimingResult timingForElement) {
@@ -448,18 +443,13 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
         PnPollingWebhook pnPollingWebhook = new PnPollingWebhook();
         if (timeLineOrStatus instanceof TimelineElementCategoryV26) {
             pnPollingWebhook.setTimelineElementCategoryV27((TimelineElementCategoryV26) timeLineOrStatus);
-            progressResponseElements.clear();
-            pnPollingWebhook.setProgressResponseElementListV27((LinkedList<ProgressResponseElementV27>) progressResponseElements);
+            progressResponseElementList.clear();
+            pnPollingWebhook.setProgressResponseElementListV27((LinkedList<ProgressResponseElementV27>) progressResponseElementList);
         } else if (timeLineOrStatus instanceof NotificationStatusV26) {
             pnPollingWebhook.setNotificationStatusV27((NotificationStatusV26) timeLineOrStatus);
-            progressResponseElements.clear();
-            pnPollingWebhook.setProgressResponseElementListV27((LinkedList<ProgressResponseElementV27>) progressResponseElements);
+            progressResponseElementList.clear();
+            pnPollingWebhook.setProgressResponseElementListV27((LinkedList<ProgressResponseElementV27>) progressResponseElementList);
         }
-//        else if (timeLineOrStatus instanceof NotificationStatus) {
-//            pnPollingWebhook.setNotificationStatus_noVersionV27((NotificationStatus) timeLineOrStatus);
-//            progressResponseElementsV27.clear();
-//            pnPollingWebhook.setProgressResponseElementListV27((LinkedList<ProgressResponseElementV27>) progressResponseElementsV27);
-//        }
         return pnPollingWebhook;
     }
 
@@ -471,8 +461,8 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
 
     @Override
     public void compareTimestampWebhook(String timelineElementCategory, String webhookElementCategory, boolean mustBeEqual) {
-        Assertions.assertNotNull(webhookSteps.getSharedSteps().getProgressResponseElementsV27());
-        OffsetDateTime eventTimestamp = webhookSteps.getSharedSteps().getProgressResponseElementsV27().stream().filter(
+        Assertions.assertNotNull(progressResponseElementList);
+        OffsetDateTime eventTimestamp = progressResponseElementList.stream().filter(
                 elem -> elem.getElement().getCategory().getValue().equals(webhookElementCategory)).findAny().get().getElement().getTimestamp();
         OffsetDateTime notificationTimestamp = webhookSteps.getSharedSteps().getSentNotification().getTimeline().stream().filter(
                 elem -> elem.getCategory().getValue().equals(timelineElementCategory)).findAny().get().getDetails().getSchedulingDate();
@@ -493,5 +483,74 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
             System.out.println("progressResponseElements V27 size: " + progressResponseElements.size());
             webhookSteps.sleepTest(50L);
         }
+    }
+
+    @Override
+    public void verificaDeanonimizzazioneEventiTimelineAnalogica(boolean withDelega) {
+        Assertions.assertNotNull(progressResponseElement);
+        TimelineElementDetailsV26 timelineElementWebhookDetails = progressResponseElement.getElement().getDetails();
+        Assertions.assertNotNull(timelineElementWebhookDetails);
+        Assertions.assertNotNull(timelineElementWebhookDetails.getPhysicalAddress().getAddress());
+        Assertions.assertNotNull(timelineElementWebhookDetails.getPhysicalAddress().getMunicipality());
+        Assertions.assertNotNull(timelineElementWebhookDetails.getPhysicalAddress().getProvince());
+        Assertions.assertNotNull(timelineElementWebhookDetails.getPhysicalAddress().getZip());
+        if (withDelega) {
+            Assertions.assertNotNull(timelineElementWebhookDetails.getDelegateInfo());
+            Assertions.assertNotNull(timelineElementWebhookDetails.getDelegateInfo().getTaxId());
+            Assertions.assertNotNull(timelineElementWebhookDetails.getDelegateInfo().getDenomination());
+        }
+    }
+
+    @Override
+    public void verificaDeanonimizzazioneEventiTimelineDigitale(boolean withDelega) {
+        Assertions.assertNotNull(progressResponseElement);
+        TimelineElementDetailsV26 timelineElementWebhookDetails = progressResponseElement.getElement().getDetails();
+        Assertions.assertNotNull(timelineElementWebhookDetails.getDigitalAddress());
+        if (withDelega) {
+            Assertions.assertNotNull(timelineElementWebhookDetails.getDelegateInfo());
+            Assertions.assertNotNull(timelineElementWebhookDetails.getDelegateInfo().getTaxId());
+            Assertions.assertNotNull(timelineElementWebhookDetails.getDelegateInfo().getDenomination());
+        }
+    }
+
+    @Override
+    public void setProgressResponseElement(Object progressResponseElement) {
+        this.progressResponseElement = (ProgressResponseElementV27) progressResponseElement;
+    }
+
+    @Override
+    public List<Object> verificaCorrispondenzaElementiTimelineWebhookAndB2B() {
+        List<Object> resultList = new LinkedList<>();
+
+        TimelineElementV26 timelineElementWebHook = progressResponseElement.getElement();
+        Assertions.assertNotNull(timelineElementWebHook);
+        Assertions.assertNotNull(timelineElementWebHook.getCategory());
+
+        String elementId = timelineElementWebHook.getCategory().toString();
+
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 timelineElement = webhookSteps.getSharedSteps().getSentNotification().getTimeline().
+                stream()
+                .filter(data -> data.getCategory() != null)
+                .filter(data -> data.getCategory().getValue().equalsIgnoreCase(elementId))
+                .findFirst()
+                .orElse(null);
+        Assertions.assertNotNull(timelineElement);
+
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementDetailsV26 timelineElementDetails = timelineElement.getDetails();
+        Assertions.assertNotNull(timelineElementDetails);
+        resultList.add(timelineElementDetails);
+
+        TimelineElementDetailsV26 timelineElementWebhookDetails = timelineElementWebHook.getDetails();
+        Assertions.assertNotNull(timelineElementWebhookDetails);
+        resultList.add(timelineElementDetails);
+
+        return resultList;
+    }
+
+    @Override
+    public void checkLegalFactId() {
+        Assertions.assertNotNull(progressResponseElement);
+        Assertions.assertNotNull(progressResponseElement.getElement().getLegalFactsIds());
+        Assertions.assertFalse(progressResponseElement.getElement().getLegalFactsIds().isEmpty());
     }
 }

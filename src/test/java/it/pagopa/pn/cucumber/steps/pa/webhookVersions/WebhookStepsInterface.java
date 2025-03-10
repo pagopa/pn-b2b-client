@@ -82,4 +82,14 @@ public interface WebhookStepsInterface {
     void compareTimestampWebhook(String timelineElementCategory, String webhookElementCategory, boolean mustBeEqual);
 
     void getStreamEventListForStressTest();
+
+    void verificaDeanonimizzazioneEventiTimelineAnalogica(boolean delega);
+
+    void verificaDeanonimizzazioneEventiTimelineDigitale(boolean delega);
+
+    void setProgressResponseElement(Object progressResponseElement);
+
+    List<Object> verificaCorrispondenzaElementiTimelineWebhookAndB2B();
+
+    void checkLegalFactId();
 }

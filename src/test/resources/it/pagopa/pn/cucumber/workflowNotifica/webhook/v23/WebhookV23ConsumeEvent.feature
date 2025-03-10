@@ -1,38 +1,38 @@
 Feature: avanzamento notifiche webhook b2b V23
 
   ##ONLY FOR DUBUG AND STRESS TEST
-  Scenario: [ONLY_FOR_STRESS] Cancellazione stream notifica
-    Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V23"
-    Given vengono cancellati tutti gli stream presenti del "Comune_1" con versione "V23"
-    Given vengono cancellati tutti gli stream presenti del "Comune_2" con versione "V23"
-
-  Scenario: [1] test lettura
-    And vengono letti gli eventi dello stream con id "6c71596e-666d-4e63-9a20-777b0b95ad34" e versione "V23"
-
-
-  Scenario: [2] creazione stream
-    And si predispongono 700 nuovi stream denominati "stream-test" con eventType "TIMELINE" con versione "V23"
-    And si creano i nuovi stream con versione "V23" per il "Comune_Multi" con un gruppo disponibile "NO_GROUPS"
-    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
-
-
-  Scenario: [3] creazione stream e consumo stream
-    And si predispongono 1400 nuovi stream denominati "stream-test" con eventType "TIMELINE" con versione "V23"
-    And si creano i nuovi stream con versione "V23" per il "Comune_Multi" con un gruppo disponibile "NO_GROUPS"
-    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
-    And vengono letti tutti gli eventi degli stream con versione "V23" creati per il test di carico per 800 minuti
-
-  Scenario: [4] test lettura multi stream
-    And vengono letti tutti gli eventi degli stream con versione "V23" hardcodati per il test di carico per 800 minuti
-
-  Scenario: [B2B-STREAM_ES123123124] test lettura
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di milano            |
-    And destinatario
-      | denomination | Galileo galileo  |
-      | taxId        | GLLGLL64B15G702I |
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+#  Scenario: [ONLY_FOR_STRESS] Cancellazione stream notifica
+#    Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V23"
+#    Given vengono cancellati tutti gli stream presenti del "Comune_1" con versione "V23"
+#    Given vengono cancellati tutti gli stream presenti del "Comune_2" con versione "V23"
+#
+#  Scenario: [1] test lettura
+#    And vengono letti gli eventi dello stream con id "6c71596e-666d-4e63-9a20-777b0b95ad34" e versione "V23"
+#
+#
+#  Scenario: [2] creazione stream
+#    And si predispongono 700 nuovi stream denominati "stream-test" con eventType "TIMELINE" con versione "V23"
+#    And si creano i nuovi stream con versione "V23" per il "Comune_Multi" con un gruppo disponibile "NO_GROUPS"
+#    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
+#
+#
+#  Scenario: [3] creazione stream e consumo stream
+#    And si predispongono 1400 nuovi stream denominati "stream-test" con eventType "TIMELINE" con versione "V23"
+#    And si creano i nuovi stream con versione "V23" per il "Comune_Multi" con un gruppo disponibile "NO_GROUPS"
+#    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
+#    And vengono letti tutti gli eventi degli stream con versione "V23" creati per il test di carico per 800 minuti
+#
+#  Scenario: [4] test lettura multi stream
+#    And vengono letti tutti gli eventi degli stream con versione "V23" hardcodati per il test di carico per 800 minuti
+#
+#  Scenario: [B2B-STREAM_ES123123124] test lettura
+#    Given viene generata una nuova notifica
+#      | subject            | invio notifica con cucumber |
+#      | senderDenomination | Comune di milano            |
+#    And destinatario
+#      | denomination | Galileo galileo  |
+#      | taxId        | GLLGLL64B15G702I |
+#    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
 
 
 #COMUNE 1
@@ -63,13 +63,13 @@ Feature: avanzamento notifiche webhook b2b V23
     #TEST VERIFICA CORRISPONDENZA ELEMENTO DI TIMELINE STREAM
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "SEND_COURTESY_MESSAGE" con la versione "V23" e apiKey aggiornata con position 0
-    And verifica corrispondenza tra i detail del webhook e quelli della timeline
+    And verifica corrispondenza tra i detail del webhook e quelli della timeline con la versione "V23"
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "SEND_DIGITAL_DOMICILE" con la versione "V23" e apiKey aggiornata con position 0
-    And verifica corrispondenza tra i detail del webhook e quelli della timeline
+    And verifica corrispondenza tra i detail del webhook e quelli della timeline con la versione "V23"
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "SEND_DIGITAL_FEEDBACK" con la versione "V23" e apiKey aggiornata con position 0
-    And verifica corrispondenza tra i detail del webhook e quelli della timeline
+    And verifica corrispondenza tra i detail del webhook e quelli della timeline con la versione "V23"
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" con la versione "V23" e apiKey aggiornata con position 0
-    And verifica corrispondenza tra i detail del webhook e quelli della timeline
+    And verifica corrispondenza tra i detail del webhook e quelli della timeline con la versione "V23"
     #TEST VERIFICA REFINEMENT
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "REFINEMENT" con la versione "V23" e apiKey aggiornata con position 0
@@ -106,13 +106,13 @@ Feature: avanzamento notifiche webhook b2b V23
     #TEST VERIFICA CORRISPONDENZA ELEMENTO DI TIMELINE STREAM
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "SEND_COURTESY_MESSAGE" con la versione "V23" e apiKey aggiornata con position 0
-    And verifica corrispondenza tra i detail del webhook e quelli della timeline
+    And verifica corrispondenza tra i detail del webhook e quelli della timeline con la versione "V23"
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "SEND_DIGITAL_DOMICILE" con la versione "V23" e apiKey aggiornata con position 0
-    And verifica corrispondenza tra i detail del webhook e quelli della timeline
+    And verifica corrispondenza tra i detail del webhook e quelli della timeline con la versione "V23"
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "SEND_DIGITAL_FEEDBACK" con la versione "V23" e apiKey aggiornata con position 0
-    And verifica corrispondenza tra i detail del webhook e quelli della timeline
+    And verifica corrispondenza tra i detail del webhook e quelli della timeline con la versione "V23"
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" con la versione "V23" e apiKey aggiornata con position 0
-    And verifica corrispondenza tra i detail del webhook e quelli della timeline
+    And verifica corrispondenza tra i detail del webhook e quelli della timeline con la versione "V23"
     #TEST VERIFICA REFINEMENT
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "REFINEMENT" con la versione "V23" e apiKey aggiornata con position 0
@@ -183,13 +183,13 @@ Feature: avanzamento notifiche webhook b2b V23
     #TEST DEANONIMIZZAZIONE
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     And vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "SEND_COURTESY_MESSAGE" con la versione "V23" e apiKey aggiornata con position 0
-    And verifica deanonimizzazione degli eventi di timeline con delega "NO" digitale
+    And verifica deanonimizzazione degli eventi di timeline versione "V23" con delega "NO" digitale
     And vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "SEND_DIGITAL_DOMICILE" con la versione "V23" e apiKey aggiornata con position 0
-    And verifica deanonimizzazione degli eventi di timeline con delega "NO" digitale
+    And verifica deanonimizzazione degli eventi di timeline versione "V23" con delega "NO" digitale
     And vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "SEND_DIGITAL_FEEDBACK" con la versione "V23" e apiKey aggiornata con position 0
-    And verifica deanonimizzazione degli eventi di timeline con delega "NO" digitale
+    And verifica deanonimizzazione degli eventi di timeline versione "V23" con delega "NO" digitale
     And vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" con la versione "V23" e apiKey aggiornata con position 0
-    And verifica deanonimizzazione degli eventi di timeline con delega "NO" digitale
+    And verifica deanonimizzazione degli eventi di timeline versione "V23" con delega "NO" digitale
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
@@ -251,7 +251,7 @@ Feature: avanzamento notifiche webhook b2b V23
     And si crea il nuovo stream per il "Comune_2" con versione "V10"
     When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "REQUEST_ACCEPTED" con la versione "V10"
-    And viene verificato che il campo legalFactIds sia valorizzato nel EventStream
+    And viene verificato che il campo legalFactIds sia valorizzato nel EventStream con la versione "V10"
 
 
   #COMUNE MULTI
@@ -275,11 +275,11 @@ Feature: avanzamento notifiche webhook b2b V23
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     When vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "PREPARE_ANALOG_DOMICILE" con la versione "V23" e apiKey aggiornata con position 0
-    And verifica corrispondenza tra i detail del webhook e quelli della timeline
+    And verifica corrispondenza tra i detail del webhook e quelli della timeline con la versione "V23"
     And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SEND_ANALOG_DOMICILE" con la versione "V23" e apiKey aggiornata con position 0
-    And verifica corrispondenza tra i detail del webhook e quelli della timeline
+    And verifica corrispondenza tra i detail del webhook e quelli della timeline con la versione "V23"
     And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" con la versione "V23" e apiKey aggiornata con position 0
-    And verifica corrispondenza tra i detail del webhook e quelli della timeline
+    And verifica corrispondenza tra i detail del webhook e quelli della timeline con la versione "V23"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
@@ -303,11 +303,11 @@ Feature: avanzamento notifiche webhook b2b V23
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "PREPARE_ANALOG_DOMICILE" con la versione "V23" e apiKey aggiornata con position 0
-    And verifica deanonimizzazione degli eventi di timeline con delega "NO" analogico
+    And verifica deanonimizzazione degli eventi di timeline versione "V23" con delega "NO" analogico
     And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SEND_ANALOG_DOMICILE" con la versione "V23" e apiKey aggiornata con position 0
-    And verifica deanonimizzazione degli eventi di timeline con delega "NO" analogico
+    And verifica deanonimizzazione degli eventi di timeline versione "V23" con delega "NO" analogico
     And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" con la versione "V23" e apiKey aggiornata con position 0
-    And verifica deanonimizzazione degli eventi di timeline con delega "NO" analogico
+    And verifica deanonimizzazione degli eventi di timeline versione "V23" con delega "NO" analogico
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 

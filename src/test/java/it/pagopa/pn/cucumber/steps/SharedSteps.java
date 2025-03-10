@@ -24,12 +24,10 @@ import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.ProgressResponseElement;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.ProgressResponseElementV26;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.StreamMetadataResponseV26;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v27.ProgressResponseElementV27;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v27.StreamMetadataResponseV27;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.ProgressResponseElementV23;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamMetadataResponseV23;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model.RequestNewApiKey;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model.ResponseNewApiKey;
@@ -128,10 +126,6 @@ public class SharedSteps {
 
     @Getter
     @Setter
-    private ProgressResponseElement progressResponseElement;
-
-    @Getter
-    @Setter
     private RequestNewApiKey requestNewApiKey;
 
     @Getter
@@ -141,18 +135,6 @@ public class SharedSteps {
     @Getter
     @Setter
     private TimelineElementV26 timelineElement;
-
-    @Getter
-    @Setter
-    private ProgressResponseElementV23 progressResponseElementV23;
-
-    @Getter
-    @Setter
-    private ProgressResponseElementV26 progressResponseElementV26;
-
-    @Getter
-    @Setter
-    private ProgressResponseElementV27 progressResponseElementV27;
 
     @Getter
     @Setter
@@ -180,10 +162,6 @@ public class SharedSteps {
 
     @Getter
     @Setter
-    private List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.ProgressResponseElement> progressResponseElements = null;
-
-    @Getter
-    @Setter
     @Value("${pn.external.bearer-token-pg1.id}")
     private String idOrganizationGherkinSrl;
 
@@ -194,23 +172,27 @@ public class SharedSteps {
 
     @Getter
     @Setter
-    private List<ProgressResponseElementV23> progressResponseElementsV23 = null;
+    private List<ProgressResponseElement> progressResponseElementList = null;
 
     @Getter
     @Setter
-    private List<ProgressResponseElementV24> progressResponseElementsV24 = null;
+    private List<ProgressResponseElementV23> progressResponseElementListV23 = null;
 
     @Getter
     @Setter
-    private List<ProgressResponseElementV25> progressResponseElementsV25 = null;
+    private List<ProgressResponseElementV24> progressResponseElementListV24 = null;
 
     @Getter
     @Setter
-    private List<ProgressResponseElementV26> progressResponseElementsV26 = null;
+    private List<ProgressResponseElementV25> progressResponseElementListV25 = null;
 
     @Getter
     @Setter
-    private List<ProgressResponseElementV27> progressResponseElementsV27 = null;
+    private List<ProgressResponseElementV26> progressResponseElementListV26 = null;
+
+    @Getter
+    @Setter
+    private List<ProgressResponseElementV27> progressResponseElementListV27 = null;
 
     @Value("${pn.interop.base-url}")
     private String interopBaseUrl;

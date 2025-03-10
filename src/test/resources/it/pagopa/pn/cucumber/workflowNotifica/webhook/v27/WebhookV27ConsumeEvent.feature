@@ -29,13 +29,13 @@ Feature: avanzamento notifiche webhook b2b V27
     #TEST VERIFICA CORRISPONDENZA ELEMENTO DI TIMELINE STREAM
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "SEND_COURTESY_MESSAGE" con la versione "V27" e apiKey aggiornata con position 0
-    And verifica corrispondenza tra i detail del webhook e quelli della timeline
+    And verifica corrispondenza tra i detail del webhook e quelli della timeline con la versione "V27"
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "SEND_DIGITAL_DOMICILE" con la versione "V27" e apiKey aggiornata con position 0
-    And verifica corrispondenza tra i detail del webhook e quelli della timeline
+    And verifica corrispondenza tra i detail del webhook e quelli della timeline con la versione "V27"
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "SEND_DIGITAL_FEEDBACK" con la versione "V27" e apiKey aggiornata con position 0
-    And verifica corrispondenza tra i detail del webhook e quelli della timeline
+    And verifica corrispondenza tra i detail del webhook e quelli della timeline con la versione "V27"
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" con la versione "V27" e apiKey aggiornata con position 0
-    And verifica corrispondenza tra i detail del webhook e quelli della timeline
+    And verifica corrispondenza tra i detail del webhook e quelli della timeline con la versione "V27"
     #TEST VERIFICA REFINEMENT
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "REFINEMENT" con la versione "V27" e apiKey aggiornata con position 0
@@ -72,13 +72,13 @@ Feature: avanzamento notifiche webhook b2b V27
     #TEST VERIFICA CORRISPONDENZA ELEMENTO DI TIMELINE STREAM
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "SEND_COURTESY_MESSAGE" con la versione "V27" e apiKey aggiornata con position 0
-    And verifica corrispondenza tra i detail del webhook e quelli della timeline
+    And verifica corrispondenza tra i detail del webhook e quelli della timeline con la versione "V27"
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "SEND_DIGITAL_DOMICILE" con la versione "V27" e apiKey aggiornata con position 0
-    And verifica corrispondenza tra i detail del webhook e quelli della timeline
+    And verifica corrispondenza tra i detail del webhook e quelli della timeline con la versione "V27"
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "SEND_DIGITAL_FEEDBACK" con la versione "V27" e apiKey aggiornata con position 0
-    And verifica corrispondenza tra i detail del webhook e quelli della timeline
+    And verifica corrispondenza tra i detail del webhook e quelli della timeline con la versione "V27"
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" con la versione "V27" e apiKey aggiornata con position 0
-    And verifica corrispondenza tra i detail del webhook e quelli della timeline
+    And verifica corrispondenza tra i detail del webhook e quelli della timeline con la versione "V27"
     #TEST VERIFICA REFINEMENT
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "REFINEMENT" con la versione "V27" e apiKey aggiornata con position 0
@@ -149,13 +149,13 @@ Feature: avanzamento notifiche webhook b2b V27
     #TEST DEANONIMIZZAZIONE
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     And vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "SEND_COURTESY_MESSAGE" con la versione "V27" e apiKey aggiornata con position 0
-    And verifica deanonimizzazione degli eventi di timeline con delega "NO" digitale
+    And verifica deanonimizzazione degli eventi di timeline versione "V27" con delega "NO" digitale
     And vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "SEND_DIGITAL_DOMICILE" con la versione "V27" e apiKey aggiornata con position 0
-    And verifica deanonimizzazione degli eventi di timeline con delega "NO" digitale
+    And verifica deanonimizzazione degli eventi di timeline versione "V27" con delega "NO" digitale
     And vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "SEND_DIGITAL_FEEDBACK" con la versione "V27" e apiKey aggiornata con position 0
-    And verifica deanonimizzazione degli eventi di timeline con delega "NO" digitale
+    And verifica deanonimizzazione degli eventi di timeline versione "V27" con delega "NO" digitale
     And vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" con la versione "V27" e apiKey aggiornata con position 0
-    And verifica deanonimizzazione degli eventi di timeline con delega "NO" digitale
+    And verifica deanonimizzazione degli eventi di timeline versione "V27" con delega "NO" digitale
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
@@ -217,7 +217,7 @@ Feature: avanzamento notifiche webhook b2b V27
     And si crea il nuovo stream per il "Comune_2" con versione "V10"
     When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "REQUEST_ACCEPTED" con la versione "V10"
-    And viene verificato che il campo legalFactIds sia valorizzato nel EventStream
+    And viene verificato che il campo legalFactIds sia valorizzato nel EventStream con la versione "V10"
 
 
   #COMUNE MULTI
@@ -241,11 +241,11 @@ Feature: avanzamento notifiche webhook b2b V27
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     When vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "PREPARE_ANALOG_DOMICILE" con la versione "V27" e apiKey aggiornata con position 0
-    And verifica corrispondenza tra i detail del webhook e quelli della timeline
+    And verifica corrispondenza tra i detail del webhook e quelli della timeline con la versione "V27"
     And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SEND_ANALOG_DOMICILE" con la versione "V27" e apiKey aggiornata con position 0
-    And verifica corrispondenza tra i detail del webhook e quelli della timeline
+    And verifica corrispondenza tra i detail del webhook e quelli della timeline con la versione "V27"
     And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" con la versione "V27" e apiKey aggiornata con position 0
-    And verifica corrispondenza tra i detail del webhook e quelli della timeline
+    And verifica corrispondenza tra i detail del webhook e quelli della timeline con la versione "V27"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
@@ -269,11 +269,11 @@ Feature: avanzamento notifiche webhook b2b V27
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "PREPARE_ANALOG_DOMICILE" con la versione "V27" e apiKey aggiornata con position 0
-    And verifica deanonimizzazione degli eventi di timeline con delega "NO" analogico
+    And verifica deanonimizzazione degli eventi di timeline versione "V27" con delega "NO" analogico
     And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SEND_ANALOG_DOMICILE" con la versione "V27" e apiKey aggiornata con position 0
-    And verifica deanonimizzazione degli eventi di timeline con delega "NO" analogico
+    And verifica deanonimizzazione degli eventi di timeline versione "V27" con delega "NO" analogico
     And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" con la versione "V27" e apiKey aggiornata con position 0
-    And verifica deanonimizzazione degli eventi di timeline con delega "NO" analogico
+    And verifica deanonimizzazione degli eventi di timeline versione "V27" con delega "NO" analogico
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
