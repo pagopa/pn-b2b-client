@@ -821,7 +821,6 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         Assertions.assertTrue(sharedSteps.getProgressResponseElementListV23().stream()
                 .filter(data -> data.getElement().getElementId() != null)
                 .filter(timelineElementV23 -> timelineElementV23.getElement().getElementId().contains("SEND_DIGITAL_FEEDBACK"))
-                .filter(Objects::nonNull)
                 .allMatch(elementDetailsV23 -> "OK".equals(elementDetailsV23.getElement().getDetails().getResponseStatus().toString())
                         && "SERCQ".equals(elementDetailsV23.getElement().getDetails().getDigitalAddress().getType())
                 ));
@@ -1256,14 +1255,14 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     @Then("tra gli elementi di timeline versione {string} di categoria {string} nessuno contiene un legalFact con categoria {string}")
     public void checkTimelineElementVersionLegalFacts(String version, String timelineCategory, String legalFactCategory) {
         if (version.equalsIgnoreCase("V26") || version.equalsIgnoreCase("V27")) {
-            Assertions.assertNotNull(sharedSteps.getNotificationResponseComplete());
-            TimelineElementV26 timelineElementWithTargetCategory = sharedSteps.getNotificationResponseComplete().getTimeline().stream().filter(
+            Assertions.assertNotNull(sharedSteps.getNotificationResponseCompleteV26());
+            TimelineElementV26 timelineElementWithTargetCategory = sharedSteps.getNotificationResponseCompleteV26().getTimeline().stream().filter(
                     x -> x.getCategory().getValue().equals(timelineCategory)).findFirst().orElse(null);
             Assertions.assertNotNull(timelineElementWithTargetCategory);
             timelineElementWithTargetCategory.getLegalFactsIds().forEach(
                     x -> Assertions.assertNotEquals(x.getCategory(), legalFactCategory));
         } else if (version.equalsIgnoreCase("V25")) {
-            Assertions.assertNotNull(sharedSteps.getNotificationResponseComplete());
+            Assertions.assertNotNull(sharedSteps.getNotificationResponseCompleteV26());
             TimelineElementV25 timelineElementWithTargetCategory = sharedSteps.getNotificationResponseCompleteV25().getTimeline().stream().filter(
                     x -> x.getCategory().getValue().equals(timelineCategory)).findFirst().orElse(null);
             Assertions.assertNotNull(timelineElementWithTargetCategory);

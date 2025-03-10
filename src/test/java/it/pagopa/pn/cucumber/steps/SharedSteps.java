@@ -116,7 +116,7 @@ public class SharedSteps {
     private final String gherkinSrltaxId = "12666810299";
 
     @Getter
-    private final String cucumberSpataxId = "20517490320"; //
+    private final String cucumberSpataxId = "20517490320";
 
     @Getter
     private SettableApiKey.ApiKeyType apiKeyTypeSetted = SettableApiKey.ApiKeyType.MVP_1;
@@ -280,10 +280,6 @@ public class SharedSteps {
     @Setter
     private FullSentNotificationV26 notificationResponseCompleteV26;
 
-    @Getter
-    @Setter
-    private FullSentNotificationV26 notificationResponseComplete;
-
     private String settedPa = "Comune_1";
     private boolean groupToSet = true;
     private String errorCode = null;
@@ -435,7 +431,7 @@ public class SharedSteps {
     TODO: migliorare e rendere di utilità generale
      */
     @Given("vengono inviate {int} notifiche per l'utente Signor casuale con il {string} e si aspetta fino allo stato COMPLETELY_UNREACHABLE")
-    public void vengonoInviateNotifichePerLUtenteSignorCasualeConIlESiAspettaFinoAlloStatoCOMPLETELY_UNREACHABLE(int numberOfNotification, String pa) {
+    public void sendNotificationForUserSignorCasualeAndWaitUntilCompletelyUnreacheable(int numberOfNotification, String pa) {
         List<NewNotificationRequestV24> notificationRequests = new LinkedList<>();
         String generatedFiscalCode = generateCF(System.currentTimeMillis());
         for (int i = 0; i < numberOfNotification; i++) {
@@ -480,7 +476,9 @@ public class SharedSteps {
                     threadWait(getWorkFlowWait());
                     fullSentNotificationV26 = b2bClient.getSentNotification(fullSentNotificationV26.getIun());
                     log.info("NOTIFICATION_TIMELINE: " + fullSentNotificationV26.getTimeline());
-                    timelineElement = fullSentNotificationV26.getTimeline().stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(TimelineElementCategoryV23.COMPLETELY_UNREACHABLE)).findAny().orElse(null);
+                    timelineElement = fullSentNotificationV26.getTimeline().stream().filter(
+                            elem -> Objects.requireNonNull(elem.getCategory().getValue())
+                                    .equals(TimelineElementCategoryV23.COMPLETELY_UNREACHABLE.getValue())).findAny().orElse(null);
                     if (timelineElement != null) {
                         break;
                     }
@@ -518,8 +516,8 @@ public class SharedSteps {
         }
         log.debug("End IUN list");
         //la prima notifica viene inserita
-        this.notificationResponseComplete = sentNotifications.poll();
-        log.debug("notificationResponseComplete: {}", this.notificationResponseComplete);
+        this.notificationResponseCompleteV26 = sentNotifications.poll();
+        log.debug("notificationResponseComplete: {}", this.notificationResponseCompleteV26);
     }
 
     @And("destinatario Mario Cucumber")
@@ -1231,12 +1229,12 @@ public class SharedSteps {
 
                 threadWait(wait);
 
-                notificationResponseComplete = b2bUtils.waitForRequestAcceptation(newNotificationResponse);
+                notificationResponseCompleteV26 = b2bUtils.waitForRequestAcceptation(newNotificationResponse);
             });
 
             threadWait(wait);
 
-            Assertions.assertNotNull(notificationResponseComplete);
+            Assertions.assertNotNull(notificationResponseCompleteV26);
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
                     "{RequestID: " + (newNotificationResponse == null ? "NULL" : newNotificationResponse.getNotificationRequestId()) + " }";
@@ -1251,12 +1249,12 @@ public class SharedSteps {
 
                 threadWait(wait);
 
-                notificationResponseComplete = b2bUtils.waitForRequestNoAcceptation(newNotificationResponse);
+                notificationResponseCompleteV26 = b2bUtils.waitForRequestNoAcceptation(newNotificationResponse);
             });
 
             threadWait(wait);
 
-            Assertions.assertNull(notificationResponseComplete);
+            Assertions.assertNull(notificationResponseCompleteV26);
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
                     "{RequestID: " + (newNotificationResponse == null ? "NULL" : newNotificationResponse.getNotificationRequestId()) + " }";
@@ -1272,13 +1270,13 @@ public class SharedSteps {
 
                 threadWait(wait);
 
-                notificationResponseComplete = b2bUtils.waitForRequestAcceptationShort(newNotificationResponse);
+                notificationResponseCompleteV26 = b2bUtils.waitForRequestAcceptationShort(newNotificationResponse);
             });
 
 
             threadWait(wait);
 
-            Assertions.assertNotNull(notificationResponseComplete);
+            Assertions.assertNotNull(notificationResponseCompleteV26);
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
                     "{RequestID: " + (newNotificationResponse == null ? "NULL" : newNotificationResponse.getNotificationRequestId()) + " }";
@@ -1300,7 +1298,7 @@ public class SharedSteps {
                     throw new RuntimeException(e);
                 }
 
-                notificationResponseComplete = b2bUtils.waitForRequestAcceptationExtraRapid(newNotificationResponse);
+                notificationResponseCompleteV26 = b2bUtils.waitForRequestAcceptationExtraRapid(newNotificationResponse);
             });
 
             try {
@@ -1309,7 +1307,7 @@ public class SharedSteps {
                 log.error("Thread.sleep error retry");
                 throw new RuntimeException(e);
             }
-            Assertions.assertNotNull(notificationResponseComplete);
+            Assertions.assertNotNull(notificationResponseCompleteV26);
 
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
@@ -1444,12 +1442,10 @@ public class SharedSteps {
     }
 
     private void sendNotificationAndCancel() {
-
         sendNotificationExtraRapid(500);
-
         Assertions.assertDoesNotThrow(() -> {
             RequestStatus resp = Assertions.assertDoesNotThrow(() ->
-                    b2bClient.notificationCancellation(notificationResponseComplete.getIun()));
+                    b2bClient.notificationCancellation(notificationResponseCompleteV26.getIun()));
             Assertions.assertNotNull(resp);
             Assertions.assertNotNull(resp.getDetails());
             Assertions.assertFalse(resp.getDetails().isEmpty());
@@ -1740,10 +1736,6 @@ public class SharedSteps {
             case "v21" -> this.notificationRequestV21.setSenderTaxId(getSenderTaxIdFromProperties(settedPa));
             case "v23" -> this.notificationRequest.setSenderTaxId(getSenderTaxIdFromProperties(settedPa));
             case "v24" -> this.notificationRequestV24.setSenderTaxId(getSenderTaxIdFromProperties(settedPa));
-//            case "v25" -> this.notificationRequestV25.setSenderTaxId(getSenderTaxIdFromProperties(settedPa));
-//            case "v26" -> this.notificationRequestV26.setSenderTaxId(getSenderTaxIdFromProperties(settedPa));
-//            case "v27" -> this.notificationRequestV27.setSenderTaxId(getSenderTaxIdFromProperties(settedPa));
-
         }
     }
 
@@ -1804,7 +1796,7 @@ public class SharedSteps {
     }
 
     public FullSentNotificationV26 getSentNotification() {
-        return notificationResponseComplete;
+        return notificationResponseCompleteV26;
     }
 
     public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification getSentNotificationV1() {
@@ -1832,7 +1824,7 @@ public class SharedSteps {
     }
 
     public void setSentNotification(FullSentNotificationV26 notificationResponseComplete) {
-        this.notificationResponseComplete = notificationResponseComplete;
+        this.notificationResponseCompleteV26 = notificationResponseComplete;
     }
 
     public void setSentNotificationV1(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification notificationResponseCompleteV1) {
@@ -1944,55 +1936,6 @@ public class SharedSteps {
         }
     }
 
-    public PnPollingFactory getPollingFactory() {
-        return pollingFactory;
-    }
-
-    public IPnTosPrivacyClientImpl getIPnTosPrivacyClientImpl() {
-        return iPnTosPrivacyClientImpl;
-    }
-
-
-    public IPnWebPaClient getWebPaClient() {
-        return webPaClient;
-    }
-
-    public PnGPDClientImpl getPnGPDClientImpl() {
-        return pnGPDClientImpl;
-    }
-
-    public PnPaymentInfoClientImpl getPnPaymentInfoClientImpl() {
-        return pnPaymentInfoClientImpl;
-    }
-
-    public PnPaB2bUtils getB2bUtils() {
-        return b2bUtils;
-    }
-
-    public IPnWebRecipientClient getWebRecipientClient() {
-        return webRecipientClient;
-    }
-
-    public PnServiceDeskClientImpl getServiceDeskClient() {
-        return serviceDeskClient;
-    }
-
-    public String getMarioCucumberTaxID() {
-        return marioCucumberTaxID;
-    }
-
-    public String getMarioGherkinTaxID() {
-        return marioGherkinTaxID;
-    }
-
-    public String getGherkinSrltaxId() {
-        return gherkinSrltaxId;
-    }
-
-    public String getCucumberSpataxId() {
-        return cucumberSpataxId;
-    }
-
     public String getGherkinIrreperibileTaxId() {
         return gherkinIrreperibileTaxID;
     }
@@ -2015,7 +1958,7 @@ public class SharedSteps {
 
     public void throwAssertFailerWithAmountGDPAndIUN(AssertionFailedError assertionFailedError, Integer amountGDP) {
         String message = assertionFailedError.getMessage() +
-                "{IUN: " + notificationResponseComplete.getIun() + ", amountGDP " + (amountGDP == null ? "NULL" : amountGDP.toString()) + "}";
+                "{IUN: " + notificationResponseCompleteV26.getIun() + ", amountGDP " + (amountGDP == null ? "NULL" : amountGDP.toString()) + "}";
         throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
     }
 
@@ -2197,7 +2140,7 @@ public class SharedSteps {
      * @return a list of timeline elements that match the given event category and data from test
      */
     public List<TimelineElementV26> getTimelineElementsByEventId(String timelineEventCategory, DataTest dataFromTest) {
-        List<TimelineElementV26> timelineElementList = notificationResponseComplete.getTimeline();
+        List<TimelineElementV26> timelineElementList = notificationResponseCompleteV26.getTimeline();
         String iun = getIun(timelineEventCategory);
         if (dataFromTest != null && dataFromTest.getTimelineElement() != null) {
             // get timeline event id
@@ -2223,7 +2166,7 @@ public class SharedSteps {
      * @return a list of timeline elements that match the given event category and data from test
      */
     public List<TimelineElementV26> getTimelineElementsToAttempt(int attemptIndex) {
-        List<TimelineElementV26> timelineElementList = notificationResponseComplete.getTimeline();
+        List<TimelineElementV26> timelineElementList = notificationResponseCompleteV26.getTimeline();
         return timelineElementList.stream()
                 .filter(elem -> nonNull(elem.getDetails()))
                 .filter(elem -> nonNull(elem.getDetails().getSentAttemptMade()))
@@ -2245,7 +2188,7 @@ public class SharedSteps {
             iun = new String(decodedBytes);
         } else {
             // proceed with default flux
-            iun = notificationResponseComplete.getIun();
+            iun = notificationResponseCompleteV26.getIun();
         }
         return iun;
     }

@@ -283,8 +283,8 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
     public Object searchTimelineElementInWebhook(String lastEventId, int deepCount, int position, AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream) {
         TimelineElementCategoryV26 timeLineOrStatus = ((TimelineElementCategoryV26) timelineForStream.getTimelineElementCategory());
         PnPollingWebhook pnPollingWebhook = getPnPollingWebhook(timeLineOrStatus);
-        PnPollingServiceWebhookV27 webhookV27 = (PnPollingServiceWebhookV27) webhookSteps.getSharedSteps().getPollingFactory().getPollingService(PnPollingStrategy.WEBHOOK_V27);
-        PnPollingResponseV27 pnPollingResponse = webhookV27.waitForEvent(webhookSteps.getSharedSteps().getSentNotification().getIun(),
+        PnPollingServiceWebhookV27 webhook = (PnPollingServiceWebhookV27) webhookSteps.getSharedSteps().getPollingFactory().getPollingService(PnPollingStrategy.WEBHOOK_V27);
+        PnPollingResponseV27 pnPollingResponse = webhook.waitForEvent(webhookSteps.getSharedSteps().getSentNotification().getIun(),
                 PnPollingParameter.builder()
                         .value("WEBHOOK")
                         .pnPollingWebhook(pnPollingWebhook)
@@ -295,8 +295,8 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
 
         log.info("WEBHOOK_PROGRESS_RESPONSE_ELEMENT_V26: " + pnPollingResponse.getProgressResponseElementV27());
         if (pnPollingResponse.getProgressResponseElementV27() != null) {
-            this.progressResponseElement = pnPollingResponse.getProgressResponseElementV27();
-            this.progressResponseElementList = pnPollingResponse.getProgressResponseElementListV27();
+            progressResponseElement = pnPollingResponse.getProgressResponseElementV27();
+            progressResponseElementList = pnPollingResponse.getProgressResponseElementListV27();
             return progressResponseElement;
         }
         return null;
@@ -318,8 +318,8 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
 
         log.info("WEBHOOK_PROGRESS_RESPONSE_ELEMENT_V27: " + pnPollingResponse.getProgressResponseElementV27());
         if (pnPollingResponse.getProgressResponseElementListV27() != null) {
-            this.progressResponseElement = pnPollingResponse.getProgressResponseElementV27();
-            this.progressResponseElementList = pnPollingResponse.getProgressResponseElementListV27();
+            progressResponseElement = pnPollingResponse.getProgressResponseElementV27();
+            progressResponseElementList = pnPollingResponse.getProgressResponseElementListV27();
             return progressResponseElement;
         }
         return null;
@@ -444,11 +444,11 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
         if (timeLineOrStatus instanceof TimelineElementCategoryV26) {
             pnPollingWebhook.setTimelineElementCategoryV27((TimelineElementCategoryV26) timeLineOrStatus);
             progressResponseElementList.clear();
-            pnPollingWebhook.setProgressResponseElementListV27((LinkedList<ProgressResponseElementV27>) progressResponseElementList);
+            pnPollingWebhook.setProgressResponseElementListV27(progressResponseElementList);
         } else if (timeLineOrStatus instanceof NotificationStatusV26) {
             pnPollingWebhook.setNotificationStatusV27((NotificationStatusV26) timeLineOrStatus);
             progressResponseElementList.clear();
-            pnPollingWebhook.setProgressResponseElementListV27((LinkedList<ProgressResponseElementV27>) progressResponseElementList);
+            pnPollingWebhook.setProgressResponseElementListV27(progressResponseElementList);
         }
         return pnPollingWebhook;
     }
@@ -456,7 +456,7 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
     @Override
     public void getTimelineElementVersionB2B(String iun) {
         FullSentNotificationV26 fullSentNotification = webhookSteps.getB2bClient().getSentNotification(iun);
-        webhookSteps.getSharedSteps().setNotificationResponseComplete(fullSentNotification);
+        webhookSteps.getSharedSteps().setNotificationResponseCompleteV26(fullSentNotification);
     }
 
     @Override

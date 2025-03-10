@@ -277,8 +277,8 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
     public Object searchTimelineElementInWebhook(String lastEventId, int deepCount, int position, AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream) {
         TimelineElementCategoryV23 timeLineOrStatus = ((TimelineElementCategoryV23) timelineForStream.getTimelineElementCategory());
         PnPollingWebhook pnPollingWebhook = getPnPollingWebhook(timeLineOrStatus);
-        PnPollingServiceWebhookV25 webhookV25 = (PnPollingServiceWebhookV25) webhookSteps.getSharedSteps().getPollingFactory().getPollingService(PnPollingStrategy.WEBHOOK_V25);
-        PnPollingResponseV25 pnPollingResponse = webhookV25.waitForEvent(webhookSteps.getSharedSteps().getSentNotification().getIun(),
+        PnPollingServiceWebhookV25 webhook = (PnPollingServiceWebhookV25) webhookSteps.getSharedSteps().getPollingFactory().getPollingService(PnPollingStrategy.WEBHOOK_V25);
+        PnPollingResponseV25 pnPollingResponse = webhook.waitForEvent(webhookSteps.getSharedSteps().getSentNotification().getIun(),
                 PnPollingParameter.builder()
                         .value("WEBHOOK")
                         .pnPollingWebhook(pnPollingWebhook)
@@ -289,8 +289,8 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
 
         log.info("WEBHOOK_PROGRESS_RESPONSE_ELEMENT_V25: " + pnPollingResponse.getProgressResponseElementV25());
         if (pnPollingResponse.getProgressResponseElementV25() != null) {
-            this.progressResponseElement = pnPollingResponse.getProgressResponseElementV25();
-            this.progressResponseElementList = pnPollingResponse.getProgressResponseElementListV25();
+            progressResponseElement = pnPollingResponse.getProgressResponseElementV25();
+            progressResponseElementList = pnPollingResponse.getProgressResponseElementListV25();
             return progressResponseElement;
         }
         return null;
@@ -312,8 +312,8 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
 
         log.info("WEBHOOK_PROGRESS_RESPONSE_ELEMENT_V25: " + pnPollingResponse.getProgressResponseElementV25());
         if (pnPollingResponse.getProgressResponseElementListV25() != null) {
-            this.progressResponseElement = pnPollingResponse.getProgressResponseElementV25();
-            this.progressResponseElementList = pnPollingResponse.getProgressResponseElementListV25();
+            progressResponseElement = pnPollingResponse.getProgressResponseElementV25();
+            progressResponseElementList = pnPollingResponse.getProgressResponseElementListV25();
             return progressResponseElement;
         }
         return null;
@@ -439,11 +439,11 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
         if (timeLineOrStatus instanceof TimelineElementCategoryV23) {
             pnPollingWebhook.setTimelineElementCategoryV25((TimelineElementCategoryV23) timeLineOrStatus);
             progressResponseElementList.clear();
-            pnPollingWebhook.setProgressResponseElementListV25((LinkedList<ProgressResponseElementV25>) progressResponseElementList);
+            pnPollingWebhook.setProgressResponseElementListV25(progressResponseElementList);
         } else if (timeLineOrStatus instanceof NotificationStatus) {
             pnPollingWebhook.setNotificationStatusV25((NotificationStatus) timeLineOrStatus);
             progressResponseElementList.clear();
-            pnPollingWebhook.setProgressResponseElementListV25((LinkedList<ProgressResponseElementV25>) progressResponseElementList);
+            pnPollingWebhook.setProgressResponseElementListV25(progressResponseElementList);
         }
         return pnPollingWebhook;
     }
