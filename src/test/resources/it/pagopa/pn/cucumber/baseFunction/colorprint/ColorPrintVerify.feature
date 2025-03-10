@@ -61,6 +61,7 @@ Feature: Verifica delle stampe a colori con successivo controllo manuale delle c
       | physicalAddress_address | Via@OK_PCRETRY_CON996_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_deliveryDetailCode | CON996 |
       | details_recIndex | 0 |
