@@ -13,6 +13,10 @@ public interface WebhookStepsInterface {
 
     void createStreamRequest(List<String> filterValues, int number, String title, String eventType);
 
+    Object retrieveStreamEvent(UUID streamId);
+
+    void deleteStream(UUID streamId);
+
     void deleteStreams(String pa);
 
     void cleanWebHookDelete();
@@ -43,17 +47,23 @@ public interface WebhookStepsInterface {
 
     void consumeEventStreamAndCheckNumEvents(int numEvents);
 
-    void verifyNoEventInStream();
+    void verifyNoEventsInStream();
 
     void createEventStream(String pa, List<String> listGroups, UUID streamIdToReplace, List<String> filteredValues, boolean forced);
 
+    void disableStream(UUID streamId);
+
     void disableStreams();
 
-    Object searchInWebhook(String lastEventId, int deepCount, int position, AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream);
+    Object searchTimelineElementInWebhook(String lastEventId, int deepCount, int position, AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream);
 
-    boolean checkInternalTimeline(AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream);
+    Object searchStatusElementInWebhook(String lastEventId, int deepCount, int position, AvanzamentoNotificheWebhookB2bSteps.StatusElementSearchResult<?> statusForStream);
 
-    <T> void verifyAssertions(AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream, T progressResponseElement);
+    boolean checkTimeline(AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream);
+
+    boolean checkStatus(AvanzamentoNotificheWebhookB2bSteps.StatusElementSearchResult<?> statusForStream);
+
+    <T> void verifyAssertionsTimeline(AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream, T progressResponseElement);
 
     void setValueForWaitForAccepted(boolean waitForAccepted);
 
@@ -61,12 +71,15 @@ public interface WebhookStepsInterface {
 
     void verifyIncrementalEventId();
 
-    //TODO MATTEO IMPLEMENTARE IN TUTTE LE VERSIONI
-//    void checkAbsenceOfNewEvents();
-
     <T> AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<T> getTimelineEventForStream(String timelineEventCategory, TimingForPolling.TimingResult timingForElement);
 
     <T> AvanzamentoNotificheWebhookB2bSteps.StatusElementSearchResult<T> getStatusEventForStream(String notificationStatusName, TimingForPolling.TimingResult timingForElement);
 
     <T> PnPollingWebhook getPnPollingWebhook(T timeLineOrStatus);
+
+    void getTimelineElementVersionB2B(String iun);
+
+    void compareTimestampWebhook(String timelineElementCategory, String webhookElementCategory, boolean mustBeEqual);
+
+    void getStreamEventListForStressTest();
 }

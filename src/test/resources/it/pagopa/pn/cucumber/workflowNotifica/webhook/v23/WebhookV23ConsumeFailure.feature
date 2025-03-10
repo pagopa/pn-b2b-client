@@ -130,7 +130,7 @@ Feature: tentativo consumo stream
   Scenario: [B2B-STREAM_ES1.1_161] Consume di uno stream notifica con gruppo non esistente, con eventType "TIMELINE"  utilizzando un apikey con stesso gruppo.
     Given Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
-    When vengono letti gli eventi dello stream non esistente versione "V23"
+    When si consuma lo stream che non esiste con la versione "V23" e apiKey aggiornata
     Then l'operazione ha prodotto un errore con status code "404"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata

@@ -30,7 +30,7 @@ public interface IPnWebhookB2bClient extends SettableApiKey {
 
     void deleteEventStream(UUID streamId);
 
-    StreamMetadataResponse getEventStream(UUID streamId);
+    StreamMetadataResponse retrieveEventStream(UUID streamId);
 
     List<StreamListElement> listEventStreams();
 
@@ -45,7 +45,7 @@ public interface IPnWebhookB2bClient extends SettableApiKey {
 
     void deleteEventStreamV23(UUID streamId);
 
-    StreamMetadataResponseV23 getEventStreamV23(UUID streamId);
+    StreamMetadataResponseV23 retrieveEventStreamV23(UUID streamId);
 
     List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamListElement> listEventStreamsV23();
 

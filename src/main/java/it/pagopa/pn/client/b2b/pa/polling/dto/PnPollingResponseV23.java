@@ -18,6 +18,6 @@ public class PnPollingResponseV23 extends PnPollingResponse {
     private NewNotificationRequestStatusResponseV23 statusResponse;
     private TimelineElementV23 timelineElement;
     private NotificationStatusHistoryElement notificationStatusHistoryElement;
-    private List<ProgressResponseElementV23> progressResponseElementsV23;
+    private List<ProgressResponseElementV23> progressResponseElementListV23;
     private ProgressResponseElementV23 progressResponseElementV23;
 }

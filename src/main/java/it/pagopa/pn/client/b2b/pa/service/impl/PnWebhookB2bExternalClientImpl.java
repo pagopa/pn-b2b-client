@@ -161,7 +161,7 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
         this.streamsApi.removeEventStream(streamId);
     }
 
-    public StreamMetadataResponse getEventStream(UUID streamId) {
+    public StreamMetadataResponse retrieveEventStream(UUID streamId) {
         refreshAndSetTokenInteropClient();
         return this.streamsApi.retrieveEventStream(streamId);
     }
@@ -198,7 +198,7 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
         this.streamsApiV23.removeEventStreamV23(streamId);
     }
 
-    public StreamMetadataResponseV23 getEventStreamV23(UUID streamId) {
+    public StreamMetadataResponseV23 retrieveEventStreamV23(UUID streamId) {
         refreshAndSetTokenInteropClient();
         return this.streamsApiV23.retrieveEventStreamV23(streamId);
     }

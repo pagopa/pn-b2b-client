@@ -12,7 +12,7 @@ Feature: avanzamento notifiche webhook b2b per persona giuridica
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_2" con versione "V10"
     When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi dello stream del "Comune_2" fino allo stato "ACCEPTED"
+    Then vengono letti gli eventi dello stream del "Comune_2" fino allo stato "ACCEPTED" con la versione "V10"
 
   @cleanWebhook
   Scenario: [B2B-STREAM_TIMELINE_PG_2] Invio notifica digitale ed attesa elemento di timeline REQUEST_ACCEPTED_scenario positivo
@@ -56,7 +56,7 @@ Feature: avanzamento notifiche webhook b2b per persona giuridica
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_2" con versione "V10"
     When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi dello stream del "Comune_2" fino allo stato "DELIVERING"
+    Then vengono letti gli eventi dello stream del "Comune_2" fino allo stato "DELIVERING" con la versione "V10"
 
   @cleanWebhook @testLite
   Scenario: [B2B-STREAM_TIMELINE_PG_6] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_DOMICILE_scenario positivo
@@ -78,7 +78,7 @@ Feature: avanzamento notifiche webhook b2b per persona giuridica
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_2" con versione "V10"
     When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi dello stream del "Comune_2" fino allo stato "DELIVERED"
+    Then vengono letti gli eventi dello stream del "Comune_2" fino allo stato "DELIVERED" con la versione "V10"
 
   @cleanWebhook @ignore
   Scenario: [B2B-STREAM_TIMELINE_PG_8] Invio notifica digitale ed attesa elemento di timeline PREPARE_SIMPLE_REGISTERED_LETTER_scenario positivo
@@ -148,4 +148,4 @@ Feature: avanzamento notifiche webhook b2b per persona giuridica
     And si crea il nuovo stream per il "Comune_2" con versione "V10"
     When la notifica viene inviata tramite api b2b senza preload allegato dal "Comune_2" e si attende che lo stato diventi REFUSED
     And si verifica che la notifica non viene accettata causa "ALLEGATO"
-    Then vengono letti gli eventi dello stream del "Comune_2" con la verifica di Allegato non trovato
+    Then vengono letti gli eventi dello stream con versione "V10" del "Comune_2" con la verifica di Allegato non trovato

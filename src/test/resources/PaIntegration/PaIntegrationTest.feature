@@ -142,7 +142,7 @@ Feature: test di integrazione della pubblica amministrazione
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_1" con versione "V10"
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi dello stream del "Comune_1" fino allo stato "DELIVERING"
+    Then vengono letti gli eventi dello stream del "Comune_1" fino allo stato "DELIVERING" con la versione "V10"
 
   @clean @integrationTest @TC-INVIO-02
   Scenario: [TC-STREAM_TIMELINE_6] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_DOMICILE_scenario positivo

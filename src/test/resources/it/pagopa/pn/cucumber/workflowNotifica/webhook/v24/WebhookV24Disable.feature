@@ -191,7 +191,7 @@ Feature: disabilitazione stream
     And viene aggiornata la apiKey utilizzata per gli stream
     And si crea il nuovo stream per il "Comune_Multi" con versione "V24"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V24"
-    When si disabilita lo stream che non esiste e apiKey aggiornata
+    When si disabilita lo stream che non esiste con la versione "V24" e apiKey aggiornata
     Then l'operazione ha prodotto un errore con status code "404"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
