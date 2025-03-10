@@ -284,8 +284,7 @@ public class AvanzamentoNotificheB2bSteps {
                     Assertions.assertEquals(detailsFromNotification.getDigitalAddress(), detailsFromTest.getDigitalAddress());
                 }
                 break;
-            case "DIGITAL_SUCCESS_WORKFLOW":
-            case "DIGITAL_FAILURE_WORKFLOW":
+            case "DIGITAL_FAILURE_WORKFLOW", "DIGITAL_SUCCESS_WORKFLOW":
                 Assertions.assertNotNull(elementFromNotification.getLegalFactsIds());
                 Assertions.assertEquals(elementFromNotification.getLegalFactsIds().size(), elementFromTest.getLegalFactsIds().size());
                 for (int i = 0; i < elementFromNotification.getLegalFactsIds().size(); i++) {
@@ -316,8 +315,7 @@ public class AvanzamentoNotificheB2bSteps {
                     }
                 }
                 break;
-            case "SEND_ANALOG_PROGRESS":
-            case "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS":
+            case "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS", "SEND_ANALOG_PROGRESS":
                 if (detailsFromTest != null) {
                     if (Objects.nonNull(elementFromTest.getLegalFactsIds())) {
                         Assertions.assertEquals(elementFromNotification.getLegalFactsIds().size(), elementFromTest.getLegalFactsIds().size());
@@ -351,8 +349,7 @@ public class AvanzamentoNotificheB2bSteps {
                     }
                 }
                 break;
-            case "ANALOG_SUCCESS_WORKFLOW":
-            case "PREPARE_SIMPLE_REGISTERED_LETTER":
+            case "PREPARE_SIMPLE_REGISTERED_LETTER", "ANALOG_SUCCESS_WORKFLOW":
                 if (detailsFromTest != null && detailsFromTest.getPhysicalAddress() != null) {
                     Assertions.assertEquals(detailsFromTest.getPhysicalAddress(), detailsFromNotification.getPhysicalAddress());
                 }
@@ -3086,6 +3083,11 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
+    @Then("viene verificato che non esista l'elemento {string} al tentativo {string}")
+    public void checkToTheTimelineForElementOfNotificationAtAttemptNotExist(String timelineEventCategory, String attempt) {
+        Assertions.assertThrows(AssertionFailedError.class, () -> readingEventUpToTheTimelineElementOfNotificationAtAttempt(timelineEventCategory, attempt));
+    }
+
     //Notifica Annullata
 
     //Annullamento Notifica
@@ -3253,12 +3255,10 @@ public class AvanzamentoNotificheB2bSteps {
                     digitalDeliveryCreationRequestDate = element.getTimestamp();
                     delayMillis = sharedSteps.getSchedulingDaysFailureDigitalRefinement().toMillis();
                     break;
-                } else if (element.getCategory().getValue().equals("SEND_DIGITAL_FEEDBACK") && Objects.requireNonNull(element.getDetails()).getRecIndex().equals(destinatario) && evento.equalsIgnoreCase("SEND_DIGITAL_FEEDBACK")) {
-                    if ("OK".equalsIgnoreCase(element.getDetails().getResponseStatus().getValue())) {
-                        digitalDeliveryCreationRequestDate = element.getDetails().getNotificationDate();
-                        delayMillis = sharedSteps.getSchedulingDaysSuccessDigitalRefinement().toMillis();
-                        break;
-                    }
+                } else if (element.getCategory().getValue().equals("SEND_DIGITAL_FEEDBACK") && Objects.requireNonNull(element.getDetails()).getRecIndex().equals(destinatario) && evento.equalsIgnoreCase("SEND_DIGITAL_FEEDBACK") && "OK".equalsIgnoreCase(element.getDetails().getResponseStatus().getValue())) {
+                    digitalDeliveryCreationRequestDate = element.getDetails().getNotificationDate();
+                    delayMillis = sharedSteps.getSchedulingDaysSuccessDigitalRefinement().toMillis();
+                    break;
                 }
             }
             Long schedulingDateMillis = timelineElement.getDetails().getSchedulingDate().toInstant().toEpochMilli();
@@ -3495,10 +3495,7 @@ public class AvanzamentoNotificheB2bSteps {
         for (TimelineElementV26 element : sharedSteps.getSentNotification().getTimeline()) {
 
             if (element.getCategory().equals(categoriesV26.getTimelineElementInternalCategory())) {
-                if (deliveryDetailCode == null) {
-                    timelineElement = element;
-                    break;
-                } else if (element.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode)) {
+                if (deliveryDetailCode == null || (element.getDetails() != null && element.getDetails().getDeliveryDetailCode() != null && element.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode))) {
                     timelineElement = element;
                     break;
                 }
