@@ -341,13 +341,13 @@ public class SharedSteps {
             .build();
     private static final Integer WAITING_GPD = 1000;
     public static final String DEFAULT_PA = "Comune_1";
-    private static final String cucumberAnalogicTaxID = "LBPHLS94A56C826R";
+    private static final String CUCUMBER_ANALOGIC_TAX_ID = "LBPHLS94A56C826R";
     // private String gherkinSrltaxId = "CCRMCT06A03A433H";
-    private static final String gherkinAnalogicTaxID = "05722930657";
-    private static final String defaultDigitalAddress = "testpagopa3@pec.pagopa.it";
-    private static final String schedulingDeltaDefault = "500";
-    private static final Integer workFlowWaitDefault = 31000;
-    private static final Integer waitDefault = 10000;
+    private static final String GHERKIN_ANALOGIC_TAX_ID = "05722930657";
+    private static final String DEFAULT_DIGITAL_ADDRESS = "testpagopa3@pec.pagopa.it";
+    private static final String SCHEDULING_DELTA_DEFAULT = "500";
+    private static final Integer WORK_FLOW_WAIT_DEFAULT = 31000;
+    private static final Integer WAIT_DEFAULT = 10000;
     private static final Integer WORKFLOW_WAIT_UPPER_BOUND = 2900;
     private static final Integer WAIT_UPPER_BOUND = 950;
     private static final String ALLEGATO = "ALLEGATO";
@@ -845,7 +845,7 @@ public class SharedSteps {
         addRecipientToNotification(this.notificationRequest,
                 updateNotificationRecipient(notificationRecipientV23,
                         "Gherkin Analogic",
-                        gherkinAnalogicTaxID,
+                        GHERKIN_ANALOGIC_TAX_ID,
                         NotificationRecipientV23.RecipientTypeEnum.PG,
                         null)
                 , data);
@@ -869,7 +869,7 @@ public class SharedSteps {
         addRecipientToNotification(this.notificationRequest,
                 updateNotificationRecipient(notificationRecipientV23,
                         "Cucumber Analogic",
-                        cucumberAnalogicTaxID,
+                        CUCUMBER_ANALOGIC_TAX_ID,
                         null,
                         null)
                 , data);
@@ -1234,6 +1234,7 @@ public class SharedSteps {
                 break;
             case ADDRESS:
                 Assertions.assertTrue(NOT_VALID_ADDRESS.equalsIgnoreCase(errorCode));
+                break;
             case INVALID_PARAMETER_MAX_ATTACHMENT:
                 Assertions.assertTrue(INVALID_PARAMETER_MAX_ATTACHMENT.equalsIgnoreCase(errorCode));
                 break;
@@ -1765,6 +1766,7 @@ public class SharedSteps {
                 setGrup(SettableApiKey.ApiKeyType.ROOT);
                 apiKeyTypeSetted = SettableApiKey.ApiKeyType.ROOT;
             }
+            default -> throw new IllegalArgumentException("PA non supportata: " + settedPa);
         }
     }
 
@@ -1775,7 +1777,7 @@ public class SharedSteps {
             case "v21" -> this.notificationRequestV21.setSenderTaxId(getSenderTaxIdFromProperties(settedPa));
             case "v23" -> this.notificationRequest.setSenderTaxId(getSenderTaxIdFromProperties(settedPa));
             case "v24" -> this.notificationRequestV24.setSenderTaxId(getSenderTaxIdFromProperties(settedPa));
-
+            default -> throw new IllegalArgumentException("Versione non supportata: " + version);
         }
     }
 
@@ -1813,6 +1815,7 @@ public class SharedSteps {
             case "v1" -> group = this.notificationRequestV1.getGroup();
             case "v2" -> group = this.notificationRequestV2.getGroup();
             case "v21" -> group = this.notificationRequestV21.getGroup();
+            default -> throw new IllegalArgumentException("Versione non supportata: " + version);
         }
 
         if (groupToSet && group == null) {
@@ -1831,6 +1834,7 @@ public class SharedSteps {
                 case "v1" -> this.notificationRequestV1.setGroup(id);
                 case "v2" -> this.notificationRequestV2.setGroup(id);
                 case "v21" -> this.notificationRequestV21.setGroup(id);
+                default -> throw new IllegalArgumentException("Versione non supportata: " + version);
             }
         }
     }
@@ -2054,19 +2058,19 @@ public class SharedSteps {
 
     public Integer getWorkFlowWait() {
         if (timingConfigs.getWorkflowWaitMillis() == null)
-            return workFlowWaitDefault + secureRandom.nextInt(WORKFLOW_WAIT_UPPER_BOUND);
+            return WORK_FLOW_WAIT_DEFAULT + secureRandom.nextInt(WORKFLOW_WAIT_UPPER_BOUND);
         return timingConfigs.getWorkflowWaitMillis() + secureRandom.nextInt(WORKFLOW_WAIT_UPPER_BOUND);
     }
 
 
     public Integer getWait() {
-        if (timingConfigs.getWaitMillis() == null) return waitDefault + secureRandom.nextInt(WAIT_UPPER_BOUND);
+        if (timingConfigs.getWaitMillis() == null) return WAIT_DEFAULT + secureRandom.nextInt(WAIT_UPPER_BOUND);
         return timingConfigs.getWaitMillis() + secureRandom.nextInt(WAIT_UPPER_BOUND);
     }
 
     public String getDigitalAddressValue() {
         if (digitalAddress == null || digitalAddress.equalsIgnoreCase("${pn.external.digitalDomicile.address}"))
-            return defaultDigitalAddress;
+            return DEFAULT_DIGITAL_ADDRESS;
         return digitalAddress;
     }
 
@@ -2269,7 +2273,7 @@ public class SharedSteps {
     }
 
     public String getSchedulingDelta() {
-        if (timingConfigs.getSchedulingDeltaMillis() == null) return schedulingDeltaDefault;
+        if (timingConfigs.getSchedulingDeltaMillis() == null) return SCHEDULING_DELTA_DEFAULT;
         return String.valueOf(timingConfigs.getSchedulingDeltaMillis());
     }
 
@@ -2300,21 +2304,21 @@ public class SharedSteps {
     }
 
     public List<String> getDatiPagamentoVersionamento(Integer destinatario, Integer pagamento) {
-        List<String> DatiPagamento = new ArrayList<>();
+        List<String> datiPagamento = new ArrayList<>();
         if (getSentNotificationV1() != null) {
-            DatiPagamento.add(Objects.requireNonNull(getSentNotificationV1().getRecipients().get(destinatario).getPayment()).getCreditorTaxId());
-            DatiPagamento.add(Objects.requireNonNull(getSentNotificationV1().getRecipients().get(destinatario).getPayment()).getNoticeCode());
+            datiPagamento.add(Objects.requireNonNull(getSentNotificationV1().getRecipients().get(destinatario).getPayment()).getCreditorTaxId());
+            datiPagamento.add(Objects.requireNonNull(getSentNotificationV1().getRecipients().get(destinatario).getPayment()).getNoticeCode());
         } else if (getSentNotificationV2() != null) {
-            DatiPagamento.add(Objects.requireNonNull(getSentNotificationV2().getRecipients().get(destinatario).getPayment()).getCreditorTaxId());
-            DatiPagamento.add(Objects.requireNonNull(getSentNotificationV2().getRecipients().get(destinatario).getPayment()).getNoticeCode());
+            datiPagamento.add(Objects.requireNonNull(getSentNotificationV2().getRecipients().get(destinatario).getPayment()).getCreditorTaxId());
+            datiPagamento.add(Objects.requireNonNull(getSentNotificationV2().getRecipients().get(destinatario).getPayment()).getNoticeCode());
         } else if (getSentNotificationV21() != null) {
-            DatiPagamento.add(Objects.requireNonNull(Objects.requireNonNull(getSentNotificationV21().getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getCreditorTaxId());
-            DatiPagamento.add(Objects.requireNonNull(Objects.requireNonNull(getSentNotificationV21().getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getNoticeCode());
+            datiPagamento.add(Objects.requireNonNull(Objects.requireNonNull(getSentNotificationV21().getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getCreditorTaxId());
+            datiPagamento.add(Objects.requireNonNull(Objects.requireNonNull(getSentNotificationV21().getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getNoticeCode());
         } else if (getSentNotification() != null) {
-            DatiPagamento.add(Objects.requireNonNull(Objects.requireNonNull(getSentNotification().getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getCreditorTaxId());
-            DatiPagamento.add(Objects.requireNonNull(Objects.requireNonNull(getSentNotification().getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getNoticeCode());
+            datiPagamento.add(Objects.requireNonNull(Objects.requireNonNull(getSentNotification().getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getCreditorTaxId());
+            datiPagamento.add(Objects.requireNonNull(Objects.requireNonNull(getSentNotification().getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getNoticeCode());
         }
-        return DatiPagamento;
+        return datiPagamento;
     }
 
     private static void threadWait(int wait) {
@@ -2333,6 +2337,7 @@ public class SharedSteps {
             case "v2" -> sendNotificationV2();
             case "v21" -> sendNotificationV21();
             case "v25" -> sendNotificationV25();
+            default -> throw new IllegalArgumentException("Versione non supportata: " + version);
         }
     }
 
