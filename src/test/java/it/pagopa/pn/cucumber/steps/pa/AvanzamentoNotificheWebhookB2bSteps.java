@@ -1447,7 +1447,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             pnPollingWebhook.setProgressResponseElementListV23((LinkedList<ProgressResponseElementV23>) progressResponseElementsV23);
 
         } else if (timeLineOrStatus instanceof TimelineElementCategoryV26) {
-            pnPollingWebhook.setTimelineElementCategoryV26((TimelineElementCategoryV26) timeLineOrStatus);
+            pnPollingWebhook.setTimelineElementCategoryV26((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26) timeLineOrStatus);
             progressResponseElementsV26.clear();
             pnPollingWebhook.setProgressResponseElementListV26((LinkedList<ProgressResponseElementV26>) progressResponseElementsV26);
 
