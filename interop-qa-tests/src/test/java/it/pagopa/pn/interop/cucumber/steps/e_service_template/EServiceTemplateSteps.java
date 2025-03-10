@@ -2,17 +2,20 @@ package it.pagopa.pn.interop.cucumber.steps.e_service_template;
 
 import static it.pagopa.interop.e_service_template.IEServiceTemplateClient.EServiceTemplateDocumentKind.DOCUMENT;
 import static java.lang.Math.abs;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
 import static org.apache.commons.collections4.IterableUtils.isEmpty;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import com.google.common.io.Files;
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.authorization.service.utils.PollingService;
@@ -22,6 +25,7 @@ import it.pagopa.interop.e_service_template.mapper.DescriptorAttributesMapper;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServiceTemplate;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServiceTemplates;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CompactDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganization;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganizations;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
@@ -29,6 +33,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributes;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysis;
@@ -37,12 +42,15 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTechnology;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateAttributesSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDescriptionUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDetails;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateInstance;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateInstances;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateNameUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionQuotasUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.InstanceEServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceTemplate;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceTemplates;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
@@ -93,6 +101,7 @@ public class EServiceTemplateSteps {
     private final DataPreparationService dataPreparationService;
     private final IdentityService identityService;
     private final SharedStepsContext sharedStepsContext;
+    private final IEServiceClient eServiceClient;
     private final IEServiceTemplateClient eServiceTemplateClient;
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
@@ -113,6 +122,8 @@ public class EServiceTemplateSteps {
     private EServiceTemplateDescriptionUpdateSeed lastTemplateDescriptionUpdateSeed;
     private EServiceTemplateVersionQuotasUpdateSeed lastTemplateVersionQuotasUpdateSeed;
     private DescriptorAttributesSeed lastAttributesUpdateSeed;
+    private InstanceEServiceSeed lastEServiceCreatedFromTemplate;
+    private UUID lastEServiceIdCreatedFromTemplate;
 
     // TODO farne un bean centralizzato riutilizzabile ovunque
     private static EasyRandomParameters easyRandomParameters = new EasyRandomParameters()
@@ -137,6 +148,7 @@ public class EServiceTemplateSteps {
         this.dataPreparationService = dataPreparationService;
         this.sharedStepsContext = sharedStepsContext;
         this.identityService = sharedStepsContext.getIdentityService();
+        this.eServiceClient = clientTokenConfigurator.getEServiceClient();
         this.eServiceTemplateClient = clientTokenConfigurator.getEServiceTemplateClient();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
@@ -173,6 +185,7 @@ public class EServiceTemplateSteps {
         };
     }
 
+    // TODO 10/03/2025 ora che è stato introdotto Mapstruct si potrebbe delegare a lui la conversione, snellendo un po' il codice
     @ParameterType("DRAFT|PUBLISHED|DEPRECATED|SUSPENDED")
     public EServiceTemplateVersionState eServiceTemplateVersionState(String state) {
         return switch (state) {
@@ -194,6 +207,21 @@ public class EServiceTemplateSteps {
             default             -> throw new IllegalArgumentException("Unsupported %s value: %s".formatted(
                                         EServiceTemplateDocumentKind.class.getSimpleName(),
                                         kind));
+        };
+    }
+
+    @ParameterType("DRAFT|PUBLISHED|DEPRECATED|SUSPENDED|ARCHIVED|WAITING_FOR_APPROVAL")
+    public EServiceDescriptorState eServiceDescriptorState(String state) {
+        return switch (state) {
+            case "DRAFT"                -> EServiceDescriptorState.DRAFT;
+            case "PUBLISHED"            -> EServiceDescriptorState.PUBLISHED;
+            case "DEPRECATED"           -> EServiceDescriptorState.DEPRECATED;
+            case "SUSPENDED"            -> EServiceDescriptorState.SUSPENDED;
+            case "ARCHIVED"             -> EServiceDescriptorState.ARCHIVED;
+            case "WAITING_FOR_APPROVAL" -> EServiceDescriptorState.WAITING_FOR_APPROVAL;
+            default                     -> throw new IllegalArgumentException("Unsupported %s value: %s".formatted(
+                                                EServiceDescriptorState.class.getSimpleName(),
+                                                state));
         };
     }
 
@@ -1660,6 +1688,97 @@ public class EServiceTemplateSteps {
             .first()
             .extracting(CompactOrganization::getName)
             .isEqualTo(tenant);
+    }
+
+    @When("l'utente tenta la creazione di un nuovo e-service a partire dal template indicando solo le specifiche strettamente necessarie")
+    public void createEServiceFromTemplateMinimalSpec() {
+        createEServiceFromTemplate(lastTemplateManaged.id(), null);
+    }
+
+
+    @When("l'utente tenta la creazione di un nuovo e-service a partire dal template indicando tutte le specifiche")
+    public void createEServiceFromTemplateFullSpec() {
+        InstanceEServiceSeed seed = easyRandom.nextObject(InstanceEServiceSeed.class);
+        createEServiceFromTemplate(lastTemplateManaged.id(), seed);
+    }
+
+    @When("l'utente tenta la creazione di un nuovo e-service indicando un template inesistente")
+    public void createEServiceFromNonExistentTemplate() {
+        createEServiceFromTemplate(UUID.randomUUID(), null);
+    }
+
+    private void createEServiceFromTemplate(UUID id, InstanceEServiceSeed seed) {
+        String userToken = getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+        httpCallExecutor.performCall(
+            () -> eServiceClient.createEServiceInstanceFromTemplateWithHttpInfo(
+                sharedStepsContext.getXCorrelationId(),
+                id,
+                seed),
+            ResponseEntity::getStatusCode);
+
+        this.lastEServiceIdCreatedFromTemplate = ((ResponseEntity<CreatedResource>) httpCallExecutor.getResponse()).getBody().getId();
+        this.lastEServiceCreatedFromTemplate = seed;
+    }
+
+    @Then("il nuovo e-service è stato creato correttamente in stato {eServiceDescriptorState}")
+    public void checkEServiceCreated(EServiceDescriptorState expectedState) {
+        try {
+            pollingService.makePolling(
+                () -> httpCallExecutor.performCall(
+                    () -> eServiceClient.getEServiceTemplateInstancesWithHttpInfo(
+                        sharedStepsContext.getXCorrelationId(),
+                        lastTemplateManaged.id()
+                    ),
+                    ResponseEntity::getStatusCode),
+                res -> res.getStatusCode().is2xxSuccessful() && !res.getBody().getResults().isEmpty(),
+                "Il nuovo e-service non è stato creato correttamente"
+            );
+
+            EServiceTemplateVersionDetails eServiceSourceTemplate = this.eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
+                sharedStepsContext.getXCorrelationId(),
+                lastTemplateManaged.id(),
+                lastTemplateManaged.lastVersionId()).getBody();
+            Optional<EServiceTemplateInstance> eServiceCreatedFromTemplate = ((ResponseEntity<EServiceTemplateInstances>) httpCallExecutor.getResponse()).getBody()
+                .getResults()
+                .stream()
+                .filter(instance -> instance.getId().equals(lastEServiceIdCreatedFromTemplate))
+                .findAny();
+
+            assertSoftly(softly -> {
+                softly.assertThat(eServiceCreatedFromTemplate)
+                    .as("Check esistenza istanza del template")
+                    .withFailMessage("Fra le istanze del template non è presente quella appena creata. E' possibile sia avvenuto un errore a monte in fase di creazione dell'istanza, oppure a valle in fase di reperimento delle stesse.")
+                    .isPresent();
+                softly.assertThat(eServiceCreatedFromTemplate)
+                    .get()
+                    .as("Check stato dell'istanza creata")
+                    .extracting(EServiceTemplateInstance::getActiveDescriptor)
+                    .extracting(CompactDescriptor::getState)
+                    .isEqualTo(expectedState);
+
+                String instanceDefaultName = eServiceSourceTemplate.getEserviceTemplate().getName();
+                softly.assertThat(eServiceCreatedFromTemplate)
+                    .get()
+                    .as("Check correttezza del nome dell'istanza creata")
+                    .isEqualTo(isNull(lastEServiceCreatedFromTemplate) || isNull(lastEServiceCreatedFromTemplate.getInstanceLabel())
+                        ? instanceDefaultName
+                        : "%s %s".formatted(instanceDefaultName, lastEServiceCreatedFromTemplate.getInstanceLabel()));
+
+
+                /* TODO 10/03/2025 sebbene i controlli soprastanti bastino a implementare lo
+                    scenario indicato in SRS, sarebbe il caso di verificare che il risultato sia
+                    coerente con tutti gli altri parametri del template, nonché con i parametri
+                    inseriti nella creazione dell'e-service a partire dal template.
+                    Un modo elastico per implementarli potrebbe essere mappare con Mapstruct
+                    EServiceTemplateVersionDetails in EServiceTemplateInstance e procedere con
+                    un isEqualTo(...), e quindi fare lo stesso mappando EServiceTemplateInstance
+                    in InstanceEServiceSeed.
+                 */
+            });
+        } catch (PollingPredicateException e) {
+            fail("Il nuovo e-service non è stato creato correttamente");
+        }
     }
 
 

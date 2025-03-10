@@ -1704,7 +1704,62 @@ Feature: Test API of e-service template
     Then si ottiene status code 404
 
 
-  #TODO continua da 175...
+  # NOTA: un e-service creato a partire da un template è anche detto "istanza" del template
+
+  Scenario Outline: [INTEROP-EST-155] La creazione di un nuovo e-service a partire da un template attivo può essere effettuata da un ente in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la creazione di un nuovo e-service a partire dal template indicando solo le specifiche strettamente necessarie
+    Then si ottiene status code 200
+    And il nuovo e-service è stato creato correttamente in stato DRAFT
+    Examples:
+      | ruolo |
+      | admin |
+      | api   |
+
+  Scenario Outline: [INTEROP-EST-156] La creazione di un nuovo e-service a partire da un template attivo NON può essere effettuata da un ente NON in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la creazione di un nuovo e-service a partire dal template indicando solo le specifiche strettamente necessarie
+    Then si ottiene status code 403
+    Examples:
+      | ruolo |
+      | security      |
+      | api,security  |
+      | support       |
+
+  Scenario Outline: [INTEROP-EST-157] La creazione di un nuovo e-service completamente specificato a partire da un template attivo può essere effettuata da un ente in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la creazione di un nuovo e-service a partire dal template indicando tutte le specifiche
+    Then si ottiene status code 200
+    And il nuovo e-service è stato creato correttamente in stato DRAFT
+    Examples:
+      | ruolo |
+      | admin |
+      | api   |
+
+  Scenario Outline: [INTEROP-EST-158] La creazione di un nuovo e-service a partire da un template in stato DRAFT o SUSPENDED non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
+    When l'utente tenta la creazione di un nuovo e-service a partire dal template indicando solo le specifiche strettamente necessarie
+    Then si ottiene status code 400
+    Examples:
+      | stato     |
+      | DRAFT     |
+      | PUBLISHED |
+
+  Scenario: [INTEROP-EST-159] La creazione di un nuovo e-service NON può essere effettuata a partire da un template inesistente
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    When l'utente tenta la creazione di un nuovo e-service indicando un template inesistente
+    Then si ottiene status code 404
+
+
+  # TODO continua da 180...
 
 
   #TODO la maggior parte dei test sono fatti su template in mod. RICEZIONE. Valutare che non sia il caso di testare per entrambe le modalità.

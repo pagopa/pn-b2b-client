@@ -62,8 +62,7 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
     @Override
     public void updateEServiceTemplate(String xCorrelationId, UUID eServiceTemplateId,
         UpdateEServiceTemplateSeed updateEServiceTemplateSeed) {
-        // TODO 28/02/2025: il template id, a differenza di altre api, se lo aspetta in semplice formato stringa e non UUID, va segnalato
-        eserviceTemplatesApi.updateEServiceTemplate(xCorrelationId, eServiceTemplateId.toString(), updateEServiceTemplateSeed);
+        eserviceTemplatesApi.updateEServiceTemplate(xCorrelationId, eServiceTemplateId, updateEServiceTemplateSeed);
     }
 
     @Override
@@ -88,10 +87,8 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
     {
         eserviceTemplatesApi.updateDraftTemplateVersion(
             xCorrelationId,
-
-            // TODO 28/02/2025: gli id, a differenza di altre api, se li aspetta in semplice formato stringa e non UUID, va segnalato
-            eServiceTemplateId.toString(),
-            eServiceTemplateVersionId.toString(),
+            eServiceTemplateId,
+            eServiceTemplateVersionId,
 
             seed);
     }
@@ -176,15 +173,13 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
     public ResponseEntity<EServiceTemplateDetails> getEServiceTemplateWithHttpInfo(
         String xCorrelationId,
         UUID eServiceTemplateId) {
-        // TODO 04/03/2025: gli id, a differenza di altre api, se li aspetta in semplice formato stringa e non UUID, va segnalato
-        return eserviceTemplatesApi.getEServiceTemplateWithHttpInfo(xCorrelationId, eServiceTemplateId.toString());
+        return eserviceTemplatesApi.getEServiceTemplateWithHttpInfo(xCorrelationId, eServiceTemplateId);
     }
 
     @Override
     public EServiceTemplateDetails getEServiceTemplate(String xCorrelationId,
         UUID eServiceTemplateId) {
-        // TODO 04/03/2025: gli id, a differenza di altre api, se li aspetta in semplice formato stringa e non UUID, va segnalato
-        return eserviceTemplatesApi.getEServiceTemplate(xCorrelationId, eServiceTemplateId.toString());
+        return eserviceTemplatesApi.getEServiceTemplate(xCorrelationId, eServiceTemplateId);
     }
 
     @Override
@@ -273,8 +268,7 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
         UUID eServiceTemplateVersionId,
         UUID documentId
     ) {
-        // TODO 04/03/2025: gli id, a differenza di altre api, se li aspetta in semplice formato stringa e non UUID, va segnalato
-        return this.eserviceTemplatesApi.getEServiceTemplateDocumentById(xCorrelationId, eServiceTemplateId.toString(), eServiceTemplateVersionId.toString(), documentId.toString());
+        return this.eserviceTemplatesApi.getEServiceTemplateDocumentById(xCorrelationId, eServiceTemplateId, eServiceTemplateVersionId, documentId);
     }
 
     @Override
@@ -284,8 +278,7 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
         UUID eServiceTemplateVersionId,
         UUID documentId
     ) {
-        // TODO 04/03/2025: gli id, a differenza di altre api, se li aspetta in semplice formato stringa e non UUID, va segnalato
-        return this.eserviceTemplatesApi.getEServiceTemplateDocumentByIdWithHttpInfo(xCorrelationId, eServiceTemplateId.toString(), eServiceTemplateVersionId.toString(), documentId.toString());
+        return this.eserviceTemplatesApi.getEServiceTemplateDocumentByIdWithHttpInfo(xCorrelationId, eServiceTemplateId, eServiceTemplateVersionId, documentId);
     }
 
     @Override
@@ -313,16 +306,14 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
     @Override
     public void deleteDocument(String xCorrelationId, UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId, UUID documentId) {
-        // TODO anche qui id in semplice formato stringa e non UUID
-        this.eserviceTemplatesApi.deleteEServiceTemplateDocumentById(xCorrelationId, eServiceTemplateId.toString(), eServiceTemplateVersionId.toString(), documentId.toString());
+        this.eserviceTemplatesApi.deleteEServiceTemplateDocumentById(xCorrelationId, eServiceTemplateId, eServiceTemplateVersionId, documentId);
     }
 
     @Override
     public ResponseEntity<Void> deleteDocumentWithHttpInfo(String xCorrelationId,
         UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId, UUID documentId) {
-        // TODO anche qui id in semplice formato stringa e non UUID
-        return this.eserviceTemplatesApi.deleteEServiceTemplateDocumentByIdWithHttpInfo(xCorrelationId, eServiceTemplateId.toString(), eServiceTemplateVersionId.toString(), documentId.toString());
+        return this.eserviceTemplatesApi.deleteEServiceTemplateDocumentByIdWithHttpInfo(xCorrelationId, eServiceTemplateId, eServiceTemplateVersionId, documentId);
     }
 
     @Override
