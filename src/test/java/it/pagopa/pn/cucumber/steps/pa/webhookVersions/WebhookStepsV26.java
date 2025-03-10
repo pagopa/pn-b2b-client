@@ -276,14 +276,6 @@ public class WebhookStepsV26 implements WebhookStepsInterface {
         return null;
     }
 
-    private PnPollingWebhook getPnPollingWebhook(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26 timeLineOrStatus) {
-        PnPollingWebhook pnPollingWebhook = new PnPollingWebhook();
-        pnPollingWebhook.setTimelineElementCategoryV26(timeLineOrStatus);
-        progressResponseElementsV26.clear();
-        pnPollingWebhook.setProgressResponseElementListV26((LinkedList<ProgressResponseElementV26>) progressResponseElementsV26);
-        return pnPollingWebhook;
-    }
-
     @Override
     public boolean checkInternalTimeline(AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream) {
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26 timelineElementInternalCategory = it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26.valueOf(((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26) timelineForStream.getTimelineElementCategory()).name());
@@ -382,8 +374,8 @@ public class WebhookStepsV26 implements WebhookStepsInterface {
     @Override
     public <T> PnPollingWebhook getPnPollingWebhook(T timeLineOrStatus) {
         PnPollingWebhook pnPollingWebhook = new PnPollingWebhook();
-        if (timeLineOrStatus instanceof it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26) {
-            pnPollingWebhook.setTimelineElementCategoryV26((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26) timeLineOrStatus);
+        if (timeLineOrStatus instanceof TimelineElementCategoryV26) {
+            pnPollingWebhook.setTimelineElementCategoryV26((TimelineElementCategoryV26) timeLineOrStatus);
             progressResponseElementsV26.clear();
             pnPollingWebhook.setProgressResponseElementListV26((LinkedList<ProgressResponseElementV26>) progressResponseElementsV26);
         } else if (timeLineOrStatus instanceof NotificationStatusV26) {

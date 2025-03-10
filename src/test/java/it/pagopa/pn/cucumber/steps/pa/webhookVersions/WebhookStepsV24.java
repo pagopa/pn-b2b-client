@@ -275,14 +275,6 @@ public class WebhookStepsV24 implements WebhookStepsInterface {
         return null;
     }
 
-    private PnPollingWebhook getPnPollingWebhook(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23 timeLineOrStatus) {
-        PnPollingWebhook pnPollingWebhook = new PnPollingWebhook();
-        pnPollingWebhook.setTimelineElementCategoryV24(timeLineOrStatus);
-        progressResponseElementsV24.clear();
-        pnPollingWebhook.setProgressResponseElementListV24((LinkedList<ProgressResponseElementV24>) progressResponseElementsV24);
-        return pnPollingWebhook;
-    }
-
     @Override
     public boolean checkInternalTimeline(AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream) {
         TimelineElementCategoryV23 timelineElementInternalCategory = TimelineElementCategoryV23.valueOf(((TimelineElementCategoryV23) timelineForStream.getTimelineElementCategory()).name());
