@@ -341,7 +341,7 @@ public class SharedSteps {
             .build();
     private static final Integer WAITING_GPD = 1000;
     public static final String DEFAULT_PA = "Comune_1";
-    private static final String cucumberAnalogicTaxID = "SNCLNN65D19Z131V";
+    private static final String cucumberAnalogicTaxID = "LBPHLS94A56C826R";
     // private String gherkinSrltaxId = "CCRMCT06A03A433H";
     private static final String gherkinAnalogicTaxID = "05722930657";
     private static final String defaultDigitalAddress = "testpagopa3@pec.pagopa.it";
