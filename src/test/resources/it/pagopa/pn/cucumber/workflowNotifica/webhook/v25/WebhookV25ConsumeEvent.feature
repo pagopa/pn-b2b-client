@@ -43,7 +43,7 @@ Feature: avanzamento notifiche webhook b2b V25
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV25 @precondition @webhook1
+  @webhookV25 @precondition @cleanWebhook @webhook1
   Scenario: [B2B-STREAM_ES1.1_158] Consumo di uno stream notifica con gruppi appartenenti ad un sottinsieme dei gruppi dell'apikey utilizzata.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
