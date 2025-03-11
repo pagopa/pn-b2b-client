@@ -40,11 +40,17 @@ Feature: Verifica delle stampe a colori con successivo controllo manuale delle c
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
-      | denomination            | Test AR Fail 2           |
-      | taxId                   | DVNLRD52D15M059P         |
+      | denomination            | Test AR deceduto         |
+      | taxId                   | CLMCST42R12D969Z         |
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-CON996_PCRETRY_DECEDUTO-AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | loadTimeline | true |
+      | details | NOT_NULL |
+      | details_deliveryDetailCode | CON996 |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
     And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost uguale a "null" per l'utente 0
     Then viene verificato che non esista l'elemento "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_1"
 
@@ -53,10 +59,9 @@ Feature: Verifica delle stampe a colori con successivo controllo manuale delle c
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
-      | denomination            | Test AR Fail 2           |
-      | taxId                   | DVNLRD52D15M059P         |
+      | denomination            | Test AR CON996           |
+      | taxId                   | CLMCST42R12D969Z         |
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@OK_PCRETRY_CON996_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -65,5 +70,11 @@ Feature: Verifica delle stampe a colori con successivo controllo manuale delle c
       | details | NOT_NULL |
       | details_deliveryDetailCode | CON996 |
       | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | loadTimeline | true |
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
       | details_sentAttemptMade | 1 |
+      | details_deliveryDetailCode | RECAG001C |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
