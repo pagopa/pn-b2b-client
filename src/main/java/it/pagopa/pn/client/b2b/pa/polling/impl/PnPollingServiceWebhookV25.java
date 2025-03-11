@@ -126,7 +126,7 @@ public class PnPollingServiceWebhookV25 extends PnPollingTemplate<PnPollingRespo
                 .stream()
                 .map(progressResponseElement -> {
                     if (!pnPollingParameter.getPnPollingWebhook().getProgressResponseElementListV25().contains(progressResponseElement)) {
-                        pnPollingParameter.getPnPollingWebhook().getProgressResponseElementListV25().addLast(progressResponseElement);
+                        pnPollingParameter.getPnPollingWebhook().getProgressResponseElementListV25().add(progressResponseElement);
                     }
                     return progressResponseElement;
                 })
