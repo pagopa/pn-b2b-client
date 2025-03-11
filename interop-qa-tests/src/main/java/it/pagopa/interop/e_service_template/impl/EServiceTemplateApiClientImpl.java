@@ -66,6 +66,13 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
     }
 
     @Override
+    public ResponseEntity<Void> updateEServiceTemplateWithHttpInfo(String xCorrelationId,
+        UUID eServiceTemplateId,
+        UpdateEServiceTemplateSeed updateEServiceTemplateSeed) {
+        return eserviceTemplatesApi.updateEServiceTemplateWithHttpInfo(xCorrelationId, eServiceTemplateId, updateEServiceTemplateSeed);
+    }
+
+    @Override
     public CreatedResource createEServiceTemplateVersion(String xCorrelationId,
         UUID eServiceTemplateId) {
         return eserviceTemplatesApi.createEServiceTemplateVersion(xCorrelationId, eServiceTemplateId);
@@ -89,7 +96,20 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
             xCorrelationId,
             eServiceTemplateId,
             eServiceTemplateVersionId,
+            seed);
+    }
 
+    @Override
+    public ResponseEntity<Void> updateEServiceTemplateVersionWithHttpInfo(
+        String xCorrelationId,
+        UUID eServiceTemplateId,
+        UUID eServiceTemplateVersionId,
+        UpdateEServiceTemplateVersionSeed seed)
+    {
+        return eserviceTemplatesApi.updateDraftTemplateVersionWithHttpInfo(
+            xCorrelationId,
+            eServiceTemplateId,
+            eServiceTemplateVersionId,
             seed);
     }
 

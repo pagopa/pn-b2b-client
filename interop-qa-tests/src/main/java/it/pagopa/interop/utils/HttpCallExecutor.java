@@ -29,6 +29,11 @@ public class HttpCallExecutor {
         return responseStatus;
     }
 
+    /* TODO 11/03/2025: potrebbe essere il caso di restituire sempre una ResponseEntity,
+     * eventualmente con body vuoto e statusCode debitamente valorizzato in caso di eccezioni,
+     * facendo così anche a meno del secondo parametro. Probabilmente si avrebbe un comportamento
+     * meglio standardizzato, visto che la versione attuale potenzialmente potrebbe lasciare
+     * l'oggetto response a NULL, in caso di eccezioni. */
     public <T> T performCall(Supplier<T> promise, Function<T, HttpStatus> httpStatusMapper) {
         T promiseResponse = null;
         try {

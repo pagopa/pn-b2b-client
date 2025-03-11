@@ -80,6 +80,7 @@ import org.jeasy.random.EasyRandomParameters;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -97,7 +98,7 @@ public class EServiceTemplateSteps {
     }
 
     /** Stores data on an e-service template document useful for testing */
-    record EServiceTemplateDocumentInfo(UUID id, String prettyName, String body){}
+    record EServiceTemplateDocumentInfo(UUID id, String prettyName, byte[] body){}
 
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final DataPreparationService dataPreparationService;
@@ -235,6 +236,11 @@ public class EServiceTemplateSteps {
         createEServiceTemplate(templateSeed);
     }
 
+    @When("l'utente tenta la creazione di un e-service template indicando una specifica vuota")
+    public void createUnspecifiedEServiceTemplate() {
+        createEServiceTemplate(new EServiceTemplateSeed());
+    }
+
     @When("l'utente effettua la creazione di un e-service template in modalità {eServiceMode} in stato di {eServiceTemplateVersionState}")
     public void createEServiceTemplate(EServiceMode eServiceMode, EServiceTemplateVersionState desiredState) {
         createEServiceTemplate(eServiceMode);
@@ -308,6 +314,14 @@ public class EServiceTemplateSteps {
         updateEServiceTemplate(eServiceTemplateId, sameNameUpdateSeed);
     }
 
+    @When("l'utente tenta di modificare l'e-service template specificando un nome vuoto")
+    public void updateEServiceTemplateWithEmptyName() {
+        UpdateEServiceTemplateSeed emptyNameUpdateSeed = new UpdateEServiceTemplateSeed()
+            .name("");
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        updateEServiceTemplate(eServiceTemplateId, emptyNameUpdateSeed);
+    }
+
     @When("l'utente tenta delle modifiche a un e-service template inesistente")
     public void updateNonExistentEServiceTemplate() {
         UUID eServiceTemplateId = UUID.randomUUID();
@@ -320,14 +334,20 @@ public class EServiceTemplateSteps {
         updateEServiceTemplate(eServiceTemplateId, updateSeed);
     }
 
+    @When("l'utente tenta di modificare l'e-service template indicando una specifica vuota")
+    public void updateEServiceTemplateWithEmptySpec() {
+        updateEServiceTemplate(lastTemplateManaged.id(), new UpdateEServiceTemplateSeed());
+    }
+
     private void updateEServiceTemplate(UUID eServiceTemplateId, UpdateEServiceTemplateSeed sameNameUpdateSeed) {
         String userToken = getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);
         httpCallExecutor.performCall(
-            () -> eServiceTemplateClient.updateEServiceTemplate(
+            () -> eServiceTemplateClient.updateEServiceTemplateWithHttpInfo(
                 sharedStepsContext.getXCorrelationId(),
                 eServiceTemplateId,
-                sameNameUpdateSeed));
+                sameNameUpdateSeed),
+            ResponseEntity::getStatusCode);
     }
 
     private boolean areConsistent(UpdateEServiceTemplateSeed lastUpdate, EServiceTemplateDetails retrievedTemplate) {
@@ -351,6 +371,15 @@ public class EServiceTemplateSteps {
             this.lastTemplateManaged.id(),
             this.lastTemplateManaged.lastVersionId(),
             lastTemplateVersionUpdateSeed);
+    }
+
+
+    @When("l'utente tenta di modificare la versione dell'e-service template indicando una specifica vuota")
+    public void updateEServiceTemplateVersionWithEmptySpec() {
+        updateEServiceTemplateVersion(
+            this.lastTemplateManaged.id(),
+            this.lastTemplateManaged.lastVersionId(),
+            new UpdateEServiceTemplateVersionSeed());
     }
 
     @Given("l'utente effettua delle modifiche alla versione dell'e-service template con successo")
@@ -410,6 +439,11 @@ public class EServiceTemplateSteps {
         lastAddedRiskAnalysis = easyRandom.nextObject(EServiceRiskAnalysisSeed.class);
         lastAddedRiskAnalysisIndex++;
         addRiskAnalysisToEServiceTemplate(eServiceTemplateId, lastAddedRiskAnalysis);
+    }
+
+    @When("l'utente tenta la creazione di una risk analysis indicando una specifica vuota")
+    public void addRiskAnalysisWithEmptySpecToEServiceTemplate() {
+        addRiskAnalysisToEServiceTemplate(lastTemplateManaged.id(), new EServiceRiskAnalysisSeed());
     }
 
     private void addRiskAnalysisToEServiceTemplate(UUID eServiceTemplateId, EServiceRiskAnalysisSeed riskAnalysisSeed) {
@@ -475,6 +509,15 @@ public class EServiceTemplateSteps {
         deleteRiskAnalysisFromEServiceTemplate(eServiceTemplateId, riskAnalysisId);
     }
 
+    @When("l'utente tenta la cancellazione della risk analysis indicando un identificativo vuoto")
+    public void deleteRiskAnalysisWithEmptyIdFromEServiceTemplate() {
+        /* DEV. NOTE 11/03/2025: il passaggio di NULL come identificativo della risk analysis
+         * è una BAD_REQUEST annunciata, in quanto è il comportamento di default del client OpenApi
+         * generato. Ciò implica che la chiamata non raggiungerà mai il server. Non è stato
+         * trovato un modo per passare stringa vuota senza bypassare il client OpenApi generato. */
+        deleteRiskAnalysisFromEServiceTemplate(lastTemplateManaged.id(), null);
+    }
+
     @Then("la cancellazione della risk analysis dell'e-service è stata effettuata correttamente")
     public void checkRiskAnalysisDeletedFromEServiceTemplate() {
         UUID eServiceTemplateId = lastTemplateManaged.id();
@@ -537,6 +580,24 @@ public class EServiceTemplateSteps {
         UUID riskAnalysisId = riskAnalysis.get(lastAddedRiskAnalysisIndex).getId();
         EServiceRiskAnalysisSeed editedRiskAnalysisSeed = easyRandom.nextObject(EServiceRiskAnalysisSeed.class);
         editRiskAnalysisFromEServiceTemplate(eServiceTemplateId, riskAnalysisId, editedRiskAnalysisSeed);
+    }
+
+    @When("l'utente tenta la modifica della risk analysis dell'e-service template indicando una specifica vuota")
+    public void editUnspecifiedRiskAnalysisFromEServiceTemplate() {
+
+        // TODO modo inefficiente di reperire la risk analysis inserita: andrebbe memorizzato
+        // l'id subito dopo la creazione, e quindi collocato in contesto di classe come per
+        // gli altri id
+        List<EServiceRiskAnalysis> riskAnalysis = eServiceTemplateClient.getEServiceTemplate(
+            sharedStepsContext.getXCorrelationId(),
+            lastTemplateManaged.id()).getRiskAnalysis();
+        if(isEmpty(riskAnalysis)) { // TODO aggiungere controlli simili anche nei passi di cancellazione risk analysis
+            throw new IllegalStateException("Nessuna risk analysis presente nell'e-service template");
+        }
+
+        UUID riskAnalysisId = riskAnalysis.get(lastAddedRiskAnalysisIndex).getId();
+        EServiceRiskAnalysisSeed editedRiskAnalysisSeed = new EServiceRiskAnalysisSeed();
+        editRiskAnalysisFromEServiceTemplate(lastTemplateManaged.id(), riskAnalysisId, editedRiskAnalysisSeed);
     }
 
     @Then("la modifica della risk analysis dell'e-service è stata effettuata correttamente")
@@ -629,6 +690,15 @@ public class EServiceTemplateSteps {
         addDocumentToEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, kind);
     }
 
+    // WIP
+    @When("l'utente tenta l'aggiunta di un documento di tipo {eServiceTemplateDocumentKind} alla versione dell'e-service template specificando un contenuto vuoto")
+    public void addUnspecifiedDocumentToEServiceTemplateVersion(EServiceTemplateDocumentKind kind) {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        UUID eServiceTemplateVersionId = lastTemplateManaged.lastVersionId();
+        ByteArrayResource emptyByteArray = new ByteArrayResource(new byte[]{});
+        addDocumentToEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, kind, emptyByteArray);
+    }
+
     @Then("l'aggiunta del documento di tipo {eServiceTemplateDocumentKind} alla versione dell'e-service template è stata effettuata correttamente")
     public void checkDocumentAddedToEServiceTemplateVersion(EServiceTemplateDocumentKind kind) {
         UUID eServiceTemplateId = lastTemplateManaged.id();
@@ -703,19 +773,39 @@ public class EServiceTemplateSteps {
         addDocumentToEServiceTemplateVersion(lastTemplateManaged.id(), UUID.randomUUID(), kind);
     }
 
+    // TODO troppe varianti di questi metodi, standardizzarne 1 o 2 al massimo
     private void addDocumentToEServiceTemplateVersion(UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId, EServiceTemplateDocumentKind kind) {
-        String prettyName = "e-service-template-%s-%s".formatted(kind.toString(),
-            nextTestResourceNameSuffix());
+        String prettyName = buildPrettyName(kind);
         addDocumentToEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, kind, prettyName);
+    }
+
+    private String buildPrettyName(EServiceTemplateDocumentKind kind) {
+        return "e-service-template-%s-%s".formatted(kind.toString(),
+            nextTestResourceNameSuffix());
+    }
+
+    private void addDocumentToEServiceTemplateVersion(UUID eServiceTemplateId, UUID eServiceTemplateVersionId, EServiceTemplateDocumentKind kind, Resource resource) {
+        addDocumentToEserviceTemplateVersion(
+            eServiceTemplateId,
+            eServiceTemplateVersionId,
+            kind,
+            buildPrettyName(kind),
+            getUserToken(),
+            resource);
     }
 
     private void addDocumentToEServiceTemplateVersion(UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId, EServiceTemplateDocumentKind kind, String prettyName) {
         String userToken = getUserToken();
-        clientTokenConfigurator.setBearerToken(userToken);
-
         String docBody = "Hello, I'm a document of type %s".formatted(kind);
+        Resource doc = new ByteArrayResource(docBody.getBytes(StandardCharsets.UTF_8));
+        addDocumentToEserviceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, kind, prettyName, userToken, doc);
+    }
+
+    private void addDocumentToEserviceTemplateVersion(UUID eServiceTemplateId, UUID eServiceTemplateVersionId,
+        EServiceTemplateDocumentKind kind, String prettyName, String userToken, Resource doc) {
+        clientTokenConfigurator.setBearerToken(userToken);
         httpCallExecutor.performCall(
             () -> eServiceTemplateClient.addDocumentWithHttpInfo(
                 sharedStepsContext.getXCorrelationId(),
@@ -723,7 +813,7 @@ public class EServiceTemplateSteps {
                 eServiceTemplateVersionId,
                 kind,
                 prettyName,
-                new ByteArrayResource(docBody.getBytes(StandardCharsets.UTF_8))),
+                doc),
 
             /* TODO altrove non è stata usata questa variante del metodo che permette di conservare il codice di risposta originale,
              * modificare anche gli altri scenari così che si possa effettuare un check preciso dello status restituito
@@ -731,9 +821,14 @@ public class EServiceTemplateSteps {
             ResponseEntity::getStatusCode);
 
         ResponseEntity<CreatedResource> response = (ResponseEntity<CreatedResource>) httpCallExecutor.getResponse();
-        this.lastAddedDocument = response.getStatusCode().is2xxSuccessful()
-            ? new EServiceTemplateDocumentInfo(response.getBody().getId(), prettyName, docBody)
-            : null;
+        try {
+            this.lastAddedDocument = response.getStatusCode().is2xxSuccessful()
+                ? new EServiceTemplateDocumentInfo(response.getBody().getId(), prettyName,
+                doc.getInputStream().readAllBytes())
+                : null;
+        } catch (IOException e) {
+            fail("Errore imprevisto: il body del documento costruito non restituisce correttamente un InputStream", e);
+        }
     }
 
     @When("l'utente tenta il reperimento del documento dalla versione dell'e-service template")
@@ -741,6 +836,18 @@ public class EServiceTemplateSteps {
         UUID eServiceTemplateId = lastTemplateManaged.id();
         UUID eServiceTemplateVersionId = lastTemplateManaged.lastVersionId();
         getDocumentFromEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, lastAddedDocument.id());
+    }
+
+    @When("l'utente tenta il reperimento del documento dalla versione dell'e-service template indicando un identificativo vuoto")
+    public void getUnspecifiedDocumentFromEServiceTemplateVersion() {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        UUID eServiceTemplateVersionId = lastTemplateManaged.lastVersionId();
+
+        /* DEV. NOTE 11/03/2025: il passaggio di NULL come identificativo è una BAD_REQUEST
+         * annunciata, in quanto è il comportamento di default del client OpenApi
+         * generato. Ciò implica che la chiamata non raggiungerà mai il server. Non è stato
+         * trovato un modo per passare stringa vuota senza bypassare il client OpenApi. */
+        getDocumentFromEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, null);
     }
 
     @When("l'utente tenta il reperimento di un documento da un e-service template inesistente")
@@ -773,6 +880,13 @@ public class EServiceTemplateSteps {
         UUID eServiceTemplateVersionId = lastTemplateManaged.lastVersionId();
         lastDocumentUpdateSeed = easyRandom.nextObject(UpdateEServiceTemplateVersionDocumentSeed.class);
         editDocumentFromEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, lastAddedDocument.id(), lastDocumentUpdateSeed);
+    }
+
+    @When("l'utente tenta la modifica del documento dell'e-service template indicando una specifica vuota")
+    public void editDocumentWithEmptySpecFromEServiceTemplateVersion() {
+        UUID eServiceTemplateId = lastTemplateManaged.id();
+        UUID eServiceTemplateVersionId = lastTemplateManaged.lastVersionId();
+        editDocumentFromEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, lastAddedDocument.id(), new UpdateEServiceTemplateVersionDocumentSeed());
     }
 
     @Then("la modifica del documento dell'e-service template è stata effettuata correttamente")
@@ -862,6 +976,18 @@ public class EServiceTemplateSteps {
         UUID eServiceTemplateVersionId = lastTemplateManaged.lastVersionId();
         UUID documentId = lastAddedDocument.id();
         deleteDocumentFromEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, documentId);
+    }
+
+    @When("l'utente tenta la cancellazione del documento dell'e-service template indicando un identificato vuoto")
+    public void deleteUnspecifiedDocumentFromEServiceTemplateVersion() {
+        /* DEV. NOTE 11/03/2025: il passaggio di NULL come identificativo è una BAD_REQUEST
+         * annunciata, in quanto è il comportamento di default del client OpenApi
+         * generato. Ciò implica che la chiamata non raggiungerà mai il server. Non è stato
+         * trovato un modo per passare stringa vuota senza bypassare il client OpenApi. */
+        deleteDocumentFromEServiceTemplateVersion(
+            lastTemplateManaged.id(),
+            lastTemplateManaged.lastVersionId(),
+            null);
     }
 
     @Then("la cancellazione del documento dell'e-service template è stata effettuata correttamente")
@@ -955,6 +1081,15 @@ public class EServiceTemplateSteps {
         publishEServiceTemplateVersion(UUID.randomUUID(), UUID.randomUUID());
     }
 
+    @When("l'utente tenta la pubblicazione di una versione di un e-service template indicando un identificativo vuoto")
+    public void publishUnspecifiedEServiceTemplateVersion() {
+        /* DEV. NOTE 11/03/2025: il passaggio di NULL come identificativo è una BAD_REQUEST
+         * annunciata, in quanto è il comportamento di default del client OpenApi
+         * generato. Ciò implica che la chiamata non raggiungerà mai il server. Non è stato
+         * trovato un modo per passare stringa vuota senza bypassare il client OpenApi. */
+        publishEServiceTemplateVersion(lastTemplateManaged.id(), null);
+    }
+
     @When("l'utente tenta la pubblicazione di una versione inesistente di un e-service template")
     public void publishNonExistentEServiceTemplateVersion() {
         publishEServiceTemplateVersion(lastTemplateManaged.id(), UUID.randomUUID());
@@ -1026,6 +1161,15 @@ public class EServiceTemplateSteps {
         UUID eServiceTemplateId = lastTemplateManaged.id();
         UUID eServiceTemplateVersionId = lastTemplateManaged.lastVersionId();
         deleteEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId);
+    }
+
+    @When("l'utente tenta la cancellazione della versione dell'e-service template indicando un identificativo vuoto")
+    public void deleteUnspecifiedEServiceTemplateVersion() {
+        /* DEV. NOTE 11/03/2025: il passaggio di NULL come identificativo è una BAD_REQUEST
+         * annunciata, in quanto è il comportamento di default del client OpenApi
+         * generato. Ciò implica che la chiamata non raggiungerà mai il server. Non è stato
+         * trovato un modo per passare stringa vuota senza bypassare il client OpenApi. */
+        deleteEServiceTemplateVersion(lastTemplateManaged.id(), null);
     }
 
     // TODO questa classe è piena di pattern ricorrenti, questo step ne è un'esempio. Andrebbero astratti e portati in classi di utility esterne.
@@ -1114,6 +1258,16 @@ public class EServiceTemplateSteps {
         suspendEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId);
     }
 
+    @When("l'utente tenta la sospensione della versione dell'e-service template indicando un identificativo vuoto")
+    public void suspendUnspecifiedEServiceTemplateVersion() {
+        /* DEV. NOTE 11/03/2025: il passaggio di NULL come identificativo è una BAD_REQUEST
+         * annunciata, in quanto è il comportamento di default del client OpenApi
+         * generato. Ciò implica che la chiamata non raggiungerà mai il server. Non è stato
+         * trovato un modo per passare stringa vuota senza bypassare il client OpenApi. */
+        suspendEServiceTemplateVersion(lastTemplateManaged.id(), null);
+    }
+
+
     @When("l'utente tenta la sospensione della versione di un e-service template inesistente")
     public void suspendNonExistentEServiceTemplate() {
         suspendEServiceTemplateVersion(UUID.randomUUID(), UUID.randomUUID());
@@ -1160,6 +1314,15 @@ public class EServiceTemplateSteps {
         UUID eServiceTemplateId = lastTemplateManaged.id();
         UUID eServiceTemplateVersionId = lastTemplateManaged.lastVersionId();
         reactivateEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId);
+    }
+
+    @When("l'utente tenta la riattivazione della versione dell'e-service template indicando un identificativo vuoto")
+    public void reactivateUnspecifiedEServiceTemplateVersion() {
+        /* DEV. NOTE 11/03/2025: il passaggio di NULL come identificativo è una BAD_REQUEST
+         * annunciata, in quanto è il comportamento di default del client OpenApi
+         * generato. Ciò implica che la chiamata non raggiungerà mai il server. Non è stato
+         * trovato un modo per passare stringa vuota senza bypassare il client OpenApi. */
+        reactivateEServiceTemplateVersion(lastTemplateManaged.id(), null);
     }
 
     @When("l'utente tenta la riattivazione di una versione di un e-service template inesistente")
@@ -1431,6 +1594,14 @@ public class EServiceTemplateSteps {
         editEServiceTemplateVersionQuotas(eServiceTemplateId, eServiceTemplateVersionId, lastTemplateVersionQuotasUpdateSeed);
     }
 
+    @When("l'utente tenta la modifica delle quote della versione dell'e-service template indicando una specifica vuota")
+    public void editEServiceTemplateVersionQuotasWithEmptySpec() {
+        editEServiceTemplateVersionQuotas(
+            lastTemplateManaged.id(),
+            lastTemplateManaged.lastVersionId(),
+            new EServiceTemplateVersionQuotasUpdateSeed());
+    }
+
     @When("l'utente tenta la modifica delle quote della versione dell'e-service template specificando un \"dailyCallsTotal\" inferiore a \"dailyCallsPerConsumer\"")
     public void editEServiceTemplateVersionQuotasWithDailyCallsTotalLessThanDailyCallsPerConsumer() {
         UUID eServiceTemplateId = lastTemplateManaged.id();
@@ -1504,6 +1675,14 @@ public class EServiceTemplateSteps {
             .get(0).getExplicitAttributeVerification();
         lastAttributesUpdateSeed.getCertified().get(0).get(0).setExplicitAttributeVerification(!explicitAttributeVerification); // modifico 1 campo di 1 attributo
         editEServiceTemplateVersionAttributes(eServiceTemplateId, eServiceTemplateVersionId, lastAttributesUpdateSeed);
+    }
+
+    @When("l'utente tenta la modifica degli attributi della versione dell'e-service template indicando una specifica vuota")
+    public void editEServiceTemplateVersionAttributesWithEmptySpec() {
+        editEServiceTemplateVersionAttributes(
+            lastTemplateManaged.id(),
+            lastTemplateManaged.lastVersionId(),
+            new DescriptorAttributesSeed());
     }
 
     @When("l'utente tenta la modifica degli attributi della versione dell'e-service template aggiungendone di nuovi")
@@ -1615,6 +1794,15 @@ public class EServiceTemplateSteps {
         getEServiceTemplateDetails(UUID.randomUUID());
     }
 
+    @When("l'utente tenta la visualizzazione dei dettagli dell'e-service template indicando un identificativo vuoto")
+    public void getUnspecifiedEServiceTemplateDetails() {
+        /* DEV. NOTE 11/03/2025: il passaggio di NULL come identificativo è una BAD_REQUEST
+         * annunciata, in quanto è il comportamento di default del client OpenApi
+         * generato. Ciò implica che la chiamata non raggiungerà mai il server. Non è stato
+         * trovato un modo per passare stringa vuota senza bypassare il client OpenApi. */
+        getEServiceTemplateDetails(null);
+    }
+
     private void getEServiceTemplateDetails(UUID eServiceTemplateId) {
         String userToken = getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);
@@ -1634,6 +1822,15 @@ public class EServiceTemplateSteps {
     @When("l'utente tenta la visualizzazione dei dettagli della versione dell'e-service template")
     public void getEServiceTemplateVersionDetails() {
         getEServiceTemplateVersionDetails(lastTemplateManaged.id(), lastTemplateManaged.lastVersionId());
+    }
+
+    @When("l'utente tenta la visualizzazione dei dettagli della versione dell'e-service template indicando un identificativo vuoto")
+    public void getUnspecifiedEServiceTemplateVersionDetails() {
+        /* DEV. NOTE 11/03/2025: il passaggio di NULL come identificativo è una BAD_REQUEST
+         * annunciata, in quanto è il comportamento di default del client OpenApi
+         * generato. Ciò implica che la chiamata non raggiungerà mai il server. Non è stato
+         * trovato un modo per passare stringa vuota senza bypassare il client OpenApi. */
+        getEServiceTemplateVersionDetails(lastTemplateManaged.id(), null);
     }
 
     @When("l'utente tenta la visualizzazione dei dettagli di una versione di un e-service template inesistente")

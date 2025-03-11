@@ -158,8 +158,7 @@ Feature: Test API of e-service template
   Scenario: [INTEROP-EST-013] La modifica di un e-service template in stato DRAFT non può essere fatta specificando lo stesso nome
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
-    When l'utente è un "admin" di "PA1"
-    And l'utente tenta di modificare l'e-service template specificando lo stesso nome
+    When l'utente tenta di modificare l'e-service template specificando lo stesso nome
     Then si ottiene status code 403
 
   Scenario: [INTEROP-EST-014] La modifica di un e-service template in stato DRAFT non può essere fatta da una PA diversa da quella creatrice del template
@@ -1783,28 +1782,174 @@ Feature: Test API of e-service template
       | api,security  |
       | support       |
 
-    Scenario: [INTEROP-EST-162] L'aggiornamento di un'istanza inesistente di un template all'ultima versione dell'e-service template non può essere effettuata
-      Given l'utente è un "admin" di "PA1"
-      When l'utente tenta l'aggiornamento di un'istanza inesistente dell'e-service template
-      Then si ottiene status code 403
+  Scenario: [INTEROP-EST-162] L'aggiornamento di un'istanza inesistente di un template all'ultima versione dell'e-service template non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    When l'utente tenta l'aggiornamento di un'istanza inesistente dell'e-service template
+    Then si ottiene status code 403
 
-    Scenario: [INTEROP-EST-163] L'aggiornamento di un'istanza di un template all'ultima versione dell'e-service template non può essere effettuata se l'istanza fa già riferimento all'ultima versione del template
-      Given l'utente è un "admin" di "PA1"
-      And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
-      And l'utente effettua la creazione di un nuovo e-service a partire dal template con successo indicando solo le specifiche strettamente necessarie
-      When l'utente tenta l'aggiornamento dell'istanza dell'e-service template all'ultima versione
-      Then si ottiene status code 409
+  Scenario: [INTEROP-EST-163] L'aggiornamento di un'istanza di un template all'ultima versione dell'e-service template non può essere effettuata se l'istanza fa già riferimento all'ultima versione del template
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    When l'utente tenta l'aggiornamento dell'istanza dell'e-service template all'ultima versione
+    Then si ottiene status code 409
 
-    Scenario: [INTEROP-EST-164] L'aggiornamento di un'istanza di un template all'ultima versione dell'e-service template non può essere effettuata non indicando l'identificativo dell'e-service
-      Given l'utente è un "admin" di "PA1"
-      When l'utente tenta l'aggiornamento di un'istanza dell'e-service template specificando un identificativo vuoto
-      Then si ottiene status code 403
+  Scenario: [INTEROP-EST-164] L'aggiornamento di un'istanza di un template all'ultima versione dell'e-service template non può essere effettuata non indicando l'identificativo dell'e-service
+    Given l'utente è un "admin" di "PA1"
+    When l'utente tenta l'aggiornamento di un'istanza dell'e-service template specificando un identificativo vuoto
+    Then si ottiene status code 403
 
-  # TODO continua da 185...
+  Scenario: [INTEROP-EST-165] La creazione di un e-service template indicando una specifica vuota dello stesso non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    When l'utente tenta la creazione di un e-service template indicando una specifica vuota
+    Then si ottiene status code 400
+
+  Scenario: [INTEROP-EST-166] La modifica di un e-service template indicando una specifica vuota dello stesso non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    When l'utente tenta di modificare l'e-service template indicando una specifica vuota
+    Then si ottiene status code 400
+
+  Scenario: [INTEROP-EST-167] La modifica di una versione di un e-service template indicando una specifica vuota della stessa non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    When l'utente tenta di modificare la versione dell'e-service template indicando una specifica vuota
+    Then si ottiene status code 400
+
+  Scenario: [INTEROP-EST-168] La creazione di una risk analysis da associare a un e-service template indicando una specifica vuota della stessa non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    When l'utente tenta la creazione di una risk analysis indicando una specifica vuota
+    Then si ottiene status code 400
+
+  Scenario: [INTEROP-EST-169] La cancellazione di una risk analysis associata a un e-service template indicando un identificativo vuoto della stessa non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    And l'utente effettua l'aggiunta di una risk analysis all'e-service template con successo
+    When l'utente tenta la cancellazione della risk analysis indicando un identificativo vuoto
+    Then si ottiene status code 400
+
+  Scenario: [INTEROP-EST-170] La modifica di una risk analysis associata a un e-service template indicando una specifica vuota della stessa non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    And l'utente effettua l'aggiunta di una risk analysis all'e-service template con successo
+    When l'utente tenta la modifica della risk analysis dell'e-service template indicando una specifica vuota
+    Then si ottiene status code 400
+
+  Scenario Outline: [INTEROP-EST-171] La cancellazione di un documento/interfaccia di un e-service template specificando un identificativo vuoto dello stesso non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo
+    When l'utente tenta la cancellazione del documento dell'e-service template indicando un identificato vuoto
+    Then si ottiene status code 400
+    Examples:
+      | kind      |
+      | DOCUMENT  |
+      | INTERFACE |
+
+  Scenario Outline: [INTEROP-EST-172] L'aggiunta di un documento/interfaccia a una versione di un e-service template specificando un contenuto vuoto dello stesso non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente tenta l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template specificando un contenuto vuoto
+    Then si ottiene status code 400
+    Examples:
+      | kind      |
+      | DOCUMENT  |
+      | INTERFACE |
+
+  Scenario Outline: [INTEROP-EST-173] Il reperimento di un documento/interfaccia di un e-service template indicando un identificativo vuoto non può essere effettuato
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo
+    When l'utente tenta il reperimento del documento dalla versione dell'e-service template indicando un identificativo vuoto
+    Then si ottiene status code 400
+    Examples:
+      | kind      |
+      | DOCUMENT  |
+      | INTERFACE |
+
+  Scenario Outline: [INTEROP-EST-174] La modifica di un documento/interfaccia di un e-service template indicando una specifica vuota non può essere effettuato
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo
+    When l'utente tenta la modifica del documento dell'e-service template indicando una specifica vuota
+    Then si ottiene status code 400
+    Examples:
+      | kind      |
+      | DOCUMENT  |
+      | INTERFACE |
+
+  Scenario: [INTEROP-EST-175] La pubblicazione di una versione di un e-service template indicando un identificativo vuoto della stessa non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    When l'utente tenta la pubblicazione di una versione di un e-service template indicando un identificativo vuoto
+    Then si ottiene status code 400
+
+  Scenario: [INTEROP-EST-176] La cancellazione di una versione di un e-service template indicando un identificativo vuoto della stessa non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente effettua la creazione di una ulteriore versione nell'e-service template con successo
+    When l'utente tenta la cancellazione della versione dell'e-service template indicando un identificativo vuoto
+    Then si ottiene status code 400
+
+  Scenario: [INTEROP-EST-177] La sospensione di una versione di un e-service template indicando un identificativo vuoto della stessa non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    When l'utente tenta la sospensione della versione dell'e-service template indicando un identificativo vuoto
+    Then si ottiene status code 400
+
+  Scenario: [INTEROP-EST-178] La riattivazione di una versione di un e-service template indicando un identificativo vuoto della stessa non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di SUSPENDED
+    When l'utente tenta la riattivazione della versione dell'e-service template indicando un identificativo vuoto
+    Then si ottiene status code 400
+
+  Scenario: [INTEROP-EST-179] La modifica di un e-service template non può essere fatta specificando un nome vuoto
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    When l'utente tenta di modificare l'e-service template specificando un nome vuoto
+    Then si ottiene status code 400
+
+  Scenario Outline: [INTEROP-EST-180] La modifica delle quote di una versione di un e-service template indicando una specifica vuota non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
+    When l'utente tenta la modifica delle quote della versione dell'e-service template indicando una specifica vuota
+    Then si ottiene status code 400
+    Examples:
+      | stato     |
+      | PUBLISHED |
+      | SUSPENDED |
+
+  Scenario Outline: [INTEROP-EST-181] La modifica degli attributi di una versione di un e-service template indicando una specifica vuota non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
+
+    # Necessario per l'aggiunta degli attributi in vista della loro modifica
+    # TODO uno step linguisticamente più chiaro sarebbe preferibile
+    And l'utente effettua delle modifiche alla versione dell'e-service template con successo
+
+    When l'utente tenta la modifica degli attributi della versione dell'e-service template indicando una specifica vuota
+    Then si ottiene status code 400
+    Examples:
+      | stato     |
+      | PUBLISHED |
+      | SUSPENDED |
+
+  Scenario: [INTEROP-EST-182] La visualizzazione dei dettagli un e-service template indicando un identificativo vuoto non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    When l'utente tenta la visualizzazione dei dettagli dell'e-service template indicando un identificativo vuoto
+    Then si ottiene status code 400
+
+  Scenario: [INTEROP-EST-183] La visualizzazione dei dettagli della versione di un e-service template indicando un identificativo vuoto non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    When l'utente tenta la visualizzazione dei dettagli della versione dell'e-service template indicando un identificativo vuoto
+    Then si ottiene status code 400
 
 
 
-  #TODO la maggior parte dei test sono fatti su template in mod. RICEZIONE. Valutare che non sia il caso di testare per entrambe le modalità.
+  #TODO la maggior parte dei test sono fatti su template in mod. EROGAZIONE. Valutare che non sia il caso di testare per entrambe le modalità.
 
     #TODO smistare gli scenari in file .feature più piccoli e/o i relativi step in classi più piccole. Possibile divisione:
       # test che riguardano il template
