@@ -4,10 +4,12 @@ import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingTemplate;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV27;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingWebhook;
 import it.pagopa.pn.client.b2b.pa.polling.exception.PnPollingException;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebhookB2bClient;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v27.ProgressResponseElementV27;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v27.TimelineElementCategoryV26;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 
@@ -150,14 +153,10 @@ public class PnPollingServiceWebhookV27 extends PnPollingTemplate<PnPollingRespo
 
     private Predicate<ProgressResponseElementV27> toCheckCondition(PnPollingParameter pnPollingParameter) {
         return progressResponseElementV27 ->
-                progressResponseElementV27.getIun() != null
-                        && progressResponseElementV27.getIun().equals(iun)
-                        && progressResponseElementV27.getElement().getCategory() != null
-                        && progressResponseElementV27.getElement().getCategory().getValue().equals(
-                        pnPollingParameter.getPnPollingWebhook().getTimelineElementCategoryV27().getValue())
-                        || progressResponseElementV27.getIun() != null
-                        && progressResponseElementV27.getIun().equals(iun)
-                        && (progressResponseElementV27.getNewStatus() != null
-                        && (progressResponseElementV27.getNewStatus().equals(pnPollingParameter.getPnPollingWebhook().getNotificationStatusV27())));
+                progressResponseElementV27.getIun() != null && progressResponseElementV27.getIun().equals(iun)
+                        && progressResponseElementV27.getElement().getCategory() != null && progressResponseElementV27.getElement().getCategory().getValue().equals(Optional.ofNullable(pnPollingParameter.getPnPollingWebhook()).map(PnPollingWebhook::getTimelineElementCategoryV27).map(TimelineElementCategoryV26::getValue).orElse(null))
+                        ||
+                        progressResponseElementV27.getIun() != null && progressResponseElementV27.getIun().equals(iun)
+                        && (progressResponseElementV27.getNewStatus() != null && (progressResponseElementV27.getNewStatus().equals(pnPollingParameter.getPnPollingWebhook().getNotificationStatusV27())));
     }
 }
