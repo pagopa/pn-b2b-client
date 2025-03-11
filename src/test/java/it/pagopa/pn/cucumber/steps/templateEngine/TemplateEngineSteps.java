@@ -206,7 +206,7 @@ public class TemplateEngineSteps {
             } case "piu allegati" -> {
                 int count = countOccurrences("TEST_digest_allegato");
                 Assertions.assertEquals(2, count);
-            } default -> throw new IllegalArgumentException("not valid input");
+            }
         }
     }
 }
