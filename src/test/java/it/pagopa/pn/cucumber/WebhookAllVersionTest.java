@@ -23,6 +23,6 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
         @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
 })
 @ExcludeTags({"ignore"})
-@IncludeTags({"webhookV24", "webhookV26"})
+@IncludeTags({"webhookV23", "webhookV25"})
 public class WebhookAllVersionTest {
 }
