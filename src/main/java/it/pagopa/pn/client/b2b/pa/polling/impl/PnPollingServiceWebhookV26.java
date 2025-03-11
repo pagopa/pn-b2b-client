@@ -153,8 +153,8 @@ public class PnPollingServiceWebhookV26 extends PnPollingTemplate<PnPollingRespo
                 progressResponseElementV26.getIun() != null
                         && progressResponseElementV26.getIun().equals(iun)
                         && progressResponseElementV26.getElement().getCategory() != null
-                        && progressResponseElementV26.getElement().getCategory().getValue().equals(
-                        pnPollingParameter.getPnPollingWebhook().getTimelineElementCategoryV26().getValue())
+                        && progressResponseElementV26.getElement().getCategory().equals(
+                        pnPollingParameter.getPnPollingWebhook().getTimelineElementCategoryV26())
                         || progressResponseElementV26.getIun() != null
                         && progressResponseElementV26.getIun().equals(iun)
                         && (progressResponseElementV26.getNewStatus() != null

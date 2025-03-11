@@ -137,11 +137,10 @@ public class PnPollingServiceWebhookV24 extends PnPollingTemplate<PnPollingRespo
         List<ProgressResponseElementV24> finalWebhookProgressList = webhookProgressList;
         ProgressResponseElementV24 progressResponseElementV24 = pnPollingResponse.getProgressResponseElementListV24()
                 .stream()
-                .map(progressResponseElement -> {
+                .peek(progressResponseElement -> {
                     if (!finalWebhookProgressList.contains(progressResponseElement)) {
                         finalWebhookProgressList.add(progressResponseElement);
                     }
-                    return progressResponseElement;
                 })
                 .filter(toCheckCondition(pnPollingParameter))
                 .findAny()
@@ -165,10 +164,14 @@ public class PnPollingServiceWebhookV24 extends PnPollingTemplate<PnPollingRespo
 
     private Predicate<ProgressResponseElementV24> toCheckCondition(PnPollingParameter pnPollingParameter) {
         return progressResponseElementV24 ->
-                progressResponseElementV24.getIun() != null && progressResponseElementV24.getIun().equals(iun)
-                        && progressResponseElementV24.getElement().getCategory() != null && progressResponseElementV24.getElement().getCategory().equals(pnPollingParameter.getPnPollingWebhook().getTimelineElementCategoryV24())
-                        ||
-                        progressResponseElementV24.getIun() != null && progressResponseElementV24.getIun().equals(iun)
-                                && (progressResponseElementV24.getNewStatus() != null && (progressResponseElementV24.getNewStatus().equals(pnPollingParameter.getPnPollingWebhook().getNotificationStatusV23())));
+                progressResponseElementV24.getIun() != null
+                        && progressResponseElementV24.getIun().equals(iun)
+                        && progressResponseElementV24.getElement().getCategory() != null
+                        && progressResponseElementV24.getElement().getCategory().equals(
+                        pnPollingParameter.getPnPollingWebhook().getTimelineElementCategoryV24())
+                        || progressResponseElementV24.getIun() != null
+                        && progressResponseElementV24.getIun().equals(iun)
+                        && (progressResponseElementV24.getNewStatus() != null
+                        && (progressResponseElementV24.getNewStatus().equals(pnPollingParameter.getPnPollingWebhook().getNotificationStatusV24())));
     }
 }
