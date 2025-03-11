@@ -9,6 +9,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.api.EservicesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateInstances;
 import it.pagopa.interop.generated.openapi.clients.bff.model.InstanceEServiceSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
 import java.util.List;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -95,6 +96,20 @@ public class EServiceApiClientImpl implements IEServiceClient {
         String xCorrelationId, UUID templateId, Integer offset, Integer limit, String producerName,
         List<EServiceDescriptorState> states) {
         return this.eservicesApi.getEServiceTemplateInstancesWithHttpInfo(xCorrelationId, templateId, offset, limit, producerName, states);
+    }
+
+    @Override
+    public ResponseEntity<CreatedEServiceDescriptor> upgradeEServiceInstanceWithHttpInfo(
+        UUID eServiceId) {
+        /* TODO 10/03/2025 diversamente da tutte le altre API questa NON si aspetta xCorrelationId. Segnalato, riscontro non ancora ricevuto
+            https://pagopaspa.slack.com/archives/C085C3D1U84/p1741624453778969 */
+        return this.eservicesApi.upgradeEServiceInstanceWithHttpInfo(eServiceId);
+    }
+
+    @Override
+    public ResponseEntity<ProducerEServiceDescriptor> getProducerEServiceDescriptorWithHttpInfo(
+        String xCorrelationId, UUID eserviceId, UUID descriptorId) {
+        return this.eservicesApi.getProducerEServiceDescriptorWithHttpInfo(xCorrelationId, eserviceId, descriptorId);
     }
 
     @Override

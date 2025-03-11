@@ -28,6 +28,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServiceTemp
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganization;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganizations;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributeSeed;
@@ -51,6 +52,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVer
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionQuotasUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.InstanceEServiceSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceTemplate;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceTemplates;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
@@ -124,6 +126,8 @@ public class EServiceTemplateSteps {
     private DescriptorAttributesSeed lastAttributesUpdateSeed;
     private InstanceEServiceSeed lastEServiceCreatedFromTemplate;
     private UUID lastEServiceIdCreatedFromTemplate;
+    private UUID lastEServiceIdUpdatedFromTemplate;
+    private UUID lastEServiceDescriptorIdUpdatedFromTemplate;
 
     // TODO farne un bean centralizzato riutilizzabile ovunque
     private static EasyRandomParameters easyRandomParameters = new EasyRandomParameters()
@@ -1721,6 +1725,12 @@ public class EServiceTemplateSteps {
         this.lastEServiceCreatedFromTemplate = seed;
     }
 
+    @Given("l'utente effettua la creazione di un nuovo e-service a partire dal template con successo indicando solo le specifiche strettamente necessarie")
+    public void createEServiceFromTemplateMinimalSpecSuccessfully() {
+        createEServiceFromTemplateMinimalSpec();
+        checkEServiceCreated(EServiceDescriptorState.DRAFT);
+    }
+
     @Then("il nuovo e-service è stato creato correttamente in stato {eServiceDescriptorState}")
     public void checkEServiceCreated(EServiceDescriptorState expectedState) {
         try {
@@ -1765,6 +1775,10 @@ public class EServiceTemplateSteps {
                         ? instanceDefaultName
                         : "%s %s".formatted(instanceDefaultName, lastEServiceCreatedFromTemplate.getInstanceLabel()));
 
+                /* TODO 10/03/2025: in checkEServiceCreatedFromLatestTemplateVersion (parte del test
+                *   dell'API di upgrade del servizio) è stata usata l'API
+                *   getProducerEServiceDescriptor; verificare se possa essere sufficiente per essere usata
+                *   anche qui, e in tal caso usarla al posto di getEServiceTemplateInstances */
 
                 /* TODO 10/03/2025 sebbene i controlli soprastanti bastino a implementare lo
                     scenario indicato in SRS, sarebbe il caso di verificare che il risultato sia
@@ -1778,6 +1792,66 @@ public class EServiceTemplateSteps {
             });
         } catch (PollingPredicateException e) {
             fail("Il nuovo e-service non è stato creato correttamente");
+        }
+    }
+
+    @When("l'utente tenta l'aggiornamento dell'istanza dell'e-service template all'ultima versione")
+    public void updateEServiceInstanceToLatestVersion() {
+        UUID eServiceId = lastEServiceIdCreatedFromTemplate;
+        updateEServiceInstance(eServiceId);
+    }
+
+    @When("l'utente tenta l'aggiornamento di un'istanza inesistente dell'e-service template")
+    public void updateNonExistentEServiceInstance() {
+        updateEServiceInstance(UUID.randomUUID());
+    }
+
+    @When("l'utente tenta l'aggiornamento di un'istanza dell'e-service template specificando un identificativo vuoto")
+    public void updateEmptyEServiceInstance() {
+        updateEServiceInstance(null);
+    }
+
+    private void updateEServiceInstance(UUID uuid) {
+        String userToken = getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+        httpCallExecutor.performCall(
+            () -> eServiceClient.upgradeEServiceInstanceWithHttpInfo(uuid),
+            ResponseEntity::getStatusCode);
+
+        ResponseEntity<CreatedEServiceDescriptor> response = (ResponseEntity<CreatedEServiceDescriptor>) httpCallExecutor.getResponse();
+        this.lastEServiceIdUpdatedFromTemplate = response.getBody().getId();
+        this.lastEServiceDescriptorIdUpdatedFromTemplate = response.getBody().getId();
+    }
+
+    @Then("il nuovo e-service riferito all'ultima versione dell'e-service template è stato creato correttamente")
+    public void checkEServiceCreatedFromLatestTemplateVersion() {
+        try {
+            pollingService.makePolling(
+                () -> httpCallExecutor.performCall(
+                    () -> eServiceClient.getProducerEServiceDescriptorWithHttpInfo(
+                        sharedStepsContext.getXCorrelationId(),
+                        lastEServiceIdUpdatedFromTemplate,
+                        lastEServiceDescriptorIdUpdatedFromTemplate
+                    ),
+                    ResponseEntity::getStatusCode),
+                res -> res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody()),
+                "Il nuovo e-service non è stato aggiornato correttamente"
+            );
+
+            @SuppressWarnings("all")
+            ProducerEServiceDescriptor eServiceUpdatedDescriptor = ((ResponseEntity<ProducerEServiceDescriptor>) httpCallExecutor.getResponse()).getBody();
+
+            assertSoftly(softly -> {
+                softly.assertThat(lastEServiceDescriptorIdUpdatedFromTemplate)
+                    .as("Check presenza descriptor associato all'istanza aggiornata")
+                    .isEqualTo(eServiceUpdatedDescriptor.getId()); // NPE impossibile, in quanto da condizione di polling il body non può essere null
+                softly.assertThat(eServiceUpdatedDescriptor)
+                    .as("Check corretto stato dell'istanza aggiornata")
+                    .extracting(ProducerEServiceDescriptor::getState)
+                    .isEqualTo(EServiceDescriptorState.DRAFT);
+            });
+        } catch (PollingPredicateException e) {
+            fail("Il nuovo e-service non è stato aggiornato correttamente");
         }
     }
 

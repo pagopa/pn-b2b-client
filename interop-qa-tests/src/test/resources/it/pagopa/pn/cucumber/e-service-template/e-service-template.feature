@@ -1703,9 +1703,6 @@ Feature: Test API of e-service template
     When l'utente tenta la visualizzazione dell'elenco dei creatori di e-service templates attivi
     Then si ottiene status code 404
 
-
-  # NOTA: un e-service creato a partire da un template è anche detto "istanza" del template
-
   Scenario Outline: [INTEROP-EST-155] La creazione di un nuovo e-service a partire da un template attivo può essere effettuata da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
@@ -1758,8 +1755,53 @@ Feature: Test API of e-service template
     When l'utente tenta la creazione di un nuovo e-service indicando un template inesistente
     Then si ottiene status code 404
 
+  # NOTA: un e-service creato a partire da un template è anche detto "istanza" del template
+  Scenario Outline: [INTEROP-EST-160] L'aggiornamento di un'istanza di un template all'ultima versione dell'e-service template può essere effettuata da un ente in veste di ADMIN o API
+    Given l'utente è un "<ruolo>" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And l'utente effettua la creazione di una ulteriore versione nell'e-service template con successo
+    When l'utente tenta l'aggiornamento dell'istanza dell'e-service template all'ultima versione
+    Then si ottiene status code 200
+    And il nuovo e-service riferito all'ultima versione dell'e-service template è stato creato correttamente
+    Examples:
+      | ruolo |
+      | admin |
+      | api   |
 
-  # TODO continua da 180...
+  Scenario Outline: [INTEROP-EST-161] L'aggiornamento di un'istanza di un template all'ultima versione dell'e-service template NON può essere effettuata da un ente NON in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And l'utente effettua la creazione di una ulteriore versione nell'e-service template con successo
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta l'aggiornamento dell'istanza dell'e-service template all'ultima versione
+    Then si ottiene status code 403
+    Examples:
+      | ruolo         |
+      | security      |
+      | api,security  |
+      | support       |
+
+    Scenario: [INTEROP-EST-162] L'aggiornamento di un'istanza inesistente di un template all'ultima versione dell'e-service template non può essere effettuata
+      Given l'utente è un "admin" di "PA1"
+      When l'utente tenta l'aggiornamento di un'istanza inesistente dell'e-service template
+      Then si ottiene status code 403
+
+    Scenario: [INTEROP-EST-163] L'aggiornamento di un'istanza di un template all'ultima versione dell'e-service template non può essere effettuata se l'istanza fa già riferimento all'ultima versione del template
+      Given l'utente è un "admin" di "PA1"
+      And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+      And l'utente effettua la creazione di un nuovo e-service a partire dal template con successo indicando solo le specifiche strettamente necessarie
+      When l'utente tenta l'aggiornamento dell'istanza dell'e-service template all'ultima versione
+      Then si ottiene status code 409
+
+    Scenario: [INTEROP-EST-164] L'aggiornamento di un'istanza di un template all'ultima versione dell'e-service template non può essere effettuata non indicando l'identificativo dell'e-service
+      Given l'utente è un "admin" di "PA1"
+      When l'utente tenta l'aggiornamento di un'istanza dell'e-service template specificando un identificativo vuoto
+      Then si ottiene status code 403
+
+  # TODO continua da 185...
+
 
 
   #TODO la maggior parte dei test sono fatti su template in mod. RICEZIONE. Valutare che non sia il caso di testare per entrambe le modalità.

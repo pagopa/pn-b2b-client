@@ -7,6 +7,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorS
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateInstances;
 import it.pagopa.interop.generated.openapi.clients.bff.model.InstanceEServiceSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import java.util.List;
 import java.util.UUID;
@@ -30,4 +31,10 @@ public interface IEServiceClient extends SettableBearerToken {
     ResponseEntity<EServiceTemplateInstances> getEServiceTemplateInstancesWithHttpInfo(
         String xCorrelationId, UUID templateId, Integer offset, Integer limit, String producerName,
         List<EServiceDescriptorState> states);
+
+    ResponseEntity<CreatedEServiceDescriptor> upgradeEServiceInstanceWithHttpInfo(UUID eServiceId);
+
+
+    ResponseEntity<ProducerEServiceDescriptor> getProducerEServiceDescriptorWithHttpInfo(
+        String xCorrelationId, UUID eserviceId, UUID descriptorId);
 }
