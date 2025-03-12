@@ -353,7 +353,7 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
     public void updateEServiceIntendedTarget(String xCorrelationId,
         UUID eServiceTemplateId,
         EServiceTemplateDescriptionUpdateSeed seed) {
-        this.eserviceTemplatesApi.updateEServiceIntendedTarget(xCorrelationId, eServiceTemplateId, seed);
+        this.eserviceTemplatesApi.updateEServiceTemplateIntendedTarget(xCorrelationId, eServiceTemplateId, seed);
     }
 
     @Override
@@ -361,7 +361,7 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
         String xCorrelationId,
         UUID eServiceTemplateId,
         EServiceTemplateDescriptionUpdateSeed seed) {
-        return this.eserviceTemplatesApi.updateEServiceIntendedTargetWithHttpInfo(xCorrelationId, eServiceTemplateId, seed);
+        return this.eserviceTemplatesApi.updateEServiceTemplateIntendedTargetWithHttpInfo(xCorrelationId, eServiceTemplateId, seed);
     }
 
     @Override

@@ -8,7 +8,9 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateInstances;
 import it.pagopa.interop.generated.openapi.clients.bff.model.InstanceEServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorTemplateInstanceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateInstanceSeed;
 import java.util.List;
 import java.util.UUID;
@@ -33,9 +35,8 @@ public interface IEServiceClient extends SettableBearerToken {
         String xCorrelationId, UUID templateId, Integer offset, Integer limit, String producerName,
         List<EServiceDescriptorState> states);
 
-    ResponseEntity<CreatedEServiceDescriptor> upgradeEServiceInstanceWithHttpInfo(UUID eServiceId);
-
-
+    ResponseEntity<CreatedEServiceDescriptor> upgradeEServiceInstanceWithHttpInfo(String xCorrelationId, UUID eServiceId);
+    
     ResponseEntity<ProducerEServiceDescriptor> getProducerEServiceDescriptorWithHttpInfo(
         String xCorrelationId, UUID eserviceId, UUID descriptorId);
 
@@ -43,4 +44,14 @@ public interface IEServiceClient extends SettableBearerToken {
         UUID eServiceId,
         UpdateEServiceTemplateInstanceSeed updateEServiceTemplateInstanceSeed
     );
+
+    ResponseEntity<CreatedResource> updateDraftDescriptorTemplateInstanceWithHttpInfo(
+        String xCorrelationId,
+        UUID eServiceId,
+        UUID descriptorId,
+        UpdateEServiceDescriptorTemplateInstanceSeed updateEServiceDescriptorTemplateInstanceSeed
+    );
+
+    ResponseEntity<ProducerEServiceDetails> getProducerEServiceDetailsWithHttpInfo(
+        String xCorrelationId, UUID eserviceId);
 }

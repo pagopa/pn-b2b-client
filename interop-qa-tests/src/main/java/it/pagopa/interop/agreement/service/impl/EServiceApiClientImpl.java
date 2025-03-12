@@ -13,7 +13,9 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateInstances;
 import it.pagopa.interop.generated.openapi.clients.bff.model.InstanceEServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorTemplateInstanceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateInstanceSeed;
 import java.util.List;
 import java.util.UUID;
@@ -100,10 +102,9 @@ public class EServiceApiClientImpl implements IEServiceClient {
 
     @Override
     public ResponseEntity<CreatedEServiceDescriptor> upgradeEServiceInstanceWithHttpInfo(
+        String xCorrelationId,
         UUID eServiceId) {
-        /* TODO 10/03/2025 diversamente da tutte le altre API questa NON si aspetta xCorrelationId. Segnalato, riscontro non ancora ricevuto
-            https://pagopaspa.slack.com/archives/C085C3D1U84/p1741624453778969 */
-        return this.eservicesApi.upgradeEServiceInstanceWithHttpInfo(eServiceId);
+        return this.eservicesApi.upgradeEServiceInstanceWithHttpInfo(xCorrelationId, eServiceId);
     }
 
     @Override
@@ -121,8 +122,23 @@ public class EServiceApiClientImpl implements IEServiceClient {
     }
 
     @Override
+    public ResponseEntity<CreatedResource> updateDraftDescriptorTemplateInstanceWithHttpInfo(
+        String xCorrelationId,
+        UUID eServiceId,
+        UUID descriptorId,
+        UpdateEServiceDescriptorTemplateInstanceSeed updateEServiceDescriptorTemplateInstanceSeed
+    ) {
+        return this.eservicesApi.updateDraftDescriptorTemplateInstanceWithHttpInfo(xCorrelationId, eServiceId, descriptorId, updateEServiceDescriptorTemplateInstanceSeed);
+    }
+
+    @Override
+    public ResponseEntity<ProducerEServiceDetails> getProducerEServiceDetailsWithHttpInfo(
+        String xCorrelationId, UUID eserviceId) {
+        return this.eservicesApi.getProducerEServiceDetailsWithHttpInfo(xCorrelationId, eserviceId);
+    }
+
+    @Override
     public void setBearerToken(String bearerToken) {
         this.eservicesApi.setApiClient(createApiClient(bearerToken));
     }
-
 }

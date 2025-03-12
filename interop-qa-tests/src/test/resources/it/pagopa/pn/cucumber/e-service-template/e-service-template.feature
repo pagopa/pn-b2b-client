@@ -2022,7 +2022,6 @@ Feature: Test API of e-service template
       | PUBLISHED |
       | SUSPENDED |
 
-  # TODO 12/03/2025: implementazione momentaneamente saltata fino a che non sarà chiaro come aggiungere una versione all'istanza del template
   Scenario: [INTEROP-EST-190] La modifica dei campi di un'istanza di un e-service template avente una versione in stato DRAFT e una in stato PUBLISHED NON può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
@@ -2042,6 +2041,82 @@ Feature: Test API of e-service template
     And l'utente effettua la creazione di un nuovo e-service in stato DRAFT a partire dal template con successo indicando solo le specifiche strettamente necessarie
     When l'utente tenta la modifica dei campi dell'istanza dell'e-service template indicando una specifica vuota
     Then si ottiene status code 400
+
+  Scenario: [INTEROP-EST-193] La modifica dei campi di un'istanza in stato DRAFT di un e-service template NON può essere effettuata da un ente diverso dal creatore dell'istanza
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato DRAFT a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    When l'utente è un "admin" di "PA2"
+    And l'utente tenta la modifica dei campi dell'istanza dell'e-service template
+    Then si ottiene status code 403
+
+  Scenario Outline: [INTEROP-EST-194] La modifica del descriptor di un'istanza in stato DRAFT di un e-service template può essere effettuata da un ente in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato DRAFT a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la modifica del descriptor dell'istanza dell'e-service template
+    Then si ottiene status code 200
+    And il descriptor dell'istanza dell'e-service template è stato modificato correttamente
+    Examples:
+      | ruolo |
+      | admin |
+      | api   |
+
+  Scenario Outline: [INTEROP-EST-195] La modifica del descriptor di un'istanza di un e-service template NON può essere effettuata da un ente NON in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato DRAFT a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la modifica del descriptor dell'istanza dell'e-service template
+    Then si ottiene status code 403
+    Examples:
+      | ruolo |
+      | security      |
+      | api,security  |
+      | support       |
+
+  Scenario Outline: [INTEROP-EST-196] La modifica del descriptor di un'istanza in stato PUBLISHED o SUSPENDED di un e-service template NON può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato <stato> a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    When l'utente tenta la modifica del descriptor dell'istanza dell'e-service template
+    Then si ottiene status code 403
+    Examples:
+      | stato     |
+      | PUBLISHED |
+      | SUSPENDED |
+
+  Scenario: [INTEROP-EST-197] La modifica del descriptor di un'istanza di un e-service template avente una versione in stato DRAFT e una in stato PUBLISHED NON può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And l'utente effettua l'aggiunta di una versione in stato DRAFT all'e-service con successo
+    When l'utente tenta la modifica del descriptor dell'istanza dell'e-service template
+    Then si ottiene status code 403
+
+  Scenario: [INTEROP-EST-198] La modifica di un descriptor inesistente di un e-service template non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    When l'utente tenta la modifica di un descriptor inesistente dell'istanza dell'e-service template
+    Then si ottiene status code 404
+
+  Scenario: [INTEROP-EST-199] La modifica del descriptor di un'istanza di un e-service template indicando una specifica vuota non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato DRAFT a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    When l'utente tenta la modifica del descriptor dell'istanza dell'e-service template indicando una specifica vuota
+    Then si ottiene status code 400
+
+  Scenario: [INTEROP-EST-200] La modifica del descriptor di un'istanza in stato DRAFT di un e-service template NON può essere effettuata da un ente diverso dal creatore dell'istanza
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato DRAFT a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    When l'utente è un "admin" di "PA2"
+    And l'utente tenta la modifica del descriptor dell'istanza dell'e-service template
+    Then si ottiene status code 403
+
 
 
   #TODO la maggior parte dei test sono fatti su template in mod. EROGAZIONE. Valutare che non sia il caso di testare per entrambe le modalità.
