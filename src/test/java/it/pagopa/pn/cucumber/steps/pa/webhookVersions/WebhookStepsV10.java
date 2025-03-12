@@ -1,7 +1,7 @@
 package it.pagopa.pn.cucumber.steps.pa.webhookVersions;
 
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryElementV26;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationStatusHistoryElement;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.FullSentNotificationV20;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
@@ -300,8 +300,8 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
                 throw new RuntimeException(exc);
             }
             //TODO CHECK passaggi a rischio
-            webhookSteps.getSharedSteps().setSentNotification(webhookSteps.getB2bClient().getSentNotification(webhookSteps.getSharedSteps().getSentNotification().getIun()));
-            NotificationStatusHistoryElementV26 notificationStatusHistoryElement = webhookSteps.getSharedSteps().getSentNotification().getNotificationStatusHistory().
+            webhookSteps.getSharedSteps().setSentNotificationV1(webhookSteps.getB2bClient().getSentNotificationV1(webhookSteps.getSharedSteps().getSentNotification().getIun()));
+            NotificationStatusHistoryElement notificationStatusHistoryElement = webhookSteps.getSharedSteps().getSentNotificationV1().getNotificationStatusHistory().
                     stream().filter(elem -> elem.getStatus().getValue().equals(notificationInternalStatus.getValue())).findAny().orElse(null);
             if (notificationStatusHistoryElement != null) {
                 found = true;

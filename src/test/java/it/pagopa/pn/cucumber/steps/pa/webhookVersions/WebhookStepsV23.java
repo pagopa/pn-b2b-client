@@ -356,7 +356,7 @@ public class WebhookStepsV23 implements WebhookStepsInterface {
                 throw new RuntimeException(exc);
             }
             //TODO CHECK passaggi a rischio
-            webhookSteps.getSharedSteps().setSentNotification(webhookSteps.getB2bClient().getSentNotification(webhookSteps.getSharedSteps().getSentNotification().getIun()));
+            webhookSteps.getSharedSteps().setSentNotificationV23(webhookSteps.getB2bClient().getSentNotificationV23(webhookSteps.getSharedSteps().getSentNotification().getIun()));
             NotificationStatusHistoryElement notificationStatusHistoryElement = webhookSteps.getSharedSteps().getSentNotificationV23().getNotificationStatusHistory().
                     stream().filter(elem -> elem.getStatus().getValue().equals(notificationInternalStatus.getValue())).findAny().orElse(null);
             if (notificationStatusHistoryElement != null) {
