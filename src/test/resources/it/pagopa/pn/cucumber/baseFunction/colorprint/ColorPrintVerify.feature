@@ -51,8 +51,8 @@ Feature: Verifica delle stampe a colori con successivo controllo manuale delle c
       | details_deliveryDetailCode | CON996 |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
-    And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost uguale a "null" per l'utente 0
-    Then viene verificato che non esista l'elemento "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_1"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" per l'utente 0
+    And viene verificato che non esista l'elemento "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_1"
 
   @rasterScartoCON996
   Scenario: [B2B-LEGALFACT_RASTER_2] Viene inviata una notifica per la quale si riceve l’evento di CON996, in seguito ad un un secondo tentativo termini con l’evento di refinement
@@ -77,4 +77,5 @@ Feature: Verifica delle stampe a colori con successivo controllo manuale delle c
       | details_recIndex | 0 |
       | details_sentAttemptMade | 1 |
       | details_deliveryDetailCode | RECAG001C |
+      | details_responseStatus     | OK        |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
