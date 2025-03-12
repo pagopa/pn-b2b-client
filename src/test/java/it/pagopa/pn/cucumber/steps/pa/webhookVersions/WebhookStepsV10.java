@@ -3,6 +3,7 @@ package it.pagopa.pn.cucumber.steps.pa.webhookVersions;
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationStatusHistoryElement;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.FullSentNotificationV20;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.TimelineElementV20;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV20;
@@ -286,7 +287,26 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
 
     @Override
     public boolean checkTimeline(AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream) {
-        return false;
+        TimelineElementCategoryV20 timelineElementInternalCategory = TimelineElementCategoryV20.valueOf(((TimelineElementCategoryV20) timelineForStream.getTimelineElementCategory()).name());
+        boolean finish = false;
+        for (int i = 0; i < timelineForStream.getNumCheck(); i++) {
+            try {
+                Thread.sleep(timelineForStream.getWaiting());
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
+            }
+            webhookSteps.getSharedSteps().setSentNotificationV2(webhookSteps.getB2bClient().getSentNotificationV2(webhookSteps.getSharedSteps().getSentNotification().getIun()));
+            TimelineElementV20 timelineElement = webhookSteps.getSharedSteps()
+                    .getSentNotificationV2().getTimeline().stream()
+                    .filter(elem -> elem.getCategory().getValue().equals(timelineElementInternalCategory.getValue()))
+                    .findAny()
+                    .orElse(null);
+            if (timelineElement != null) {
+                finish = true;
+                break;
+            }
+        }
+        return finish;
     }
 
     @Override
@@ -299,7 +319,6 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
             } catch (InterruptedException exc) {
                 throw new RuntimeException(exc);
             }
-            //TODO CHECK passaggi a rischio
             webhookSteps.getSharedSteps().setSentNotificationV1(webhookSteps.getB2bClient().getSentNotificationV1(webhookSteps.getSharedSteps().getSentNotification().getIun()));
             NotificationStatusHistoryElement notificationStatusHistoryElement = webhookSteps.getSharedSteps().getSentNotificationV1().getNotificationStatusHistory().
                     stream().filter(elem -> elem.getStatus().getValue().equals(notificationInternalStatus.getValue())).findAny().orElse(null);
