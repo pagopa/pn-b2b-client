@@ -1947,11 +1947,106 @@ Feature: Test API of e-service template
     When l'utente tenta la visualizzazione dei dettagli della versione dell'e-service template indicando un identificativo vuoto
     Then si ottiene status code 400
 
+  Scenario Outline: [INTEROP-EST-184] La visualizzazione dell'elenco di tutte le istanze di un e-service template attivo può essere effettuata da un ente in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato DRAFT a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And l'utente effettua la creazione di un nuovo e-service in stato SUSPENDED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la visualizzazione dell'elenco di tutte le istanze dell'e-service template
+    Then si ottiene status code 200
+    And sono state visualizzate 1 istanza in stato DRAFT, 1 in stato PUBLISHED e 1 in stato SUSPENDED
+    Examples:
+      | ruolo |
+      | admin |
+      | api   |
+
+  Scenario Outline: [INTEROP-EST-185] La visualizzazione dell'elenco di tutte le istanze di un e-service template attivo NON può essere effettuata da un ente NON in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato DRAFT a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la visualizzazione dell'elenco di tutte le istanze dell'e-service template
+    Then si ottiene status code 403
+    Examples:
+      | ruolo         |
+      | security      |
+      | api,security  |
+      | support       |
+
+    # Lo scenario 208 è stato saltato vista l'impossibilità di poter creare un UUID vuoto lato Java.
+    # Altri precedenti test simili sono stati implementati passando un UUID null, ma si è concordato
+    # che il test risultante - producendo una chiamata HTTP che viene bloccata già dal client OpenApi
+    # generato - non fornisce alcun valore aggiunto.
+
+  Scenario: [INTEROP-EST-186] La visualizzazione dell'elenco di tutte le istanze di un e-service template attivo NON può essere effettuata da un ente NON in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    When l'utente tenta la visualizzazione dell'elenco di tutte le istanze di un e-service template inesistente
+    Then si ottiene status code 403
+
+  Scenario Outline: [INTEROP-EST-187] La modifica dei campi di un'istanza in stato DRAFT di un e-service template può essere effettuata da un ente in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato DRAFT a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la modifica dei campi dell'istanza dell'e-service template
+    Then si ottiene status code 200
+    And i campi dell'istanza dell'e-service template sono stati modificati correttamente
+    Examples:
+      | ruolo |
+      | admin |
+      | api   |
+
+  Scenario Outline: [INTEROP-EST-188] La modifica dei campi di un'istanza di un e-service template NON può essere effettuata da un ente NON in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato DRAFT a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la modifica dei campi dell'istanza dell'e-service template
+    Then si ottiene status code 403
+    Examples:
+      | ruolo |
+      | security      |
+      | api,security  |
+      | support       |
+
+  Scenario Outline: [INTEROP-EST-189] La modifica dei campi di un'istanza in stato PUBLISHED o SUSPENDED di un e-service template NON può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato <stato> a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    When l'utente tenta la modifica dei campi dell'istanza dell'e-service template
+    Then si ottiene status code 403
+    Examples:
+      | stato     |
+      | PUBLISHED |
+      | SUSPENDED |
+
+  # TODO 12/03/2025: implementazione momentaneamente saltata fino a che non sarà chiaro come aggiungere una versione all'istanza del template
+  Scenario: [INTEROP-EST-190] La modifica dei campi di un'istanza di un e-service template avente una versione in stato DRAFT e una in stato PUBLISHED NON può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And l'utente effettua l'aggiunta di una versione in stato DRAFT all'e-service con successo
+    When l'utente tenta la modifica dei campi dell'istanza dell'e-service template
+    Then si ottiene status code 403
+
+  Scenario: [INTEROP-EST-191] La modifica dei campi di un'istanza inesistente di un e-service template non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    When l'utente tenta la modifica dei campi di un'istanza inesistente dell'e-service template
+    Then si ottiene status code 404
+
+  Scenario: [INTEROP-EST-192] La modifica dei campi di un'istanza di un e-service template indicando una specifica vuota non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato DRAFT a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    When l'utente tenta la modifica dei campi dell'istanza dell'e-service template indicando una specifica vuota
+    Then si ottiene status code 400
 
 
   #TODO la maggior parte dei test sono fatti su template in mod. EROGAZIONE. Valutare che non sia il caso di testare per entrambe le modalità.
 
-    #TODO smistare gli scenari in file .feature più piccoli e/o i relativi step in classi più piccole. Possibile divisione:
+    #TODO smistare gli scenari in file .feature più piccoli e i relativi step in classi più piccole. Possibile divisione:
       # test che riguardano il template
       # test che riguardano la versione
       # test che riguardano la risk analysis

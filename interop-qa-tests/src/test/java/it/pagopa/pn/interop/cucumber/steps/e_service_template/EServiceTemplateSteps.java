@@ -6,6 +6,7 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
 import static org.apache.commons.collections4.IterableUtils.isEmpty;
+import static org.apache.commons.lang3.ObjectUtils.anyNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -56,6 +57,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDes
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceTemplate;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceTemplates;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateInstanceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionDocumentSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionSeed;
@@ -127,8 +129,10 @@ public class EServiceTemplateSteps {
     private DescriptorAttributesSeed lastAttributesUpdateSeed;
     private InstanceEServiceSeed lastEServiceCreatedFromTemplate;
     private UUID lastEServiceIdCreatedFromTemplate;
+    private CompactDescriptor lastEServiceDescriptorCreatedFromTemplate;
     private UUID lastEServiceIdUpdatedFromTemplate;
     private UUID lastEServiceDescriptorIdUpdatedFromTemplate;
+    private UpdateEServiceTemplateInstanceSeed lastUpdateEServiceTemplateInstanceSeed;
 
     // TODO farne un bean centralizzato riutilizzabile ovunque
     private static EasyRandomParameters easyRandomParameters = new EasyRandomParameters()
@@ -1757,7 +1761,7 @@ public class EServiceTemplateSteps {
     public void checkEServiceTemplatesCatalogContainsElementsInState(int expectedCount, EServiceTemplateVersionState expectedState) {
         /* TODO la precondizione di questo metodo sarebbe che lo status code sia positivo, che il body non sia null e che il catalogo non sia vuoto.
          * Migliorare questo e altri step così che venga sempre fatto un check preventivo, eventualmente aiutandosi
-         * con un framework con le Precondition di Google Guava. Spunti: https://www.sw-engineering-candies.com/blog-1/comparison-of-ways-to-check-preconditions-in-java
+         * con un framework con le Precondition come Google Guava. Spunti: https://www.sw-engineering-candies.com/blog-1/comparison-of-ways-to-check-preconditions-in-java
          */
         CatalogEServiceTemplates catalog = ((ResponseEntity<CatalogEServiceTemplates>) httpCallExecutor.getResponse()).getBody();
         List<CatalogEServiceTemplate> templatesInCatalog = catalog.getResults();
@@ -1928,6 +1932,71 @@ public class EServiceTemplateSteps {
         checkEServiceCreated(EServiceDescriptorState.DRAFT);
     }
 
+    // TODO il passo precedente è un sottoinsieme di questo, accorpare per ridurre ambiguità
+    // TODO aggiungere una virgola: "[...] a partire dal template con successo, indicando [...]"
+    @Given("l'utente effettua la creazione di un nuovo e-service in stato {eServiceDescriptorState} a partire dal template con successo indicando solo le specifiche strettamente necessarie")
+    public void createEServiceFromTemplateMinimalSpecSuccessfully(EServiceDescriptorState expectedState) {
+        createEServiceFromTemplateMinimalSpec();
+        checkEServiceCreated(EServiceDescriptorState.DRAFT);
+
+        if(anyNull(lastEServiceIdCreatedFromTemplate, lastEServiceDescriptorCreatedFromTemplate)) {
+            throw new IllegalStateException(("Una o più precondizioni necessarie al mutamento di "
+                + "stato dell'e-service non sono rispettate: eServiceId = %s, eServiceDescriptor = %s")
+                .formatted(lastEServiceIdCreatedFromTemplate, lastEServiceDescriptorCreatedFromTemplate));
+        }
+        this.dataPreparationService.bringDescriptorToGivenState(
+            lastEServiceIdCreatedFromTemplate,
+            lastEServiceDescriptorCreatedFromTemplate.getId(),
+            expectedState,
+            false);
+    }
+
+    @When("l'utente tenta la visualizzazione dell'elenco di tutte le istanze dell'e-service template")
+    public void getEServiceTemplateInstances() {
+        getEserviceTemplateInstances(lastTemplateManaged.id());
+    }
+
+    @When("l'utente tenta la visualizzazione dell'elenco di tutte le istanze di un e-service template inesistente")
+    public void getNotExistentEServiceTemplateInstances() {
+        getEserviceTemplateInstances(UUID.randomUUID());
+    }
+
+    private void getEserviceTemplateInstances(UUID templateId) {
+        String userToken = getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+        httpCallExecutor.performCall(
+            () -> eServiceClient.getEServiceTemplateInstancesWithHttpInfo(
+                sharedStepsContext.getXCorrelationId(),
+                templateId
+            ),
+            ResponseEntity::getStatusCode);
+    }
+
+    @Then("sono state visualizzate {int} istanza in stato DRAFT, {int} in stato PUBLISHED e {int} in stato SUSPENDED")
+    public void checkEServiceTemplateInstancesCount(int draftCount, int publishedCount, int suspendedCount) {
+        List<EServiceTemplateInstance> response = ((ResponseEntity<EServiceTemplateInstances>) httpCallExecutor.getResponse()).getBody().getResults();
+        assertSoftly(softly -> {
+            softly.assertThat(response)
+                .areExactly(
+                    draftCount,
+                    instanceInState(EServiceDescriptorState.DRAFT));
+            softly.assertThat(response)
+                .areExactly(
+                    publishedCount,
+                    instanceInState(EServiceDescriptorState.PUBLISHED));
+            softly.assertThat(response)
+                .areExactly(
+                    suspendedCount,
+                    instanceInState(EServiceDescriptorState.SUSPENDED));
+        });
+    }
+
+    private Condition<EServiceTemplateInstance> instanceInState(EServiceDescriptorState state) {
+        return new Condition<>(
+            instance -> instance.getActiveDescriptor().getState().equals(state),
+            "instances in state %s", state);
+    }
+
     @Then("il nuovo e-service è stato creato correttamente in stato {eServiceDescriptorState}")
     public void checkEServiceCreated(EServiceDescriptorState expectedState) {
         try {
@@ -1957,6 +2026,12 @@ public class EServiceTemplateSteps {
                     .as("Check esistenza istanza del template")
                     .withFailMessage("Fra le istanze del template non è presente quella appena creata. E' possibile sia avvenuto un errore a monte in fase di creazione dell'istanza, oppure a valle in fase di reperimento delle stesse.")
                     .isPresent();
+
+                if(eServiceCreatedFromTemplate.get().getDescriptors().size() != 1) {
+                    throw new IllegalStateException("L'e-service appena creato ha più di un descriptor: ciò rende incerto quale descriptor considerare per le successive operazioni di test");
+                }
+                this.lastEServiceDescriptorCreatedFromTemplate = eServiceCreatedFromTemplate.get().getDescriptors().get(0);
+
                 softly.assertThat(eServiceCreatedFromTemplate)
                     .get()
                     .as("Check stato dell'istanza creata")
@@ -2052,6 +2127,63 @@ public class EServiceTemplateSteps {
         }
     }
 
+    @When("l'utente tenta la modifica dei campi dell'istanza dell'e-service template")
+    public void editEServiceInstanceFields() {
+        UUID eServiceId = lastEServiceIdCreatedFromTemplate;
+        lastUpdateEServiceTemplateInstanceSeed = easyRandom.nextObject(UpdateEServiceTemplateInstanceSeed.class);
+        editEServiceInstanceFields(eServiceId, lastUpdateEServiceTemplateInstanceSeed);
+    }
+
+    @When("l'utente tenta la modifica dei campi di un'istanza inesistente dell'e-service template")
+    public void editNotExistentEServiceInstanceFields() {
+        UUID eServiceId = UUID.randomUUID();
+        lastUpdateEServiceTemplateInstanceSeed = easyRandom.nextObject(
+            UpdateEServiceTemplateInstanceSeed.class);
+        editEServiceInstanceFields(eServiceId, lastUpdateEServiceTemplateInstanceSeed);
+    }
+
+    @When("l'utente tenta la modifica dei campi dell'istanza dell'e-service template indicando una specifica vuota")
+    public void editEServiceInstanceUnspecifiedFields() {
+        UUID eServiceId = UUID.randomUUID();
+        lastUpdateEServiceTemplateInstanceSeed = new UpdateEServiceTemplateInstanceSeed();
+        editEServiceInstanceFields(eServiceId, lastUpdateEServiceTemplateInstanceSeed);
+    }
+
+    @Then("i campi dell'istanza dell'e-service template sono stati modificati correttamente")
+    public void checkEServiceInstanceFieldsEdited() {
+        try {
+            pollingService.makePolling(
+                () -> httpCallExecutor.performCall(
+                    () -> eServiceClient.getEServiceTemplateInstancesWithHttpInfo(
+                        sharedStepsContext.getXCorrelationId(),
+                        lastTemplateManaged.id()),
+                    ResponseEntity::getStatusCode),
+                res ->
+                        res.getStatusCode().is2xxSuccessful() &&
+                        nonNull(res.getBody()) &&
+                        res.getBody().getResults().stream().anyMatch(instance -> instance.getId().equals(lastEServiceIdCreatedFromTemplate)) &&
+                        res.getBody().getResults().stream().anyMatch(instance -> instance.getInstanceLabel().equals(lastUpdateEServiceTemplateInstanceSeed.getInstanceLabel())),
+                "L'istanza non è presente nell'elenco delle istanze dell'e-service template oppure non è stata modificata correttamente. Visionare i log delle call HTTP per maggiori dettagli."
+            );
+            /* TODO 12/03/2025 andrebbe effettuato un secondo polling per verificare la coerenza
+            *   con i restanti campi di lastUpdateEServiceTemplateInstanceSeed. Rimandato causa
+            *   incertezza sulla API da utilizzare. */
+        } catch (PollingPredicateException e) {
+            /* TODO questo tipo di gestione potrebbe essere di fatto inutile, lasciare che l'eccezione si
+             *  propaghi potrebbe portare sostanzialmente allo stesso risultato. Indagare. */
+            fail(e.getMessage());
+        }
+    }
+
+    private void editEServiceInstanceFields(UUID eServiceId, UpdateEServiceTemplateInstanceSeed seed) {
+        String userToken = getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+        httpCallExecutor.performCall(
+            () -> eServiceClient.updateEServiceTemplateInstanceByIdWithHttpInfo(
+                eServiceId,
+                seed),
+            ResponseEntity::getStatusCode);
+    }
 
 
     /* TODO un'alternativa all'uso di metodi come "areConsistent" - che confrontano i campi uno a uno - potrebbe essere
