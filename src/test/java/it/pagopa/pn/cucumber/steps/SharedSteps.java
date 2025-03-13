@@ -25,16 +25,16 @@ import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.ProgressResponseElementV26;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.StreamMetadataResponseV26;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v27.ProgressResponseElementV27;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v27.StreamMetadataResponseV27;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamMetadataResponseV23;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model.RequestNewApiKey;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model.ResponseNewApiKey;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.CourtesyDigitalAddress;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalAndUnverifiedDigitalAddress;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.UserAddresses;
+import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps;
+import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationInterface;
+import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationStepV26;
 import it.pagopa.pn.cucumber.utils.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -60,6 +60,8 @@ import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 
+import static it.pagopa.pn.cucumber.steps.SharedSteps.NotificationVersion.V26;
+import static it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps.StreamVersion.V27;
 import static it.pagopa.pn.cucumber.utils.FiscalCodeGenerator.generateCF;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
 import static java.util.Objects.nonNull;
@@ -138,30 +140,6 @@ public class SharedSteps {
 
     @Getter
     @Setter
-    private it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamMetadataResponse eventStream;
-
-    @Getter
-    @Setter
-    private StreamMetadataResponseV23 eventStreamV23;
-
-    @Getter
-    @Setter
-    private StreamMetadataResponseV24 eventStreamV24;
-
-    @Getter
-    @Setter
-    private StreamMetadataResponseV25 eventStreamV25;
-
-    @Getter
-    @Setter
-    private StreamMetadataResponseV26 eventStreamV26;
-
-    @Getter
-    @Setter
-    private StreamMetadataResponseV27 eventStreamV27;
-
-    @Getter
-    @Setter
     @Value("${pn.external.bearer-token-pg1.id}")
     private String idOrganizationGherkinSrl;
 
@@ -234,6 +212,7 @@ public class SharedSteps {
     private String galileoGalileiTaxID;
 
     private final ApplicationContext context;
+    @Getter
     private final DataTableTypeUtil dataTableTypeUtil;
     private final List<String> iuvGPD;
     private IPnWebUserAttributesClient iPnWebUserAttributesClient;
@@ -323,11 +302,32 @@ public class SharedSteps {
     private static final String FILE_PDF_INVALID_ERROR = "FILE_PDF_INVALID_ERROR";
     private static final String NOT_VALID_ADDRESS = "NOT_VALID_ADDRESS";
 
+    private final NotificationStepV26 notificationStepV26 = new NotificationStepV26(this);
+
+    @Getter
+    @Setter
+    private NotificationVersion versionUsed;
+
+    public enum NotificationVersion {
+        V10(10), V20(20), V21(21), V23(23), V24(24), V25(25), V26(26);
+
+        @Getter
+        /** Scopo di questo campo è quello di poter comparare le versioni con < o >
+         * In questo modo si possono aggiungere controlli nel codice per verificare
+         * se un dato Notification Version è antecedente o successivo a un'altra versione */
+        private final int value;
+
+        NotificationVersion(int value) {
+            this.value = value;
+        }
+    }
+
 
     public HashMap<String, String> getMapAllegatiNotificaSha256() {
         return mapAllegatiNotificaSha256;
     }
 
+    //TODO MATTEO: nessun utilizzo a codice. Rimuovere ?
     public void setMapAllegatiNotificaSha256(HashMap<String, String> mapAllegatiNotificaSha256) {
         this.mapAllegatiNotificaSha256 = mapAllegatiNotificaSha256;
     }
@@ -385,9 +385,79 @@ public class SharedSteps {
         this.groupToSet = false;
     }
 
+    private NotificationVersion getNotificationVersion(String version) {
+        if (version.trim().equalsIgnoreCase("più recente")) {
+            return V26;//TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente
+        }
+        return NotificationVersion.valueOf(version.trim().toUpperCase());
+    }
+
+    private NotificationInterface getNotificationInterface(NotificationVersion notificationVersion) {
+        switch (notificationVersion) {
+            case V10 -> {
+                System.out.println("TODO MATTEO 10");
+                return null;
+            }
+            case V20 -> {
+                System.out.println("TODO MATTEO 20");
+                return null;
+            }
+            case V21 -> {
+                System.out.println("TODO MATTEO 21");
+                return null;
+            }
+            case V23 -> {
+                System.out.println("TODO MATTEO 23");
+                return null;
+            }
+            case V24 -> {
+                System.out.println("TODO MATTEO 24");
+                return null;
+            }
+            case V25 -> {
+                System.out.println("TODO MATTEO 25");
+                return null;
+            }
+            case V26 -> {
+                return notificationStepV26;
+            }
+            default -> throw new IllegalArgumentException("Version not supported!: " + notificationVersion);
+        }
+    }
+
+    private AvanzamentoNotificheWebhookB2bSteps.StreamVersion getStreamVersion(String version) {
+        if (version.trim().equalsIgnoreCase("più recente")) {
+            return V27;//TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente
+        }
+        return AvanzamentoNotificheWebhookB2bSteps.StreamVersion.valueOf(version.trim().toUpperCase());
+    }
+
     @Given("viene generata una nuova notifica")
     public void vieneGenerataUnaNotifica(@Transpose NewNotificationRequestV24 notificationRequest) {
         this.notificationRequest = notificationRequest;
+    }
+
+    //TODO MATTEO TEST
+    @Given("MATTEOviene generata una nuova notifica")
+    public void vieneGenerataUnaNotifica(Map<String, String> data) {
+        vieneGenerataUnaNotificaMATTEOTODO(data, "più recente");
+    }
+
+    //TODO MATTEO TEST
+    @Given("viene generata una nuova notifica con la versione {string} TODO MATTEO")
+    public void vieneGenerataUnaNotificaMATTEOTODO(Map<String, String> data, String version) {
+        NotificationVersion notificationVersion = getNotificationVersion(version);
+        NotificationInterface notificationInterface = getNotificationInterface(notificationVersion);
+        notificationInterface.setNotificationRequest(data);
+    }
+
+    //TODO MATTEO TEST
+    @When("MATTEOla notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi {string}")
+    public void laNotificaVieneInviataOk(String paType, String status) {
+        selectPaAndSenderTaxId(paType, null);
+        NotificationVersion notificationVersion = versionUsed;
+        NotificationInterface notificationInterface = getNotificationInterface(notificationVersion);
+        notificationInterface.sendNotification(status, getWorkFlowWait());
     }
 
     @Given("viene generata una nuova notifica V1")
@@ -405,9 +475,18 @@ public class SharedSteps {
         this.notificationRequestV21 = notificationRequestV21;
     }
 
+
     @And("destinatario")
     public void destinatario(Map<String, String> data) { //@Transpose NotificationRecipientV21 recipient
         addRecipientToNotification(this.notificationRequest, dataTableTypeUtil.convertNotificationRecipient(data), data);
+    }
+
+    //TODO MATTEO TEST
+    @And("MATTEOdestinatario")
+    public void destinatarioMATTEO(Map<String, String> data) {
+        NotificationVersion notificationVersion = versionUsed;
+        NotificationInterface notificationInterface = getNotificationInterface(notificationVersion);
+        notificationInterface.addRecipitentToNotification(null, data);
     }
 
     @And("al destinatario viene associato lo iuv creato mediante partita debitoria alla posizione {int}")
@@ -601,6 +680,34 @@ public class SharedSteps {
                 , new HashMap<>());
     }
 
+    @And("destinatario Mario Gherkin e:")
+    public void destinatarioMarioGherkinParam(Map<String, String> data) {
+        NotificationRecipientV23 notificationRecipientV23 = dataTableTypeUtil.convertNotificationRecipient(data);
+        addRecipientToNotification(this.notificationRequest,
+                updateNotificationRecipient(notificationRecipientV23,
+                        "Mario Gherkin",
+                        marioGherkinTaxID,
+                        null,
+                        null)
+                , data);
+    }
+
+    //TODO MATTEO TEST
+    @And("MATTEOdestinatario {string}")
+    public void addDestinatario(String destinatario) {
+        NotificationVersion notificationVersion = versionUsed;
+        NotificationInterface notificationInterface = getNotificationInterface(notificationVersion);
+        notificationInterface.addRecipitentToNotification(destinatario, new HashMap<>());
+    }
+
+    //TODO MATTEO TEST
+    @And("MATTEOdestinatario {string} e:")
+    public void addDestinatarioWithParams(String destinatario, Map<String, String> data) {
+        NotificationVersion notificationVersion = versionUsed;
+        NotificationInterface notificationInterface = getNotificationInterface(notificationVersion);
+        notificationInterface.addRecipitentToNotification(destinatario, data);
+    }
+
     @And("destinatario Mario Gherkin V1 e:")
     public void destinatarioMarioGherkinParam(@Transpose it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationRecipient recipient) {
 
@@ -632,30 +739,30 @@ public class SharedSteps {
                         null));
     }
 
-    @And("destinatario Mario Gherkin e:")
-    public void destinatarioMarioGherkinParam(Map<String, String> data) {
-        NotificationRecipientV23 notificationRecipientV23 = dataTableTypeUtil.convertNotificationRecipient(data);
-        addRecipientToNotification(this.notificationRequest,
-                updateNotificationRecipient(notificationRecipientV23,
-                        "Mario Gherkin",
-                        marioGherkinTaxID,
-                        null,
-                        null)
-                , data);
-    }
-
     @And("destinatario Gherkin spa")
     public void destinatarioGherkinSpa() {
         NotificationRecipientV23 notificationRecipientV23 = dataTableTypeUtil.convertNotificationRecipient(new HashMap<>());
         addRecipientToNotification(this.notificationRequest,
                 updateNotificationRecipient(notificationRecipientV23,
-                        "Gherkin_spa",
+                        "GherkinSpa",
                         gherkinSpaTaxID,
                         NotificationRecipientV23.RecipientTypeEnum.PG,
                         new NotificationDigitalAddress()
                                 .type(NotificationDigitalAddress.TypeEnum.PEC)
                                 .address(getDigitalAddressValue())),
                 new HashMap<>());
+    }
+
+    @And("destinatario Gherkin spa e:")
+    public void destinatarioGherkinSpaParam(Map<String, String> data) {
+        NotificationRecipientV23 notificationRecipientV23 = dataTableTypeUtil.convertNotificationRecipient(data);
+        addRecipientToNotification(this.notificationRequest,
+                updateNotificationRecipient(notificationRecipientV23,
+                        "GherkinSpa",
+                        gherkinSpaTaxID,
+                        NotificationRecipientV23.RecipientTypeEnum.PG,
+                        null)
+                , data);
     }
 
     @And("destinatario GherkinSrl")
@@ -684,18 +791,6 @@ public class SharedSteps {
                 , data);
     }
 
-    @And("destinatario CucumberSpa e:")
-    public void destinatarioPg2param(Map<String, String> data) {
-        NotificationRecipientV23 notificationRecipientV23 = dataTableTypeUtil.convertNotificationRecipient(data);
-        addRecipientToNotification(this.notificationRequest,
-                updateNotificationRecipient(notificationRecipientV23,
-                        "CucumberSpa",
-                        cucumberSpataxId,
-                        NotificationRecipientV23.RecipientTypeEnum.PG,
-                        null)
-                , data);
-    }
-
     @And("destinatario CucumberSpa")
     public void destinatarioPg2() {
         NotificationRecipientV23 notificationRecipientV23 = dataTableTypeUtil.convertNotificationRecipient(new HashMap<>());
@@ -710,13 +805,13 @@ public class SharedSteps {
                 , new HashMap<>());
     }
 
-    @And("destinatario Gherkin spa e:")
-    public void destinatarioGherkinSpaParam(Map<String, String> data) {
+    @And("destinatario CucumberSpa e:")
+    public void destinatarioPg2param(Map<String, String> data) {
         NotificationRecipientV23 notificationRecipientV23 = dataTableTypeUtil.convertNotificationRecipient(data);
         addRecipientToNotification(this.notificationRequest,
                 updateNotificationRecipient(notificationRecipientV23,
-                        "GherkinSpa",
-                        gherkinSpaTaxID,
+                        "CucumberSpa",
+                        cucumberSpataxId,
                         NotificationRecipientV23.RecipientTypeEnum.PG,
                         null)
                 , data);
@@ -774,20 +869,6 @@ public class SharedSteps {
                 , data);
     }
 
-    @And("destinatario Signor casuale e:")
-    public void destinatarioSignorCasualeMap(Map<String, String> data) {
-
-        threadWait(new Random().nextInt(500));
-        NotificationRecipientV23 notificationRecipientV23 = dataTableTypeUtil.convertNotificationRecipient(data);
-        addRecipientToNotification(this.notificationRequest,
-                updateNotificationRecipient(notificationRecipientV23,
-                        "signor RaddCasuale",
-                        generateCF(System.currentTimeMillis()),
-                        NotificationRecipientV23.RecipientTypeEnum.PF,
-                        null)
-                , data);
-    }
-
     @And("destinatario Signor casuale")
     public void destinatarioSignorCasuale() {
         NotificationRecipientV23 notificationRecipientV23 = dataTableTypeUtil.convertNotificationRecipient(new HashMap<>());
@@ -800,6 +881,20 @@ public class SharedSteps {
                                 .type(NotificationDigitalAddress.TypeEnum.PEC)
                                 .address(getDigitalAddressValue()))
                 , new HashMap<>());
+    }
+
+    @And("destinatario Signor casuale e:")
+    public void destinatarioSignorCasualeMap(Map<String, String> data) {
+
+        threadWait(new Random().nextInt(500));
+        NotificationRecipientV23 notificationRecipientV23 = dataTableTypeUtil.convertNotificationRecipient(data);
+        addRecipientToNotification(this.notificationRequest,
+                updateNotificationRecipient(notificationRecipientV23,
+                        "signor RaddCasuale",
+                        generateCF(System.currentTimeMillis()),
+                        NotificationRecipientV23.RecipientTypeEnum.PF,
+                        null)
+                , data);
     }
 
     @And("destinatario Gherkin Analogic e:")
@@ -2242,7 +2337,7 @@ public class SharedSteps {
         return DatiPagamento;
     }
 
-    private static void threadWait(int wait) {
+    public static void threadWait(int wait) {
         try {
             await().atMost(wait, TimeUnit.MILLISECONDS);
         } catch (RuntimeException exception) {
@@ -2279,8 +2374,7 @@ public class SharedSteps {
                 ((NotificationRecipientV23) notificationRecipient)
                         .digitalDomicile((NotificationDigitalAddress) digitalDomicile);
             }
-        }
-        if (notificationRecipient instanceof it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationRecipient) {
+        } else if (notificationRecipient instanceof it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationRecipient) {
             ((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationRecipient) notificationRecipient)
                     .denomination(denomination).taxId(taxId);
             if (recipientType != null) {
@@ -2291,8 +2385,7 @@ public class SharedSteps {
                 ((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationRecipient) notificationRecipient)
                         .digitalDomicile((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationDigitalAddress) digitalDomicile);
             }
-        }
-        if (notificationRecipient instanceof it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationRecipient) {
+        } else if (notificationRecipient instanceof it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationRecipient) {
             ((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationRecipient) notificationRecipient)
                     .denomination(denomination).taxId(taxId);
             if (recipientType != null) {
@@ -2303,8 +2396,7 @@ public class SharedSteps {
                 ((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationRecipient) notificationRecipient)
                         .digitalDomicile((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationDigitalAddress) digitalDomicile);
             }
-        }
-        if (notificationRecipient instanceof it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21) {
+        } else if (notificationRecipient instanceof it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21) {
             ((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21) notificationRecipient)
                     .denomination(denomination).taxId(taxId);
             if (recipientType != null) {
