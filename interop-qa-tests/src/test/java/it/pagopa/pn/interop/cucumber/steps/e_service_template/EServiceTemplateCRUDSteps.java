@@ -28,6 +28,7 @@ import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTem
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
 import java.util.UUID;
 import lombok.Data;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 // TODO perché @Data? Considerarne rimozione da questa e dalle altre classi
@@ -182,6 +183,44 @@ public class EServiceTemplateCRUDSteps {
         updateEServiceTemplate(templateContext.getLastTemplateManaged().id(), new UpdateEServiceTemplateSeed());
     }
 
+    // TODO gli step sono pieni di pattern ricorrenti, questo step ne è un'esempio. Andrebbero astratti e portati in classi di utility esterne.
+    @Then("la cancellazione dell'e-service template è stata effettuata correttamente")
+    public void checkEServiceTemplateDeleted() {
+        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
+        try {
+            pollingService.makePolling(
+                () -> httpCallExecutor.performCall(
+                    () -> eServiceTemplateClient.getEServiceTemplateWithHttpInfo(
+                        sharedStepsContext.getXCorrelationId(),
+                        eServiceTemplateId),
+                    ResponseEntity::getStatusCode),
+                res -> res.getStatusCode().equals(HttpStatus.NOT_FOUND),
+                "L'e-service template non è stato cancellato correttamente"
+            );
+        } catch (PollingPredicateException e) {
+            fail("L'e-service template non è stato cancellato correttamente");
+        }
+    }
+
+    @When("l'utente tenta la visualizzazione dei dettagli dell'e-service template")
+    public void getEServiceTemplateDetails() {
+        getEServiceTemplateDetails(templateContext.getLastTemplateManaged().id());
+    }
+
+    @When("l'utente tenta la visualizzazione dei dettagli di un e-service template inesistente")
+    public void getNonExistentEServiceTemplateDetails() {
+        getEServiceTemplateDetails(UUID.randomUUID());
+    }
+
+    @When("l'utente tenta la visualizzazione dei dettagli dell'e-service template indicando un identificativo vuoto")
+    public void getUnspecifiedEServiceTemplateDetails() {
+        /* DEV. NOTE 11/03/2025: il passaggio di NULL come identificativo è una BAD_REQUEST
+         * annunciata, in quanto è il comportamento di default del client OpenApi
+         * generato. Ciò implica che la chiamata non raggiungerà mai il server. Non è stato
+         * trovato un modo per passare stringa vuota senza bypassare il client OpenApi. */
+        getEServiceTemplateDetails(null);
+    }
+
     private void updateEServiceTemplate(UUID eServiceTemplateId, UpdateEServiceTemplateSeed sameNameUpdateSeed) {
         String userToken = sharedStepsContext.getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);
@@ -230,5 +269,15 @@ public class EServiceTemplateCRUDSteps {
             lastUpdate.getDescription().equals(retrievedTemplate.getDescription()) &&
             lastUpdate.getTechnology().equals(retrievedTemplate.getTechnology()) &&
             lastUpdate.getMode().equals(retrievedTemplate.getMode());
+    }
+
+    private void getEServiceTemplateDetails(UUID eServiceTemplateId) {
+        String userToken = sharedStepsContext.getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+        httpCallExecutor.performCall(
+            () -> eServiceTemplateClient.getEServiceTemplateWithHttpInfo(
+                sharedStepsContext.getXCorrelationId(),
+                eServiceTemplateId),
+            ResponseEntity::getStatusCode);
     }
 }

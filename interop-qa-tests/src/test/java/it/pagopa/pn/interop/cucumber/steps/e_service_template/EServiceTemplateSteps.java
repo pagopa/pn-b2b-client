@@ -843,25 +843,6 @@ public class EServiceTemplateSteps {
         deleteEServiceTemplateVersion(templateContext.getLastTemplateManaged().id(), null);
     }
 
-    // TODO questa classe è piena di pattern ricorrenti, questo step ne è un'esempio. Andrebbero astratti e portati in classi di utility esterne.
-    @Then("la cancellazione dell'e-service template è stata effettuata correttamente")
-    public void checkEServiceTemplateDeleted() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
-        try {
-            pollingService.makePolling(
-                () -> httpCallExecutor.performCall(
-                    () -> eServiceTemplateClient.getEServiceTemplateWithHttpInfo(
-                        sharedStepsContext.getXCorrelationId(),
-                        eServiceTemplateId),
-                    ResponseEntity::getStatusCode),
-                res -> res.getStatusCode().equals(HttpStatus.NOT_FOUND),
-                "L'e-service template non è stato cancellato correttamente"
-            );
-        } catch (PollingPredicateException e) {
-            fail("L'e-service template non è stato cancellato correttamente");
-        }
-    }
-
     @Then("la cancellazione della versione dell'e-service template è stata effettuata correttamente")
     public void checkEServiceTemplateVersionDeleted() {
         UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
@@ -1453,35 +1434,6 @@ public class EServiceTemplateSteps {
         createAnotherEServiceTemplateVersion(templateContext.getLastTemplateManaged().id());
         testAssistant.mutateLastVersionState(state);
         checkEServiceTemplateVersionCreated();
-    }
-
-    @When("l'utente tenta la visualizzazione dei dettagli dell'e-service template")
-    public void getEServiceTemplateDetails() {
-        getEServiceTemplateDetails(templateContext.getLastTemplateManaged().id());
-    }
-
-    @When("l'utente tenta la visualizzazione dei dettagli di un e-service template inesistente")
-    public void getNonExistentEServiceTemplateDetails() {
-        getEServiceTemplateDetails(UUID.randomUUID());
-    }
-
-    @When("l'utente tenta la visualizzazione dei dettagli dell'e-service template indicando un identificativo vuoto")
-    public void getUnspecifiedEServiceTemplateDetails() {
-        /* DEV. NOTE 11/03/2025: il passaggio di NULL come identificativo è una BAD_REQUEST
-         * annunciata, in quanto è il comportamento di default del client OpenApi
-         * generato. Ciò implica che la chiamata non raggiungerà mai il server. Non è stato
-         * trovato un modo per passare stringa vuota senza bypassare il client OpenApi. */
-        getEServiceTemplateDetails(null);
-    }
-
-    private void getEServiceTemplateDetails(UUID eServiceTemplateId) {
-        String userToken = getUserToken();
-        clientTokenConfigurator.setBearerToken(userToken);
-        httpCallExecutor.performCall(
-            () -> eServiceTemplateClient.getEServiceTemplateWithHttpInfo(
-                sharedStepsContext.getXCorrelationId(),
-                eServiceTemplateId),
-            ResponseEntity::getStatusCode);
     }
 
     @Then("i dettagli dell'e-service template contengono esattamente {int} versioni")
