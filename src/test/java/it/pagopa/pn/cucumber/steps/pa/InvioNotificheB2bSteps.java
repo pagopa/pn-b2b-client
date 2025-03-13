@@ -34,8 +34,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpStatusCodeException;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.*;
@@ -45,6 +43,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.awaitility.Awaitility.await;
@@ -417,11 +416,10 @@ public class InvioNotificheB2bSteps {
             default -> throw new IllegalArgumentException();
         };
         assertThat(checkRetetion(key, retentionTimePreLoad))
-                .as("La verifica della retention per la chiave "+key+"  con il tempo di retention deve restituire true", key, retentionTimePreLoad)
+                .as("La verifica della retention per la chiave " + key + "  con il tempo di retention deve restituire true", key, retentionTimePreLoad)
                 .isTrue();
     }
-
-
+    
     @And("viene effettuato un controllo sulla durata della retention di {string}")
     public void retentionCheckLoad(String documentType) {
         String key = switch (documentType) {
@@ -433,7 +431,7 @@ public class InvioNotificheB2bSteps {
             default -> throw new IllegalArgumentException();
         };
         assertThat(checkRetetion(key, retentionTimeLoad))
-                .as("La verifica della retention per la chiave "+key+" con il tempo di retention deve restituire true", key, retentionTimeLoad)
+                .as("La verifica della retention per la chiave " + key + " con il tempo di retention deve restituire true", key, retentionTimeLoad)
                 .isTrue();
     }
 
@@ -806,7 +804,7 @@ public class InvioNotificheB2bSteps {
     public void priceNotificationVerify(Integer price) {
         try {
             assertThat(this.sharedSteps.getSentNotification().getAmount())
-                    .as("L'importo della notifica dovrebbe essere uguale a "+price, price)
+                    .as("L'importo della notifica dovrebbe essere uguale a " + price, price)
                     .isEqualTo(price);
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertFailerWithIUN(assertionError);
@@ -953,7 +951,7 @@ public class InvioNotificheB2bSteps {
             log.info("Informazioni sullo stato del Pagamento: {}", paymentInfoResponse);
 
             assertThat(paymentInfoResponse.get(0).getStatus().getValue())
-                    .as("Lo stato nella risposta dovrebbe essere uguale a "+status , status)
+                    .as("Lo stato nella risposta dovrebbe essere uguale a " + status, status)
                     .isEqualToIgnoringCase(status);
 
         } catch (AssertionError assertionError) {
@@ -1187,7 +1185,7 @@ public class InvioNotificheB2bSteps {
     @Given("viene cancellata la notifica con IUN {string}")
     public void vieneCancellataLaNotificaConIUN(String iun) {
         b2bClient.setApiKeys(SettableApiKey.ApiKeyType.GA);
-       Assertions.assertDoesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             RequestStatus resp = Assertions.assertDoesNotThrow(() ->
                     b2bClient.notificationCancellation(iun));
 
@@ -1303,7 +1301,7 @@ public class InvioNotificheB2bSteps {
             this.documentiPec = pnExternalChannelsServiceClientImpl.getReceivedMessagesAnalogico(sharedSteps.getIunVersionamento(), destinatario);
 
 
-            Assertions.assertNotNull(documentiPec, "La lista dei documenti PEC ricevuti è nulla o vuota per il destinatario " + destinatario+" l'API con Endpoint: /historical/received-message/"+sharedSteps.getIunVersionamento() +"/"+destinatario+" Non ha restituito risultati");
+            Assertions.assertNotNull(documentiPec, "La lista dei documenti PEC ricevuti è nulla o vuota per il destinatario " + destinatario + " l'API con Endpoint: /historical/received-message/" + sharedSteps.getIunVersionamento() + "/" + destinatario + " Non ha restituito risultati");
 
             log.info("documenti analogici : {}", documentiPec);
 
@@ -1385,18 +1383,18 @@ public class InvioNotificheB2bSteps {
         try {
             BffPaymentResponse responseCheckout = pnPaymentInfoClientImpl.checkoutCart(requestCheckout);
 
-         assertThat(responseCheckout)
-                 .as("Il responseCheckout non dovrebbe essere nullo")
-                 .isNotNull();
+            assertThat(responseCheckout)
+                    .as("Il responseCheckout non dovrebbe essere nullo")
+                    .isNotNull();
 
-         assertThat(responseCheckout.getCheckoutUrl())
-                 .as("La checkoutUrl non dovrebbe essere nulla")
-                 .isNotNull();
+            assertThat(responseCheckout.getCheckoutUrl())
+                    .as("La checkoutUrl non dovrebbe essere nulla")
+                    .isNotNull();
 
             log.info("response checkout: {}", responseCheckout);
         } catch (AssertionError error) {
-         throw error;
-     }
+            throw error;
+        }
 
     }
 
