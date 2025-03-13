@@ -20,48 +20,7 @@ import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
 public class NotificationStepV26 implements NotificationInterface {
 
 
-    //    @Value("${pn.bearer-token.user1.taxID}")
-    public static String MARIO_CUCUMBER_TAX_ID = "FRMTTR76M06B715E";
-    //    @Value("${pn.bearer-token.user2.taxID}")
-    public static String MARIO_GHERKIN_TAX_ID = "CLMCST42R12D969Z";
-    //    @Value("${pn.bearer-token.user4.taxID}")
-    public static String GALILEO_GALILEI_TAX_ID = "GLLGLL64B15G702I";
-    public static final String CUCUMBER_SRL_TAX_ID = "20517490320";
-    public static final String GHERKIN_SRL_TAX_ID = "12666810299";
-    public static final String CUCUMBER_SPA_TAX_ID = "20517490320";
-    public static final String GHERKIN_SPA_TAX_ID = "12666810299";
-    public static final String CUCUMBER_ANALOGIC_TAX_ID = "LBPHLS94A56C826R";
-    public static final String GHERKIN_ANALOGIC_TAX_ID = "05722930657";
-    public static final String CUCUMBER_SOCIETY_TAX_ID = "20517490320";
-    public static final String GHERKIN_IRREPERIBILE_TAX_ID = "00749900049";
-
 //    private static final NotificationDigitalAddress PEC = new NotificationDigitalAddress().type(NotificationDigitalAddress.TypeEnum.PEC).address(getDigitalAddressValue()))
-
-    private enum Destinatario {
-        MARIO_GHERKIN("Mario Gherkin", MARIO_GHERKIN_TAX_ID, null, null),
-        MARIO_CUCUMBER("Mario Cucumber", MARIO_CUCUMBER_TAX_ID, null, null);
-
-        final String denomination;
-        final String taxId;
-        final NotificationRecipientV23.RecipientTypeEnum recipientType;
-        final NotificationDigitalAddress digitalDomicile;
-
-        Destinatario(String name, String taxId, NotificationRecipientV23.RecipientTypeEnum recipientType, NotificationDigitalAddress digitalAddress) {
-            this.denomination = name;
-            this.taxId = taxId;
-            this.recipientType = recipientType;
-            this.digitalDomicile = digitalAddress;
-        }
-
-        public static Destinatario getByName(String name) {
-            for (Destinatario destinatario : values()) {
-                if (destinatario.denomination.trim().equalsIgnoreCase(name)) {
-                    return destinatario;
-                }
-            }
-            throw new IllegalArgumentException("Destinatario inesistente: " + name);
-        }
-    }
 
     private NewNotificationRequestV24 notificationRequest;
     private NewNotificationResponse notificationResponse;
@@ -88,7 +47,7 @@ public class NotificationStepV26 implements NotificationInterface {
             Destinatario destinatario = Destinatario.getByName(recipientName);
             notificationRecipient.setDenomination(destinatario.denomination);
             notificationRecipient.setTaxId(destinatario.taxId);
-            notificationRecipient.setRecipientType(destinatario.recipientType);
+            notificationRecipient.setRecipientType(NotificationRecipientV23.RecipientTypeEnum.valueOf(destinatario.recipientType));
             notificationRecipient.setDigitalDomicile(destinatario.digitalDomicile);
 
             if (notificationRequest.getNotificationFeePolicy() == NotificationFeePolicy.DELIVERY_MODE

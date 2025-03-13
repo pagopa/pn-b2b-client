@@ -394,30 +394,24 @@ public class SharedSteps {
 
     private NotificationInterface getNotificationInterface(NotificationVersion notificationVersion) {
         switch (notificationVersion) {
-            case V10 -> {
-                System.out.println("TODO MATTEO 10");
-                return null;
-            }
-            case V20 -> {
-                System.out.println("TODO MATTEO 20");
-                return null;
-            }
-            case V21 -> {
-                System.out.println("TODO MATTEO 21");
-                return null;
-            }
-            case V23 -> {
-                System.out.println("TODO MATTEO 23");
-                return null;
-            }
-            case V24 -> {
-                System.out.println("TODO MATTEO 24");
-                return null;
-            }
-            case V25 -> {
-                System.out.println("TODO MATTEO 25");
-                return null;
-            }
+//            case V10 -> {
+//                return null;
+//            }
+//            case V20 -> {
+//                return null;
+//            }
+//            case V21 -> {
+//                return null;
+//            }
+//            case V23 -> {
+//                return null;
+//            }
+//            case V24 -> {
+//                return null;
+//            }
+//            case V25 -> {
+//                return null;
+//            }
             case V26 -> {
                 return notificationStepV26;
             }

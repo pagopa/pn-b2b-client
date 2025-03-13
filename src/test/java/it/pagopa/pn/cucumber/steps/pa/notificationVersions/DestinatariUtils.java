@@ -2,19 +2,21 @@ package it.pagopa.pn.cucumber.steps.pa.notificationVersions;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Getter
+@Component
 public class DestinatariUtils {
 
     @Value("${pn.bearer-token.user1.taxID}")
-    public static String MARIO_CUCUMBER_TAX_ID = "FRMTTR76M06B715E";
+    public static String MARIO_CUCUMBER_TAX_ID;// = "FRMTTR76M06B715E";
     @Value("${pn.bearer-token.user2.taxID}")
-    public static String MARIO_GHERKIN_TAX_ID = "CLMCST42R12D969Z";
+    public static String MARIO_GHERKIN_TAX_ID;// = "CLMCST42R12D969Z";
     @Value("${pn.bearer-token.user4.taxID}")
-    public static String GALILEO_GALILEI_TAX_ID = "GLLGLL64B15G702I";
+    public static String GALILEO_GALILEI_TAX_ID;// = "GLLGLL64B15G702I";
     public static final String CUCUMBER_SRL_TAX_ID = "20517490320";
     public static final String GHERKIN_SRL_TAX_ID = "12666810299";
     public static final String CUCUMBER_SPA_TAX_ID = "20517490320";
