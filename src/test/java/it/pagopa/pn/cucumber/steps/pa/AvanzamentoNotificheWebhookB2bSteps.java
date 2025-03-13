@@ -1111,6 +1111,10 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             }
             try {
                 webhookStepsInterface.createEventStream(pa, listGroups, streamIdToReplace, filteredValues, forced);
+                if (replaceId) {
+                    WebhookStepsInterface webhookStepsInterfaceForFinalChecks = crossVersion == null ? webhookStepsInterface : getWebhookStep(crossVersion);
+                    webhookStepsInterfaceForFinalChecks.checkCorrectDisabling(streamIdToReplace);
+                }
             } catch (HttpStatusCodeException e) {
                 notificationError = e;
                 sharedSteps.setNotificationError(e);

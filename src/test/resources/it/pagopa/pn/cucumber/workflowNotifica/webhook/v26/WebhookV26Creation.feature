@@ -1,5 +1,10 @@
 Feature: verifica creazione stream
 
+  Scenario: [ONLY_FOR_DEBUG] Cancellazione stream notifica
+    Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V26"
+    Given vengono cancellati tutti gli stream presenti del "Comune_1" con versione "V26"
+    Given vengono cancellati tutti gli stream presenti del "Comune_2" con versione "V26"
+
   #--------------CREAZIONE DI UNO STREAM--------------------
   @webhookV26 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_1] Creazione per una PA di 10 nuovi stream notifica con eventType TIMELINE e senza gruppo.
@@ -18,7 +23,7 @@ Feature: verifica creazione stream
   @webhookV26 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_2] Creazione per una PA di 11 nuovi stream notifica con eventType TIMELINE e senza gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V26"
-    And si predispone 10 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V26"
+    And si predispongono 10 nuovi stream denominati "stream-test" con eventType "TIMELINE" con versione "V26"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -32,7 +37,7 @@ Feature: verifica creazione stream
   @webhookV26 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_3] Creazione per una PA di 10 nuovi stream notifica con eventType TIMELINE con gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V26"
-    And si predispone 10 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V26"
+    And si predispongono 10 nuovi stream denominati "stream-test" con eventType "TIMELINE" con versione "V26"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -46,7 +51,7 @@ Feature: verifica creazione stream
   @webhookV26 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_4] Creazione per una PA di 11 nuovi stream notifica con eventType TIMELINE con gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V26"
-    And si predispone 10 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V26"
+    And si predispongono 10 nuovi stream denominati "stream-test" con eventType "TIMELINE" con versione "V26"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -60,7 +65,7 @@ Feature: verifica creazione stream
   @webhookV26 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_5] Creazione per una PA di 10 nuovi stream notifica con eventType STATUS e senza gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V26"
-    And si predispone 10 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V26"
+    And si predispongono 10 nuovi stream denominati "stream-test" con eventType "STATUS" con versione "V26"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -74,7 +79,7 @@ Feature: verifica creazione stream
   @webhookV26 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_6] Creazione per una PA di 11 nuovi stream notifica con eventType STATUS e senza gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V26"
-    And si predispone 10 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V26"
+    And si predispongono 10 nuovi stream denominati "stream-test" con eventType "STATUS" con versione "V26"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -88,7 +93,7 @@ Feature: verifica creazione stream
   @webhookV26 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_7] Creazione per una PA di 10 nuovi stream notifica con eventType TIMELINE con gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V26"
-    And si predispone 10 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V26"
+    And si predispongono 10 nuovi stream denominati "stream-test" con eventType "STATUS" con versione "V26"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -101,7 +106,7 @@ Feature: verifica creazione stream
   @webhookV26 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_8] Creazione per una PA di 11 nuovi stream notifica con eventType STATUS con gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V26"
-    And si predispone 10 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V26"
+    And si predispongono 10 nuovi stream denominati "stream-test" con eventType "STATUS" con versione "V26"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream

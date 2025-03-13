@@ -37,7 +37,7 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
 
     public WebhookStepsV27(AvanzamentoNotificheWebhookB2bSteps webhookSteps) {
         this.webhookSteps = webhookSteps;
-        this.streamVersion = AvanzamentoNotificheWebhookB2bSteps.StreamVersion.V27;
+        streamVersion = AvanzamentoNotificheWebhookB2bSteps.StreamVersion.V27;
         progressResponseElementList = new LinkedList<>();
     }
 
@@ -71,12 +71,12 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
 
     @Override
     public Object retrieveStreamEvent(UUID streamId) {
-        return this.webhookSteps.getWebhookB2bClient().retrieveEventStreamV27(streamId);
+        return webhookSteps.getWebhookB2bClient().retrieveEventStreamV27(streamId);
     }
 
     @Override
     public void deleteStream(UUID streamId) {
-        this.webhookSteps.getWebhookB2bClient().deleteEventStreamV27(streamId);
+        webhookSteps.getWebhookB2bClient().deleteEventStreamV27(streamId);
     }
 
     @Override
@@ -206,7 +206,6 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
     public void getStreamById(UUID streamId) {
         StreamMetadataResponseV27 eventStreamV27 = Assertions.assertDoesNotThrow(() ->
                 webhookSteps.getWebhookB2bClient().retrieveEventStreamV27(streamId));
-        webhookSteps.getSharedSteps().setEventStreamV27(eventStreamV27);
         Assertions.assertNotNull(eventStreamV27);
         Assertions.assertNotNull(eventStreamV27.getStreamId());
         Assertions.assertEquals(waitForAccepted, eventStreamV27.getWaitForAccepted());
@@ -251,13 +250,6 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
             request.setWaitForAccepted(waitForAccepted);
             StreamMetadataResponseV27 eventStream = webhookSteps.getWebhookB2bClient().createEventStreamV27(request);
             if (streamIdToReplace != null) {
-                StreamMetadataResponseV27 eventStreamV27 =
-                        webhookSteps.getWebhookB2bClient().retrieveEventStreamV27(streamIdToReplace);
-                webhookSteps.getSharedSteps().setEventStreamV27(eventStreamV27);
-                Assertions.assertNotNull(eventStreamV27);
-                Assertions.assertNotNull(eventStreamV27.getStreamId());
-                Assertions.assertNotNull(eventStreamV27.getDisabledDate());
-                log.info("EVENTSTREAM REPLACED: {}", eventStreamV27);
                 eventStreamList = new LinkedList<>();
             }
             eventStreamList.add(eventStream);
@@ -392,7 +384,7 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
             log.info("EventProgress: " + progressResponseElement);
         } catch (AssertionFailedError assertionFailedError) {
             String message = String.format("%s {IUN: %s -WEBHOOK %s }", assertionFailedError.getMessage(),
-                    this.webhookSteps.getSharedSteps().getSentNotification().getIun(), this.eventStreamList.get(0).getStreamId());
+                    webhookSteps.getSharedSteps().getSentNotification().getIun(), eventStreamList.get(0).getStreamId());
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
     }
@@ -552,5 +544,15 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
         Assertions.assertNotNull(progressResponseElement);
         Assertions.assertNotNull(progressResponseElement.getElement().getLegalFactsIds());
         Assertions.assertFalse(progressResponseElement.getElement().getLegalFactsIds().isEmpty());
+    }
+
+    @Override
+    public void checkCorrectDisabling(UUID streamId) {
+        StreamMetadataResponseV27 eventStream =
+                webhookSteps.getWebhookB2bClient().retrieveEventStreamV27(streamId);
+        Assertions.assertNotNull(eventStream);
+        Assertions.assertNotNull(eventStream.getStreamId());
+        Assertions.assertNotNull(eventStream.getDisabledDate());
+        log.info("EVENTSTREAM REPLACED: {}", eventStream);
     }
 }

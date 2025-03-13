@@ -36,7 +36,7 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
 
     public WebhookStepsV10(AvanzamentoNotificheWebhookB2bSteps webhookSteps) {
         this.webhookSteps = webhookSteps;
-        this.streamVersion = AvanzamentoNotificheWebhookB2bSteps.StreamVersion.V10;
+        streamVersion = AvanzamentoNotificheWebhookB2bSteps.StreamVersion.V10;
         progressResponseElementList = new LinkedList<>();
     }
 
@@ -63,12 +63,12 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
 
     @Override
     public Object retrieveStreamEvent(UUID streamId) {
-        return this.webhookSteps.getWebhookB2bClient().retrieveEventStream(streamId);
+        return webhookSteps.getWebhookB2bClient().retrieveEventStream(streamId);
     }
 
     @Override
     public void deleteStream(UUID streamId) {
-        this.webhookSteps.getWebhookB2bClient().deleteEventStream(streamId);
+        webhookSteps.getWebhookB2bClient().deleteEventStream(streamId);
     }
 
     @Override
@@ -188,7 +188,6 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
     public void getStreamById(UUID streamId) {
         StreamMetadataResponse eventStream = Assertions.assertDoesNotThrow(() ->
                 webhookSteps.getWebhookB2bClient().retrieveEventStream(streamId));
-        webhookSteps.getSharedSteps().setEventStream(eventStream);
         Assertions.assertNotNull(eventStream);
         Assertions.assertNotNull(eventStream.getStreamId());
         log.info("EVENTSTREAM: {}", eventStream);
@@ -224,6 +223,9 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
                 request.setFilterValues(filteredValues);
             }
             StreamMetadataResponse eventStream = webhookSteps.getWebhookB2bClient().createEventStream(request);
+            if (streamIdToReplace != null) {
+                eventStreamList = new LinkedList<>();
+            }
             eventStreamList.add(eventStream);
             webhookSteps.getPaStreamOwner().add(pa);
         }
@@ -450,5 +452,14 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
         Assertions.assertNotNull(progressResponseElement);
         Assertions.assertNotNull(progressResponseElement.getLegalfactIds());
         Assertions.assertFalse(progressResponseElement.getLegalfactIds().isEmpty());
+    }
+
+    @Override
+    public void checkCorrectDisabling(UUID streamId) {
+        StreamMetadataResponse eventStream =
+                webhookSteps.getWebhookB2bClient().retrieveEventStream(streamId);
+        Assertions.assertNotNull(eventStream);
+        Assertions.assertNotNull(eventStream.getStreamId());
+        log.info("EVENTSTREAM REPLACED: {}", eventStream);
     }
 }
