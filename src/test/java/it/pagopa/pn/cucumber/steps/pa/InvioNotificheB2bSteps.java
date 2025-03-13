@@ -34,8 +34,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpStatusCodeException;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.*;
@@ -45,6 +43,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.awaitility.Awaitility.await;
@@ -83,14 +82,14 @@ public class InvioNotificheB2bSteps {
     private List<String> blackListTaxIds;
 
     @Autowired
-    public InvioNotificheB2bSteps(PnExternalServiceClientImpl safeStorageClient, SharedSteps sharedSteps,PnExternalChannelsServiceClientImpl pnExternalChannelsServiceClientImpl, JavaMailSender emailSender) {
+    public InvioNotificheB2bSteps(PnExternalServiceClientImpl safeStorageClient, SharedSteps sharedSteps, PnExternalChannelsServiceClientImpl pnExternalChannelsServiceClientImpl, JavaMailSender emailSender) {
         this.safeStorageClient = safeStorageClient;
         this.sharedSteps = sharedSteps;
         this.b2bUtils = sharedSteps.getB2bUtils();
         this.b2bClient = sharedSteps.getB2bClient();
         this.webPaClient = sharedSteps.getWebPaClient();
-        this.pnPaymentInfoClientImpl =sharedSteps.getPnPaymentInfoClientImpl();
-        this.pnExternalChannelsServiceClientImpl=pnExternalChannelsServiceClientImpl;
+        this.pnPaymentInfoClientImpl = sharedSteps.getPnPaymentInfoClientImpl();
+        this.pnExternalChannelsServiceClientImpl = pnExternalChannelsServiceClientImpl;
 
         this.emailSender = emailSender;
     }
@@ -202,15 +201,15 @@ public class InvioNotificheB2bSteps {
 
         FullSentNotificationV26 notifica120 = null;
 
-            for(NotificationSearchRow notifiche :serarchedNotification){
+        for (NotificationSearchRow notifiche : serarchedNotification) {
 
-                notifica120 = b2bClient.getSentNotification(notifiche.getIun());
+            notifica120 = b2bClient.getSentNotification(notifiche.getIun());
 
-                if(notifica120.getRecipients().get(0).getPayments() != null && notifica120.getRecipients().get(0).getPayments().get(0).getPagoPa() != null && notifica120.getRecipients().get(0).getPayments().get(0).getPagoPa().getNoticeCode() != null){
-                    break;
-                }else{
-                    notifica120=null;
-                }
+            if (notifica120.getRecipients().get(0).getPayments() != null && notifica120.getRecipients().get(0).getPayments().get(0).getPagoPa() != null && notifica120.getRecipients().get(0).getPayments().get(0).getPagoPa().getNoticeCode() != null) {
+                break;
+            } else {
+                notifica120 = null;
+            }
 
 
             try {
@@ -417,11 +416,10 @@ public class InvioNotificheB2bSteps {
             default -> throw new IllegalArgumentException();
         };
         assertThat(checkRetetion(key, retentionTimePreLoad))
-                .as("La verifica della retention per la chiave "+key+"  con il tempo di retention deve restituire true", key, retentionTimePreLoad)
+                .as("La verifica della retention per la chiave " + key + "  con il tempo di retention deve restituire true", key, retentionTimePreLoad)
                 .isTrue();
     }
-
-
+    
     @And("viene effettuato un controllo sulla durata della retention di {string}")
     public void retentionCheckLoad(String documentType) {
         String key = switch (documentType) {
@@ -433,7 +431,7 @@ public class InvioNotificheB2bSteps {
             default -> throw new IllegalArgumentException();
         };
         assertThat(checkRetetion(key, retentionTimeLoad))
-                .as("La verifica della retention per la chiave "+key+" con il tempo di retention deve restituire true", key, retentionTimeLoad)
+                .as("La verifica della retention per la chiave " + key + " con il tempo di retention deve restituire true", key, retentionTimeLoad)
                 .isTrue();
     }
 
@@ -511,7 +509,6 @@ public class InvioNotificheB2bSteps {
             throw new IllegalArgumentException();
         }
     }
-
 
 
     @Given("viene letta la notifica {string} dal {string}")
@@ -592,7 +589,7 @@ public class InvioNotificheB2bSteps {
                 List<NotificationDocument> documents = sharedSteps.getSentNotification().getDocuments();
                 this.downloadResponse = b2bClient
                         .getSentNotificationDocument(sharedSteps.getSentNotification().getIun(), Integer.parseInt(documents.get(0).getDocIdx()));
-            }else {
+            } else {
                 this.downloadResponse = b2bClient
                         .getSentNotificationAttachment(iun, destinatario, type, 0);
 
@@ -703,11 +700,11 @@ public class InvioNotificheB2bSteps {
 
     private void verifyNotificationVersioning(String version) {
         try {
-            if (version.equalsIgnoreCase("V1")){
+            if (version.equalsIgnoreCase("V1")) {
                 b2bUtils.verifyNotificationV1(sharedSteps.getSentNotificationV1());
-            }else if (version.equalsIgnoreCase("V2")){
+            } else if (version.equalsIgnoreCase("V2")) {
                 b2bUtils.verifyNotificationV2(sharedSteps.getSentNotificationV2());
-            }else if (version.equalsIgnoreCase("V23")){
+            } else if (version.equalsIgnoreCase("V23")) {
                 b2bUtils.verifyNotification(sharedSteps.getSentNotification());
             }
         } catch (AssertionFailedError assertionFailedError) {
@@ -807,7 +804,7 @@ public class InvioNotificheB2bSteps {
     public void priceNotificationVerify(Integer price) {
         try {
             assertThat(this.sharedSteps.getSentNotification().getAmount())
-                    .as("L'importo della notifica dovrebbe essere uguale a "+price, price)
+                    .as("L'importo della notifica dovrebbe essere uguale a " + price, price)
                     .isEqualTo(price);
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertFailerWithIUN(assertionError);
@@ -954,7 +951,7 @@ public class InvioNotificheB2bSteps {
             log.info("Informazioni sullo stato del Pagamento: {}", paymentInfoResponse);
 
             assertThat(paymentInfoResponse.get(0).getStatus().getValue())
-                    .as("Lo stato nella risposta dovrebbe essere uguale a "+status , status)
+                    .as("Lo stato nella risposta dovrebbe essere uguale a " + status, status)
                     .isEqualToIgnoringCase(status);
 
         } catch (AssertionError assertionError) {
@@ -978,7 +975,7 @@ public class InvioNotificheB2bSteps {
     }
 
     @And("l'avviso pagopa viene pagato correttamente su checkout creditorTaxID {string} noticeCode {string} con errore {string}")
-    public void laNotificaVienePagatasuCheckoutError(String creditorTaxID , String noticeCode,String codiceErrore) {
+    public void laNotificaVienePagatasuCheckoutError(String creditorTaxID, String noticeCode, String codiceErrore) {
         BffPaymentRequest paymentRequest = getPaymentRequest(null,
                 noticeCode,
                 creditorTaxID,
@@ -1168,8 +1165,8 @@ public class InvioNotificheB2bSteps {
     }
 
     private BffPaymentRequest getPaymentRequest(NotificationPriceResponseV23 notificationPrice, String noticeNumber, String fiscalCode, String companyName, Integer amount, String description, String returnUrl) {
-        BffPaymentRequest paymentRequest= new BffPaymentRequest();
-        PaymentNotice paymentNotice= new PaymentNotice();
+        BffPaymentRequest paymentRequest = new BffPaymentRequest();
+        PaymentNotice paymentNotice = new PaymentNotice();
         paymentNotice.noticeNumber(noticeNumber);
         paymentNotice.fiscalCode(fiscalCode);
         paymentNotice.companyName(companyName);
@@ -1188,7 +1185,7 @@ public class InvioNotificheB2bSteps {
     @Given("viene cancellata la notifica con IUN {string}")
     public void vieneCancellataLaNotificaConIUN(String iun) {
         b2bClient.setApiKeys(SettableApiKey.ApiKeyType.GA);
-       Assertions.assertDoesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             RequestStatus resp = Assertions.assertDoesNotThrow(() ->
                     b2bClient.notificationCancellation(iun));
 
@@ -1304,7 +1301,7 @@ public class InvioNotificheB2bSteps {
             this.documentiPec = pnExternalChannelsServiceClientImpl.getReceivedMessagesAnalogico(sharedSteps.getIunVersionamento(), destinatario);
 
 
-            Assertions.assertNotNull(documentiPec, "La lista dei documenti PEC ricevuti è nulla o vuota per il destinatario " + destinatario+" l'API con Endpoint: /historical/received-message/"+sharedSteps.getIunVersionamento() +"/"+destinatario+" Non ha restituito risultati");
+            Assertions.assertNotNull(documentiPec, "La lista dei documenti PEC ricevuti è nulla o vuota per il destinatario " + destinatario + " l'API con Endpoint: /historical/received-message/" + sharedSteps.getIunVersionamento() + "/" + destinatario + " Non ha restituito risultati");
 
             log.info("documenti analogici : {}", documentiPec);
 
@@ -1383,21 +1380,21 @@ public class InvioNotificheB2bSteps {
     @Given("si richiama checkout con dati:")
     public void siRichiamaCheckoutConDati(Map<String, String> dataCheckout) {
         BffPaymentRequest requestCheckout = creationPaymentRequest(dataCheckout);
-     try {
-         BffPaymentResponse responseCheckout = pnPaymentInfoClientImpl.checkoutCart(requestCheckout);
+        try {
+            BffPaymentResponse responseCheckout = pnPaymentInfoClientImpl.checkoutCart(requestCheckout);
 
-         assertThat(responseCheckout)
-                 .as("Il responseCheckout non dovrebbe essere nullo")
-                 .isNotNull();
+            assertThat(responseCheckout)
+                    .as("Il responseCheckout non dovrebbe essere nullo")
+                    .isNotNull();
 
-         assertThat(responseCheckout.getCheckoutUrl())
-                 .as("La checkoutUrl non dovrebbe essere nulla")
-                 .isNotNull();
+            assertThat(responseCheckout.getCheckoutUrl())
+                    .as("La checkoutUrl non dovrebbe essere nulla")
+                    .isNotNull();
 
             log.info("response checkout: {}", responseCheckout);
         } catch (AssertionError error) {
-         throw error;
-     }
+            throw error;
+        }
 
     }
 
@@ -1426,8 +1423,6 @@ public class InvioNotificheB2bSteps {
         log.info("request checkout: {}", requestCheckout);
         return requestCheckout;
     }
-
-
 
 
     @And("si verifica che negli url non contenga il docTag nel {string}")
@@ -1529,7 +1524,7 @@ public class InvioNotificheB2bSteps {
                 .key("classpath:/sample.pdf");
         NotificationDocument document = new NotificationDocument()
                 .contentType("application/pdf")
-                        .ref(ref);
+                .ref(ref);
         sharedSteps.getNotificationRequest().setDocuments(List.of(document));
     }
 

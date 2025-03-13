@@ -10,6 +10,10 @@ import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebh
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.StreamCreationRequestV26;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.StreamMetadataResponseV26;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.StreamRequestV26;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v27.ProgressResponseElementV27;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v27.StreamCreationRequestV27;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v27.StreamMetadataResponseV27;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v27.StreamRequestV27;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.ProgressResponseElementV23;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamCreationRequestV23;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamMetadataResponseV23;
@@ -26,7 +30,7 @@ public interface IPnWebhookB2bClient extends SettableApiKey {
 
     void deleteEventStream(UUID streamId);
 
-    StreamMetadataResponse getEventStream(UUID streamId);
+    StreamMetadataResponse retrieveEventStream(UUID streamId);
 
     List<StreamListElement> listEventStreams();
 
@@ -41,7 +45,7 @@ public interface IPnWebhookB2bClient extends SettableApiKey {
 
     void deleteEventStreamV23(UUID streamId);
 
-    StreamMetadataResponseV23 getEventStreamV23(UUID streamId);
+    StreamMetadataResponseV23 retrieveEventStreamV23(UUID streamId);
 
     List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamListElement> listEventStreamsV23();
 
@@ -103,6 +107,23 @@ public interface IPnWebhookB2bClient extends SettableApiKey {
     List<ProgressResponseElementV26> consumeEventStreamV26(UUID streamId, String lastEventId) throws RestClientException;
 
     ResponseEntity<List<ProgressResponseElementV26>> consumeEventStreamHttpV26(UUID streamId, String lastEventId) throws RestClientException;
+
+    //V27
+    StreamMetadataResponseV27 createEventStreamV27(StreamCreationRequestV27 streamCreationRequestV27) throws RestClientException;
+
+    StreamMetadataResponseV27 disableEventStreamV27(UUID streamId) throws RestClientException;
+
+    List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v27.StreamListElement> listEventStreamsV27() throws RestClientException;
+
+    void deleteEventStreamV27(UUID streamId) throws RestClientException;
+
+    StreamMetadataResponseV27 retrieveEventStreamV27(UUID streamId) throws RestClientException;
+
+    StreamMetadataResponseV27 updateEventStreamV27(UUID streamId, StreamRequestV27 streamRequestV27) throws RestClientException;
+
+    List<ProgressResponseElementV27> consumeEventStreamV27(UUID streamId, String lastEventId) throws RestClientException;
+
+    ResponseEntity<List<ProgressResponseElementV27>> consumeEventStreamHttpV27(UUID streamId, String lastEventId) throws RestClientException;
 
 
 }
