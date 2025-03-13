@@ -102,6 +102,7 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnWebRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebhookB2bExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.TemplateEngineClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.EmdIntegrationApiImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.cucumber.steps.templateEngine.TemplateConfiguration;
@@ -216,7 +217,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         IPnTosPrivacyClientImpl.class,
         TemplateEngineClientImpl.class,
         TemplateConfiguration.class,
-        TemplateEngineContextFactory.class
+        TemplateEngineContextFactory.class,
+        EmdIntegrationApiImpl.class
 })
 @EnableScheduling
 @EnableConfigurationProperties

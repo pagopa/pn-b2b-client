@@ -9,7 +9,9 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffDocumentType;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffFullNotificationV1;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffNotificationDetailDocument;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffNotificationDetailTimeline;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffConsent;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffTosPrivacyActionBody;
@@ -141,6 +143,28 @@ public class RicezioneNotificheWebSteps {
         Assertions.assertNotNull(bffFullNotificationV1Recipient);
         log.info("FULL TIMELINE RECIPIENT: " + bffFullNotificationV1Recipient.getTimeline());
     }
+
+    @And("lato destinatario viene recuperato AAR lato web dal destinatario {string}")
+    public void retrieveNotificationAAROnRecipientSideForWeb(String user) {
+        Assertions.assertNotNull(bffFullNotificationV1Recipient);
+        selectUser(user);
+        String documentId = Optional.ofNullable(bffFullNotificationV1Recipient.getOtherDocuments()).orElse(List.of()).stream()
+                .filter(x -> x != null && x.getDocumentType().equals("AAR"))
+                .map(BffNotificationDetailDocument::getDocumentId)
+                .findFirst()
+                .orElse(null);
+        Assertions.assertDoesNotThrow(() ->
+                bffRecipientNotificationClient.getReceivedNotificationDocumentV1(sharedSteps.getSentNotification().getIun(), BffDocumentType.AAR, null, null, documentId));
+    }
+
+    @And("lato destinatario è possibile recuperare correttamente l'allegato {string} dal destinatario {string}")
+    public void retrieveAttachmentOnRecipientSideForWeb(String attachmentName, String user) {
+        Assertions.assertNotNull(bffFullNotificationV1Recipient);
+        selectUser(user);
+        Assertions.assertDoesNotThrow(() ->
+                bffRecipientNotificationClient.getReceivedNotificationPaymentV1WithHttpInfo(sharedSteps.getSentNotification().getIun(), attachmentName, null, 0));
+    }
+
 
     @And("lato api l'elemento di timeline della notifica {string} con deliveryDetailCode {string} non è visibile")
     public void timelineEventWithCategoryAndDeliveryDetailCodeNotPresent(String category, String deliveryDetailCode) {
