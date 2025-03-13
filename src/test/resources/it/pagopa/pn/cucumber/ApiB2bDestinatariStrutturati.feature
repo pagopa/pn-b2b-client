@@ -307,7 +307,7 @@ Feature: Api b2b per destinatari strutturati
       | qazwsxedcrfvtgbyhnujmikolpQAZWSXEDCRFVTGBYHNUJMIKOLP1234567890!#$%&'+/=?^_`{}~-£(@gmail.com                  |
       | qazwsxedcrfvtgbyhnujmikolpQAZWSXEDCRFVTGBYHNUJMIKOLP1234567890!#$%&'+/=?^_`{}~-£@gmail.com                   |
 
-  @addressBook1 @useB2B @b2bDestinatariStrutturati @ignoreHotfixTemp #temp
+  @addressBook2 @useB2B @b2bDestinatariStrutturati @ignoreHotfixTemp #temp
   Scenario: [B2B-DEST-USER-ATTR_10] invio messaggio di cortesia - invio notifica per email per ente padre per PG
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
     And viene inserito un recapito legale "example@pecSuccess.it"
