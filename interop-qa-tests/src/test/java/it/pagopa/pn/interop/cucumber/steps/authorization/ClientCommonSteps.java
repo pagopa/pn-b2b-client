@@ -1,5 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.authorization;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
@@ -92,11 +94,21 @@ public class ClientCommonSteps {
         else Assertions.assertEquals(statusCode, httpCallExecutor.getResponseStatus().value());
     }
 
+    /* DEV. NOTE 12/03/2025: si differenzia da verifyStatusCode(int statusCode) per la verifica
+    * accurata dello status anche in caso di esito positivo, bypassando quindi la normalizzazione
+    * su codice 200. Questo è reso possibile dalla recente aggiunta del metodo
+    * it.pagopa.interop.utils.HttpCallExecutor.performCall(java.util.function.Supplier<T>, java.util.function.Function<T,org.springframework.http.HttpStatus>)
+    * che dà modo di conservare lo status code originale. */
+    @Then("si ottiene response status code {int}")
+    public void accuratelyVerifyStatusCode(int statusCode) {
+        assertThat(httpCallExecutor.getResponseStatus().value())
+            .as("Check HTTP response status risultante da ultima call effettuata attraverso %s", HttpCallExecutor.class.getSimpleName())
+            .isEqualTo(statusCode);
+    }
+
     private ClientSeed createClientSeed(int index) {
         ClientSeed clientSeed = new ClientSeed();
         clientSeed.setName(String.format("client-%d-%d-%s", index, sharedStepsContext.getTestSeed(), ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)));
         return clientSeed;
     }
-
-
 }
