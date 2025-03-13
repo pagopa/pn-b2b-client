@@ -92,4 +92,6 @@ public interface WebhookStepsInterface {
     List<Object> verificaCorrispondenzaElementiTimelineWebhookAndB2B();
 
     void checkLegalFactId();
+
+    void checkCorrectDisabling(UUID streamId);
 }

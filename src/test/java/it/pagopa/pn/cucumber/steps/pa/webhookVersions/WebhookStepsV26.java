@@ -36,7 +36,7 @@ public class WebhookStepsV26 implements WebhookStepsInterface {
 
     public WebhookStepsV26(AvanzamentoNotificheWebhookB2bSteps webhookSteps) {
         this.webhookSteps = webhookSteps;
-        this.streamVersion = AvanzamentoNotificheWebhookB2bSteps.StreamVersion.V26;
+        streamVersion = AvanzamentoNotificheWebhookB2bSteps.StreamVersion.V26;
         progressResponseElementList = new LinkedList<>();
     }
 
@@ -70,12 +70,12 @@ public class WebhookStepsV26 implements WebhookStepsInterface {
 
     @Override
     public Object retrieveStreamEvent(UUID streamId) {
-        return this.webhookSteps.getWebhookB2bClient().retrieveEventStreamV26(streamId);
+        return webhookSteps.getWebhookB2bClient().retrieveEventStreamV26(streamId);
     }
 
     @Override
     public void deleteStream(UUID streamId) {
-        this.webhookSteps.getWebhookB2bClient().deleteEventStreamV26(streamId);
+        webhookSteps.getWebhookB2bClient().deleteEventStreamV26(streamId);
     }
 
     @Override
@@ -204,7 +204,6 @@ public class WebhookStepsV26 implements WebhookStepsInterface {
     public void getStreamById(UUID streamId) {
         StreamMetadataResponseV26 eventStreamV26 = Assertions.assertDoesNotThrow(() ->
                 webhookSteps.getWebhookB2bClient().retrieveEventStreamV26(streamId));
-        webhookSteps.getSharedSteps().setEventStreamV26(eventStreamV26);
         Assertions.assertNotNull(eventStreamV26);
         Assertions.assertNotNull(eventStreamV26.getStreamId());
         log.info("EVENTSTREAM: {}", eventStreamV26);
@@ -247,13 +246,6 @@ public class WebhookStepsV26 implements WebhookStepsInterface {
             }
             StreamMetadataResponseV26 eventStream = webhookSteps.getWebhookB2bClient().createEventStreamV26(request);
             if (streamIdToReplace != null) {
-                StreamMetadataResponseV26 eventStreamV26 =
-                        webhookSteps.getWebhookB2bClient().retrieveEventStreamV26(streamIdToReplace);
-                webhookSteps.getSharedSteps().setEventStreamV26(eventStreamV26);
-                Assertions.assertNotNull(eventStreamV26);
-                Assertions.assertNotNull(eventStreamV26.getStreamId());
-                Assertions.assertNotNull(eventStreamV26.getDisabledDate());
-                log.info("EVENTSTREAM REPLACED: {}", eventStreamV26);
                 eventStreamList = new LinkedList<>();
             }
             eventStreamList.add(eventStream);
@@ -548,5 +540,15 @@ public class WebhookStepsV26 implements WebhookStepsInterface {
         Assertions.assertNotNull(progressResponseElement);
         Assertions.assertNotNull(progressResponseElement.getElement().getLegalFactsIds());
         Assertions.assertFalse(progressResponseElement.getElement().getLegalFactsIds().isEmpty());
+    }
+
+    @Override
+    public void checkCorrectDisabling(UUID streamId) {
+        StreamMetadataResponseV26 eventStream =
+                webhookSteps.getWebhookB2bClient().retrieveEventStreamV26(streamId);
+        Assertions.assertNotNull(eventStream);
+        Assertions.assertNotNull(eventStream.getStreamId());
+        Assertions.assertNotNull(eventStream.getDisabledDate());
+        log.info("EVENTSTREAM REPLACED: {}", eventStream);
     }
 }

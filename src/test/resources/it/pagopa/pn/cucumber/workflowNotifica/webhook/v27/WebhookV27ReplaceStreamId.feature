@@ -194,7 +194,7 @@ Feature: replace streamID webhook
   @webhookV27 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_117]  Creazione per una PA di 10 nuovi stream notifica con eventType TIMELINE e senza gruppo, disabilitazione di uno stream e creazione di un nuovo stream.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V27"
-    And si predispone 10 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V27"
+    And si predispongono 10 nuovi stream denominati "stream-test" con eventType "TIMELINE" con versione "V27"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -224,17 +224,65 @@ Feature: replace streamID webhook
     And l'apiKey viene cancellata
 
   @webhookV27 @precondition @cleanWebhook @webhook2
-  Scenario: [B2B-STREAM_ES1.5_142] Creazione di uno stream notifica con gruppo, con eventType "TIMELINE" con V27 e replaceId di uno stream V10 senza gruppo e utilizzando un apikey con gruppo con la versione V27.(replacedStreamId di uno stream creato con la versione V10 settato).
+  Scenario: [B2B-STREAM_ES1.5_142] Creazione di uno stream notifica con gruppo, con eventType "TIMELINE" con V10 su cui poi viene fatto il replaceId alla versione successiva passando di versione in versione (replacedStreamId di uno stream creato con la versione V10 settato).
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V10"
-    And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
+#    # da versione 10 passa alla 23
+    Then si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V23"
+    And si crea il nuovo stream con versione "V23" per il "Comune_Multi" con un gruppo disponibile "NO_GROUPS" con replaceId dello stream creato con la versione "V10" - Cross Versioning
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
+    # da versione 23 passa alla 24
+    Then si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V24"
+    And si crea il nuovo stream con versione "V24" per il "Comune_Multi" con un gruppo disponibile "NO_GROUPS" con replaceId dello stream creato con la versione "V23" - Cross Versioning
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V24"
+    # da versione 24 passa alla 25
+    Then si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V25"
+    And si crea il nuovo stream con versione "V25" per il "Comune_Multi" con un gruppo disponibile "NO_GROUPS" con replaceId dello stream creato con la versione "V24" - Cross Versioning
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V25"
+    # da versione 25 passa alla 26
+    Then si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V26"
+    And si crea il nuovo stream con versione "V26" per il "Comune_Multi" con un gruppo disponibile "NO_GROUPS" con replaceId dello stream creato con la versione "V25" - Cross Versioning
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V26"
+    # da versione 26 passa alla 27
+    Then si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V27"
+    And si crea il nuovo stream con versione "V27" per il "Comune_Multi" con un gruppo disponibile "NO_GROUPS" con replaceId dello stream creato con la versione "V26" - Cross Versioning
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V27"
+    #fine
+    And viene modificato lo stato dell'apiKey in "BLOCK"
+    And l'apiKey viene cancellata
+
+  @webhookV27 @precondition @cleanWebhook @webhook2
+  Scenario: [B2B-STREAM_ES1.5_142status] Creazione di uno stream notifica con gruppo, con eventType "STATUS" con V10 su cui poi viene fatto il replaceId alla versione successiva passando di versione in versione (replacedStreamId di uno stream creato con la versione V10 settato).
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V10"
+    And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    Then si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V27"
-    And si crea il nuovo stream con versione "V27" per il "Comune_Multi" con un gruppo disponibile "NO_GROUPS" con replaceId dello stream creato con la versione "V10" - Cross Versioning
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V10"
+#    # da versione 10 passa alla 23
+    Then si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V23"
+    And si crea il nuovo stream con versione "V23" per il "Comune_Multi" con un gruppo disponibile "NO_GROUPS" con replaceId dello stream creato con la versione "V10" - Cross Versioning
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
+    # da versione 23 passa alla 24
+    Then si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V24"
+    And si crea il nuovo stream con versione "V24" per il "Comune_Multi" con un gruppo disponibile "NO_GROUPS" con replaceId dello stream creato con la versione "V23" - Cross Versioning
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V24"
+    # da versione 24 passa alla 25
+    Then si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V25"
+    And si crea il nuovo stream con versione "V25" per il "Comune_Multi" con un gruppo disponibile "NO_GROUPS" con replaceId dello stream creato con la versione "V24" - Cross Versioning
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V25"
+    # da versione 25 passa alla 26
+    Then si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V26"
+    And si crea il nuovo stream con versione "V26" per il "Comune_Multi" con un gruppo disponibile "NO_GROUPS" con replaceId dello stream creato con la versione "V25" - Cross Versioning
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V26"
+    # da versione 26 passa alla 27
+    Then si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V27"
+    And si crea il nuovo stream con versione "V27" per il "Comune_Multi" con un gruppo disponibile "NO_GROUPS" con replaceId dello stream creato con la versione "V26" - Cross Versioning
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V27"
+    #fine
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
