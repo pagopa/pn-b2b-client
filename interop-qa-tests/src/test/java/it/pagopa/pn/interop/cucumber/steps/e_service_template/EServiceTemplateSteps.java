@@ -35,10 +35,8 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttribute
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysis;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTechnology;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateAttributesSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDescriptionUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDetails;
@@ -55,7 +53,6 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceTem
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceTemplates;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorTemplateInstanceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateInstanceSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionDocumentSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionSeed;
 import it.pagopa.interop.utils.HttpCallExecutor;
@@ -94,7 +91,6 @@ public class EServiceTemplateSteps {
     private final EServiceTemplateStepContext templateContext;
 
     // TODO alcune di queste variabili andranno incapsulate in un bean di tipo Context
-    private UpdateEServiceTemplateSeed lastTemplateUpdateSeed;
     private UpdateEServiceTemplateVersionSeed lastTemplateVersionUpdateSeed;
     private UpdateEServiceTemplateVersionDocumentSeed lastDocumentUpdateSeed;
     private UUID lastDeletedVersion;
@@ -162,98 +158,6 @@ public class EServiceTemplateSteps {
         };
     }
 
-    @When("l'utente tenta delle modifiche all'e-service template")
-    public void updateEServiceTemplate() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
-        lastTemplateUpdateSeed = new UpdateEServiceTemplateSeed()
-            .name(templateContext.getLastTemplateManaged().name() + " - modificato")
-            .intendedTarget("Nuovo intended target")
-            .description("Nuova descrizione")
-            .technology(EServiceTechnology.SOAP)
-            .mode(EServiceMode.RECEIVE)
-            .isSignalHubEnabled(false);
-        updateEServiceTemplate(eServiceTemplateId, lastTemplateUpdateSeed);
-    }
-
-    @Then("le modifiche al template sono state applicate correttamente")
-    public void checkEServiceTemplateUpdate() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
-
-        try {
-            pollingService.makePolling(
-                    () -> httpCallExecutor.performCall( // TODO è stata introdotta la API specifica per i template, refattorizzare usando quella (non solo qui) per i check che riguardano solo i template
-                        () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
-                            sharedStepsContext.getXCorrelationId(),
-                            eServiceTemplateId,
-                            eServiceTemplateVersionId),
-                        ResponseEntity::getStatusCode),
-                    res -> nonNull(res.getBody()) && this.areConsistent(lastTemplateUpdateSeed, res.getBody().getEserviceTemplate()),
-                    "L'e-service template non corrisponde alle modifiche apportate"
-            );
-        } catch (PollingPredicateException e) {
-            fail("Le modifiche all'e-service template non sono state "
-                    + "applicate correttamente: le modifiche apportate '%s' non sono compatibili con il risultato ricevuto '%s'",
-                lastTemplateUpdateSeed, httpCallExecutor.getResponse());
-        }
-    }
-
-    @When("l'utente tenta di modificare l'e-service template specificando lo stesso nome")
-    public void updateEServiceTemplateWithSameName() {
-        UpdateEServiceTemplateSeed sameNameUpdateSeed = new UpdateEServiceTemplateSeed()
-            .name(templateContext.getLastTemplateManaged().name())
-            .intendedTarget("Nuova intended target")
-            .description("Nuova descrizione del servizio")
-            .technology(EServiceTechnology.SOAP)
-            .mode(EServiceMode.RECEIVE);
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
-        updateEServiceTemplate(eServiceTemplateId, sameNameUpdateSeed);
-    }
-
-    @When("l'utente tenta di modificare l'e-service template specificando un nome vuoto")
-    public void updateEServiceTemplateWithEmptyName() {
-        UpdateEServiceTemplateSeed emptyNameUpdateSeed = new UpdateEServiceTemplateSeed()
-            .name("");
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
-        updateEServiceTemplate(eServiceTemplateId, emptyNameUpdateSeed);
-    }
-
-    @When("l'utente tenta delle modifiche a un e-service template inesistente")
-    public void updateNonExistentEServiceTemplate() {
-        UUID eServiceTemplateId = UUID.randomUUID();
-        UpdateEServiceTemplateSeed updateSeed = new UpdateEServiceTemplateSeed()
-            .name("Nuovo nome")
-            .intendedTarget("Nuova intended target")
-            .description("Nuova descrizione del servizio")
-            .technology(EServiceTechnology.SOAP)
-            .mode(EServiceMode.RECEIVE);
-        updateEServiceTemplate(eServiceTemplateId, updateSeed);
-    }
-
-    @When("l'utente tenta di modificare l'e-service template indicando una specifica vuota")
-    public void updateEServiceTemplateWithEmptySpec() {
-        updateEServiceTemplate(templateContext.getLastTemplateManaged().id(), new UpdateEServiceTemplateSeed());
-    }
-
-    private void updateEServiceTemplate(UUID eServiceTemplateId, UpdateEServiceTemplateSeed sameNameUpdateSeed) {
-        String userToken = getUserToken();
-        clientTokenConfigurator.setBearerToken(userToken);
-        httpCallExecutor.performCall(
-            () -> eServiceTemplateClient.updateEServiceTemplateWithHttpInfo(
-                sharedStepsContext.getXCorrelationId(),
-                eServiceTemplateId,
-                sameNameUpdateSeed),
-            ResponseEntity::getStatusCode);
-    }
-
-    private boolean areConsistent(UpdateEServiceTemplateSeed lastUpdate, EServiceTemplateDetails retrievedTemplate) {
-        return lastUpdate.getName().equals(retrievedTemplate.getName()) &&
-            lastUpdate.getIntendedTarget().equals(retrievedTemplate.getIntendedTarget()) &&
-            lastUpdate.getDescription().equals(retrievedTemplate.getDescription()) &&
-            lastUpdate.getTechnology().equals(retrievedTemplate.getTechnology()) &&
-            lastUpdate.getMode().equals(retrievedTemplate.getMode());
-    }
-
     @When("l'utente tenta delle modifiche alla versione dell'e-service template")
     public void updateEServiceTemplateVersion() {
         lastTemplateVersionUpdateSeed = new UpdateEServiceTemplateVersionSeed()
@@ -313,7 +217,7 @@ public class EServiceTemplateSteps {
         } catch (PollingPredicateException e) {
             fail("Le modifiche alla versione dell'e-service template non sono state "
                     + "applicate correttamente: le modifiche apportate '%s' non sono compatibili con il risultato ricevuto '%s'",
-                lastTemplateUpdateSeed, httpCallExecutor.getResponse());
+                lastTemplateVersionUpdateSeed, httpCallExecutor.getResponse());
         }
     }
 
