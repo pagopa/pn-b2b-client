@@ -212,9 +212,9 @@ public interface IEServiceTemplateClient extends SettableBearerToken {
     // DEV. NOTE: si cambia naming convention omettendo il suffisso "withHttpInfo", rendendolo implicito da qui in avanti
     ResponseEntity<CatalogEServiceTemplates> getEServiceTemplatesCatalog(String xCorrelationId);
 
-    ResponseEntity<ProducerEServiceTemplates> getProducerEServiceTemplates(String xCorrelationId);
+    ResponseEntity<ProducerEServiceTemplates> getCreatorEServiceTemplates(String xCorrelationId);
 
-    ResponseEntity<ProducerEServiceTemplates> getProducerEServiceTemplates(
+    ResponseEntity<ProducerEServiceTemplates> getCreatorEServiceTemplates(
         String xCorrelationId,
         Integer offset,
         Integer limit,

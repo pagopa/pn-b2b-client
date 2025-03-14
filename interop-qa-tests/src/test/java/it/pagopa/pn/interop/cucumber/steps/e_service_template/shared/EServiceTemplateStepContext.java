@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.e_service_template.shared;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionSeed;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -11,8 +12,6 @@ import java.util.UUID;
 import lombok.Data;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
 @Data
 public class EServiceTemplateStepContext {
@@ -25,16 +24,10 @@ public class EServiceTemplateStepContext {
     /** Stores data on an e-service template document useful for testing */
     public record EServiceTemplateDocumentInfo(UUID id, String prettyName, byte[] body){}
 
-    @Mapper(componentModel = "spring")
-    public interface EServiceTemplateInfoMapper {
-        /* TODO 07/03/2025 overhead, se questo mapper continua a servire solo a questo bisognerebbe
-         * semplicemente mutare EServiceTemplateInfo in un pojo e ricorrere ai metodi set per modificarlo   */
-        @Mapping(source = "newVersionId", target = "lastVersionId")
-        EServiceTemplateInfo withVersionId(EServiceTemplateInfo templateInfo, UUID newVersionId);
-    }
-
     private EServiceTemplateInfo lastTemplateManaged;
     private EServiceTemplateDocumentInfo lastAddedDocument;
+    private UpdateEServiceTemplateVersionSeed lastTemplateVersionUpdateSeed;
+
 
     private final EasyRandomParameters easyRandomParameters = new EasyRandomParameters()
         .seed(123L)

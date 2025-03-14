@@ -416,13 +416,13 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
     }
 
     @Override
-    public ResponseEntity<ProducerEServiceTemplates> getProducerEServiceTemplates(
+    public ResponseEntity<ProducerEServiceTemplates> getCreatorEServiceTemplates(
         String xCorrelationId) {
         return this.eserviceTemplatesApi.getCreatorEServiceTemplatesWithHttpInfo(xCorrelationId, 0, 100, null);
     }
 
     @Override
-    public ResponseEntity<ProducerEServiceTemplates> getProducerEServiceTemplates(
+    public ResponseEntity<ProducerEServiceTemplates> getCreatorEServiceTemplates(
         String xCorrelationId,
         Integer offset,
         Integer limit,

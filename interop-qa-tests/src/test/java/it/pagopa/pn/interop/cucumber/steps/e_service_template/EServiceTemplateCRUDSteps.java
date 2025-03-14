@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.fail;
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.authorization.service.utils.PollingService;
@@ -33,14 +32,13 @@ import org.springframework.http.ResponseEntity;
 
 // TODO perché @Data? Considerarne rimozione da questa e dalle altre classi
 /** Cucumber steps involving creation, editing, viewing or deletion
- * of E-service template resources */
+ * of E-service template */
 @Data
 public class EServiceTemplateCRUDSteps {
     private final DataPreparationService dataPreparationService;
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
     private final IdentityService identityService;
-    private final IEServiceClient eServiceClient;
     private final IEServiceTemplateClient eServiceTemplateClient;
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
@@ -61,7 +59,6 @@ public class EServiceTemplateCRUDSteps {
         this.dataPreparationService = dataPreparationService;
         this.sharedStepsContext = sharedStepsContext;
         this.identityService = sharedStepsContext.getIdentityService();
-        this.eServiceClient = clientTokenConfigurator.getEServiceClient();
         this.eServiceTemplateClient = clientTokenConfigurator.getEServiceTemplateClient();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
@@ -121,29 +118,6 @@ public class EServiceTemplateCRUDSteps {
             .mode(EServiceMode.RECEIVE)
             .isSignalHubEnabled(false);
         updateEServiceTemplate(eServiceTemplateId, lastTemplateUpdateSeed);
-    }
-
-    @Then("le modifiche al template sono state applicate correttamente")
-    public void checkEServiceTemplateUpdate() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
-
-        try {
-            pollingService.makePolling(
-                () -> httpCallExecutor.performCall( // TODO è stata introdotta la API specifica per i template, refattorizzare usando quella (non solo qui) per i check che riguardano solo i template
-                    () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
-                        sharedStepsContext.getXCorrelationId(),
-                        eServiceTemplateId,
-                        eServiceTemplateVersionId),
-                    ResponseEntity::getStatusCode),
-                res -> nonNull(res.getBody()) && this.areConsistent(lastTemplateUpdateSeed, res.getBody().getEserviceTemplate()),
-                "L'e-service template non corrisponde alle modifiche apportate"
-            );
-        } catch (PollingPredicateException e) {
-            fail("Le modifiche all'e-service template non sono state "
-                    + "applicate correttamente: le modifiche apportate '%s' non sono compatibili con il risultato ricevuto '%s'",
-                lastTemplateUpdateSeed, httpCallExecutor.getResponse());
-        }
     }
 
     @When("l'utente tenta di modificare l'e-service template specificando lo stesso nome")
@@ -219,6 +193,29 @@ public class EServiceTemplateCRUDSteps {
          * generato. Ciò implica che la chiamata non raggiungerà mai il server. Non è stato
          * trovato un modo per passare stringa vuota senza bypassare il client OpenApi. */
         getEServiceTemplateDetails(null);
+    }
+
+    @Then("le modifiche al template sono state applicate correttamente")
+    public void checkEServiceTemplateUpdate() {
+        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
+        UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
+
+        try {
+            pollingService.makePolling(
+                () -> httpCallExecutor.performCall( // TODO è stata introdotta la API specifica per i template, refattorizzare usando quella (non solo qui) per i check che riguardano solo i template
+                    () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
+                        sharedStepsContext.getXCorrelationId(),
+                        eServiceTemplateId,
+                        eServiceTemplateVersionId),
+                    ResponseEntity::getStatusCode),
+                res -> nonNull(res.getBody()) && this.areConsistent(lastTemplateUpdateSeed, res.getBody().getEserviceTemplate()),
+                "L'e-service template non corrisponde alle modifiche apportate"
+            );
+        } catch (PollingPredicateException e) {
+            fail("Le modifiche all'e-service template non sono state "
+                    + "applicate correttamente: le modifiche apportate '%s' non sono compatibili con il risultato ricevuto '%s'",
+                lastTemplateUpdateSeed, httpCallExecutor.getResponse());
+        }
     }
 
     private void updateEServiceTemplate(UUID eServiceTemplateId, UpdateEServiceTemplateSeed sameNameUpdateSeed) {

@@ -29,7 +29,9 @@ import it.pagopa.interop.tracing.config.TracingClientConfigs;
 import it.pagopa.interop.tracing.service.impl.DevAbstractInteropTracingClient;
 import it.pagopa.interop.tracing.service.impl.QAAbstractInteropTracingClient;
 import it.pagopa.interop.utils.HttpCallExecutor;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext$EServiceTemplateInfoMapperImpl;
+import it.pagopa.pn.interop.cucumber.steps.e_service_template.EServiceTemplateVersionCRUDSteps$EServiceTemplateInfoMapperImpl;
+import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
+import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
 import it.pagopa.pn.interop.cucumber.utility.TracingFileUtils;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -68,7 +70,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
     DevAbstractInteropTracingClient.class,
     QAAbstractInteropTracingClient.class,
     DescriptorAttributesMapperImpl.class,
-    EServiceTemplateStepContext$EServiceTemplateInfoMapperImpl.class
+    EServiceTemplateVersionCRUDSteps$EServiceTemplateInfoMapperImpl.class,
+    EServiceTemplateTestAssistant.class,
+    EServiceTemplateStepContext.class
 })
 @EnableScheduling
 @EnableConfigurationProperties

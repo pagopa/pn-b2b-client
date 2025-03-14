@@ -14,6 +14,8 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysis;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateAttributesSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionState;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
@@ -26,12 +28,15 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import lombok.Data;
 import org.jeasy.random.EasyRandom;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 
 /** It contains general utility functions used across all other classes.  */
 @Data
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class EServiceTemplateTestAssistant {
     // TODO 13/03/2025: almeno alcuni di questi attributi resteranno inutilizzati, rimuoverli
     private final DataPreparationService dataPreparationService;
@@ -253,6 +258,13 @@ public class EServiceTemplateTestAssistant {
         } catch (PollingPredicateException e) {
             fail("La risk analysis non è stata aggiunta correttamente all'e-service template");
         }
+    }
+
+    public EServiceTemplateAttributesSeed nextAttributesSeed() {
+        return new EServiceTemplateAttributesSeed()
+            .addCertifiedItem(easyRandom.objects(EServiceTemplateVersionAttributeSeed.class, 3).toList())
+            .addDeclaredItem(easyRandom.objects(EServiceTemplateVersionAttributeSeed.class, 3).toList())
+            .addVerifiedItem(easyRandom.objects(EServiceTemplateVersionAttributeSeed.class, 3).toList());
     }
 
     public boolean areConsistent(EServiceRiskAnalysisSeed lastRiskAnalysis, EServiceRiskAnalysis retrievedAnalysis) {
