@@ -27,7 +27,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 
-/** Cucumber steps involving risk analyses of E-service templates */
+/** Cucumber steps involving documents of E-service templates */
 @Data
 public class EServiceTemplateDocumentSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;

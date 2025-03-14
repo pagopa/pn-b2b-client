@@ -1,7 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template;
 
 import static it.pagopa.interop.e_service_template.IEServiceTemplateClient.EServiceTemplateDocumentKind.DOCUMENT;
-import static java.lang.Math.abs;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
@@ -38,7 +37,6 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateIns
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateInstances;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateNameUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionQuotasUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.InstanceEServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
@@ -80,7 +78,6 @@ public class EServiceTemplateSteps {
     private EServiceTemplateNameUpdateSeed lastTemplateNameUpdateSeed;
     private EServiceTemplateDescriptionUpdateSeed lastTemplateIntendedTargetUpdateSeed;
     private EServiceTemplateDescriptionUpdateSeed lastTemplateDescriptionUpdateSeed;
-    private EServiceTemplateVersionQuotasUpdateSeed lastTemplateVersionQuotasUpdateSeed;
     private DescriptorAttributesSeed lastAttributesUpdateSeed;
     private InstanceEServiceSeed lastEServiceCreatedFromTemplate;
     private UUID lastEServiceIdCreatedFromTemplate;
@@ -351,89 +348,6 @@ public class EServiceTemplateSteps {
             );
         } catch (PollingPredicateException e) {
             fail("La descrizione dell'e-service template non è stata modificata correttamente");
-        }
-    }
-
-    @When("l'utente tenta la modifica delle quote della versione dell'e-service template")
-    public void editEServiceTemplateVersionQuotas() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
-
-        lastTemplateVersionQuotasUpdateSeed = easyRandom.nextObject(
-            EServiceTemplateVersionQuotasUpdateSeed.class);
-        lastTemplateVersionQuotasUpdateSeed.setVoucherLifespan(abs(lastTemplateVersionQuotasUpdateSeed.getVoucherLifespan()));
-        lastTemplateVersionQuotasUpdateSeed.setDailyCallsTotal(abs(lastTemplateVersionQuotasUpdateSeed.getDailyCallsPerConsumer() + 1));
-        lastTemplateVersionQuotasUpdateSeed.setDailyCallsPerConsumer(abs(lastTemplateVersionQuotasUpdateSeed.getDailyCallsPerConsumer()));
-
-        editEServiceTemplateVersionQuotas(eServiceTemplateId, eServiceTemplateVersionId, lastTemplateVersionQuotasUpdateSeed);
-    }
-
-    @When("l'utente tenta la modifica delle quote della versione dell'e-service template indicando una specifica vuota")
-    public void editEServiceTemplateVersionQuotasWithEmptySpec() {
-        editEServiceTemplateVersionQuotas(
-            templateContext.getLastTemplateManaged().id(),
-            templateContext.getLastTemplateManaged().lastVersionId(),
-            new EServiceTemplateVersionQuotasUpdateSeed());
-    }
-
-    @When("l'utente tenta la modifica delle quote della versione dell'e-service template specificando un \"dailyCallsTotal\" inferiore a \"dailyCallsPerConsumer\"")
-    public void editEServiceTemplateVersionQuotasWithDailyCallsTotalLessThanDailyCallsPerConsumer() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
-
-        lastTemplateVersionQuotasUpdateSeed = easyRandom.nextObject(
-            EServiceTemplateVersionQuotasUpdateSeed.class);
-        lastTemplateVersionQuotasUpdateSeed.setVoucherLifespan(abs(lastTemplateVersionQuotasUpdateSeed.getVoucherLifespan()));
-        lastTemplateVersionQuotasUpdateSeed.setDailyCallsTotal(abs(lastTemplateVersionQuotasUpdateSeed.getDailyCallsPerConsumer() - 1));
-        lastTemplateVersionQuotasUpdateSeed.setDailyCallsPerConsumer(abs(lastTemplateVersionQuotasUpdateSeed.getDailyCallsPerConsumer()));
-
-        editEServiceTemplateVersionQuotas(eServiceTemplateId, eServiceTemplateVersionId, lastTemplateVersionQuotasUpdateSeed);
-    }
-
-    @When("l'utente tenta la modifica delle quote della versione di un e-service template inesistente")
-    public void editNonExistentEServiceTemplateVersionQuotas() {
-        editEServiceTemplateVersionQuotas(UUID.randomUUID(), UUID.randomUUID(), easyRandom.nextObject(EServiceTemplateVersionQuotasUpdateSeed.class));
-    }
-
-    @When("l'utente tenta la modifica delle quote di una versione inesistente dell'e-service template")
-    public void editEServiceTemplateNonExistentVersionQuotas() {
-        editEServiceTemplateVersionQuotas(templateContext.getLastTemplateManaged().id(), UUID.randomUUID(), easyRandom.nextObject(EServiceTemplateVersionQuotasUpdateSeed.class));
-    }
-
-    private void editEServiceTemplateVersionQuotas(UUID eServiceTemplateId, UUID eServiceTemplateVersionId,
-        EServiceTemplateVersionQuotasUpdateSeed lastTemplateVersionQuotasUpdateSeed) {
-        String userToken = getUserToken();
-        clientTokenConfigurator.setBearerToken(userToken);
-        httpCallExecutor.performCall(
-            () -> eServiceTemplateClient.updateEServiceTemplateVersionQuotasWithHttpInfo(
-                sharedStepsContext.getXCorrelationId(),
-                eServiceTemplateId,
-                eServiceTemplateVersionId,
-                lastTemplateVersionQuotasUpdateSeed),
-            ResponseEntity::getStatusCode);
-    }
-
-    @Then("la modifica delle quote della versione dell'e-service template è stata effettuata correttamente")
-    public void checkEServiceTemplateVersionQuotasEdited() {
-        try {
-            pollingService.makePolling(
-                () -> httpCallExecutor.performCall( // TODO usare la versione invece del template
-                    () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
-                        sharedStepsContext.getXCorrelationId(),
-                        templateContext.getLastTemplateManaged().id(),
-                        templateContext.getLastTemplateManaged().lastVersionId()),
-                    ResponseEntity::getStatusCode),
-                res -> {
-                    if(res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody())) {
-                        EServiceTemplateVersionDetails version = res.getBody();
-                        return this.areConsistent(version, lastTemplateVersionQuotasUpdateSeed);
-                    }
-                    return false;
-                },
-                "Le quote dell'e-service template non sono state modificate correttamente"
-            );
-        } catch (PollingPredicateException e) {
-            fail("Le quote dell'e-service template non sono state modificate correttamente");
         }
     }
 
@@ -1003,12 +917,6 @@ public class EServiceTemplateSteps {
      * l'uso di una libreria di mapping, da usare per mappare un oggetto nell'altro tipo, e quindi procedere con
      * un normale equals(...).
      */
-
-    private boolean areConsistent(EServiceTemplateVersionDetails version, EServiceTemplateVersionQuotasUpdateSeed lastUpdate) {
-        return version.getDailyCallsPerConsumer().equals(lastUpdate.getDailyCallsPerConsumer()) &&
-            version.getDailyCallsTotal().equals(lastUpdate.getDailyCallsTotal()) &&
-            version.getVoucherLifespan().equals(lastUpdate.getVoucherLifespan());
-    }
 
     private boolean areConsistent(EServiceTemplateDetails template, EServiceTemplateNameUpdateSeed lastUpdate) {
         return template.getName().equals(lastUpdate.getName());
