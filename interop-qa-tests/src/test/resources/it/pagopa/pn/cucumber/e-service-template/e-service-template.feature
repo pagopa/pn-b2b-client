@@ -12,7 +12,6 @@ Feature: Test API of e-service template
     #"l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>"
     When l'utente effettua la creazione di un e-service template in modalità <modo>
 
-    # TODO tentare invece lo step "si ottiene response status code {int}", e se ha successo usarlo in tutti gli altri test
     Then si ottiene response status code 403
 
     Examples:
