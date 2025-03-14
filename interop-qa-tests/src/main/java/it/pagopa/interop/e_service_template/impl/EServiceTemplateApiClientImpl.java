@@ -30,9 +30,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-/* TODO considerato che le varianti con HTTP info conservano lo stato di errore senza
- *  - presumibilmente - lanciare alcuna eccezione, potrebbe essere preferibile utilizzare solo
- *  quelle, rimuovere le altre e adattare gli utilizzi di conseguenza */
+/* TODO considerato che le varianti con HTTP info conservano lo stato di errore potrebbe essere
+    preferibile utilizzare solo quelle, rimuovere le altre e adattare gli utilizzi di conseguenza */
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
