@@ -12,6 +12,7 @@ import it.pagopa.pn.cucumber.utils.GroupPosition;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.HttpStatusCodeException;
+
 import java.util.List;
 
 
@@ -201,7 +202,7 @@ public class ApikeyManagerSteps {
         firstGroupUsed = this.sharedSteps.getGroupIdByPa(settedPa, GroupPosition.FIRST);
         String lastGroupUsed = this.sharedSteps.getGroupIdByPa(settedPa, GroupPosition.LAST);
 
-        requestNewApiKey.setGroups(List.of(firstGroupUsed,lastGroupUsed));
+        requestNewApiKey.setGroups(List.of(firstGroupUsed, lastGroupUsed));
         Assertions.assertDoesNotThrow(() -> responseNewApiKey = this.apiKeyManagerClient.newApiKey(requestNewApiKey));
         Assertions.assertNotNull(responseNewApiKey);
         sharedSteps.setRequestNewApiKey(requestNewApiKey);
@@ -222,7 +223,7 @@ public class ApikeyManagerSteps {
         System.out.println("New ApiKey: " + responseNewApiKey);
     }
 
-    private void setBearerToken(String settedPa){
+    private void setBearerToken(String settedPa) {
         switch (settedPa) {
             case "Comune_1":
                 apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.MVP_1);
@@ -295,7 +296,6 @@ public class ApikeyManagerSteps {
     }
 
 
-
     @Given("Viene creata una nuova apiKey per il comune {string} con gruppo uguale del invio notifica")
     public void viene_creata_una_nuova_api_key_per_il_comune_con_gruppo_uguale_del_invio_notifica(String settedPa) {
         setBearerToken(settedPa);
@@ -332,8 +332,8 @@ public class ApikeyManagerSteps {
 
     @And("Si cambia al comune {string}")
     public void lApiKeyNonÈPresenteDalComune(String settedPa) {
-        sharedSteps.selectPA(settedPa);
-        switch (settedPa){
+        sharedSteps.setPA(settedPa);
+        switch (settedPa) {
             case "Comune_1":
                 apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.MVP_1);
                 break;
@@ -351,6 +351,6 @@ public class ApikeyManagerSteps {
                 break;
         }
 
-        }
+    }
 
 }

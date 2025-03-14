@@ -1,43 +1,43 @@
 package it.pagopa.pn.cucumber.steps.pa.notificationVersions;
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationDigitalAddress;
+import it.pagopa.pn.cucumber.utils.FiscalCodeGenerator;
 import lombok.Getter;
 
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.DestinatariUtils.MARIO_CUCUMBER_TAX_ID;
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.DestinatariUtils.MARIO_GHERKIN_TAX_ID;
+import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.DestinatariUtils.*;
 
 @Getter
 public enum Destinatario {
 
+    // Persone fisiche
+    MARIO_GHERKIN("Mario Gherkin", MARIO_GHERKIN_TAX_ID, PF, PEC),
+    MARIO_CUCUMBER("Mario Cucumber", MARIO_CUCUMBER_TAX_ID, PF, PEC),
+    SIGNOR_CASUALE("Signor RaddCasuale", FiscalCodeGenerator.generateCF(System.currentTimeMillis()), PF, PEC),
+    CRISTOFORO_COLOMBO("Cristoforo Colombo", MARIO_GHERKIN_TAX_ID, PF, null),
+    // Spa
+    GHERKIN_SPA("GherkinSpa", GHERKIN_SPA_TAX_ID, PG, PEC),
+    CUCUMBER_SPA("CucumberSpa", CUCUMBER_SPA_TAX_ID, PG, PEC),
+    // Srl
+    GHERKIN_SRL("GherkinSrl", GHERKIN_SRL_TAX_ID, PG, PEC),
+    CUCUMBER_SRL("CucumberSrl", CUCUMBER_SPA_TAX_ID, PG, PEC),
+    // Analogiche
+    GHERKIN_ANALOGIC("Gherkin Analogic", GHERKIN_ANALOGIC_TAX_ID, PG, PEC),
+    CUCUMBER_ANALOGIC("Cucumber Analogic", CUCUMBER_ANALOGIC_TAX_ID, PG, PEC),
+    // Altro
+    GHERKIN_IRREPERIBILE("Gherkin Irreperibile", GHERKIN_IRREPERIBILE_TAX_ID, PG, null),
+    CUCUMBER_SOCIETY("Cucumber Society", CUCUMBER_SOCIETY_TAX_ID, PG, PEC),
+    SIGNOR_GENERATO("TODO MATTEO", null, null, null),
+    NESSUNO("Nessuno", null, null, null);
 
-    MARIO_GHERKIN("Mario Gherkin", MARIO_GHERKIN_TAX_ID, "PF", null),
-    MARIO_CUCUMBER("Mario Cucumber", MARIO_CUCUMBER_TAX_ID, "PF", null);
+    private final String denomination;
+    private final String taxId;
+    private final String recipientType;
+    private final String digitalDomicileType;
 
-    final String denomination;
-    final String taxId;
-    final String recipientType;
-    final NotificationDigitalAddress digitalDomicile;
-
-//    //    @Value("${pn.bearer-token.user1.taxID}")
-//    public static final String MARIO_CUCUMBER_TAX_ID = "FRMTTR76M06B715E";
-//    //    @Value("${pn.bearer-token.user2.taxID}")
-//    public static final String MARIO_GHERKIN_TAX_ID = "CLMCST42R12D969Z";
-//    //    @Value("${pn.bearer-token.user4.taxID}")
-//    public static final String GALILEO_GALILEI_TAX_ID = "GLLGLL64B15G702I";
-//    public static final String CUCUMBER_SRL_TAX_ID = "20517490320";
-//    public static final String GHERKIN_SRL_TAX_ID = "12666810299";
-//    public static final String CUCUMBER_SPA_TAX_ID = "20517490320";
-//    public static final String GHERKIN_SPA_TAX_ID = "12666810299";
-//    public static final String CUCUMBER_ANALOGIC_TAX_ID = "LBPHLS94A56C826R";
-//    public static final String GHERKIN_ANALOGIC_TAX_ID = "05722930657";
-//    public static final String CUCUMBER_SOCIETY_TAX_ID = "20517490320";
-//    public static final String GHERKIN_IRREPERIBILE_TAX_ID = "00749900049";
-
-    Destinatario(String name, String taxId, String recipientType, NotificationDigitalAddress digitalAddress) {
-        this.denomination = name;
+    Destinatario(String denomination, String taxId, String recipientType, String digitalDomicileType) {
+        this.denomination = denomination;
         this.taxId = taxId;
         this.recipientType = recipientType;
-        this.digitalDomicile = digitalAddress;
+        this.digitalDomicileType = digitalDomicileType;
     }
 
     public static Destinatario getByName(String name) {

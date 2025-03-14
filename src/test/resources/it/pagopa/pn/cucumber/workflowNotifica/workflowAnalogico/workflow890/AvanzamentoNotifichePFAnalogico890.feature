@@ -1,7 +1,8 @@
 Feature: avanzamento notifiche b2b con workflow cartaceo 890
 
-  Background:
-    Given viene rimossa se presente la pec di piattaforma di "Mario Gherkin"
+  #TODO MATTEO SCOMMENTARE
+#  Background:
+#    Given viene rimossa se presente la pec di piattaforma di "Mario Gherkin"
 
 
   @workflowAnalogico
@@ -47,15 +48,15 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
 
   @workflowAnalogico
     #TODO MATTEO, identico al metodo sopra, ma con i metodi nuovi (PER TESTARE VERSIONE SHARED STEPS REFATTORIZZATA)
-  Scenario: [B2B_TIMELINE_ANALOG_890_3] Attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_FAIL-Discovery_890_scenario positivo
+  Scenario: [B2B_TIMELINE_ANALOG_890_3MATTEO] Attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_FAIL-Discovery_890_scenario positivo
     Given MATTEOviene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-#    And MATTEOdestinatario "Mario Gherkin"
-    And MATTEOdestinatario "Mario Gherkin" e:
-      | digitalDomicile         | NULL                   |
-      | physicalAddress_address | Via@fail-Discovery_890 |
-    When MATTEOla notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And MATTEOdestinatario "Mario Gherkin"
+#    And MATTEOdestinatario "Mario Gherkin" e:
+#      | digitalDomicile         | NULL                   |
+#      | physicalAddress_address | Via@fail-Discovery_890 |
+#    When MATTEOla notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
 #    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @workflowAnalogico

@@ -16,10 +16,12 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.ConsentType;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV25;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV26;
 import it.pagopa.pn.client.b2b.pa.service.*;
-import it.pagopa.pn.client.b2b.pa.service.impl.*;
+import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.*;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.*;
@@ -445,7 +447,7 @@ public class RicezioneNotificheWebSteps {
 
     @Then("la notifica può essere correttamente recuperata con una ricerca da web PA {string}")
     public void notificationCanBeCorrectlyReadWithResearchWebPA(String paType, @Transpose NotificationSearchParamWebPA searchParam) {
-        sharedSteps.selectPA(paType);
+        sharedSteps.setPA(paType);
         Assertions.assertTrue(searchNotificationWebPA(searchParam));
     }
 
@@ -647,7 +649,7 @@ public class RicezioneNotificheWebSteps {
 
     private void postRecipientCourtesyAddress(String senderId, String addressVerification, CourtesyChannelType type, String verificationCode, boolean inserimento) {
         try {
-            if(inserimento){
+            if (inserimento) {
                 this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderId, CourtesyChannelType.EMAIL, (new AddressVerification().value(addressVerification)));
                 verificationCode = this.externalClient.getVerificationCode(addressVerification);
             }
@@ -659,7 +661,7 @@ public class RicezioneNotificheWebSteps {
 
     private void postRecipientLegalAddress(String senderIdPa, String addressVerification, String verificationCode, boolean inserimento) {
         try {
-            if (inserimento){
+            if (inserimento) {
                 this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.PEC, (new AddressVerification().value(addressVerification)));
                 verificationCode = this.externalClient.getVerificationCode(addressVerification);
             }
@@ -823,7 +825,6 @@ public class RicezioneNotificheWebSteps {
             }
         });
     }
-
 
 
     @And("viene verificata l' assenza di pec inserite per l'utente")

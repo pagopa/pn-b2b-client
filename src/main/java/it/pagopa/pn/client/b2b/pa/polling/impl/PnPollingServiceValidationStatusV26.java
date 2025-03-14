@@ -37,7 +37,7 @@ public class PnPollingServiceValidationStatusV26 extends PnPollingTemplate<PnPol
     protected Callable<PnPollingResponseV26> getPollingResponse(String id, PnPollingParameter pnPollingParameter) {
         return () -> {
             PnPollingResponseV26 pnPollingResponse = new PnPollingResponseV26();
-            NewNotificationRequestStatusResponseV24 statusResponseV24 = b2bClient.getNotificationRequestStatus(id);
+            NewNotificationRequestStatusResponseV24 statusResponseV24 = b2bClient.getNotificationRequestStatusV24(id);
             pnPollingResponse.setStatusResponse(statusResponseV24);
             this.requestStatusResponseV24 = statusResponseV24;
 

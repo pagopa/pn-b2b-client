@@ -12,8 +12,6 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryElementV26;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV24;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV25;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
@@ -42,8 +40,6 @@ import java.lang.reflect.Field;
 import java.time.OffsetDateTime;
 import java.util.*;
 
-import static it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps.StreamVersion.V27;
-
 @Slf4j
 public class AvanzamentoNotificheWebhookB2bSteps {
 
@@ -64,7 +60,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     @Getter
     private final IPnWebhookB2bClient webhookB2bClient;
     @Getter
-    private static IPnWebhookB2bClient webhookClientForClean;//Perché statico?
+    private static IPnWebhookB2bClient webhookClientForClean;//TODO: Perché statico?
     private final IPnWebRecipientClient webRecipientClient;
     @Getter
     private final SharedSteps sharedSteps;
@@ -174,7 +170,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
     private StreamVersion getStreamVersion(String version) {
         if (version.trim().equalsIgnoreCase("più recente")) {
-            return V27;//TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente
+            return StreamVersion.V27;//TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente
         }
         return StreamVersion.valueOf(version.trim().toUpperCase());
     }
@@ -190,17 +186,17 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             case "Comune_1" -> {
                 webhookB2bClient.setApiKeys(SettableApiKey.ApiKeyType.MVP_1);
                 pollingFactory.setApiKeys(SettableApiKey.ApiKeyType.MVP_1);
-                sharedSteps.selectPA(pa);
+                sharedSteps.setPA(pa);
             }
             case "Comune_2" -> {
                 webhookB2bClient.setApiKeys(SettableApiKey.ApiKeyType.MVP_2);
                 pollingFactory.setApiKeys(SettableApiKey.ApiKeyType.MVP_2);
-                sharedSteps.selectPA(pa);
+                sharedSteps.setPA(pa);
             }
             case "Comune_Multi" -> {
                 webhookB2bClient.setApiKeys(SettableApiKey.ApiKeyType.GA);
                 pollingFactory.setApiKeys(SettableApiKey.ApiKeyType.GA);
-                sharedSteps.selectPA(pa);
+                sharedSteps.setPA(pa);
             }
             default -> throw new IllegalArgumentException();
         }
@@ -1252,40 +1248,5 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         StreamVersion streamVersion = getStreamVersion(version);
         WebhookStepsInterface webhookStepsInterface = getWebhookStep(streamVersion);
         webhookStepsInterface.getTimelineElementVersionB2B(iun);
-    }
-
-    //attestatoAnnullamentoNotifica.feature
-    //TODO MATTEO: questo l'avevo messo erroneamente in questo file di step, ma non ha nulla a che vedere col webhook
-    @Then("tra gli elementi di timeline versione {string} di categoria {string} nessuno contiene un legalFact con categoria {string}")
-    public void checkTimelineElementVersionLegalFacts(String version, String timelineCategory, String legalFactCategory) {
-        if (version.equalsIgnoreCase("V26") || version.equalsIgnoreCase("V27")) {
-            Assertions.assertNotNull(sharedSteps.getNotificationResponseCompleteV26());
-            TimelineElementV26 timelineElementWithTargetCategory = sharedSteps.getNotificationResponseCompleteV26().getTimeline().stream().filter(
-                    x -> x.getCategory().getValue().equals(timelineCategory)).findFirst().orElse(null);
-            Assertions.assertNotNull(timelineElementWithTargetCategory);
-            timelineElementWithTargetCategory.getLegalFactsIds().forEach(
-                    x -> Assertions.assertNotEquals(x.getCategory(), legalFactCategory));
-        } else if (version.equalsIgnoreCase("V25")) {
-            Assertions.assertNotNull(sharedSteps.getNotificationResponseCompleteV26());
-            TimelineElementV25 timelineElementWithTargetCategory = sharedSteps.getNotificationResponseCompleteV25().getTimeline().stream().filter(
-                    x -> x.getCategory().getValue().equals(timelineCategory)).findFirst().orElse(null);
-            Assertions.assertNotNull(timelineElementWithTargetCategory);
-            timelineElementWithTargetCategory.getLegalFactsIds().forEach(
-                    x -> Assertions.assertNotEquals(x.getCategory(), legalFactCategory));
-        } else if (version.equalsIgnoreCase("V24")) {
-            Assertions.assertNotNull(sharedSteps.getNotificationResponseCompleteV24());
-            TimelineElementV24 timelineElementWithTargetCategory = sharedSteps.getNotificationResponseCompleteV24().getTimeline().stream().filter(
-                    x -> x.getCategory().getValue().equals(timelineCategory)).findFirst().orElse(null);
-            Assertions.assertNotNull(timelineElementWithTargetCategory);
-            timelineElementWithTargetCategory.getLegalFactsIds().forEach(
-                    x -> Assertions.assertNotEquals(x.getCategory().getValue(), legalFactCategory));
-        } else if (version.equalsIgnoreCase("V23")) {
-            Assertions.assertNotNull(sharedSteps.getNotificationResponseCompleteV23());
-            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23 timelineElementWithTargetCategory = sharedSteps.getNotificationResponseCompleteV23().getTimeline().stream().filter(
-                    x -> x.getCategory().getValue().equals(timelineCategory)).findFirst().orElse(null);
-            Assertions.assertNotNull(timelineElementWithTargetCategory);
-            timelineElementWithTargetCategory.getLegalFactsIds().forEach(
-                    x -> Assertions.assertNotEquals(x.getCategory().getValue(), legalFactCategory));
-        }
     }
 }

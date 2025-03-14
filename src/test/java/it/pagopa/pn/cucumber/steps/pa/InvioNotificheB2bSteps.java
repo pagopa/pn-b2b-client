@@ -210,7 +210,7 @@ public class InvioNotificheB2bSteps {
 
     @And("recupero notifica del {string} lato web dalla PA {string} e verifica presenza pagamento per notifica che è arrivato fino al elemento {string} con feePolicy {string}")
     public void notificationFromADateCanBeRetrievedWithIUNWebPA(String stringDate, String pa, String type, String feePolicy) {
-        sharedSteps.selectPA(pa);
+        sharedSteps.setPA(pa);
 
         LocalDate date = LocalDate.parse(stringDate);
         OffsetDateTime offsetDateTime = date.atStartOfDay(ZoneOffset.UTC).toOffsetDateTime();
@@ -263,7 +263,7 @@ public class InvioNotificheB2bSteps {
 
     @Then("la notifica può essere correttamente recuperata dal sistema tramite Stato {string} dalla web PA {string}")
     public void notificationCanBeRetrievedWithStatusByWebPA(String status, String paType) {
-        sharedSteps.selectPA(paType);
+        sharedSteps.setPA(paType);
 
         it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatusV26 notificationInternalStatus = switch (status) {
             case "ACCEPTED" ->
@@ -417,7 +417,7 @@ public class InvioNotificheB2bSteps {
 
     @Given("viene letta la notifica {string} dal {string}")
     public void vieneLettaLaNotificaDal(String IUN, String pa) {
-        sharedSteps.selectPA(pa);
+        sharedSteps.setPA(pa);
         FullSentNotificationV26 notificationByIun = b2bUtils.getNotificationByIun(IUN);
         sharedSteps.setSentNotification(notificationByIun);
     }
@@ -617,7 +617,7 @@ public class InvioNotificheB2bSteps {
     public void correctAcquisitionRequest() {
         Assertions.assertNotNull(this.sharedSteps.getNewNotificationResponse());
         Assertions.assertNotNull(this.sharedSteps.getNewNotificationResponse().getNotificationRequestId());
-        Assertions.assertNotNull(b2bClient.getNotificationRequestStatus(this.sharedSteps.getNewNotificationResponse().getNotificationRequestId()));
+        Assertions.assertNotNull(b2bClient.getNotificationRequestStatusV24(this.sharedSteps.getNewNotificationResponse().getNotificationRequestId()));
     }
 
 

@@ -203,7 +203,7 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
         return Arrays.asList(result);
     }
 
-    public NewNotificationResponse sendNewNotification(NewNotificationRequestV24 newNotificationRequest) {
+    public NewNotificationResponse sendNewNotificationV24(NewNotificationRequestV24 newNotificationRequest) {
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NewNotificationRequestV24 request;
         request = deepCopy(newNotificationRequest, it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NewNotificationRequestV24.class);
 
@@ -283,7 +283,7 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
     }
 
     @Override
-    public NewNotificationRequestStatusResponseV24 getNotificationRequestStatus(String notificationRequestId) {
+    public NewNotificationRequestStatusResponseV24 getNotificationRequestStatusV24(String notificationRequestId) {
 
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NewNotificationRequestStatusResponseV24 resp;
         resp = senderReadB2BApi.getNotificationRequestStatusV24(
@@ -295,7 +295,7 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
                 null,
                 null
         );
-        return deepCopy( resp, NewNotificationRequestStatusResponseV24.class );
+        return deepCopy(resp, NewNotificationRequestStatusResponseV24.class);
     }
 
     @Override

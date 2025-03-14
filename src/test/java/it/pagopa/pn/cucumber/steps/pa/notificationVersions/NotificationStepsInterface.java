@@ -2,11 +2,21 @@ package it.pagopa.pn.cucumber.steps.pa.notificationVersions;
 
 import java.util.Map;
 
-public interface NotificationInterface {
+public interface NotificationStepsInterface {
 
     void setNotificationRequest(Map<String, String> data);
 
-    void addRecipitentToNotification(String destinatario, Map<String, String> data);
+    void addRecipitentToNotification(String recipientName, Map<String, String> data);
+
+    String getSelectedPA();
+
+    void setSelectedPA(String apikey);
+
+    void setSenderTaxId(String senderTaxId);
+
+    String getNotificationRequestGroup();
+
+    void setNotificationRequestGroup(String group);
 
     void sendNotification(String status, int wait);
 //

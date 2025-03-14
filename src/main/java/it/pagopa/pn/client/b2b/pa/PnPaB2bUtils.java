@@ -63,8 +63,9 @@ public class PnPaB2bUtils {
         K value1;
         E value2;
     }
+
     public static final String PN_NOTIFICATION_ATTACHMENTS_ZBEDA_19_F_8997469_BB_75_D_28_FF_12_BDF_321_PDF = "PN_NOTIFICATION_ATTACHMENTS-zbeda19f8997469bb75d28ff12bdf321.pdf";
-    public static final String PN_F24_META_AB_2_ACAB_392_D_042_A_1_A_FD_66_F_59732791_F_2_JSON ="PN_F24_META-ab2acab392d042a1afd66f59732791f2.json";
+    public static final String PN_F24_META_AB_2_ACAB_392_D_042_A_1_A_FD_66_F_59732791_F_2_JSON = "PN_F24_META-ab2acab392d042a1afd66f59732791f2.json";
     public static final String LEGAL_FACT_IS_NOT_A_PDF = "LegalFact is not a PDF ";
     public static final String WRONG_STATUS = "WRONG STATUS: ";
     private final RestTemplate restTemplate;
@@ -106,7 +107,7 @@ public class PnPaB2bUtils {
         this.pollingFactory = pollingFactory;
     }
 
-    public void setClient(IPnPaB2bClient client, PnPollingFactory pollingFactory){
+    public void setClient(IPnPaB2bClient client, PnPollingFactory pollingFactory) {
         this.client = client;
         this.pollingFactory = pollingFactory;
     }
@@ -121,7 +122,7 @@ public class PnPaB2bUtils {
                 Thread.currentThread().interrupt();
                 throw new PnB2bException(e.getMessage());
             }
-            if (doc!= null) {
+            if (doc != null) {
                 newdocs.add(this.preloadDocument(doc));
             }
         }
@@ -132,17 +133,17 @@ public class PnPaB2bUtils {
     }
 
     private void setAttachmentWithSleep(List<NotificationPaymentItem> paymentList) throws IOException {
-        for (NotificationPaymentItem paymentInfo: paymentList) {
+        for (NotificationPaymentItem paymentInfo : paymentList) {
             try {
                 Thread.sleep(this.random.nextInt(350));
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 throw new PnB2bException(e.getMessage());
             }
-            if (paymentInfo.getPagoPa()!= null) {
+            if (paymentInfo.getPagoPa() != null) {
                 paymentInfo.getPagoPa().setAttachment(preloadAttachment(paymentInfo.getPagoPa().getAttachment()));
             }
-            if (paymentInfo.getF24()!= null) {
+            if (paymentInfo.getF24() != null) {
                 paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
             }
         }
@@ -161,7 +162,7 @@ public class PnPaB2bUtils {
             }
         }
         log.info(NEW_NOTIFICATION_REQUEST, request);
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationResponse response = client.sendNewNotificationV1( request );
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationResponse response = client.sendNewNotificationV1(request);
         log.info(NEW_NOTIFICATION_REQUEST_RESPONSE, response);
         return response;
     }
@@ -185,7 +186,7 @@ public class PnPaB2bUtils {
     }
 
     public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationResponse uploadNotificationV21(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationRequestV21 request) throws IOException {
-            //PRELOAD DOCUMENTI NOTIFICA
+        //PRELOAD DOCUMENTI NOTIFICA
         List<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationDocument> newdocs = new ArrayList<>();
         for (it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationDocument doc : request.getDocuments()) {
             try {
@@ -195,7 +196,7 @@ public class PnPaB2bUtils {
                 throw new PnB2bException(e.getMessage());
             }
 
-            if (doc!= null) {
+            if (doc != null) {
                 newdocs.add(this.preloadDocumentV21(doc));
             }
         }
@@ -210,24 +211,24 @@ public class PnPaB2bUtils {
 
         for (it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21 recipient : request.getRecipients()) {
             List<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPaymentItem> paymentList = recipient.getPayments();
-            if(paymentList != null){
+            if (paymentList != null) {
                 setAttachmentWithSleepV21(paymentList);
             }
         }
     }
 
     private void setAttachmentWithSleepV21(List<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPaymentItem> paymentList) throws IOException {
-        for (it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPaymentItem paymentInfo: paymentList) {
+        for (it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPaymentItem paymentInfo : paymentList) {
             try {
                 Thread.sleep(this.random.nextInt(350));
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 throw new PnB2bException(e.getMessage());
             }
-            if (paymentInfo.getPagoPa()!= null) {
+            if (paymentInfo.getPagoPa() != null) {
                 paymentInfo.getPagoPa().setAttachment(preloadAttachmentV21(paymentInfo.getPagoPa().getAttachment()));
             }
-            if (paymentInfo.getF24()!= null) {
+            if (paymentInfo.getF24() != null) {
                 paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
             }
         }
@@ -237,7 +238,7 @@ public class PnPaB2bUtils {
 
         for (NotificationRecipientV23 recipient : request.getRecipients()) {
             List<NotificationPaymentItem> paymentList = recipient.getPayments();
-            if(paymentList != null){
+            if (paymentList != null) {
                 setAttachmentWithSleep(paymentList);
             }
         }
@@ -252,15 +253,15 @@ public class PnPaB2bUtils {
 
         for (NotificationRecipientV23 recipient : request.getRecipients()) {
             List<NotificationPaymentItem> paymentList = recipient.getPayments();
-            if(paymentList != null){
-                for (NotificationPaymentItem paymentInfo: paymentList) {
-                    if(paymentInfo.getPagoPa()!= null) {
+            if (paymentList != null) {
+                for (NotificationPaymentItem paymentInfo : paymentList) {
+                    if (paymentInfo.getPagoPa() != null) {
                         paymentInfo.getPagoPa().setAttachment(new NotificationPaymentAttachment()
                                 .ref(request.getDocuments().get(0).getRef())
                                 .digests(request.getDocuments().get(0).getDigests())
                                 .contentType(request.getDocuments().get(0).getContentType()));
                     }
-                    if(paymentInfo.getF24()!= null) {
+                    if (paymentInfo.getF24() != null) {
                         paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
                     }
                 }
@@ -272,7 +273,7 @@ public class PnPaB2bUtils {
 
     private NewNotificationResponse getAndCheckSendNewNotification(NewNotificationRequestV24 request) {
         log.info(NEW_NOTIFICATION_REQUEST, request);
-        NewNotificationResponse response = client.sendNewNotification(request);
+        NewNotificationResponse response = client.sendNewNotificationV24(request);
         log.info(NEW_NOTIFICATION_REQUEST_RESPONSE, response);
         if (response != null) {
             try {
@@ -400,7 +401,7 @@ public class PnPaB2bUtils {
     }
 
     private NewNotificationResponse sendNewNotification(NewNotificationRequestV24 request) {
-        NewNotificationResponse response = client.sendNewNotification(request);
+        NewNotificationResponse response = client.sendNewNotificationV24(request);
         log.info(NEW_NOTIFICATION_REQUEST_RESPONSE, response);
         return response;
     }
@@ -429,7 +430,7 @@ public class PnPaB2bUtils {
         }
     }
 
-    public FullSentNotificationV26 waitForRequestAcceptation(NewNotificationResponse response) {
+    public FullSentNotificationV26 waitForRequestAcceptationV26(NewNotificationResponse response) {
         PnPollingServiceValidationStatusV26 validationStatusV26 = (PnPollingServiceValidationStatusV26) pollingFactory.getPollingService(PnPollingStrategy.VALIDATION_STATUS_V26);
         PnPollingResponseV26 pollingResponseV26 = validationStatusV26.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(ACCEPTED).build());
         return pollingResponseV26.getNotification() == null ? null : pollingResponseV26.getNotification();
@@ -508,30 +509,29 @@ public class PnPaB2bUtils {
         return error.toString();
     }
 
-    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification searchForRequestV1( it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationResponse response) {
+    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification searchForRequestV1(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationResponse response) {
 
-        log.info("Request status for " + response.getNotificationRequestId() );
+        log.info("Request status for " + response.getNotificationRequestId());
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequestStatusResponse status = null;
 
-        status = client.getNotificationRequestStatusV1( response.getNotificationRequestId() );
+        status = client.getNotificationRequestStatusV1(response.getNotificationRequestId());
 
         log.info("New Notification Request status {}", status.getNotificationRequestStatus());
 
         String iun = status.getIun();
 
-        return iun == null? null : client.getSentNotificationV1( iun );
+        return iun == null ? null : client.getSentNotificationV1(iun);
     }
-
 
 
     public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification waitForRequestAcceptationV1(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationResponse response) {
         PnPollingServiceValidationStatusV1 validationStatusV1 = (PnPollingServiceValidationStatusV1) pollingFactory.getPollingService(PnPollingStrategy.VALIDATION_STATUS_V1);
-            PnPollingResponseV1 pollingResponseV1 = validationStatusV1.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value (ACCEPTED).build());
+        PnPollingResponseV1 pollingResponseV1 = validationStatusV1.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(ACCEPTED).build());
         return pollingResponseV1.getNotification() == null ? null : pollingResponseV1.getNotification();
     }
 
 
-    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.FullSentNotificationV20 waitForRequestAcceptationV2( it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationResponse response) {
+    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.FullSentNotificationV20 waitForRequestAcceptationV2(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationResponse response) {
 
         PnPollingServiceValidationStatusV20 validationStatusV20 = (PnPollingServiceValidationStatusV20) pollingFactory.getPollingService(PnPollingStrategy.VALIDATION_STATUS_V20);
         PnPollingResponseV20 pollingResponseV20 = validationStatusV20.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(ACCEPTED).build());
@@ -730,7 +730,7 @@ public class PnPaB2bUtils {
         byte[] content = downloadFile(url);
         String pdfPrefix = new String(Arrays.copyOfRange(content, 0, 10), StandardCharsets.UTF_8);
         if (!pdfPrefix.contains("PDF")) {
-            throw new IllegalStateException(LEGAL_FACT_IS_NOT_A_PDF+ legalFactsId);
+            throw new IllegalStateException(LEGAL_FACT_IS_NOT_A_PDF + legalFactsId);
         }
     }
 
@@ -745,7 +745,7 @@ public class PnPaB2bUtils {
         byte[] content = downloadFile(url);
         String pdfPrefix = new String(Arrays.copyOfRange(content, 0, 10), StandardCharsets.UTF_8);
         if (!pdfPrefix.contains("PDF")) {
-            throw new IllegalStateException(LEGAL_FACT_IS_NOT_A_PDF+ legalFactsId);
+            throw new IllegalStateException(LEGAL_FACT_IS_NOT_A_PDF + legalFactsId);
         }
     }
 
@@ -760,22 +760,22 @@ public class PnPaB2bUtils {
         byte[] content = downloadFile(url);
         String pdfPrefix = new String(Arrays.copyOfRange(content, 0, 10), StandardCharsets.UTF_8);
         if (!pdfPrefix.contains("PDF")) {
-            throw new IllegalStateException(LEGAL_FACT_IS_NOT_A_PDF+ legalFactsId);
+            throw new IllegalStateException(LEGAL_FACT_IS_NOT_A_PDF + legalFactsId);
         }
     }
 
     private void checkAttachment(NotificationAttachmentDownloadMetadataResponse resp) {
         byte[] content = downloadFile(resp.getUrl());
         String sha256 = computeSha256(new ByteArrayInputStream(content));
-        if( ! sha256.equals(resp.getSha256()) ) {
-            throw new IllegalStateException(SHA_256_DIFFERS + resp.getFilename() );
+        if (!sha256.equals(resp.getSha256())) {
+            throw new IllegalStateException(SHA_256_DIFFERS + resp.getFilename());
         }
     }
 
     private void checkAttachmentV1(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationAttachmentDownloadMetadataResponse resp) {
         byte[] content = downloadFile(resp.getUrl());
         String sha256 = computeSha256(new ByteArrayInputStream(content));
-        if( ! sha256.equals(resp.getSha256()) ) {
+        if (!sha256.equals(resp.getSha256())) {
             throw new PnB2bException(SHA_256_DIFFERS + resp.getFilename());
         }
     }
@@ -783,12 +783,12 @@ public class PnPaB2bUtils {
     private void checkAttachmentV2(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationAttachmentDownloadMetadataResponse resp) {
         byte[] content = downloadFile(resp.getUrl());
         String sha256 = computeSha256(new ByteArrayInputStream(content));
-        if( ! sha256.equals(resp.getSha256()) ) {
+        if (!sha256.equals(resp.getSha256())) {
             throw new PnB2bException(SHA_256_DIFFERS + resp.getFilename());
         }
     }
 
-    public Pair<String,String> preloadRadFsuDocument( String resourcePath, boolean usePresignedUrl) throws IOException {
+    public Pair<String, String> preloadRadFsuDocument(String resourcePath, boolean usePresignedUrl) throws IOException {
         String sha256 = computeSha256(resourcePath);
         DocumentUploadResponse documentUploadResponse = getPreLoadRaddResponse(sha256);
 
@@ -796,8 +796,8 @@ public class PnPaB2bUtils {
         String secret = documentUploadResponse.getSecret();
         String url = documentUploadResponse.getUrl();
         log.info(ATTACHMENT_RESOURCE_KEY_SHA_256_SECRET_PRESIGNED_URL, resourcePath, sha256, secret, url);
-        if(usePresignedUrl) {
-            loadToPresigned( url, secret, sha256, resourcePath );
+        if (usePresignedUrl) {
+            loadToPresigned(url, secret, sha256, resourcePath);
             log.info("UPLOAD RADD COMPLETE");
         } else {
             log.info("UPLOAD RADD COMPLETE WITHOUT UPLOAD");
@@ -808,10 +808,10 @@ public class PnPaB2bUtils {
     public void preloadRadCSVDocument(String resourcePath, String sha256, RegistryUploadResponse responseUploadCsv, boolean usePresignedUrl) {
         String secret = responseUploadCsv.getSecret();
         String url = responseUploadCsv.getUrl();
-        if(usePresignedUrl){
-            loadToPresignedCsv( url, secret, sha256, resourcePath );
+        if (usePresignedUrl) {
+            loadToPresignedCsv(url, secret, sha256, resourcePath);
             log.info("UPLOAD RADD CSV COMPLETE");
-        }else{
+        } else {
             log.info("UPLOAD RADD CSV COMPLETE WITHOUT UPLOAD");
         }
     }
@@ -824,8 +824,8 @@ public class PnPaB2bUtils {
         String url = documentUploadResponse.getUrl();
         log.info(ATTACHMENT_RESOURCE_KEY_SHA_256_SECRET_PRESIGNED_URL, resourcePath, sha256, secret, url);
 
-        if(usePresignedUrl){
-            loadToPresignedZip( url, secret, sha256, resourcePath );
+        if (usePresignedUrl) {
+            loadToPresignedZip(url, secret, sha256, resourcePath);
             log.info("UPLOAD RADD COMPLETE");
         } else {
             log.info("UPLOAD RADD COMPLETE WITHOUT UPLOAD");
@@ -842,8 +842,8 @@ public class PnPaB2bUtils {
         String url = documentUploadResponse.getUrl();
         log.info(ATTACHMENT_RESOURCE_KEY_SHA_256_SECRET_PRESIGNED_URL, resourcePath, sha256, secret, url);
 
-        if(usePresignedUrl){
-            loadToPresignedZip( url, secret, sha256, resourcePath );
+        if (usePresignedUrl) {
+            loadToPresignedZip(url, secret, sha256, resourcePath);
             log.info("UPLOAD RADD COMPLETE");
         } else {
             log.info("UPLOAD RADD COMPLETE WITHOUT UPLOAD");
@@ -1009,8 +1009,8 @@ public class PnPaB2bUtils {
         loadToPresigned(url, secret, sha256, resource, "application/zip", 0);
     }
 
-    public void loadToPresignedCsv( String url, String secret, String sha256, String resource ) {
-        loadToPresigned(url,secret,sha256,resource,"text/csv",0);
+    public void loadToPresignedCsv(String url, String secret, String sha256, String resource) {
+        loadToPresigned(url, secret, sha256, resource, "text/csv", 0);
     }
 
     private void loadToPresigned(String url, String secret, String sha256, String resource, String resourceType, int depth) {

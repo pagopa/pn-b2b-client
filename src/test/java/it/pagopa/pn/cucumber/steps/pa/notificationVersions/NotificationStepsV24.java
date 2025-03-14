@@ -17,20 +17,19 @@ import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
 
 @Data
 @Slf4j
-public class NotificationStepV26 implements NotificationInterface {
-
-
-//    private static final NotificationDigitalAddress PEC = new NotificationDigitalAddress().type(NotificationDigitalAddress.TypeEnum.PEC).address(getDigitalAddressValue()))
+public class NotificationStepsV24 implements NotificationStepsInterface {
 
     private NewNotificationRequestV24 notificationRequest;
     private NewNotificationResponse notificationResponse;
     private FullSentNotificationV26 fullSentNotification;
     private OffsetDateTime notificationCreationDate;
+    private String selectedPA;
+    private String senderTaxId;
     private final SharedSteps.NotificationVersion version;
     private SharedSteps sharedSteps;
 
-    public NotificationStepV26(SharedSteps sharedSteps) {
-        version = SharedSteps.NotificationVersion.V26;
+    public NotificationStepsV24(SharedSteps sharedSteps) {
+        version = SharedSteps.NotificationVersion.V24;
         this.sharedSteps = sharedSteps;
     }
 
@@ -43,27 +42,48 @@ public class NotificationStepV26 implements NotificationInterface {
     @Override
     public void addRecipitentToNotification(String recipientName, Map<String, String> data) {
         NotificationRecipientV23 notificationRecipient = sharedSteps.getDataTableTypeUtil().convertNotificationRecipient(data);
+        if (notificationRequest.getNotificationFeePolicy() == NotificationFeePolicy.DELIVERY_MODE
+                && NotificationValue.getValue(data, PAYMENT.key) != null) {
+            String pagopaFormValue = getValue(data, PAYMENT_PAGOPA_FORM.key);
+            if (pagopaFormValue != null && !pagopaFormValue.equalsIgnoreCase("NO")) {
+                for (NotificationPaymentItem payments : Objects.requireNonNull(notificationRecipient.getPayments())) {
+                    Objects.requireNonNull(payments.getPagoPa()).setApplyCost(true);
+                }
+            }
+        }
         if (recipientName != null) {
             Destinatario destinatario = Destinatario.getByName(recipientName);
-            notificationRecipient.setDenomination(destinatario.denomination);
-            notificationRecipient.setTaxId(destinatario.taxId);
-            notificationRecipient.setRecipientType(NotificationRecipientV23.RecipientTypeEnum.valueOf(destinatario.recipientType));
-            notificationRecipient.setDigitalDomicile(destinatario.digitalDomicile);
-
-            if (notificationRequest.getNotificationFeePolicy() == NotificationFeePolicy.DELIVERY_MODE
-                    && NotificationValue.getValue(data, PAYMENT.key) != null) {
-                String pagopaFormValue = getValue(data, PAYMENT_PAGOPA_FORM.key);
-                if (pagopaFormValue != null && !pagopaFormValue.equalsIgnoreCase("NO")) {
-                    for (NotificationPaymentItem payments : Objects.requireNonNull(notificationRecipient.getPayments())) {
-                        Objects.requireNonNull(payments.getPagoPa()).setApplyCost(true);
-                    }
-                }
+            notificationRecipient.setDenomination(destinatario.getDenomination());
+            notificationRecipient.setTaxId(destinatario.getTaxId());
+            notificationRecipient.setRecipientType(NotificationRecipientV23.RecipientTypeEnum.valueOf(destinatario.getRecipientType()));
+            /** Nei vecchi metodi @And("Destinatario xxx") denomination e taxId venivano sempre settati
+             * (recipientType veniva spesso passato null, ma in quei casi subentrava il valore di default PG)
+             * e data veniva passata sempre come mappa vuota.
+             * Al contrario nei vecchi metodi @And("Destinatario xxx e:"), data veniva passata come mappa con valori
+             * e al contempo digitalDomicile era sempre null, in modo da non sovrascrivere eventuali valori passati.
+             * Pertanto il seguente codice segue il vecchio comportamento, ma in maniera più chiara e coincisa */
+            if (data.isEmpty()) {
+                notificationRecipient.setDigitalDomicile(
+                        new NotificationDigitalAddress()
+                                .type(NotificationDigitalAddress.TypeEnum.valueOf(destinatario.getDigitalDomicileType()))
+                                .address(DestinatariUtils.getDigitalAddressValue()));
             }
         }
         notificationRequest.addRecipientsItem(notificationRecipient);
     }
 
-    //MATTEO TEST
+
+    @Override
+    public String getNotificationRequestGroup() {
+        return notificationRequest.getGroup();
+    }
+
+    @Override
+    public void setNotificationRequestGroup(String group) {
+        notificationRequest.setGroup(group);
+    }
+
+    //TODO MATTEO TEST
     @Override
     public void sendNotification(String status, int wait) {
         try {
@@ -71,7 +91,7 @@ public class NotificationStepV26 implements NotificationInterface {
                 notificationCreationDate = OffsetDateTime.now();
                 notificationResponse = sharedSteps.getB2bUtils().uploadNotification(notificationRequest);
                 threadWait(wait);
-                fullSentNotification = sharedSteps.getB2bUtils().waitForRequestAcceptation(notificationResponse);
+                fullSentNotification = sharedSteps.getB2bUtils().waitForRequestAcceptationV26(notificationResponse);
             });
             threadWait(wait);
             Assertions.assertNotNull(fullSentNotification);
