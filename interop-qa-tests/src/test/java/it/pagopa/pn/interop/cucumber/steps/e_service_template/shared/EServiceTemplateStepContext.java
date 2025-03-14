@@ -12,9 +12,19 @@ import java.util.UUID;
 import lombok.Data;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Data
 public class EServiceTemplateStepContext {
+    @Mapper(componentModel = "spring")
+    public interface EServiceTemplateInfoMapper {
+        /* TODO 07/03/2025 overhead, se questo mapper continua a servire solo a questo bisognerebbe
+         * semplicemente mutare EServiceTemplateInfo in un pojo e ricorrere ai metodi set per modificarlo   */
+        @Mapping(source = "newVersionId", target = "lastVersionId")
+        EServiceTemplateInfo withVersionId(EServiceTemplateInfo templateInfo, UUID newVersionId);
+    }
+
     /* TODO 13/03/2025 i record non si stanno prestando bene come previsto, convertirli in classi
      *  POJO con Lombok e collocarle all'esterno, in un package dedicato al context in cui
      *  spostare anche questa classe */

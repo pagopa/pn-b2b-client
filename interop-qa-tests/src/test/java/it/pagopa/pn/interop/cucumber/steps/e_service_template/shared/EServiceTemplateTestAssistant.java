@@ -10,13 +10,17 @@ import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient.EServiceTemplateDocumentKind;
+import it.pagopa.interop.e_service_template.mapper.DescriptorAttributesMapper;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributes;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysis;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateAttributesSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionAttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionSeed;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
@@ -49,11 +53,13 @@ public class EServiceTemplateTestAssistant {
     private final PollingService pollingService;
     private final EServiceTemplateStepContext templateContext;
     private final EasyRandom easyRandom;
+    private final DescriptorAttributesMapper descriptorAttributesMapper;
 
     public EServiceTemplateTestAssistant(ClientTokenConfigurator clientTokenConfigurator,
         DataPreparationService dataPreparationService,
         SharedStepsContext sharedStepsContext,
-        EServiceTemplateStepContext templateContext) {
+        EServiceTemplateStepContext templateContext,
+        DescriptorAttributesMapper descriptorAttributesMapper) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.dataPreparationService = dataPreparationService;
         this.sharedStepsContext = sharedStepsContext;
@@ -64,6 +70,7 @@ public class EServiceTemplateTestAssistant {
         this.pollingService = sharedStepsContext.getPollingService();
         this.templateContext = templateContext;
         this.easyRandom = new EasyRandom(templateContext.getEasyRandomParameters());
+        this.descriptorAttributesMapper = descriptorAttributesMapper;
     }
 
     public String nextTestResourceNameSuffix() {
@@ -275,5 +282,17 @@ public class EServiceTemplateTestAssistant {
          *  a https://stackoverflow.com/questions/49379006/what-is-the-correct-way-to-declare-a-date-in-an-openapi-swagger-file#:~:text=In%20OpenAPI%2C%20the%20date-time%20format%20is%20used%20to,a%20breakdown%3A%20Regex%20for%20this%3A%20%5Ed%7B4%7D-d%7B2%7D-d%7B2%7DTd%7B2%7D%3Ad%7B2%7D%3Ad%7B2%7DZ%24%20CODE%20%22fmt%22
          *  dovrebbe trattarsi dello standard ISO 8601; arricchire il test così da verificare anche questo dato
          */
+    }
+
+    public boolean areConsistent(UpdateEServiceTemplateVersionSeed lastUpdate, EServiceTemplateVersionDetails retrievedTemplate) {
+        DescriptorAttributes descriptorAttributes = retrievedTemplate.getAttributes();
+        EServiceTemplateAttributesSeed mappedAttributes = this.descriptorAttributesMapper.mapAttributesToSeeds(
+            descriptorAttributes);
+        return lastUpdate.getAttributes().equals(mappedAttributes) &&
+            lastUpdate.getDescription().equals(retrievedTemplate.getDescription()) &&
+            lastUpdate.getAgreementApprovalPolicy().equals(retrievedTemplate.getAgreementApprovalPolicy()) &&
+            lastUpdate.getVoucherLifespan().equals(retrievedTemplate.getVoucherLifespan()) &&
+            lastUpdate.getDailyCallsTotal().equals(retrievedTemplate.getDailyCallsTotal()) &&
+            lastUpdate.getDailyCallsPerConsumer().equals(retrievedTemplate.getDailyCallsPerConsumer());
     }
 }

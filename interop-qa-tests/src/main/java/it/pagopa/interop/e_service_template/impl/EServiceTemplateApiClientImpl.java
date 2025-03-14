@@ -12,6 +12,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttribute
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDescriptionUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDetails;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateIntendedTargetUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateNameUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
@@ -351,7 +352,7 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
     @Override
     public void updateEServiceIntendedTarget(String xCorrelationId,
         UUID eServiceTemplateId,
-        EServiceTemplateDescriptionUpdateSeed seed) {
+        EServiceTemplateIntendedTargetUpdateSeed seed) {
         this.eserviceTemplatesApi.updateEServiceTemplateIntendedTarget(xCorrelationId, eServiceTemplateId, seed);
     }
 
@@ -359,7 +360,7 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
     public ResponseEntity<Void> updateEServiceIntendedTargetWithHttpInfo(
         String xCorrelationId,
         UUID eServiceTemplateId,
-        EServiceTemplateDescriptionUpdateSeed seed) {
+        EServiceTemplateIntendedTargetUpdateSeed seed) {
         return this.eserviceTemplatesApi.updateEServiceTemplateIntendedTargetWithHttpInfo(xCorrelationId, eServiceTemplateId, seed);
     }
 

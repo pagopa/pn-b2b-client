@@ -21,6 +21,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttribute
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDescriptionUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDetails;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateIntendedTargetUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateNameUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceTemplate;
@@ -55,7 +56,7 @@ public class EServiceTemplateSteps {
 
     // TODO alcune di queste variabili andranno incapsulate in un bean di tipo Context
     private EServiceTemplateNameUpdateSeed lastTemplateNameUpdateSeed;
-    private EServiceTemplateDescriptionUpdateSeed lastTemplateIntendedTargetUpdateSeed;
+    private EServiceTemplateIntendedTargetUpdateSeed lastTemplateIntendedTargetUpdateSeed;
     private EServiceTemplateDescriptionUpdateSeed lastTemplateDescriptionUpdateSeed;
     private DescriptorAttributesSeed lastAttributesUpdateSeed;
     private final EasyRandom easyRandom;
@@ -156,7 +157,7 @@ public class EServiceTemplateSteps {
     @When("l'utente tenta la modifica della descrizione dello scopo dell'e-service template")
     public void editEServiceTemplateIntendedTarget() {
         UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
-        lastTemplateIntendedTargetUpdateSeed = easyRandom.nextObject(EServiceTemplateDescriptionUpdateSeed.class);
+        lastTemplateIntendedTargetUpdateSeed = easyRandom.nextObject(EServiceTemplateIntendedTargetUpdateSeed.class);
         editEServiceTemplateIntendedTarget(eServiceTemplateId, lastTemplateIntendedTargetUpdateSeed);
     }
 
@@ -177,18 +178,18 @@ public class EServiceTemplateSteps {
 
     @When("l'utente tenta la modifica della descrizione dello scopo di un e-service template inesistente")
     public void editNonExistentEServiceTemplateIntendedTarget() {
-        editEServiceTemplateIntendedTarget(UUID.randomUUID(), easyRandom.nextObject(EServiceTemplateDescriptionUpdateSeed.class));
+        editEServiceTemplateIntendedTarget(UUID.randomUUID(), easyRandom.nextObject(EServiceTemplateIntendedTargetUpdateSeed.class));
     }
 
     private void editEServiceTemplateIntendedTargetWith(String description) {
         UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
-        lastTemplateIntendedTargetUpdateSeed = easyRandom.nextObject(EServiceTemplateDescriptionUpdateSeed.class)
-            .description(description);
+        lastTemplateIntendedTargetUpdateSeed = easyRandom.nextObject(EServiceTemplateIntendedTargetUpdateSeed.class)
+            .intendedTarget(description);
         editEServiceTemplateIntendedTarget(eServiceTemplateId, lastTemplateIntendedTargetUpdateSeed);
     }
 
     private void editEServiceTemplateIntendedTarget(UUID eServiceTemplateId,
-        EServiceTemplateDescriptionUpdateSeed lastTemplateIntendedTargetUpdateSeed) {
+        EServiceTemplateIntendedTargetUpdateSeed lastTemplateIntendedTargetUpdateSeed) {
         String userToken = getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);
         httpCallExecutor.performCall(
@@ -213,7 +214,7 @@ public class EServiceTemplateSteps {
                     if(res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody())) {
                         EServiceTemplateDetails template = res.getBody();
                         return template.getIntendedTarget().equals(
-                            lastTemplateIntendedTargetUpdateSeed.getDescription());
+                            lastTemplateIntendedTargetUpdateSeed.getIntendedTarget());
                     }
                     return false;
                 },
