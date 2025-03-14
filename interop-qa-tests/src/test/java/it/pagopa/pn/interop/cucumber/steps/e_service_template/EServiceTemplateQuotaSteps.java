@@ -15,7 +15,6 @@ import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
 import java.util.UUID;
 import lombok.Data;
 import org.jeasy.random.EasyRandom;
@@ -23,21 +22,19 @@ import org.springframework.http.ResponseEntity;
 
 /** Cucumber steps involving quotas of E-service templates */
 @Data
-public class EServiceTemplateQuotasSteps {
+public class EServiceTemplateQuotaSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
     private final IEServiceTemplateClient eServiceTemplateClient;
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
-    private final EServiceTemplateTestAssistant testAssistant;
     private final EServiceTemplateStepContext templateContext;
     private final EasyRandom easyRandom;
 
     private EServiceTemplateVersionQuotasUpdateSeed lastTemplateVersionQuotasUpdateSeed;
 
-    public EServiceTemplateQuotasSteps(ClientTokenConfigurator clientTokenConfigurator,
+    public EServiceTemplateQuotaSteps(ClientTokenConfigurator clientTokenConfigurator,
         SharedStepsContext sharedStepsContext,
-        EServiceTemplateTestAssistant testAssistant,
         EServiceTemplateStepContext templateContext
     ) {
         this.clientTokenConfigurator = clientTokenConfigurator;
@@ -45,7 +42,6 @@ public class EServiceTemplateQuotasSteps {
         this.eServiceTemplateClient = clientTokenConfigurator.getEServiceTemplateClient();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
-        this.testAssistant = testAssistant;
         this.templateContext = templateContext;
         this.easyRandom = new EasyRandom(templateContext.getEasyRandomParameters());
     }
