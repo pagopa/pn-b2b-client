@@ -1,20 +1,16 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template;
 
-import static it.pagopa.interop.e_service_template.IEServiceTemplateClient.EServiceTemplateDocumentKind.DOCUMENT;
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
-import it.pagopa.interop.e_service_template.IEServiceTemplateClient.EServiceTemplateDocumentKind;
 import it.pagopa.interop.e_service_template.mapper.DescriptorAttributesMapper;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServiceTemplate;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServiceTemplates;
@@ -23,11 +19,8 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganization
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributes;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDescriptionUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDetails;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateInstance;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateInstances;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateNameUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceTemplate;
@@ -85,32 +78,6 @@ public class EServiceTemplateSteps {
         this.testAssistant = testAssistant;
         this.templateContext = templateContext;
         this.easyRandom = new EasyRandom(templateContext.getEasyRandomParameters());
-    }
-
-    @ParameterType("DOCUMENT|INTERFACE")
-    public EServiceTemplateDocumentKind eServiceTemplateDocumentKind(String kind) {
-        return switch (kind) {
-            case "DOCUMENT"     -> DOCUMENT;
-            case "INTERFACE"    -> EServiceTemplateDocumentKind.INTERFACE;
-            default             -> throw new IllegalArgumentException("Unsupported %s value: %s".formatted(
-                                        EServiceTemplateDocumentKind.class.getSimpleName(),
-                                        kind));
-        };
-    }
-
-    @ParameterType("DRAFT|PUBLISHED|DEPRECATED|SUSPENDED|ARCHIVED|WAITING_FOR_APPROVAL")
-    public EServiceDescriptorState eServiceDescriptorState(String state) {
-        return switch (state) {
-            case "DRAFT"                -> EServiceDescriptorState.DRAFT;
-            case "PUBLISHED"            -> EServiceDescriptorState.PUBLISHED;
-            case "DEPRECATED"           -> EServiceDescriptorState.DEPRECATED;
-            case "SUSPENDED"            -> EServiceDescriptorState.SUSPENDED;
-            case "ARCHIVED"             -> EServiceDescriptorState.ARCHIVED;
-            case "WAITING_FOR_APPROVAL" -> EServiceDescriptorState.WAITING_FOR_APPROVAL;
-            default                     -> throw new IllegalArgumentException("Unsupported %s value: %s".formatted(
-                                                EServiceDescriptorState.class.getSimpleName(),
-                                                state));
-        };
     }
 
     private DescriptorAttributesSeed nextDescriptorAttributesSeed() {
@@ -442,42 +409,6 @@ public class EServiceTemplateSteps {
         assertThat(templatesInCatalog).isEmpty();
     }
 
-    @Then("i dettagli dell'e-service template contengono esattamente {int} versioni")
-    public void checkEServiceTemplateDetailsContainVersions(int expectedVersionCount) {
-        EServiceTemplateDetails template = ((ResponseEntity<EServiceTemplateDetails>) httpCallExecutor.getResponse()).getBody();
-        assertThat(template.getVersions()).hasSize(expectedVersionCount);
-    }
-
-    @When("l'utente tenta la visualizzazione dei dettagli della versione dell'e-service template")
-    public void getEServiceTemplateVersionDetails() {
-        getEServiceTemplateVersionDetails(templateContext.getLastTemplateManaged().id(), templateContext.getLastTemplateManaged().lastVersionId());
-    }
-
-    @When("l'utente tenta la visualizzazione dei dettagli della versione dell'e-service template indicando un identificativo vuoto")
-    public void getUnspecifiedEServiceTemplateVersionDetails() {
-        /* DEV. NOTE 11/03/2025: il passaggio di NULL come identificativo è una BAD_REQUEST
-         * annunciata, in quanto è il comportamento di default del client OpenApi
-         * generato. Ciò implica che la chiamata non raggiungerà mai il server. Non è stato
-         * trovato un modo per passare stringa vuota senza bypassare il client OpenApi. */
-        getEServiceTemplateVersionDetails(templateContext.getLastTemplateManaged().id(), null);
-    }
-
-    @When("l'utente tenta la visualizzazione dei dettagli di una versione di un e-service template inesistente")
-    public void getNonExistentEServiceTemplateVersionDetails() {
-        getEServiceTemplateVersionDetails(UUID.randomUUID(), UUID.randomUUID());
-    }
-
-    private void getEServiceTemplateVersionDetails(UUID eServiceTemplateId, UUID eServiceTemplateVersionId) {
-        String userToken = getUserToken();
-        clientTokenConfigurator.setBearerToken(userToken);
-        httpCallExecutor.performCall(
-            () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
-                sharedStepsContext.getXCorrelationId(),
-                eServiceTemplateId,
-                eServiceTemplateVersionId),
-            ResponseEntity::getStatusCode);
-    }
-
     @When("l'utente tenta la visualizzazione dell'elenco producers degli e-service templates")
     public void getEServiceTemplatesProducers() {
         String userToken = getUserToken();
@@ -510,31 +441,6 @@ public class EServiceTemplateSteps {
             .first()
             .extracting(CompactOrganization::getName)
             .isEqualTo(tenant);
-    }
-
-    @Then("sono state visualizzate {int} istanza in stato DRAFT, {int} in stato PUBLISHED e {int} in stato SUSPENDED")
-    public void checkEServiceTemplateInstancesCount(int draftCount, int publishedCount, int suspendedCount) {
-        List<EServiceTemplateInstance> response = ((ResponseEntity<EServiceTemplateInstances>) httpCallExecutor.getResponse()).getBody().getResults();
-        assertSoftly(softly -> {
-            softly.assertThat(response)
-                .areExactly(
-                    draftCount,
-                    instanceInState(EServiceDescriptorState.DRAFT));
-            softly.assertThat(response)
-                .areExactly(
-                    publishedCount,
-                    instanceInState(EServiceDescriptorState.PUBLISHED));
-            softly.assertThat(response)
-                .areExactly(
-                    suspendedCount,
-                    instanceInState(EServiceDescriptorState.SUSPENDED));
-        });
-    }
-
-    private Condition<EServiceTemplateInstance> instanceInState(EServiceDescriptorState state) {
-        return new Condition<>(
-            instance -> instance.getActiveDescriptor().getState().equals(state),
-            "instances in state %s", state);
     }
 
     /* TODO un'alternativa all'uso di metodi come "areConsistent" - che confrontano i campi uno a uno - potrebbe essere

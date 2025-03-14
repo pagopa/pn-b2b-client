@@ -1,9 +1,9 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template;
 
 import static java.util.Objects.nonNull;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
-import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
@@ -64,19 +64,6 @@ public class EServiceTemplateCRUDSteps {
         this.pollingService = sharedStepsContext.getPollingService();
         this.testAssistant = testAssistant;
         this.templateContext = templateContext;
-    }
-
-    /* DEV.NOTE 13/03/2025 utilizzabile anche al di fuori dell'ambito degli e-service template,
-     * eventualmente collocare altrove */
-    @ParameterType("erogazione|ricezione")
-    public EServiceMode eServiceMode(String mode) {
-        return switch (mode) {
-            case "erogazione"   -> EServiceMode.DELIVER;
-            case "ricezione"    -> EServiceMode.RECEIVE;
-            default             -> throw new IllegalArgumentException("Unsupported %s value: %s".formatted(
-                EServiceMode.class.getSimpleName(),
-                mode));
-        };
     }
 
     @When("l'utente effettua la creazione di un e-service template in modalità {eServiceMode}")
@@ -157,6 +144,29 @@ public class EServiceTemplateCRUDSteps {
         updateEServiceTemplate(templateContext.getLastTemplateManaged().id(), new UpdateEServiceTemplateSeed());
     }
 
+    @Then("le modifiche al template sono state applicate correttamente")
+    public void checkEServiceTemplateUpdate() {
+        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
+        UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
+
+        try {
+            pollingService.makePolling(
+                () -> httpCallExecutor.performCall( // TODO è stata introdotta la API specifica per i template, refattorizzare usando quella (non solo qui) per i check che riguardano solo i template
+                    () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
+                        sharedStepsContext.getXCorrelationId(),
+                        eServiceTemplateId,
+                        eServiceTemplateVersionId),
+                    ResponseEntity::getStatusCode),
+                res -> nonNull(res.getBody()) && this.areConsistent(lastTemplateUpdateSeed, res.getBody().getEserviceTemplate()),
+                "L'e-service template non corrisponde alle modifiche apportate"
+            );
+        } catch (PollingPredicateException e) {
+            fail("Le modifiche all'e-service template non sono state "
+                    + "applicate correttamente: le modifiche apportate '%s' non sono compatibili con il risultato ricevuto '%s'",
+                lastTemplateUpdateSeed, httpCallExecutor.getResponse());
+        }
+    }
+
     // TODO gli step sono pieni di pattern ricorrenti, questo step ne è un'esempio. Andrebbero astratti e portati in classi di utility esterne.
     @Then("la cancellazione dell'e-service template è stata effettuata correttamente")
     public void checkEServiceTemplateDeleted() {
@@ -195,27 +205,10 @@ public class EServiceTemplateCRUDSteps {
         getEServiceTemplateDetails(null);
     }
 
-    @Then("le modifiche al template sono state applicate correttamente")
-    public void checkEServiceTemplateUpdate() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
-
-        try {
-            pollingService.makePolling(
-                () -> httpCallExecutor.performCall( // TODO è stata introdotta la API specifica per i template, refattorizzare usando quella (non solo qui) per i check che riguardano solo i template
-                    () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
-                        sharedStepsContext.getXCorrelationId(),
-                        eServiceTemplateId,
-                        eServiceTemplateVersionId),
-                    ResponseEntity::getStatusCode),
-                res -> nonNull(res.getBody()) && this.areConsistent(lastTemplateUpdateSeed, res.getBody().getEserviceTemplate()),
-                "L'e-service template non corrisponde alle modifiche apportate"
-            );
-        } catch (PollingPredicateException e) {
-            fail("Le modifiche all'e-service template non sono state "
-                    + "applicate correttamente: le modifiche apportate '%s' non sono compatibili con il risultato ricevuto '%s'",
-                lastTemplateUpdateSeed, httpCallExecutor.getResponse());
-        }
+    @Then("i dettagli dell'e-service template contengono esattamente {int} versioni")
+    public void checkEServiceTemplateDetailsContainVersions(int expectedVersionCount) {
+        EServiceTemplateDetails template = ((ResponseEntity<EServiceTemplateDetails>) httpCallExecutor.getResponse()).getBody();
+        assertThat(template.getVersions()).hasSize(expectedVersionCount);
     }
 
     private void updateEServiceTemplate(UUID eServiceTemplateId, UpdateEServiceTemplateSeed sameNameUpdateSeed) {

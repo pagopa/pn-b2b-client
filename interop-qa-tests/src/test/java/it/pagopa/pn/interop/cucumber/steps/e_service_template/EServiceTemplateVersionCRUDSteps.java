@@ -257,6 +257,36 @@ public class EServiceTemplateVersionCRUDSteps {
         deleteEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId);
     }
 
+    @When("l'utente tenta la visualizzazione dei dettagli della versione dell'e-service template")
+    public void getEServiceTemplateVersionDetails() {
+        getEServiceTemplateVersionDetails(templateContext.getLastTemplateManaged().id(), templateContext.getLastTemplateManaged().lastVersionId());
+    }
+
+    @When("l'utente tenta la visualizzazione dei dettagli della versione dell'e-service template indicando un identificativo vuoto")
+    public void getUnspecifiedEServiceTemplateVersionDetails() {
+        /* DEV. NOTE 11/03/2025: il passaggio di NULL come identificativo è una BAD_REQUEST
+         * annunciata, in quanto è il comportamento di default del client OpenApi
+         * generato. Ciò implica che la chiamata non raggiungerà mai il server. Non è stato
+         * trovato un modo per passare stringa vuota senza bypassare il client OpenApi. */
+        getEServiceTemplateVersionDetails(templateContext.getLastTemplateManaged().id(), null);
+    }
+
+    @When("l'utente tenta la visualizzazione dei dettagli di una versione di un e-service template inesistente")
+    public void getNonExistentEServiceTemplateVersionDetails() {
+        getEServiceTemplateVersionDetails(UUID.randomUUID(), UUID.randomUUID());
+    }
+
+    private void getEServiceTemplateVersionDetails(UUID eServiceTemplateId, UUID eServiceTemplateVersionId) {
+        String userToken = sharedStepsContext.getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+        httpCallExecutor.performCall(
+            () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
+                sharedStepsContext.getXCorrelationId(),
+                eServiceTemplateId,
+                eServiceTemplateVersionId),
+            ResponseEntity::getStatusCode);
+    }
+
     private void createAnotherEServiceTemplateVersion(UUID eServiceTemplateId) {
         String userToken = sharedStepsContext.getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);

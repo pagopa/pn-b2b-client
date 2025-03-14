@@ -29,9 +29,11 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.Data;
+import org.assertj.core.api.Condition;
 import org.jeasy.random.EasyRandom;
 import org.springframework.http.ResponseEntity;
 
@@ -352,6 +354,31 @@ public class EServiceTemplateInstanceSteps {
             descriptorState,
             false
         );
+    }
+
+    @Then("sono state visualizzate {int} istanza in stato DRAFT, {int} in stato PUBLISHED e {int} in stato SUSPENDED")
+    public void checkEServiceTemplateInstancesCount(int draftCount, int publishedCount, int suspendedCount) {
+        List<EServiceTemplateInstance> response = ((ResponseEntity<EServiceTemplateInstances>) httpCallExecutor.getResponse()).getBody().getResults();
+        assertSoftly(softly -> {
+            softly.assertThat(response)
+                .areExactly(
+                    draftCount,
+                    instanceInState(EServiceDescriptorState.DRAFT));
+            softly.assertThat(response)
+                .areExactly(
+                    publishedCount,
+                    instanceInState(EServiceDescriptorState.PUBLISHED));
+            softly.assertThat(response)
+                .areExactly(
+                    suspendedCount,
+                    instanceInState(EServiceDescriptorState.SUSPENDED));
+        });
+    }
+
+    private Condition<EServiceTemplateInstance> instanceInState(EServiceDescriptorState state) {
+        return new Condition<>(
+            instance -> instance.getActiveDescriptor().getState().equals(state),
+            "instances in state %s", state);
     }
 
     private void createEServiceFromTemplate(UUID id, InstanceEServiceSeed seed) {
