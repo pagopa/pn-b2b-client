@@ -1,4 +1,4 @@
-package it.pagopa.pn.interop.cucumber.steps.e_service_template;
+package it.pagopa.pn.interop.cucumber.steps.e_service_template.quota;
 
 import static java.lang.Math.abs;
 import static java.util.Objects.nonNull;
@@ -22,7 +22,7 @@ import org.springframework.http.ResponseEntity;
 
 /** Cucumber steps involving quotas of E-service templates */
 @Data
-public class EServiceTemplateQuotaSteps {
+public class EServiceTemplateQuotaUpdateSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
     private final IEServiceTemplateClient eServiceTemplateClient;
@@ -33,7 +33,7 @@ public class EServiceTemplateQuotaSteps {
 
     private EServiceTemplateVersionQuotasUpdateSeed lastTemplateVersionQuotasUpdateSeed;
 
-    public EServiceTemplateQuotaSteps(ClientTokenConfigurator clientTokenConfigurator,
+    public EServiceTemplateQuotaUpdateSteps(ClientTokenConfigurator clientTokenConfigurator,
         SharedStepsContext sharedStepsContext,
         EServiceTemplateStepContext templateContext
     ) {
