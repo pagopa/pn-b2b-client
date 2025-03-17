@@ -1,16 +1,27 @@
 package it.pagopa.pn.cucumber.steps.pa.notificationVersions;
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.*;
+import it.pagopa.pn.client.b2b.pa.polling.IPnPollingService;
+import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV1;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 
+import java.io.IOException;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import static it.pagopa.pn.client.b2b.pa.PnPaB2bUtils.*;
 import static it.pagopa.pn.cucumber.steps.SharedSteps.threadWait;
+import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.*;
+import static it.pagopa.pn.cucumber.utils.NotificationValue.DOCUMENT;
+import static it.pagopa.pn.cucumber.utils.NotificationValue.getDefaultValue;
 
 @Data
 @Slf4j
@@ -21,13 +32,17 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
     private FullSentNotification fullSentNotification;
     private OffsetDateTime notificationCreationDate;
     private String selectedPA;
-    private String senderTaxId;
     private final SharedSteps.NotificationVersion version;
     private SharedSteps sharedSteps;
 
     public NotificationStepsV1(SharedSteps sharedSteps) {
         version = SharedSteps.NotificationVersion.V1;
         this.sharedSteps = sharedSteps;
+    }
+
+    @Override
+    public String getNotificationSentIun() {
+        return fullSentNotification.getIun();
     }
 
     @Override
@@ -54,10 +69,15 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
                 notificationRecipient.setDigitalDomicile(
                         new NotificationDigitalAddress()
                                 .type(NotificationDigitalAddress.TypeEnum.valueOf(destinatario.getDigitalDomicileType()))
-                                .address(DestinatariUtils.getDigitalAddressValue()));
+                                .address(Costanti.getDigitalAddressValue()));
             }
         }
         notificationRequest.addRecipientsItem(notificationRecipient);
+    }
+
+    @Override
+    public void setSenderTaxId(String senderTaxId) {
+        this.notificationRequest.setSenderTaxId(senderTaxId);
     }
 
     @Override
@@ -70,15 +90,30 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
         notificationRequest.setGroup(group);
     }
 
+    @Override
+    public void retrieveFullSentNotification(String iun) {
+        fullSentNotification = sharedSteps.getB2bClient().getSentNotificationV1(iun);
+    }
+
+    @Override
+    public Object retrieveNotificationRequest() {
+        return notificationRequest;
+    }
+
+    @Override
+    public Object retrieveNotificationResponse() {
+        return notificationResponse;
+    }
+
     //TODO MATTEO TEST
     @Override
-    public void sendNotification(String status, int wait) {
+    public void sendNotification(int wait, String status, String pollingStrategy) {
         try {
             Assertions.assertDoesNotThrow(() -> {
                 notificationCreationDate = OffsetDateTime.now();
-                notificationResponse = sharedSteps.getB2bUtils().uploadNotificationV1(notificationRequest);
+                notificationResponse = (NewNotificationResponse) uploadNotification();
                 threadWait(wait);
-                fullSentNotification = sharedSteps.getB2bUtils().waitForRequestAcceptationV1(notificationResponse);
+                fullSentNotification = waitForFullSentNotification(notificationResponse, status, pollingStrategy);
             });
             threadWait(wait);
             Assertions.assertNotNull(fullSentNotification);
@@ -87,5 +122,103 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
                     "{RequestID: " + (notificationResponse == null ? "NULL" : notificationResponse.getNotificationRequestId()) + " }";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
+    }
+
+    //TODO MATTEO TEST (rendere private?)
+    @Override
+    public Object uploadNotification() throws IOException {
+        List<NotificationDocument> documents = new ArrayList<>();
+        for (NotificationDocument doc : notificationRequest.getDocuments()) {
+            documents.add(this.preloadDocument(doc));
+        }
+        notificationRequest.setDocuments(documents);
+        for (NotificationRecipient recipient : notificationRequest.getRecipients()) {
+            NotificationPaymentInfo paymentInfo = recipient.getPayment();
+            if (paymentInfo != null) {
+                paymentInfo.setPagoPaForm(preloadAttachment(paymentInfo.getPagoPaForm()));
+            }
+        }
+        log.info(NEW_NOTIFICATION_REQUEST, notificationRequest);
+        NewNotificationResponse response = sharedSteps.getB2bUtils().getClient().sendNewNotificationV1(notificationRequest);
+        log.info(NEW_NOTIFICATION_REQUEST_RESPONSE, response);
+        return response;
+    }
+
+    @Override
+    public void setIuvToRecipient(Integer posizione, String iuvGPD) {
+        throw new RuntimeException("Metodo non previsto per la versione V21");
+    }
+
+    @Override
+    public void addDocumentItems(int numAllegati) {
+        int i = 0;
+        while (i < numAllegati) {
+            notificationRequest.addDocumentsItem(
+                    new NotificationDocument()
+                            .contentType(APPLICATION_PDF)
+                            .ref(new NotificationAttachmentBodyRef().key(getDefaultValue(DOCUMENT.key))));
+            i++;
+        }
+    }
+
+    public FullSentNotification waitForFullSentNotification(NewNotificationResponse response, String status, String pollingStrategy) {
+        IPnPollingService pollingService = sharedSteps.getB2bUtils().getPollingFactory().getPollingService(getPollingStrategy(pollingStrategy));
+        PnPollingResponseV1 pollingResponse = (PnPollingResponseV1) pollingService.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(status).build());
+        return pollingResponse.getNotification() == null ? null : pollingResponse.getNotification();
+    }
+
+    private String getPollingStrategy(String pollingStrategy) {
+        return switch (pollingStrategy) {
+            case TIMELINE_RAPID -> PnPollingStrategy.TIMELINE_RAPID_V1;
+            case STATUS_RAPID -> PnPollingStrategy.STATUS_RAPID_V1;
+            case TIMELINE_SLOW -> PnPollingStrategy.TIMELINE_SLOW_V1;
+            case STATUS_SLOW -> PnPollingStrategy.STATUS_SLOW_V1;
+            case VALIDATION_STATUS -> PnPollingStrategy.VALIDATION_STATUS_V1;
+            default ->
+                    throw new RuntimeException("PnPollingStrategy non riconosciuta per la versione V1: " + pollingStrategy);
+        };
+    }
+
+    public NotificationDocument preloadDocument(NotificationDocument document) throws IOException {
+        Pair<String, String> preloadDocument = sharedSteps.getB2bUtils().preloadGeneric(document.getRef().getKey(), LOAD_TO_PRESIGNED);
+        documentSetKey(document, preloadDocument.getValue1());
+        documentSetVersionToken(document, "v1");
+        documentSetDigests(document, preloadDocument.getValue2());
+        return document;
+    }
+
+    public NotificationPaymentAttachment preloadAttachment(NotificationPaymentAttachment attachment) throws IOException {
+        if (attachment != null) {
+            Pair<String, String> preloadAttachment = sharedSteps.getB2bUtils().preloadGeneric(attachment.getRef().getKey(), LOAD_TO_PRESIGNED);
+            attachmentSetKey(attachment, preloadAttachment.getValue1());
+            attachmentSetVersionToken(attachment, "v1");
+            attachmentSetDigests(attachment, preloadAttachment.getValue2());
+            return attachment;
+        }
+        return null;
+    }
+
+    private void documentSetKey(NotificationDocument notificationDocument, String key) {
+        notificationDocument.getRef().setKey(key);
+    }
+
+    private void documentSetVersionToken(NotificationDocument notificationDocument, String version) {
+        notificationDocument.getRef().setVersionToken(version);
+    }
+
+    private void documentSetDigests(NotificationDocument notificationDocument, String sha256) {
+        notificationDocument.digests(new NotificationAttachmentDigests().sha256(sha256));
+    }
+
+    private void attachmentSetKey(NotificationPaymentAttachment notificationPaymentAttachment, String key) {
+        notificationPaymentAttachment.getRef().setKey(key);
+    }
+
+    private void attachmentSetVersionToken(NotificationPaymentAttachment notificationPaymentAttachment, String version) {
+        notificationPaymentAttachment.getRef().setVersionToken(version);
+    }
+
+    private void attachmentSetDigests(NotificationPaymentAttachment notificationPaymentAttachment, String sha256) {
+        notificationPaymentAttachment.digests(new NotificationAttachmentDigests().sha256(sha256));
     }
 }

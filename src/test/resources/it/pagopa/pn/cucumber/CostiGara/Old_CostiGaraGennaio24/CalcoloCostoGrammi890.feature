@@ -11,14 +11,14 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | physicalCommunication | REGISTERED_LETTER_890 |
       | feePolicy             | DELIVERY_MODE         |
       | document              | DOC_4_PG;             |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_890     |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -40,14 +40,14 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | physicalCommunication | REGISTERED_LETTER_890 |
       | feePolicy             | DELIVERY_MODE         |
       | document              | DOC_5_PG;             |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_890     |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -69,14 +69,14 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | physicalCommunication | REGISTERED_LETTER_890 |
       | feePolicy             | DELIVERY_MODE         |
       | document              | DOC_8_PG;DOC_8_PG;    |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_890     |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -87,7 +87,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 00010 | 1081  | CASAPE         | RM       | notifica analogica RECAPITISTA |
       | 70010 | 1027  | ADELFIA        | BA       | notifica analogica RECAPITISTA |
       | 10010 | 1103  | ANDRATE        | TO       | notifica analogica RECAPITISTA |
-      | 60012 | 1168     | MONTERADO      | AN       | notifica analogica RECAPITISTA |
+      | 60012 | 1168  | MONTERADO      | AN       | notifica analogica RECAPITISTA |
 
   @costoAnalogicoGennaio24
   Scenario Outline: [CALCOLO-COSTO_OLD_890-51GR_4] Invio notifica e verifica calcolo del costo su raccomandata con peso = 51gr
@@ -97,14 +97,14 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | physicalCommunication | REGISTERED_LETTER_890      |
       | feePolicy             | DELIVERY_MODE              |
       | document              | DOC_8_PG;DOC_8_PG;DOC_1_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_890     |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -126,14 +126,14 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | physicalCommunication | REGISTERED_LETTER_890                         |
       | feePolicy             | DELIVERY_MODE                                 |
       | document              | DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_4_PG; |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_890     |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -144,7 +144,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 00010 | 1111  | CASAPE         | RM       | notifica analogica RECAPITISTA |
       | 70010 | 1057  | ADELFIA        | BA       | notifica analogica RECAPITISTA |
       | 10010 | 1133  | ANDRATE        | TO       | notifica analogica RECAPITISTA |
-      | 60012 | 1198     | MONTERADO      | AN       | notifica analogica RECAPITISTA |
+      | 60012 | 1198  | MONTERADO      | AN       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio24
@@ -155,14 +155,14 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | physicalCommunication | REGISTERED_LETTER_890                        |
       | feePolicy             | DELIVERY_MODE                                |
       | document              | DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_5_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_890     |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -184,14 +184,14 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | physicalCommunication | REGISTERED_LETTER_890                                           |
       | feePolicy             | DELIVERY_MODE                                                   |
       | document              | DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_6_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_890     |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -202,7 +202,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 00010 | 1276  | CASAPE         | RM       | notifica analogica RECAPITISTA |
       | 70010 | 1217  | ADELFIA        | BA       | notifica analogica RECAPITISTA |
       | 10010 | 1300  | ANDRATE        | TO       | notifica analogica RECAPITISTA |
-      | 60012 | 1371     | MONTERADO      | AN       | notifica analogica RECAPITISTA |
+      | 60012 | 1371  | MONTERADO      | AN       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio24
@@ -213,14 +213,14 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | physicalCommunication | REGISTERED_LETTER_890                                           |
       | feePolicy             | DELIVERY_MODE                                                   |
       | document              | DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_7_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_890     |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -231,7 +231,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 00010 | 1279  | CASAPE         | RM       | notifica analogica RECAPITISTA |
       | 70010 | 1220  | ADELFIA        | BA       | notifica analogica RECAPITISTA |
       | 10010 | 1303  | ANDRATE        | TO       | notifica analogica RECAPITISTA |
-      | 60012 | 1374     | MONTERADO      | AN       | notifica analogica RECAPITISTA |
+      | 60012 | 1374  | MONTERADO      | AN       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio24
@@ -242,14 +242,14 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | physicalCommunication | REGISTERED_LETTER_890                                            |
       | feePolicy             | DELIVERY_MODE                                                    |
       | document              | DOC_50_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_4_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_890     |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -260,7 +260,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 00010 | 1336  | CASAPE         | RM       | notifica analogica RECAPITISTA |
       | 70010 | 1277  | ADELFIA        | BA       | notifica analogica RECAPITISTA |
       | 10010 | 1360  | ANDRATE        | TO       | notifica analogica RECAPITISTA |
-      | 60012 | 1431     | MONTERADO      | AN       | notifica analogica RECAPITISTA |
+      | 60012 | 1431  | MONTERADO      | AN       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio24
@@ -271,14 +271,14 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | physicalCommunication | REGISTERED_LETTER_890                                            |
       | feePolicy             | DELIVERY_MODE                                                    |
       | document              | DOC_50_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_5_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_890     |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -300,14 +300,14 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | physicalCommunication | REGISTERED_LETTER_890                                                                            |
       | feePolicy             | DELIVERY_MODE                                                                                    |
       | document              | DOC_100_PG;DOC_100_PG;DOC_100_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_6_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_890     |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -329,14 +329,14 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | physicalCommunication | REGISTERED_LETTER_890                                                                            |
       | feePolicy             | DELIVERY_MODE                                                                                    |
       | document              | DOC_100_PG;DOC_100_PG;DOC_100_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_7_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_890     |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -358,14 +358,14 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | physicalCommunication | REGISTERED_LETTER_890                                                                            |
       | feePolicy             | DELIVERY_MODE                                                                                    |
       | document              | DOC_300_PG;DOC_300_PG;DOC_100_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_5_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_890     |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:

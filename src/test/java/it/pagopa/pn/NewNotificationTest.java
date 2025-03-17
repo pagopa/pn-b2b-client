@@ -92,7 +92,10 @@ public class NewNotificationTest {
                 .paProtocolNumber("" + System.currentTimeMillis())
                 .addDocumentsItem(newDocument("classpath:/sample.pdf"))
                 .addRecipientsItem(newRecipient(
-                        policy != NotificationFeePolicy.FLAT_RATE, "Leo ", "DVNLRD52D15M059P", "classpath:/sample.pdf",
+                        policy != NotificationFeePolicy.FLAT_RATE,
+                        "Leo ",
+                        "DVNLRD52D15M059P",
+                        "classpath:/sample.pdf",
                         enableF24Attachment ? (policy == NotificationFeePolicy.FLAT_RATE ? "classpath:/f24_flat.json" : "classpath:/f24_deliverymode.json") : null,
                         RECIPIENT_TYPE_DIGITAL.DIGITAL_KO, RECIPIENT_TYPE_ANALOG.ANALOG_OK))
                 //.addRecipientsItem( newRecipient( policy!=NotificationFeePolicy.FLAT_RATE,"Fiera ", "FRMTTR76M06B715E","classpath:/sample.pdf",
@@ -102,7 +105,7 @@ public class NewNotificationTest {
 
 
         Assertions.assertDoesNotThrow(() -> {
-            NewNotificationResponse newNotificationRequest = utils.uploadNotification(request);
+            NewNotificationResponse newNotificationRequest = utils.uploadNotificationV24(request);
             FullSentNotificationV26 newNotification = utils.waitForRequestAcceptationV26(newNotificationRequest);
             await().atMost(10, SECONDS);
             utils.verifyNotification(newNotification);
@@ -129,7 +132,7 @@ public class NewNotificationTest {
                 .addRecipientsItem(newRecipient(false, "Fiera", "FRMTTR76M06B715E", "classpath:/sample.pdf", "classpath:/f24_flat.json", RECIPIENT_TYPE_DIGITAL.DIGITAL_OK, RECIPIENT_TYPE_ANALOG.ANALOG_OK));
 
         Assertions.assertDoesNotThrow(() -> {
-            NewNotificationResponse newNotificationRequest = utils.uploadNotification(request);
+            NewNotificationResponse newNotificationRequest = utils.uploadNotificationV24(request);
             FullSentNotificationV26 newNotification = utils.waitForRequestAcceptationV26(newNotificationRequest);
             await().atMost(10, SECONDS);
             utils.verifyNotification(newNotification);
@@ -212,7 +215,8 @@ public class NewNotificationTest {
                                         .f24(new F24Payment()
                                                 .applyCost(withapplycost)
                                                 .title("f24 qualcosa")
-                                                .metadataAttachment(newMatadataAttachment(resourcePathf24))), new NotificationPaymentItem()
+                                                .metadataAttachment(newMatadataAttachment(resourcePathf24))),
+                        new NotificationPaymentItem()
                                 .f24(new F24Payment()
                                         .applyCost(withapplycost)
                                         .title("f24 qualcosa 1")

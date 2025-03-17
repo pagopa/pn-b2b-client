@@ -7,13 +7,13 @@ Feature: costo notifica con workflow analogico per persona giuridica 890
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | REGISTERED_LETTER_890           |
       | feePolicy             | DELIVERY_MODE                   |
-    And destinatario Cucumber Analogic e:
+    And destinatario "Cucumber Analogic" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_890     |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -28,13 +28,13 @@ Feature: costo notifica con workflow analogico per persona giuridica 890
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | REGISTERED_LETTER_890           |
       | feePolicy             | FLAT_RATE                       |
-    And destinatario Cucumber Analogic e:
+    And destinatario "Cucumber Analogic" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_890     |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "<COSTO>" della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
@@ -50,13 +50,13 @@ Feature: costo notifica con workflow analogico per persona giuridica 890
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | REGISTERED_LETTER_890           |
       | feePolicy             | DELIVERY_MODE                   |
-    And destinatario Cucumber Analogic e:
+    And destinatario "Cucumber Analogic" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_890     |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -75,13 +75,13 @@ Feature: costo notifica con workflow analogico per persona giuridica 890
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | REGISTERED_LETTER_890           |
       | feePolicy             | FLAT_RATE                       |
-    And destinatario Cucumber Analogic e:
+    And destinatario "Cucumber Analogic" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_890     |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "<COSTO>" della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica

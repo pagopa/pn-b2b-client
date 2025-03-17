@@ -10,7 +10,7 @@ Feature: Radd Alternative Atto Intero
       | physicalCommunication | REGISTERED_LETTER_890          |
       | feePolicy             | DELIVERY_MODE                  |
       | document              | DOC_3_PG;                      |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL                 |
       | physicalAddress_address      | Via@ok_890           |
       | physicalAddress_municipality | VENEZIA              |
@@ -19,7 +19,7 @@ Feature: Radd Alternative Atto Intero
       | payment_f24                  | PAYMENT_F24_STANDARD |
       | title_payment                | F24_STANDARD_GHERKIN |
       | apply_cost_f24               | SI                   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo di 809 e il peso di 10 nei details del'elemento di timeline letto
 
@@ -31,7 +31,7 @@ Feature: Radd Alternative Atto Intero
       | physicalCommunication | AR_REGISTERED_LETTER           |
       | feePolicy             | DELIVERY_MODE                  |
       | document              | DOC_3_PG;                      |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL                 |
       | physicalAddress_address      | Via@ok_AR            |
       | physicalAddress_municipality | VENEZIA              |
@@ -40,7 +40,7 @@ Feature: Radd Alternative Atto Intero
       | payment_f24                  | PAYMENT_F24_STANDARD |
       | title_payment                | F24_STANDARD_GHERKIN |
       | apply_cost_f24               | SI                   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo di 349 e il peso di 10 nei details del'elemento di timeline letto
 
@@ -51,7 +51,7 @@ Feature: Radd Alternative Atto Intero
       | senderDenomination | Comune di palermo              |
       | feePolicy          | DELIVERY_MODE                  |
       | document           | DOC_3_PG;                      |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile_address      | test@fail.it         |
       | physicalAddress_address      | Via@ok_RS            |
       | physicalAddress_municipality | VENEZIA              |
@@ -60,7 +60,7 @@ Feature: Radd Alternative Atto Intero
       | payment_f24                  | PAYMENT_F24_STANDARD |
       | title_payment                | F24_STANDARD_GHERKIN |
       | apply_cost_f24               | SI                   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo di 211 e il peso di 10 nei details del'elemento di timeline letto
 
@@ -72,7 +72,7 @@ Feature: Radd Alternative Atto Intero
       | physicalCommunication | REGISTERED_LETTER_890 |
       | feePolicy             | DELIVERY_MODE         |
       | document              | DOC_3_PG;             |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL                 |
       | physicalAddress_address      | Via@ok_890           |
       | physicalAddress_municipality | <MUNICIPALITY>       |
@@ -81,7 +81,7 @@ Feature: Radd Alternative Atto Intero
       | payment_f24                  | PAYMENT_F24_STANDARD |
       | title_payment                | F24_STANDARD_GHERKIN |
       | apply_cost_f24               | SI                   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo di <COSTO> e il peso di <PESO> nei details del'elemento di timeline letto
     Examples:
@@ -97,7 +97,7 @@ Feature: Radd Alternative Atto Intero
       | senderDenomination | Comune di palermo                        |
       | feePolicy          | DELIVERY_MODE                            |
       | document           | DOC_3_PG;                                |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile_address      | test@fail.it         |
       | physicalAddress_address      | Via@ok_RS            |
       | physicalAddress_municipality | VENEZIA              |
@@ -106,7 +106,7 @@ Feature: Radd Alternative Atto Intero
       | payment_f24                  | PAYMENT_F24_STANDARD |
       | title_payment                | F24_STANDARD_GHERKIN |
       | apply_cost_f24               | SI                   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo di 211 e il peso di 10 nei details del'elemento di timeline letto
 
@@ -118,7 +118,7 @@ Feature: Radd Alternative Atto Intero
       | physicalCommunication | AR_REGISTERED_LETTER |
       | feePolicy             | DELIVERY_MODE        |
       | document              | DOC_3_PG;            |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL                 |
       | physicalAddress_address      | Via@ok_AR            |
       | physicalAddress_municipality | <MUNICIPALITY>       |
@@ -127,7 +127,7 @@ Feature: Radd Alternative Atto Intero
       | payment_f24                  | PAYMENT_F24_STANDARD |
       | title_payment                | F24_STANDARD_GHERKIN |
       | apply_cost_f24               | SI                   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo di <COSTO> e il peso di <PESO> nei details del'elemento di timeline letto
     Examples:
@@ -144,7 +144,7 @@ Feature: Radd Alternative Atto Intero
       | physicalCommunication | AR_REGISTERED_LETTER                               |
       | feePolicy             | DELIVERY_MODE                                      |
       | document              | DOC_3_PG;                                          |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL                 |
       | physicalAddress_address      | Via@ok_AR            |
       | physicalAddress_municipality | VENEZIA              |
@@ -153,7 +153,7 @@ Feature: Radd Alternative Atto Intero
       | payment_f24                  | PAYMENT_F24_STANDARD |
       | title_payment                | F24_STANDARD_GHERKIN |
       | apply_cost_f24               | SI                   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo di 353 e il peso di 15 nei details del'elemento di timeline letto
 
@@ -165,7 +165,7 @@ Feature: Radd Alternative Atto Intero
       | physicalCommunication | REGISTERED_LETTER_890          |
       | feePolicy             | DELIVERY_MODE                  |
       | document              | DOC_3_PG;                      |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL                 |
       | physicalAddress_address      | Via@ok_890           |
       | physicalAddress_municipality | VENEZIA              |
@@ -174,7 +174,7 @@ Feature: Radd Alternative Atto Intero
       | payment_f24                  | PAYMENT_F24_STANDARD |
       | title_payment                | F24_STANDARD_GHERKIN |
       | apply_cost_f24               | SI                   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo di 809 e il peso di 10 nei details del'elemento di timeline letto
 
@@ -198,7 +198,7 @@ Feature: Radd Alternative Atto Intero
       | payment_f24                  | PAYMENT_F24_STANDARD      |
       | title_payment                | F24_STANDARD_GHERKIN      |
       | apply_cost_f24               | SI                        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_0"
     And viene verificato il costo di 809 e il peso di 10 nei details del'elemento di timeline letto
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_1"
@@ -224,7 +224,7 @@ Feature: Radd Alternative Atto Intero
       | payment_f24                  | PAYMENT_F24_STANDARD      |
       | title_payment                | F24_STANDARD_GHERKIN      |
       | apply_cost_f24               | SI                        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_0"
     And viene verificato il costo di 818 e il peso di 10 nei details del'elemento di timeline letto
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_1"
@@ -250,7 +250,7 @@ Feature: Radd Alternative Atto Intero
       | payment_f24                  | PAYMENT_F24_STANDARD     |
       | title_payment                | F24_STANDARD_GHERKIN     |
       | apply_cost_f24               | SI                       |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_0"
     And viene verificato il costo di 349 e il peso di 10 nei details del'elemento di timeline letto
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_1"
@@ -276,7 +276,7 @@ Feature: Radd Alternative Atto Intero
       | payment_f24                  | PAYMENT_F24_STANDARD     |
       | title_payment                | F24_STANDARD_GHERKIN     |
       | apply_cost_f24               | SI                       |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_0"
     And viene verificato il costo di 351 e il peso di 10 nei details del'elemento di timeline letto
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_1"

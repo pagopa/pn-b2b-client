@@ -62,7 +62,7 @@ Feature: Validazione notifica e2e
     Given viene generata una nuova notifica
       | subject   | invio notifica con cucumber |
       | feePolicy | DELIVERY_MODE               |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | NULL                 |
       | payment_f24          | PAYMENT_F24_STANDARD |
       | apply_cost_f24       | SI                   |
@@ -82,7 +82,7 @@ Feature: Validazione notifica e2e
     Given viene generata una nuova notifica
       | subject   | invio notifica con cucumber |
       | feePolicy | DELIVERY_MODE               |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | NULL                 |
       | payment_f24          | PAYMENT_F24_STANDARD |
       | apply_cost_f24       | SI                   |
@@ -100,7 +100,7 @@ Feature: Validazione notifica e2e
       | subject | invio notifica con cucumber |
     And destinatario
       | taxId | LNALNI80A01H501T |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
     Then si verifica che la notifica non viene accettata causa "TAX_ID"
     And viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
       | loadTimeline           | true                               |
@@ -115,7 +115,7 @@ Feature: Validazione notifica e2e
       | denomination        | Cristoforo Colombo |
       | taxId               | CLMCST42R12D969Z   |
       | physicalAddress_zip | 00000              |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
     Then si verifica che la notifica non viene accettata causa "ADDRESS"
     And viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
       | loadTimeline           | true                                 |
@@ -131,7 +131,7 @@ Feature: Validazione notifica e2e
     And destinatario
       | denomination | Cristoforo Colombo |
       | taxId        | CLMCST42R12D969Z   |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And viene verificato che l'elemento di timeline "REQUEST_ACCEPTED" esista
       | loadTimeline  | true                         |
       | legalFactsIds | [{"category": "SENDER_ACK"}] |
@@ -146,7 +146,7 @@ Feature: Validazione notifica e2e
     And destinatario
       | denomination | Cristoforo Colombo |
       | taxId        | CLMCST42R12D969Z   |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che l'elemento di timeline "AAR_GENERATION" esista
       | loadTimeline            | true     |
       | details                 | NOT_NULL |

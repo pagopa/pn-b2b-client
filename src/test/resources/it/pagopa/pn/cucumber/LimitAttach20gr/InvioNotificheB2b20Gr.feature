@@ -5,9 +5,9 @@ Feature: invio notifiche b2b con analisi documenti allegati
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_pagoPaForm | SI |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
@@ -17,9 +17,9 @@ Feature: invio notifiche b2b con analisi documenti allegati
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | document           | DOC_2_PG;DOC_2_PG;DOC_2_PG  |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
@@ -30,9 +30,9 @@ Feature: invio notifiche b2b con analisi documenti allegati
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | document           | DOC_6_PG                    |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
@@ -43,9 +43,9 @@ Feature: invio notifiche b2b con analisi documenti allegati
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | document           | DOC_3_PG                    |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
@@ -56,9 +56,9 @@ Feature: invio notifiche b2b con analisi documenti allegati
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | document           | DOC_1_PG;DOC_2_PG           |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
@@ -68,9 +68,9 @@ Feature: invio notifiche b2b con analisi documenti allegati
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | document           | DOC_2_PG                    |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_pagoPaForm | SI |
-    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi REFUSED
+    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "REFUSED"
     Then verifica che la notifica inviata tramite api b2b dal "Comune_2" non diventi ACCEPTED
 
 
@@ -80,9 +80,9 @@ Feature: invio notifiche b2b con analisi documenti allegati
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | document           | DOC_8_PG                    |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi REFUSED
+    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "REFUSED"
     Then verifica che la notifica inviata tramite api b2b dal "Comune_2" non diventi ACCEPTED
 
 
@@ -92,9 +92,9 @@ Feature: invio notifiche b2b con analisi documenti allegati
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | document           | DOC_2_PG;DOC_2_PG;DOC_2_PG  |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment | NULL |
-    Then la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi REFUSED
+    Then la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "REFUSED"
     Then verifica che la notifica inviata tramite api b2b dal "Comune_2" non diventi ACCEPTED
 
   @20Grammi
@@ -103,9 +103,9 @@ Feature: invio notifiche b2b con analisi documenti allegati
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | document           | DOC_3_PG;DOC_1_PG           |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment | NULL |
-    Then la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi REFUSED
+    Then la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "REFUSED"
     Then verifica che la notifica inviata tramite api b2b dal "Comune_2" non diventi ACCEPTED
 
 
@@ -115,9 +115,9 @@ Feature: invio notifiche b2b con analisi documenti allegati
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | document           | DOC_2_PG;DOC_2_PG           |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
@@ -127,9 +127,9 @@ Feature: invio notifiche b2b con analisi documenti allegati
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | document           | DOC_4_PG                    |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
@@ -142,14 +142,14 @@ Feature: invio notifiche b2b con analisi documenti allegati
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
       | document           | DOC_8_PG                    |
-    And destinatario Mario Cucumber e:
-      | payment_pagoPaForm   | SI                            |
+    And destinatario "Mario Cucumber" e:
+      | payment_pagoPaForm   | SI                              |
       | payment_f24          | PAYMENT_F24_SIMPLIFIED          |
       | title_payment        | F24_SIMPLIFIED_CLMCST42R12D969Z |
-      | apply_cost_pagopa    | SI                            |
-      | apply_cost_f24       | SI                            |
-      | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi REFUSED
+      | apply_cost_pagopa    | SI                              |
+      | apply_cost_f24       | SI                              |
+      | payment_multy_number | 1                               |
+    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "REFUSED"
     Then verifica che la notifica inviata tramite api b2b dal "Comune_2" non diventi ACCEPTED
 
 
@@ -161,14 +161,14 @@ Feature: invio notifiche b2b con analisi documenti allegati
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
       | document           | DOC_8_PG                    |
-    And destinatario Mario Cucumber e:
-      | payment_pagoPaForm   | NOALLEGATO                    |
+    And destinatario "Mario Cucumber" e:
+      | payment_pagoPaForm   | NOALLEGATO                      |
       | payment_f24          | PAYMENT_F24_SIMPLIFIED          |
       | title_payment        | F24_SIMPLIFIED_CLMCST42R12D969Z |
-      | apply_cost_pagopa    | SI                            |
-      | apply_cost_f24       | SI                            |
-      | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi REFUSED
+      | apply_cost_pagopa    | SI                              |
+      | apply_cost_f24       | SI                              |
+      | payment_multy_number | 1                               |
+    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "REFUSED"
     Then verifica che la notifica inviata tramite api b2b dal "Comune_2" non diventi ACCEPTED
 
 
@@ -180,14 +180,14 @@ Feature: invio notifiche b2b con analisi documenti allegati
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
       | document           | DOC_8_PG                    |
-    And destinatario Mario Cucumber e:
-      | payment_pagoPaForm   | NOALLEGATO                    |
+    And destinatario "Mario Cucumber" e:
+      | payment_pagoPaForm   | NOALLEGATO                      |
       | payment_f24          | PAYMENT_F24_SIMPLIFIED          |
       | title_payment        | F24_SIMPLIFIED_CLMCST42R12D969Z |
-      | apply_cost_pagopa    | SI                            |
-      | apply_cost_f24       | SI                            |
-      | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi REFUSED
+      | apply_cost_pagopa    | SI                              |
+      | apply_cost_f24       | SI                              |
+      | payment_multy_number | 1                               |
+    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "REFUSED"
     Then verifica che la notifica inviata tramite api b2b dal "Comune_2" non diventi ACCEPTED
 
 
@@ -199,14 +199,14 @@ Feature: invio notifiche b2b con analisi documenti allegati
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
       | document           | DOC_4_PG                    |
-    And destinatario Mario Cucumber e:
-      | payment_pagoPaForm   | SI                            |
+    And destinatario "Mario Cucumber" e:
+      | payment_pagoPaForm   | SI                              |
       | payment_f24          | PAYMENT_F24_SIMPLIFIED          |
       | title_payment        | F24_SIMPLIFIED_CLMCST42R12D969Z |
-      | apply_cost_pagopa    | SI                            |
-      | apply_cost_f24       | SI                            |
-      | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi REFUSED
+      | apply_cost_pagopa    | SI                              |
+      | apply_cost_f24       | SI                              |
+      | payment_multy_number | 1                               |
+    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "REFUSED"
     Then verifica che la notifica inviata tramite api b2b dal "Comune_2" non diventi ACCEPTED
 
   @20Grammi
@@ -217,14 +217,14 @@ Feature: invio notifiche b2b con analisi documenti allegati
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
       | document           | DOC_4_PG                    |
-    And destinatario Mario Cucumber e:
-      | payment_pagoPaForm   | NOALLEGATO                    |
-      | payment_f24          | PAYMENT_F24_SIMPLIFIED        |
+    And destinatario "Mario Cucumber" e:
+      | payment_pagoPaForm   | NOALLEGATO                      |
+      | payment_f24          | PAYMENT_F24_SIMPLIFIED          |
       | title_payment        | F24_SIMPLIFIED_CLMCST42R12D969Z |
-      | apply_cost_pagopa    | SI                            |
-      | apply_cost_f24       | SI                            |
-      | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi REFUSED
+      | apply_cost_pagopa    | SI                              |
+      | apply_cost_f24       | SI                              |
+      | payment_multy_number | 1                               |
+    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "REFUSED"
     Then verifica che la notifica inviata tramite api b2b dal "Comune_2" non diventi ACCEPTED
 
 #---------------------------PN-9589--------------------------------
@@ -235,11 +235,11 @@ Feature: invio notifiche b2b con analisi documenti allegati
       | senderDenomination | Comune di milano            |
       | document           | DOC_3_PG                    |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_pagoPaForm   | NOALLEGATO |
       | apply_cost_pagopa    | SI         |
       | payment_multy_number | 1          |
-    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
   @20Grammi
@@ -249,11 +249,11 @@ Feature: invio notifiche b2b con analisi documenti allegati
       | senderDenomination | Comune di milano            |
       | document           | DOC_4_PG                    |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_pagoPaForm   | NOALLEGATO |
       | apply_cost_pagopa    | SI         |
       | payment_multy_number | 1          |
-    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
 
@@ -264,11 +264,11 @@ Feature: invio notifiche b2b con analisi documenti allegati
       | senderDenomination | Comune di milano            |
       | document           | DOC_2_PG;DOC_2_PG           |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_pagoPaForm   | NOALLEGATO |
       | apply_cost_pagopa    | SI         |
       | payment_multy_number | 1          |
-    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
   @20Grammi
@@ -278,11 +278,11 @@ Feature: invio notifiche b2b con analisi documenti allegati
       | senderDenomination | Comune di milano            |
       | document           | DOC_5_PG                    |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_pagoPaForm   | NOALLEGATO |
       | apply_cost_pagopa    | SI         |
       | payment_multy_number | 1          |
-    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi REFUSED
+    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "REFUSED"
     Then verifica che la notifica inviata tramite api b2b dal "Comune_2" non diventi ACCEPTED
 
   @20Grammi
@@ -292,11 +292,11 @@ Feature: invio notifiche b2b con analisi documenti allegati
       | senderDenomination | Comune di milano            |
       | document           | DOC_2_PG;DOC_3_PG           |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_pagoPaForm   | NOALLEGATO |
       | apply_cost_pagopa    | SI         |
       | payment_multy_number | 1          |
-    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi REFUSED
+    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "REFUSED"
     Then verifica che la notifica inviata tramite api b2b dal "Comune_2" non diventi ACCEPTED
 
 
@@ -308,14 +308,14 @@ Feature: invio notifiche b2b con analisi documenti allegati
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
       | document           | DOC_2_PG                    |
-    And destinatario Mario Cucumber e:
-      | payment_pagoPaForm   | NOALLEGATO                    |
-      | payment_f24          | PAYMENT_F24_SIMPLIFIED        |
+    And destinatario "Mario Cucumber" e:
+      | payment_pagoPaForm   | NOALLEGATO                      |
+      | payment_f24          | PAYMENT_F24_SIMPLIFIED          |
       | title_payment        | F24_SIMPLIFIED_CLMCST42R12D969Z |
-      | apply_cost_pagopa    | SI                            |
-      | apply_cost_f24       | SI                            |
-      | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi REFUSED
+      | apply_cost_pagopa    | SI                              |
+      | apply_cost_f24       | SI                              |
+      | payment_multy_number | 1                               |
+    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "REFUSED"
     Then verifica che la notifica inviata tramite api b2b dal "Comune_2" non diventi ACCEPTED
 
   @20Grammi
@@ -325,11 +325,11 @@ Feature: invio notifiche b2b con analisi documenti allegati
       | senderDenomination | Comune di milano            |
       | document           | DOC_3_PG;DOC_1_PG           |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_pagoPaForm   | NOALLEGATO |
       | apply_cost_pagopa    | SI         |
       | payment_multy_number | 1          |
-    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi REFUSED
+    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "REFUSED"
     Then verifica che la notifica inviata tramite api b2b dal "Comune_2" non diventi ACCEPTED
 
 

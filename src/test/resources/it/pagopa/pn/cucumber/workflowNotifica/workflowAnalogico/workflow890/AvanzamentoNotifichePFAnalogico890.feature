@@ -1,8 +1,7 @@
 Feature: avanzamento notifiche b2b con workflow cartaceo 890
 
-  #TODO MATTEO SCOMMENTARE
-#  Background:
-#    Given viene rimossa se presente la pec di piattaforma di "Mario Gherkin"
+  Background:
+    Given viene rimossa se presente la pec di piattaforma di "Mario Gherkin"
 
 
   @workflowAnalogico
@@ -10,10 +9,10 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
 
@@ -22,10 +21,10 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL         |
       | physicalAddress_address | Via@fail_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con responseStatus "OK"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                    | NOT_NULL |
@@ -40,24 +39,23 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL                   |
       | physicalAddress_address | Via@fail-Discovery_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @workflowAnalogico
-    #TODO MATTEO, identico al metodo sopra, ma con i metodi nuovi (PER TESTARE VERSIONE SHARED STEPS REFATTORIZZATA)
-  Scenario: [B2B_TIMELINE_ANALOG_890_3MATTEO] Attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_FAIL-Discovery_890_scenario positivo
-    Given MATTEOviene generata una nuova notifica
+    #TODO MATTEO, scommentare le righe commentate (TEST PER VERSIONE SHARED STEPS REFATTORIZZATA)
+  Scenario: [B2B_TIMELINE_ANALOG_890_3test] Attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_FAIL-Discovery_890_scenario positivo
+    Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And MATTEOdestinatario "Mario Gherkin"
-#    And MATTEOdestinatario "Mario Gherkin" e:
-#      | digitalDomicile         | NULL                   |
-#      | physicalAddress_address | Via@fail-Discovery_890 |
-#    When MATTEOla notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-#    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And destinatario "Mario Gherkin" e:
+      | digitalDomicile         | NULL                   |
+      | physicalAddress_address | Via@fail-Discovery_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @workflowAnalogico
   Scenario: [B2B-TIMELINE_HOTFIX-BUG-PEC_3] ordinamento non rispettato nella costruzione della richiesta di postalizzazione
@@ -65,12 +63,12 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | document           | DOC_1_PG; DOC_2_PG          |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL                 |
       | physicalAddress_address | Via@ok_890           |
       | payment_f24             | PAYMENT_F24_FLAT     |
       | title_payment           | F24_STANDARD_GHERKIN |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And si verifica il contenuto degli attachments da inviare in via cartacea al destinatario 0 con 5 allegati
     And si verifica che il 1 documento arrivato sia di tipo "AAR"
@@ -84,28 +82,28 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL                 |
       | physicalAddress_address | Via@ok_890           |
       | payment_pagoPaForm      | SI                   |
       | payment_f24             | PAYMENT_F24_FLAT     |
       | title_payment           | F24_STANDARD_GHERKIN |
       | payment_multy_number    | 20                   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     Then si verifica il contenuto degli attachments da inviare in via cartacea al destinatario 0 con 42 allegati
     And si verifica che il contenuto degli attachments da inviare in via cartacea abbia 20 attachment di tipo "F24"
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL                 |
       | physicalAddress_address | Via@ok_AR            |
       | payment_pagoPaForm      | SI                   |
       | payment_f24             | PAYMENT_F24_FLAT     |
       | title_payment           | F24_STANDARD_GHERKIN |
       | payment_multy_number    | 20                   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     Then si verifica il contenuto degli attachments da inviare in via cartacea al destinatario 0 con 42 allegati
     And si verifica che il contenuto degli attachments da inviare in via cartacea abbia 20 attachment di tipo "F24"
@@ -120,7 +118,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
       | taxId                   | DVNLRD52D15M059P |
       | digitalDomicile         | NULL             |
       | physicalAddress_address | Via@ok_890       |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
 
@@ -129,10 +127,10 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | digitalDomicile         | NULL         |
       | physicalAddress_address | Via@fail_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
     And viene verificato il campo sendRequestId dell' evento di timeline "SEND_ANALOG_FEEDBACK"
 
@@ -142,10 +140,10 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Cucumber Analogic e:
+    And destinatario "Cucumber Analogic" e:
       | digitalDomicile         | NULL         |
       | physicalAddress_address | Via@fail_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato che nell'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" siano configurati i campi municipalityDetails e foreignState
 
@@ -154,10 +152,10 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il campo serviceLevel dell' evento di timeline "SEND_ANALOG_DOMICILE" sia valorizzato con "REGISTERED_LETTER_890"
 
@@ -167,10 +165,10 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And viene verificato il campo serviceLevel dell' evento di timeline "PREPARE_ANALOG_DOMICILE" sia valorizzato con "REGISTERED_LETTER_890"
 
@@ -180,10 +178,10 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
     And viene verificato il campo serviceLevel dell' evento di timeline "SEND_ANALOG_FEEDBACK" sia valorizzato con "REGISTERED_LETTER_890"
 
@@ -198,7 +196,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
       | taxId                   | DVNLRD52D15M059P          |
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | Via@FAIL-Irreperibile_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
 
   @workflowAnalogico
@@ -211,7 +209,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
       | taxId                   | DVNLRD52D15M059P                             |
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries@FAIL-Irreperibile_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
 
 
@@ -220,11 +218,11 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | denomination            | OK-CausaForzaMaggiore_890     |
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | via@OK-CausaForzaMaggiore_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG001C"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                    | NOT_NULL |
@@ -256,11 +254,11 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | denomination            | OK-NonRendicontabile_890     |
       | digitalDomicile         | NULL                         |
       | physicalAddress_address | via@OK-NonRendicontabile_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG001C"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                    | NOT_NULL |
@@ -292,10 +290,10 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL                               |
       | physicalAddress_address | Via@FAIL-DiscoveryIrreperibile_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                    | NOT_NULL |
@@ -360,10 +358,10 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL           |
       | physicalAddress_address | via@OK-WO-011B |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
@@ -373,10 +371,10 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL              |
       | physicalAddress_address | Via@OK-REC008_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                    | NOT_NULL |
@@ -408,10 +406,10 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | REGISTERED_LETTER_890           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL                                     |
       | physicalAddress_address | Via@FAIL-DiscoveryIrreperibileBadCAP_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG001C" tentativo "ATTEMPT_1"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                    | NOT_NULL |

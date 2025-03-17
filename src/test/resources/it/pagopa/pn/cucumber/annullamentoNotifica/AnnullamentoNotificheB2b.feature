@@ -7,7 +7,7 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Cucumber
+    And destinatario "Mario Cucumber"
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
     When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
@@ -17,8 +17,8 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Cucumber
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Cucumber"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino allo stato della notifica "DELIVERING"
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
@@ -29,8 +29,8 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Gherkin"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
@@ -41,8 +41,8 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Cucumber
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Cucumber"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
@@ -60,7 +60,7 @@ Feature: annullamento notifiche b2b
       | taxId                   | DVNLRD52D15M059P         |
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE" e successivamente annullata
     When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
@@ -70,9 +70,9 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile_address | CLMCST42R12D969Z@pec.pagopa.it |
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
     And "Mario Gherkin" legge la notifica ricevuta
     And vengono letti gli eventi fino allo stato della notifica "VIEWED"
@@ -85,8 +85,8 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Gherkin"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino allo stato della notifica "IN_VALIDATION"
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
@@ -98,9 +98,9 @@ Feature: annullamento notifiche b2b
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_creditorTaxId | 77777777777 |
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And viene verificato il costo = "100" della notifica
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
@@ -112,11 +112,11 @@ Feature: annullamento notifiche b2b
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm | SI                   |
       | payment_f24        | PAYMENT_F24_STANDARD |
       | apply_cost_f24     | SI                   |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And l'avviso pagopa viene pagato correttamente
     And si attende il corretto pagamento della notifica
     When la notifica può essere annullata dal sistema tramite codice IUN
@@ -128,9 +128,9 @@ Feature: annullamento notifiche b2b
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_creditorTaxId | 77777777777 |
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
@@ -143,9 +143,9 @@ Feature: annullamento notifiche b2b
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_creditorTaxId | 77777777777 |
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
 
@@ -155,8 +155,8 @@ Feature: annullamento notifiche b2b
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
       | document           | SI                          |
-    And destinatario Mario Cucumber
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Cucumber"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
@@ -169,8 +169,8 @@ Feature: annullamento notifiche b2b
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario Mario Gherkin
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Gherkin"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And viene verificato il costo = "100" della notifica
     And la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
@@ -183,8 +183,8 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario Mario Cucumber
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Cucumber"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION" e successivamente annullata
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When vengono letti gli eventi fino allo stato della notifica "CANCELLED"
@@ -196,8 +196,8 @@ Feature: annullamento notifiche b2b
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
       | document           | SI                          |
-    And destinatario Mario Cucumber
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Cucumber"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION" e successivamente annullata
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
@@ -210,8 +210,8 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Gherkin"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And "Mario Gherkin" legge la notifica ricevuta
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED" e successivamente annullata
     When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
@@ -223,8 +223,8 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Gherkin"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_PROGRESS" e successivamente annullata
     When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
@@ -235,8 +235,8 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Gherkin"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" e successivamente annullata
     When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
@@ -247,10 +247,10 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok_RS    |
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW" e successivamente annullata
     When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
@@ -261,10 +261,10 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" e successivamente annullata
     When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
@@ -282,7 +282,7 @@ Feature: annullamento notifiche b2b
       | taxId                   | DVNLRD52D15M059P         |
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE" e successivamente annullata
     When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
@@ -293,8 +293,8 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Gherkin"
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     When la notifica può essere annullata dal sistema tramite codice IUN
     And  vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
@@ -308,8 +308,8 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Gherkin"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED" e successivamente annullata
     When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
@@ -320,8 +320,8 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Gherkin"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
 
@@ -330,7 +330,7 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
+    And destinatario "Mario Gherkin"
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
@@ -348,7 +348,7 @@ Feature: annullamento notifiche b2b
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
       | document           | SI                          |
-    And destinatario Mario Cucumber
+    And destinatario "Mario Cucumber"
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When il documento notificato non può essere correttamente recuperato da "Mario Cucumber"
@@ -360,7 +360,7 @@ Feature: annullamento notifiche b2b
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
       | document           | SI                          |
-    And destinatario Mario Cucumber
+    And destinatario "Mario Cucumber"
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
     When il documento notificato non può essere correttamente recuperato da "Mario Cucumber"
@@ -372,7 +372,7 @@ Feature: annullamento notifiche b2b
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
       | document           | SI                          |
-    And destinatario Mario Cucumber
+    And destinatario "Mario Cucumber"
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     When il documento notificato non può essere correttamente recuperato da "Mario Cucumber"
@@ -383,7 +383,7 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_pagoPaForm | SI               |
       | payment_f24        | PAYMENT_F24_FLAT |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
@@ -396,7 +396,7 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_pagoPaForm | SI               |
       | payment_f24        | PAYMENT_F24_FLAT |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
@@ -409,7 +409,7 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_pagoPaForm | SI               |
       | payment_f24        | PAYMENT_F24_FLAT |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
@@ -422,8 +422,8 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario Mario Cucumber
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Cucumber"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION" e successivamente annullata
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When download attestazione opponibile AAR da parte "Mario Cucumber"
@@ -434,8 +434,8 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario Mario Cucumber
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Cucumber"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION" e successivamente annullata
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
     When download attestazione opponibile AAR da parte "Mario Cucumber"
@@ -446,8 +446,8 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario Mario Cucumber
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Cucumber"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION" e successivamente annullata
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     When download attestazione opponibile AAR da parte "Mario Cucumber"
@@ -458,8 +458,8 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Gherkin"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED" e successivamente annullata
     When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     Then "Mario Gherkin" richiede il download dell'attestazione opponibile "SENDER_ACK" con errore "404"
@@ -469,8 +469,8 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Gherkin"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED" e successivamente annullata
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
     When vengono letti gli eventi fino allo stato della notifica "CANCELLED"
@@ -481,8 +481,8 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Gherkin"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED" e successivamente annullata
     When vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     Then "Mario Cucumber" richiede il download dell'attestazione opponibile "SENDER_ACK" con errore "404"
@@ -492,8 +492,8 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Gherkin"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED" e successivamente annullata
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When vengono letti gli eventi fino allo stato della notifica "CANCELLED"
@@ -505,8 +505,8 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Gherkin"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" e successivamente annullata
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When vengono letti gli eventi fino allo stato della notifica "CANCELLED"
@@ -517,8 +517,8 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Gherkin"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" e successivamente annullata
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When vengono letti gli eventi fino allo stato della notifica "CANCELLED"
@@ -529,10 +529,10 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok_RS    |
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW" e successivamente annullata
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When vengono letti gli eventi fino allo stato della notifica "CANCELLED"
@@ -548,7 +548,7 @@ Feature: annullamento notifiche b2b
       | taxId                   | MNTMRA03M71C615V |
       | digitalDomicile         | NULL             |
       | physicalAddress_address | Via@fail_AR      |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" e successivamente annullata
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
@@ -563,7 +563,7 @@ Feature: annullamento notifiche b2b
       | taxId                   | MNTMRA03M71C615V         |
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     And la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
@@ -574,8 +574,8 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Gherkin"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED" e successivamente annullata
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When vengono letti gli eventi fino allo stato della notifica "CANCELLED"
@@ -589,9 +589,9 @@ Feature: annullamento notifiche b2b
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_creditorTaxId | 77777777777 |
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
 
@@ -601,9 +601,9 @@ Feature: annullamento notifiche b2b
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_creditorTaxId | 77777777777 |
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
 
@@ -613,9 +613,9 @@ Feature: annullamento notifiche b2b
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_creditorTaxId | 77777777777 |
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
 
@@ -624,7 +624,7 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
+    And destinatario "Mario Gherkin"
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
     When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
@@ -635,9 +635,9 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_creditorTaxId | 77777777777 |
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     When la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     #When la notifica con pagamento può essere annullata dal sistema tramite codice IUV
@@ -650,14 +650,14 @@ Feature: annullamento notifiche b2b
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario Gherkin spa e:
+    And destinatario "GherkinSpa" e:
       | payment_creditorTaxId | 77777777777 |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     #And si verifica la coretta cancellazione da tabella pn-NotificationsCost
     When viene generata una nuova notifica con uguale codice fiscale del creditore e uguale codice avviso
-    Then la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
 
 
   @Annullamento @ignore #Conflitto 409 Conflict
@@ -666,11 +666,11 @@ Feature: annullamento notifiche b2b
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario Gherkin spa e:
+    And destinatario "GherkinSpa" e:
       | payment_creditorTaxId | 77777777777 |
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     When viene generata una nuova notifica con uguale codice fiscale del creditore e uguale codice avviso
-    Then la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
 
 
                     #Da Verificare...............Solo Manuale
@@ -689,7 +689,7 @@ Feature: annullamento notifiche b2b
       | denomination    | Louis Armstrong  |
       | taxId           | RMSLSO31M04Z404R |
       | digitalDomicile | NULL             |
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And si verifica la corretta acquisizione della notifica
     And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
       | loadTimeline           | true                                        |
@@ -732,7 +732,7 @@ Feature: annullamento notifiche b2b
       | denomination    | Galileo Galilei  |
       | taxId           | GLLGLL64B15G702I |
       | digitalDomicile | NULL             |
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
       | loadTimeline           | true                                                |
       | details                | NOT_NULL                                            |
@@ -766,8 +766,8 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Gherkin"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_PROGRESS" e successivamente annullata
     When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
@@ -778,7 +778,7 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
+    And destinatario "Mario Gherkin"
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
     When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     #Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
@@ -795,10 +795,10 @@ Feature: annullamento notifiche b2b
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm | SI   |
       | payment_f24        | NULL |
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And l'avviso pagopa viene pagato correttamente
     When la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
@@ -817,7 +817,7 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Cucumber
+    And destinatario "Mario Cucumber"
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When vengono letti gli eventi fino allo stato della notifica "CANCELLED"
@@ -828,13 +828,13 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di palermo           |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_pagoPaForm | SI               |
       | payment_f24        | PAYMENT_F24_FLAT |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm | SI               |
       | payment_f24        | PAYMENT_F24_FLAT |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When "Mario Cucumber" tenta il recupero dell'allegato "PAGOPA"
@@ -848,11 +848,11 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
+    And destinatario "Mario Gherkin"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_1" con versione "V10" e filtro di timeline "NOTIFICATION_CANCELLATION_REQUEST"
     #And si crea il nuovo stream per il "Comune_1" con versione "V10"
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "NOTIFICATION_CANCELLATION_REQUEST"
 
@@ -862,11 +862,11 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
+    And destinatario "Mario Gherkin"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_1" con versione "V10" e filtro di timeline "NOTIFICATION_CANCELLED"
    # And si crea il nuovo stream per il "Comune_1" con versione "V10"
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "NOTIFICATION_CANCELLED"
 
@@ -876,10 +876,10 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
+    And destinatario "Mario Gherkin"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V10"
     And si crea il nuovo stream per il "Comune_1" con versione "V10" e filtro status "CANCELLED"
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi dello stream del "Comune_1" fino allo stato "CANCELLED" con la versione "V10"
 
@@ -889,20 +889,20 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
-    And destinatario Mario Gherkin
+    And destinatario "Mario Gherkin"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10" e filtro di timeline "NOTIFICATION_CANCELLED"
     #And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "NOTIFICATION_CANCELLED"
     And viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati "V10"
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
-    And destinatario Cucumber Analogic e:
+    And destinatario "Cucumber Analogic" e:
       | digitalDomicile_address | test@fail.it |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "DIGITAL_FAILURE_WORKFLOW"
     Then viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati "V10"
 
@@ -912,27 +912,27 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
-    And destinatario Mario Gherkin
+    And destinatario "Mario Gherkin"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_2" con versione "V10" e filtro di timeline "NOTIFICATION_CANCELLED"
     #And si crea il nuovo stream per il "Comune_2" con versione "V10"
-    And la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "NOTIFICATION_CANCELLED"
     And viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati "V10"
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
-    And destinatario Cucumber Analogic e:
+    And destinatario "Cucumber Analogic" e:
       | digitalDomicile_address | test@fail.it |
-    And la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "DIGITAL_FAILURE_WORKFLOW"
     And viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati "V10"
     And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
-    And destinatario Mario Gherkin
-    And la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Gherkin"
+    And la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "SEND_DIGITAL_DOMICILE"
     Then viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati "V10"
 
@@ -942,19 +942,19 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
-    And destinatario Mario Gherkin
+    And destinatario "Mario Gherkin"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10" e filtro di timeline "NOTIFICATION_CANCELLED"
     #And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SEND_DIGITAL_DOMICILE"
     And viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati "V10"
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
-    And destinatario Cucumber Analogic e:
+    And destinatario "Cucumber Analogic" e:
       | digitalDomicile_address | test@fail.it |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "DIGITAL_FAILURE_WORKFLOW"
     Then viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati "V10"
 
@@ -963,7 +963,7 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile_address | test@fail.it |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
     When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
@@ -976,7 +976,7 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok_RS    |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
@@ -991,7 +991,7 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok_RS    |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
@@ -1009,7 +1009,7 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile_address | test@OK-PEC-SLOW.it |
       | payment_f24             | PAYMENT_F24_FLAT    |
       | title_payment           | F24_FLAT_GHERKIN    |
@@ -1023,7 +1023,7 @@ Feature: annullamento notifiche b2b
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
@@ -1035,7 +1035,7 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
@@ -1047,13 +1047,13 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Cucumber
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Cucumber"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     When la notifica non può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     Then l'operazione di annullamento ha prodotto un errore con status code "404"
 
   @Annullamento @precondition
-  Scenario: [B2B-PA-ANNULLAMENTO_39] Generazione con gruppo e invio notifica con gruppo e cancellazione notifica con gruppo diverso ApiKey_scenario netagivo
+  Scenario: [B2B-PA-ANNULLAMENTO_39] Generazione con gruppo e invio notifica con gruppo e cancellazione notifica con gruppo diverso ApiKey_scenario negativo
     Given Viene creata una nuova apiKey per il comune "Comune_1" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene generata una nuova notifica
@@ -1061,8 +1061,8 @@ Feature: annullamento notifiche b2b
       | senderDenomination | Comune di milano            |
     And viene settato il gruppo della notifica con quello dell'apikey
     And viene settato il taxId della notifica con quello dell'apikey
-    And destinatario Mario Cucumber
-    And la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Cucumber"
+    And la notifica viene inviata tramite api b2b e si attende che lo stato diventi "ACCEPTED"
     And si verifica la corretta acquisizione della notifica
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
@@ -1078,8 +1078,8 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
+    And destinatario "Mario Gherkin"
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED" e successivamente annullata
     And il documento notificato può essere recuperata tramite AppIO da "Mario Gherkin"
     Then il tentativo di recupero con appIO ha prodotto un errore con status code "404"
 
@@ -1091,7 +1091,7 @@ Feature: annullamento notifiche b2b
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                        |
       | apply_cost_pagopa    | NULL                        |
@@ -1101,7 +1101,7 @@ Feature: annullamento notifiche b2b
       | title_payment        | F24_STANDARD_SEMPLIFICATO   |
       | apply_cost_f24       | SI                          |
       | payment_multy_number | 1                           |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" si annulla prima che lo stato diventi REFUSED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si annulla prima che lo stato diventi REFUSED
     When si tenta il recupero della notifica dal sistema
     Then l'operazione ha prodotto un errore con status code "404"
 
@@ -1114,7 +1114,7 @@ Feature: annullamento notifiche b2b
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                        |
       | apply_cost_pagopa    | NULL                        |
@@ -1124,7 +1124,7 @@ Feature: annullamento notifiche b2b
       | title_payment        | F24_STANDARD_SEMPLIFICATO   |
       | apply_cost_f24       | SI                          |
       | payment_multy_number | 1                           |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
     And la notifica non può essere annullata dal sistema tramite codice IUN
     When si tenta il recupero della notifica dal sistema
     Then l'operazione ha prodotto un errore con status code "404"

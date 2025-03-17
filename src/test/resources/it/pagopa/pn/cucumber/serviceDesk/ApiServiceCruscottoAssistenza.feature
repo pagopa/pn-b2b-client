@@ -54,8 +54,8 @@ Feature: Api Service Cruscotto Assitenza
     Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then Il servizio risponde correttamente
     Examples:
-      | TAXIID        | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | Mario Cucumber | PF             | 1                | NULL                 |  2024-01-01 | 2024-08-30 |
+      | TAXIID         | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
+      | Mario Cucumber | PF             | 1                | NULL                 | 2024-01-01 | 2024-08-30 |
 
    #CE02.3 Come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche
 
@@ -397,9 +397,9 @@ Feature: Api Service Cruscotto Assitenza
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo          |
-    And destinatario Mario Gherkin
-    And destinatario Mario Cucumber
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Gherkin"
+    And destinatario "Mario Cucumber"
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
     Then invocazione servizio per recupero dettaglio timeline notifica multidestinatario con taxId "Mario Gherkin" e iun "VUOTO" per il  destinatario 0
     And il servizio risponde con errore "405"
@@ -410,9 +410,9 @@ Feature: Api Service Cruscotto Assitenza
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo          |
-    And destinatario Mario Gherkin
-    And destinatario Mario Cucumber
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Gherkin"
+    And destinatario "Mario Cucumber"
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
     Then invocazione servizio per recupero dettaglio timeline notifica multidestinatario con taxId "Mario Gherkin" e iun "NULL" per il  destinatario 0
     And il servizio risponde con errore "400"
@@ -423,9 +423,9 @@ Feature: Api Service Cruscotto Assitenza
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo          |
-    And destinatario Mario Gherkin
-    And destinatario Mario Cucumber
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Gherkin"
+    And destinatario "Mario Cucumber"
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
     Then invocazione servizio per recupero dettaglio timeline notifica multidestinatario con taxId "Mario Gherkin" e iun "JRDT-XAPH-JQYW-202312-J-1" per il  destinatario 0
     And il servizio risponde con errore "404"
@@ -436,9 +436,9 @@ Feature: Api Service Cruscotto Assitenza
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo          |
-    And destinatario Mario Gherkin
-    And destinatario Mario Cucumber
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Gherkin"
+    And destinatario "Mario Cucumber"
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
     Then invocazione servizio per recupero dettaglio timeline notifica multidestinatario con taxId "VUOTO" e iun "JRDT-XAPH-JQYW-202312-J-1" per il  destinatario 0
     And il servizio risponde con errore "400"
@@ -449,9 +449,9 @@ Feature: Api Service Cruscotto Assitenza
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo          |
-    And destinatario Mario Gherkin
-    And destinatario Mario Cucumber
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Gherkin"
+    And destinatario "Mario Cucumber"
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
     Then invocazione servizio per recupero dettaglio timeline notifica multidestinatario con taxId "ERRATO" e iun "JRDT-XAPH-JQYW-202312-J-1" per il  destinatario 0
     And il servizio risponde con errore "400"
@@ -462,9 +462,9 @@ Feature: Api Service Cruscotto Assitenza
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo          |
-    And destinatario Mario Gherkin
-    And destinatario Mario Cucumber
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Gherkin"
+    And destinatario "Mario Cucumber"
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
     Then invocazione servizio per recupero dettaglio timeline notifica multidestinatario con taxId "ADA" e iun "NO_SET" per il  destinatario 0
     And il servizio risponde con errore "404"
@@ -475,9 +475,9 @@ Feature: Api Service Cruscotto Assitenza
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo          |
-    And destinatario Mario Gherkin
-    And destinatario Mario Cucumber
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Gherkin"
+    And destinatario "Mario Cucumber"
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
     Then invocazione servizio per recupero dettaglio timeline notifica multidestinatario con taxId "Mario Gherkin" e iun "NO_SET" per il  destinatario 0
     And invocazione servizio per recupero dettaglio timeline notifica multidestinatario con taxId "Mario Cucumber" e iun "NO_SET" per il  destinatario 1
@@ -488,8 +488,8 @@ Feature: Api Service Cruscotto Assitenza
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo          |
-    And destinatario Mario Gherkin
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Gherkin"
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
     Then verifica IsMultiRecipients nel dettaglio notifica
 
@@ -532,8 +532,8 @@ Feature: Api Service Cruscotto Assitenza
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Gherkin"
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And si verifica la corretta acquisizione della notifica
     And come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "<IUN>" e taxId "<TAXIID>"  recipientType  "<RECIPIENT_TYPE>"
     Then Il servizio risponde correttamente con presenza di allegati "true"
@@ -549,7 +549,7 @@ Feature: Api Service Cruscotto Assitenza
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Cucumber
+    And destinatario "Mario Cucumber"
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
     When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "<IUN>" e taxId "<TAXIID>"  recipientType  "<RECIPIENT_TYPE>"
@@ -565,8 +565,8 @@ Feature: Api Service Cruscotto Assitenza
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario CucumberSpa
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "CucumberSpa"
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And si verifica la corretta acquisizione della notifica
     And come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "<IUN>" e taxId "<TAXIID>"  recipientType  "<RECIPIENT_TYPE>"
     Then Il servizio risponde correttamente con presenza di allegati "true"
@@ -592,8 +592,8 @@ Feature: Api Service Cruscotto Assitenza
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario CucumberSpa
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "CucumberSpa"
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And si verifica la corretta acquisizione della notifica
     And come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "<IUN>" e taxId "<TAXIID>"  recipientType  "<RECIPIENT_TYPE>"
     Then il servizio risponde con errore "404"
@@ -608,8 +608,8 @@ Feature: Api Service Cruscotto Assitenza
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Cucumber
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Cucumber"
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And si verifica la corretta acquisizione della notifica
     And come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "<IUN>" e taxId "<TAXIID>"  recipientType  "<RECIPIENT_TYPE>"
     Then il servizio risponde con errore "404"
@@ -624,8 +624,8 @@ Feature: Api Service Cruscotto Assitenza
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Cucumber
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Cucumber"
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And si verifica la corretta acquisizione della notifica
     And come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "<IUN>" e taxId "<TAXIID>"  recipientType  "<RECIPIENT_TYPE>"
     Then il servizio risponde con errore "404"
@@ -857,10 +857,10 @@ Feature: Api Service Cruscotto Assitenza
   @ServiceDeskRefinement @cruscottoAssistenza
   Scenario: [SERVICE_DESK_TIMELINE_REFINEMENT_1] verifica presenza elemento REFINEMENT nella response di service desk
     Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
-    And destinatario Mario Cucumber
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario "Mario Cucumber"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And viene chiamato service desk e si controlla la presenza dell'elemento "REFINEMENT" nella response
 
@@ -930,13 +930,13 @@ Feature: Api Service Cruscotto Assitenza
     When come operatore devo accedere ai dettagli dei pagamenti di una notifica con uno iun "<IUN>" associata all' utente "<USER>" con uid "<UID>"
     Then il servizio risponde con errore "<ERROR>"
     Examples:
-    | USER            |  IUN                        | UID      | ERROR |
-    | Mario Gherkin   | VUOTO                       | corretto | 400   |
-    | Mario Gherkin   | INESISTENTE                 | corretto | 404   |
-    |                 | NOTIFICA SENZA PAGAMENTI    | corretto | 400   |
-    | ERRATO          | NOTIFICA SENZA PAGAMENTI    | corretto | 400   |
-    | Mario Cucumber  | NOTIFICA SENZA PAGAMENTI    | corretto | 400   |
-    | Mario Gherkin   | NOTIFICA SENZA PAGAMENTI    | vuoto    | 400   |
+      | USER           | IUN                      | UID      | ERROR |
+      | Mario Gherkin  | VUOTO                    | corretto | 400   |
+      | Mario Gherkin  | INESISTENTE              | corretto | 404   |
+      |                | NOTIFICA SENZA PAGAMENTI | corretto | 400   |
+      | ERRATO         | NOTIFICA SENZA PAGAMENTI | corretto | 400   |
+      | Mario Cucumber | NOTIFICA SENZA PAGAMENTI | corretto | 400   |
+      | Mario Gherkin  | NOTIFICA SENZA PAGAMENTI | vuoto    | 400   |
 
   @evolutiveCruscottoAssistenza
   Scenario Outline: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_8] Recupero del dettaglio della notifica con i pagamenti associati con l’utilizzo di uno IUN associato ad una notifica di pagamento pagoPA - f24 - notifica semplice
@@ -944,7 +944,7 @@ Feature: Api Service Cruscotto Assitenza
     When come operatore devo accedere ai dettagli dei pagamenti di una notifica con uno iun "<IUN>" associata all' utente "<USER>" con uid "corretto"
     Then controllo che la risposta del servizio contenta una lista "<LIST_TYPE>"
     Examples:
-    | USER          | IUN                           | LIST_TYPE  |
-    | Mario Gherkin | ASSOCIATO A PAGAMENTO PAGOPA  | COMPILATA  |
-    | Mario Gherkin | NOTIFICA SENZA PAGAMENTI      | VUOTA      |
-    | Mario Gherkin | ASSOCIATO A PAGAMENTO F24     | VUOTA      |
+      | USER          | IUN                          | LIST_TYPE |
+      | Mario Gherkin | ASSOCIATO A PAGAMENTO PAGOPA | COMPILATA |
+      | Mario Gherkin | NOTIFICA SENZA PAGAMENTI     | VUOTA     |
+      | Mario Gherkin | ASSOCIATO A PAGAMENTO F24    | VUOTA     |

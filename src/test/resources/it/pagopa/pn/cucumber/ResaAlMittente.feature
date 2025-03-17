@@ -6,10 +6,10 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | REGISTERED_LETTER_890       |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
       | digitalDomicile         | NULL               |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
     And esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost uguale a "NotNull" per l'utente 0
     Then viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
@@ -21,10 +21,10 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
       | digitalDomicile         | NULL              |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then "Mario Cucumber" legge la notifica
     And vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
     And esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost uguale a "null" per l'utente 0
@@ -39,10 +39,10 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_SLOW_AR |
       | digitalDomicile         | NULL                   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" per l'utente 0
     And la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
@@ -58,10 +58,10 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | REGISTERED_LETTER_890       |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
       | digitalDomicile         | NULL               |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" per l'utente 0
     And "Mario Cucumber" legge la notifica
     Then vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
@@ -77,10 +77,10 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_SLOW_AR |
       | digitalDomicile         | NULL                   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And esiste l'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" per l'utente 0
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
@@ -92,7 +92,7 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
       | digitalDomicile         | NULL              |
     And destinatario
@@ -100,10 +100,10 @@ Feature: Resa al mittente di una notifica
       | taxId                   | NNTNRZ80A01H501D         |
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
-    And destinatario Cucumber Analogic e:
+    And destinatario "Cucumber Analogic" e:
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V26"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V26"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "DELIVERED" con la versione "V26"
@@ -116,7 +116,7 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
       | digitalDomicile         | NULL              |
     And destinatario
@@ -124,7 +124,7 @@ Feature: Resa al mittente di una notifica
       | taxId                   | NNTNRZ80A01H501D         |
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V26"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V26"
     And  si invoca l'api Webhook versione "V26" per ottenere gli elementi di timeline di tale notifica
@@ -136,7 +136,7 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | REGISTERED_LETTER_890       |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
       | digitalDomicile         | NULL               |
     And destinatario
@@ -144,7 +144,7 @@ Feature: Resa al mittente di una notifica
       | taxId                   | NNTNRZ80A01H501D   |
       | digitalDomicile         | NULL               |
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V26"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V26"
     And vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "RETURNED_TO_SENDER" con la versione "V26"
@@ -155,13 +155,13 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | REGISTERED_LETTER_890       |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
       | digitalDomicile         | NULL               |
-    And destinatario Cucumber Analogic e:
+    And destinatario "Cucumber Analogic" e:
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
 
 
@@ -171,7 +171,7 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Cucumber Analogic e:
+    And destinatario "Cucumber Analogic" e:
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
     And destinatario
@@ -179,7 +179,7 @@ Feature: Resa al mittente di una notifica
       | taxId                   | NNTNRZ80A01H501D         |
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
 
 
@@ -189,14 +189,14 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | digitalDomicile | NULL |
     And destinatario
       | denomination            | Test AR Fail 2    |
       | taxId                   | NNTNRZ80A01H501D  |
       | digitalDomicile         | NULL              |
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And esiste l'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" per l'utente 0
     And "Mario Cucumber" legge la notifica
     Then vengono letti gli eventi fino allo stato della notifica "VIEWED"
@@ -207,7 +207,7 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Cucumber Analogic e:
+    And destinatario "Cucumber Analogic" e:
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
     And destinatario
@@ -215,7 +215,7 @@ Feature: Resa al mittente di una notifica
       | taxId                   | NNTNRZ80A01H501D         |
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
 
 
@@ -226,13 +226,13 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
       | digitalDomicile         | NULL              |
-    And destinatario Cucumber Analogic e:
+    And destinatario "Cucumber Analogic" e:
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And esiste l'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" per l'utente 0
     And "Mario Cucumber" legge la notifica ricevuta
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
@@ -245,7 +245,7 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | REGISTERED_LETTER_890       |
-    And destinatario Cucumber Analogic e:
+    And destinatario "Cucumber Analogic" e:
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
     And destinatario
@@ -253,10 +253,10 @@ Feature: Resa al mittente di una notifica
       | taxId                   | NNTNRZ80A01H501D         |
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
       | digitalDomicile         | NULL               |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost uguale a "NotNull" per l'utente 2
     And "Mario Cucumber" legge la notifica
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
@@ -268,7 +268,7 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
       | digitalDomicile         | NULL              |
     And destinatario
@@ -276,7 +276,7 @@ Feature: Resa al mittente di una notifica
       | taxId                   | NNTNRZ80A01H501D         |
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And esiste l'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" per l'utente 0
     And "Mario Cucumber" legge la notifica
     Then vengono letti gli eventi fino allo stato della notifica "UNREACHABLE"
@@ -292,10 +292,10 @@ Feature: Resa al mittente di una notifica
       | taxId                   | NNTNRZ80A01H501D          |
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | Via@FAIL-Irreperibile_890 |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
       | digitalDomicile         | NULL               |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino allo stato della notifica "UNREACHABLE"
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
@@ -306,7 +306,7 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | REGISTERED_LETTER_890       |
-    And destinatario Cucumber Analogic e:
+    And destinatario "Cucumber Analogic" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
     And destinatario
@@ -314,10 +314,10 @@ Feature: Resa al mittente di una notifica
       | taxId                   | NNTNRZ80A01H501D          |
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | Via@FAIL-Irreperibile_890 |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
       | digitalDomicile         | NULL               |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And "Mario Cucumber" legge la notifica
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
     And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost uguale a "null" per l'utente 2
@@ -329,7 +329,7 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
       | digitalDomicile         | NULL              |
     And destinatario
@@ -337,7 +337,7 @@ Feature: Resa al mittente di una notifica
       | taxId                   | NNTNRZ80A01H501D  |
       | digitalDomicile         | NULL              |
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" per l'utente 0
     And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost uguale a "NotNull" per l'utente 0
     And "Mario Cucumber" legge la notifica
@@ -354,10 +354,10 @@ Feature: Resa al mittente di una notifica
       | taxId                   | NNTNRZ80A01H501D   |
       | digitalDomicile         | NULL               |
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
       | digitalDomicile         | NULL               |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And esiste l'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" per l'utente 1
     And "Mario Cucumber" legge la notifica
     And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost uguale a "null" per l'utente 1
@@ -370,10 +370,10 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
       | digitalDomicile         | NULL              |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
     And  esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" abbia notificationCost uguale a "NotNull" per l'utente 0
     Then viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
@@ -386,10 +386,10 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
       | digitalDomicile         | NULL              |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And esiste l'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" per l'utente 0
     And "Mario Cucumber" legge la notifica
     And vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
@@ -401,10 +401,10 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | REGISTERED_LETTER_890       |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
       | digitalDomicile         | NULL               |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And esiste l'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" per l'utente 0
     And esiste l'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" per l'utente 0
     And "Mario Cucumber" legge la notifica
@@ -418,10 +418,10 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
       | digitalDomicile         | NULL               |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And esiste l'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" per l'utente 0
     And esiste l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" per l'utente 0
     When la notifica può essere annullata dal sistema tramite codice IUN
@@ -433,10 +433,10 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | REGISTERED_LETTER_890       |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
       | digitalDomicile         | NULL               |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And esiste l'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" per l'utente 0
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
@@ -448,13 +448,13 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | REGISTERED_LETTER_890       |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
       | digitalDomicile         | NULL               |
-    And destinatario Cucumber Analogic e:
+    And destinatario "Cucumber Analogic" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And esiste l'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" per l'utente 0
     And "Mario Cucumber" legge la notifica
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED" per l'utente 0
@@ -468,13 +468,13 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
       | digitalDomicile         | NULL              |
-    And destinatario Cucumber Analogic e:
+    And destinatario "Cucumber Analogic" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" per l'utente 0
     And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
 
@@ -485,13 +485,13 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | REGISTERED_LETTER_890       |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
       | digitalDomicile         | NULL               |
-    And destinatario Cucumber Analogic e:
+    And destinatario "Cucumber Analogic" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And esiste l'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" per l'utente 0
     And "Mario Cucumber" legge la notifica
     And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
@@ -505,10 +505,10 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | ***RS***                    |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_RS |
       | digitalDomicile         | NULL              |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
     And viene verificato che l'elemento di timeline "ANALOG_WORKFLOW_RECIPIENT_DECEASED" non esista
       | details          | NOT_NULL |
@@ -520,10 +520,10 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
       | digitalDomicile         | NULL              |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
     Then viene controllato che l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" non esiste con V23
 
@@ -533,15 +533,15 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Cucumber Analogic e:
+    And destinatario "Cucumber Analogic" e:
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
       | digitalDomicile         | NULL              |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V23"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V23"
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "DELIVERING" con la versione "V23"
 
   @returnedToSender @webhookV23 @cleanWebhook @precondition @webhook1
@@ -551,10 +551,10 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
       | digitalDomicile         | NULL              |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V23"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V23"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "DELIVERING" con la versione "V23"
@@ -567,10 +567,10 @@ Feature: Resa al mittente di una notifica
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | REGISTERED_LETTER_890       |
       | digitalDomicile       | NULL                        |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
       | digitalDomicile         | NULL               |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V23"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V23"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "DELIVERING" con la versione "V23"
@@ -583,13 +583,13 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | REGISTERED_LETTER_890       |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
       | digitalDomicile         | NULL               |
-    And destinatario Cucumber Analogic e:
+    And destinatario "Cucumber Analogic" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V25"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V25"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "RETURNED_TO_SENDER" con la versione "V10"
@@ -602,10 +602,10 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
       | digitalDomicile         | NULL              |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V26"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V26" e filtro status "DEFAULT"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "ANALOG_WORKFLOW_RECIPIENT_DECEASED" con la versione "V26"
@@ -617,10 +617,10 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
       | digitalDomicile         | NULL              |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V26"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V26"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "ANALOG_WORKFLOW_RECIPIENT_DECEASED" con la versione "V26"
@@ -635,10 +635,10 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
       | digitalDomicile         | NULL              |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
     And si invoca l'api Webhook versione "V25" per ottenere gli elementi di timeline di tale notifica
     Then si controlla che tra gli elementi dello stream con versione "V25" ritornati non ci sia l'elemento "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
@@ -653,10 +653,10 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
       | digitalDomicile         | NULL              |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
     And si invoca l'api Webhook versione "V25" per ottenere gli elementi di timeline di tale notifica
     Then si controlla che tra gli elementi dello stream con versione "V25" ritornati non ci sia l'elemento "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
@@ -669,10 +669,10 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
       | digitalDomicile         | NULL              |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
     And vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
     Then l'operazione ha prodotto un errore con status code "400"
@@ -684,10 +684,10 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | REGISTERED_LETTER_890       |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
       | digitalDomicile         | NULL               |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And esiste l'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
 
@@ -700,10 +700,10 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
       | digitalDomicile         | NULL               |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW "
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT_WORKFLOW"
@@ -714,10 +714,10 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_SLOW_AR |
       | digitalDomicile         | NULL                   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And "Mario Cucumber" legge la notifica
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
@@ -731,7 +731,7 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
       | digitalDomicile         | NULL              |
     And destinatario
@@ -739,10 +739,10 @@ Feature: Resa al mittente di una notifica
       | taxId                   | NNTNRZ80A01H501D         |
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
-    And destinatario Cucumber Analogic e:
+    And destinatario "Cucumber Analogic" e:
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" con la versione "V10"
     And  vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SCHEDULE_REFINEMENT_WORKFLOW" con la versione "V10"
@@ -754,7 +754,7 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | REGISTERED_LETTER_890       |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_890 |
       | digitalDomicile         | NULL               |
     And destinatario
@@ -763,7 +763,7 @@ Feature: Resa al mittente di una notifica
       | digitalDomicile         | NULL              |
       | physicalAddress_address | Via@OK_890        |
       | digitalDomicile         | NULL              |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "26"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V26"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "DELIVERED" con la versione "V26"
@@ -776,12 +776,12 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_SLOW_AR |
       | digitalDomicile         | NULL                   |
-    And destinatario GherkinSrl
+    And destinatario "GherkinSrl"
     And "GherkinSrl" legge la notifica
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V26"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V26"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "VIEWED" con la versione "V26"
@@ -795,7 +795,7 @@ Feature: Resa al mittente di una notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | physicalAddress_address | @FAIL_DECEDUTO_AR |
       | digitalDomicile         | NULL              |
     And destinatario
@@ -803,10 +803,10 @@ Feature: Resa al mittente di una notifica
       | taxId                   | NNTNRZ80A01H501D         |
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
-    And destinatario Cucumber Analogic e:
+    And destinatario "Cucumber Analogic" e:
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V26"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V26"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "DELIVERED" con la versione "V26"

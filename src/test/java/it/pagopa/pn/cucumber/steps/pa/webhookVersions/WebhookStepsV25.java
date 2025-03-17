@@ -270,7 +270,7 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
         TimelineElementCategoryV23 timeLineOrStatus = ((TimelineElementCategoryV23) timelineForStream.getTimelineElementCategory());
         PnPollingWebhook pnPollingWebhook = getPnPollingWebhook(timeLineOrStatus);
         PnPollingServiceWebhookV25 webhook = (PnPollingServiceWebhookV25) webhookSteps.getSharedSteps().getPollingFactory().getPollingService(PnPollingStrategy.WEBHOOK_V25);
-        PnPollingResponseV25 pnPollingResponse = webhook.waitForEvent(webhookSteps.getSharedSteps().getSentNotification().getIun(),
+        PnPollingResponseV25 pnPollingResponse = webhook.waitForEvent(webhookSteps.getSharedSteps().getFullSentNotificationV26().getIun(),
                 PnPollingParameter.builder()
                         .value("WEBHOOK")
                         .pnPollingWebhook(pnPollingWebhook)
@@ -293,7 +293,7 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
         NotificationStatus status = ((NotificationStatus) statusForStream.getNotificationStatus());
         PnPollingWebhook pnPollingWebhook = getPnPollingWebhook(status);
         PnPollingServiceWebhookV25 webhook = (PnPollingServiceWebhookV25) webhookSteps.getSharedSteps().getPollingFactory().getPollingService(PnPollingStrategy.WEBHOOK_V25);
-        PnPollingResponseV25 pnPollingResponse = webhook.waitForEvent(webhookSteps.getSharedSteps().getSentNotification().getIun(),
+        PnPollingResponseV25 pnPollingResponse = webhook.waitForEvent(webhookSteps.getSharedSteps().getFullSentNotificationV26().getIun(),
                 PnPollingParameter.builder()
                         .value("WEBHOOK")
                         .pnPollingWebhook(pnPollingWebhook)
@@ -321,9 +321,9 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
             } catch (InterruptedException exc) {
                 throw new RuntimeException(exc);
             }
-            webhookSteps.getSharedSteps().setSentNotificationV25(webhookSteps.getB2bClient().getSentNotificationV25(webhookSteps.getSharedSteps().getSentNotification().getIun()));
+            webhookSteps.getSharedSteps().setFullSentNotificationV25(webhookSteps.getB2bClient().getSentNotificationV25(webhookSteps.getSharedSteps().getFullSentNotificationV26().getIun()));
             TimelineElementV25 timelineElement = webhookSteps.getSharedSteps()
-                    .getSentNotificationV25().getTimeline().stream()
+                    .getFullSentNotificationV25().getTimeline().stream()
                     .filter(elem -> elem.getCategory().getValue().equals(timelineElementInternalCategory.getValue()))
                     .findAny()
                     .orElse(null);
@@ -345,8 +345,8 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
             } catch (InterruptedException exc) {
                 throw new RuntimeException(exc);
             }
-            webhookSteps.getSharedSteps().setSentNotificationV25(webhookSteps.getB2bClient().getSentNotificationV25(webhookSteps.getSharedSteps().getSentNotification().getIun()));
-            NotificationStatusHistoryElement notificationStatusHistoryElement = webhookSteps.getSharedSteps().getSentNotificationV25().getNotificationStatusHistory().
+            webhookSteps.getSharedSteps().setFullSentNotificationV25(webhookSteps.getB2bClient().getSentNotificationV25(webhookSteps.getSharedSteps().getFullSentNotificationV26().getIun()));
+            NotificationStatusHistoryElement notificationStatusHistoryElement = webhookSteps.getSharedSteps().getFullSentNotificationV25().getNotificationStatusHistory().
                     stream().filter(elem -> elem.getStatus().getValue().equals(notificationInternalStatus.getValue())).findAny().orElse(null);
             if (notificationStatusHistoryElement != null) {
                 found = true;
@@ -362,7 +362,7 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
             Assertions.assertNotNull(progressResponseElement);
             TimelineElementCategoryV23 timelineElementInternalCategory = TimelineElementCategoryV23.valueOf(((TimelineElementCategoryV23) timelineForStream.getTimelineElementCategory()).name());
 
-            TimelineElementV25 elementToCheck = webhookSteps.getSharedSteps().getSentNotificationV25().getTimeline().stream()
+            TimelineElementV25 elementToCheck = webhookSteps.getSharedSteps().getFullSentNotificationV25().getTimeline().stream()
                     .filter(elem -> elem.getCategory() != null)
                     .filter(elem -> elem.getCategory().getValue().equals(timelineElementInternalCategory.getValue()))
                     .findAny()
@@ -377,7 +377,7 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
             log.info("EventProgress: " + progressResponseElement);
         } catch (AssertionFailedError assertionFailedError) {
             String message = String.format("%s {IUN: %s -WEBHOOK %s }", assertionFailedError.getMessage(),
-                    webhookSteps.getSharedSteps().getSentNotification().getIun(), eventStreamList.get(0).getStreamId());
+                    webhookSteps.getSharedSteps().getFullSentNotificationV26().getIun(), eventStreamList.get(0).getStreamId());
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
     }
@@ -390,7 +390,7 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
 
     @Override
     public String getSentNotificationIun() {
-        return webhookSteps.getSharedSteps().getSentNotificationV25().getIun();
+        return webhookSteps.getSharedSteps().getFullSentNotificationV25().getIun();
     }
 
     @Override
@@ -442,7 +442,7 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
     @Override
     public void getTimelineElementVersionB2B(String iun) {
         FullSentNotificationV25 fullSentNotification = webhookSteps.getB2bClient().getSentNotificationV25(iun);
-        webhookSteps.getSharedSteps().setNotificationResponseCompleteV25(fullSentNotification);
+        webhookSteps.getSharedSteps().setFullSentNotificationV25(fullSentNotification);
     }
 
     @Override
@@ -450,7 +450,7 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
         Assertions.assertNotNull(progressResponseElementList);
         OffsetDateTime eventTimestamp = progressResponseElementList.stream().filter(
                 elem -> elem.getElement().getCategory().getValue().equals(webhookElementCategory)).findAny().get().getElement().getTimestamp();
-        OffsetDateTime notificationTimestamp = webhookSteps.getSharedSteps().getSentNotification().getTimeline().stream().filter(
+        OffsetDateTime notificationTimestamp = webhookSteps.getSharedSteps().getFullSentNotificationV26().getTimeline().stream().filter(
                 elem -> elem.getCategory().getValue().equals(timelineElementCategory)).findAny().get().getDetails().getSchedulingDate();
         log.info("event timestamp : {}", eventTimestamp);
         log.info("notification timestamp : {}", notificationTimestamp);
@@ -514,7 +514,7 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
 
         String elementId = timelineElementWebHook.getCategory().toString();
 
-        TimelineElementV25 timelineElement = webhookSteps.getSharedSteps().getSentNotificationV25().getTimeline().
+        TimelineElementV25 timelineElement = webhookSteps.getSharedSteps().getFullSentNotificationV25().getTimeline().
                 stream()
                 .filter(data -> data.getCategory() != null)
                 .filter(data -> data.getCategory().getValue().equalsIgnoreCase(elementId))

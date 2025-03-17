@@ -24,7 +24,7 @@ public class DataTableTypeUtil {
     private PnPaB2bUtils utils;
 
     @DataTableType
-    public synchronized NewNotificationRequestV24 convertNotificationRequest(Map<String, String> data) {
+    public synchronized NewNotificationRequestV24 convertNotificationRequestV24(Map<String, String> data) {
         NewNotificationRequestV24 notificationRequest = (new NewNotificationRequestV24()
                 .subject(getValue(data, SUBJECT.key))
                 .cancelledIun(getValue(data, CANCELLED_IUN.key))
@@ -67,7 +67,7 @@ public class DataTableTypeUtil {
         return notificationRequest;
     }
 
-    private NewNotificationRequestV23 addDocument(NewNotificationRequestV23 notificationRequest, Map<String, String> data) {
+    private NewNotificationRequestV23 addDocumentV23(NewNotificationRequestV23 notificationRequest, Map<String, String> data) {
         String documentsToAdd = getValue(data, DOCUMENT.key);
         if (documentsToAdd == null) {
             return notificationRequest.addDocumentsItem(null);

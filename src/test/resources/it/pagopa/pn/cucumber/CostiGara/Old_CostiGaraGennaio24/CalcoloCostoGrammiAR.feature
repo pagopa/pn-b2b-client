@@ -11,19 +11,19 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER |
       | feePolicy             | DELIVERY_MODE        |
       | document              | DOC_4_PG;            |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_AR      |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE | SUBJECT                        |
-      | 80060 | 546   | MASSAQUANO | NA       | notifica analogica FSU         |
+      | 80060 | 546   | MASSAQUANO   | NA       | notifica analogica FSU         |
       | 60012 | 452   | MONTERADO    | AN       | notifica analogica RECAPITISTA |
       | 60123 | 409   | ANCONA       | AN       | notifica analogica RECAPITISTA |
       | 70123 | 376   | BARI         | BA       | notifica analogica RECAPITISTA |
@@ -32,7 +32,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 83100 | 417   | AVELLINO     | AV       | notifica analogica RECAPITISTA |
       | 00012 | 546   | ALBUCCIONE   | RM       | notifica analogica RECAPITISTA |
       | 00118 | 457   | ROMA         | RM       | notifica analogica RECAPITISTA |
-      | 04100 | 484     | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
+      | 04100 | 484   | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
 
   @costoAnalogicoGennaio24
   Scenario Outline: [CALCOLO-COSTO_OLD_AR-21GR_2] Invio notifica e verifica calcolo del costo su raccomandata con peso = 21gr
@@ -42,14 +42,14 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER |
       | feePolicy             | DELIVERY_MODE        |
       | document              | DOC_5_PG;            |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_AR      |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -73,19 +73,19 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER |
       | feePolicy             | DELIVERY_MODE        |
       | document              | DOC_8_PG;DOC_8_PG;   |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_AR      |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE | SUBJECT                        |
-      | 80060 | 634   | MASSAQUANO | NA       | notifica analogica FSU         |
+      | 80060 | 634   | MASSAQUANO   | NA       | notifica analogica FSU         |
       | 60012 | 469   | MONTERADO    | AN       | notifica analogica RECAPITISTA |
       | 60123 | 410   | ANCONA       | AN       | notifica analogica RECAPITISTA |
       | 70123 | 375   | BARI         | BA       | notifica analogica RECAPITISTA |
@@ -94,7 +94,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 83100 | 423   | AVELLINO     | AV       | notifica analogica RECAPITISTA |
       | 00012 | 573   | ALBUCCIONE   | RM       | notifica analogica RECAPITISTA |
       | 00118 | 462   | ROMA         | RM       | notifica analogica RECAPITISTA |
-      | 04100 | 490     | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
+      | 04100 | 490   | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio24
@@ -105,19 +105,19 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER        |
       | feePolicy             | DELIVERY_MODE               |
       | document              | DOC_8_PG;DOC_8_PG;DOC_1_PG; |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_AR      |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE | SUBJECT                        |
-      | 80060 | 674   | MASSAQUANO | NA       | notifica analogica FSU         |
+      | 80060 | 674   | MASSAQUANO   | NA       | notifica analogica FSU         |
       | 60012 | 500   | MONTERADO    | AN       | notifica analogica RECAPITISTA |
       | 60123 | 441   | ANCONA       | AN       | notifica analogica RECAPITISTA |
       | 70123 | 404   | BARI         | BA       | notifica analogica RECAPITISTA |
@@ -126,7 +126,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 83100 | 455   | AVELLINO     | AV       | notifica analogica RECAPITISTA |
       | 00012 | 613   | ALBUCCIONE   | RM       | notifica analogica RECAPITISTA |
       | 00118 | 502   | ROMA         | RM       | notifica analogica RECAPITISTA |
-      | 04100 | 530     | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
+      | 04100 | 530   | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
 
   @costoAnalogicoGennaio24
   Scenario Outline: [CALCOLO-COSTO_OLD_AR-100GR_5] Invio notifica e verifica calcolo del costo su raccomandata con peso = 100gr
@@ -136,19 +136,19 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                          |
       | feePolicy             | DELIVERY_MODE                                 |
       | document              | DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_4_PG; |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_AR      |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE | SUBJECT                        |
-      | 80060 | 701   | MASSAQUANO | NA       | notifica analogica FSU         |
+      | 80060 | 701   | MASSAQUANO   | NA       | notifica analogica FSU         |
       | 60012 | 527   | MONTERADO    | AN       | notifica analogica RECAPITISTA |
       | 60123 | 468   | ANCONA       | AN       | notifica analogica RECAPITISTA |
       | 70123 | 431   | BARI         | BA       | notifica analogica RECAPITISTA |
@@ -157,7 +157,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 83100 | 482   | AVELLINO     | AV       | notifica analogica RECAPITISTA |
       | 00012 | 640   | ALBUCCIONE   | RM       | notifica analogica RECAPITISTA |
       | 00118 | 529   | ROMA         | RM       | notifica analogica RECAPITISTA |
-      | 04100 | 557     | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
+      | 04100 | 557   | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
 
   @costoAnalogicoGennaio24
   Scenario Outline: [CALCOLO-COSTO_OLD_AR-101GR_6] Invio notifica e verifica calcolo del costo su raccomandata con peso = 101gr
@@ -167,19 +167,19 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                         |
       | feePolicy             | DELIVERY_MODE                                |
       | document              | DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_5_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_AR      |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE | SUBJECT                        |
-      | 80060 | 745   | MASSAQUANO | NA       | notifica analogica FSU         |
+      | 80060 | 745   | MASSAQUANO   | NA       | notifica analogica FSU         |
       | 60012 | 561   | MONTERADO    | AN       | notifica analogica RECAPITISTA |
       | 60123 | 503   | ANCONA       | AN       | notifica analogica RECAPITISTA |
       | 70123 | 464   | BARI         | BA       | notifica analogica RECAPITISTA |
@@ -188,7 +188,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 83100 | 518   | AVELLINO     | AV       | notifica analogica RECAPITISTA |
       | 00012 | 684   | ALBUCCIONE   | RM       | notifica analogica RECAPITISTA |
       | 00118 | 573   | ROMA         | RM       | notifica analogica RECAPITISTA |
-      | 04100 | 601     | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
+      | 04100 | 601   | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio24
@@ -199,19 +199,19 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                            |
       | feePolicy             | DELIVERY_MODE                                                   |
       | document              | DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_6_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_AR      |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE | SUBJECT                        |
-      | 80060 | 832   | MASSAQUANO | NA       | notifica analogica FSU         |
+      | 80060 | 832   | MASSAQUANO   | NA       | notifica analogica FSU         |
       | 60012 | 648   | MONTERADO    | AN       | notifica analogica RECAPITISTA |
       | 60123 | 590   | ANCONA       | AN       | notifica analogica RECAPITISTA |
       | 70123 | 551   | BARI         | BA       | notifica analogica RECAPITISTA |
@@ -220,7 +220,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 83100 | 605   | AVELLINO     | AV       | notifica analogica RECAPITISTA |
       | 00012 | 771   | ALBUCCIONE   | RM       | notifica analogica RECAPITISTA |
       | 00118 | 660   | ROMA         | RM       | notifica analogica RECAPITISTA |
-      | 04100 | 688     | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
+      | 04100 | 688   | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio24
@@ -231,19 +231,19 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                            |
       | feePolicy             | DELIVERY_MODE                                                   |
       | document              | DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_7_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_AR      |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE | SUBJECT                        |
-      | 80060 | 869   | MASSAQUANO | NA       | notifica analogica FSU         |
+      | 80060 | 869   | MASSAQUANO   | NA       | notifica analogica FSU         |
       | 60012 | 675   | MONTERADO    | AN       | notifica analogica RECAPITISTA |
       | 60123 | 621   | ANCONA       | AN       | notifica analogica RECAPITISTA |
       | 70123 | 577   | BARI         | BA       | notifica analogica RECAPITISTA |
@@ -263,19 +263,19 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                             |
       | feePolicy             | DELIVERY_MODE                                                    |
       | document              | DOC_50_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_4_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_AR      |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE | SUBJECT                        |
-      | 80060 | 926   | MASSAQUANO | NA       | notifica analogica FSU         |
+      | 80060 | 926   | MASSAQUANO   | NA       | notifica analogica FSU         |
       | 60012 | 732   | MONTERADO    | AN       | notifica analogica RECAPITISTA |
       | 60123 | 678   | ANCONA       | AN       | notifica analogica RECAPITISTA |
       | 70123 | 634   | BARI         | BA       | notifica analogica RECAPITISTA |
@@ -284,7 +284,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 83100 | 695   | AVELLINO     | AV       | notifica analogica RECAPITISTA |
       | 00012 | 864   | ALBUCCIONE   | RM       | notifica analogica RECAPITISTA |
       | 00118 | 753   | ROMA         | RM       | notifica analogica RECAPITISTA |
-      | 04100 | 785     | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
+      | 04100 | 785   | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio24
@@ -295,19 +295,19 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                             |
       | feePolicy             | DELIVERY_MODE                                                    |
       | document              | DOC_50_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_5_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_AR      |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE | SUBJECT                        |
-      | 80060 | 1002  | MASSAQUANO | NA       | notifica analogica FSU         |
+      | 80060 | 1002  | MASSAQUANO   | NA       | notifica analogica FSU         |
       | 60012 | 791   | MONTERADO    | AN       | notifica analogica RECAPITISTA |
       | 60123 | 734   | ANCONA       | AN       | notifica analogica RECAPITISTA |
       | 70123 | 690   | BARI         | BA       | notifica analogica RECAPITISTA |
@@ -316,7 +316,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 83100 | 754   | AVELLINO     | AV       | notifica analogica RECAPITISTA |
       | 00012 | 941   | ALBUCCIONE   | RM       | notifica analogica RECAPITISTA |
       | 00118 | 830   | ROMA         | RM       | notifica analogica RECAPITISTA |
-      | 04100 | 858     | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
+      | 04100 | 858   | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio24
@@ -327,19 +327,19 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                                                             |
       | feePolicy             | DELIVERY_MODE                                                                                    |
       | document              | DOC_100_PG;DOC_100_PG;DOC_100_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_6_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_AR      |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE | SUBJECT                        |
-      | 80060 | 1389  | MASSAQUANO | NA       | notifica analogica FSU         |
+      | 80060 | 1389  | MASSAQUANO   | NA       | notifica analogica FSU         |
       | 60012 | 1178  | MONTERADO    | AN       | notifica analogica RECAPITISTA |
       | 60123 | 1121  | ANCONA       | AN       | notifica analogica RECAPITISTA |
       | 70123 | 1077  | BARI         | BA       | notifica analogica RECAPITISTA |
@@ -348,7 +348,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 83100 | 1141  | AVELLINO     | AV       | notifica analogica RECAPITISTA |
       | 00012 | 1328  | ALBUCCIONE   | RM       | notifica analogica RECAPITISTA |
       | 00118 | 1217  | ROMA         | RM       | notifica analogica RECAPITISTA |
-      | 04100 | 1245     | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
+      | 04100 | 1245  | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio24
@@ -359,19 +359,19 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                                                             |
       | feePolicy             | DELIVERY_MODE                                                                                    |
       | document              | DOC_100_PG;DOC_100_PG;DOC_100_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_7_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_AR      |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE | SUBJECT                        |
-      | 80060 | 1479  | MASSAQUANO | NA       | notifica analogica FSU         |
+      | 80060 | 1479  | MASSAQUANO   | NA       | notifica analogica FSU         |
       | 60012 | 1246  | MONTERADO    | AN       | notifica analogica RECAPITISTA |
       | 60123 | 1191  | ANCONA       | AN       | notifica analogica RECAPITISTA |
       | 70123 | 1142  | BARI         | BA       | notifica analogica RECAPITISTA |
@@ -391,19 +391,19 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                                                             |
       | feePolicy             | DELIVERY_MODE                                                                                    |
       | document              | DOC_300_PG;DOC_300_PG;DOC_100_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_6_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_AR      |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE | SUBJECT                        |
-      | 80060 | 2076  | MASSAQUANO | NA       | notifica analogica FSU         |
+      | 80060 | 2076  | MASSAQUANO   | NA       | notifica analogica FSU         |
       | 60012 | 1843  | MONTERADO    | AN       | notifica analogica RECAPITISTA |
       | 60123 | 1788  | ANCONA       | AN       | notifica analogica RECAPITISTA |
       | 70123 | 1739  | BARI         | BA       | notifica analogica RECAPITISTA |
@@ -412,7 +412,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 83100 | 1811  | AVELLINO     | AV       | notifica analogica RECAPITISTA |
       | 00012 | 2015  | ALBUCCIONE   | RM       | notifica analogica RECAPITISTA |
       | 00118 | 1904  | ROMA         | RM       | notifica analogica RECAPITISTA |
-      | 04100 | 1933     | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
+      | 04100 | 1933  | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio24
@@ -423,13 +423,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
       | document              | DOC_4_PG;                       |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | MESSICO    |
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1036" della notifica
 
@@ -441,13 +441,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
       | document              | DOC_5_PG;                       |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | MESSICO    |
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1154" della notifica
 
@@ -459,13 +459,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
       | document              | DOC_8_PG;DOC_8_PG;              |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | MESSICO    |
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1169" della notifica
 
@@ -477,13 +477,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
       | document              | DOC_8_PG;DOC_8_PG;DOC_1_PG      |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | MESSICO    |
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1273" della notifica
 
@@ -495,13 +495,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                          |
       | feePolicy             | DELIVERY_MODE                                 |
       | document              | DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_4_PG; |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | MESSICO    |
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1300" della notifica
 
@@ -513,13 +513,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                         |
       | feePolicy             | DELIVERY_MODE                                |
       | document              | DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_5_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | MESSICO    |
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1700" della notifica
 
@@ -531,13 +531,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                            |
       | feePolicy             | DELIVERY_MODE                                                   |
       | document              | DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_6_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | MESSICO    |
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1787" della notifica
 
@@ -549,13 +549,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                            |
       | feePolicy             | DELIVERY_MODE                                                   |
       | document              | DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_7_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | MESSICO    |
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1980" della notifica
 
@@ -567,13 +567,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                             |
       | feePolicy             | DELIVERY_MODE                                                    |
       | document              | DOC_50_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_4_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | MESSICO    |
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "2037" della notifica
 
@@ -585,13 +585,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                             |
       | feePolicy             | DELIVERY_MODE                                                    |
       | document              | DOC_50_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_5_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | MESSICO    |
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "2768" della notifica
 
@@ -603,13 +603,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                                                             |
       | feePolicy             | DELIVERY_MODE                                                                                    |
       | document              | DOC_100_PG;DOC_100_PG;DOC_100_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_6_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | MESSICO    |
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "3155" della notifica
 
@@ -621,13 +621,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                                                             |
       | feePolicy             | DELIVERY_MODE                                                                                    |
       | document              | DOC_100_PG;DOC_100_PG;DOC_100_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_7_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | MESSICO    |
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "4340" della notifica
 
@@ -639,13 +639,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                                                             |
       | feePolicy             | DELIVERY_MODE                                                                                    |
       | document              | DOC_300_PG;DOC_300_PG;DOC_100_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_6_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | MESSICO    |
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "4937" della notifica
 
@@ -657,13 +657,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
       | document              | DOC_4_PG;                       |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | ALBANIA    |
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "921" della notifica
 
@@ -675,13 +675,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
       | document              | DOC_5_PG;                       |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | ALBANIA    |
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1034" della notifica
 
@@ -693,13 +693,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
       | document              | DOC_8_PG;DOC_8_PG;              |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | ALBANIA    |
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1049" della notifica
 
@@ -711,13 +711,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
       | document              | DOC_8_PG;DOC_8_PG;DOC_1_PG      |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | ALBANIA    |
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1144" della notifica
 
@@ -729,13 +729,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                          |
       | feePolicy             | DELIVERY_MODE                                 |
       | document              | DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_4_PG; |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | ALBANIA    |
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1171" della notifica
 
@@ -747,13 +747,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                         |
       | feePolicy             | DELIVERY_MODE                                |
       | document              | DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_5_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | ALBANIA    |
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1364" della notifica
 
@@ -765,13 +765,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                            |
       | feePolicy             | DELIVERY_MODE                                                   |
       | document              | DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_6_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | ALBANIA    |
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1451" della notifica
 
@@ -783,13 +783,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                            |
       | feePolicy             | DELIVERY_MODE                                                   |
       | document              | DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_7_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | ALBANIA    |
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1591" della notifica
 
@@ -801,13 +801,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                             |
       | feePolicy             | DELIVERY_MODE                                                    |
       | document              | DOC_50_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_4_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | ALBANIA    |
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1648" della notifica
 
@@ -819,13 +819,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                             |
       | feePolicy             | DELIVERY_MODE                                                    |
       | document              | DOC_50_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_5_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | ALBANIA    |
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "2100" della notifica
 
@@ -837,13 +837,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                                                             |
       | feePolicy             | DELIVERY_MODE                                                                                    |
       | document              | DOC_100_PG;DOC_100_PG;DOC_100_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_6_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | ALBANIA    |
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "2487" della notifica
 
@@ -855,13 +855,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                                                             |
       | feePolicy             | DELIVERY_MODE                                                                                    |
       | document              | DOC_100_PG;DOC_100_PG;DOC_100_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_7_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | ALBANIA    |
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "3292" della notifica
 
@@ -873,13 +873,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                                                             |
       | feePolicy             | DELIVERY_MODE                                                                                    |
       | document              | DOC_300_PG;DOC_300_PG;DOC_100_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_6_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | ALBANIA    |
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "3889" della notifica
 
@@ -891,13 +891,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
       | document              | DOC_4_PG;                       |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | AUSTRALIA  |
       | physicalAddress_zip     | ZONE_3     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1093" della notifica
 
@@ -909,13 +909,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
       | document              | DOC_5_PG;                       |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | AUSTRALIA  |
       | physicalAddress_zip     | ZONE_3     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1246" della notifica
 
@@ -927,13 +927,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
       | document              | DOC_8_PG;DOC_8_PG;              |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | AUSTRALIA  |
       | physicalAddress_zip     | ZONE_3     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1261" della notifica
 
@@ -945,13 +945,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
       | document              | DOC_8_PG;DOC_8_PG;DOC_1_PG      |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | AUSTRALIA  |
       | physicalAddress_zip     | ZONE_3     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1410" della notifica
 
@@ -963,13 +963,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                          |
       | feePolicy             | DELIVERY_MODE                                 |
       | document              | DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_4_PG; |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | AUSTRALIA  |
       | physicalAddress_zip     | ZONE_3     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1437" della notifica
 
@@ -981,13 +981,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                         |
       | feePolicy             | DELIVERY_MODE                                |
       | document              | DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_5_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | AUSTRALIA  |
       | physicalAddress_zip     | ZONE_3     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1828" della notifica
 
@@ -999,13 +999,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                            |
       | feePolicy             | DELIVERY_MODE                                                   |
       | document              | DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_6_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | AUSTRALIA  |
       | physicalAddress_zip     | ZONE_3     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1915" della notifica
 
@@ -1017,13 +1017,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                            |
       | feePolicy             | DELIVERY_MODE                                                   |
       | document              | DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_7_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | AUSTRALIA  |
       | physicalAddress_zip     | ZONE_3     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "2442" della notifica
 
@@ -1035,13 +1035,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                             |
       | feePolicy             | DELIVERY_MODE                                                    |
       | document              | DOC_50_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_4_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | AUSTRALIA  |
       | physicalAddress_zip     | ZONE_3     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "2499" della notifica
 
@@ -1053,13 +1053,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                             |
       | feePolicy             | DELIVERY_MODE                                                    |
       | document              | DOC_50_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_5_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | AUSTRALIA  |
       | physicalAddress_zip     | ZONE_3     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "3561" della notifica
 
@@ -1071,13 +1071,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                                                             |
       | feePolicy             | DELIVERY_MODE                                                                                    |
       | document              | DOC_100_PG;DOC_100_PG;DOC_100_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_6_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | AUSTRALIA  |
       | physicalAddress_zip     | ZONE_3     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "3948" della notifica
 
@@ -1089,13 +1089,13 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                                                             |
       | feePolicy             | DELIVERY_MODE                                                                                    |
       | document              | DOC_100_PG;DOC_100_PG;DOC_100_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_7_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | AUSTRALIA  |
       | physicalAddress_zip     | ZONE_3     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "5273" della notifica
 
@@ -1107,16 +1107,15 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                                                             |
       | feePolicy             | DELIVERY_MODE                                                                                    |
       | document              | DOC_300_PG;DOC_300_PG;DOC_100_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_6_PG |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | AUSTRALIA  |
       | physicalAddress_zip     | ZONE_3     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "5870" della notifica
-
 
 
   @costoAnalogicoGennaio24
@@ -1127,7 +1126,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER |
       | feePolicy             | DELIVERY_MODE        |
       | document              | DOC_8_PG;DOC_5_PG;   |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL                              |
       | physicalAddress_address      | Via@ok_AR                         |
       | physicalAddress_municipality | <MUNICIPALITY>                    |
@@ -1138,13 +1137,12 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | title_payment                | F24_SEMPLIFICATO_CLMCST42R12D969Z |
       | apply_cost_f24               | SI                                |
       | payment_multy_number         | 1                                 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE | SUBJECT                |
-      | 80060 | 634   | MASSAQUANO | NA       | notifica analogica FSU |
-
+      | 80060 | 634   | MASSAQUANO   | NA       | notifica analogica FSU |
 
 
   @costoAnalogicoGennaio24
@@ -1155,7 +1153,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER      |
       | feePolicy             | DELIVERY_MODE             |
       | document              | DOC_8_PG;DOC_5_PG;        |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL                              |
       | physicalAddress_State   | ALBANIA                           |
       | physicalAddress_zip     | ZONE_1                            |
@@ -1165,7 +1163,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | title_payment           | F24_SEMPLIFICATO_CLMCST42R12D969Z |
       | apply_cost_f24          | SI                                |
       | payment_multy_number    | 1                                 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1049" della notifica
 
@@ -1176,7 +1174,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | senderDenomination    | Comune di palermo    |
       | physicalCommunication | AR_REGISTERED_LETTER |
       | feePolicy             | DELIVERY_MODE        |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL                              |
       | physicalAddress_address      | Via@ok_AR                         |
       | physicalAddress_municipality | <MUNICIPALITY>                    |
@@ -1187,9 +1185,9 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | title_payment                | F24_SEMPLIFICATO_CLMCST42R12D969Z |
       | apply_cost_f24               | SI                                |
       | payment_multy_number         | 120                               |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE | SUBJECT                |
-      | 80060 | 1164  | MASSAQUANO | NA       | notifica analogica FSU |
+      | 80060 | 1164  | MASSAQUANO   | NA       | notifica analogica FSU |

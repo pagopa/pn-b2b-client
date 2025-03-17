@@ -10,8 +10,8 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
 #    Given viene generata una nuova notifica
 #      | subject            | invio notifica con cucumber radd alternative  |
 #      | senderDenomination | Comune di Palermo           |
-#    And destinatario Mario Cucumber
-#    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+#    And destinatario "Mario Cucumber"
+#    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
 #    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
 #    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 #    And Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
@@ -25,10 +25,10 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
   @raddTechnicalAnnex
   Scenario: [ADEG-RADD-PRINT_ACTS-2] PF - Stampa limitata di documenti disponibili associati a QR code esistente con CF corretto
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber radd alternative  |
-      | senderDenomination | Comune di Palermo           |
-    And destinatario Mario Cucumber
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
+    And destinatario "Mario Cucumber"
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
@@ -40,10 +40,10 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
   @raddTechnicalAnnex
   Scenario: [ADEG-RADD-PRINT_ACTS-3] PF - Restituzione errore - Stampa limitata di documenti disponibili associati con raggiungimento limite raggiunto
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber radd alternative  |
-      | senderDenomination | Comune di Palermo           |
-    And destinatario Mario Cucumber
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
+    And destinatario "Mario Cucumber"
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
@@ -61,10 +61,10 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario Signor casuale e:
+    And And destinatario "Signor RaddCasuale" e;
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     And la persona fisica "Signor casuale" chiede di verificare ad operatore radd "UPLOADER" la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
@@ -78,27 +78,27 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario Signor casuale e:
+    And And destinatario "Signor RaddCasuale" e;
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     And la persona fisica "Signor casuale" chiede di verificare ad operatore radd "UPLOADER" la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     When tentativo di recuperare gli aar delle notifiche in stato irreperibile da operatore radd "UPLOADER" senza successo con file key "<fileKey>"
     And il tentativo genera un errore 400 "Bad Request" con il messaggio "Campo fileKey obbligatorio mancante"
     Examples:
-    | fileKey |
-    | null    |
-    |         |
+      | fileKey |
+      | null    |
+      |         |
 
   @raddTechnicalAnnex
   Scenario: [ADEG-RADD-TRANS_ACT-1] PF - Operatore RADD_UPLOADER - Start di una ACT transaction con fileKey presente - ricezione OK
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber radd alternative  |
-      | senderDenomination | Comune di Palermo           |
-    And destinatario Mario Cucumber
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
+    And destinatario "Mario Cucumber"
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     When Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
@@ -111,10 +111,10 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
   @raddTechnicalAnnex
   Scenario Outline: [ADEG-RADD-TRANS_ACT-2] Operatore RADD_UPLOADER - Start di una ACT transaction senza fileKey presente - ricezione Errore
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber radd alternative  |
-      | senderDenomination | Comune di Palermo           |
-    And destinatario Mario Cucumber
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
+    And destinatario "Mario Cucumber"
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     When Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
@@ -135,10 +135,10 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario Signor casuale e:
+    And And destinatario "Signor RaddCasuale" e;
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     And la persona fisica "Signor casuale" chiede di verificare ad operatore radd "<operatorType>" la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
@@ -155,10 +155,10 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario Signor casuale e:
+    And And destinatario "Signor RaddCasuale" e;
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     And la persona fisica "Signor casuale" chiede di verificare ad operatore radd "<operatorType>" la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
@@ -173,10 +173,10 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
   @raddTechnicalAnnex
   Scenario Outline: [ADEG-RADD-TRANS_ACT-3] Operatore RADD_STANDARD / senza ruolo - Start di una ACT transaction senza fileKey presente - ricezione OK
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber radd alternative  |
-      | senderDenomination | Comune di Palermo           |
-    And destinatario Mario Cucumber
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
+    And destinatario "Mario Cucumber"
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     When Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
@@ -186,16 +186,16 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
     And l'operazione di download degli atti si conclude correttamente su radd alternative
     Examples:
       | operatorType | fileKey |
-      | STANDARD     |  null   |
+      | STANDARD     | null    |
       | WITHOUT_ROLE |         |
 
   @raddTechnicalAnnex
   Scenario Outline: [ADEG-RADD-TRANS_ACT-4] Operatore RADD_STANDARD - Start di una ACT transaction con fileKey presente - ricezione Errore
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber radd alternative  |
-      | senderDenomination | Comune di Palermo           |
-    And destinatario Mario Cucumber
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
+    And destinatario "Mario Cucumber"
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     When Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
@@ -213,10 +213,10 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
   @raddTechnicalAnnex
   Scenario Outline: [ADEG-RADD-TRANS_ACT-5] Operatore senza ruolo / standard - Tentativo di eseguire documentUpload - ricezione Errore
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber radd alternative  |
-      | senderDenomination | Comune di Palermo           |
-    And destinatario Mario Cucumber
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
+    And destinatario "Mario Cucumber"
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     When Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
@@ -225,9 +225,9 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
     And l'operatore "<operatorType>" tenta di caricare i documento di identità del cittadino su radd alternative senza successo
     And il caricamente ha prodotto une errore http 403 su radd alternative
     Examples:
-    | operatorType |
-    | WITHOUT_ROLE |
-    | STANDARD     |
+      | operatorType |
+      | WITHOUT_ROLE |
+      | STANDARD     |
 
   @raddTechnicalAnnex
   Scenario: [ADEG-RADD-TRANS_AOR-5] Operatore RADD_STANDARD - Start di una AOR transaction con versionToken presente - ricezione Error
@@ -235,10 +235,10 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario Signor casuale e:
+    And And destinatario "Signor RaddCasuale" e;
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     And la persona fisica "Signor casuale" chiede di verificare ad operatore radd "STANDARD" la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
@@ -251,10 +251,10 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario Signor casuale e:
+    And And destinatario "Signor RaddCasuale" e;
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     And la persona fisica "Signor casuale" chiede di verificare ad operatore radd "UPLOADER" la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
@@ -265,10 +265,10 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
   @raddTechnicalAnnex
   Scenario: [ADEG-RADD-TRANS_ACT-6] PF - Operatore RADD_UPLOADER - Start di una ACT transaction senza version token presente - ricezione OK
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber radd alternative  |
-      | senderDenomination | Comune di Palermo           |
-    And destinatario Mario Cucumber
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
+    And destinatario "Mario Cucumber"
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     When Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
@@ -281,10 +281,10 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
   @raddTechnicalAnnex
   Scenario: [ADEG-RADD-TRANS_ACT-7] PF - Operatore RADD_STANDARD - Start di una ACT transaction senza version token presente - ricezione OK
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber radd alternative  |
-      | senderDenomination | Comune di Palermo           |
-    And destinatario Mario Cucumber
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
+    And destinatario "Mario Cucumber"
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     When Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"

@@ -6,8 +6,8 @@ Feature: Download da persona giuridica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
       | document           | SI                          |
-    And destinatario Gherkin spa
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "GherkinSpa"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And si verifica la corretta acquisizione della notifica
     When viene richiesto il download del documento "NOTIFICA"
     Then il download si conclude correttamente
@@ -17,10 +17,10 @@ Feature: Download da persona giuridica
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario Gherkin spa e:
-      | payment_pagoPaForm  | SI   |
-      | payment_f24          | PAYMENT_F24_FLAT              |
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "GherkinSpa" e:
+      | payment_pagoPaForm | SI               |
+      | payment_f24        | PAYMENT_F24_FLAT |
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And si verifica la corretta acquisizione della notifica
     When viene richiesto il download del documento "PAGOPA"
     Then il download si conclude correttamente
@@ -30,10 +30,10 @@ Feature: Download da persona giuridica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario Gherkin spa e:
-      | payment_pagoPaForm  | SI   |
-      | payment_f24          | PAYMENT_F24_STANDARD          |
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "GherkinSpa" e:
+      | payment_pagoPaForm | SI                   |
+      | payment_f24        | PAYMENT_F24_STANDARD |
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And si verifica la corretta acquisizione della notifica
     When viene richiesto il download del documento "PAGOPA"
     Then il download si conclude correttamente
@@ -43,8 +43,8 @@ Feature: Download da persona giuridica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
       | document           | SI                          |
-    And destinatario Cucumber Society
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Cucumber Society"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And si verifica la corretta acquisizione della notifica
     When viene richiesto il download del documento "NOTIFICA"
     Then il download si conclude correttamente
@@ -54,10 +54,10 @@ Feature: Download da persona giuridica
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario Cucumber Society e:
-      | payment_pagoPaForm  | SI   |
-      | payment_f24          | PAYMENT_F24_FLAT              |
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Cucumber Society" e:
+      | payment_pagoPaForm | SI               |
+      | payment_f24        | PAYMENT_F24_FLAT |
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And si verifica la corretta acquisizione della notifica
     When viene richiesto il download del documento "PAGOPA"
     Then il download si conclude correttamente
@@ -68,10 +68,10 @@ Feature: Download da persona giuridica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario Cucumber Society e:
-      | payment_pagoPaForm  | SI   |
-      | payment_f24          | PAYMENT_F24_STANDARD          |
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Cucumber Society" e:
+      | payment_pagoPaForm | SI                   |
+      | payment_f24        | PAYMENT_F24_STANDARD |
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And si verifica la corretta acquisizione della notifica
     When viene richiesto il download del documento "PAGOPA"
     Then il download si conclude correttamente

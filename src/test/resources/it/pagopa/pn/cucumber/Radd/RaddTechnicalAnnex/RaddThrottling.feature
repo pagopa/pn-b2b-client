@@ -8,10 +8,10 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Throttling
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
-      | digitalDomicile         | NULL                                         |
-      | physicalAddress_address | Via@FAIL-Irreperibile_AR                     |
-      | taxId                   | FLPCPT69A65Z336P                             |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | digitalDomicile         | NULL                     |
+      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
+      | taxId                   | FLPCPT69A65Z336P         |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     And la persona fisica "Signor casuale" chiede di verificare ad operatore radd "UPLOADER" la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
@@ -25,10 +25,10 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Throttling
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario Signor casuale e:
+    And And destinatario "Signor RaddCasuale" e;
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     And la persona fisica "Signor casuale" chiede di verificare ad operatore radd "STANDARD" la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
@@ -43,10 +43,10 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Throttling
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
-      | digitalDomicile         | NULL                                         |
-      | taxId                   | TMTSFS80A01H703K                             |
-      | physicalAddress_address | Via@FAIL-Irreperibile_AR                     |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | digitalDomicile         | NULL                     |
+      | taxId                   | TMTSFS80A01H703K         |
+      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     Then Viene visualizzata la presenza di notifiche un numero di volte superiore al limite definito
 
@@ -58,10 +58,10 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Throttling
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
-      | digitalDomicile         | NULL                                         |
-      | taxId                   | LVLDAA85T50G702B                             |
-      | physicalAddress_address | Via@FAIL-Irreperibile_AR                     |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | digitalDomicile         | NULL                     |
+      | taxId                   | LVLDAA85T50G702B         |
+      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     Then Viene visualizzata la presenza di notifiche per la persona fisica "Signor casuale" 100 volte dal operatore radd "UPLOADER"
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
@@ -96,12 +96,12 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Throttling
   Scenario: [RADD-ALT_START-ACT-THROTTLE-OK] PF - Visualizzazione di atti e attestazioni opponibili per più volte - Caso di successo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
-      | senderDenomination | Comune di Palermo |
+      | senderDenomination | Comune di Palermo                            |
     And destinatario
-      | denomination           | Mario Cucumber            |
-      | taxId                  | FRMTTR76M06B715E          |
-      | digitalDomicile_address| testpagopa3@pec.pagopa.it |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | denomination            | Mario Cucumber            |
+      | taxId                   | FRMTTR76M06B715E          |
+      | digitalDomicile_address | testpagopa3@pec.pagopa.it |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
     When L'operatore scansione il qrCode per recuperare gli atti di "Mario Cucumber"
@@ -114,23 +114,23 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Throttling
     #actInquiry
   Scenario: [RADD-ALT_ACT-INQ-THROTTLE-KO] Inserimento più tentativi al minuto (actInquiry) - Caso di errore
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber radd alternative  |
-      | senderDenomination | Comune di Palermo           |
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
     And destinatario
-      | denomination    | Galileo Galilei  |
-      | taxId           | MNDLCU98T68C933T |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | denomination | Galileo Galilei  |
+      | taxId        | MNDLCU98T68C933T |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then L'operatore usa lo IUN "corretto" per recuperare gli atti di "Signor casuale" un numero di volte superiore al limite definito
 
   @raddTechnicalThrottle
   #actInquiry
   Scenario: [RADD-ALT_ACT-INQ-THROTTLE-OK] Inserimento più tentativi al minuto (actInquiry) - Caso di successo
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber radd alternative  |
-      | senderDenomination | Comune di Palermo           |
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
     And destinatario
-      | denomination    | Galileo Galilei  |
-      | taxId           | DSRDNI00A01A225I |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | denomination | Galileo Galilei  |
+      | taxId        | DSRDNI00A01A225I |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then L'operatore usa lo IUN "corretto" per recuperare gli atti di "Signor casuale" 100 volte
     And la lettura si conclude correttamente su radd alternative

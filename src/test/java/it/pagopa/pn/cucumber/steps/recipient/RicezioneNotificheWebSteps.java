@@ -45,6 +45,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.*;
 import static org.awaitility.Awaitility.await;
 
 @Slf4j
@@ -69,6 +70,7 @@ public class RicezioneNotificheWebSteps {
 
     private static final String TOS_VERSION = "2";
     private static final String ACCEPT_TOS = "ACCETTA";
+
 
     @Value("${pn.external.senderId}")
     private String senderId;
@@ -110,7 +112,7 @@ public class RicezioneNotificheWebSteps {
     public void notificationCanBeCorrectlyReadby(String recipient) {
         sharedSteps.selectUser(recipient);
         Assertions.assertDoesNotThrow(() -> {
-            this.fullNotification = webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
+            this.fullNotification = webRecipientClient.getReceivedNotification(sharedSteps.getFullSentNotificationV26().getIun(), null);
             log.info("timeline received: " + fullNotification.getTimeline());
         });
     }
@@ -120,7 +122,7 @@ public class RicezioneNotificheWebSteps {
         selectUser(user);
         bffFullNotificationV1Recipient =
                 Assertions.assertDoesNotThrow(() ->
-                        bffRecipientNotificationClient.getReceivedNotificationV1WithHttpInfoForRecipient(sharedSteps.getSentNotification().getIun())
+                        bffRecipientNotificationClient.getReceivedNotificationV1WithHttpInfoForRecipient(sharedSteps.getFullSentNotificationV26().getIun())
                                 .getBody());
         Assertions.assertNotNull(bffFullNotificationV1Recipient);
         log.info("FULL TIMELINE RECIPIENT: " + bffFullNotificationV1Recipient.getTimeline());
@@ -136,7 +138,7 @@ public class RicezioneNotificheWebSteps {
                 .findFirst()
                 .orElse(null);
         Assertions.assertDoesNotThrow(() ->
-                bffRecipientNotificationClient.getReceivedNotificationDocumentV1(sharedSteps.getSentNotification().getIun(), BffDocumentType.AAR, null, null, documentId));
+                bffRecipientNotificationClient.getReceivedNotificationDocumentV1(sharedSteps.getFullSentNotificationV26().getIun(), BffDocumentType.AAR, null, null, documentId));
     }
 
     @And("lato destinatario è possibile recuperare correttamente l'allegato {string} dal destinatario {string}")
@@ -144,7 +146,7 @@ public class RicezioneNotificheWebSteps {
         Assertions.assertNotNull(bffFullNotificationV1Recipient);
         selectUser(user);
         Assertions.assertDoesNotThrow(() ->
-                bffRecipientNotificationClient.getReceivedNotificationPaymentV1WithHttpInfo(sharedSteps.getSentNotification().getIun(), attachmentName, null, 0));
+                bffRecipientNotificationClient.getReceivedNotificationPaymentV1WithHttpInfo(sharedSteps.getFullSentNotificationV26().getIun(), attachmentName, null, 0));
     }
 
 
@@ -194,9 +196,9 @@ public class RicezioneNotificheWebSteps {
                 .stream()
                 .filter(Objects::nonNull)
                 .filter(data ->
-                        data.getElementId().contains(category) && data.getDetails() != null &&
-                                data.getDetails().getDeliveryDetailCode() != null &&
-                                data.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode))
+                        data.getElementId().contains(category)
+                                && data.getDetails().getDeliveryDetailCode() != null
+                                && data.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode))
                 .findFirst();
     }
 
@@ -204,7 +206,7 @@ public class RicezioneNotificheWebSteps {
     public void latoMittenteVengonoLettiIDettagliDellaNotificaLatoWebDalDestinatario(String sender) {
         selectPa(sender);
         bffFullNotificationV1Sender = Assertions.assertDoesNotThrow(() ->
-                bffRecipientNotificationClient.getSentNotificationV1WithHttpInfoForSender(sharedSteps.getSentNotification().getIun())
+                bffRecipientNotificationClient.getSentNotificationV1WithHttpInfoForSender(sharedSteps.getFullSentNotificationV26().getIun())
                         .getBody());
         Assertions.assertNotNull(bffFullNotificationV1Sender);
         log.info("FULL TIMELINE SENDER: " + bffFullNotificationV1Sender.getTimeline());
@@ -236,16 +238,16 @@ public class RicezioneNotificheWebSteps {
                 .stream()
                 .filter(Objects::nonNull)
                 .filter(data ->
-                        data.getElementId().contains(category) && data.getDetails() != null &&
-                                data.getDetails().getDeliveryDetailCode() != null &&
-                                data.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode))
+                        data.getElementId().contains(category)
+                                && data.getDetails().getDeliveryDetailCode() != null
+                                && data.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode))
                 .findFirst();
     }
 
     @Then("la notifica non può essere correttamente recuperata da {string}")
     public void notificationCanNotBeCorrectlyReadby(String recipient) {
         sharedSteps.selectUser(recipient);
-        this.fullNotification = webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
+        this.fullNotification = webRecipientClient.getReceivedNotification(sharedSteps.getFullSentNotificationV26().getIun(), null);
         Assertions.assertNull(fullNotification);
     }
 
@@ -275,8 +277,8 @@ public class RicezioneNotificheWebSteps {
     private NotificationAttachmentDownloadMetadataResponse getRecivedNotificationDocument() {
 
         return webRecipientClient.getReceivedNotificationDocument(
-                sharedSteps.getSentNotification().getIun(),
-                Integer.parseInt(Objects.requireNonNull(Objects.requireNonNull(Objects.requireNonNull(sharedSteps.getSentNotification()).getDocuments()).get(0).getDocIdx())),
+                sharedSteps.getFullSentNotificationV26().getIun(),
+                Integer.parseInt(Objects.requireNonNull(Objects.requireNonNull(Objects.requireNonNull(sharedSteps.getFullSentNotificationV26()).getDocuments()).get(0).getDocIdx())),
                 null
         );
     }
@@ -335,7 +337,7 @@ public class RicezioneNotificheWebSteps {
     private NotificationAttachmentDownloadMetadataResponse getReceivedNotificationAttachment(String attachmentName) {
 
         return webRecipientClient.getReceivedNotificationAttachment(
-                sharedSteps.getSentNotification().getIun(),
+                sharedSteps.getFullSentNotificationV26().getIun(),
                 attachmentName,
                 null, 0);
     }
@@ -402,7 +404,7 @@ public class RicezioneNotificheWebSteps {
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26 timelineElementInternalCategory = it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26.AAR_GENERATION;
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 timelineElement = null;
 
-        for (it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 element : sharedSteps.getSentNotification().getTimeline()) {
+        for (it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 element : sharedSteps.getFullSentNotificationV26().getTimeline()) {
             if (Objects.requireNonNull(element.getCategory()).equals(timelineElementInternalCategory)) {
                 timelineElement = element;
                 break;
@@ -420,7 +422,7 @@ public class RicezioneNotificheWebSteps {
 
             String finalKeySearch = "safestorage://" + keySearch;
             try {
-                this.webRecipientClient.getDocumentsWeb(sharedSteps.getSentNotification().getIun(), DocumentCategory.AAR, finalKeySearch, null);
+                this.webRecipientClient.getDocumentsWeb(sharedSteps.getFullSentNotificationV26().getIun(), DocumentCategory.AAR, finalKeySearch, null);
             } catch (HttpStatusCodeException e) {
                 this.notificationError = e;
             }
@@ -432,7 +434,7 @@ public class RicezioneNotificheWebSteps {
     public void notificationCanBeCorrectlyReadBy(String recipient) {
         sharedSteps.selectUser(recipient);
         try {
-            webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
+            webRecipientClient.getReceivedNotification(sharedSteps.getFullSentNotificationV26().getIun(), null);
         } catch (HttpStatusCodeException e) {
             this.notificationError = e;
         }
@@ -470,7 +472,7 @@ public class RicezioneNotificheWebSteps {
         if (data.containsKey("status")) {
             searchParam.status = NotificationStatusV26.valueOf(data.get("status"));
         }
-        searchParam.iunMatch = ((iun != null && iun.equalsIgnoreCase("ACTUAL") ? sharedSteps.getSentNotification().getIun() : iun));
+        searchParam.iunMatch = ((iun != null && iun.equalsIgnoreCase("ACTUAL") ? sharedSteps.getFullSentNotificationV26().getIun() : iun));
         searchParam.size = Integer.parseInt(data.getOrDefault("size", "10"));
         if (searchParam.size == -1) searchParam.size = null;
         return searchParam;
@@ -486,7 +488,7 @@ public class RicezioneNotificheWebSteps {
         searchParam.endDate = dates.getValue2();
         searchParam.subjectRegExp = data.getOrDefault("subjectRegExp", null);
         String iun = data.getOrDefault("iunMatch", null);
-        searchParam.iunMatch = ((iun != null && iun.equalsIgnoreCase("ACTUAL") ? sharedSteps.getSentNotification().getIun() : iun));
+        searchParam.iunMatch = ((iun != null && iun.equalsIgnoreCase("ACTUAL") ? sharedSteps.getFullSentNotificationV26().getIun() : iun));
         searchParam.size = Integer.parseInt(data.getOrDefault("size", "10"));
         return searchParam;
     }
@@ -502,7 +504,7 @@ public class RicezioneNotificheWebSteps {
         String end = data.getOrDefault("endDate", null);
 
 //        OffsetDateTime sentAt = sharedSteps.getSentNotification().getSentAt();
-        OffsetDateTime sentAt = Optional.ofNullable(sharedSteps.getSentNotification()).map(FullSentNotificationV26::getSentAt).orElse(OffsetDateTime.now());
+        OffsetDateTime sentAt = Optional.ofNullable(sharedSteps.getFullSentNotificationV26()).map(FullSentNotificationV26::getSentAt).orElse(OffsetDateTime.now());
         LocalDateTime localDateStart = LocalDate.parse(start, DateTimeFormatter.ofPattern("dd/MM/yyyy")).atStartOfDay();
         OffsetDateTime startDate = OffsetDateTime.of(localDateStart, sentAt.getOffset());
 
@@ -525,7 +527,7 @@ public class RicezioneNotificheWebSteps {
                         searchParam.senderId, searchParam.status, searchParam.subjectRegExp,
                         searchParam.iunMatch, searchParam.size, null);
         List<NotificationSearchRow> resultsPage = notificationSearchResponse.getResultsPage();
-        beenFound = Objects.requireNonNull(resultsPage).stream().filter(elem -> Objects.requireNonNull(elem.getIun()).equals(sharedSteps.getSentNotification().getIun())).findAny().orElse(null) != null;
+        beenFound = Objects.requireNonNull(resultsPage).stream().filter(elem -> Objects.requireNonNull(elem.getIun()).equals(sharedSteps.getFullSentNotificationV26().getIun())).findAny().orElse(null) != null;
         if (!beenFound && Boolean.TRUE.equals(notificationSearchResponse.getMoreResult())) {
             while (Boolean.TRUE.equals(notificationSearchResponse.getMoreResult())) {
                 List<String> nextPagesKey = notificationSearchResponse.getNextPagesKey();
@@ -535,7 +537,7 @@ public class RicezioneNotificheWebSteps {
                                     searchParam.startDate, searchParam.endDate, searchParam.mandateId,
                                     searchParam.senderId, searchParam.status, searchParam.subjectRegExp,
                                     searchParam.iunMatch, searchParam.size, pageKey);
-                    beenFound = resultsPage.stream().filter(elem -> Objects.requireNonNull(elem.getIun()).equals(sharedSteps.getSentNotification().getIun())).findAny().orElse(null) != null;
+                    beenFound = resultsPage.stream().filter(elem -> Objects.requireNonNull(elem.getIun()).equals(sharedSteps.getFullSentNotificationV26().getIun())).findAny().orElse(null) != null;
                     if (beenFound) break;
                 }//for
                 if (beenFound) break;
@@ -553,7 +555,7 @@ public class RicezioneNotificheWebSteps {
                         searchParam.status, searchParam.subjectRegExp,
                         searchParam.iunMatch, searchParam.size, null);
         List<it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchRow> resultsPage = notificationSearchResponse.getResultsPage();
-        beenFound = Objects.requireNonNull(resultsPage).stream().filter(elem -> Objects.requireNonNull(elem.getIun()).equals(sharedSteps.getSentNotification().getIun())).findAny().orElse(null) != null;
+        beenFound = Objects.requireNonNull(resultsPage).stream().filter(elem -> Objects.requireNonNull(elem.getIun()).equals(sharedSteps.getFullSentNotificationV26().getIun())).findAny().orElse(null) != null;
         if (!beenFound && Boolean.TRUE.equals(notificationSearchResponse.getMoreResult())) {
             while (Boolean.TRUE.equals(notificationSearchResponse.getMoreResult())) {
                 List<String> nextPagesKey = notificationSearchResponse.getNextPagesKey();
@@ -563,7 +565,7 @@ public class RicezioneNotificheWebSteps {
                                     searchParam.startDate, searchParam.endDate, searchParam.mandateId,
                                     searchParam.status, searchParam.subjectRegExp,
                                     searchParam.iunMatch, searchParam.size, pageKey);
-                    beenFound = resultsPage.stream().filter(elem -> Objects.requireNonNull(elem.getIun()).equals(sharedSteps.getSentNotification().getIun())).findAny().orElse(null) != null;
+                    beenFound = resultsPage.stream().filter(elem -> Objects.requireNonNull(elem.getIun()).equals(sharedSteps.getFullSentNotificationV26().getIun())).findAny().orElse(null) != null;
                     if (beenFound) break;
                 }//for
                 if (beenFound) break;
@@ -673,9 +675,11 @@ public class RicezioneNotificheWebSteps {
 
     private void postRecipientLegalAddressWrongCode(String senderIdPa, String addressVerification, String verificationCode) {
         String[] code = {verificationCode};
-        Assertions.assertThrows(HttpStatusCodeException.class, () -> {
-            this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.PEC, (new AddressVerification().value(addressVerification).verificationCode(code[0])));
-        });
+        Assertions.assertThrows(HttpStatusCodeException.class, () ->
+                this.iPnWebUserAttributesClient.postRecipientLegalAddress(
+                        senderIdPa,
+                        LegalChannelType.PEC,
+                        (new AddressVerification().value(addressVerification).verificationCode(code[0]))));
     }
 
     @And("viene cancellata l'email di cortesia per il comune {string}")
@@ -691,11 +695,11 @@ public class RicezioneNotificheWebSteps {
 
     private String getSenderIdPa(String pa) {
         return switch (pa) {
-            case "Comune_1" -> senderId;
-            case "Comune_2" -> senderId2;
-            case "Comune_Multi" -> senderIdGA;
-            case "Comune_Son" -> senderIdSON;
-            case "Comune_Root" -> senderIdROOT;
+            case COMUNE_1 -> senderId;
+            case COMUNE_2 -> senderId2;
+            case COMUNE_MULTI -> senderIdGA;
+            case COMUNE_SON -> senderIdSON;
+            case COMUNE_ROOT -> senderIdROOT;
             default -> "default";
         };
     }
@@ -712,8 +716,8 @@ public class RicezioneNotificheWebSteps {
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 timelineElement =
                 sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         // get new timeline
-        String iun = sharedSteps.getSentNotification().getIun();
-        sharedSteps.setSentNotification(b2bClient.getSentNotification(iun));
+        String iun = sharedSteps.getFullSentNotificationV26().getIun();
+        sharedSteps.setFullSentNotificationV26(b2bClient.getSentNotification(iun));
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 newTimelineElement =
                 sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         // check legal fact key
@@ -751,51 +755,39 @@ public class RicezioneNotificheWebSteps {
     }
 
     public void selectUser(String user) {
-        switch (user.trim().toLowerCase()) {
-            case "mario cucumber", "ettore fieramosca" -> {
-                bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_1);
-            }
-            case "mario gherkin", "cristoforo colombo" -> {
-                bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_2);
-            }
-            case "gherkinsrl" -> {
-                bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.PG_1);
-            }
-            case "cucumberspa", "lucio anneo seneca" -> {
-                bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.PG_2);
-            }
-            case "leonardo da vinci" -> {
-                bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_3);
-            }
-            case "dino sauro" -> {
-                bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_5);
-            }
-            case "mario cucumber con credenziali non valide" -> {
-                bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_SCADUTO);
-            }
+        switch (user.trim()) {
+            case MARIOCUCUMBER, ETTOREFIERAMOSCA ->
+                    bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_1);
+            case MARIOGHERKIN, CRISTOFOROCOLOMBO ->
+                    bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_2);
+            case GHERKINSRL ->
+                    bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.PG_1);
+            case CUCUMBERSPA, LUCIOANNEOSENECA ->
+                    bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+            case LEONARDODAVINCI ->
+                    bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_3);
+            case DINOSAURO ->
+                    bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_5);
+            case "mario cucumber con credenziali non valide" ->
+                    bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_SCADUTO);
             default -> throw new IllegalArgumentException();
 
         }
 
     }
 
-    public void selectPa(String pa) {
-        switch (pa) {
-            case "Comune_1" -> {
-                this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.MVP_1);
-            }
-            case "Comune_2" -> {
-                this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.MVP_2);
-            }
-            case "Comune_Multi" -> {
-                this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.GA);
-            }
-            case "Comune_Son" -> {
-                this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.SON);
-            }
-            case "Comune_Root" -> {
-                this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.ROOT);
-            }
+    public void selectPa(String paName) {
+        switch (paName) {
+            case COMUNE_1 ->
+                    this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.MVP_1);
+            case COMUNE_2 ->
+                    this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.MVP_2);
+            case COMUNE_MULTI ->
+                    this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.GA);
+            case COMUNE_SON ->
+                    this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.SON);
+            case COMUNE_ROOT ->
+                    this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.ROOT);
             default -> throw new IllegalArgumentException();
         }
     }
@@ -809,9 +801,8 @@ public class RicezioneNotificheWebSteps {
     }
 
     private void postRecipientLegalAddressSercq(String senderIdPa, String address) {
-        Assertions.assertDoesNotThrow(() -> {
-            this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.SERCQ, (new AddressVerification().value(address)));
-        });
+        Assertions.assertDoesNotThrow(() -> this.iPnWebUserAttributesClient.postRecipientLegalAddress(
+                senderIdPa, LegalChannelType.SERCQ, (new AddressVerification().value(address))));
     }
 
     @And("viene disabilitato il servizio SERCQ SEND per il comune di {string}")
@@ -867,14 +858,10 @@ public class RicezioneNotificheWebSteps {
                 .orElse(false);
 
         switch (act) {
-            case "disabilitato":
-                Assertions.assertFalse(exists, "Sercq risulta abilitato per il comune: " + pa);
-                break;
-            case "abilitato":
-                Assertions.assertTrue(exists, "Sercq risulta disabilitato per il comune: " + pa);
-                break;
-            default:
-                throw new IllegalArgumentException("Valore di 'act' non valido: " + act + ". I valori consentiti sono 'abilitato' o 'disabilitato'.");
+            case "disabilitato" -> Assertions.assertFalse(exists, "Sercq risulta abilitato per il comune: " + pa);
+            case "abilitato" -> Assertions.assertTrue(exists, "Sercq risulta disabilitato per il comune: " + pa);
+            default ->
+                    throw new IllegalArgumentException("Valore di 'act' non valido: " + act + ". I valori consentiti sono 'abilitato' o 'disabilitato'.");
         }
     }
 
@@ -961,7 +948,7 @@ public class RicezioneNotificheWebSteps {
         try {
             List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getAddressesByRecipient().getLegal();
             if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
-                legalAddressByRecipient.stream()
+                legalAddressByRecipient
                         .forEach(address -> {
                             this.iPnWebUserAttributesClient.deleteRecipientLegalAddress(address.getSenderId(), address.getChannelType());
                             log.info("Cancellato indirizzo di tipo " + address.getChannelType() + " per il comune " + address.getSenderId());
@@ -969,7 +956,7 @@ public class RicezioneNotificheWebSteps {
             }
             List<CourtesyDigitalAddress> courtesyDigitalAddresses = this.iPnWebUserAttributesClient.getAddressesByRecipient().getCourtesy();
             if (courtesyDigitalAddresses != null && !courtesyDigitalAddresses.isEmpty()) {
-                courtesyDigitalAddresses.stream()
+                courtesyDigitalAddresses
                         .forEach(address -> {
                             this.iPnWebUserAttributesClient.deleteRecipientCourtesyAddress(address.getSenderId(), address.getChannelType());
                             log.info("Cancellato indirizzo di cortesia di tipo " + address.getChannelType() + " per il comune " + address.getSenderId());
@@ -984,7 +971,7 @@ public class RicezioneNotificheWebSteps {
     @And("Viene verificato che non sia arrivato un evento di {string}")
     public void verificaAssenzaElementoTimeline(String categoryToFind) {
 
-        boolean isPresent = sharedSteps.getSentNotification().getTimeline()
+        boolean isPresent = sharedSteps.getFullSentNotificationV26().getTimeline()
                 .stream()
                 .map(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26::getCategory)
                 .filter(Objects::nonNull)
@@ -1013,7 +1000,6 @@ public class RicezioneNotificheWebSteps {
         Assertions.assertFalse(privacyConsentv1.isEmpty());
         privacyConsentv1.forEach(data -> {
             Assertions.assertNotNull(data.getConsentType());
-            Assertions.assertNotNull(data.getConsentType().equals(ConsentType.TOS_SERCQ));
             Assertions.assertEquals(data.getAccepted(), tosStatus.equalsIgnoreCase("positiva"));
         });
     }

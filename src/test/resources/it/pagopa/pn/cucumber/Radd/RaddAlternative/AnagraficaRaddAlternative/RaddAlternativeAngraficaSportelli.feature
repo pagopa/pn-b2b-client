@@ -77,8 +77,8 @@ Feature: Radd Alternative Anagrafica Sportelli
     When viene cambiato raddista con "STANDARD"
     When viene caricato il csv con dati:
       | address_radd_row | address_radd_cap | address_radd_province | address_radd_city | address_radd_country | radd_geoLocation_latitudine | radd_geoLocation_longitudine | radd_description | radd_phoneNumber |
-      | NULL             | NULL             | NULL                  | NULL              | NULL                 | NULL                        | 45.0000                      |  cuccumella      | 01-5245951       |
-      | NULL             | 75010            | NULL                  | NULL              | NULL                 | 42.0000                     | NULL                         |  cipicipi        | 01-5245951       |
+      | NULL             | NULL             | NULL                  | NULL              | NULL                 | NULL                        | 45.0000                      | cuccumella       | 01-5245951       |
+      | NULL             | 75010            | NULL                  | NULL              | NULL                 | 42.0000                     | NULL                         | cipicipi         | 01-5245951       |
     Then viene controllato lo stato di caricamento del csv a "DONE"
     Then si controlla che gli sportelli inseriti siano nello status giusto:
       | index | status   |
@@ -112,23 +112,23 @@ Feature: Radd Alternative Anagrafica Sportelli
   Scenario Outline: [ADEG-RADD-VAL-FIELD-2] caricamento CSV contiene solo il campo description o il campo telefono vuoto
     When viene cambiato raddista con "STANDARD"
     When viene caricato il csv con dati:
-      | address_radd_row | address_radd_cap | address_radd_province | address_radd_city    | address_radd_country | radd_description  | radd_phoneNumber  | radd_geoLocation_latitudine | radd_geoLocation_longitudine | radd_openingTime | radd_start_validity | radd_end_validity | radd_capacity | radd_externalCode |
-      | via posto        | 30022            | VE                    | CEGGIA               | ITALIA               | <raddDescription> | <raddPhoneNumber> | 45.0000                     | 42.2412                      | lun=9:00-10:00#  | now                 | +10g              | 10            | testRadd          |
+      | address_radd_row | address_radd_cap | address_radd_province | address_radd_city | address_radd_country | radd_description  | radd_phoneNumber  | radd_geoLocation_latitudine | radd_geoLocation_longitudine | radd_openingTime | radd_start_validity | radd_end_validity | radd_capacity | radd_externalCode |
+      | via posto        | 30022            | VE                    | CEGGIA            | ITALIA               | <raddDescription> | <raddPhoneNumber> | 45.0000                     | 42.2412                      | lun=9:00-10:00#  | now                 | +10g              | 10            | testRadd          |
     Then viene controllato lo stato di caricamento del csv a "DONE"
     Then si controlla che gli sportelli inseriti siano nello status giusto:
       | index | status   | errorMessage   |
       | 0     | REJECTED | <errorMessage> |
     Examples:
-      | raddDescription | raddPhoneNumber | errorMessage                          |
-      | null            | 01-5245951      | Il campo descrizione è obbligatorio   |
-      | test sportelli  | null            | Il campo telefono è obbligatorio      |
+      | raddDescription | raddPhoneNumber | errorMessage                        |
+      | null            | 01-5245951      | Il campo descrizione è obbligatorio |
+      | test sportelli  | null            | Il campo telefono è obbligatorio    |
 
   @raddAnagrafica @raddAlternativeCsv @puliziaSportelliCsv
   Scenario: [ADEG-RADD-VAL-FIELD-3] caricamento CSV contiene solo il campo telefono compilato erroneamente
     When viene cambiato raddista con "STANDARD"
     When viene caricato il csv con dati:
-      | address_radd_row | address_radd_cap | address_radd_province | address_radd_city    | address_radd_country | radd_description | radd_phoneNumber  | radd_geoLocation_latitudine | radd_geoLocation_longitudine | radd_openingTime | radd_start_validity | radd_end_validity | radd_capacity | radd_externalCode |
-      | via posto        | 30022            | VE                    | CEGGIA               | ITALIA               | test sportelli   | ĄŁĽŚŠŞŤŹŽż              | 45.0000                     | 42.2412                      | lun=9:00-10:00#  | now                 | +10g              | 10            | testRadd          |
+      | address_radd_row | address_radd_cap | address_radd_province | address_radd_city | address_radd_country | radd_description | radd_phoneNumber | radd_geoLocation_latitudine | radd_geoLocation_longitudine | radd_openingTime | radd_start_validity | radd_end_validity | radd_capacity | radd_externalCode |
+      | via posto        | 30022            | VE                    | CEGGIA            | ITALIA               | test sportelli   | ĄŁĽŚŠŞŤŹŽż       | 45.0000                     | 42.2412                      | lun=9:00-10:00#  | now                 | +10g              | 10            | testRadd          |
     Then viene controllato lo stato di caricamento del csv a "DONE"
     Then si controlla che gli sportelli inseriti siano nello status giusto:
       | index | status   | errorMessage                                       |
@@ -138,10 +138,10 @@ Feature: Radd Alternative Anagrafica Sportelli
   Scenario: [ADEG-RADD-VAL-FIELD-4] caricamento CSV con uno sportello con campi telefono e descrizione vuoti, uno sportello con telefono compilato correttamente e uno sportello compilato correttamente
     When viene cambiato raddista con "STANDARD"
     When viene caricato il csv con dati:
-      | address_radd_row | address_radd_cap | address_radd_province | address_radd_city    | address_radd_country | radd_description | radd_phoneNumber  | radd_geoLocation_latitudine | radd_geoLocation_longitudine | radd_openingTime | radd_start_validity | radd_end_validity | radd_capacity | radd_externalCode |
-      | via posto        | 30022            | VE                    | CEGGIA               | ITALIA               | NULL             | NULL              | 45.0000                     | 42.2412                      | lun=9:00-10:00#  | now                 | +10g              | 10            | testRadd          |
-      | via posto2       | 30022            | VE                    | GORGOGLIONE          | ITALIA               | test sportelli   | error             | 45.0000                     | 42.2412                      | lun=9:00-10:00#  | now                 | +10g              | 10            | testRadd          |
-      | via posto3       | 30023            | VE                    | CONCORDIA SAGITTARIA | ITALIA               | test sportelli   | 01-5245951        | 45.0000                     | 42.2412                      | lun=9:00-10:00#  | now                 | +10g              | 10            | testRadd          |
+      | address_radd_row | address_radd_cap | address_radd_province | address_radd_city    | address_radd_country | radd_description | radd_phoneNumber | radd_geoLocation_latitudine | radd_geoLocation_longitudine | radd_openingTime | radd_start_validity | radd_end_validity | radd_capacity | radd_externalCode |
+      | via posto        | 30022            | VE                    | CEGGIA               | ITALIA               | NULL             | NULL             | 45.0000                     | 42.2412                      | lun=9:00-10:00#  | now                 | +10g              | 10            | testRadd          |
+      | via posto2       | 30022            | VE                    | GORGOGLIONE          | ITALIA               | test sportelli   | error            | 45.0000                     | 42.2412                      | lun=9:00-10:00#  | now                 | +10g              | 10            | testRadd          |
+      | via posto3       | 30023            | VE                    | CONCORDIA SAGITTARIA | ITALIA               | test sportelli   | 01-5245951       | 45.0000                     | 42.2412                      | lun=9:00-10:00#  | now                 | +10g              | 10            | testRadd          |
     Then viene controllato lo stato di caricamento del csv a "DONE"
     Then si controlla che gli sportelli inseriti siano nello status giusto:
       | index | status   | errorMessage                                                          |
@@ -153,9 +153,9 @@ Feature: Radd Alternative Anagrafica Sportelli
   Scenario: [RADD_ANAGRAFICA_CSV_LISTA_1] caricamento CSV verifica il ricevimento della lista dei sportelli RADD
     When viene cambiato raddista con "STANDARD"
     When viene caricato il csv con dati:
-      | address_radd_row | address_radd_cap | address_radd_province | address_radd_city | radd_description | radd_phoneNumber  |
-      | via posto        | 75010            | MT                    | GROTTOLE          | test sportelli   | 01-5245951        |
-      | via ceggia       | 75010            | MT                    | MIGLIONICO        | test sportelli   | 01-5245951        |
+      | address_radd_row | address_radd_cap | address_radd_province | address_radd_city | radd_description | radd_phoneNumber |
+      | via posto        | 75010            | MT                    | GROTTOLE          | test sportelli   | 01-5245951       |
+      | via ceggia       | 75010            | MT                    | MIGLIONICO        | test sportelli   | 01-5245951       |
     Then viene controllato lo stato di caricamento del csv a "DONE"
     Then viene richiesta la lista degli sportelli caricati dal csv:
       | radd_requestId    | corretto |
@@ -201,12 +201,12 @@ Feature: Radd Alternative Anagrafica Sportelli
   @raddAnagrafica
   Scenario Outline: [RADD_ANAGRAFICA_CRUD_2] inserimento sportello RADD senza campi obbligatori
     When viene generato uno sportello Radd con restituzione errore con dati:
-      | address_radd_row      | <via>           |
-      | address_radd_cap      | <cap>           |
-      | address_radd_province | <provincia>     |
-      | address_radd_city     | <citta>         |
-      | radd_description      | <descrizione>   |
-      | radd_phoneNumber      | <telefono>      |
+      | address_radd_row      | <via>         |
+      | address_radd_cap      | <cap>         |
+      | address_radd_province | <provincia>   |
+      | address_radd_city     | <citta>       |
+      | radd_description      | <descrizione> |
+      | radd_phoneNumber      | <telefono>    |
     Then l'operazione ha prodotto un errore con status code "400"
     Examples:
       | via       | cap   | provincia | citta  | descrizione | telefono       |
@@ -279,13 +279,13 @@ Feature: Radd Alternative Anagrafica Sportelli
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL            |
       | physicalAddress_address      | Via@ok_890      |
       | physicalAddress_municipality | SAN MAURO FORTE |
       | physicalAddress_zip          | 75010           |
       | physicalAddress_province     | MT              |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo di 747 e il peso di 10 nei details del'elemento di timeline letto
 
@@ -305,13 +305,13 @@ Feature: Radd Alternative Anagrafica Sportelli
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL        |
       | physicalAddress_address      | Via@ok_890  |
       | physicalAddress_municipality | LAGO PATRIA |
       | physicalAddress_zip          | 80014       |
       | physicalAddress_province     | NA          |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo di 753 e il peso di 20 nei details del'elemento di timeline letto
 
@@ -409,14 +409,14 @@ Feature: Radd Alternative Anagrafica Sportelli
   @raddAnagrafica @puliziaSportelli
   Scenario: [RADD_ANAGRAFICA_CRUD_14] modifica sportello RADD con dati corretti ma modifica da diverso operatore RADD
     When viene generato uno sportello Radd con dati:
-      | address_radd_row      | via posto           |
-      | address_radd_cap      | 80016               |
-      | address_radd_province | NA                  |
-      | address_radd_city     | TORRE PISCITELLI    |
-      | address_radd_country  | ITALY               |
-      | radd_description      | descrizione         |
-      | radd_phoneNumber      | +39 0126437425      |
-      | radd_openingTime      | mon=10:00-13:00#    |
+      | address_radd_row      | via posto        |
+      | address_radd_cap      | 80016            |
+      | address_radd_province | NA               |
+      | address_radd_city     | TORRE PISCITELLI |
+      | address_radd_country  | ITALY            |
+      | radd_description      | descrizione      |
+      | radd_phoneNumber      | +39 0126437425   |
+      | radd_openingTime      | mon=10:00-13:00# |
     Then si controlla che il sportello sia in stato "ACCEPTED"
     And viene cambiato raddista con "STANDARD"
     Then viene modificato uno sportello Radd con dati errati:
@@ -429,14 +429,14 @@ Feature: Radd Alternative Anagrafica Sportelli
   @raddAnagrafica
   Scenario: [RADD_ANAGRAFICA_CRUD_15] cancellazione sportello RADD con dati corretti
     When viene generato uno sportello Radd con dati:
-      | address_radd_row      | via posto           |
-      | address_radd_cap      | 80017               |
-      | address_radd_province | NA                  |
-      | address_radd_city     | MELITO DI NAPOLI    |
-      | address_radd_country  | ITALY               |
-      | radd_start_validity   | now                 |
-      | radd_description      | descrizione         |
-      | radd_phoneNumber      | +39 0126437425      |
+      | address_radd_row      | via posto        |
+      | address_radd_cap      | 80017            |
+      | address_radd_province | NA               |
+      | address_radd_city     | MELITO DI NAPOLI |
+      | address_radd_country  | ITALY            |
+      | radd_start_validity   | now              |
+      | radd_description      | descrizione      |
+      | radd_phoneNumber      | +39 0126437425   |
     Then si controlla che il sportello sia in stato "ACCEPTED"
     Then viene cancellato uno sportello Radd con dati:
       | radd_end_validity | now |
@@ -444,15 +444,15 @@ Feature: Radd Alternative Anagrafica Sportelli
   @raddAnagrafica @puliziaSportelli
   Scenario: [RADD_ANAGRAFICA_CRUD_16] cancellazione sportello RADD con endDate < endValidity dello sportello
     When viene generato uno sportello Radd con dati:
-      | address_radd_row      | via posto           |
-      | address_radd_cap      | 80018               |
-      | address_radd_province | NA                  |
-      | address_radd_city     | MUGNANO DI NAPOLI   |
-      | address_radd_country  | ITALY               |
-      | radd_start_validity   | now                 |
-      | radd_end_validity     | +10g                |
-      | radd_description      | descrizione         |
-      | radd_phoneNumber      | +39 0126437425      |
+      | address_radd_row      | via posto         |
+      | address_radd_cap      | 80018             |
+      | address_radd_province | NA                |
+      | address_radd_city     | MUGNANO DI NAPOLI |
+      | address_radd_country  | ITALY             |
+      | radd_start_validity   | now               |
+      | radd_end_validity     | +10g              |
+      | radd_description      | descrizione       |
+      | radd_phoneNumber      | +39 0126437425    |
     Then si controlla che il sportello sia in stato "ACCEPTED"
     Then viene cancellato uno sportello Radd con dati:
       | radd_end_validity | -10g |
@@ -461,28 +461,28 @@ Feature: Radd Alternative Anagrafica Sportelli
   @raddAnagrafica @puliziaSportelli
   Scenario: [RADD_ANAGRAFICA_CRUD_17] cancellazione sportello RADD con endDate > endValidity dello sportello controllo sportello ancora aperto
     When viene generato uno sportello Radd con dati:
-      | address_radd_row      | via posto           |
-      | address_radd_cap      | 80019               |
-      | address_radd_province | NA                  |
-      | address_radd_city     | QUALIANO            |
-      | address_radd_country  | ITALY               |
-      | radd_start_validity   | now                 |
-      | radd_end_validity     | +1g                 |
-      | radd_description      | descrizione         |
-      | radd_phoneNumber      | 0126437425          |
+      | address_radd_row      | via posto   |
+      | address_radd_cap      | 80019       |
+      | address_radd_province | NA          |
+      | address_radd_city     | QUALIANO    |
+      | address_radd_country  | ITALY       |
+      | radd_start_validity   | now         |
+      | radd_end_validity     | +1g         |
+      | radd_description      | descrizione |
+      | radd_phoneNumber      | 0126437425  |
     Then si controlla che il sportello sia in stato "ACCEPTED"
     And viene cancellato uno sportello Radd con dati:
       | radd_end_validity | +10g |
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL       |
       | physicalAddress_address      | Via@ok_890 |
       | physicalAddress_municipality | QUALIANO   |
       | physicalAddress_zip          | 80019      |
       | physicalAddress_province     | NA         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo di 747 e il peso di 10 nei details del'elemento di timeline letto
 
@@ -490,13 +490,13 @@ Feature: Radd Alternative Anagrafica Sportelli
   @raddAnagrafica  @puliziaSportelli
   Scenario: [RADD_ANAGRAFICA_CRUD_18] cancellazione sportello RADD con registryId non presente nella lista degli sportelli
     When viene generato uno sportello Radd con dati:
-      | address_radd_row      | via posto           |
-      | address_radd_cap      | 80020               |
-      | address_radd_province | NA                  |
-      | address_radd_city     | CASAVATORE          |
-      | address_radd_country  | ITALY               |
-      | radd_description      | descrizione         |
-      | radd_phoneNumber      | +39 0126437425      |
+      | address_radd_row      | via posto      |
+      | address_radd_cap      | 80020          |
+      | address_radd_province | NA             |
+      | address_radd_city     | CASAVATORE     |
+      | address_radd_country  | ITALY          |
+      | radd_description      | descrizione    |
+      | radd_phoneNumber      | +39 0126437425 |
     Then si controlla che il sportello sia in stato "ACCEPTED"
     Then viene cancellato uno sportello Radd con dati errati:
       | radd_registryId | 0_CHAR |

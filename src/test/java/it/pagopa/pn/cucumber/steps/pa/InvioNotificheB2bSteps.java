@@ -43,6 +43,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
+import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.COMUNE_1;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -114,20 +115,20 @@ public class InvioNotificheB2bSteps {
 
     private <T> void notificationCanBeRetrievedWithIUN(AtomicReference<T> notificationByIun, Function<String, T> getNotificationByIunFunction) {
         try {
-            if (sharedSteps.getSentNotification() != null) {
+            if (sharedSteps.getFullSentNotificationV26() != null) {
                 assertThatCode(() ->
-                        notificationByIun.set(getNotificationByIunFunction.apply(sharedSteps.getSentNotification().getIun()))
-                ).as("Il recupero della notifica con IUN '%s' non deve generare eccezioni", sharedSteps.getSentNotification().getIun())
+                        notificationByIun.set(getNotificationByIunFunction.apply(sharedSteps.getFullSentNotificationV26().getIun()))
+                ).as("Il recupero della notifica con IUN '%s' non deve generare eccezioni", sharedSteps.getFullSentNotificationV26().getIun())
                         .doesNotThrowAnyException();
-            } else if (sharedSteps.getSentNotificationV1() != null) {
+            } else if (sharedSteps.getFullSentNotificationV1() != null) {
                 assertThatCode(() ->
-                        notificationByIun.set(getNotificationByIunFunction.apply(sharedSteps.getSentNotificationV1().getIun()))
-                ).as("Il recupero della notifica con IUN '%s' non deve generare eccezioni", sharedSteps.getSentNotificationV1().getIun())
+                        notificationByIun.set(getNotificationByIunFunction.apply(sharedSteps.getFullSentNotificationV1().getIun()))
+                ).as("Il recupero della notifica con IUN '%s' non deve generare eccezioni", sharedSteps.getFullSentNotificationV1().getIun())
                         .doesNotThrowAnyException();
-            } else if (sharedSteps.getSentNotificationV2() != null) {
+            } else if (sharedSteps.getFullSentNotificationV20() != null) {
                 assertThatCode(() ->
-                        notificationByIun.set(getNotificationByIunFunction.apply(sharedSteps.getSentNotificationV2().getIun()))
-                ).as("Il recupero della notifica con IUN '%s' non deve generare eccezioni", sharedSteps.getSentNotificationV2().getIun())
+                        notificationByIun.set(getNotificationByIunFunction.apply(sharedSteps.getFullSentNotificationV20().getIun()))
+                ).as("Il recupero della notifica con IUN '%s' non deve generare eccezioni", sharedSteps.getFullSentNotificationV20().getIun())
                         .doesNotThrowAnyException();
             } else {
                 assertThat(notificationByIun.get())
@@ -148,7 +149,7 @@ public class InvioNotificheB2bSteps {
     public void notificationCanBeRetrievedWithIUNV2Error() {
         AtomicReference<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.FullSentNotificationV20> notificationByIun = new AtomicReference<>();
         try {
-            notificationByIun.set(b2bUtils.getNotificationByIunV2(sharedSteps.getSentNotification().getIun()));
+            notificationByIun.set(b2bUtils.getNotificationByIunV2(sharedSteps.getFullSentNotificationV26().getIun()));
 
         } catch (HttpStatusCodeException e) {
             sharedSteps.setNotificationError(e);
@@ -159,7 +160,7 @@ public class InvioNotificheB2bSteps {
     public void notificationCanBeRetrievedWithIUNV1Error() {
         AtomicReference<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification> notificationByIun = new AtomicReference<>();
         try {
-            notificationByIun.set(b2bUtils.getNotificationByIunV1(sharedSteps.getSentNotification().getIun()));
+            notificationByIun.set(b2bUtils.getNotificationByIunV1(sharedSteps.getFullSentNotificationV26().getIun()));
         } catch (HttpStatusCodeException e) {
             sharedSteps.setNotificationError(e);
         }
@@ -169,11 +170,11 @@ public class InvioNotificheB2bSteps {
     public void notificationCanBeRetrievedWithIUNWebPA() {
         AtomicReference<NotificationSearchResponse> notificationByIun = new AtomicReference<>();
 
-        assertThat(sharedSteps.getSentNotification())
+        assertThat(sharedSteps.getFullSentNotificationV26())
                 .as("La notifica inviata non deve essere nulla prima di recuperare il codice IUN")
                 .isNotNull();
 
-        String iun = sharedSteps.getSentNotification().getIun();
+        String iun = sharedSteps.getFullSentNotificationV26().getIun();
 
         try {
             notificationByIun.set(
@@ -231,7 +232,7 @@ public class InvioNotificheB2bSteps {
                     .as("L'attachment del pagamento deve essere nullo")
                     .isNull();
 
-            sharedSteps.setSentNotification(notifica120);
+            sharedSteps.setFullSentNotificationV26(notifica120);
 
         } catch (AssertionError assertionError) {
             String message = assertionError.getMessage() +
@@ -271,7 +272,7 @@ public class InvioNotificheB2bSteps {
             log.info("notifica trovata: {}", notifica);
             notifica.setPaFee(100);
             notifica.setVat(22);
-            sharedSteps.setSentNotification(notifica);
+            sharedSteps.setFullSentNotificationV26(notifica);
 
         } catch (AssertionError assertionError) {
             String message = assertionError.getMessage() +
@@ -360,9 +361,9 @@ public class InvioNotificheB2bSteps {
     public void laNotificaVieneRecuperataDalSistemaTramiteCodiceIUN() {
         AtomicReference<FullSentNotificationV26> notificationByIun = new AtomicReference<>();
         try {
-            FullSentNotificationV26 notificationResponseComplete = b2bUtils.getNotificationByIun(sharedSteps.getSentNotification().getIun());
+            FullSentNotificationV26 notificationResponseComplete = b2bUtils.getNotificationByIun(sharedSteps.getFullSentNotificationV26().getIun());
             notificationByIun.set(notificationResponseComplete);
-            sharedSteps.setSentNotification(notificationResponseComplete);
+            sharedSteps.setFullSentNotificationV26(notificationResponseComplete);
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
         }
@@ -423,11 +424,11 @@ public class InvioNotificheB2bSteps {
     @And("viene effettuato un controllo sulla durata della retention di {string}")
     public void retentionCheckLoad(String documentType) {
         String key = switch (documentType) {
-            case "ATTO OPPONIBILE" -> sharedSteps.getSentNotification().getDocuments().get(0).getRef().getKey();
+            case "ATTO OPPONIBILE" -> sharedSteps.getFullSentNotificationV26().getDocuments().get(0).getRef().getKey();
             case "PAGOPA" ->
-                    sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(0).getPagoPa().getAttachment().getRef().getKey();
+                    sharedSteps.getFullSentNotificationV26().getRecipients().get(0).getPayments().get(0).getPagoPa().getAttachment().getRef().getKey();
             case "F24" ->
-                    sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(0).getF24().getMetadataAttachment().getRef().getKey();
+                    sharedSteps.getFullSentNotificationV26().getRecipients().get(0).getPayments().get(0).getF24().getMetadataAttachment().getRef().getKey();
             default -> throw new IllegalArgumentException();
         };
         assertThat(checkRetetion(key, retentionTimeLoad))
@@ -439,8 +440,8 @@ public class InvioNotificheB2bSteps {
     public void retentionCheckLoadForTimelineElement(String documentType, String timelineEventCategory, @Transpose DataTest dataFromTest) throws RuntimeException {
         TimelineElementV26 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         if (documentType.equals("ATTACHMENTS")) {
-            for (int i = 0; i < sharedSteps.getSentNotification().getDocuments().size(); i++) {
-                String key = sharedSteps.getSentNotification().getDocuments().get(i).getRef().getKey();
+            for (int i = 0; i < sharedSteps.getFullSentNotificationV26().getDocuments().size(); i++) {
+                String key = sharedSteps.getFullSentNotificationV26().getDocuments().get(i).getRef().getKey();
 
                 assertThat(checkRetention(key, retentionTimeLoad, timelineElement.getTimestamp()))
                         .as("La verifica della retention ha fallito per la chiave '%s'. retentionTimeLoad: %d, timelineElement.getTimestamp: %s",
@@ -456,8 +457,8 @@ public class InvioNotificheB2bSteps {
     public void retentionCheckLoadForTimelineElementF24(String documentType, String timelineEventCategory, @Transpose DataTest dataFromTest) throws RuntimeException {
         TimelineElementV26 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         if (documentType.equals("ATTACHMENTS")) {
-            for (int i = 0; i < sharedSteps.getSentNotification().getRecipients().get(0).getPayments().size(); i++) {
-                String key = sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(i).getF24().getMetadataAttachment().getRef().getKey();
+            for (int i = 0; i < sharedSteps.getFullSentNotificationV26().getRecipients().get(0).getPayments().size(); i++) {
+                String key = sharedSteps.getFullSentNotificationV26().getRecipients().get(0).getPayments().get(i).getF24().getMetadataAttachment().getRef().getKey();
 
                 assertThat(timelineElement.getTimestamp()).as("Il timestamp dell'elemento della timeline non deve essere nullo").isNotNull();
 
@@ -497,8 +498,8 @@ public class InvioNotificheB2bSteps {
     public void retentionCheckLoadForTimelineElementPAGOPA(String documentType, String timelineEventCategory, @Transpose DataTest dataFromTest) throws RuntimeException {
         TimelineElementV26 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         if (documentType.equals("ATTACHMENTS")) {
-            for (int i = 0; i < sharedSteps.getSentNotification().getRecipients().get(0).getPayments().size(); i++) {
-                String key = sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(i).getPagoPa().getAttachment().getRef().getKey();
+            for (int i = 0; i < sharedSteps.getFullSentNotificationV26().getRecipients().get(0).getPayments().size(); i++) {
+                String key = sharedSteps.getFullSentNotificationV26().getRecipients().get(0).getPayments().get(i).getPagoPa().getAttachment().getRef().getKey();
 
                 assertThat(checkRetention(key, retentionTimeLoad, timelineElement.getTimestamp()))
                         .as("La verifica della retention per la chiave con tempo di retention e il timestamp deve restituire true",
@@ -515,7 +516,7 @@ public class InvioNotificheB2bSteps {
     public void vieneLettaLaNotificaDal(String IUN, String pa) {
         sharedSteps.setPA(pa);
         FullSentNotificationV26 notificationByIun = b2bUtils.getNotificationByIun(IUN);
-        sharedSteps.setSentNotification(notificationByIun);
+        sharedSteps.setFullSentNotificationV26(notificationByIun);
     }
 
     @When("si tenta il recupero della notifica dal sistema tramite codice IUN {string}")
@@ -569,26 +570,26 @@ public class InvioNotificheB2bSteps {
 
     @When("viene richiesto il download del documento {string} per il destinatario {int}")
     public void documentDownloadPerDestinatario(String type, int destinatario) {
-        getDownloadFile(type, sharedSteps.getSentNotification().getIun(), destinatario);
+        getDownloadFile(type, sharedSteps.getFullSentNotificationV26().getIun(), destinatario);
     }
 
     @When("viene richiesto il download del documento {string} inesistente")
     public void documentAbsentDownload(String type) {
-        getDownloadFile(type, sharedSteps.getSentNotification().getIun(), 0);
+        getDownloadFile(type, sharedSteps.getFullSentNotificationV26().getIun(), 0);
     }
 
     @When("viene richiesto il download del documento {string} inesistente per il destinatario {int}")
     public void documentAbsentDownload(String type, int destinatario) {
-        getDownloadFile(type, sharedSteps.getSentNotification().getIun(), destinatario);
+        getDownloadFile(type, sharedSteps.getFullSentNotificationV26().getIun(), destinatario);
     }
 
     private void getDownloadFile(String type, String iun, int destinatario) {
         try {
 
             if (type.equalsIgnoreCase("NOTIFICA")) {
-                List<NotificationDocument> documents = sharedSteps.getSentNotification().getDocuments();
+                List<NotificationDocument> documents = sharedSteps.getFullSentNotificationV26().getDocuments();
                 this.downloadResponse = b2bClient
-                        .getSentNotificationDocument(sharedSteps.getSentNotification().getIun(), Integer.parseInt(documents.get(0).getDocIdx()));
+                        .getSentNotificationDocument(sharedSteps.getFullSentNotificationV26().getIun(), Integer.parseInt(documents.get(0).getDocIdx()));
             } else {
                 this.downloadResponse = b2bClient
                         .getSentNotificationAttachment(iun, destinatario, type, 0);
@@ -701,11 +702,11 @@ public class InvioNotificheB2bSteps {
     private void verifyNotificationVersioning(String version) {
         try {
             if (version.equalsIgnoreCase("V1")) {
-                b2bUtils.verifyNotificationV1(sharedSteps.getSentNotificationV1());
+                b2bUtils.verifyNotificationV1(sharedSteps.getFullSentNotificationV1());
             } else if (version.equalsIgnoreCase("V2")) {
-                b2bUtils.verifyNotificationV2(sharedSteps.getSentNotificationV2());
+                b2bUtils.verifyNotificationV2(sharedSteps.getFullSentNotificationV20());
             } else if (version.equalsIgnoreCase("V23")) {
-                b2bUtils.verifyNotification(sharedSteps.getSentNotification());
+                b2bUtils.verifyNotification(sharedSteps.getFullSentNotificationV26());
             }
         } catch (AssertionFailedError assertionFailedError) {
             log.info("Errore di acquisizione notifica");
@@ -714,7 +715,7 @@ public class InvioNotificheB2bSteps {
 
     @Then("si verifica la corretta acquisizione della notifica con verifica sha256 dell'allegato di pagamento {string}")
     public void correctAcquisitionNotificationVerifySha256AllegatiPagamento(String attachment) {
-        assertThatCode(() -> b2bUtils.verifyNotificationAndSha256AllegatiPagamento(sharedSteps.getSentNotification(), attachment))
+        assertThatCode(() -> b2bUtils.verifyNotificationAndSha256AllegatiPagamento(sharedSteps.getFullSentNotificationV26(), attachment))
                 .as("Verifica fallita per la notifica e l'hash SHA-256 dell'allegato di pagamento . Assicurati che non vengano sollevate eccezioni.", attachment)
                 .doesNotThrowAnyException();
     }
@@ -722,14 +723,14 @@ public class InvioNotificheB2bSteps {
 
     @And("viene controllato la presenza del taxonomyCode")
     public void checkTaxonomyCode() {
-        assertThat(this.sharedSteps.getSentNotification().getTaxonomyCode())
+        assertThat(this.sharedSteps.getFullSentNotificationV26().getTaxonomyCode())
                 .as("Il taxonomyCode nella notifica inviata non dovrebbe essere nullo")
                 .isNotNull();
 
         if (this.sharedSteps.getNotificationRequest().getTaxonomyCode() != null) {
             assertThat(this.sharedSteps.getNotificationRequest().getTaxonomyCode())
                     .as("Il taxonomyCode nella richiesta di notifica dovrebbe essere uguale al taxonomyCode nella notifica inviata")
-                    .isEqualTo(this.sharedSteps.getSentNotification().getTaxonomyCode());
+                    .isEqualTo(this.sharedSteps.getFullSentNotificationV26().getTaxonomyCode());
         }
 
     }
@@ -803,7 +804,7 @@ public class InvioNotificheB2bSteps {
     @And("l'importo della notifica è {int}")
     public void priceNotificationVerify(Integer price) {
         try {
-            assertThat(this.sharedSteps.getSentNotification().getAmount())
+            assertThat(this.sharedSteps.getFullSentNotificationV26().getAmount())
                     .as("L'importo della notifica dovrebbe essere uguale a " + price, price)
                     .isEqualTo(price);
         } catch (AssertionError assertionError) {
@@ -855,7 +856,7 @@ public class InvioNotificheB2bSteps {
     public void notificationNotCanBeCanceledWithIUN() {
         assertSoftly(softly -> {
             softly.assertThatCode(() -> {
-                RequestStatus resp = b2bClient.notificationCancellation(sharedSteps.getSentNotification().getIun());
+                RequestStatus resp = b2bClient.notificationCancellation(sharedSteps.getFullSentNotificationV26().getIun());
                 softly.assertThat(resp)
                         .as("La risposta alla cancellazione della notifica non dovrebbe essere nulla")
                         .isNotNull();
@@ -879,12 +880,12 @@ public class InvioNotificheB2bSteps {
 
     @And("l'avviso pagopa viene pagato correttamente su checkout")
     public void laNotificaVienePagatasuCheckout() {
-        NotificationPriceResponseV23 notificationPrice = this.b2bClient.getNotificationPriceV23(Objects.requireNonNull(Objects.requireNonNull(sharedSteps.getSentNotification().getRecipients().get(0).getPayments()).get(0).getPagoPa()).getCreditorTaxId(),
-                Objects.requireNonNull(Objects.requireNonNull(sharedSteps.getSentNotification().getRecipients().get(0).getPayments()).get(0).getPagoPa()).getNoticeCode());
+        NotificationPriceResponseV23 notificationPrice = this.b2bClient.getNotificationPriceV23(Objects.requireNonNull(Objects.requireNonNull(sharedSteps.getFullSentNotificationV26().getRecipients().get(0).getPayments()).get(0).getPagoPa()).getCreditorTaxId(),
+                Objects.requireNonNull(Objects.requireNonNull(sharedSteps.getFullSentNotificationV26().getRecipients().get(0).getPayments()).get(0).getPagoPa()).getNoticeCode());
 
         BffPaymentRequest paymentRequest = getPaymentRequest(notificationPrice,
-                Objects.requireNonNull(Objects.requireNonNull(sharedSteps.getSentNotification().getRecipients().get(0).getPayments()).get(0).getPagoPa()).getNoticeCode(),
-                Objects.requireNonNull(Objects.requireNonNull(sharedSteps.getSentNotification().getRecipients().get(0).getPayments()).get(0).getPagoPa()).getCreditorTaxId(),
+                Objects.requireNonNull(Objects.requireNonNull(sharedSteps.getFullSentNotificationV26().getRecipients().get(0).getPayments()).get(0).getPagoPa()).getNoticeCode(),
+                Objects.requireNonNull(Objects.requireNonNull(sharedSteps.getFullSentNotificationV26().getRecipients().get(0).getPayments()).get(0).getPagoPa()).getCreditorTaxId(),
                 "Test Automation",
                 null,
                 "Test Automation Desk",
@@ -1112,7 +1113,7 @@ public class InvioNotificheB2bSteps {
         String regex = "[{}-~¡-ÿ^]";
         String regexCaratteriA = "[æ]";
 
-        FullSentNotificationV26 timeline = sharedSteps.getSentNotification();
+        FullSentNotificationV26 timeline = sharedSteps.getFullSentNotificationV26();
 
         TimelineElementV26 timelineNormalizer = timeline.getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV23.NORMALIZED_ADDRESS)).findAny().orElse(null);
         PhysicalAddress oldAddress = timelineNormalizer.getDetails().getOldAddress();
@@ -1236,11 +1237,11 @@ public class InvioNotificheB2bSteps {
         try {
 
             //caricamento in Mappa di tutti i documenti della notifica
-            for (NotificationDocument documentNotifica : sharedSteps.getSentNotification().getDocuments()) {
+            for (NotificationDocument documentNotifica : sharedSteps.getFullSentNotificationV26().getDocuments()) {
                 sharedSteps.getMapAllegatiNotificaSha256().put(documentNotifica.getRef().getKey(), documentNotifica.getDigests().getSha256());
             }
             //caricamento in Mappa di tutti i documenti di pagamento della notifica
-            for (NotificationPaymentItem documentPagamento : sharedSteps.getSentNotification().getRecipients().get(destinatario).getPayments()) {
+            for (NotificationPaymentItem documentPagamento : sharedSteps.getFullSentNotificationV26().getRecipients().get(destinatario).getPayments()) {
                 sharedSteps.getMapAllegatiNotificaSha256().put(documentPagamento.getPagoPa().getAttachment().getRef().getKey(), documentPagamento.getPagoPa().getAttachment().getDigests().getSha256());
             }
 
@@ -1413,9 +1414,9 @@ public class InvioNotificheB2bSteps {
         BffPaymentRequest requestCheckout = new BffPaymentRequest()
                 .paymentNotice(new PaymentNotice()
                         .noticeNumber(dataCheckout.get("noticeCode") != null ? dataCheckout.get("noticeCode") :
-                                sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(0).getPagoPa().getNoticeCode())
+                                sharedSteps.getFullSentNotificationV26().getRecipients().get(0).getPayments().get(0).getPagoPa().getNoticeCode())
                         .fiscalCode(dataCheckout.get("fiscalCode") != null ? dataCheckout.get("fiscalCode") :
-                                sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(0).getPagoPa().getCreditorTaxId())
+                                sharedSteps.getFullSentNotificationV26().getRecipients().get(0).getPayments().get(0).getPagoPa().getCreditorTaxId())
                         .amount(dataCheckout.get("amount") != null ? Integer.parseInt(dataCheckout.get("amount")) : null)
                         .description(dataCheckout.get("description"))
                         .companyName(dataCheckout.get("companyName")))
@@ -1471,7 +1472,7 @@ public class InvioNotificheB2bSteps {
         TimelineElementCategoryV26 timelineElementInternalCategory = TimelineElementCategoryV26.AAR_GENERATION;
         TimelineElementV26 timelineElement = null;
 
-        for (TimelineElementV26 element : sharedSteps.getSentNotification().getTimeline()) {
+        for (TimelineElementV26 element : sharedSteps.getFullSentNotificationV26().getTimeline()) {
 
             if (Objects.requireNonNull(element.getCategory()).equals(timelineElementInternalCategory)) {
                 timelineElement = element;
@@ -1490,7 +1491,7 @@ public class InvioNotificheB2bSteps {
             String finalKeySearch = keySearch;
             try {
                 Assertions.assertDoesNotThrow(() -> {
-                    legalFactDownloadMetadataResponse.set(this.b2bClient.getDownloadLegalFact(sharedSteps.getSentNotification().getIun(), finalKeySearch));
+                    legalFactDownloadMetadataResponse.set(this.b2bClient.getDownloadLegalFact(sharedSteps.getFullSentNotificationV26().getIun(), finalKeySearch));
                 });
             } catch (AssertionFailedError assertionFailedError) {
                 sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
@@ -1511,8 +1512,8 @@ public class InvioNotificheB2bSteps {
             resetNotificationRequest();
             HashMap<String, String> map = new HashMap<>();
             map.put("taxId", data);
-            sharedSteps.destinatario(map);
-            sharedSteps.laNotificaVieneInviataDallaPA("Comune_1");
+            sharedSteps.addDestinatario(map);
+            sharedSteps.laNotificaVieneInviataDallaPA(COMUNE_1);
             operationProducedAnErrorWithMessage(errorCode, errorMessage);
         });
     }

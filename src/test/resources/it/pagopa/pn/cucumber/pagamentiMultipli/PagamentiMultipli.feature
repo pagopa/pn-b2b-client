@@ -9,13 +9,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | apply_cost_f24       | NO   |
       | payment_multy_number | 2    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica
 
   @pagamentiMultipli
@@ -25,12 +25,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 2    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica
 
   @pagamentiMultipli
@@ -40,14 +40,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | NULL                          |
       | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa    | NO                            |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -58,7 +58,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI                            |
       | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
@@ -66,15 +66,15 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
     And destinatario
-      | denomination         | Leonardo Da Vinci            |
+      | denomination         | Leonardo Da Vinci             |
       | taxId                | DVNLRD52D15M059P              |
       | payment_pagoPaForm   | SI                            |
       | payment_f24          | PAYMENT_F24_STANDARD          |
-      | title_payment        | F24_STANDARD_DVNLRD52D15M059P  |
+      | title_payment        | F24_STANDARD_DVNLRD52D15M059P |
       | apply_cost_pagopa    | SI                            |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     And viene verificato il costo = "100" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
@@ -87,12 +87,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI               |
       | payment_f24          | PAYMENT_F24_FLAT |
       | apply_cost_pagopa    | NO               |
       | payment_multy_number | 1                |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "0" della notifica
 
 
@@ -104,13 +104,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | NULL                          |
       | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli
@@ -120,13 +120,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | NULL                          |
       | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -138,12 +138,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 2    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica
 
   @pagamentiMultipli
@@ -153,12 +153,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 3    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica
 
   @pagamentiMultipli
@@ -168,12 +168,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 4    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica
 
   @pagamentiMultipli
@@ -183,14 +183,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI                            |
       | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa    | SI                            |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 2                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     And viene verificato il costo = "100" della notifica
 
@@ -202,12 +202,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | NO   |
       | payment_multy_number | 2    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "0" della notifica
 
 
@@ -221,13 +221,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | NULL                          |
       | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 2                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli
@@ -237,13 +237,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | NULL                          |
       | payment_f24          | PAYMENT_F24_FLAT              |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | NO                            |
       | payment_multy_number | 2                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   #TODO Vecchio Requisito
@@ -255,12 +255,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica
 
   #29  PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA]
@@ -271,12 +271,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica
 
   @pagamentiMultipli
@@ -286,12 +286,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | NO   |
       | payment_multy_number | 1    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "0" della notifica
 
 
@@ -303,13 +303,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | NULL                          |
       | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli
@@ -319,13 +319,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | NULL                          |
       | payment_f24          | PAYMENT_F24_FLAT              |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | NO                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli
@@ -335,13 +335,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | NULL                          |
       | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -355,19 +355,19 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
     And destinatario
-      | denomination         | Leonardo Da Vinci  |
-      | taxId                | DVNLRD52D15M059P   |
-      | payment_pagoPaForm   | SI                 |
-      | payment_f24          | NULL               |
-      | apply_cost_pagopa    | SI                 |
-      | payment_multy_number | 1                  |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | denomination         | Leonardo Da Vinci |
+      | taxId                | DVNLRD52D15M059P  |
+      | payment_pagoPaForm   | SI                |
+      | payment_f24          | NULL              |
+      | apply_cost_pagopa    | SI                |
+      | payment_multy_number | 1                 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
 
@@ -378,19 +378,19 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | NO   |
       | payment_multy_number | 1    |
     And destinatario
-      | denomination         | Leonardo Da Vinci  |
-      | taxId                | DVNLRD52D15M059P   |
-      | payment_pagoPaForm   | SI                 |
-      | payment_f24          | NULL               |
-      | apply_cost_pagopa    | NO                 |
-      | payment_multy_number | 1                  |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | denomination         | Leonardo Da Vinci |
+      | taxId                | DVNLRD52D15M059P  |
+      | payment_pagoPaForm   | SI                |
+      | payment_f24          | NULL              |
+      | apply_cost_pagopa    | NO                |
+      | payment_multy_number | 1                 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "0" della notifica per l'utente 0
     And viene verificato il costo = "0" della notifica per l'utente 1
 
@@ -403,7 +403,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | NULL                          |
       | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
@@ -417,7 +417,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
     #32 PA - inserimento notifica multi destinatario con un solo F24 [TA]
@@ -428,7 +428,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | NULL                          |
       | payment_f24          | PAYMENT_F24_FLAT              |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
@@ -442,7 +442,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | NO                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -453,20 +453,20 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | NULL                          |
       | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
     And destinatario
-      | denomination         | Leonardo Da Vinci             |
-      | taxId                | DVNLRD52D15M059P              |
-      | payment_pagoPaForm   | SI                            |
-      | payment_f24          | NULL                          |
-      | apply_cost_pagopa    | SI                            |
-      | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | denomination         | Leonardo Da Vinci |
+      | taxId                | DVNLRD52D15M059P  |
+      | payment_pagoPaForm   | SI                |
+      | payment_f24          | NULL              |
+      | apply_cost_pagopa    | SI                |
+      | payment_multy_number | 1                 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica per l'utente 1
 
 
@@ -478,19 +478,19 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 2    |
     And destinatario
-      | denomination         | Leonardo Da Vinci             |
-      | taxId                | DVNLRD52D15M059P              |
-      | payment_pagoPaForm   | SI                            |
-      | payment_f24          | NULL                          |
-      | apply_cost_pagopa    | SI                            |
-      | payment_multy_number | 2                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | denomination         | Leonardo Da Vinci |
+      | taxId                | DVNLRD52D15M059P  |
+      | payment_pagoPaForm   | SI                |
+      | payment_f24          | NULL              |
+      | apply_cost_pagopa    | SI                |
+      | payment_multy_number | 2                 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
 
@@ -505,7 +505,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | NULL                          |
       | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
@@ -519,7 +519,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_DVNLRD52D15M059P |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -532,14 +532,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | NULL                          |
       | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa    | NO                            |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When si verifica la corretta acquisizione della notifica
     Then viene richiesto il download del documento "F24"
     And il download non ha prodotto errori
@@ -551,7 +551,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | NULL                          |
       | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
@@ -567,7 +567,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa    | NO                            |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When si verifica la corretta acquisizione della notifica
     Then viene richiesto il download del documento "F24" per il destinatario 0
     And il download non ha prodotto errori
@@ -583,12 +583,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And si verifica la corretta acquisizione della notifica
     When viene richiesto il download del documento "PAGOPA"
     Then il download si conclude correttamente
@@ -608,19 +608,19 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 2    |
     And destinatario
-      | denomination         | Leonardo Da Vinci             |
-      | taxId                | DVNLRD52D15M059P              |
-      | payment_pagoPaForm   | SI                            |
-      | payment_f24          | NULL                          |
-      | apply_cost_pagopa    | SI                            |
-      | payment_multy_number | 2                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | denomination         | Leonardo Da Vinci |
+      | taxId                | DVNLRD52D15M059P  |
+      | payment_pagoPaForm   | SI                |
+      | payment_f24          | NULL              |
+      | apply_cost_pagopa    | SI                |
+      | payment_multy_number | 2                 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
 
@@ -635,7 +635,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                            |
@@ -647,7 +647,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_DVNLRD52D15M059P |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -668,12 +668,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica
 
@@ -687,12 +687,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 2    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica con l' avviso 0 dal destinatario 0
 
@@ -703,12 +703,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 2    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     And l'avviso pagopa 1 viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica con l' avviso 0 dal destinatario 0
@@ -723,14 +723,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI                            |
       | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                            |
       | apply_cost_pagopa    | SI                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica
 
@@ -743,14 +743,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI                            |
       | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa    | NO                            |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     #TODO parametrizzare lo step per avviso di pagamento.......
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica
@@ -764,14 +764,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_pagoPaForm   | NULL                 |
       | payment_f24          | PAYMENT_F24_STANDARD |
       | title_payment        | F24_STANDARD_MARIO   |
       | apply_cost_pagopa    | NO                   |
       | apply_cost_f24       | SI                   |
       | payment_multy_number | 1                    |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When si verifica la corretta acquisizione della notifica
     Then l'allegato "F24" può essere correttamente recuperato da "Mario Cucumber"
 
@@ -784,12 +784,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When si verifica la corretta acquisizione della notifica
     Then l'allegato "PAGOPA" può essere correttamente recuperato da "Mario Cucumber"
 
@@ -803,19 +803,19 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
     And destinatario
-      | denomination         | Leonardo Da Vinci             |
-      | taxId                | DVNLRD52D15M059P              |
-      | payment_pagoPaForm   | SI                            |
-      | payment_f24          | NULL                          |
-      | apply_cost_pagopa    | SI                            |
-      | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | denomination         | Leonardo Da Vinci |
+      | taxId                | DVNLRD52D15M059P  |
+      | payment_pagoPaForm   | SI                |
+      | payment_f24          | NULL              |
+      | apply_cost_pagopa    | SI                |
+      | payment_multy_number | 1                 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And l'avviso pagopa viene pagato correttamente dall'utente 1
     And si attende il corretto pagamento della notifica dell'utente 0
@@ -828,19 +828,19 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 2    |
     And destinatario
-      | denomination         | Leonardo Da Vinci             |
-      | taxId                | DVNLRD52D15M059P              |
-      | payment_pagoPaForm   | SI                            |
-      | payment_f24          | NULL                          |
-      | apply_cost_pagopa    | SI                            |
-      | payment_multy_number | 2                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | denomination         | Leonardo Da Vinci |
+      | taxId                | DVNLRD52D15M059P  |
+      | payment_pagoPaForm   | SI                |
+      | payment_f24          | NULL              |
+      | apply_cost_pagopa    | SI                |
+      | payment_multy_number | 2                 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     And l'avviso pagopa 0 viene pagato correttamente dall'utente 1
     And si attende il corretto pagamento della notifica con l' avviso 0 dal destinatario 0
@@ -853,7 +853,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI                            |
       | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
@@ -869,7 +869,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa    | SI                            |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 2                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     And l'avviso pagopa 0 viene pagato correttamente dall'utente 1
     And si attende il corretto pagamento della notifica con l' avviso 0 dal destinatario 0
@@ -884,19 +884,19 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
     And destinatario
-      | denomination         | Leonardo Da Vinci             |
-      | taxId                | DVNLRD52D15M059P              |
-      | payment_pagoPaForm   | SI                            |
-      | payment_f24          | NULL                          |
-      | apply_cost_pagopa    | SI                            |
-      | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | denomination         | Leonardo Da Vinci |
+      | taxId                | DVNLRD52D15M059P  |
+      | payment_pagoPaForm   | SI                |
+      | payment_f24          | NULL              |
+      | apply_cost_pagopa    | SI                |
+      | payment_multy_number | 1                 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     And l'avviso pagopa 0 viene pagato correttamente dall'utente 1
     And si attende il corretto pagamento della notifica dell'utente 0
@@ -913,21 +913,21 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI   |
       | payment_pagoPaForm_1 | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 2    |
     And destinatario
-      | denomination         | Leonardo Da Vinci             |
-      | taxId                | DVNLRD52D15M059P              |
-      | payment_pagoPaForm   | SI                            |
-      | payment_pagoPaForm_1 | SI                            |
-      | payment_f24          | NULL                          |
-      | apply_cost_pagopa    | SI                            |
-      | payment_multy_number | 2                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | denomination         | Leonardo Da Vinci |
+      | taxId                | DVNLRD52D15M059P  |
+      | payment_pagoPaForm   | SI                |
+      | payment_pagoPaForm_1 | SI                |
+      | payment_f24          | NULL              |
+      | apply_cost_pagopa    | SI                |
+      | payment_multy_number | 2                 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica per l'utente 0
 
   #50 Destinatario 1 - notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: pagamento di uno degli avvisi (PagoPa)
@@ -939,7 +939,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI                            |
       | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
@@ -955,7 +955,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa    | SI                            |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
 
@@ -970,12 +970,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica
 
@@ -988,12 +988,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | NO   |
       | payment_multy_number | 1    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica
 #SOLO TM
@@ -1005,13 +1005,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | NULL                          |
       | payment_f24          | PAYMENT_F24_FLAT              |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | NO                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -1024,13 +1024,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | NULL                          |
       | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -1043,14 +1043,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI                            |
       | payment_f24          | PAYMENT_F24_FLAT              |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa    | NO                            |
       | apply_cost_f24       | NO                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica con l' avviso 0 dal destinatario 0
 
@@ -1064,19 +1064,19 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
     And destinatario
-      | denomination         | Leonardo Da Vinci             |
-      | taxId                | DVNLRD52D15M059P              |
-      | payment_pagoPaForm   | SI                            |
-      | payment_f24          | NULL                          |
-      | apply_cost_pagopa    | SI                            |
-      | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | denomination         | Leonardo Da Vinci |
+      | taxId                | DVNLRD52D15M059P  |
+      | payment_pagoPaForm   | SI                |
+      | payment_f24          | NULL              |
+      | apply_cost_pagopa    | SI                |
+      | payment_multy_number | 1                 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     And l'avviso pagopa 0 viene pagato correttamente dall'utente 1
     And si attende il corretto pagamento della notifica con l' avviso 0 dal destinatario 0
@@ -1091,19 +1091,19 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | NO   |
       | payment_multy_number | 1    |
     And destinatario
-      | denomination         | Leonardo Da Vinci             |
-      | taxId                | DVNLRD52D15M059P              |
-      | payment_pagoPaForm   | SI                            |
-      | payment_f24          | NULL                          |
-      | apply_cost_pagopa    | NO                            |
-      | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | denomination         | Leonardo Da Vinci |
+      | taxId                | DVNLRD52D15M059P  |
+      | payment_pagoPaForm   | SI                |
+      | payment_f24          | NULL              |
+      | apply_cost_pagopa    | NO                |
+      | payment_multy_number | 1                 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 1
     And si attende il corretto pagamento della notifica con l' avviso 0 dal destinatario 0
@@ -1118,7 +1118,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | NULL                          |
       | payment_f24          | PAYMENT_F24_FLAT              |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
@@ -1132,7 +1132,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_DVNLRD52D15M059P |
       | apply_cost_f24       | NO                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 #SOLO TM
@@ -1144,7 +1144,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | NULL                          |
       | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
@@ -1158,7 +1158,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_DVNLRD52D15M059P |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 #SOLO TM
@@ -1170,7 +1170,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | NO   |
@@ -1183,7 +1183,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_DVNLRD52D15M059P |
       | apply_cost_f24       | NO                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica dell'utente 0
 
@@ -1208,20 +1208,20 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | NO   |
       | payment_multy_number | 1    |
     And destinatario
-      | denomination         | Leonardo Da Vinci             |
-      | taxId                | DVNLRD52D15M059P              |
-      | payment_pagoPaForm   | SI                            |
-      | payment_f24          | NULL                          |
-      | apply_cost_pagopa    | SI                            |
-      | payment_multy_number | 1                             |
+      | denomination         | Leonardo Da Vinci |
+      | taxId                | DVNLRD52D15M059P  |
+      | payment_pagoPaForm   | SI                |
+      | payment_f24          | NULL              |
+      | apply_cost_pagopa    | SI                |
+      | payment_multy_number | 1                 |
 
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -1232,20 +1232,20 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | NO   |
       | payment_multy_number | 4    |
     And destinatario
-      | denomination         | Leonardo Da Vinci             |
-      | taxId                | DVNLRD52D15M059P              |
-      | payment_pagoPaForm   | SI                            |
-      | payment_f24          | NULL                          |
-      | apply_cost_pagopa    | NO                            |
-      | payment_multy_number | 1                             |
+      | denomination         | Leonardo Da Vinci |
+      | taxId                | DVNLRD52D15M059P  |
+      | payment_pagoPaForm   | SI                |
+      | payment_f24          | NULL              |
+      | apply_cost_pagopa    | NO                |
+      | payment_multy_number | 1                 |
 
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -1263,12 +1263,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 2    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then gli avvisi PagoPa vengono pagati correttamente dal destinatario 0
     And si attende il corretto pagamento della notifica con l' avviso 0 dal destinatario 0
     And si attende il corretto pagamento della notifica con l' avviso 1 dal destinatario 0
@@ -1285,7 +1285,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI                            |
       | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
@@ -1301,7 +1301,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_f24       | SI                            |
       | apply_cost_pagopa    | SI                            |
       | payment_multy_number | 2                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then gli avvisi PagoPa vengono pagati correttamente dal destinatario 0
     And gli avvisi PagoPa vengono pagati correttamente dal destinatario 1
     And si attende il corretto pagamento della notifica dell'utente 0
@@ -1373,14 +1373,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_pagoPaForm   | SI                   |
       | payment_f24          | PAYMENT_F24_STANDARD |
       | title_payment        | F24_STANDARD_MARIO   |
       | apply_cost_pagopa    | SI                   |
       | apply_cost_f24       | SI                   |
       | payment_multy_number | 1                    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'allegato "PAGOPA" può essere correttamente recuperato da "Mario Gherkin" con delega
     And "Mario Cucumber" tenta il recupero dell'allegato "PAGOPA"
     And il download non ha prodotto errori
@@ -1400,12 +1400,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'allegato "PAGOPA" può essere correttamente recuperato da "Mario Gherkin" con delega
     And "Mario Cucumber" tenta il recupero dell'allegato "PAGOPA"
     And il download non ha prodotto errori
@@ -1420,12 +1420,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And viene effettuato un controllo sulla durata della retention di "PAGOPA"
 
@@ -1437,12 +1437,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
       | NULL | NULL |
     Then viene verificato che l'elemento di timeline "REFINEMENT" esista
@@ -1470,14 +1470,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_pagoPaForm      | NULL                 |
       | payment_f24             | PAYMENT_F24_STANDARD |
       | digitalDomicile_address | test@pecOk.it        |
       | title_payment           | F24_STANDARD_MARIO   |
       | apply_cost_f24          | SI                   |
       | payment_multy_number    | 1                    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
@@ -1495,14 +1495,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Cucumber e:
-      | payment_pagoPaForm      | NULL                  |
-      | payment_f24             | PAYMENT_F24_STANDARD  |
+    And destinatario "Mario Cucumber" e:
+      | payment_pagoPaForm      | NULL                                                |
+      | payment_f24             | PAYMENT_F24_STANDARD                                |
       | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it |
-      | title_payment           | F24_STANDARD_MARIO    |
-      | apply_cost_f24          | SI                    |
-      | payment_multy_number    | 1                     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | title_payment           | F24_STANDARD_MARIO                                  |
+      | apply_cost_f24          | SI                                                  |
+      | payment_multy_number    | 1                                                   |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
@@ -1527,13 +1527,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_pagoPaForm   | NULL                 |
       | payment_f24          | PAYMENT_F24_STANDARD |
       | title_payment        | F24_STANDARD_MARIO   |
       | apply_cost_f24       | SI                   |
       | payment_multy_number | 1                    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And viene effettuato un controllo sulla durata della retention di "F24"
 
@@ -1547,13 +1547,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_pagoPaForm   | NULL                 |
       | payment_f24          | PAYMENT_F24_STANDARD |
       | title_payment        | F24_STANDARD_MARIO   |
       | apply_cost_f24       | SI                   |
       | payment_multy_number | 1                    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     #Then si verifica la corretta acquisizione della notifica con verifica sha256 del allegato di pagamento "F24"
     When viene richiesto il download del documento "F24"
@@ -1570,13 +1570,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_pagoPaForm   | NULL                 |
       | payment_f24          | PAYMENT_F24_STANDARD |
       | title_payment        | F24_STANDARD_MARIO   |
       | apply_cost_f24       | SI                   |
       | payment_multy_number | 1                    |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
    # Then si verifica la corretta acquisizione della notifica con verifica sha256 del allegato di pagamento "F24"
     #viene fatta la stessa verifica sullo Sha256
@@ -1594,13 +1594,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_f24       | NO   |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     Then il documento di pagamento "PAGOPA" può essere recuperata tramite AppIO da "Mario Cucumber"
     And il download non ha prodotto errori
@@ -1612,14 +1612,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_pagoPaForm   | SI                   |
       | payment_f24          | PAYMENT_F24_STANDARD |
       | title_payment        | F24_STANDARD_MARIO   |
       | apply_cost_f24       | SI                   |
       | apply_cost_pagopa    | SI                   |
       | payment_multy_number | 1                    |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     Then il documento di pagamento "F24" può essere recuperata tramite AppIO da "Mario Cucumber"
     And il download non ha prodotto errori
@@ -1632,12 +1632,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | comune di palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When "Mario Cucumber" tenta il recupero dell'allegato "PAGOPA"
@@ -1650,13 +1650,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | comune di palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_pagoPaForm   | NULL                 |
       | payment_f24          | PAYMENT_F24_STANDARD |
       | title_payment        | F24_STANDARD_MARIO   |
       | apply_cost_f24       | SI                   |
       | payment_multy_number | 1                    |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When "Mario Cucumber" tenta il recupero dell'allegato "F24"
@@ -1670,17 +1670,17 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | comune di palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When "Mario Cucumber" tenta il recupero dell'allegato "PAGOPA"
@@ -1695,19 +1695,19 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | comune di palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_pagoPaForm   | NULL                 |
       | payment_f24          | PAYMENT_F24_STANDARD |
       | title_payment        | F24_STANDARD_MARIO   |
       | apply_cost_f24       | SI                   |
       | payment_multy_number | 1                    |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | NULL                 |
       | payment_f24          | PAYMENT_F24_STANDARD |
       | title_payment        | F24_STANDARD_GHERKIN |
       | apply_cost_f24       | SI                   |
       | payment_multy_number | 1                    |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When "Mario Cucumber" tenta il recupero dell'allegato "F24"
@@ -1723,12 +1723,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And viene verificato il costo = "100" della notifica
     And la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
@@ -1743,13 +1743,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_pagoPaForm   | NULL                 |
       | payment_f24          | PAYMENT_F24_STANDARD |
       | title_payment        | F24_STANDARD_MARIO   |
       | apply_cost_f24       | SI                   |
       | payment_multy_number | 1                    |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
@@ -1769,7 +1769,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via Roma     |
       | payment_pagoPaForm      | SI           |
@@ -1777,7 +1777,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | SI           |
       | apply_cost_f24          | NO           |
       | payment_multy_number    | 1            |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
 
@@ -1788,7 +1788,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile_address | test@fail.it    |
       | physicalAddress_address | Via@ok-Retry_RS |
       | payment_pagoPaForm      | SI              |
@@ -1796,7 +1796,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | SI              |
       | apply_cost_f24          | NO              |
       | payment_multy_number    | 1               |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
 
@@ -1807,7 +1807,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via Roma     |
       | payment_pagoPaForm      | SI           |
@@ -1815,7 +1815,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | SI           |
       | apply_cost_f24          | NO           |
       | payment_multy_number    | 1            |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
 
@@ -1826,7 +1826,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via Roma     |
       | payment_pagoPaForm      | SI           |
@@ -1834,7 +1834,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO           |
       | apply_cost_f24          | NO           |
       | payment_multy_number    | 1            |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
 
@@ -1845,7 +1845,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile_address | test@fail.it                  |
       | physicalAddress_address | Via Roma                      |
       | payment_pagoPaForm      | NULL                          |
@@ -1854,7 +1854,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
 
@@ -1865,7 +1865,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile_address | test@fail.it                  |
       | physicalAddress_address | Via Roma                      |
       | payment_pagoPaForm      | NULL                          |
@@ -1874,7 +1874,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
 
@@ -1885,7 +1885,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile_address | test@fail.it                  |
       | physicalAddress_address | Via@ok-Retry_RS               |
       | payment_pagoPaForm      | NULL                          |
@@ -1894,7 +1894,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
 
@@ -1905,7 +1905,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile_address | test@fail.it              |
       | physicalAddress_address | Via Roma                  |
       | payment_pagoPaForm      | NULL                      |
@@ -1914,7 +1914,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
       | payment_multy_number    | 1                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
 
@@ -1925,7 +1925,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile_address | test@fail.it              |
       | physicalAddress_address | Via Roma                  |
       | payment_pagoPaForm      | NULL                      |
@@ -1934,7 +1934,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
       | payment_multy_number    | 1                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
 
@@ -1946,7 +1946,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | physicalCommunication | AR_REGISTERED_LETTER        |
       | feePolicy             | DELIVERY_MODE               |
       | paFee                 | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
       | payment_pagoPaForm      | SI        |
@@ -1954,7 +1954,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | SI        |
       | apply_cost_f24          | NO        |
       | payment_multy_number    | 1         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @cartaceoF24
@@ -1965,7 +1965,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | physicalCommunication | AR_REGISTERED_LETTER        |
       | feePolicy             | DELIVERY_MODE               |
       | paFee                 | 100                         |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
       | payment_pagoPaForm      | SI        |
@@ -1973,7 +1973,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | SI        |
       | apply_cost_f24          | NO        |
       | payment_multy_number    | 1         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @cartaceoF24
@@ -1984,7 +1984,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | physicalCommunication | AR_REGISTERED_LETTER        |
       | feePolicy             | FLAT_RATE                   |
       | paFee                 | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
       | payment_pagoPaForm      | SI        |
@@ -1992,7 +1992,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO        |
       | apply_cost_f24          | NO        |
       | payment_multy_number    | 1         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @cartaceoF24
@@ -2003,7 +2003,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | physicalCommunication | AR_REGISTERED_LETTER        |
       | feePolicy             | DELIVERY_MODE               |
       | paFee                 | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | Via@ok_AR                     |
       | payment_pagoPaForm      | NULL                          |
@@ -2012,7 +2012,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @cartaceoF24
@@ -2023,7 +2023,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | physicalCommunication | AR_REGISTERED_LETTER        |
       | feePolicy             | DELIVERY_MODE               |
       | paFee                 | 100                         |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | Via@ok_AR                     |
       | payment_pagoPaForm      | NULL                          |
@@ -2032,7 +2032,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
 
@@ -2044,7 +2044,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | physicalCommunication | AR_REGISTERED_LETTER        |
       | feePolicy             | FLAT_RATE                   |
       | paFee                 | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | Via@ok_AR                 |
       | payment_pagoPaForm      | NULL                      |
@@ -2053,7 +2053,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
       | payment_multy_number    | 1                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @cartaceoF24
@@ -2064,7 +2064,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | physicalCommunication | AR_REGISTERED_LETTER        |
       | feePolicy             | FLAT_RATE                   |
       | paFee                 | 100                         |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | Via@ok_AR                 |
       | payment_pagoPaForm      | NULL                      |
@@ -2073,7 +2073,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
       | payment_multy_number    | 1                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @cartaceoF24
@@ -2084,7 +2084,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | physicalCommunication | AR_REGISTERED_LETTER        |
       | feePolicy             | FLAT_RATE                   |
       | paFee                 | 100                         |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | via@fail-Discovery_AR     |
       | payment_pagoPaForm      | NULL                      |
@@ -2093,7 +2093,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
       | payment_multy_number    | 1                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
@@ -2105,7 +2105,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | physicalCommunication | AR_REGISTERED_LETTER        |
       | feePolicy             | FLAT_RATE                   |
       | paFee                 | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | via@fail-Discovery_AR     |
       | payment_pagoPaForm      | NULL                      |
@@ -2114,7 +2114,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
       | payment_multy_number    | 1                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
@@ -2127,7 +2127,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | physicalCommunication | AR_REGISTERED_LETTER        |
       | feePolicy             | DELIVERY_MODE               |
       | paFee                 | 100                         |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | via@fail-Discovery_AR         |
       | payment_pagoPaForm      | NULL                          |
@@ -2136,7 +2136,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
@@ -2148,7 +2148,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | physicalCommunication | AR_REGISTERED_LETTER        |
       | feePolicy             | DELIVERY_MODE               |
       | paFee                 | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | via@fail-Discovery_AR         |
       | payment_pagoPaForm      | NULL                          |
@@ -2157,7 +2157,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
@@ -2170,7 +2170,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
       | paFee                 | 0                               |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | via@fail-Discovery_AR         |
       | payment_pagoPaForm      | NULL                          |
@@ -2179,7 +2179,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
@@ -2191,7 +2191,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
       | payment_pagoPaForm      | SI         |
@@ -2199,7 +2199,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | SI         |
       | apply_cost_f24          | NO         |
       | payment_multy_number    | 1          |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @cartaceoF24
@@ -2209,7 +2209,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
       | payment_pagoPaForm      | SI         |
@@ -2217,7 +2217,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | SI         |
       | apply_cost_f24          | NO         |
       | payment_multy_number    | 1          |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @cartaceoF24
@@ -2227,7 +2227,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
       | payment_pagoPaForm      | SI         |
@@ -2235,7 +2235,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO         |
       | apply_cost_f24          | NO         |
       | payment_multy_number    | 1          |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @cartaceoF24
@@ -2245,7 +2245,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | Via@ok_890                    |
       | payment_pagoPaForm      | NULL                          |
@@ -2254,7 +2254,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @cartaceoF24
@@ -2264,7 +2264,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | Via@ok_890                    |
       | payment_pagoPaForm      | NULL                          |
@@ -2273,7 +2273,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
 
@@ -2284,7 +2284,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | Via@ok_890                |
       | payment_pagoPaForm      | NULL                      |
@@ -2293,7 +2293,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
       | payment_multy_number    | 1                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @cartaceoF24
@@ -2303,7 +2303,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | Via@ok_890                |
       | payment_pagoPaForm      | NULL                      |
@@ -2312,7 +2312,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
       | payment_multy_number    | 1                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
@@ -2323,7 +2323,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                       |
       | apply_cost_pagopa    | NULL                                       |
@@ -2331,7 +2331,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_SEMPLIFICATO_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                                         |
       | payment_multy_number | 1                                          |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
@@ -2341,7 +2341,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                       |
       | apply_cost_pagopa    | NULL                                       |
@@ -2349,7 +2349,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_SEMPLIFICATO_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                                         |
       | payment_multy_number | 1                                          |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
@@ -2359,7 +2359,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                            |
       | apply_cost_pagopa    | NULL                                            |
@@ -2367,7 +2367,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_SEMPLIFICATO_FLAT_CLMCST42R12D969Z |
       | apply_cost_f24       | NO                                              |
       | payment_multy_number | 1                                               |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
@@ -2377,7 +2377,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                      |
       | apply_cost_pagopa    | NULL                      |
@@ -2387,7 +2387,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_SEMPLIFICATO |
       | apply_cost_f24       | SI                        |
       | payment_multy_number | 1                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -2398,7 +2398,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                               |
       | apply_cost_pagopa    | NULL                               |
@@ -2406,7 +2406,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_INPS_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                                 |
       | payment_multy_number | 1                                  |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -2417,7 +2417,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                    |
       | apply_cost_pagopa    | NULL                                    |
@@ -2425,7 +2425,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_INPS_FLAT_CLMCST42R12D969Z |
       | apply_cost_f24       | NO                                      |
       | payment_multy_number | 1                                       |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -2436,7 +2436,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                |
       | apply_cost_pagopa    | NULL                                |
@@ -2444,7 +2444,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_LOCAL_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                                  |
       | payment_multy_number | 1                                   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
@@ -2454,7 +2454,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                |
       | apply_cost_pagopa    | NULL                                |
@@ -2462,7 +2462,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_LOCAL_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                                  |
       | payment_multy_number | 1                                   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
@@ -2472,7 +2472,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                     |
       | apply_cost_pagopa    | NULL                                     |
@@ -2480,7 +2480,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_LOCAL_FLAT_CLMCST42R12D969Z |
       | apply_cost_f24       | NO                                       |
       | payment_multy_number | 1                                        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
@@ -2490,7 +2490,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                 |
       | apply_cost_pagopa    | NULL                                 |
@@ -2498,7 +2498,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_REGION_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                                   |
       | payment_multy_number | 1                                    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
@@ -2508,7 +2508,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                 |
       | apply_cost_pagopa    | NULL                                 |
@@ -2516,7 +2516,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_REGION_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                                   |
       | payment_multy_number | 1                                    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
@@ -2526,7 +2526,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                      |
       | apply_cost_pagopa    | NULL                                      |
@@ -2534,7 +2534,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_REGION_FLAT_CLMCST42R12D969Z |
       | apply_cost_f24       | NO                                        |
       | payment_multy_number | 1                                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 #--------------------------------------TEST VERIFICA SCRITTURA F24-------------------------
@@ -2547,7 +2547,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                 |
       | apply_cost_pagopa    | NULL                                 |
@@ -2555,7 +2555,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_SOCIAL_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                                   |
       | payment_multy_number | 1                                    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 #--------------------------------------TEST VERIFICA SCRITTURA F24-------------------------
@@ -2568,7 +2568,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                 |
       | apply_cost_pagopa    | NULL                                 |
@@ -2576,7 +2576,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_SOCIAL_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                                   |
       | payment_multy_number | 1                                    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
@@ -2586,7 +2586,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                      |
       | apply_cost_pagopa    | NULL                                      |
@@ -2594,7 +2594,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_SOCIAL_FLAT_CLMCST42R12D969Z |
       | apply_cost_f24       | NO                                        |
       | payment_multy_number | 1                                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -2605,7 +2605,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                   |
       | apply_cost_pagopa    | NULL                                   |
@@ -2613,7 +2613,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_TREASURY_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                                     |
       | payment_multy_number | 1                                      |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
@@ -2623,7 +2623,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                   |
       | apply_cost_pagopa    | NULL                                   |
@@ -2631,7 +2631,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_TREASURY_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                                     |
       | payment_multy_number | 1                                      |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -2642,7 +2642,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                        |
       | apply_cost_pagopa    | NULL                                        |
@@ -2650,7 +2650,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_TREASURY_FLAT_CLMCST42R12D969Z |
       | apply_cost_f24       | NO                                          |
       | payment_multy_number | 1                                           |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
@@ -2660,7 +2660,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                      |
       | apply_cost_pagopa    | NULL                                      |
@@ -2668,7 +2668,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_TREASURY_AE_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                                        |
       | payment_multy_number | 1                                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
@@ -2678,7 +2678,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                      |
       | apply_cost_pagopa    | NULL                                      |
@@ -2686,7 +2686,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_TREASURY_AE_CLMCST42R12D969Z |
       | apply_cost_f24       | NO                                        |
       | payment_multy_number | 1                                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -2706,7 +2706,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa    | SI                            |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     And viene verificato il costo = "100" della notifica
 
@@ -2726,7 +2726,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa    | SI                        |
       | apply_cost_f24       | SI                        |
       | payment_multy_number | 4                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
    # And viene verificato il costo = "100" della notifica
 
@@ -2738,7 +2738,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                               |
       | apply_cost_pagopa    | NULL                               |
@@ -2746,7 +2746,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_INPS_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                                 |
       | payment_multy_number | 1                                  |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
@@ -2756,7 +2756,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                   |
       | apply_cost_pagopa    | NULL                                   |
@@ -2764,7 +2764,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_INPS_DC_CLMCST42R12D969Z  |
       | apply_cost_f24       | SI                                     |
       | payment_multy_number | 1                                      |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
@@ -2774,7 +2774,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                     |
       | apply_cost_pagopa    | NULL                                     |
@@ -2782,7 +2782,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_INPS_DC1_CLMCST42R12D969Z   |
       | apply_cost_f24       | SI                                       |
       | payment_multy_number | 1                                        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
       #--------------------------DIGITALE---------------------------------
@@ -2794,7 +2794,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | physicalCommunication | AR_REGISTERED_LETTER        |
       | feePolicy             | DELIVERY_MODE               |
       | paFee                 | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile_address | test@pecOk.it                 |
       | payment_pagoPaForm      | NULL                          |
       | payment_f24             | PAYMENT_F24_STANDARD          |
@@ -2802,7 +2802,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @digitaleF24 @realPec
@@ -2813,15 +2813,15 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | physicalCommunication | AR_REGISTERED_LETTER        |
       | feePolicy             | DELIVERY_MODE               |
       | paFee                 | 0                           |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it         |
-      | payment_pagoPaForm      | NULL                          |
-      | payment_f24             | PAYMENT_F24_STANDARD          |
-      | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
-      | apply_cost_pagopa       | NO                            |
-      | apply_cost_f24          | SI                            |
-      | payment_multy_number    | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Gherkin" e:
+      | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it |
+      | payment_pagoPaForm      | NULL                                                |
+      | payment_f24             | PAYMENT_F24_STANDARD                                |
+      | title_payment           | F24_STANDARD_CLMCST42R12D969Z                       |
+      | apply_cost_pagopa       | NO                                                  |
+      | apply_cost_f24          | SI                                                  |
+      | payment_multy_number    | 1                                                   |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @digitaleF24 @mockPec
@@ -2832,7 +2832,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | physicalCommunication | AR_REGISTERED_LETTER        |
       | feePolicy             | DELIVERY_MODE               |
       | paFee                 | 100                         |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile_address | test@pecOk.it                 |
       | payment_pagoPaForm      | NULL                          |
       | payment_f24             | PAYMENT_F24_STANDARD          |
@@ -2840,7 +2840,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @digitaleF24 @realPec
@@ -2851,15 +2851,15 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | physicalCommunication | AR_REGISTERED_LETTER        |
       | feePolicy             | DELIVERY_MODE               |
       | paFee                 | 100                         |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it         |
-      | payment_pagoPaForm      | NULL                          |
-      | payment_f24             | PAYMENT_F24_STANDARD          |
-      | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
-      | apply_cost_pagopa       | NO                            |
-      | apply_cost_f24          | SI                            |
-      | payment_multy_number    | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Gherkin" e:
+      | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it |
+      | payment_pagoPaForm      | NULL                                                |
+      | payment_f24             | PAYMENT_F24_STANDARD                                |
+      | title_payment           | F24_STANDARD_CLMCST42R12D969Z                       |
+      | apply_cost_pagopa       | NO                                                  |
+      | apply_cost_f24          | SI                                                  |
+      | payment_multy_number    | 1                                                   |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @digitaleF24 @mockPec
@@ -2869,7 +2869,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | title_payment           | F24_FLAT_CLMCST42R12D969Z |
       | digitalDomicile_address | test@pecOk.it             |
       | payment_pagoPaForm      | NULL                      |
@@ -2877,7 +2877,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
       | payment_multy_number    | 1                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @digitaleF24 @realPec
@@ -2887,15 +2887,15 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
-      | title_payment           | F24_FLAT_CLMCST42R12D969Z |
-      | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it     |
-      | payment_pagoPaForm      | NULL                      |
-      | payment_f24             | PAYMENT_F24_FLAT          |
-      | apply_cost_pagopa       | NO                        |
-      | apply_cost_f24          | NO                        |
-      | payment_multy_number    | 1                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Gherkin" e:
+      | title_payment           | F24_FLAT_CLMCST42R12D969Z                           |
+      | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it |
+      | payment_pagoPaForm      | NULL                                                |
+      | payment_f24             | PAYMENT_F24_FLAT                                    |
+      | apply_cost_pagopa       | NO                                                  |
+      | apply_cost_f24          | NO                                                  |
+      | payment_multy_number    | 1                                                   |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @digitaleF24 @mockPec
@@ -2905,7 +2905,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile_address | test@pecOk.it             |
       | title_payment           | F24_FLAT_CLMCST42R12D969Z |
       | payment_pagoPaForm      | NULL                      |
@@ -2913,7 +2913,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
       | payment_multy_number    | 1                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @digitaleF24 @realPec
@@ -2923,15 +2923,15 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it     |
-      | title_payment           | F24_FLAT_CLMCST42R12D969Z |
-      | payment_pagoPaForm      | NULL                      |
-      | payment_f24             | PAYMENT_F24_FLAT          |
-      | apply_cost_pagopa       | NO                        |
-      | apply_cost_f24          | NO                        |
-      | payment_multy_number    | 1                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Gherkin" e:
+      | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it |
+      | title_payment           | F24_FLAT_CLMCST42R12D969Z                           |
+      | payment_pagoPaForm      | NULL                                                |
+      | payment_f24             | PAYMENT_F24_FLAT                                    |
+      | apply_cost_pagopa       | NO                                                  |
+      | apply_cost_f24          | NO                                                  |
+      | payment_multy_number    | 1                                                   |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
 
@@ -2942,7 +2942,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                 |
       | apply_cost_pagopa    | NULL                                 |
@@ -2950,7 +2950,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_AE                      |
       | apply_cost_f24       | SI                                   |
       | payment_multy_number | 1                                    |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
 
 
 
@@ -2963,7 +2963,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
       | document           | DOC_8_PG;DOC_5_PG           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile_address | test@fail.it                     |
       | payment_pagoPaForm      | NULL                             |
       | apply_cost_pagopa       | NULL                             |
@@ -2971,7 +2971,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment           | PAYMENT_F24_PAYMENT_F24_STANDARD |
       | apply_cost_f24          | NO                               |
       | payment_multy_number    | 3                                |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
 
@@ -2984,7 +2984,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy             | FLAT_RATE                   |
       | paFee                 | 0                           |
       | document              | DOC_8_PG;DOC_5_PG           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | Via@ok_AR                 |
       | payment_pagoPaForm      | NULL                      |
@@ -2993,7 +2993,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
       | payment_multy_number    | 3                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @cartaceoF24 @integration
@@ -3005,7 +3005,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy             | FLAT_RATE                   |
       | paFee                 | 100                         |
       | document              | DOC_8_PG;DOC_5_PG           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | via@fail-Discovery_AR     |
       | payment_pagoPaForm      | NULL                      |
@@ -3014,7 +3014,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
       | payment_multy_number    | 3                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @f24 @dev @integration
@@ -3025,7 +3025,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
       | document           | DOC_8_PG;DOC_5_PG           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile_address | test@fail.it                  |
       | payment_pagoPaForm      | NULL                          |
       | apply_cost_pagopa       | NULL                          |
@@ -3033,7 +3033,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 3                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
   @pagamentiMultipli @cartaceoF24 @integration
@@ -3045,7 +3045,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy             | DELIVERY_MODE               |
       | paFee                 | 0                           |
       | document              | DOC_8_PG;DOC_5_PG           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | Via@ok_AR                     |
       | payment_pagoPaForm      | NULL                          |
@@ -3054,7 +3054,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 3                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
 
@@ -3067,7 +3067,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy             | DELIVERY_MODE               |
       | paFee                 | 100                         |
       | document              | DOC_8_PG;DOC_5_PG           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | via@fail-Discovery_AR         |
       | payment_pagoPaForm      | NULL                          |
@@ -3076,7 +3076,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 3                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
 
@@ -3089,7 +3089,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy             | FLAT_RATE                   |
       | paFee                 | 0                           |
       | document              | DOC_8_PG;DOC_5_PG           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | NULL                      |
       | payment_f24_x        | PAYMENT_F24_FLAT          |
       | title_payment        | F24_FLAT_CLMCST42R12D969Z |
@@ -3105,7 +3105,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment           | F24_FLAT_DVNLRD52D15M059P |
       | apply_cost_f24          | NO                        |
       | payment_multy_number    | 3                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 0
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 1
 
@@ -3119,7 +3119,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy             | DELIVERY_MODE               |
       | paFee                 | 0                           |
       | document              | DOC_8_PG;DOC_5_PG           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm   | NULL                          |
       | payment_f24_x        | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
@@ -3135,7 +3135,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment           | F24_STANDARD_DVNLRD52D15M059P |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 3                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 0
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 1
 
@@ -3149,7 +3149,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy             | DELIVERY_MODE               |
       | paFee                 | 0                           |
       | document              | DOC_8_PG;DOC_5_PG           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL                          |
       | physicalAddress_address      | Via@ok_AR                     |
       | payment_pagoPaForm           | NULL                          |
@@ -3171,12 +3171,9 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment           | F24_STANDARD_DVNLRD52D15M059P |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 3                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 1
-
-
-
 
 
   @pagamentiMultipli @cartaceoF24 @integration
@@ -3185,7 +3182,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | subject            | notifica analogica |
       | senderDenomination | Comune di palermo  |
       | feePolicy          | DELIVERY_MODE      |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL                              |
       | physicalAddress_address | Via@ok_890                        |
       | payment_pagoPaForm      | NOALLEGATO                        |
@@ -3193,7 +3190,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment           | F24_SEMPLIFICATO_CLMCST42R12D969Z |
       | apply_cost_f24          | SI                                |
       | payment_multy_number    | 6                                 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS"
 
   @pagamentiMultipli @cartaceoF24 @integration
@@ -3202,7 +3199,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | subject            | notifica analogica |
       | senderDenomination | Comune di palermo  |
       | feePolicy          | DELIVERY_MODE      |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL                              |
       | physicalAddress_address | Via@ok_890                        |
       | payment_pagoPaForm      | NOALLEGATO                        |
@@ -3210,7 +3207,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment           | F24_SEMPLIFICATO_CLMCST42R12D969Z |
       | apply_cost_f24          | SI                                |
       | payment_multy_number    | 9                                 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
 
 
@@ -3220,15 +3217,15 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | subject            | notifica analogica |
       | senderDenomination | Comune di palermo  |
       | feePolicy          | DELIVERY_MODE      |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL                              |
       | physicalAddress_address | Via@ok_890                        |
       | payment_pagoPaForm      | NOALLEGATO                        |
       | payment_f24             | PAYMENT_F24_SIMPLIFIED            |
       | title_payment           | F24_SEMPLIFICATO_CLMCST42R12D969Z |
       | apply_cost_f24          | SI                                |
-      | payment_multy_number    | 10                                 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | payment_multy_number    | 10                                |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
 
 
@@ -3240,7 +3237,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | physicalCommunication | AR_REGISTERED_LETTER        |
       | feePolicy             | DELIVERY_MODE               |
       | paFee                 | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL                            |
       | physicalAddress_address | via@fail-Discovery_AR           |
       | payment_pagoPaForm      | NULL                            |
@@ -3249,7 +3246,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                              |
       | apply_cost_f24          | SI                              |
       | payment_multy_number    | 120                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
@@ -3261,7 +3258,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | physicalCommunication | AR_REGISTERED_LETTER        |
       | feePolicy             | DELIVERY_MODE               |
       | paFee                 | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL                            |
       | physicalAddress_address | via@fail-Discovery_890          |
       | payment_pagoPaForm      | NULL                            |
@@ -3270,7 +3267,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                              |
       | apply_cost_f24          | SI                              |
       | payment_multy_number    | 120                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
@@ -3282,7 +3279,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL                   |
       | physicalAddress_address | Via@ok_AR              |
       | payment_pagoPaForm      | NULL                   |
@@ -3290,7 +3287,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                     |
       | apply_cost_f24          | SI                     |
       | payment_multy_number    | 120                    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @cartaceoF24 @120F24
@@ -3300,7 +3297,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL                   |
       | physicalAddress_address | Via@ok_890             |
       | payment_pagoPaForm      | NULL                   |
@@ -3308,7 +3305,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                     |
       | apply_cost_f24          | SI                     |
       | payment_multy_number    | 120                    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
 
@@ -3319,7 +3316,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                          |
       | apply_cost_pagopa    | NULL                          |
@@ -3327,7 +3324,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 120                           |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -3339,7 +3336,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | physicalCommunication | AR_REGISTERED_LETTER        |
       | feePolicy             | DELIVERY_MODE               |
       | paFee                 | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | via@fail-Discovery_AR         |
       | payment_pagoPaForm      | NULL                          |
@@ -3348,7 +3345,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 120                           |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
@@ -3360,7 +3357,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | physicalCommunication | AR_REGISTERED_LETTER        |
       | feePolicy             | DELIVERY_MODE               |
       | paFee                 | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | via@fail-Discovery_890        |
       | payment_pagoPaForm      | NULL                          |
@@ -3369,7 +3366,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 120                           |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
@@ -3381,7 +3378,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL                 |
       | physicalAddress_address | Via@ok_AR            |
       | payment_pagoPaForm      | NULL                 |
@@ -3389,7 +3386,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                   |
       | apply_cost_f24          | SI                   |
       | payment_multy_number    | 120                  |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @cartaceoF24 @120F24
@@ -3399,7 +3396,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL                 |
       | physicalAddress_address | Via@ok_890           |
       | payment_pagoPaForm      | NULL                 |
@@ -3407,7 +3404,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                   |
       | apply_cost_f24          | SI                   |
       | payment_multy_number    | 120                  |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
 
@@ -3417,7 +3414,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | subject            | notifica analogica |
       | senderDenomination | Comune di palermo  |
       | feePolicy          | DELIVERY_MODE      |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL                              |
       | physicalAddress_address | Via@ok_890                        |
       | payment_pagoPaForm      | NOALLEGATO                        |
@@ -3425,7 +3422,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment           | F24_SEMPLIFICATO_CLMCST42R12D969Z |
       | apply_cost_f24          | SI                                |
       | payment_multy_number    | 11                                |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
 
 
@@ -3436,7 +3433,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile_address | test@fail.it                  |
       | physicalAddress_address | Via Roma                      |
       | payment_pagoPaForm      | NULL                          |
@@ -3445,7 +3442,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 120                           |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
 
@@ -3456,7 +3453,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile_address | test@fail.it                  |
       | physicalAddress_address | Via Roma                      |
       | payment_pagoPaForm      | NULL                          |
@@ -3465,7 +3462,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 120                           |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
 
@@ -3476,7 +3473,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile_address | test@fail.it                  |
       | physicalAddress_address | Via@ok-Retry_RS               |
       | payment_pagoPaForm      | NULL                          |
@@ -3485,7 +3482,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 120                           |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
 
@@ -3496,7 +3493,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile_address | test@fail.it              |
       | physicalAddress_address | Via Roma                  |
       | payment_pagoPaForm      | NULL                      |
@@ -3505,7 +3502,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
       | payment_multy_number    | 120                       |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
 
@@ -3516,7 +3513,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile_address | test@fail.it              |
       | physicalAddress_address | Via Roma                  |
       | payment_pagoPaForm      | NULL                      |
@@ -3525,7 +3522,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
       | payment_multy_number    | 120                       |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
 

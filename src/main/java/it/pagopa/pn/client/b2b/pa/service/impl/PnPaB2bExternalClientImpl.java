@@ -25,7 +25,6 @@ import java.util.List;
 
 import static it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton.ENEBLED_INTEROP;
 
-
 @Slf4j
 @Component()
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -294,11 +293,6 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         return newNotificationApi.presignedUploadRequest(preLoadRequest);
     }
 
-    public NewNotificationResponse sendNewNotificationV24(NewNotificationRequestV24 newNotificationRequest) {
-        refreshAndSetTokenInteropClient();
-        return newNotificationApi.sendNewNotificationV24(newNotificationRequest);
-    }
-
     public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationResponse sendNewNotificationV1(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequest newNotificationRequest) {
         refreshAndSetTokenInteropClient();
         return newNotificationApiV1.sendNewNotification(newNotificationRequest);
@@ -312,6 +306,17 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationResponse sendNewNotificationV21(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationRequestV21 newNotificationRequest) {
         refreshAndSetTokenInteropClient();
         return newNotificationApiV21.sendNewNotificationV21(newNotificationRequest);
+    }
+
+    @Override
+    public NewNotificationResponse sendNewNotificationV23(NewNotificationRequestV23 newNotificationRequest) {
+        refreshAndSetTokenInteropClient();
+        return newNotificationApi.sendNewNotificationV23(newNotificationRequest);
+    }
+
+    public NewNotificationResponse sendNewNotificationV24(NewNotificationRequestV24 newNotificationRequest) {
+        refreshAndSetTokenInteropClient();
+        return newNotificationApi.sendNewNotificationV24(newNotificationRequest);
     }
 
     @Override

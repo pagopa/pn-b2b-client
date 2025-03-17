@@ -8,11 +8,11 @@ Feature: avanzamento notifiche webhook b2b multi
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
-    And destinatario Mario Cucumber
+    And destinatario "Mario Gherkin"
+    And destinatario "Mario Cucumber"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "GET_ADDRESS" con la versione "V10"
 
 
@@ -21,13 +21,13 @@ Feature: avanzamento notifiche webhook b2b multi
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile_address | test@fail.it |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | digitalDomicile_address | test@fail.it |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "PUBLIC_REGISTRY_CALL" con la versione "V10"
 
   @cleanC3 @dev @webhook2
@@ -35,13 +35,13 @@ Feature: avanzamento notifiche webhook b2b multi
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile_address | test@fail.it |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | digitalDomicile_address | test@fail.it |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "PUBLIC_REGISTRY_RESPONSE" con la versione "V10"
 
 
@@ -50,14 +50,14 @@ Feature: avanzamento notifiche webhook b2b multi
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile_address | test@fail.it |
     And destinatario
       | taxId                   | LVLDAA85T50G702B |
       | digitalDomicile_address | test@fail.it     |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "DIGITAL_FAILURE_WORKFLOW" con la versione "V10"
 
   @cleanC3 @webhook2
@@ -65,11 +65,11 @@ Feature: avanzamento notifiche webhook b2b multi
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
-    And destinatario Mario Cucumber
+    And destinatario "Mario Gherkin"
+    And destinatario "Mario Cucumber"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SEND_DIGITAL_PROGRESS" con la versione "V10"
 
 
@@ -78,11 +78,11 @@ Feature: avanzamento notifiche webhook b2b multi
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
-    And destinatario Mario Cucumber
+    And destinatario "Mario Gherkin"
+    And destinatario "Mario Cucumber"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SEND_DIGITAL_FEEDBACK" con la versione "V10"
 
   @cleanC3 @webhook2
@@ -90,11 +90,11 @@ Feature: avanzamento notifiche webhook b2b multi
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Gherkin spa
-    And destinatario Cucumber srl
+    And destinatario "GherkinSpa"
+    And destinatario "CucumberSrl"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "GET_ADDRESS" con la versione "V10"
 
 
@@ -103,13 +103,13 @@ Feature: avanzamento notifiche webhook b2b multi
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Gherkin spa e:
+    And destinatario "GherkinSpa" e:
       | digitalDomicile_address | test@fail.it |
-    And destinatario Cucumber srl e:
+    And destinatario "CucumberSrl" e;
       | digitalDomicile_address | test@fail.it |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "PUBLIC_REGISTRY_CALL" con la versione "V10"
 
   @cleanC3 @dev @webhook2
@@ -117,13 +117,13 @@ Feature: avanzamento notifiche webhook b2b multi
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Gherkin spa e:
+    And destinatario "GherkinSpa" e:
       | digitalDomicile_address | test@fail.it |
-    And destinatario Cucumber srl e:
+    And destinatario "CucumberSrl" e;
       | digitalDomicile_address | test@fail.it |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "PUBLIC_REGISTRY_RESPONSE" con la versione "V10"
 
   @cleanC3 @dev @ignore @tbc @webhook2
@@ -131,13 +131,13 @@ Feature: avanzamento notifiche webhook b2b multi
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Gherkin spa e:
+    And destinatario "GherkinSpa" e:
       | digitalDomicile_address | test@fail.it |
-    And destinatario Cucumber srl e:
+    And destinatario "CucumberSrl" e;
       | digitalDomicile_address | test@fail.it |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "DIGITAL_FAILURE_WORKFLOW" con la versione "V10"
 
   @cleanC3 @webhook2
@@ -145,11 +145,11 @@ Feature: avanzamento notifiche webhook b2b multi
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Gherkin spa
-    And destinatario Cucumber srl
+    And destinatario "GherkinSpa"
+    And destinatario "CucumberSrl"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SEND_DIGITAL_PROGRESS" con la versione "V10"
 
   @cleanC3 @webhook2
@@ -157,11 +157,11 @@ Feature: avanzamento notifiche webhook b2b multi
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Gherkin spa
-    And destinatario Cucumber srl
+    And destinatario "GherkinSpa"
+    And destinatario "CucumberSrl"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SEND_DIGITAL_FEEDBACK" con la versione "V10"
 
 
@@ -170,13 +170,13 @@ Feature: avanzamento notifiche webhook b2b multi
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
-    And destinatario Mario Gherkin
+    And destinatario "Mario Gherkin"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SEND_ANALOG_DOMICILE" con la versione "V10"
 
   @cleanC3 @webhook2
@@ -184,13 +184,13 @@ Feature: avanzamento notifiche webhook b2b multi
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
-    And destinatario Mario Gherkin
+    And destinatario "Mario Gherkin"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SEND_ANALOG_PROGRESS" con la versione "V10"
 
   @cleanC3 @webhook2
@@ -198,13 +198,13 @@ Feature: avanzamento notifiche webhook b2b multi
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
-    And destinatario Mario Gherkin
+    And destinatario "Mario Gherkin"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SEND_ANALOG_FEEDBACK" con la versione "V10"
 
   @cleanC3 @webhook2
@@ -212,12 +212,12 @@ Feature: avanzamento notifiche webhook b2b multi
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile_address | test@fail.it |
-    And destinatario Mario Cucumber
+    And destinatario "Mario Cucumber"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" con la versione "V10"
 
   @cleanC3 @webhook2
@@ -226,13 +226,13 @@ Feature: avanzamento notifiche webhook b2b multi
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario Mario Cucumber
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Cucumber"
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm | SI   |
       | payment_f24        | NULL |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And l'avviso pagopa viene pagato correttamente dall'utente 1
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "PAYMENT" con la versione "V10"
 
@@ -242,12 +242,12 @@ Feature: avanzamento notifiche webhook b2b multi
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Cucumber
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Cucumber"
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile_address | test@fail.it |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then Si verifica che l'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" dello stream con versione "V10" di "Comune_Multi" non abbia il timestamp uguale a quella della notifica
 
   @cleanC3 @webhook2
@@ -256,13 +256,13 @@ Feature: avanzamento notifiche webhook b2b multi
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario Mario Cucumber
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Cucumber"
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm | SI   |
       | payment_f24        | NULL |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And l'avviso pagopa viene pagato correttamente dall'utente 1
     Then Si verifica che l'elemento di timeline "PAYMENT" dello stream con versione "V10" di "Comune_Multi" non abbia il timestamp uguale a quella della notifica
 
@@ -271,13 +271,13 @@ Feature: avanzamento notifiche webhook b2b multi
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Cucumber
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Cucumber"
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then Si verifica che l'elemento di timeline "SEND_ANALOG_PROGRESS" dello stream con versione "V10" di "Comune_Multi" non abbia il timestamp uguale a quella della notifica
 
 
@@ -286,13 +286,13 @@ Feature: avanzamento notifiche webhook b2b multi
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Cucumber
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Cucumber"
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then Si verifica che l'elemento di timeline "SEND_ANALOG_FEEDBACK" dello stream con versione "V10" di "Comune_Multi" non abbia il timestamp uguale a quella della notifica
 
   @cleanC3 @webhook2
@@ -300,11 +300,11 @@ Feature: avanzamento notifiche webhook b2b multi
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Cucumber
-    And destinatario Mario Gherkin
+    And destinatario "Mario Cucumber"
+    And destinatario "Mario Gherkin"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then Si verifica che l'elemento di timeline "SEND_DIGITAL_PROGRESS" dello stream con versione "V10" di "Comune_Multi" non abbia il timestamp uguale a quella della notifica
 
 
@@ -313,11 +313,11 @@ Feature: avanzamento notifiche webhook b2b multi
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Cucumber
-    And destinatario Mario Gherkin
+    And destinatario "Mario Cucumber"
+    And destinatario "Mario Gherkin"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then Si verifica che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" dello stream con versione "V10" di "Comune_Multi" non abbia il timestamp uguale a quella della notifica
 
 
@@ -326,11 +326,11 @@ Feature: avanzamento notifiche webhook b2b multi
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
-    And destinatario Mario Cucumber
-    And destinatario Mario Gherkin
+    And destinatario "Mario Cucumber"
+    And destinatario "Mario Gherkin"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "DELIVERING" con la versione "V10"
     And "Mario Gherkin" legge la notifica
     Then Si verifica che l'elemento di timeline "NOTIFICATION_VIEWED" dello stream con versione "V10" di "Comune_Multi" non abbia il timestamp uguale a quella della notifica
@@ -341,9 +341,9 @@ Feature: avanzamento notifiche webhook b2b multi
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
-    And destinatario Mario Cucumber
+    And destinatario "Mario Gherkin"
+    And destinatario "Mario Cucumber"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "ACCEPTED" con la versione "V10"

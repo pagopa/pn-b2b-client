@@ -1,7 +1,6 @@
 package it.pagopa.pn.client.b2b.pa.mapper.impl;
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactCategory;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26;
 import it.pagopa.pn.client.b2b.pa.mapper.model.PnTimelineLegalFactV26;
 import it.pagopa.pn.client.b2b.pa.service.IPnTimelineLegalFactService;
@@ -37,12 +36,8 @@ public class PnTimelineAndLegalFactV26 implements IPnTimelineLegalFactService<Pn
                 timelineElementInternalCategory = TimelineElementCategoryV26.SEND_ANALOG_PROGRESS;
                 category = LegalFactCategory.ANALOG_DELIVERY;
             }
-            case "COMPLETELY_UNREACHABLE" -> {
-                timelineElementInternalCategory = TimelineElementCategoryV26.COMPLETELY_UNREACHABLE;
-                category = LegalFactCategory.ANALOG_FAILURE_DELIVERY;
-            }
-            //introdotto con V25
-            case "NOTIFICATION_CANCELLED" -> {
+            // NOTIFICATION_CANCELLED introdotto con V25
+            case "COMPLETELY_UNREACHABLE", "NOTIFICATION_CANCELLED" -> {
                 timelineElementInternalCategory = TimelineElementCategoryV26.COMPLETELY_UNREACHABLE;
                 category = LegalFactCategory.ANALOG_FAILURE_DELIVERY;
             }

@@ -13,11 +13,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.HttpStatusCodeException;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+
+import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.*;
 import static it.pagopa.pn.cucumber.utils.FiscalCodeGenerator.generateCF;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.generateRandomNumber;
 
@@ -37,7 +40,7 @@ public class RaddFsuSteps {
     private final String uid = "1234556";
     private AORInquiryResponse aorInquiryResponse;
     private CompleteTransactionResponse completeTransactionResponse;
-    private PnPaB2bUtils.Pair<String,String> documentUploadResponse;
+    private PnPaB2bUtils.Pair<String, String> documentUploadResponse;
     private AbortTransactionResponse abortActTransaction;
     private HttpStatusCodeException documentUploadError;
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -61,25 +64,27 @@ public class RaddFsuSteps {
     @Given("viene richiesto il codice QR per lo IUN {string}")
     public void vieneRichiestoIlCodiceQRPerLoIUN(String iun) {
         HashMap<String, String> quickAccessLink = externalServiceClient.getQuickAccessLink(iun);
-        log.debug("quickAccessLink: {}",quickAccessLink.toString());
+        log.debug("quickAccessLink: {}", quickAccessLink.toString());
         this.qrCode = quickAccessLink.get(quickAccessLink.keySet().toArray()[0]);
-        log.debug("qrCode: {}",qrCode);
+        log.debug("qrCode: {}", qrCode);
     }
 
     @When("L'operatore scansione il qrCode per recuperare gli atti")
     public void lOperatoreScansioneIlQrCodePerRecuperariGliAtti() {
-        ActInquiryResponse actInquiryResponse = raddFsuClient.actInquiry(uid,this.currentUserCf, "PF", qrCode);
-        log.info("actInquiryResponse: {}",actInquiryResponse);
+        ActInquiryResponse actInquiryResponse = raddFsuClient.actInquiry(uid, this.currentUserCf, "PF", qrCode);
+        log.info("actInquiryResponse: {}", actInquiryResponse);
         this.actInquiryResponse = actInquiryResponse;
     }
 
-    private void selectUser(String cf){
-        switch (cf.toUpperCase()){
-            case "MARIO CUCUMBER" -> this.currentUserCf = sharedSteps.getMarioCucumberTaxID();
-            case "MARIO GHERKIN" -> this.currentUserCf = sharedSteps.getMarioGherkinTaxID();
-            case "SIGNOR CASUALE" -> this.currentUserCf = sharedSteps.getSentNotification().getRecipients().get(0).getTaxId();
+    private void selectUser(String userName) {
+        //TODO MATTEO OCCHIO A CASUALE E GENERATO QUA (PRIMA ERA TO UPPER CASE)
+        switch (userName) {
+            case MARIOCUCUMBER -> this.currentUserCf = MARIO_CUCUMBER_TAX_ID;
+            case MARIOGHERKIN -> this.currentUserCf = MARIO_GHERKIN_TAX_ID;
+            case "SIGNOR CASUALE" ->
+                    this.currentUserCf = sharedSteps.getFullSentNotificationV26().getRecipients().get(0).getTaxId();
             case "SIGNOR GENERATO" -> this.currentUserCf = generateCF(System.nanoTime());
-            default ->  this.currentUserCf = cf;
+            default -> this.currentUserCf = userName;
         }
     }
 
@@ -89,30 +94,30 @@ public class RaddFsuSteps {
         qrCodeType = qrCodeType.toLowerCase();
         switch (qrCodeType) {
             case "malformato" -> {
-                vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getSentNotification().getIun());
-                this.qrCode = this.qrCode+"MALF";
+                vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getFullSentNotificationV26().getIun());
+                this.qrCode = this.qrCode + "MALF";
             }
             case "inesistente" -> {
-                vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getSentNotification().getIun());
+                vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getFullSentNotificationV26().getIun());
                 char toReplace = this.qrCode.charAt(0);
                 char replace = toReplace == 'B' ? 'C' : 'B';
-                this.qrCode = this.qrCode.replace(toReplace,replace);
+                this.qrCode = this.qrCode.replace(toReplace, replace);
             }
             case "appartenente a terzo" -> {
-                if(this.currentUserCf.equalsIgnoreCase(sharedSteps.getSentNotification().getRecipients().get(0).getTaxId())){
+                if (this.currentUserCf.equalsIgnoreCase(sharedSteps.getFullSentNotificationV26().getRecipients().get(0).getTaxId())) {
                     throw new IllegalArgumentException();
                 }
-                vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getSentNotification().getIun());
+                vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getFullSentNotificationV26().getIun());
             }
             case "corretto" -> {
-                vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getSentNotification().getIun());
+                vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getFullSentNotificationV26().getIun());
             }
             default -> throw new IllegalArgumentException();
         }
     }
 
-    private ActInquiryResponseStatus.CodeEnum getErrorCode(int errorCode){
-        switch (errorCode){
+    private ActInquiryResponseStatus.CodeEnum getErrorCode(int errorCode) {
+        switch (errorCode) {
             case 0 -> {
                 return ActInquiryResponseStatus.CodeEnum.NUMBER_0;
             }
@@ -139,12 +144,12 @@ public class RaddFsuSteps {
         switch (errorType) {
             case "qrcode non valido", "cf non valido" -> {
                 Assertions.assertEquals(false, actInquiryResponse.getResult());
-                Assertions.assertNotNull( actInquiryResponse.getStatus());
+                Assertions.assertNotNull(actInquiryResponse.getStatus());
                 Assertions.assertEquals(error, actInquiryResponse.getStatus().getCode());
             }
-            case "stampa già eseguita" ->{
+            case "stampa già eseguita" -> {
                 Assertions.assertEquals(false, actInquiryResponse.getResult());
-                Assertions.assertNotNull( actInquiryResponse.getStatus());
+                Assertions.assertNotNull(actInquiryResponse.getStatus());
                 Assertions.assertNotNull(actInquiryResponse.getStatus().getMessage());
                 Assertions.assertEquals(errorType.toLowerCase(), actInquiryResponse.getStatus().getMessage().toLowerCase());
                 Assertions.assertEquals(error, actInquiryResponse.getStatus().getCode());
@@ -155,9 +160,9 @@ public class RaddFsuSteps {
 
     @And("la scansione si conclude correttamente")
     public void laScansioneSiConcludeCorrettamente() {
-        log.debug("actInquiryResponse {}",actInquiryResponse.toString());
+        log.debug("actInquiryResponse {}", actInquiryResponse.toString());
         Assertions.assertEquals(true, actInquiryResponse.getResult());
-        Assertions.assertNotNull( actInquiryResponse.getStatus());
+        Assertions.assertNotNull(actInquiryResponse.getStatus());
         Assertions.assertEquals(ActInquiryResponseStatus.CodeEnum.NUMBER_0, actInquiryResponse.getStatus().getCode());
     }
 
@@ -171,12 +176,12 @@ public class RaddFsuSteps {
         uploadDocument(false);
     }
 
-    private void uploadDocument(boolean usePresignedUrl){
+    private void uploadDocument(boolean usePresignedUrl) {
         try {
-            PnPaB2bUtils.Pair<String, String> uploadResponse = pnPaB2bUtils.preloadRadFsuDocument("classpath:/sample.pdf",usePresignedUrl);
+            PnPaB2bUtils.Pair<String, String> uploadResponse = pnPaB2bUtils.preloadRadFsuDocument("classpath:/sample.pdf", usePresignedUrl);
             Assertions.assertNotNull(uploadResponse);
             this.documentUploadResponse = uploadResponse;
-            log.info("documentUploadResponse: {}",documentUploadResponse);
+            log.info("documentUploadResponse: {}", documentUploadResponse);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -193,7 +198,7 @@ public class RaddFsuSteps {
         startTransactionAct(this.operationid);
     }
 
-    private void startTransactionAct(String operationid){
+    private void startTransactionAct(String operationid) {
         ActStartTransactionRequest actStartTransactionRequest =
                 new ActStartTransactionRequest()
                         .qrCode(this.qrCode)
@@ -204,9 +209,9 @@ public class RaddFsuSteps {
                         .recipientType(ActStartTransactionRequest.RecipientTypeEnum.PF)
                         //.operationDate(OffsetDateTime.now()) TODO: controllare
                         .checksum(this.documentUploadResponse.getValue2());
-        System.out.println("actStartTransactionRequest: "+actStartTransactionRequest);
+        System.out.println("actStartTransactionRequest: " + actStartTransactionRequest);
         this.startTransactionResponse = raddFsuClient.startActTransaction(uid, actStartTransactionRequest);
-        System.out.println("startTransactionResponse: "+startTransactionResponse);
+        System.out.println("startTransactionResponse: " + startTransactionResponse);
     }
 
     @And("l'operazione di download degli atti si conclude correttamente")
@@ -214,7 +219,7 @@ public class RaddFsuSteps {
         Assertions.assertNotNull(this.startTransactionResponse.getUrlList());
         Assertions.assertFalse(this.startTransactionResponse.getUrlList().isEmpty());
         Assertions.assertNotNull(this.startTransactionResponse.getStatus());
-        Assertions.assertEquals(StartTransactionResponseStatus.CodeEnum.NUMBER_0,this.startTransactionResponse.getStatus().getCode());
+        Assertions.assertEquals(StartTransactionResponseStatus.CodeEnum.NUMBER_0, this.startTransactionResponse.getStatus().getCode());
     }
 
 
@@ -223,14 +228,14 @@ public class RaddFsuSteps {
         StartTransactionResponseStatus.CodeEnum error = getErrorCodeStartTransaction(erroCode);
         Assertions.assertNull(this.startTransactionResponse.getUrlList());
         Assertions.assertNotNull(this.startTransactionResponse.getStatus());
-        Assertions.assertEquals(error,this.startTransactionResponse.getStatus().getCode());
+        Assertions.assertEquals(error, this.startTransactionResponse.getStatus().getCode());
         Assertions.assertNotNull(this.startTransactionResponse.getStatus().getMessage());
-        Assertions.assertEquals(errorDescription.trim().toLowerCase(),this.startTransactionResponse.getStatus().getMessage().toLowerCase());
+        Assertions.assertEquals(errorDescription.trim().toLowerCase(), this.startTransactionResponse.getStatus().getMessage().toLowerCase());
     }
 
-    private StartTransactionResponseStatus.CodeEnum getErrorCodeStartTransaction(int errorCode){
+    private StartTransactionResponseStatus.CodeEnum getErrorCodeStartTransaction(int errorCode) {
         //return StartTransactionResponseStatus.CodeEnum.valueOf("NUMBER_"+errorCode);
-        switch (errorCode){
+        switch (errorCode) {
             case 0 -> {
                 return StartTransactionResponseStatus.CodeEnum.NUMBER_0;
             }
@@ -273,8 +278,8 @@ public class RaddFsuSteps {
         Assertions.assertNotNull(this.aorInquiryResponse);
         Assertions.assertEquals(Boolean.TRUE, this.aorInquiryResponse.getResult());
         Assertions.assertNotNull(this.aorInquiryResponse.getStatus());
-        Assertions.assertEquals(ResponseStatus.CodeEnum.NUMBER_0,this.aorInquiryResponse.getStatus().getCode());
-        log.info("aorInquiryResponse: {}",this.aorInquiryResponse);
+        Assertions.assertEquals(ResponseStatus.CodeEnum.NUMBER_0, this.aorInquiryResponse.getStatus().getCode());
+        log.info("aorInquiryResponse: {}", this.aorInquiryResponse);
     }
 
     @Then("Vengono recuperati gli aar delle notifiche in stato irreperibile")
@@ -295,37 +300,37 @@ public class RaddFsuSteps {
 
     @And("il recupero degli aar in stato irreperibile si conclude correttamente")
     public void ilRecuperoDegliAttiInStatoIrreperibileSiConcludeCorrettamente() {
-        log.info("aorStartTransactionResponse: {}",this.aorStartTransactionResponse);
+        log.info("aorStartTransactionResponse: {}", this.aorStartTransactionResponse);
 
         Assertions.assertNotNull(this.aorStartTransactionResponse.getUrlList());
         Assertions.assertFalse(this.aorStartTransactionResponse.getUrlList().isEmpty());
         Assertions.assertNotNull(this.aorStartTransactionResponse.getStatus());
-        Assertions.assertEquals(StartTransactionResponseStatus.CodeEnum.NUMBER_0,this.aorStartTransactionResponse.getStatus().getCode());
+        Assertions.assertEquals(StartTransactionResponseStatus.CodeEnum.NUMBER_0, this.aorStartTransactionResponse.getStatus().getCode());
     }
 
     @And("il recupero degli aar in stato irreperibile si conclude correttamente e vengono restituiti {int} aar")
     public void ilRecuperoDegliAarInStatoIrreperibileSiConcludeCorrettamenteEVengonoRestituitiTuttiEGliAar(int aarNumber) {
-        log.info("aorStartTransactionResponse: {}",this.aorStartTransactionResponse);
+        log.info("aorStartTransactionResponse: {}", this.aorStartTransactionResponse);
 
         Assertions.assertNotNull(this.aorStartTransactionResponse.getUrlList());
-        Assertions.assertEquals(this.aorStartTransactionResponse.getUrlList().size(),aarNumber);
+        Assertions.assertEquals(this.aorStartTransactionResponse.getUrlList().size(), aarNumber);
         Assertions.assertFalse(this.aorStartTransactionResponse.getUrlList().isEmpty());
         Assertions.assertNotNull(this.aorStartTransactionResponse.getStatus());
-        Assertions.assertEquals(StartTransactionResponseStatus.CodeEnum.NUMBER_0,this.aorStartTransactionResponse.getStatus().getCode());
+        Assertions.assertEquals(StartTransactionResponseStatus.CodeEnum.NUMBER_0, this.aorStartTransactionResponse.getStatus().getCode());
     }
 
     @And("il recupero degli aar genera un errore {string} con codice {int}")
     public void ilRecuperoDegliAarGeneraUnErroreConCodice(String errorType, int errorCode) {
-        log.info("aorStartTransactionResponse: {}",this.aorStartTransactionResponse);
+        log.info("aorStartTransactionResponse: {}", this.aorStartTransactionResponse);
 
         errorType = errorType.toLowerCase();
         StartTransactionResponseStatus.CodeEnum error = getErrorCodeStartTransaction(errorCode);
 
         Assertions.assertNull(this.aorStartTransactionResponse.getUrlList());
-        Assertions.assertNotNull( this.aorStartTransactionResponse.getStatus());
-        Assertions.assertEquals(error,this.aorStartTransactionResponse.getStatus().getCode());
+        Assertions.assertNotNull(this.aorStartTransactionResponse.getStatus());
+        Assertions.assertEquals(error, this.aorStartTransactionResponse.getStatus().getCode());
         Assertions.assertNotNull(this.aorStartTransactionResponse.getStatus().getMessage());
-        Assertions.assertEquals(errorType,this.aorStartTransactionResponse.getStatus().getMessage().toLowerCase());
+        Assertions.assertEquals(errorType, this.aorStartTransactionResponse.getStatus().getMessage().toLowerCase());
     }
 
     @When("La verifica della presenza di notifiche in stato irreperibile genera un errore {string} con codice {int}")
@@ -335,17 +340,17 @@ public class RaddFsuSteps {
         switch (errorType) {
             case "non ci sono notifiche non consegnate per questo codice fiscale" -> {
                 Assertions.assertEquals(false, this.aorInquiryResponse.getResult());
-                Assertions.assertNotNull( this.aorInquiryResponse.getStatus());
+                Assertions.assertNotNull(this.aorInquiryResponse.getStatus());
                 Assertions.assertEquals(error, this.aorInquiryResponse.getStatus().getCode());
             }
             default -> throw new IllegalArgumentException();
         }
 
-        log.info("aorInquiryResponse: {}",this.aorInquiryResponse);
+        log.info("aorInquiryResponse: {}", this.aorInquiryResponse);
     }
 
-    private ResponseStatus.CodeEnum getAorErrorCode(int errorCode){
-        switch (errorCode){
+    private ResponseStatus.CodeEnum getAorErrorCode(int errorCode) {
+        switch (errorCode) {
             case 0 -> {
                 return ResponseStatus.CodeEnum.NUMBER_0;
             }
@@ -363,14 +368,14 @@ public class RaddFsuSteps {
                         .operationId(this.operationid)
                         .operationDate(dateTimeFormatter.format(OffsetDateTime.now()));
         this.completeTransactionResponse = raddFsuClient.completeAorTransaction(this.uid, completeTransactionRequest);
-        log.info("completeTransactionResponse: {}",completeTransactionResponse);
+        log.info("completeTransactionResponse: {}", completeTransactionResponse);
     }
 
     @And("la chiusura delle transazione per il recupero degli aar non genera errori")
     public void laChiusuraDelleTransazionePerIlRecuperoDegliAarNonGeneraErrori() {
         Assertions.assertNotNull(this.completeTransactionResponse);
         Assertions.assertNotNull(this.completeTransactionResponse.getStatus());
-        Assertions.assertEquals(TransactionResponseStatus.CodeEnum.NUMBER_0,this.completeTransactionResponse.getStatus().getCode());
+        Assertions.assertEquals(TransactionResponseStatus.CodeEnum.NUMBER_0, this.completeTransactionResponse.getStatus().getCode());
     }
 
     @And("la chiusura delle transazione per il recupero degli aar ha generato l'errore {string} con statusCode {int}")
@@ -378,15 +383,15 @@ public class RaddFsuSteps {
         Assertions.assertNotNull(this.completeTransactionResponse);
         Assertions.assertNotNull(this.completeTransactionResponse.getStatus());
         Assertions.assertNotNull(this.completeTransactionResponse.getStatus().getCode());
-        Assertions.assertEquals(new BigDecimal(statusCode),this.completeTransactionResponse.getStatus().getCode().getValue());
-        Assertions.assertEquals(error,this.completeTransactionResponse.getStatus().getMessage());
+        Assertions.assertEquals(new BigDecimal(statusCode), this.completeTransactionResponse.getStatus().getCode().getValue());
+        Assertions.assertEquals(error, this.completeTransactionResponse.getStatus().getMessage());
     }
 
     @Given("vengono caricati i documento di identità del cittadino senza {string}")
     public void vengonoCaricatiIDocumentoDiIdentitàDelCittadinoSenza(String without) {
         String sha256;
         try {
-            sha256 = pnPaB2bUtils.computeSha256( "classpath:/sample.pdf" );
+            sha256 = pnPaB2bUtils.computeSha256("classpath:/sample.pdf");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -396,11 +401,11 @@ public class RaddFsuSteps {
         documentUploadRequest = without.equalsIgnoreCase("contentType") ? documentUploadRequest : documentUploadRequest.checksum(sha256);
         documentUploadRequest = without.equalsIgnoreCase("checksum") ? documentUploadRequest : documentUploadRequest.contentType("application/pdf");
 
-        try{
+        try {
             DocumentUploadResponse documentUploadResponse = raddFsuClient.documentUpload("1234556", documentUploadRequest);
-            log.debug("DocumentUploadResponse: {}",documentUploadResponse);
-        }catch(HttpStatusCodeException httpStatusCodeException){
-            log.debug("HttpStatusCodeException {}",httpStatusCodeException);
+            log.debug("DocumentUploadResponse: {}", documentUploadResponse);
+        } catch (HttpStatusCodeException httpStatusCodeException) {
+            log.debug("HttpStatusCodeException {}", httpStatusCodeException);
             this.documentUploadError = httpStatusCodeException;
         }
     }
@@ -408,7 +413,7 @@ public class RaddFsuSteps {
     @Then("il caricamente ha prodotto une errore http {int}")
     public void ilCaricamenteHaProdottoUneErroreHttp(int httpError) {
         Assertions.assertNotNull(this.documentUploadError);
-        Assertions.assertEquals(this.documentUploadError.getStatusCode().value(),httpError);
+        Assertions.assertEquals(this.documentUploadError.getStatusCode().value(), httpError);
     }
 
     @Then("la transazione viene abortita")
@@ -425,8 +430,8 @@ public class RaddFsuSteps {
         Assertions.assertNotNull(this.abortActTransaction);
         Assertions.assertNotNull(this.abortActTransaction.getStatus());
         Assertions.assertNotNull(this.abortActTransaction.getStatus().getCode());
-        Assertions.assertEquals(new BigDecimal(statusCode),this.abortActTransaction.getStatus().getCode().getValue());
-        Assertions.assertEquals(error,this.abortActTransaction.getStatus().getMessage());
+        Assertions.assertEquals(new BigDecimal(statusCode), this.abortActTransaction.getStatus().getCode().getValue());
+        Assertions.assertEquals(error, this.abortActTransaction.getStatus().getMessage());
     }
 
 }

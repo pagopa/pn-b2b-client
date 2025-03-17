@@ -6,8 +6,8 @@ Feature: test di integrazione della pubblica amministrazione
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Cucumber
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Cucumber"
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
@@ -16,12 +16,12 @@ Feature: test di integrazione della pubblica amministrazione
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_creditorTaxId | 77777777777 |
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And si verifica la corretta acquisizione della notifica
     And viene generata una nuova notifica con uguale codice fiscale del creditore e diverso codice avviso
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
 
   @integrationTest @TC-INVIO-01
@@ -30,8 +30,8 @@ Feature: test di integrazione della pubblica amministrazione
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
       | document           | SI                          |
-    And destinatario Mario Cucumber
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Cucumber"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And si verifica la corretta acquisizione della notifica
     When viene richiesto il download del documento "NOTIFICA"
     Then il download si conclude correttamente
@@ -43,10 +43,10 @@ Feature: test di integrazione della pubblica amministrazione
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_pagoPaForm | SI   |
       | payment_f24        | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
 
   @integrationTest @TC-INVIO-01
@@ -54,7 +54,7 @@ Feature: test di integrazione della pubblica amministrazione
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_creditorTaxId | 77777777777 |
     When la notifica viene inviata dal "Comune_1"
     Then si verifica la corretta acquisizione della richiesta di invio notifica
@@ -65,7 +65,7 @@ Feature: test di integrazione della pubblica amministrazione
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment | NULL |
     When la notifica viene inviata dal "Comune_1"
     Then si verifica la corretta acquisizione della richiesta di invio notifica
@@ -94,10 +94,10 @@ Feature: test di integrazione della pubblica amministrazione
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
+    And destinatario "Mario Gherkin"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_1" con versione "V10"
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi dello stream del "Comune_1" del validatore fino allo stato "ACCEPTED"
 
   @clean @integrationTest @TC-INVIO-02
@@ -105,10 +105,10 @@ Feature: test di integrazione della pubblica amministrazione
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
+    And destinatario "Mario Gherkin"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_1" con versione "V10"
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "REQUEST_ACCEPTED" con la versione "V10"
 
   @clean @integrationTest @TC-INVIO-02
@@ -116,10 +116,10 @@ Feature: test di integrazione della pubblica amministrazione
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
+    And destinatario "Mario Gherkin"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_1" con versione "V10"
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "AAR_GENERATION" con la versione "V10"
 
   @clean @integrationTest @TC-INVIO-02
@@ -127,10 +127,10 @@ Feature: test di integrazione della pubblica amministrazione
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
+    And destinatario "Mario Gherkin"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_1" con versione "V10"
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "GET_ADDRESS" con la versione "V10"
 
   @clean @integrationTest @TC-INVIO-02
@@ -138,10 +138,10 @@ Feature: test di integrazione della pubblica amministrazione
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
+    And destinatario "Mario Gherkin"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_1" con versione "V10"
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi dello stream del "Comune_1" fino allo stato "DELIVERING" con la versione "V10"
 
   @clean @integrationTest @TC-INVIO-02
@@ -149,10 +149,10 @@ Feature: test di integrazione della pubblica amministrazione
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
+    And destinatario "Mario Gherkin"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_1" con versione "V10"
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "SEND_DIGITAL_DOMICILE" con la versione "V10"
 
   @clean @integrationTest @TC-INVIO-02
@@ -160,10 +160,10 @@ Feature: test di integrazione della pubblica amministrazione
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
+    And destinatario "Mario Gherkin"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_1" con versione "V10"
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi dello stream del "Comune_1" del validatore fino allo stato "DELIVERED"
 
 
@@ -174,8 +174,8 @@ Feature: test di integrazione della pubblica amministrazione
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Gherkin"
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     Then la PA richiede il download dell'attestazione opponibile "SENDER_ACK"
 
@@ -184,8 +184,8 @@ Feature: test di integrazione della pubblica amministrazione
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Gherkin"
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     Then la PA richiede il download dell'attestazione opponibile "DIGITAL_DELIVERY"
 
@@ -194,8 +194,8 @@ Feature: test di integrazione della pubblica amministrazione
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Gherkin"
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_PROGRESS"
     Then la PA richiede il download dell'attestazione opponibile "PEC_RECEIPT"
 
@@ -209,6 +209,6 @@ Feature: test di integrazione della pubblica amministrazione
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario Mario Gherkin
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Gherkin"
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica

@@ -9,7 +9,7 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | denomination    | Test digitale ok |
       | taxId           | TRVVCN73H02L259I |
       | digitalDomicile | NULL             |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK" con responseStatus "OK" e digitalAddressSource "GENERAL"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
@@ -23,7 +23,7 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | denomination    | Test digitale ok |
       | taxId           | JHKRFU96H15F068N |
       | digitalDomicile | NULL             |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK" con responseStatus "OK" e digitalAddressSource "GENERAL"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
@@ -34,11 +34,11 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
     And destinatario
-      | denomination    | Test digitale ok |
-      | taxId           | JPCRPP78D43F165N |
-      | digitalDomicile | NULL             |
+      | denomination            | Test digitale ok         |
+      | taxId                   | JPCRPP78D43F165N         |
+      | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
 
@@ -60,7 +60,7 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | denomination    | Test digitale ok |
       | taxId           | DRCMRA80A01H501L |
       | digitalDomicile | NULL             |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK" con responseStatus "OK" e digitalAddressSource "GENERAL"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
@@ -71,33 +71,33 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
     And destinatario
-      | denomination    | Test digitale ok |
-      | taxId           | DRCMRA80A01H501L |
-      | digitalDomicile_address| testpagopa3@pec.pagopa.it |
+      | denomination            | Test digitale ok          |
+      | taxId                   | DRCMRA80A01H501L          |
+      | digitalDomicile_address | testpagopa3@pec.pagopa.it |
     And destinatario
-      | denomination    | Test digitale ok |
-      | taxId           | PPPPLT80A01H501V |
-      | digitalDomicile_address| testpagopa3@pec.pagopa.it |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+      | denomination            | Test digitale ok          |
+      | taxId                   | PPPPLT80A01H501V          |
+      | digitalDomicile_address | testpagopa3@pec.pagopa.it |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
-      | loadTimeline | true |
-      | details | NOT_NULL |
-      | details_responseStatus | OK |
-      | details_sendingReceipts | [{"id": null, "system": null}] |
-      | details_digitalAddress | {"address": "esempio@pec.it", "type": "PEC"} |
-      | details_recIndex | 0 |
-      | details_digitalAddressSource | GENERAL |
-      | details_sentAttemptMade | 0 |
+      | loadTimeline                 | true                                         |
+      | details                      | NOT_NULL                                     |
+      | details_responseStatus       | OK                                           |
+      | details_sendingReceipts      | [{"id": null, "system": null}]               |
+      | details_digitalAddress       | {"address": "esempio@pec.it", "type": "PEC"} |
+      | details_recIndex             | 0                                            |
+      | details_digitalAddressSource | GENERAL                                      |
+      | details_sentAttemptMade      | 0                                            |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
-      | loadTimeline | true |
-      | details | NOT_NULL |
-      | details_responseStatus | OK |
-      | details_sendingReceipts | [{"id": null, "system": null}] |
-      | details_digitalAddress | {"address": "PPPPLT80A01H501V@pec.it", "type": "PEC"} |
-      | details_recIndex | 1 |
-      | details_digitalAddressSource | GENERAL |
-      | details_sentAttemptMade | 0 |
+      | loadTimeline                 | true                                                  |
+      | details                      | NOT_NULL                                              |
+      | details_responseStatus       | OK                                                    |
+      | details_sendingReceipts      | [{"id": null, "system": null}]                        |
+      | details_digitalAddress       | {"address": "PPPPLT80A01H501V@pec.it", "type": "PEC"} |
+      | details_recIndex             | 1                                                     |
+      | details_digitalAddressSource | GENERAL                                               |
+      | details_sentAttemptMade      | 0                                                     |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   #OK------------>
@@ -111,7 +111,7 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | recipientType   | PF               |
       | taxId           | PRVMNL80A01F205M |
       | digitalDomicile | NULL             |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK" con responseStatus "OK" e digitalAddressSource "GENERAL"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
@@ -127,7 +127,7 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | recipientType   | PF               |
       | taxId           | DRCMRA80A01H501L |
       | digitalDomicile | NULL             |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK" con responseStatus "OK" e digitalAddressSource "GENERAL"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
@@ -142,17 +142,17 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | recipientType   | PF               |
       | taxId           | DRCMRA80A01H501L |
       | digitalDomicile | NULL             |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
-      | loadTimeline | true |
-      | details | NOT_NULL |
-      | details_responseStatus | OK |
-      | details_sendingReceipts | [{"id": null, "system": null}] |
-      | details_digitalAddress | {"address": "esempio@pec.it", "type": "PEC"} |
-      | details_recIndex | 0 |
-      | details_digitalAddressSource | GENERAL |
-      | details_sentAttemptMade | 0 |
+      | loadTimeline                 | true                                         |
+      | details                      | NOT_NULL                                     |
+      | details_responseStatus       | OK                                           |
+      | details_sendingReceipts      | [{"id": null, "system": null}]               |
+      | details_digitalAddress       | {"address": "esempio@pec.it", "type": "PEC"} |
+      | details_recIndex             | 0                                            |
+      | details_digitalAddressSource | GENERAL                                      |
+      | details_sentAttemptMade      | 0                                            |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
  #4 (MITTENTE) Invio Notifica mono destinatario a PF con recupero del domicilio digitale - IPA e INIPEC risponde lista vuota e parte chiamata INAD
@@ -172,7 +172,7 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | denomination    | Test digitale ok |
       | taxId           | RMSLSO31M04Z404R |
       | digitalDomicile | NULL             |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK" con responseStatus "OK" e digitalAddressSource "GENERAL"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
@@ -187,7 +187,7 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | denomination    | Test digitale ok |
       | taxId           | FRNGRG88A64A794S |
       | digitalDomicile | NULL             |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK" con responseStatus "OK" e digitalAddressSource "GENERAL"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"

@@ -1,8 +1,11 @@
 package it.pagopa.pn.cucumber.steps.pa.notificationVersions;
 
+import java.io.IOException;
 import java.util.Map;
 
 public interface NotificationStepsInterface {
+
+    String getNotificationSentIun();
 
     void setNotificationRequest(Map<String, String> data);
 
@@ -18,47 +21,17 @@ public interface NotificationStepsInterface {
 
     void setNotificationRequestGroup(String group);
 
-    void sendNotification(String status, int wait);
-//
-//    void destinatarioMarioCucumber();
-//
-//    void destinatarioMarioCucumberParam(Map<String, String> data);
-//
-//    void destinatarioMarioGherkin();
-//
-//    void destinatarioMarioGherkinParam(Map<String, String> data);
-//
-//    void destinatarioGherkinSpa();
-//
-//    void destinatarioGherkinSpaParam(Map<String, String> data);
-//
-//    void destinatarioGherkinSrl();
-//
-//    void destinatarioGherkinSrlParam(Map<String, String> data);
-//
-//    void destinatarioCucumberSpa();
-//
-//    void destinatarioCucumberSpaParam(Map<String, String> data);
-//
-//    void destinatarioCucumberSrl();
-//
-//    void destinatarioCucumberSrlParam(Map<String, String> data);
-//
-//    void destinatarioSignorCasuale();
-//
-//    void destinatarioSignorCasualeParam(Map<String, String> data);
-//
-//    void destinatarioGherkinAnalogicParam(Map<String, String> data);
-//
-//    void destinatarioCucumberAnalogicParam(Map<String, String> data);
-//
-//    void destinatarioGherkinIrreperibileParam(Map<String, String> data);
-//
-//    void destinatarioCucumberSociety();
-//
-//    void destinatarioCucumberSocietyParam(Map<String, String> data);
-//
-//    void destinatarioCristoforoColombo();
+    void retrieveFullSentNotification(String iun);
 
+    Object retrieveNotificationRequest();
 
+    Object retrieveNotificationResponse();
+
+    void sendNotification(int wait, String status, String pollingStrategy);
+
+    Object uploadNotification() throws IOException;
+
+    void setIuvToRecipient(Integer posizione, String iuvGPD);
+
+    void addDocumentItems(int numAllegati);
 }

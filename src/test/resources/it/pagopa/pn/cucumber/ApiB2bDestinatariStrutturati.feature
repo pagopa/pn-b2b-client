@@ -8,8 +8,8 @@ Feature: Api b2b per destinatari strutturati
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario CucumberSpa
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "CucumberSpa"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente letta da "Mario Gherkin" con delega
 
   @useB2B @deleghe1 @b2bDestinatariStrutturati
@@ -20,8 +20,8 @@ Feature: Api b2b per destinatari strutturati
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario CucumberSpa
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "CucumberSpa"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente letta da "GherkinSrl" con delega
 
   @useB2B @deleghe1 @b2bDestinatariStrutturati
@@ -31,9 +31,9 @@ Feature: Api b2b per destinatari strutturati
     And "Mario Gherkin" accetta la delega "CucumberSpa"
     Given viene generata una nuova notifica
       | subject            | invio notifica CucumberSpa |
-      | senderDenomination | Comune di Milano          |
-    And destinatario CucumberSpa
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+      | senderDenomination | Comune di Milano           |
+    And destinatario "CucumberSpa"
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente letta da "Mario Gherkin" con delega
 
   @useB2B @deleghe1 @b2bDestinatariStrutturati
@@ -43,25 +43,25 @@ Feature: Api b2b per destinatari strutturati
     And "GherkinSrl" accetta la delega "CucumberSpa"
     Given viene generata una nuova notifica
       | subject            | invio notifica CucumberSpa |
-      | senderDenomination | Comune di Milano          |
-    And destinatario CucumberSpa
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+      | senderDenomination | Comune di Milano           |
+    And destinatario "CucumberSpa"
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente letta da "GherkinSrl" con delega
 
   @useB2B @deleghe1 @b2bDestinatariStrutturati
   Scenario Outline: [Scenario-5-6-9-10-11-12] Viene invocata l’API di creazione delega da delegante PG a delegato PF con campi non conformi
     And viene creata una delega con i seguenti parametri errati:
       | delegator | CucumberSpa |
-      | delegate  | <DELEGATE> |
+      | delegate  | <DELEGATE>  |
     Then si verifica che lo status code sia: 400
     Examples:
-      | DELEGATE |
-      | EMPTY_FISCAL_CODE |
-      | INVALID_FISCAL_CODE |
-      | EMPTY_FIRST_NAME |
-      | EMPTY_LAST_NAME |
-      | FIRST_NAME_NOT_VALID |
-      | LAST_NAME_NOT_VALID |
+      | DELEGATE               |
+      | EMPTY_FISCAL_CODE      |
+      | INVALID_FISCAL_CODE    |
+      | EMPTY_FIRST_NAME       |
+      | EMPTY_LAST_NAME        |
+      | FIRST_NAME_NOT_VALID   |
+      | LAST_NAME_NOT_VALID    |
 #      | EMPTY_DISPLAY_NAME |
       | DISPLAY_NAME_NOT_VALID |
 
@@ -69,18 +69,18 @@ Feature: Api b2b per destinatari strutturati
   @useB2B @deleghe1 @b2bDestinatariStrutturati
   Scenario: [Scenario-8] Viene invocata l’API di creazione delega da delegante PG a delegato PF con data di fine delega antecedente a quella di inizio
     And viene creata una delega con i seguenti parametri errati:
-      | delegator | CucumberSpa    |
-      | dateFrom  | TODAY         |
-      | dateTo    | PAST_DATE     |
+      | delegator | CucumberSpa |
+      | dateFrom  | TODAY       |
+      | dateTo    | PAST_DATE   |
     Then si verifica che lo status code sia: 400
 
   @useB2B @deleghe1 @b2bDestinatariStrutturati
   Scenario: [Scenario-7] Viene invocata l’API di creazione delega da delegante PG a delegato PF con data di fine delega formalmente non valida
     Given "Mario Gherkin" rifiuta se presente la delega ricevuta "CucumberSpa"
     And viene creata una delega con i seguenti parametri errati:
-      | delegator | CucumberSpa      |
-      | dateFrom  | TODAY           |
-      | dateTo    | INVALID_FORMAT  |
+      | delegator | CucumberSpa    |
+      | dateFrom  | TODAY          |
+      | dateTo    | INVALID_FORMAT |
     Then si verifica che lo status code sia: 400
 
   @useB2B @deleghe1 @b2bDestinatariStrutturati
@@ -159,17 +159,17 @@ Feature: Api b2b per destinatari strutturati
   @useB2B @deleghe1 @b2bDestinatariStrutturati
   Scenario: [B2B_MANDATE_DEST_34] Invocare l’API di visualizzazione dell’elenco delle notifiche
     Given "GherkinSrl" visualizza l'elenco delle notifiche per comune "Comune_Multi"
-      | startDate     | 01/01/2030 |
-      | endDate       | 01/10/2022 |
+      | startDate | 01/01/2030 |
+      | endDate   | 01/10/2022 |
     And si verifica che lo status code sia: 500
     And "GherkinSrl" visualizza l'elenco delle notifiche per comune "Comune_Multi"
-      | startDate     | 01/01/2022 |
-      | endDate       | 01/10/2030 |
-      | status        | ACCEPTED   |
+      | startDate | 01/01/2022 |
+      | endDate   | 01/10/2030 |
+      | status    | ACCEPTED   |
     And "GherkinSrl" visualizza l'elenco delle notifiche per comune "Comune_Multi"
-      | startDate     | 01/01/2022 |
-      | endDate       | 01/10/2030 |
-      | iunMatch      |  VDKD-YVDR-XXXX-202409-X-9  |
+      | startDate | 01/01/2022                |
+      | endDate   | 01/10/2030                |
+      | iunMatch  | VDKD-YVDR-XXXX-202409-X-9 |
     And Si verifica che il numero di notifiche restituite nella pagina sia 0
 
   @useB2B @deleghe1 @b2bDestinatariStrutturati
@@ -180,8 +180,8 @@ Feature: Api b2b per destinatari strutturati
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario GherkinSrl
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "GherkinSrl"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then il documento notificato può essere correttamente recuperato da "CucumberSpa" con delega
 
   @useB2B @deleghe1 @b2bDestinatariStrutturati
@@ -192,24 +192,24 @@ Feature: Api b2b per destinatari strutturati
     Then "CucumberSpa" visualizza l'elenco delle notifiche del delegante "GherkinSrl" per comune "Comune_Multi"
       |  |  |
     And "CucumberSpa" visualizza l'elenco delle notifiche del delegante "GherkinSrl" per comune "Comune_Multi"
-      | startDate     | 01/01/2022 |
-      | endDate       | 01/10/2030 |
-      | size          |    -1      |
+      | startDate | 01/01/2022 |
+      | endDate   | 01/10/2030 |
+      | size      | -1         |
     And si verifica che lo status code sia: 400
     #size = -1 -> size = null
     And "CucumberSpa" visualizza l'elenco delle notifiche del delegante "GherkinSrl" per comune "Comune_Multi"
-      | startDate     | 01/01/2022 |
-      | endDate       | 01/10/2030 |
-      | status        | ACCEPTED   |
+      | startDate | 01/01/2022 |
+      | endDate   | 01/10/2030 |
+      | status    | ACCEPTED   |
     And "CucumberSpa" visualizza l'elenco delle notifiche del delegante "GherkinSrl" per comune "Comune_Multi"
-      | startDate     | 01/01/2022 |
-      | endDate       | 01/10/2030 |
-      | subjectRegExp | adsdasdasdasdasdasdasdasdasdasdasdas   |
+      | startDate     | 01/01/2022                           |
+      | endDate       | 01/10/2030                           |
+      | subjectRegExp | adsdasdasdasdasdasdasdasdasdasdasdas |
     And Si verifica che il numero di notifiche restituite nella pagina sia 0
     And "CucumberSpa" visualizza l'elenco delle notifiche del delegante "GherkinSrl" per comune "Comune_Multi"
-      | startDate     | 01/01/2022 |
-      | endDate       | 01/10/2030 |
-      | iunMatch      |  VDKD-YVDR-XXXX-202409-X-9  |
+      | startDate | 01/01/2022                |
+      | endDate   | 01/10/2030                |
+      | iunMatch  | VDKD-YVDR-XXXX-202409-X-9 |
     And Si verifica che il numero di notifiche restituite nella pagina sia 0
 
   @useB2B @deleghe1 @b2bDestinatariStrutturati
@@ -220,9 +220,9 @@ Feature: Api b2b per destinatari strutturati
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario GherkinSrl e:
-      | payment_pagoPaForm | SI               |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "GherkinSrl" e:
+      | payment_pagoPaForm | SI |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then l'allegato "PAGOPA" può essere correttamente recuperato da "CucumberSpa" con delega
 
   @userAttributes  @useB2B @b2bDestinatariStrutturati
@@ -290,7 +290,7 @@ Feature: Api b2b per destinatari strutturati
     When viene richiesto l'inserimento del email di cortesia "<email>"
     Then l'inserimento ha prodotto un errore con status code "400"
     Examples:
-      | email                                                                                                                                                                                                                                                                                  |
+      | email                                                                                                                                                                                                                                                                                |
       | emailchecontienemolticaratterimetterneilpiupossibileemailchecontienemolticaratterimetterneilpiupossibileemailchecontienemolticaratterimetterneilpiupossibilecontienemolticarattericontienemolticarattericontienemolticarattericontienemolticarattericontienemolticaratteri@gmail.com |
 
   @userAttributes  @useB2B @b2bDestinatariStrutturati
@@ -299,7 +299,7 @@ Feature: Api b2b per destinatari strutturati
     When viene richiesto l'inserimento del email di cortesia "<email>"
     Then l'inserimento ha prodotto un errore con status code "400"
     Examples:
-      | email                                                                                                          |
+      | email                                                                                                        |
       | qazwsxedcrfvtgbyhnujmikolpQAZWSXEDCRFVTGBYHNUJMIKOLP1234567890!#$%&'+/=?^_`{}~-£()ìàèéçòù§[]°><\;,@gmail.com |
       | qazwsxedcrfvtgbyhnujmikolpQAZWSXEDCRFVTGBYHNUJMIKOLP1234567890!#$%&'+/=?^_`{}~-£()ìàèéçòù§[]°><\;@gmail.com  |
       | qazwsxedcrfvtgbyhnujmikolpQAZWSXEDCRFVTGBYHNUJMIKOLP1234567890!#$%&'+/=?^_`{}~-£()ì@gmail.com                |
@@ -325,40 +325,40 @@ Feature: Api b2b per destinatari strutturati
   @legalFact @useB2B @b2bDestinatariStrutturati
   Scenario: [B2B-RECIPIENT_LEGALFACT_1] Invio notifica e download atto opponibile SENDER_ACK_scenario positivo
     Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
-    And destinatario CucumberSpa
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario "CucumberSpa"
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     Then "CucumberSpa" richiede il download dell'attestazione opponibile "SENDER_ACK"
 
   @legalFact @useB2B @b2bDestinatariStrutturati
   Scenario: [B2B-RECIPIENT_LEGALFACT_2] Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo
     Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
-    And destinatario CucumberSpa
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario "CucumberSpa"
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     Then "CucumberSpa" richiede il download dell'attestazione opponibile "DIGITAL_DELIVERY"
 
   @legalFact @useB2B @b2bDestinatariStrutturati
   Scenario: [B2B-RECIPIENT_LEGALFACT_3] Invio notifica e download atto opponibile PEC_RECEIPT_scenario positivo
     Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
-    And destinatario CucumberSpa
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario "CucumberSpa"
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_PROGRESS"
     Then "CucumberSpa" richiede il download dell'attestazione opponibile "PEC_RECEIPT"
 
   @legalFact @useB2B @b2bDestinatariStrutturati
   Scenario: [B2B-RECIPIENT_LEGALFACT_4] Invio notifica e download atto opponibile RECIPIENT_ACCESS_scenario positivo
     Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
-    And destinatario CucumberSpa
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario "CucumberSpa"
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And "CucumberSpa" legge la notifica ricevuta
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     Then "CucumberSpa" richiede il download dell'attestazione opponibile "RECIPIENT_ACCESS"
@@ -368,6 +368,6 @@ Feature: Api b2b per destinatari strutturati
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario CucumberSpa
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario "CucumberSpa"
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente recuperata da "CucumberSpa"

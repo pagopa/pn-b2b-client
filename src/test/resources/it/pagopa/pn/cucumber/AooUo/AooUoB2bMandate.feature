@@ -8,8 +8,8 @@ Feature: verifica feature aoo/uo con deleghe
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo          |
-    And destinatario Mario Cucumber
-    When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Cucumber"
+    When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente letta da "Mario Gherkin" con delega
 
   @deleghe1 @AOO_UO
@@ -20,10 +20,10 @@ Feature: verifica feature aoo/uo con deleghe
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di Aglientu         |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_pagoPaForm | SI               |
       | payment_f24        | PAYMENT_F24_FLAT |
-    When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi "ACCEPTED"
     And l'allegato "PAGOPA" può essere correttamente recuperato da "Mario Gherkin" con delega
 
   @deleghe1 @AOO_UO
@@ -36,14 +36,14 @@ Feature: verifica feature aoo/uo con deleghe
       | senderDenomination | Comune di Aglientu         |
       | feePolicy          | DELIVERY_MODE              |
       | paFee              | 0                          |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | payment_pagoPaForm   | NULL                 |
       | payment_f24          | PAYMENT_F24_STANDARD |
       | title_payment        | F24_STANDARD_MARIO   |
       | apply_cost_pagopa    | NO                   |
       | apply_cost_f24       | SI                   |
       | payment_multy_number | 1                    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi "ACCEPTED"
     And l'allegato "F24" può essere correttamente recuperato da "Mario Gherkin" con delega
 
   @deleghe1 @AOO_UO
@@ -54,8 +54,8 @@ Feature: verifica feature aoo/uo con deleghe
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di Aglientu         |
-    And destinatario Mario Cucumber
-    When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Cucumber"
+    When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente letta da "Mario Gherkin" con delega
 
   @deleghe1 @AOO_UO
@@ -73,8 +73,8 @@ Feature: verifica feature aoo/uo con deleghe
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di Aglientu         |
-    And destinatario GherkinSrl
-    When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi ACCEPTED
+    And destinatario "GherkinSrl"
+    When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente letta da "CucumberSpa" con delega
 
   @deleghe2 @AOO_UO
@@ -85,10 +85,10 @@ Feature: verifica feature aoo/uo con deleghe
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber             |
       | senderDenomination | Ufficio per la transizione al Digitale |
-    And destinatario GherkinSrl e:
+    And destinatario "GherkinSrl" e:
       | payment_pagoPaForm | SI               |
       | payment_f24        | PAYMENT_F24_FLAT |
-    When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi "ACCEPTED"
     And l'allegato "PAGOPA" può essere correttamente recuperato da "CucumberSpa" con delega
 
   @deleghe2 @AOO_UO
@@ -101,14 +101,14 @@ Feature: verifica feature aoo/uo con deleghe
       | senderDenomination | Ufficio per la transizione al Digitale |
       | feePolicy          | DELIVERY_MODE                          |
       | paFee              | 0                                      |
-    And destinatario GherkinSrl e:
+    And destinatario "GherkinSrl" e:
       | payment_pagoPaForm   | NULL                 |
       | payment_f24          | PAYMENT_F24_STANDARD |
       | title_payment        | F24_STANDARD_GHERKIN |
       | apply_cost_pagopa    | NO                   |
       | apply_cost_f24       | SI                   |
       | payment_multy_number | 1                    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi "ACCEPTED"
     And l'allegato "F24" può essere correttamente recuperato da "CucumberSpa" con delega
 
   @deleghe2 @AOO_UO
@@ -119,6 +119,6 @@ Feature: verifica feature aoo/uo con deleghe
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber             |
       | senderDenomination | Ufficio per la transizione al Digitale |
-    And destinatario GherkinSrl
-    When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi ACCEPTED
+    And destinatario "GherkinSrl"
+    When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente letta da "CucumberSpa" con delega

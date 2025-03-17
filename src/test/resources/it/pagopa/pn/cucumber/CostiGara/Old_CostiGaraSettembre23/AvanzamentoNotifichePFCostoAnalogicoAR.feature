@@ -10,13 +10,13 @@ Feature: costo notifica con workflow analogico per persona fisica
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_AR      |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     Then viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -31,13 +31,13 @@ Feature: costo notifica con workflow analogico per persona fisica
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | FLAT_RATE                       |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_AR      |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "<COSTO>" della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
@@ -53,13 +53,13 @@ Feature: costo notifica con workflow analogico per persona fisica
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_AR      |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     Then viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -82,13 +82,13 @@ Feature: costo notifica con workflow analogico per persona fisica
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | FLAT_RATE                       |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_AR      |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "<COSTO>" della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
@@ -112,17 +112,16 @@ Feature: costo notifica con workflow analogico per persona fisica
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_State        | BRASILE        |
       | physicalAddress_municipality | Florianopolis  |
       | physicalAddress_zip          | ZONA_2         |
       | physicalAddress_province     | Santa Catarina |
       | physicalAddress_address      | Via@ok_RIR     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     Then viene verificato il costo = "1030" della notifica
-
 
 
   @dev @costoAnalogico2023
@@ -132,7 +131,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | FLAT_RATE                       |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm           | SI             |
       | digitalDomicile              | NULL           |
       | physicalAddress_State        | BRASILE        |
@@ -140,7 +139,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       | physicalAddress_zip          | ZONA_2         |
       | physicalAddress_province     | Santa Catarina |
       | physicalAddress_address      | Via@ok_RIR     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "0" della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "0" della notifica
@@ -153,14 +152,14 @@ Feature: costo notifica con workflow analogico per persona fisica
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL       |
       | physicalAddress_State        | FRANCIA    |
       | physicalAddress_municipality | Parigi     |
       | physicalAddress_zip          | ZONE_1     |
       | physicalAddress_province     | Paris      |
       | physicalAddress_address      | Via@ok_RIR |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     Then viene verificato il costo = "915" della notifica
 
@@ -171,14 +170,14 @@ Feature: costo notifica con workflow analogico per persona fisica
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | FLAT_RATE                       |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL       |
       | physicalAddress_State        | FRANCIA    |
       | physicalAddress_municipality | Parigi     |
       | physicalAddress_zip          | ZONE_1     |
       | physicalAddress_province     | Paris      |
       | physicalAddress_address      | Via@ok_RIR |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "0" della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "0" della notifica
@@ -191,14 +190,14 @@ Feature: costo notifica con workflow analogico per persona fisica
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL       |
       | physicalAddress_State        | AUSTRALIA  |
       | physicalAddress_municipality | Hobart     |
       | physicalAddress_zip          | ZONA_3     |
       | physicalAddress_province     | Tasmania   |
       | physicalAddress_address      | Via@ok_RIR |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     Then viene verificato il costo = "1087" della notifica
 
@@ -210,14 +209,14 @@ Feature: costo notifica con workflow analogico per persona fisica
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | FLAT_RATE                       |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL       |
       | physicalAddress_State        | AUSTRALIA  |
       | physicalAddress_municipality | Hobart     |
       | physicalAddress_zip          | ZONA_3     |
       | physicalAddress_province     | Tasmania   |
       | physicalAddress_address      | Via@ok_RIR |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "0" della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "0" della notifica

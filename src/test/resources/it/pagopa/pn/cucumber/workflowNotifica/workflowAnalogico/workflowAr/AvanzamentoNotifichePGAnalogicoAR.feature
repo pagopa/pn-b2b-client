@@ -7,10 +7,10 @@ Feature: avanzamento notifiche analogico AR persona giuridica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di milano            |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Gherkin Analogic e:
+    And destinatario "Gherkin Analogic" e:
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
 
@@ -20,10 +20,10 @@ Feature: avanzamento notifiche analogico AR persona giuridica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di milano                |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario Gherkin Analogic e:
-      | digitalDomicile         | NULL             |
-      | physicalAddress_address | Via@fail_AR      |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Gherkin Analogic" e:
+      | digitalDomicile         | NULL        |
+      | physicalAddress_address | Via@fail_AR |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con responseStatus "OK"
 
 
@@ -33,10 +33,10 @@ Feature: avanzamento notifiche analogico AR persona giuridica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di milano                |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario Gherkin Analogic e:
+    And destinatario "Gherkin Analogic" e:
       | digitalDomicile         | NULL                  |
       | physicalAddress_address | Via@fail-Discovery_AR |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
 
@@ -46,10 +46,10 @@ Feature: avanzamento notifiche analogico AR persona giuridica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di milano            |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Gherkin Analogic e:
+    And destinatario "Gherkin Analogic" e:
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il campo serviceLevel dell' evento di timeline "SEND_ANALOG_DOMICILE" sia valorizzato con "AR_REGISTERED_LETTER"
 
@@ -60,10 +60,10 @@ Feature: avanzamento notifiche analogico AR persona giuridica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di milano            |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Gherkin Analogic e:
+    And destinatario "Gherkin Analogic" e:
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And viene verificato il campo serviceLevel dell' evento di timeline "PREPARE_ANALOG_DOMICILE" sia valorizzato con "AR_REGISTERED_LETTER"
 
@@ -74,10 +74,10 @@ Feature: avanzamento notifiche analogico AR persona giuridica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di milano            |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Gherkin Analogic e:
+    And destinatario "Gherkin Analogic" e:
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
     And viene verificato il campo serviceLevel dell' evento di timeline "SEND_ANALOG_FEEDBACK" sia valorizzato con "AR_REGISTERED_LETTER"
 
@@ -88,10 +88,10 @@ Feature: avanzamento notifiche analogico AR persona giuridica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di milano                |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario Gherkin Irreperibile e:
+    And destinatario "Gherkin Irreperibile" e:
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
 
 
@@ -107,7 +107,7 @@ Feature: avanzamento notifiche analogico AR persona giuridica
       | taxId                   | 00749900049                 |
       | digitalDomicile         | NULL                        |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR 16 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE_FAILURE" con failureCause "D00"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
 
@@ -124,7 +124,7 @@ Feature: avanzamento notifiche analogico AR persona giuridica
       | taxId                   | 00749900049                  |
       | digitalDomicile         | NULL                         |
       | physicalAddress_address | via @FAIL-Irreperibile_AR 16 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE_FAILURE" con failureCause "D01"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
 
@@ -146,10 +146,9 @@ Feature: avanzamento notifiche analogico AR persona giuridica
       | physicalAddress_province            | BO                         |
       | physicalAddress_addressDetails      | NULL                       |
       | physicalAddress_municipalityDetails | NULL                       |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE_FAILURE" con failureCause "D02"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
-
 
 
   @workflowAnalogico @mockNR
@@ -157,10 +156,10 @@ Feature: avanzamento notifiche analogico AR persona giuridica
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Gherkin Analogic e:
+    And destinatario "Gherkin Analogic" e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_RIR |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
 
@@ -169,9 +168,9 @@ Feature: avanzamento notifiche analogico AR persona giuridica
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di milano                |
-    And destinatario Gherkin Analogic e:
+    And destinatario "Gherkin Analogic" e:
       | digitalDomicile         | NULL         |
       | physicalAddress_address | Via@fail_RIR |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con responseStatus "OK"
 

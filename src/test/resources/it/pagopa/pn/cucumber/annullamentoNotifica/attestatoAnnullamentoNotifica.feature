@@ -5,10 +5,10 @@ Feature: produzione del documento di annullamento notifica
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune_Multi                    |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | digitalDomicile         | NULL        |
       | physicalAddress_address | Via @ok_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
     Then tra gli elementi di timeline con categoria "NOTIFICATION_CANCELLED" è presente un legalFact con categoria "NOTIFICATION_CANCELLED"
@@ -20,10 +20,10 @@ Feature: produzione del documento di annullamento notifica
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune_Multi                    |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | digitalDomicile         | NULL        |
       | physicalAddress_address | Via @ok_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
     When si invoca l'api B2B versione "V24" per ottenere gli elementi di timeline di tale notifica
@@ -42,7 +42,7 @@ Feature: produzione del documento di annullamento notifica
     And viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune_Multi                    |
-    And destinatario Mario Gherkin
+    And destinatario "Mario Gherkin"
     And si predispone 1 nuovo stream denominato "stream-testV10" con eventType "TIMELINE" con versione "V10"
     And si predispone 1 nuovo stream denominato "stream-testV23" con eventType "TIMELINE" con versione "V23"
     And si predispone 1 nuovo stream denominato "stream-testV24" con eventType "TIMELINE" con versione "V24"
@@ -54,7 +54,7 @@ Feature: produzione del documento di annullamento notifica
     And si crea il nuovo stream per il "Comune_Multi" con versione "V23"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V24"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V25"
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
     Then vengono letti gli eventi dello stream versione "V10"

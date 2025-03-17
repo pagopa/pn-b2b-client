@@ -5,10 +5,10 @@ Feature: esposizione timestamp tecnici per gli SLA
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario Mario Cucumber e:
+    And destinatario "Mario Cucumber" e:
       | digitalDomicile         | NULL        |
       | physicalAddress_address | Via @ok_890 |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<timeline_element>"
     When si invoca l'api B2B versione "<version>" per ottenere gli elementi di timeline di tale notifica
     Then gli elementi di timeline restituiti da B2B contengono i campi attesi in accordo alla versione "<version>"
@@ -23,10 +23,10 @@ Feature: esposizione timestamp tecnici per gli SLA
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario Signor casuale e:
+    And And destinatario "Signor RaddCasuale" e;
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     When si invoca l'api B2B versione "<version>" per ottenere gli elementi di timeline di tale notifica
     Then gli elementi di timeline restituiti da B2B contengono i campi attesi in accordo alla versione "<version>"
@@ -40,8 +40,8 @@ Feature: esposizione timestamp tecnici per gli SLA
     Given viene generata una nuova notifica
       | subject            | notifica digitale con cucumber |
       | senderDenomination | Comune di palermo              |
-    And destinatario Mario Gherkin
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And destinatario "Mario Gherkin"
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<timeline_element>"
     When si invoca l'api B2B versione "<version>" per ottenere gli elementi di timeline di tale notifica
     Then gli elementi di timeline restituiti da B2B contengono i campi attesi in accordo alla versione "<version>"
@@ -56,13 +56,13 @@ Feature: esposizione timestamp tecnici per gli SLA
     And viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario Mario Gherkin
+    And destinatario "Mario Gherkin"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "<version>"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
     And si crea il nuovo stream per il "Comune_Multi" con versione "<version>"
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<timeline_element>"
     When vengono letti gli eventi dello stream versione "<version>"
     Then gli elementi di timeline restituiti dal Webhook contengono i campi attesi in accordo alla versione "<version>"
@@ -78,7 +78,7 @@ Feature: esposizione timestamp tecnici per gli SLA
     And viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario Mario Gherkin
+    And destinatario "Mario Gherkin"
     And si predispone 1 nuovo stream denominato "stream-test24" con eventType "TIMELINE" con versione "V24"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
@@ -89,7 +89,7 @@ Feature: esposizione timestamp tecnici per gli SLA
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
     And si crea il nuovo stream per il "Comune_Multi" con versione "V23"
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     When vengono letti gli eventi dello stream versione "V23"
     Then gli elementi di timeline restituiti dal Webhook contengono i campi attesi in accordo alla versione "V23"
@@ -100,13 +100,13 @@ Feature: esposizione timestamp tecnici per gli SLA
     And viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario Mario Gherkin
+    And destinatario "Mario Gherkin"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "<version>"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
     And si crea il nuovo stream per il "Comune_Multi" con versione "<version>"
-    And la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "ACCEPTED"
     When vengono letti gli eventi dello stream versione "<version>"
     Then la chiamata restituisce correttamente lo stream di elementi timeline versione "<version>"
     Examples:
@@ -121,13 +121,13 @@ Feature: esposizione timestamp tecnici per gli SLA
     And viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario Mario Gherkin
+    And destinatario "Mario Gherkin"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "<versionCreate>"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
     And si crea il nuovo stream per il "Comune_2" con versione "<versionCreate>"
-    And la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "ACCEPTED"
     When vengono letti gli eventi dello stream con versione "<versionRead>" creati dalla versione "<versionCreate>"
     Then la chiamata restituisce un errore 403 riportante la dicitura "GENERIC_ERROR"
     Examples:

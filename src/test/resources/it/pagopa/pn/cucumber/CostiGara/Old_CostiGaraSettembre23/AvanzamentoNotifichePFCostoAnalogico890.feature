@@ -10,13 +10,13 @@ Feature: costo notifica con workflow analogico per persona fisica 890
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | REGISTERED_LETTER_890           |
       | feePolicy             | DELIVERY_MODE                   |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_890     |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     Then viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -30,19 +30,19 @@ Feature: costo notifica con workflow analogico per persona fisica 890
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | REGISTERED_LETTER_890           |
       | feePolicy             | FLAT_RATE                       |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_890     |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "<COSTO>" della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE |
-      | 05010 | 0     | COLLELUNGO   | TR        |
+      | 05010 | 0     | COLLELUNGO   | TR       |
 
   @dev @costoAnalogico2023 @costoCartAAR
   Scenario Outline: [B2B_COSTO_ANALOG_PF_890_3] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + DELIVERY_MODE positivo
@@ -51,13 +51,13 @@ Feature: costo notifica con workflow analogico per persona fisica 890
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | REGISTERED_LETTER_890           |
       | feePolicy             | DELIVERY_MODE                   |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_890     |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     Then viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -77,13 +77,13 @@ Feature: costo notifica con workflow analogico per persona fisica 890
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | REGISTERED_LETTER_890           |
       | feePolicy             | FLAT_RATE                       |
-    And destinatario Mario Gherkin e:
+    And destinatario "Mario Gherkin" e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_890     |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "<COSTO>" della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica

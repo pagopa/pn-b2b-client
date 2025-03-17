@@ -24,6 +24,8 @@ public interface IPnPaB2bClient extends SettableApiKey {
 
     it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationResponse sendNewNotificationV21(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationRequestV21 newNotificationRequest);
 
+    NewNotificationResponse sendNewNotificationV23(NewNotificationRequestV23 newNotificationRequest);
+
     NewNotificationResponse sendNewNotificationV24(NewNotificationRequestV24 newNotificationRequest);
 
     FullSentNotification getSentNotificationV1(String iun);

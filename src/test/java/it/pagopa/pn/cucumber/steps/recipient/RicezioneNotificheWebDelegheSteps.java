@@ -35,6 +35,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.*;
 import static org.awaitility.Awaitility.await;
 
 
@@ -49,10 +50,7 @@ public class RicezioneNotificheWebDelegheSteps {
     private final SettableBearerToken.BearerTokenType baseUser = SettableBearerToken.BearerTokenType.USER_2;
     private final String verificationCode = "24411";
     private HttpStatusCodeException notificationError;
-    private final String marioCucumberTaxID;
-    private final String marioGherkinTaxID;
-    private final String gherkinSrltaxId;
-    private final String cucumberSpataxId;
+
     private UserDto userDtoCustom;
     @Value("${pn.external.senderId}")
     private String senderId;
@@ -81,43 +79,37 @@ public class RicezioneNotificheWebDelegheSteps {
         this.sharedSteps = sharedSteps;
         this.webRecipientClient = sharedSteps.getWebRecipientClient();
         this.b2bUtils = sharedSteps.getB2bUtils();
-        this.marioCucumberTaxID = sharedSteps.getMarioCucumberTaxID();
-        this.marioGherkinTaxID = sharedSteps.getMarioGherkinTaxID();
-        this.gherkinSrltaxId = sharedSteps.getGherkinSrltaxId();
-        this.cucumberSpataxId = sharedSteps.getCucumberSpataxId();
     }
 
     private String getTaxIdByUser(String user) {
-
         return switch (user) {
-            case "Mario Cucumber" -> marioCucumberTaxID;
-            case "Mario Gherkin" -> marioGherkinTaxID;
-            case "GherkinSrl" -> gherkinSrltaxId;
-            case "CucumberSpa" -> cucumberSpataxId;
+            case MARIOCUCUMBER -> MARIO_CUCUMBER_TAX_ID;
+            case MARIOGHERKIN -> MARIO_GHERKIN_TAX_ID;
+            case GHERKINSRL -> GHERKIN_SRL_TAX_ID;
+            case CUCUMBERSPA -> CUCUMBER_SPA_TAX_ID;
             case "Utente errato" -> "asdasdasd";
             default -> throw new IllegalArgumentException();
         };
     }
 
     private UserDto getUserDtoByuser(String user) {
-
         return switch (user.trim().toLowerCase()) {
             case "mario cucumber" ->
-                    createUserDto("Mario Cucumber", "Mario", "Cucumber", marioCucumberTaxID, null, true);
-            case "mario gherkin" -> createUserDto("Mario Gherkin", "Mario", "Gherkin", marioGherkinTaxID, null, true);
-            case "gherkinsrl" -> createUserDto("gherkinsrl", "gherkin", "srl", gherkinSrltaxId, "gherkinsrl", false);
+                    createUserDto(MARIOCUCUMBER, "Mario", "Cucumber", MARIO_CUCUMBER_TAX_ID, null, true);
+            case "mario gherkin" -> createUserDto(MARIOGHERKIN, "Mario", "Gherkin", MARIO_GHERKIN_TAX_ID, null, true);
+            case "gherkinsrl" -> createUserDto(GHERKINSRL, "gherkin", "srl", GHERKIN_SRL_TAX_ID, GHERKINSRL, false);
             case "cucumberspa" ->
-                    createUserDto("cucumberspa", "cucumber", "spa", cucumberSpataxId, "cucumberspa", false);
+                    createUserDto(CUCUMBERSPA, "cucumber", "spa", CUCUMBER_SPA_TAX_ID, CUCUMBERSPA, false);
             default -> throw new IllegalArgumentException();
         };
     }
 
     private boolean setBearerToken(String user) {
-        return switch (user.trim().toLowerCase()) {
-            case "mario cucumber" -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
-            case "mario gherkin" -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
-            case "gherkinsrl" -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
-            case "cucumberspa" -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+        return switch (user.trim()) {
+            case MARIOCUCUMBER -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
+            case MARIOGHERKIN -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
+            case GHERKINSRL -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
+            case CUCUMBERSPA -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
             default -> throw new IllegalArgumentException();
         };
     }
@@ -197,19 +189,19 @@ public class RicezioneNotificheWebDelegheSteps {
         OrganizationIdDto organizationIdDto = new OrganizationIdDto();
 
         switch (comune) {
-            case "Comune_1" -> organizationIdDto
+            case COMUNE_1 -> organizationIdDto
                     .name("Comune di Milano")
                     .uniqueIdentifier(senderId);
-            case "Comune_2" -> organizationIdDto
+            case COMUNE_2 -> organizationIdDto
                     .name("Comune di Verona")
                     .uniqueIdentifier(senderId2);
-            case "Comune_Multi" -> organizationIdDto
+            case COMUNE_MULTI -> organizationIdDto
                     .name("Comune di Palermo")
                     .uniqueIdentifier(senderIdGA);
-            case "Comune_Son" -> organizationIdDto
+            case COMUNE_SON -> organizationIdDto
                     .name("Ufficio per la transizione al Digitale")
                     .uniqueIdentifier(senderIdSON);
-            case "Comune_Root" -> organizationIdDto
+            case COMUNE_ROOT -> organizationIdDto
                     .name("Comune di Aglientu")
                     .uniqueIdentifier(senderIdROOT);
             default -> throw new IllegalStateException();
@@ -312,7 +304,7 @@ public class RicezioneNotificheWebDelegheSteps {
     public void notificationCanBeCorrectlyReadFromWithMandate(String recipient) {
         sharedSteps.selectUser(recipient);
         Assertions.assertDoesNotThrow(() -> {
-            webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), mandateToSearch.getMandateId());
+            webRecipientClient.getReceivedNotification(sharedSteps.getFullSentNotificationV26().getIun(), mandateToSearch.getMandateId());
         });
     }
 
@@ -406,8 +398,8 @@ public class RicezioneNotificheWebDelegheSteps {
 
     private NotificationAttachmentDownloadMetadataResponse getReceivedNotificationDocument() {
         return webRecipientClient.getReceivedNotificationDocument(
-                sharedSteps.getSentNotification().getIun(),
-                Integer.parseInt(Objects.requireNonNull(sharedSteps.getSentNotification().getDocuments().get(0).getDocIdx())),
+                sharedSteps.getFullSentNotificationV26().getIun(),
+                Integer.parseInt(Objects.requireNonNull(sharedSteps.getFullSentNotificationV26().getDocuments().get(0).getDocIdx())),
                 UUID.fromString(Objects.requireNonNull(mandateToSearch.getMandateId()))
         );
     }
@@ -417,7 +409,7 @@ public class RicezioneNotificheWebDelegheSteps {
         //TODO Modificare attachmentIdx al momento e 0...............
         sharedSteps.selectUser(recipient);
         NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
-                sharedSteps.getSentNotification().getIun(),
+                sharedSteps.getFullSentNotificationV26().getIun(),
                 attachmentName,
                 UUID.fromString(Objects.requireNonNull(mandateToSearch.getMandateId())), 0);
 
@@ -425,7 +417,7 @@ public class RicezioneNotificheWebDelegheSteps {
             try {
                 await().atMost(downloadResponse.getRetryAfter() * 3L, TimeUnit.MILLISECONDS);
                 downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
-                        sharedSteps.getSentNotification().getIun(),
+                        sharedSteps.getFullSentNotificationV26().getIun(),
                         attachmentName,
                         UUID.fromString(mandateToSearch.getMandateId()), 0);
             } catch (RuntimeException exc) {
@@ -492,7 +484,7 @@ public class RicezioneNotificheWebDelegheSteps {
         sharedSteps.selectUser(recipient);
         HttpClientErrorException httpClientErrorException = null;
         try {
-            webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), mandateToSearch.getMandateId());
+            webRecipientClient.getReceivedNotification(sharedSteps.getFullSentNotificationV26().getIun(), mandateToSearch.getMandateId());
         } catch (HttpClientErrorException e) {
             httpClientErrorException = e;
         }
@@ -511,7 +503,7 @@ public class RicezioneNotificheWebDelegheSteps {
     public void notificationCanBeCorrectlyReadFrom(String recipient) {
         sharedSteps.selectUser(recipient);
         Assertions.assertDoesNotThrow(() -> {
-            webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
+            webRecipientClient.getReceivedNotification(sharedSteps.getFullSentNotificationV26().getIun(), null);
         });
         webRecipientClient.setBearerToken(baseUser);
     }
@@ -551,8 +543,8 @@ public class RicezioneNotificheWebDelegheSteps {
 
     private it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementV26 getTimelineElementV23WebRecipient(it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV26 timelineElementCategoryV23) {
 
-        FullReceivedNotificationV25 result = webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
-        log.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
+        FullReceivedNotificationV25 result = webRecipientClient.getReceivedNotification(sharedSteps.getFullSentNotificationV26().getIun(), null);
+        log.info("NOTIFICATION_TIMELINE: " + sharedSteps.getFullSentNotificationV26().getTimeline());
 
         return result
                 .getTimeline()
@@ -568,7 +560,7 @@ public class RicezioneNotificheWebDelegheSteps {
         sharedSteps.setPA(pa);
         sharedSteps.selectUser(recipient);
         Assertions.assertDoesNotThrow(() -> {
-            webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
+            webRecipientClient.getReceivedNotification(sharedSteps.getFullSentNotificationV26().getIun(), null);
         });
     }
 
@@ -648,14 +640,14 @@ public class RicezioneNotificheWebDelegheSteps {
         } catch (RuntimeException exception) {
             exception.printStackTrace();
         }
-        sharedSteps.setSentNotification(sharedSteps.getB2bClient().getSentNotification(sharedSteps.getSentNotification().getIun()));
+        sharedSteps.setFullSentNotificationV26(sharedSteps.getB2bClient().getSentNotification(sharedSteps.getFullSentNotificationV26().getIun()));
 
         return sharedSteps
-                .getSentNotification()
+                .getFullSentNotificationV26()
                 .getTimeline()
                 .stream()
-                .filter(elem -> Objects.requireNonNull(elem.getCategory())
-                        .equals(TimelineElementCategoryV23.NOTIFICATION_VIEWED))
+                .filter(elem -> Objects.requireNonNull(elem.getCategory()).getValue()
+                        .equals(TimelineElementCategoryV23.NOTIFICATION_VIEWED.getValue()))
                 .findAny()
                 .orElse(null);
     }
