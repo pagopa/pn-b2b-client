@@ -33,7 +33,7 @@ Feature: Verifica delle stampe a colori con successivo controllo manuale delle c
     | ALLEGATO_1_BN     | 70124 | Bari         | BA       | AR_REGISTERED_LETTER  |
     | ALLEGATO_3_COLORI | 70124 | Bari         | BA       | REGISTERED_LETTER_890 |
 
-  @rasterScartoCON996
+  @rasterScartoCON996 @workflowAnalogico
   Scenario: [B2B-LEGALFACT_RASTER_1] Viene inviata una notifica con delivery detail code CON996 per il flusso di deceduto
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -54,7 +54,7 @@ Feature: Verifica delle stampe a colori con successivo controllo manuale delle c
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" per l'utente 0
     And viene verificato che non esista l'elemento "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_1"
 
-  @rasterScartoCON996
+  @rasterScartoCON996 @workflowAnalogico
   Scenario: [B2B-LEGALFACT_RASTER_2] Viene inviata una notifica per la quale si riceve l’evento di CON996, in seguito ad un un secondo tentativo termini con l’evento di refinement
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
