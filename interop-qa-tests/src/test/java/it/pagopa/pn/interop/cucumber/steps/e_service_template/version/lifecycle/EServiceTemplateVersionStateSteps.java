@@ -46,7 +46,7 @@ public class EServiceTemplateVersionStateSteps {
         UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
         UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
 
-        /* Attende qualora eventuali chiamate precedenti (creazione, pubblicazione, sospensine...)
+        /* Attende qualora eventuali chiamate precedenti (creazione, pubblicazione, sospensione...)
          * non abbiano ancora completato il proprio corso */
         pollingService.makePolling(
             () -> httpCallExecutor.performCall(

@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template.shared;
 
+import it.pagopa.interop.generated.openapi.clients.bff.model.CompactDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionSeed;
@@ -37,7 +38,8 @@ public class EServiceTemplateStepContext {
     private EServiceTemplateInfo lastTemplateManaged;
     private EServiceTemplateDocumentInfo lastAddedDocument;
     private UpdateEServiceTemplateVersionSeed lastTemplateVersionUpdateSeed;
-
+    private UUID lastEServiceIdCreatedFromTemplate;
+    private CompactDescriptor lastEServiceDescriptorCreatedFromTemplate;
 
     private final EasyRandomParameters easyRandomParameters = new EasyRandomParameters()
         .seed(123L)
