@@ -69,24 +69,24 @@ Feature: tentativo consumo stream
 
     #Verificare se corretto che restituisce un 400 invece di un 403
   @webhookV23 @precondition @cleanWebhook @webhook2
-  Scenario: [B2B-STREAM_ES1.5_139] Creazione di uno stream senza gruppo con la V23 e lettura Eventi di timeline o di cambio di stato con la versione V10  utilzzando un apikey abilitata
+  Scenario: [B2B-STREAM_ES1.5_139] Creazione di uno stream senza gruppo con la V23 e lettura Eventi di timeline o di cambio di stato con la versione V10  utilizzando un apikey abilitata
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V23"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
     And si crea il nuovo stream per il "Comune_Multi" con versione "V23"
-    When vengono letti gli eventi di timeline dello stream con versione "V10" -Cross Versioning
+    When vengono letti gli eventi di timeline dello stream con versione "V10" nonostante sia stato creato con la "V23" - Cross Versioning
     Then l'operazione ha prodotto un errore con status code "400"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
   @webhookV23 @precondition @cleanWebhook @webhook2
-  Scenario: [B2B-STREAM_ES1.5_141] Creazione di uno stream senza gruppo con la V10 e  lettura Eventi di timeline o di cambio di stato con la versione V23 utilzzando un apikey abilitata.
+  Scenario: [B2B-STREAM_ES1.5_141] Creazione di uno stream senza gruppo con la V10 e  lettura Eventi di timeline o di cambio di stato con la versione V23 utilizzando un apikey abilitata.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
-    When vengono letti gli eventi di timeline dello stream con versione "V23" -Cross Versioning
+    When vengono letti gli eventi di timeline dello stream con versione "V23" nonostante sia stato creato con la "V10" - Cross Versioning
     Then l'operazione ha prodotto un errore con status code "403"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
@@ -130,7 +130,7 @@ Feature: tentativo consumo stream
   Scenario: [B2B-STREAM_ES1.1_161] Consume di uno stream notifica con gruppo non esistente, con eventType "TIMELINE"  utilizzando un apikey con stesso gruppo.
     Given Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
-    When vengono letti gli eventi dello stream non esistente versione "V23"
+    When si consuma lo stream che non esiste con la versione "V23" e apiKey aggiornata
     Then l'operazione ha prodotto un errore con status code "404"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata

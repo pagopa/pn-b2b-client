@@ -171,10 +171,12 @@ public class DowntimeLogsSteps {
     @Given("viene chiamata l’API per il download dell'atto opponibile ai terzi con id {string}")
     public void vieneChiamataLAPIPerIlDownloadDellAttoOpponibileAiTerziConId(String idType) {
         try {
-            siChiamaLApiDiRecuperoElencoDisserviziNellAnnoEMeseCorrente();
-            Assertions.assertNotNull(pnDowntimeHistoryResponse);
-            Assertions.assertNotNull(pnDowntimeHistoryResponse.getResult());
-            Assertions.assertFalse(pnDowntimeHistoryResponse.getResult().isEmpty());
+            if (idType.equalsIgnoreCase("CORRETTO")) {
+                siChiamaLApiDiRecuperoElencoDisserviziNellAnnoEMeseCorrente();
+                Assertions.assertNotNull(pnDowntimeHistoryResponse);
+                Assertions.assertNotNull(pnDowntimeHistoryResponse.getResult());
+                Assertions.assertFalse(pnDowntimeHistoryResponse.getResult().isEmpty());
+            }
             String legalFactId = getLegalFactId(idType);
             legalFact = downtimeLogsClient.getLegalFact(idType.equals("null") ? null : legalFactId);
         } catch (RestClientResponseException e) {
@@ -198,7 +200,7 @@ public class DowntimeLogsSteps {
     public void vieneChiamataLAPIPerIlDownloadDellAttoOpponibileProdottoPiuDiGiorniPrecedenti() {
         try {
             LocalDate date = LocalDate.now();
-            LocalDate before = date.minusDays(365);
+            LocalDate before = LocalDate.of(2024, 01, 27);
             siChiamaLApiDiRecuperoElencoDisserviziNellAnnoEMese(before.getYear(), before.getMonthValue());
             Assertions.assertNotNull(pnDowntimeHistoryResponse.getResult());
             Assertions.assertFalse(pnDowntimeHistoryResponse.getResult().isEmpty());

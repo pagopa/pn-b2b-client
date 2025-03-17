@@ -1,6 +1,6 @@
 package it.pagopa.interop.tenant.service.impl;
 
-import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
+import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.TenantsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedAttributesResponse;
@@ -8,14 +8,15 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedTenantAttr
 import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredAttributesResponse;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredTenantAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Tenant;
+import it.pagopa.interop.generated.openapi.clients.bff.model.TenantDelegatedFeaturesFlagsUpdateSeed;
 import it.pagopa.interop.tenant.service.ITenantsApi;
+import java.util.UUID;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.UUID;
-import org.springframework.web.client.RestTemplate;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -58,13 +59,12 @@ public class TenantsApiClientImpl implements ITenantsApi {
     }
 
     @Override
-    public void assignTenantDelegatedProducerFeature() {
-        tenantsApi.assignTenantDelegatedProducerFeature();
-    }
-
-    @Override
-    public void deleteTenantDelegatedProducerFeature() {
-        tenantsApi.deleteTenantDelegatedProducerFeature();
+    public void updateTenantDelegatedFeatures(boolean isProducerFeatureEnabled, boolean isConsumerFeatureEnabled) {
+        tenantsApi.updateTenantDelegatedFeatures(
+                new TenantDelegatedFeaturesFlagsUpdateSeed()
+                        .isDelegatedProducerFeatureEnabled(isProducerFeatureEnabled)
+                        .isDelegatedConsumerFeatureEnabled(isConsumerFeatureEnabled)
+        );
     }
 
     @Override

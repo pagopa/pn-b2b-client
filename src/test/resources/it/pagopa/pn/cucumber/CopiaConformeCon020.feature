@@ -13,7 +13,7 @@ Feature: test per la visualizzazione della copia conforme
     And si crea il nuovo stream per il "Comune_Multi" con versione "V24"
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
-    Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SEND_ANALOG_PROGRESS" con la versione V24 con deliveryDetailCode "CON020"
+    Then vengono letti gli eventi dello stream del "Comune_Multi" con la versione "V24" fino all'elemento di timeline "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
 
 
   @copiaConformeCon020 @cleanWebhook @addressBook1
@@ -27,7 +27,7 @@ Feature: test per la visualizzazione della copia conforme
     Then si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V24"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V24"
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SEND_ANALOG_PROGRESS" con la versione V24 con deliveryDetailCode "CON020"
+    Then vengono letti gli eventi dello stream del "Comune_Multi" con la versione "V24" fino all'elemento di timeline "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
 
 
@@ -43,8 +43,7 @@ Feature: test per la visualizzazione della copia conforme
     And si crea il nuovo stream per il "Comune_Multi" con versione "V24"
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" con deliveryDetailCode "CON020"
-    And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" con la versione V24 con deliveryDetailCode "CON020"
-
+    And vengono letti gli eventi dello stream del "Comune_Multi" con la versione "V24" fino all'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" con deliveryDetailCode "CON020"
 
 
   @copiaConformeCon020

@@ -219,6 +219,7 @@ Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal 
       | digitalDomicile_address | test@OK-pecFirstFailSecondSuccess.it |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_responseStatus | KO |
       | details_sendingReceipts | [{"id": null, "system": null}] |

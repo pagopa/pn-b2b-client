@@ -128,7 +128,7 @@ Feature: esposizione timestamp tecnici per gli SLA
     And viene aggiornata la apiKey utilizzata per gli stream
     And si crea il nuovo stream per il "Comune_2" con versione "<versionCreate>"
     And la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
-    When vengono letti gli eventi dello stream versione "<versionRead>"
+    When vengono letti gli eventi dello stream con versione "<versionRead>" creati dalla versione "<versionCreate>"
     Then la chiamata restituisce un errore 403 riportante la dicitura "GENERIC_ERROR"
     Examples:
       | versionCreate | versionRead |

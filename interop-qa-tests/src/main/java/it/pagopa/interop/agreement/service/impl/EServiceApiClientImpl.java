@@ -1,10 +1,9 @@
 package it.pagopa.interop.agreement.service.impl;
 
 import it.pagopa.interop.agreement.service.IEServiceClient;
-import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
+import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EservicesApi;
-import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
