@@ -80,7 +80,7 @@ public class AvanzamentoNotificheB2bSteps {
     @Value("${pn.consolidatore.requestId}")
     private String requestIdConsolidator;
 
-    private TimelineElementV26 lastTimelineElement;
+    private TimelineElementV26 timelineElement;
 
     @Autowired
     public AvanzamentoNotificheB2bSteps(SharedSteps sharedSteps,
@@ -99,8 +99,8 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
     @Then("vengono letti gli eventi fino allo stato della notifica {string} dalla PA {string}")
-    public void readingEventsNotificationPA(String status, String pa) {
-        sharedSteps.setPA(pa);
+    public void readingEventsNotificationPA(String status, String paName) {
+        sharedSteps.setPA(paName);
         readingEventUpToTheStatusOfNotification(status);
         sharedSteps.setPA(DEFAULT_PA);
     }
@@ -681,18 +681,12 @@ public class AvanzamentoNotificheB2bSteps {
                     .isNotNull();
 
             sharedSteps.setFullSentNotificationV26(pnPollingResponseV26.getNotification());
-
-            TimelineElementV26 timelineElement = pnPollingResponseV26.getTimelineElement();
+            timelineElement = pnPollingResponseV26.getTimelineElement();
             log.info("TIMELINE_ELEMENT: " + timelineElement);
-            sharedSteps.setTimelineElement(timelineElement);
-
-            return timelineElement;
-
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertFailerWithIUN(assertionError);
         }
-
-        return null;
+        return timelineElement;
     }
 
     public TimelineElementV26 readingEventUpToTheTimelineElementOfNotificationForCategoryExtraRapid(String timelineEventCategory) {
@@ -707,13 +701,12 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertTrue(pnPollingResponseV26.getResult());
             Assertions.assertNotNull(pnPollingResponseV26.getTimelineElement());
             sharedSteps.setFullSentNotificationV26(pnPollingResponseV26.getNotification());
-            TimelineElementV26 timelineElement = pnPollingResponseV26.getTimelineElement();
+            timelineElement = pnPollingResponseV26.getTimelineElement();
             log.info("TIMELINE_ELEMENT: " + timelineElement);
-            sharedSteps.setTimelineElement(timelineElement);
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
-        return pnPollingResponseV26.getTimelineElement();
+        return timelineElement;
     }
 
     public void checkTimeLineEventDuplicates(String timelineEventCategory) {
@@ -1151,7 +1144,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertTrue(pnPollingResponseV26.getResult());
             Assertions.assertNotNull(pnPollingResponseV26.getTimelineElement());
             sharedSteps.setFullSentNotificationV26(pnPollingResponseV26.getNotification());
-            this.lastTimelineElement = pnPollingResponseV26.getTimelineElement();
+            timelineElement = pnPollingResponseV26.getTimelineElement();
             log.info("TIMELINE_ELEMENT: " + pnPollingResponseV26.getTimelineElement());
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
@@ -1162,9 +1155,9 @@ public class AvanzamentoNotificheB2bSteps {
     @Then("viene verificato che nell'elemento di timeline della notifica {string} sia presente il campo Digital Address da National Registry per l utente {int}")
     public void vieneVerificatoCheNellElementoDiTimelineDellaNotificaSiaPresenteIlCampoDigitalAddressDaNationalRegistryPerLUtente(String timelineEventCategory, Integer destinatario) {
         readingEventUpToTheTimelineElementOfNotificationPerUtente(timelineEventCategory, destinatario);
-        Assertions.assertNotNull(lastTimelineElement);
-        Assertions.assertNotNull(lastTimelineElement.getDetails());
-        Assertions.assertNotNull(lastTimelineElement.getDetails().getDigitalAddress());
+        Assertions.assertNotNull(timelineElement);
+        Assertions.assertNotNull(timelineElement.getDetails());
+        Assertions.assertNotNull(timelineElement.getDetails().getDigitalAddress());
     }
 
     @Then("viene verificato che nell'elemento di timeline della notifica {string} sia presente il campo Digital Address da National Registry")
@@ -2587,12 +2580,11 @@ public class AvanzamentoNotificheB2bSteps {
             if (dataFromTest != null && dataFromTest.getTimelineElement() != null) {
                 boolean atLeastOneSuccessful = false;
                 AssertionFailedError assertionFailedError = null;
-                for (TimelineElementV26 timelineElement : timelineElements) {
+                for (TimelineElementV26 te : timelineElements) {
                     try {
-
-                        this.lastTimelineElement = timelineElement;
-                        log.info("TIMELINE_ELEMENT: " + timelineElement);
-                        checkTimelineElementEquality(timelineEventCategory, timelineElement, dataFromTest);
+                        timelineElement = te;
+                        log.info("TIMELINE_ELEMENT: " + te);
+                        checkTimelineElementEquality(timelineEventCategory, te, dataFromTest);
 
                         // se si arriva a questo punto, allora l'ultimo check ha avuto successo e non è necessario continuare
                         atLeastOneSuccessful = true;
@@ -2688,12 +2680,12 @@ public class AvanzamentoNotificheB2bSteps {
     @And("abbia anche un valore per il campo {string} compatibile con l'espressione regolare {string}")
     public void vieneVerificatoCheElementoTimelineAbbiaUnValoreDiCampoCompatibileConRegex(String fieldPath, String regex) {
         try {
-            Assertions.assertNotNull(lastTimelineElement,
+            Assertions.assertNotNull(timelineElement,
                     "There is no time element to analyze. Remember that this proposition is made "
                             + "to be called after another that get a timeline event, such as "
                             + "'it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheB2bSteps.vieneVerificatoElementoTimeline'");
 
-            String fieldValue = getProperty(fieldPath, lastTimelineElement);
+            String fieldValue = getProperty(fieldPath, timelineElement);
             Assertions.assertNotNull(fieldValue,
                     "Field %s has NULL value in timeline element".formatted(fieldPath));
 
@@ -3078,8 +3070,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertNotNull(pnPollingResponseV26.getTimelineElement());
             sharedSteps.setFullSentNotificationV26(pnPollingResponseV26.getNotification());
             log.info("TIMELINE_ELEMENT: " + pnPollingResponseV26.getTimelineElement());
-            TimelineElementV26 timelineElement = pnPollingResponseV26.getTimelineElement();
-            sharedSteps.setTimelineElement(timelineElement);
+            timelineElement = pnPollingResponseV26.getTimelineElement();
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
@@ -3446,8 +3437,8 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
     @Then("l'ente {string} richiede l'attestazione opponibile {string}")
-    public void paRequiresLegalFact(String ente, String legalFactCategory) {
-        sharedSteps.setPA(ente);
+    public void paRequiresLegalFact(String paName, String legalFactCategory) {
+        sharedSteps.setPA(paName);
         try {
             takeLegalFact(legalFactCategory, null);
         } catch (HttpStatusCodeException e) {
@@ -3456,8 +3447,8 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
     @Then("l'ente {string} richiede l'attestazione opponibile {string} con deliveryDetailCode {string}")
-    public void paRequiresLegalFactConDeliveryDetailCode(String ente, String legalFactCategory, String deliveryDetailCode) {
-        sharedSteps.setPA(ente);
+    public void paRequiresLegalFactConDeliveryDetailCode(String paName, String legalFactCategory, String deliveryDetailCode) {
+        sharedSteps.setPA(paName);
         try {
             takeLegalFact(legalFactCategory, deliveryDetailCode);
         } catch (HttpStatusCodeException e) {
@@ -3557,10 +3548,9 @@ public class AvanzamentoNotificheB2bSteps {
 
     @And("viene verificato il costo di {int} e il peso di {int} nei details del'elemento di timeline letto")
     public void verificaCostoePesoInvioCartaceo(Integer costo, Integer peso) {
-        TimelineElementV26 timeline = sharedSteps.getTimelineElement();
         try {
-            Assertions.assertEquals(costo, timeline.getDetails().getAnalogCost());
-            Assertions.assertEquals(peso, timeline.getDetails().getEnvelopeWeight());
+            Assertions.assertEquals(costo, timelineElement.getDetails().getAnalogCost());
+            Assertions.assertEquals(peso, timelineElement.getDetails().getEnvelopeWeight());
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
@@ -3569,9 +3559,8 @@ public class AvanzamentoNotificheB2bSteps {
 
     @And("viene verificato che il peso della busta cartacea sia di {int}")
     public void verificaCostoePesoInvioCartaceo(Integer peso) {
-        TimelineElementV26 timeline = sharedSteps.getTimelineElement();
         try {
-            Assertions.assertEquals(peso, timeline.getDetails().getEnvelopeWeight());
+            Assertions.assertEquals(peso, timelineElement.getDetails().getEnvelopeWeight());
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
@@ -3722,13 +3711,12 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertTrue(pnPollingResponseV26.getResult());
             Assertions.assertNotNull(pnPollingResponseV26.getTimelineElement());
             sharedSteps.setFullSentNotificationV26(pnPollingResponseV26.getNotification());
-            TimelineElementV26 timelineElement = pnPollingResponseV26.getTimelineElement();
+            timelineElement = pnPollingResponseV26.getTimelineElement();
             log.info("TIMELINE_ELEMENT: " + timelineElement);
-            sharedSteps.setTimelineElement(timelineElement);
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
-        return pnPollingResponseV26.getTimelineElement();
+        return timelineElement;
     }
 
     @Then("viene controllato che l'elemento di timeline della notifica {string} non esiste con V23")

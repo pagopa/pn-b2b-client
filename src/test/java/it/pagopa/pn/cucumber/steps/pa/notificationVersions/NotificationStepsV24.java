@@ -35,7 +35,6 @@ public class NotificationStepsV24 implements NotificationStepsInterface {
     private NewNotificationResponse notificationResponse;
     private FullSentNotificationV26 fullSentNotification;
     private OffsetDateTime notificationCreationDate;
-    private String selectedPA;
     private final SharedSteps.NotificationVersion version;
     private SharedSteps sharedSteps;
 
@@ -130,7 +129,7 @@ public class NotificationStepsV24 implements NotificationStepsInterface {
                 sharedSteps.setNewNotificationResponse(notificationResponse);//TODO MATTEO: SOLO QUA, CHE E' L'ULTIMA VERSIONE
                 if (status.equalsIgnoreCase(NOTIFICATION_STATUS_ACCEPTED)) {
                     threadWait(wait);
-                    fullSentNotification = waitForRequestAcceptation(notificationResponse, pollingStrategy);
+                    fullSentNotification = waitForRequestAccepted(notificationResponse, pollingStrategy);
                     threadWait(wait);
                     Assertions.assertNotNull(fullSentNotification);
                 } else if (status.equalsIgnoreCase(NOTIFICATION_STATUS_REFUSED)) {
@@ -200,14 +199,35 @@ public class NotificationStepsV24 implements NotificationStepsInterface {
         }
     }
 
-    private FullSentNotificationV26 waitForRequestAcceptation(NewNotificationResponse response, String pollingStrategy) {
+    @Override
+    public void performPriceVerification(String price, String date, Integer destinatario) {
+        List<NotificationPaymentItem> listNotificationPaymentItem = sharedSteps.getFullSentNotificationV26().getRecipients().get(destinatario).getPayments();
+        if (listNotificationPaymentItem != null) {
+            for (NotificationPaymentItem notificationPaymentItem : listNotificationPaymentItem) {
+                it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPriceResponse notificationPrice =
+                        sharedSteps.getB2bClient().getNotificationPrice(notificationPaymentItem.getPagoPa().getCreditorTaxId(), notificationPaymentItem.getPagoPa().getNoticeCode());
+                try {
+                    Assertions.assertEquals(notificationPrice.getIun(), sharedSteps.getIunVersionamento());
+                    if (price != null) {
+                        log.info("Costo notifica: {} destinatario: {}", notificationPrice.getAmount(), destinatario);
+                        Assertions.assertEquals(Integer.parseInt(price), notificationPrice.getAmount());
+                    }
+                    if (notificationPrice.getRefinementDate() != null) {
+                        Assertions.assertEquals(OffsetDateTime.now().toLocalDate(), notificationPrice.getRefinementDate().toLocalDate());
+                    }
+                } catch (AssertionFailedError assertionFailedError) {
+                    sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+                }
+            }
+        }
+    }
+
+    private FullSentNotificationV26 waitForRequestAccepted(NewNotificationResponse response, String pollingStrategy) {
         IPnPollingService pollingService = sharedSteps.getB2bUtils().getPollingFactory().getPollingService(getPollingStrategy(pollingStrategy));
         PnPollingResponseV26 pollingResponse = (PnPollingResponseV26) pollingService.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(ACCEPTED).build());
-        return pollingResponse.getNotification() == null ? null : pollingResponse.getNotification();
-        //OLD
-//        PnPollingServiceValidationStatusV26 validationStatus = (PnPollingServiceValidationStatusV26) pnPaB2bUtils.getPollingFactory().getPollingService(getPollingStrategy(pollingStrategy));
-//        PnPollingResponseV26 pollingResponse = validationStatus.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(status).build());
-//        return pollingResponse.getNotification() == null ? null : pollingResponse.getNotification();
+        FullSentNotificationV26 result = pollingResponse.getNotification() == null ? null : pollingResponse.getNotification();
+        sharedSteps.setFullSentNotificationV26(result);
+        return result;
     }
 
     //TODO MATTEO AGGIUNGERE ANCHE AGLI ALTRI NotificationSteps

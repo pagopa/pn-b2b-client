@@ -55,7 +55,7 @@ public class RaddAltThrottleSteps {
      */
     @Then("Viene visualizzata la presenza di notifiche un numero di volte superiore al limite definito")
     public void vieneVisualizzataLaPresenzaDiNotifichePiuVolteDelLimite() {
-        Assertions.assertThrows(HttpClientErrorException.class, () -> vieneVisualizzataLaPresenzaDiNotifichePiuVolte("Signor casuale", 300, "UPLOADER"));
+        Assertions.assertThrows(HttpClientErrorException.class, () -> vieneVisualizzataLaPresenzaDiNotifichePiuVolte("Signor Casuale", 300, "UPLOADER"));
     }
 
     @Then("Viene visualizzata la presenza di notifiche per la persona fisica {string} {int} volte dal operatore radd {string}")

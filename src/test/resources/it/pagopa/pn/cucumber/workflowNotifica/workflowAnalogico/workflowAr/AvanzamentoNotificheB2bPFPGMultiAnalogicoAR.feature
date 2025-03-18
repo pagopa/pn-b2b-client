@@ -110,7 +110,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico AR
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE" per l'utente 0
-    Then "Leonardo Da Vinci" legge la notifica
+    Then "Leonardo da Vinci" legge la notifica
     And viene verificato che l'elemento di timeline "REFINEMENT" non esista
       | details          | NOT_NULL |
       | details_recIndex | 0        |

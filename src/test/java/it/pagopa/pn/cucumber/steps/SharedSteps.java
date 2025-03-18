@@ -42,7 +42,6 @@ import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.boot.convert.DurationStyle;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.util.Base64Utils;
@@ -57,7 +56,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 
 import static it.pagopa.pn.cucumber.steps.SharedSteps.NotificationVersion.V1;
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.TAX_ID;
 import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.*;
 import static it.pagopa.pn.cucumber.utils.FiscalCodeGenerator.generateCF;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
@@ -98,19 +96,11 @@ public class SharedSteps {
 
     @Setter
     @Getter
-    private NewNotificationResponse newNotificationResponse;
-
-    @Getter
-    @Setter
-    private NewNotificationRequestV24 notificationRequest;
-
-    @Setter
-    @Getter
     private HttpStatusCodeException notificationError;
 
     @Getter
     private OffsetDateTime notificationCreationDate;
-
+    
     @Getter
     private SettableApiKey.ApiKeyType apiKeyTypeSetted = SettableApiKey.ApiKeyType.MVP_1;
 
@@ -127,10 +117,6 @@ public class SharedSteps {
 
     @Getter
     @Setter
-    private TimelineElementV26 timelineElement;
-
-    @Getter
-    @Setter
     @Value("${pn.external.bearer-token-pg1.id}")
     private String idOrganizationGherkinSrl;
 
@@ -138,14 +124,6 @@ public class SharedSteps {
     @Setter
     @Value("${pn.external.bearer-token-pg2.id}")
     private String idOrganizationCucumberSpa;
-
-    @Getter
-    @Setter
-    private List<ProgressResponseElement> progressResponseElementList = null;
-
-    @Getter
-    @Setter
-    private List<ProgressResponseElementV23> progressResponseElementListV23 = null;
 
     @Value("${pn.interop.base-url}")
     private String interopBaseUrl;
@@ -180,14 +158,30 @@ public class SharedSteps {
     @Value("${pn.bearer-token.user2.taxID}")
     private String marioGherkinTaxID;
     private final ApplicationContext context;
+
     @Getter
     private final DataTableTypeUtil dataTableTypeUtil;
+
+    @Getter
+    private final HashMap<String, String> mapAllegatiNotificaSha256 = new HashMap<>();
     private final List<String> iuvGPD;
     private IPnWebUserAttributesClient iPnWebUserAttributesClient;
 
     @Getter
     @Setter
     private String errorCode;
+    private boolean groupToSet = true;
+    private final SecureRandom secureRandom;
+    private final PnB2bClientTimingConfigs timingConfigs;
+    private final ObjectMapper objMapper;
+
+    @Getter
+    @Setter
+    private NewNotificationResponse newNotificationResponse;//Viene settato solo per l'ultima versione. Al rilascio di una nuova, sostituire con l'oggetto corrispondente
+
+    @Getter
+    @Setter
+    private NewNotificationRequestV24 notificationRequest;//Viene settato solo per l'ultima versione. Al rilascio di una nuova, sostituire con l'oggetto corrispondente
 
     @Getter
     @Setter
@@ -217,31 +211,6 @@ public class SharedSteps {
     @Setter
     private FullSentNotificationV26 fullSentNotificationV26;
 
-    //    private String settedPa = COMUNE_1;
-    private boolean groupToSet = true;
-
-    private final SecureRandom secureRandom = new SecureRandom();
-    private final PnB2bClientTimingConfigs timingConfigs;
-    private final Duration schedulingDaysSuccessDigitalRefinementDefault = DurationStyle.detectAndParse("6m");
-    private final Duration schedulingDaysFailureDigitalRefinementDefault = DurationStyle.detectAndParse("6m");
-    private final Duration schedulingDaysSuccessAnalogRefinementDefault = DurationStyle.detectAndParse("2m");
-    private final Duration schedulingDaysFailureAnalogRefinementDefault = DurationStyle.detectAndParse("4m");
-    private final Duration timeToAddInNonVisibilityTimeCaseDefault = DurationStyle.detectAndParse("10m");
-    private final Duration secondNotificationWorkflowWaitingTimeDefault = DurationStyle.detectAndParse("6m");
-    private final Duration waitingForReadCourtesyMessageDefault = DurationStyle.detectAndParse("5m");
-    private final ObjectMapper objMapper;
-
-
-    //    private final String gherkinSrltaxId = "12666810299";
-//    private final String gherkinSpaTaxID = "12666810299";
-//    private final String cucumberSpataxId = "20517490320";
-//    private final String cucumberSrlTaxID = "20517490320";
-//    private final String cucumberSocietyTaxID = "20517490320";
-//    private final String gherkinIrreperibileTaxID = "00749900049";
-//    private static final String gherkinAnalogicTaxID = "05722930657";
-//    private static final String cucumberAnalogicTaxID = "LBPHLS94A56C826R";
-//    private static final String defaultDigitalAddress = "testpagopa3@pec.pagopa.it";
-
     private final NotificationStepsV1 notificationStepsV1 = new NotificationStepsV1(this);
     private final NotificationStepsV2 notificationStepsV2 = new NotificationStepsV2(this);
     private final NotificationStepsV21 notificationStepsV21 = new NotificationStepsV21(this);
@@ -267,18 +236,6 @@ public class SharedSteps {
             this.value = value;
         }
     }
-
-
-    public HashMap<String, String> getMapAllegatiNotificaSha256() {
-        return mapAllegatiNotificaSha256;
-    }
-
-    //TODO: nessun utilizzo a codice. Rimuovere ?
-//    public void setMapAllegatiNotificaSha256(HashMap<String, String> mapAllegatiNotificaSha256) {
-//        this.mapAllegatiNotificaSha256 = mapAllegatiNotificaSha256;
-//    }
-
-    private final HashMap<String, String> mapAllegatiNotificaSha256 = new HashMap<>();
 
     @Before("@useB2B")
     public void beforeMethod() {
@@ -313,6 +270,7 @@ public class SharedSteps {
         this.pollingFactory = pollingFactory;
         this.iPnTosPrivacyClientImpl = iPnTosPrivacyClientImpl;
         this.objMapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
+        this.secureRandom = new SecureRandom();
     }
 
     @BeforeAll
@@ -337,6 +295,11 @@ public class SharedSteps {
             return NotificationVersion.V24;//TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente
         }
         return NotificationVersion.valueOf(version.trim().toUpperCase());
+    }
+
+    private NotificationStepsInterface getNotificationStepInterface() {
+        NotificationVersion notificationVersion = versionUsed == null ? getNotificationVersion(MOST_RECENT) : versionUsed;
+        return getNotificationStepInterface(notificationVersion);
     }
 
     private NotificationStepsInterface getNotificationStepInterface(NotificationVersion notificationVersion) {
@@ -377,25 +340,19 @@ public class SharedSteps {
     //TODO MATTEO TEST
     @And("destinatario")
     public void addDestinatario(Map<String, String> data) {
-        NotificationVersion notificationVersion = versionUsed == null ? getNotificationVersion(MOST_RECENT) : versionUsed;
-        NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface(notificationVersion);
-        notificationStepsInterface.addRecipitentToNotification(null, data);
+        getNotificationStepInterface().addRecipitentToNotification(null, data);
     }
 
     //TODO MATTEO TEST
     @And("destinatario {string}")
     public void addDestinatario(String destinatario) {
-        NotificationVersion notificationVersion = versionUsed == null ? getNotificationVersion(MOST_RECENT) : versionUsed;
-        NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface(notificationVersion);
-        notificationStepsInterface.addRecipitentToNotification(destinatario, new HashMap<>());
+        getNotificationStepInterface().addRecipitentToNotification(destinatario, new HashMap<>());
     }
 
     //TODO MATTEO TEST
     @And("destinatario {string} e:")
     public void addDestinatarioWithParams(String destinatario, Map<String, String> data) {
-        NotificationVersion notificationVersion = versionUsed == null ? getNotificationVersion(MOST_RECENT) : versionUsed;
-        NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface(notificationVersion);
-        notificationStepsInterface.addRecipitentToNotification(destinatario, data);
+        getNotificationStepInterface().addRecipitentToNotification(destinatario, data);
     }
 
     @And("senza destinatario")
@@ -703,7 +660,7 @@ public class SharedSteps {
 //                , data);
 //    }
 
-//    @And("destinatario Signor casuale")
+//    @And("destinatario Signor Casuale")
 //    public void destinatarioSignorCasuale() {
 //        NotificationRecipientV23 notificationRecipientV23 = dataTableTypeUtil.convertNotificationRecipient(new HashMap<>());
 //        addRecipientToNotification(this.notificationRequest,
@@ -717,7 +674,7 @@ public class SharedSteps {
 //                , new HashMap<>());
 //    }
 
-//    @And("destinatario Signor casuale e:")
+//    @And("destinatario Signor Casuale e:")
 //    public void destinatarioSignorCasualeMap(Map<String, String> data) {
 //
 //        threadWait(new Random().nextInt(500));
@@ -803,17 +760,15 @@ public class SharedSteps {
 
     @And("al destinatario viene associato lo iuv creato mediante partita debitoria alla posizione {int}")
     public void destinatarioAddIuvGPD(Integer posizione) {
-        NotificationVersion notificationVersion = versionUsed == null ? getNotificationVersion(MOST_RECENT) : versionUsed;
-        NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface(notificationVersion);
         String iuvGPD = getIuvGPD(posizione);
-        notificationStepsInterface.setIuvToRecipient(posizione, iuvGPD);
+        getNotificationStepInterface().setIuvToRecipient(posizione, iuvGPD);
     }
 
     /*
     Invio massivo di notifiche irreperibili utili per i test radd
     TODO: migliorare e rendere di utilità generale
      */
-    @Given("vengono inviate {int} notifiche per l'utente Signor casuale con il {string} e si aspetta fino allo stato COMPLETELY_UNREACHABLE")
+    @Given("vengono inviate {int} notifiche per l'utente Signor Casuale con il {string} e si aspetta fino allo stato COMPLETELY_UNREACHABLE")
     public void sendNotificationForUserSignorCasualeAndWaitUntilCompletelyUnreacheable(int numberOfNotification, String pa) {
         List<NewNotificationRequestV24> notificationRequests = new LinkedList<>();
         String generatedFiscalCode = generateCF(System.currentTimeMillis());
@@ -829,7 +784,7 @@ public class SharedSteps {
             NotificationRecipientV23 notificationRecipientV23 = dataTableTypeUtil.convertNotificationRecipient(notificationRecipientMap);
             addRecipientToNotification(newNotificationRequest,
                     updateNotificationRecipient(notificationRecipientV23,
-                            "signor RaddCasuale",
+                            SIGNOR_CASUALE,
                             generatedFiscalCode,
                             NotificationRecipientV23.RecipientTypeEnum.PF,
                             null
@@ -914,10 +869,10 @@ public class SharedSteps {
     public void destinatarioConUgualeCodiceAvvisoDelDestinarioN(String recipientName, int recipientNumber, @Transpose NotificationRecipientV23 recipient) {
         Assertions.assertDoesNotThrow(() -> Objects.requireNonNull(notificationRequest.getRecipients().get(recipientNumber - 1).getPayments()).get(0));
         String noticeCode = Objects.requireNonNull(Objects.requireNonNull(notificationRequest.getRecipients().get(recipientNumber - 1).getPayments()).get(0).getPagoPa()).getNoticeCode();
-        if (recipientName.trim().equalsIgnoreCase("mario cucumber")) {
-            updateNotificationRecipient(recipient, "Mario Cucumber", marioCucumberTaxID, null, null);
-        } else if (recipientName.trim().equalsIgnoreCase("mario gherkin")) {
-            updateNotificationRecipient(recipient, "Mario Gherkin", marioGherkinTaxID, null, null);
+        if (recipientName.trim().equalsIgnoreCase(MARIO_CUCUMBER)) {
+            updateNotificationRecipient(recipient, MARIO_CUCUMBER, marioCucumberTaxID, null, null);
+        } else if (recipientName.trim().equalsIgnoreCase(MARIO_GHERKIN)) {
+            updateNotificationRecipient(recipient, MARIO_GHERKIN, marioGherkinTaxID, null, null);
         } else {
             throw new IllegalArgumentException();
         }
@@ -998,24 +953,21 @@ public class SharedSteps {
 
     @When("la notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi ACCEPTED per controllo GPD")
     public void laNotificaVieneInviataOkGPD(String paName) {
-        NotificationVersion notificationVersion = versionUsed == null ? getNotificationVersion(MOST_RECENT) : versionUsed;
-        NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface(notificationVersion);
+        NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface();
         setPaAndSenderTaxId(paName, notificationStepsInterface);
         notificationStepsInterface.sendNotification(WAITING_GPD, NOTIFICATION_STATUS_ACCEPTED, VALIDATION_STATUS_ACCEPTATION_SHORT);
     }
 
     @When("la notifica viene inviata tramite api b2b dal {string} e si controlla con check rapidi che lo stato diventi ACCEPTED")
     public void laNotificaVieneInviataOkRapidCheck(String paName) {
-        NotificationVersion notificationVersion = versionUsed == null ? getNotificationVersion(MOST_RECENT) : versionUsed;
-        NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface(notificationVersion);
+        NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface();
         setPaAndSenderTaxId(paName, notificationStepsInterface);
         notificationStepsInterface.sendNotification(100, NOTIFICATION_STATUS_ACCEPTED, VALIDATION_STATUS_ACCEPTATION_SHORT);
     }
 
     @When("verifica che la notifica inviata tramite api b2b dal {string} non diventi ACCEPTED")
     public void laNotificaVieneInviataNoAccept(String paName) {
-        NotificationVersion notificationVersion = versionUsed == null ? getNotificationVersion(MOST_RECENT) : versionUsed;
-        NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface(notificationVersion);
+        NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface();
         setPaAndSenderTaxId(paName, notificationStepsInterface);
         //TODO MATTEO: prima richiamava waitForRequestNoAcceptation in b2bUtils. Ma è corretto che prenda "ACCEPTED" ?
         notificationStepsInterface.sendNotification(getWorkFlowWait(), NOTIFICATION_STATUS_ACCEPTED, VALIDATION_STATUS_NO_ACCEPTATION);
@@ -1023,8 +975,7 @@ public class SharedSteps {
 
     @When("la notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi ACCEPTED e successivamente annullata")
     public void laNotificaVieneInviataOkAndCancelled(String paName) {
-        NotificationVersion notificationVersion = versionUsed == null ? getNotificationVersion(MOST_RECENT) : versionUsed;
-        NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface(notificationVersion);
+        NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface();
         setPaAndSenderTaxId(paName, notificationStepsInterface);
         notificationStepsInterface.sendNotification(WAIT_EXTRA_RAPID, NOTIFICATION_STATUS_ACCEPTED, VALIDATION_STATUS);
         String iun = notificationStepsInterface.getNotificationSentIun();
@@ -1041,7 +992,8 @@ public class SharedSteps {
     //TODO MATTEO: creare metodo apposito nell'interfaccia
     @When("la notifica viene inviata tramite api b2b dal {string} con allegato uguale all'allegato di pagamento")
     public void laNotificaVieneInviataAllegatiUgualeAlPagamento(String paName) {
-        setPaAndSenderTaxId(paName, null);
+        NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface();
+        setPaAndSenderTaxId(paName, notificationStepsInterface);
         try {
             newNotificationResponse = b2bUtils.uploadNotificationAllegatiUgualiPagamento(notificationRequest);
         } catch (HttpStatusCodeException | IOException e) {
@@ -1053,8 +1005,7 @@ public class SharedSteps {
 
     @And("la notifica può essere annullata dal sistema tramite codice IUN dal comune {string}")
     public void notificationCanBeCanceledWithIunByComune(String paName) {
-        NotificationVersion notificationVersion = versionUsed == null ? getNotificationVersion(MOST_RECENT) : versionUsed;
-        NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface(notificationVersion);
+        NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface();
         setPA(paName);
         String iun = notificationStepsInterface.getNotificationSentIun();
         Assertions.assertDoesNotThrow(() -> {
@@ -1068,8 +1019,7 @@ public class SharedSteps {
 
     @And("la notifica non può essere annullata dal sistema tramite codice IUN dal comune {string}")
     public void notificationCanNotBeCanceledWithIunByComune(String paName) {
-        NotificationVersion notificationVersion = versionUsed == null ? getNotificationVersion(MOST_RECENT) : versionUsed;
-        NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface(notificationVersion);
+        NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface();
         setPA(paName);
         String iun = notificationStepsInterface.getNotificationSentIun();
         try {
@@ -1373,7 +1323,7 @@ public class SharedSteps {
             case ALLEGATO -> FILE_NOTFOUND;
             case EXTENSION, FILE_PDF_INVALID_ERROR -> FILE_PDF_INVALID_ERROR;
             case SHA_256 -> FILE_SHA_ERROR;
-            case TAX_ID -> TAXID_NOT_VALID;
+            case Costanti.TAX_ID -> TAXID_NOT_VALID;
             case ADDRESS, NOT_VALID_ADDRESS -> NOT_VALID_ADDRESS;
             case INVALID_PARAMETER_MAX_ATTACHMENT -> INVALID_PARAMETER_MAX_ATTACHMENT;
             default -> throw new IllegalArgumentException();
@@ -1622,15 +1572,13 @@ public class SharedSteps {
     //TODO MATTEO TEST anche con le vecchie versioni
     private void setPaAndSenderTaxId(String paName, NotificationStepsInterface notificationStepsInterface) {
         if (notificationStepsInterface == null) {
-            NotificationVersion notificationVersion = versionUsed == null ? getNotificationVersion(MOST_RECENT) : versionUsed;
-            notificationStepsInterface = getNotificationStepInterface(notificationVersion);
+            notificationStepsInterface = getNotificationStepInterface();
         }
-        setPA(paName, notificationStepsInterface);
+        setPA(paName);
         setSenderTaxId(paName, notificationStepsInterface);
     }
 
-    //TODO MATTEO TEST
-    private void setPA(String paName, NotificationStepsInterface notificationStepsInterface) {
+    public void setPA(String paName) {
         switch (paName) {
             case COMUNE_1 -> {
                 this.b2bClient.setApiKeys(IPnPaB2bClient.ApiKeyType.MVP_1);
@@ -1660,8 +1608,8 @@ public class SharedSteps {
             default -> throw new IllegalArgumentException();
         }
         this.b2bUtils.setClient(b2bClient, pollingFactory);
-        notificationStepsInterface.setSelectedPA(paName);//TODO MATTEO, CREDO SIA INUTILE, rimuovere qua, nell'interfaccia e nei campi delle impl
     }
+
 
     //TODO MATTEO TEST
     private void setSenderTaxId(String pa, NotificationStepsInterface notificationStepsInterface) {
@@ -1823,84 +1771,50 @@ public class SharedSteps {
 //        }
 //    }
 
-    public void setPA(String paName) {
-        switch (paName) {
-            case COMUNE_1 -> {
-                this.b2bClient.setApiKeys(IPnPaB2bClient.ApiKeyType.MVP_1);
-                this.pollingFactory.setApiKeys(IPnPaB2bClient.ApiKeyType.MVP_1);
-                this.webPaClient.setBearerToken(SettableBearerToken.BearerTokenType.MVP_1);
-            }
-            case COMUNE_2 -> {
-                this.b2bClient.setApiKeys(IPnPaB2bClient.ApiKeyType.MVP_2);
-                this.pollingFactory.setApiKeys(IPnPaB2bClient.ApiKeyType.MVP_2);
-                this.webPaClient.setBearerToken(SettableBearerToken.BearerTokenType.MVP_2);
-            }
-            case COMUNE_MULTI -> {
-                this.b2bClient.setApiKeys(IPnPaB2bClient.ApiKeyType.GA);
-                this.pollingFactory.setApiKeys(IPnPaB2bClient.ApiKeyType.GA);
-                this.webPaClient.setBearerToken(SettableBearerToken.BearerTokenType.GA);
-            }
-            case COMUNE_SON -> {
-                this.b2bClient.setApiKeys(IPnPaB2bClient.ApiKeyType.SON);
-                this.pollingFactory.setApiKeys(IPnPaB2bClient.ApiKeyType.SON);
-                this.webPaClient.setBearerToken(SettableBearerToken.BearerTokenType.SON);
-            }
-            case COMUNE_ROOT -> {
-                this.b2bClient.setApiKeys(IPnPaB2bClient.ApiKeyType.ROOT);
-                this.pollingFactory.setApiKeys(IPnPaB2bClient.ApiKeyType.ROOT);
-                this.webPaClient.setBearerToken(SettableBearerToken.BearerTokenType.ROOT);
-            }
-            default -> throw new IllegalArgumentException();
-        }
-        this.b2bUtils.setClient(b2bClient, pollingFactory);
-//        this.settedPa = paName;
-    }
-
     public void selectUser(String recipient) {
         switch (recipient.trim()) {
-            case MARIOCUCUMBER, ETTOREFIERAMOSCA -> {
+            case MARIO_CUCUMBER, ETTORE_FIERAMOSCA -> {
                 webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
                 iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
                 iPnTosPrivacyClientImpl.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
 
             }
-            case MARIOGHERKIN, CRISTOFOROCOLOMBO -> {
+            case MARIO_GHERKIN, CRISTOFORO_COLOMBO -> {
                 webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
                 iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
                 iPnTosPrivacyClientImpl.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
             }
-            case GHERKINSRL -> {
+            case GHERKIN_SRL -> {
                 webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
                 iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
                 iPnTosPrivacyClientImpl.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
             }
-            case CUCUMBERSPA, LUCIOANNEOSENECA -> {
+            case CUCUMBER_SPA, LUCIO_ANNEO_SENECA -> {
                 webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
                 iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
                 iPnTosPrivacyClientImpl.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
             }
-            case ALDAMERINI -> {
+            case ALDA_MERINI -> {
                 webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_3);
                 iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_3);
                 iPnTosPrivacyClientImpl.setBearerToken(SettableBearerToken.BearerTokenType.PG_3);
             }
-            case LEONARDODAVINCI -> {
+            case LEONARDO_DA_VINCI -> {
                 webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_3);
                 iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_3);
                 iPnTosPrivacyClientImpl.setBearerToken(SettableBearerToken.BearerTokenType.USER_3);
             }
-            case DINOSAURO -> {
+            case DINO_SAURO -> {
                 webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_5);
                 iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_5);
                 iPnTosPrivacyClientImpl.setBearerToken(SettableBearerToken.BearerTokenType.USER_5);
             }
-            //TODO MATTEO: occhio, qua era previsto toLowerCase()
-            case "mario cucumber con credenziali non valide" -> {
+            case MARIO_CREDENZIALI_SCADUTE -> {
                 webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_SCADUTO);
                 iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_SCADUTO);
                 iPnTosPrivacyClientImpl.setBearerToken(SettableBearerToken.BearerTokenType.USER_SCADUTO);
             }
-            case GALILEOGALILEI -> {
+            case GALILEO_GALILEI -> {
                 webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_4);
                 iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_4);
                 iPnTosPrivacyClientImpl.setBearerToken(SettableBearerToken.BearerTokenType.USER_4);
@@ -1908,10 +1822,6 @@ public class SharedSteps {
             default -> throw new IllegalArgumentException();
         }
     }
-
-//    public String getGherkinIrreperibileTaxId() {
-//        return gherkinIrreperibileTaxID;
-//    }
 
     public void throwAssertFailerWithIUN(AssertionFailedError assertionFailedError) {
         String message = decorateErrorMsg(assertionFailedError.getMessage());
@@ -1959,42 +1869,51 @@ public class SharedSteps {
     }
 
     public Duration getSchedulingDaysSuccessDigitalRefinement() {
-        if (timingConfigs.getSchedulingDaysSuccessDigitalRefinement() == null)
-            return schedulingDaysSuccessDigitalRefinementDefault;
+        if (timingConfigs.getSchedulingDaysSuccessDigitalRefinement() == null) {
+            return DURATION_DIGITAL_REFINEMENT_DEFAULT_SUCCESS;
+        }
         return timingConfigs.getSchedulingDaysSuccessDigitalRefinement();
     }
 
     public Duration getSchedulingDaysFailureDigitalRefinement() {
-        if (timingConfigs.getSchedulingDaysFailureDigitalRefinement() == null)
-            return schedulingDaysFailureDigitalRefinementDefault;
+        if (timingConfigs.getSchedulingDaysFailureDigitalRefinement() == null) {
+            return DURATION_DIGITAL_REFINEMENT_DEFAULT_FAILURE;
+        }
         return timingConfigs.getSchedulingDaysFailureDigitalRefinement();
     }
 
     public Duration getSchedulingDaysSuccessAnalogRefinement() {
-        if (timingConfigs.getSchedulingDaysSuccessAnalogRefinement() == null)
-            return schedulingDaysSuccessAnalogRefinementDefault;
+        if (timingConfigs.getSchedulingDaysSuccessAnalogRefinement() == null) {
+            return DURATION_ANALOG_REFINEMENT_DEFAULT_SUCCESS;
+        }
         return timingConfigs.getSchedulingDaysSuccessAnalogRefinement();
     }
 
     public Duration getSchedulingDaysFailureAnalogRefinement() {
-        if (timingConfigs.getSchedulingDaysFailureAnalogRefinement() == null)
-            return schedulingDaysFailureAnalogRefinementDefault;
+        if (timingConfigs.getSchedulingDaysFailureAnalogRefinement() == null) {
+            return DURATION_ANALOG_REFINEMENT_DEFAULT_FAILURE;
+        }
         return timingConfigs.getSchedulingDaysFailureAnalogRefinement();
     }
 
     public Duration getTimeToAddInNonVisibilityTimeCase() {
-        if (timingConfigs.getNonVisibilityTime() == null) return timeToAddInNonVisibilityTimeCaseDefault;
+        if (timingConfigs.getNonVisibilityTime() == null) {
+            return DURATION_TIME_TO_ADD_IN_NON_VISIBILITY_TIME_CASE_DEFAULT;
+        }
         return timingConfigs.getNonVisibilityTime();
     }
 
     public Duration getSecondNotificationWorkflowWaitingTime() {
-        if (timingConfigs.getSecondNotificationWorkflowWaitingTime() == null)
-            return secondNotificationWorkflowWaitingTimeDefault;
+        if (timingConfigs.getSecondNotificationWorkflowWaitingTime() == null) {
+            return DURATION_SECOND_NOTIFICATION_WORKFLOW_WAITING_TIME_DEFAULT;
+        }
         return timingConfigs.getSecondNotificationWorkflowWaitingTime();
     }
 
     public Duration getWaitingForReadCourtesyMessage() {
-        if (timingConfigs.getWaitingForReadCourtesyMessage() == null) return waitingForReadCourtesyMessageDefault;
+        if (timingConfigs.getWaitingForReadCourtesyMessage() == null) {
+            return DURATION_WAIT_READ_COURTESY_MESSAGE_DEFAULT;
+        }
         return timingConfigs.getWaitingForReadCourtesyMessage();
     }
 
@@ -2176,7 +2095,7 @@ public class SharedSteps {
         return this.iuvGPD.get(posizione);
     }
 
-    //TODO MATTEO IMPORTANTISSIMO
+    //TODO MATTEO: TEST, IMPORTANTISSIMO
     public String getIunVersionamento() {
         NotificationVersion notificationVersion = versionUsed == null ? getNotificationVersion(MOST_RECENT) : versionUsed;
         NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface(notificationVersion);
@@ -2199,21 +2118,25 @@ public class SharedSteps {
     }
 
     public List<String> getDatiPagamentoVersionamento(Integer destinatario, Integer pagamento) {
-        List<String> DatiPagamento = new ArrayList<>();
-        if (getFullSentNotificationV1() != null) {
-            DatiPagamento.add(Objects.requireNonNull(getFullSentNotificationV1().getRecipients().get(destinatario).getPayment()).getCreditorTaxId());
-            DatiPagamento.add(Objects.requireNonNull(getFullSentNotificationV1().getRecipients().get(destinatario).getPayment()).getNoticeCode());
-        } else if (getFullSentNotificationV20() != null) {
-            DatiPagamento.add(Objects.requireNonNull(getFullSentNotificationV20().getRecipients().get(destinatario).getPayment()).getCreditorTaxId());
-            DatiPagamento.add(Objects.requireNonNull(getFullSentNotificationV20().getRecipients().get(destinatario).getPayment()).getNoticeCode());
-        } else if (getFullSentNotificationV21() != null) {
-            DatiPagamento.add(Objects.requireNonNull(Objects.requireNonNull(getFullSentNotificationV21().getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getCreditorTaxId());
-            DatiPagamento.add(Objects.requireNonNull(Objects.requireNonNull(getFullSentNotificationV21().getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getNoticeCode());
-        } else if (getFullSentNotificationV26() != null) {
-            DatiPagamento.add(Objects.requireNonNull(Objects.requireNonNull(getFullSentNotificationV26().getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getCreditorTaxId());
-            DatiPagamento.add(Objects.requireNonNull(Objects.requireNonNull(getFullSentNotificationV26().getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getNoticeCode());
+        NotificationVersion notificationVersion = versionUsed == null ? getNotificationVersion(MOST_RECENT) : versionUsed;
+        NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface(notificationVersion);
+        //TODO MATTEO FINIRE
+
+        List<String> datiPagamento = new ArrayList<>();
+        if (fullSentNotificationV1 != null) {
+            datiPagamento.add(Objects.requireNonNull(fullSentNotificationV1.getRecipients().get(destinatario).getPayment()).getCreditorTaxId());
+            datiPagamento.add(Objects.requireNonNull(fullSentNotificationV1.getRecipients().get(destinatario).getPayment()).getNoticeCode());
+        } else if (fullSentNotificationV20 != null) {
+            datiPagamento.add(Objects.requireNonNull(fullSentNotificationV20.getRecipients().get(destinatario).getPayment()).getCreditorTaxId());
+            datiPagamento.add(Objects.requireNonNull(fullSentNotificationV20.getRecipients().get(destinatario).getPayment()).getNoticeCode());
+        } else if (fullSentNotificationV21 != null) {
+            datiPagamento.add(Objects.requireNonNull(Objects.requireNonNull(fullSentNotificationV21.getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getCreditorTaxId());
+            datiPagamento.add(Objects.requireNonNull(Objects.requireNonNull(fullSentNotificationV21.getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getNoticeCode());
+        } else if (fullSentNotificationV26 != null) {
+            datiPagamento.add(Objects.requireNonNull(Objects.requireNonNull(fullSentNotificationV26.getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getCreditorTaxId());
+            datiPagamento.add(Objects.requireNonNull(Objects.requireNonNull(fullSentNotificationV26.getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getNoticeCode());
         }
-        return DatiPagamento;
+        return datiPagamento;
     }
 
     public static void threadWait(int wait) {

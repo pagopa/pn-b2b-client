@@ -243,8 +243,8 @@ public class InvioNotificheB2bSteps {
 
 
     @And("recupero notifica del {string} lato web dalla PA {string} e verifica presenza pagamento per notifica che è arrivato fino al elemento {string} con feePolicy {string}")
-    public void notificationFromADateCanBeRetrievedWithIUNWebPA(String stringDate, String pa, String type, String feePolicy) {
-        sharedSteps.setPA(pa);
+    public void notificationFromADateCanBeRetrievedWithIUNWebPA(String stringDate, String paName, String type, String feePolicy) {
+        sharedSteps.setPA(paName);
 
         LocalDate date = LocalDate.parse(stringDate);
         OffsetDateTime offsetDateTime = date.atStartOfDay(ZoneOffset.UTC).toOffsetDateTime();
@@ -256,7 +256,12 @@ public class InvioNotificheB2bSteps {
 
             notifica = b2bClient.getSentNotification(notifiche.getIun());
 
-            if (!notifica.getRecipients().get(0).getPayments().isEmpty() && notifica.getRecipients().get(0).getPayments() != null && notifica.getRecipients().get(0).getPayments().get(0).getPagoPa() != null && notifica.getTimeline().toString().contains(type) && notifica.getNotificationFeePolicy().toString().equals(feePolicy) && notifica.getPaFee() == null) {
+            if (!notifica.getRecipients().get(0).getPayments().isEmpty()
+                    && notifica.getRecipients().get(0).getPayments() != null
+                    && notifica.getRecipients().get(0).getPayments().get(0).getPagoPa() != null
+                    && notifica.getTimeline().toString().contains(type)
+                    && notifica.getNotificationFeePolicy().toString().equals(feePolicy)
+                    && notifica.getPaFee() == null) {
                 break;
             } else {
                 notifica = null;
@@ -309,8 +314,8 @@ public class InvioNotificheB2bSteps {
     }
 
     @Then("la notifica può essere correttamente recuperata dal sistema tramite Stato {string} dalla web PA {string}")
-    public void notificationCanBeRetrievedWithStatusByWebPA(String status, String paType) {
-        sharedSteps.setPA(paType);
+    public void notificationCanBeRetrievedWithStatusByWebPA(String status, String paName) {
+        sharedSteps.setPA(paName);
 
         it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatusV26 notificationInternalStatus = switch (status) {
             case "ACCEPTED" ->
@@ -513,8 +518,8 @@ public class InvioNotificheB2bSteps {
 
 
     @Given("viene letta la notifica {string} dal {string}")
-    public void vieneLettaLaNotificaDal(String IUN, String pa) {
-        sharedSteps.setPA(pa);
+    public void vieneLettaLaNotificaDal(String IUN, String paName) {
+        sharedSteps.setPA(paName);
         FullSentNotificationV26 notificationByIun = b2bUtils.getNotificationByIun(IUN);
         sharedSteps.setFullSentNotificationV26(notificationByIun);
     }

@@ -248,7 +248,7 @@ Feature: Radd fsu
 
   @radd
   Scenario: [B2B_RADD_AOR-1] inquiry per cittadino con nessuna notifica in stato irreperibile
-    Given Il cittadino "signor generato" chiede di verificare la presenza di notifiche
+    Given Il cittadino "Signor Generato" chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile genera un errore "Non ci sono notifiche non consegnate per questo codice fiscale" con codice 99
 
   @radd @bugNoto
@@ -263,12 +263,12 @@ Feature: Radd fsu
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And And destinatario "Signor RaddCasuale" e;
+    And destinatario "Signor Casuale" e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    When Il cittadino Signor casuale chiede di verificare la presenza di notifiche
+    When Il cittadino Signor Casuale chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente
 
   @radd
@@ -277,12 +277,12 @@ Feature: Radd fsu
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And And destinatario "Signor RaddCasuale" e;
+    And destinatario "Signor Casuale" e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    When Il cittadino Signor casuale chiede di verificare la presenza di notifiche
+    When Il cittadino Signor Casuale chiede di verificare la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente
     And vengono caricati i documento di identità del cittadino
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile
@@ -296,12 +296,12 @@ Feature: Radd fsu
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And And destinatario "Signor RaddCasuale" e;
+    And destinatario "Signor Casuale" e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    When Il cittadino Signor casuale chiede di verificare la presenza di notifiche
+    When Il cittadino Signor Casuale chiede di verificare la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente
     And si inizia il processo di caricamento dei documento di identità del cittadino ma non si porta a conclusione
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile
@@ -309,8 +309,8 @@ Feature: Radd fsu
 
   @radd
   Scenario: [B2B_RADD_AOR-6] aor per cittadino con 49 notifiche in stato irreperibile
-    Given vengono inviate 49 notifiche per l'utente Signor casuale con il "Comune_Multi" e si aspetta fino allo stato COMPLETELY_UNREACHABLE
-    When Il cittadino Signor casuale chiede di verificare la presenza di notifiche
+    Given vengono inviate 49 notifiche per l'utente Signor Casuale con il "Comune_Multi" e si aspetta fino allo stato COMPLETELY_UNREACHABLE
+    When Il cittadino Signor Casuale chiede di verificare la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente
     And vengono caricati i documento di identità del cittadino
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile
@@ -323,10 +323,10 @@ Feature: Radd fsu
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Signor RaddCasuale"
+    And destinatario "Signor Casuale"
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
-    When Il cittadino Signor casuale chiede di verificare la presenza di notifiche
+    When Il cittadino Signor Casuale chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile genera un errore "Non ci sono notifiche non consegnate per questo codice fiscale" con codice 99
 
 

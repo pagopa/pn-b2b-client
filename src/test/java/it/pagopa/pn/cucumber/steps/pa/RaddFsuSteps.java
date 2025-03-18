@@ -79,9 +79,9 @@ public class RaddFsuSteps {
     private void selectUser(String userName) {
         //TODO MATTEO OCCHIO A CASUALE E GENERATO QUA (PRIMA ERA TO UPPER CASE)
         switch (userName) {
-            case MARIOCUCUMBER -> this.currentUserCf = MARIO_CUCUMBER_TAX_ID;
-            case MARIOGHERKIN -> this.currentUserCf = MARIO_GHERKIN_TAX_ID;
-            case "SIGNOR CASUALE" ->
+            case MARIO_CUCUMBER -> this.currentUserCf = MARIO_CUCUMBER_TAX_ID;
+            case MARIO_GHERKIN -> this.currentUserCf = MARIO_GHERKIN_TAX_ID;
+            case SIGNOR_CASUALE ->
                     this.currentUserCf = sharedSteps.getFullSentNotificationV26().getRecipients().get(0).getTaxId();
             case "SIGNOR GENERATO" -> this.currentUserCf = generateCF(System.nanoTime());
             default -> this.currentUserCf = userName;
@@ -267,9 +267,9 @@ public class RaddFsuSteps {
         this.aorInquiryResponse = raddFsuClient.aorInquiry(uid, cf, "PF");
     }
 
-    @When("Il cittadino Signor casuale chiede di verificare la presenza di notifiche")
+    @When("Il cittadino Signor Casuale chiede di verificare la presenza di notifiche")
     public void ilCittadinoSignorCasualeChiedeDiVerificareLaPresenzaDiNotifiche() {
-        selectUser("Signor casuale");
+        selectUser(SIGNOR_CASUALE);
         this.aorInquiryResponse = raddFsuClient.aorInquiry(uid, this.currentUserCf, "PF");
     }
 

@@ -61,12 +61,12 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And And destinatario "Signor RaddCasuale" e;
+    And destinatario "Signor Casuale" e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    And la persona fisica "Signor casuale" chiede di verificare ad operatore radd "UPLOADER" la presenza di notifiche
+    And la persona fisica "Signor Casuale" chiede di verificare ad operatore radd "UPLOADER" la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative dall'operatore RADD "UPLOADER"
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisicagiuridica su radd alternative da operatore radd "UPLOADER"
@@ -78,12 +78,12 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And And destinatario "Signor RaddCasuale" e;
+    And destinatario "Signor Casuale" e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    And la persona fisica "Signor casuale" chiede di verificare ad operatore radd "UPLOADER" la presenza di notifiche
+    And la persona fisica "Signor Casuale" chiede di verificare ad operatore radd "UPLOADER" la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     When tentativo di recuperare gli aar delle notifiche in stato irreperibile da operatore radd "UPLOADER" senza successo con file key "<fileKey>"
     And il tentativo genera un errore 400 "Bad Request" con il messaggio "Campo fileKey obbligatorio mancante"
@@ -135,12 +135,12 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And And destinatario "Signor RaddCasuale" e;
+    And destinatario "Signor Casuale" e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    And la persona fisica "Signor casuale" chiede di verificare ad operatore radd "<operatorType>" la presenza di notifiche
+    And la persona fisica "Signor Casuale" chiede di verificare ad operatore radd "<operatorType>" la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisicagiuridica su radd alternative da operatore radd "<operatorType>" con file key "<fileKey>"
     And il recupero degli aar in stato irreperibile si conclude correttamente su radd alternative
@@ -155,12 +155,12 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And And destinatario "Signor RaddCasuale" e;
+    And destinatario "Signor Casuale" e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    And la persona fisica "Signor casuale" chiede di verificare ad operatore radd "<operatorType>" la presenza di notifiche
+    And la persona fisica "Signor Casuale" chiede di verificare ad operatore radd "<operatorType>" la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative per errore
     When tentativo di recuperare gli aar delle notifiche in stato irreperibile da operatore radd "<operatorType>" senza successo
@@ -235,12 +235,12 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And And destinatario "Signor RaddCasuale" e;
+    And destinatario "Signor Casuale" e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    And la persona fisica "Signor casuale" chiede di verificare ad operatore radd "STANDARD" la presenza di notifiche
+    And la persona fisica "Signor Casuale" chiede di verificare ad operatore radd "STANDARD" la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     Then tentativo di recuperare gli aar delle notifiche in stato irreperibile da operatore radd "STANDARD" con versionToken errato
     And il tentativo genera un errore 400 "Bad Request" con il messaggio "Campo versionToken inaspettato"
@@ -251,12 +251,12 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And And destinatario "Signor RaddCasuale" e;
+    And destinatario "Signor Casuale" e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    And la persona fisica "Signor casuale" chiede di verificare ad operatore radd "UPLOADER" la presenza di notifiche
+    And la persona fisica "Signor Casuale" chiede di verificare ad operatore radd "UPLOADER" la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative dall'operatore RADD "UPLOADER"
     Then tentativo di recuperare gli aar delle notifiche in stato irreperibile da operatore radd "UPLOADER" con versionToken errato

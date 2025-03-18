@@ -94,4 +94,6 @@ public interface WebhookStepsInterface {
     void checkLegalFactId();
 
     void checkCorrectDisabling(UUID streamId);
+
+    void verificaPresenzaSercQ(boolean present);
 }

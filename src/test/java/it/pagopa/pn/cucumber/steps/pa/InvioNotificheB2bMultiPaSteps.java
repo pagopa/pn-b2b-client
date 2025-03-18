@@ -31,8 +31,8 @@ public class InvioNotificheB2bMultiPaSteps {
 
 
     @Then("la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA {string}")
-    public void notificationCanBeRetrievedWithIUNByPA(String paType) {
-        sharedSteps.setPA(paType);
+    public void notificationCanBeRetrievedWithIUNByPA(String paName) {
+        sharedSteps.setPA(paName);
         AtomicReference<FullSentNotificationV26> notificationByIun = new AtomicReference<>();
         try {
             Assertions.assertDoesNotThrow(() ->
@@ -47,8 +47,8 @@ public class InvioNotificheB2bMultiPaSteps {
 
 
     @Then("la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla web PA {string}")
-    public void notificationCanBeRetrievedWithIUNByWebPA(String paType) {
-        sharedSteps.setPA(paType);
+    public void notificationCanBeRetrievedWithIUNByWebPA(String paName) {
+        sharedSteps.setPA(paName);
 
         AtomicReference<NotificationSearchResponse> notificationByIun = new AtomicReference<>();
         try {
@@ -62,8 +62,8 @@ public class InvioNotificheB2bMultiPaSteps {
     }
 
     @Then("si tenta il recupero dal sistema tramite codice IUN dalla PA {string}")
-    public void retrievalAttemptedIUNFromPA(String paType) {
-        sharedSteps.setPA(paType);
+    public void retrievalAttemptedIUNFromPA(String paName) {
+        sharedSteps.setPA(paName);
         try {
             b2bUtils.getNotificationByIun(sharedSteps.getFullSentNotificationV26().getIun());
         } catch (HttpStatusCodeException e) {

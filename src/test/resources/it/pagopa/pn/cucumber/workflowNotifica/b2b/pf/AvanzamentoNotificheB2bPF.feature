@@ -54,7 +54,7 @@ Feature: avanzamento notifiche b2b persona fisica
       | senderDenomination | Comune di milano            |
     And destinatario "Mario Cucumber"
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
-    And "Mario Cucumber con credenziali non valide" tenta di leggere la notifica ricevuta
+    And "Mario Credenziali Scadute" tenta di leggere la notifica ricevuta
     Then l'operazione ha prodotto un errore con status code "403"
 
 

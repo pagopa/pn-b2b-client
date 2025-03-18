@@ -34,7 +34,6 @@ public class NotificationStepsV23 implements NotificationStepsInterface {
     private NewNotificationResponse notificationResponse;
     private FullSentNotificationV23 fullSentNotification;
     private OffsetDateTime notificationCreationDate;
-    private String selectedPA;
     private final SharedSteps.NotificationVersion version;
     private SharedSteps sharedSteps;
 
@@ -126,7 +125,7 @@ public class NotificationStepsV23 implements NotificationStepsInterface {
                 notificationCreationDate = OffsetDateTime.now();
                 notificationResponse = (NewNotificationResponse) uploadNotification();
                 threadWait(wait);
-                fullSentNotification = waitForFullSentNotification(notificationResponse, status, pollingStrategy);
+                fullSentNotification = waitForRequestAccepted(notificationResponse, status, pollingStrategy);
             });
             threadWait(wait);
             Assertions.assertNotNull(fullSentNotification);
@@ -177,10 +176,17 @@ public class NotificationStepsV23 implements NotificationStepsInterface {
         }
     }
 
-    private FullSentNotificationV23 waitForFullSentNotification(NewNotificationResponse response, String status, String pollingStrategy) {
+    @Override
+    public void performPriceVerification(String price, String date, Integer destinatario) {
+        //TODO MATTEO IMPLEMENTARE
+    }
+
+    private FullSentNotificationV23 waitForRequestAccepted(NewNotificationResponse response, String status, String pollingStrategy) {
         IPnPollingService pollingService = sharedSteps.getB2bUtils().getPollingFactory().getPollingService(getPollingStrategy(pollingStrategy));
         PnPollingResponseV23 pollingResponse = (PnPollingResponseV23) pollingService.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(status).build());
-        return pollingResponse.getNotification() == null ? null : pollingResponse.getNotification();
+        FullSentNotificationV23 result = pollingResponse.getNotification() == null ? null : pollingResponse.getNotification();
+        sharedSteps.setFullSentNotificationV23(result);
+        return result;
     }
 
     private String getPollingStrategy(String pollingStrategy) {

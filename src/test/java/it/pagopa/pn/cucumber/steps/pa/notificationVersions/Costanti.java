@@ -3,31 +3,36 @@ package it.pagopa.pn.cucumber.steps.pa.notificationVersions;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.boot.convert.DurationStyle;
 import org.springframework.context.annotation.Scope;
+
+import java.time.Duration;
 
 @Getter
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class Costanti {
 
     // Nomi Utenti
-    public static final String MARIOGHERKIN = "Mario Gherkin";
-    public static final String MARIOCUCUMBER = "Mario Cucumber";
-    public static final String GHERKINSPA = "GherkinSpa";
-    public static final String CUCUMBERSPA = "CucumberSpa";
-    public static final String GHERKINSRL = "GherkinSrl";
-    public static final String CUCUMBERSRL = "CucumberSrl";
-    public static final String GHERKINANALOGIC = "Gherkin Analogic";
-    public static final String CUCUMBERANALOGIC = "Cucumber Analogic";
-    public static final String GHERKINIRREPERIBILE = "Gherkin Irreperibile";
-    public static final String CUCUMBERSOCIETY = "Cucumber Society";
-    public static final String CRISTOFOROCOLOMBO = "Cristoforo Colombo";
-    public static final String ETTOREFIERAMOSCA = "Ettore Fieramosca";
-    public static final String GALILEOGALILEI = "Galileo Galilei";
-    public static final String LEONARDODAVINCI = "Leonardo Da Vinci";
-    public static final String DINOSAURO = "Dino Sauro";
-    public static final String LUCIOANNEOSENECA = "Lucio Anneo Seneca";
-    public static final String SIGNORCASUALE = "Signor RaddCasuale";
-    public static final String ALDAMERINI = "Alda Merini";
+    public static final String MARIO_GHERKIN = "Mario Gherkin";
+    public static final String MARIO_CUCUMBER = "Mario Cucumber";
+    public static final String GHERKIN_SPA = "GherkinSpa";
+    public static final String CUCUMBER_SPA = "CucumberSpa";
+    public static final String GHERKIN_SRL = "GherkinSrl";
+    public static final String CUCUMBER_SRL = "CucumberSrl";
+    public static final String GHERKIN_ANALOGIC = "Gherkin Analogic";
+    public static final String CUCUMBER_ANALOGIC = "Cucumber Analogic";
+    public static final String GHERKIN_IRREPERIBILE = "Gherkin Irreperibile";
+    public static final String CUCUMBER_SOCIETY = "Cucumber Society";
+    public static final String CRISTOFORO_COLOMBO = "Cristoforo Colombo";
+    public static final String ETTORE_FIERAMOSCA = "Ettore Fieramosca";
+    public static final String GALILEO_GALILEI = "Galileo Galilei";
+    public static final String LEONARDO_DA_VINCI = "Leonardo da Vinci";
+    public static final String DINO_SAURO = "Dino Sauro";
+    public static final String LUCIO_ANNEO_SENECA = "Lucio Anneo Seneca";
+    public static final String SIGNOR_CASUALE = "Signor Casuale";
+    public static final String SIGNOR_GENERATO = "Signor Generato";
+    public static final String ALDA_MERINI = "Alda Merini";
+    public static final String MARIO_CREDENZIALI_SCADUTE = "Mario Credenziali Scadute";
     // PA
     public static final String COMUNE_1 = "Comune_1";
     public static final String COMUNE_2 = "Comune_2";
@@ -111,6 +116,14 @@ public class Costanti {
     public static final Integer WORKFLOW_WAIT_UPPER_BOUND = 2900;
     public static final Integer WAITING_GPD = 1000;
     public static final Integer WAIT_UPPER_BOUND = 950;
+    // Duration
+    public static final Duration DURATION_DIGITAL_REFINEMENT_DEFAULT_SUCCESS = DurationStyle.detectAndParse("6m");
+    public static final Duration DURATION_DIGITAL_REFINEMENT_DEFAULT_FAILURE = DurationStyle.detectAndParse("6m");
+    public static final Duration DURATION_ANALOG_REFINEMENT_DEFAULT_SUCCESS = DurationStyle.detectAndParse("2m");
+    public static final Duration DURATION_ANALOG_REFINEMENT_DEFAULT_FAILURE = DurationStyle.detectAndParse("4m");
+    public static final Duration DURATION_TIME_TO_ADD_IN_NON_VISIBILITY_TIME_CASE_DEFAULT = DurationStyle.detectAndParse("10m");
+    public static final Duration DURATION_SECOND_NOTIFICATION_WORKFLOW_WAITING_TIME_DEFAULT = DurationStyle.detectAndParse("6m");
+    public static final Duration DURATION_WAIT_READ_COURTESY_MESSAGE_DEFAULT = DurationStyle.detectAndParse("5m");
     // Notification Status
     public static final String NOTIFICATION_STATUS_ACCEPTED = "ACCEPTED";
     public static final String NOTIFICATION_STATUS_REFUSED = "REFUSED";

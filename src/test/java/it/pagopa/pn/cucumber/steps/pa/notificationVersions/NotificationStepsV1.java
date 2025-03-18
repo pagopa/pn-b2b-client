@@ -31,7 +31,6 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
     private NewNotificationResponse notificationResponse;
     private FullSentNotification fullSentNotification;
     private OffsetDateTime notificationCreationDate;
-    private String selectedPA;
     private final SharedSteps.NotificationVersion version;
     private SharedSteps sharedSteps;
 
@@ -113,7 +112,7 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
                 notificationCreationDate = OffsetDateTime.now();
                 notificationResponse = (NewNotificationResponse) uploadNotification();
                 threadWait(wait);
-                fullSentNotification = waitForFullSentNotification(notificationResponse, status, pollingStrategy);
+                fullSentNotification = waitForRequestAccepted(notificationResponse, status, pollingStrategy);
             });
             threadWait(wait);
             Assertions.assertNotNull(fullSentNotification);
@@ -161,10 +160,31 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
         }
     }
 
-    public FullSentNotification waitForFullSentNotification(NewNotificationResponse response, String status, String pollingStrategy) {
+    @Override
+    public void performPriceVerification(String price, String date, Integer destinatario) {
+        List<String> datiPagamento = sharedSteps.getDatiPagamentoVersionamento(destinatario, 0);
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPriceResponse notificationPrice =
+                sharedSteps.getB2bClient().getNotificationPrice(datiPagamento.get(0), datiPagamento.get(1));
+        try {
+            Assertions.assertEquals(notificationPrice.getIun(), sharedSteps.getIunVersionamento());
+            if (price != null) {
+                log.info("Costo notifica: {} destinatario: {}", notificationPrice.getAmount(), destinatario);
+                Assertions.assertEquals(Integer.parseInt(price), notificationPrice.getAmount());
+            }
+            if (date != null) {
+                Assertions.assertNotNull(notificationPrice.getRefinementDate());
+            }
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
+    public FullSentNotification waitForRequestAccepted(NewNotificationResponse response, String status, String pollingStrategy) {
         IPnPollingService pollingService = sharedSteps.getB2bUtils().getPollingFactory().getPollingService(getPollingStrategy(pollingStrategy));
         PnPollingResponseV1 pollingResponse = (PnPollingResponseV1) pollingService.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(status).build());
-        return pollingResponse.getNotification() == null ? null : pollingResponse.getNotification();
+        FullSentNotification result = pollingResponse.getNotification() == null ? null : pollingResponse.getNotification();
+        sharedSteps.setFullSentNotificationV1(result);
+        return result;
     }
 
     private String getPollingStrategy(String pollingStrategy) {

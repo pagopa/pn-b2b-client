@@ -411,7 +411,7 @@ Feature: Abilitazione domicilio digitale
     And si crea il nuovo stream per il "Comune_1" con versione "V10"
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi dello stream del "Comune_1" fino allo stato "ACCEPTED" con la versione "V10"
-    And verifica la non presenza di SERCQ
+    And si verifica la "ASSENZA" di SERCQ con la versione "V10"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
@@ -435,7 +435,7 @@ Feature: Abilitazione domicilio digitale
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi dello stream del "Comune_1" fino allo stato "ACCEPTED" con la versione "V23"
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "SEND_DIGITAL_FEEDBACK" con la versione "V23"
-    And verifica presenza SERCQ
+    And si verifica la "PRESENZA" di SERCQ con la versione "V23"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 

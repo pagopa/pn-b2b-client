@@ -83,10 +83,10 @@ public class RicezioneNotificheWebDelegheSteps {
 
     private String getTaxIdByUser(String user) {
         return switch (user) {
-            case MARIOCUCUMBER -> MARIO_CUCUMBER_TAX_ID;
-            case MARIOGHERKIN -> MARIO_GHERKIN_TAX_ID;
-            case GHERKINSRL -> GHERKIN_SRL_TAX_ID;
-            case CUCUMBERSPA -> CUCUMBER_SPA_TAX_ID;
+            case MARIO_CUCUMBER -> MARIO_CUCUMBER_TAX_ID;
+            case MARIO_GHERKIN -> MARIO_GHERKIN_TAX_ID;
+            case GHERKIN_SRL -> GHERKIN_SRL_TAX_ID;
+            case CUCUMBER_SPA -> CUCUMBER_SPA_TAX_ID;
             case "Utente errato" -> "asdasdasd";
             default -> throw new IllegalArgumentException();
         };
@@ -95,21 +95,21 @@ public class RicezioneNotificheWebDelegheSteps {
     private UserDto getUserDtoByuser(String user) {
         return switch (user.trim().toLowerCase()) {
             case "mario cucumber" ->
-                    createUserDto(MARIOCUCUMBER, "Mario", "Cucumber", MARIO_CUCUMBER_TAX_ID, null, true);
-            case "mario gherkin" -> createUserDto(MARIOGHERKIN, "Mario", "Gherkin", MARIO_GHERKIN_TAX_ID, null, true);
-            case "gherkinsrl" -> createUserDto(GHERKINSRL, "gherkin", "srl", GHERKIN_SRL_TAX_ID, GHERKINSRL, false);
+                    createUserDto(MARIO_CUCUMBER, "Mario", "Cucumber", MARIO_CUCUMBER_TAX_ID, null, true);
+            case "mario gherkin" -> createUserDto(MARIO_GHERKIN, "Mario", "Gherkin", MARIO_GHERKIN_TAX_ID, null, true);
+            case "gherkinsrl" -> createUserDto(GHERKIN_SRL, "gherkin", "srl", GHERKIN_SRL_TAX_ID, GHERKIN_SRL, false);
             case "cucumberspa" ->
-                    createUserDto(CUCUMBERSPA, "cucumber", "spa", CUCUMBER_SPA_TAX_ID, CUCUMBERSPA, false);
+                    createUserDto(CUCUMBER_SPA, "cucumber", "spa", CUCUMBER_SPA_TAX_ID, CUCUMBER_SPA, false);
             default -> throw new IllegalArgumentException();
         };
     }
 
     private boolean setBearerToken(String user) {
         return switch (user.trim()) {
-            case MARIOCUCUMBER -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
-            case MARIOGHERKIN -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
-            case GHERKINSRL -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
-            case CUCUMBERSPA -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+            case MARIO_CUCUMBER -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
+            case MARIO_GHERKIN -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
+            case GHERKIN_SRL -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
+            case CUCUMBER_SPA -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
             default -> throw new IllegalArgumentException();
         };
     }
@@ -556,8 +556,8 @@ public class RicezioneNotificheWebDelegheSteps {
     }
 
     @And("la notifica può essere correttamente letta da {string} per comune {string}")
-    public void notificationCanBeCorrectlyReadFromAtPa(String recipient, String pa) {
-        sharedSteps.setPA(pa);
+    public void notificationCanBeCorrectlyReadFromAtPa(String recipient, String paName) {
+        sharedSteps.setPA(paName);
         sharedSteps.selectUser(recipient);
         Assertions.assertDoesNotThrow(() -> {
             webRecipientClient.getReceivedNotification(sharedSteps.getFullSentNotificationV26().getIun(), null);
@@ -567,8 +567,8 @@ public class RicezioneNotificheWebDelegheSteps {
     private NotificationSearchResponse notificationSearchResponse;
 
     @And("{string} visualizza l'elenco delle notifiche per comune {string}")
-    public void notificationCanBeCorrectlyReadFromAtPa(String recipient, String pa, @Transpose RicezioneNotificheWebSteps.NotificationSearchParam searchParam) {
-        sharedSteps.setPA(pa);
+    public void notificationCanBeCorrectlyReadFromAtPa(String recipient, String paName, @Transpose RicezioneNotificheWebSteps.NotificationSearchParam searchParam) {
+        sharedSteps.setPA(paName);
         sharedSteps.selectUser(recipient);
         try {
             this.notificationSearchResponse = webRecipientClient.searchReceivedNotification(searchParam.startDate, searchParam.endDate, searchParam.mandateId /*mandateId = null by default*/,
@@ -581,8 +581,8 @@ public class RicezioneNotificheWebDelegheSteps {
     }
 
     @And("{string} visualizza l'elenco delle notifiche del delegante {string} per comune {string}")
-    public void notificationCanBeCorrectlyReadFromAtPa(String user, String recipient, String pa, @Transpose RicezioneNotificheWebSteps.NotificationSearchParam searchParam) {
-        sharedSteps.setPA(pa);
+    public void notificationCanBeCorrectlyReadFromAtPa(String user, String recipient, String paName, @Transpose RicezioneNotificheWebSteps.NotificationSearchParam searchParam) {
+        sharedSteps.setPA(paName);
         sharedSteps.selectUser(user);
         try {
             this.notificationSearchResponse = webRecipientClient.searchReceivedDelegatedNotification(

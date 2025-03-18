@@ -448,8 +448,8 @@ public class RicezioneNotificheWebSteps {
     }
 
     @Then("la notifica può essere correttamente recuperata con una ricerca da web PA {string}")
-    public void notificationCanBeCorrectlyReadWithResearchWebPA(String paType, @Transpose NotificationSearchParamWebPA searchParam) {
-        sharedSteps.setPA(paType);
+    public void notificationCanBeCorrectlyReadWithResearchWebPA(String paName, @Transpose NotificationSearchParamWebPA searchParam) {
+        sharedSteps.setPA(paName);
         Assertions.assertTrue(searchNotificationWebPA(searchParam));
     }
 
@@ -756,19 +756,19 @@ public class RicezioneNotificheWebSteps {
 
     public void selectUser(String user) {
         switch (user.trim()) {
-            case MARIOCUCUMBER, ETTOREFIERAMOSCA ->
+            case MARIO_CUCUMBER, ETTORE_FIERAMOSCA ->
                     bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_1);
-            case MARIOGHERKIN, CRISTOFOROCOLOMBO ->
+            case MARIO_GHERKIN, CRISTOFORO_COLOMBO ->
                     bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_2);
-            case GHERKINSRL ->
+            case GHERKIN_SRL ->
                     bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.PG_1);
-            case CUCUMBERSPA, LUCIOANNEOSENECA ->
+            case CUCUMBER_SPA, LUCIO_ANNEO_SENECA ->
                     bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.PG_2);
-            case LEONARDODAVINCI ->
+            case LEONARDO_DA_VINCI ->
                     bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_3);
-            case DINOSAURO ->
+            case DINO_SAURO ->
                     bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_5);
-            case "mario cucumber con credenziali non valide" ->
+            case MARIO_CREDENZIALI_SCADUTE ->
                     bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_SCADUTO);
             default -> throw new IllegalArgumentException();
 

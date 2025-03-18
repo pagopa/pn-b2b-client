@@ -555,4 +555,15 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
         Assertions.assertNotNull(eventStream.getDisabledDate());
         log.info("EVENTSTREAM REPLACED: {}", eventStream);
     }
+
+    @Override
+    public void verificaPresenzaSercQ(boolean present) {
+        String channel = present ? "SERCQ" : "PEC";
+        Assertions.assertTrue(progressResponseElementList.stream()
+                .filter(data -> data.getElement().getElementId() != null)
+                .filter(timelineElement -> timelineElement.getElement().getElementId().contains("SEND_DIGITAL_FEEDBACK"))
+                .allMatch(elementDetails -> "OK".equals(elementDetails.getElement().getDetails().getResponseStatus().toString())
+                        && channel.equals(elementDetails.getElement().getDetails().getDigitalAddress().getType())
+                ));
+    }
 }

@@ -174,9 +174,11 @@ public class MandateReverseSteps {
 
     private UserDto getUserDto(String delegator) {
         return switch (delegator) {
-            case MARIOCUCUMBER -> createUserDto(MARIOCUCUMBER, "Mario", "Cucumber", MARIO_CUCUMBER_TAX_ID, null, true);
-            case GHERKINSRL -> createUserDto(GHERKINSRL, "gherkin", "srl", GHERKIN_SRL_TAX_ID, GHERKINSRL, false);
-            case CUCUMBERSPA -> createUserDto(CUCUMBERSPA, "cucumber", "spa", CUCUMBER_SPA_TAX_ID, CUCUMBERSPA, false);
+            case MARIO_CUCUMBER ->
+                    createUserDto(MARIO_CUCUMBER, "Mario", "Cucumber", MARIO_CUCUMBER_TAX_ID, null, true);
+            case GHERKIN_SRL -> createUserDto(GHERKIN_SRL, "gherkin", "srl", GHERKIN_SRL_TAX_ID, GHERKIN_SRL, false);
+            case CUCUMBER_SPA ->
+                    createUserDto(CUCUMBER_SPA, "cucumber", "spa", CUCUMBER_SPA_TAX_ID, CUCUMBER_SPA, false);
             case "EMPTY_FISCAL_CODE" -> createUserDto("Cristoforo Colombo", "Cristoforo", "Colombo", null, null, true);
             case "INVALID_FISCAL_CODE" ->
                     createUserDto("Cristoforo Colombo", "Cristoforo", "Colombo", "AAA8090ZAC", null, true);
@@ -214,9 +216,9 @@ public class MandateReverseSteps {
 
     private String getTaxIdByUser(String user) {
         return switch (user) {
-            case MARIOCUCUMBER -> MARIO_CUCUMBER_TAX_ID;
-            case GHERKINSRL -> GHERKIN_SRL_TAX_ID;
-            case CUCUMBERSPA -> CUCUMBER_SPA_TAX_ID;
+            case MARIO_CUCUMBER -> MARIO_CUCUMBER_TAX_ID;
+            case GHERKIN_SRL -> GHERKIN_SRL_TAX_ID;
+            case CUCUMBER_SPA -> CUCUMBER_SPA_TAX_ID;
             default -> throw new IllegalArgumentException();
         };
     }

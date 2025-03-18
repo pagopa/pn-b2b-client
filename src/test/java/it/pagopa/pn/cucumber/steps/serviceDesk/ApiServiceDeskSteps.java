@@ -1374,11 +1374,11 @@ public class ApiServiceDeskSteps {
     public String setTaxID(String taxId) {
         String result;
         result = switch (taxId) {
-            case MARIOGHERKIN -> MARIO_GHERKIN_TAX_ID;
-            case MARIOCUCUMBER -> MARIO_CUCUMBER_TAX_ID;
-            case CUCUMBERSPA -> CUCUMBER_SPA_TAX_ID;
-            case GHERKINSRL -> GHERKIN_SRL_TAX_ID;
-            case GALILEOGALILEI -> GALILEO_GALILEI_TAX_ID;
+            case MARIO_GHERKIN -> MARIO_GHERKIN_TAX_ID;
+            case MARIO_CUCUMBER -> MARIO_CUCUMBER_TAX_ID;
+            case CUCUMBER_SPA -> CUCUMBER_SPA_TAX_ID;
+            case GHERKIN_SRL -> GHERKIN_SRL_TAX_ID;
+            case GALILEO_GALILEI -> GALILEO_GALILEI_TAX_ID;
             default -> null;
         };
         return result;

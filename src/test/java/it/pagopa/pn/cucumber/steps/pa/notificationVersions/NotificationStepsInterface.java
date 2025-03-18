@@ -11,10 +11,6 @@ public interface NotificationStepsInterface {
 
     void addRecipitentToNotification(String recipientName, Map<String, String> data);
 
-    String getSelectedPA();
-
-    void setSelectedPA(String apikey);
-
     void setSenderTaxId(String senderTaxId);
 
     String getNotificationRequestGroup();
@@ -34,4 +30,6 @@ public interface NotificationStepsInterface {
     void setIuvToRecipient(Integer posizione, String iuvGPD);
 
     void addDocumentItems(int numAllegati);
+
+    void performPriceVerification(String price, String date, Integer destinatario);
 }
