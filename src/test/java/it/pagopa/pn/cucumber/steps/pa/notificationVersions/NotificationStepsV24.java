@@ -139,7 +139,6 @@ public class NotificationStepsV24 implements NotificationStepsInterface {
                     Assertions.assertFalse(errorCode.isEmpty());
                 }
                 //TODO MATTEO: TUTTO DA VERIFICARE COME CASO
-                //TODO MATTEO AGGIUNGERE ANCHE AGLI ALTRI NotificationSteps
                 else if (status.equalsIgnoreCase(NOTIFICATION_STATUS_NOT_REFUSED)) {
                     RequestStatus response = sharedSteps.getB2bUtils().getClient().notificationCancellation(
                             new String(Base64Utils.decodeFromString(notificationResponse.getNotificationRequestId())));
@@ -216,7 +215,7 @@ public class NotificationStepsV24 implements NotificationStepsInterface {
                         Assertions.assertEquals(OffsetDateTime.now().toLocalDate(), notificationPrice.getRefinementDate().toLocalDate());
                     }
                 } catch (AssertionFailedError assertionFailedError) {
-                    sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+                    sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
                 }
             }
         }
@@ -230,7 +229,6 @@ public class NotificationStepsV24 implements NotificationStepsInterface {
         return result;
     }
 
-    //TODO MATTEO AGGIUNGERE ANCHE AGLI ALTRI NotificationSteps
     private String waitForRequestRefused(NewNotificationResponse response, String pollingStrategy) {
         log.info("Request status for " + response.getNotificationRequestId());
         long startTime = System.currentTimeMillis();
@@ -253,7 +251,6 @@ public class NotificationStepsV24 implements NotificationStepsInterface {
         return error.toString();
     }
 
-    //TODO MATTEO AGGIUNGERE ANCHE AGLI ALTRI NotificationSteps
     private boolean waitForRequestNotRefused(NewNotificationResponse response, String pollingStrategy) {
         IPnPollingService pollingService = sharedSteps.getB2bUtils().getPollingFactory().getPollingService(getPollingStrategy(pollingStrategy));
         PnPollingResponseV26 pollingResponse = (PnPollingResponseV26) pollingService.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(REFUSED).build());

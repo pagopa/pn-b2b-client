@@ -86,7 +86,7 @@ Feature: verifica compatibilità tra v2 a v2.1
       | feePolicy          | DELIVERY_MODE               |
     And destinatario "Mario Cucumber"
     When la notifica viene inviata tramite api b2b con la versione "V2" dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
-    Then si verifica la corretta acquisizione della notifica V2
+    Then si verifica la corretta acquisizione della notifica
     And "Mario Cucumber" legge la notifica ricevuta
     Then vengono verificati costo = "100" e data di perfezionamento della notifica
 

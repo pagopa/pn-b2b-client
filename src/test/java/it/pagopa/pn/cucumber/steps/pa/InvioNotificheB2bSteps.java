@@ -141,7 +141,7 @@ public class InvioNotificheB2bSteps {
                     .isNotNull();
 
         } catch (AssertionError assertionError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -191,28 +191,22 @@ public class InvioNotificheB2bSteps {
             });
 
         } catch (AssertionError assertionError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
     @And("recupera notifica vecchia di 120 giorni da lato web PA e verifica presenza pagamento")
-    public void notification120ggCanBeRetrievedWithIUNWebPA() {
-
+    public void retrieveNotification120DaysOldByIunWebPaSide() {
         List<NotificationSearchRow> serarchedNotification = searchNotificationWebFromADate(OffsetDateTime.now().minusDays(120));
-
         FullSentNotificationV26 notifica120 = null;
-
-        for (NotificationSearchRow notifiche : serarchedNotification) {
-
-            notifica120 = b2bClient.getSentNotification(notifiche.getIun());
-
-            if (notifica120.getRecipients().get(0).getPayments() != null && notifica120.getRecipients().get(0).getPayments().get(0).getPagoPa() != null && notifica120.getRecipients().get(0).getPayments().get(0).getPagoPa().getNoticeCode() != null) {
+        for (NotificationSearchRow notifica : serarchedNotification) {
+            FullSentNotificationV26 result = b2bClient.getSentNotification(notifica.getIun());
+            if (result.getRecipients().get(0).getPayments() != null
+                    && result.getRecipients().get(0).getPayments().get(0).getPagoPa() != null
+                    && result.getRecipients().get(0).getPayments().get(0).getPagoPa().getNoticeCode() != null) {
+                notifica120 = result;
                 break;
-            } else {
-                notifica120 = null;
             }
-
-
             try {
                 await().atMost(sharedSteps.getWorkFlowWait(), TimeUnit.MILLISECONDS);
             } catch (RuntimeException exc) {
@@ -220,23 +214,17 @@ public class InvioNotificheB2bSteps {
                 throw exc;
             }
         }
-
         try {
             assertThat(notifica120)
                     .as("La notifica dopo 120 giorni non deve essere nulla")
                     .isNotNull();
-
             log.info("notifica dopo 120gg: {}", notifica120);
-
             assertThat(notifica120.getRecipients().get(0).getPayments().get(0).getPagoPa().getAttachment())
                     .as("L'attachment del pagamento deve essere nullo")
                     .isNull();
-
             sharedSteps.setFullSentNotificationV26(notifica120);
-
         } catch (AssertionError assertionError) {
-            String message = assertionError.getMessage() +
-                    "{notifica : " + (notifica120 == null ? "NULL" : notifica120) + " }";
+            String message = assertionError.getMessage() + "{notifica : " + (notifica120 == null ? "NULL" : notifica120) + " }";
             throw new AssertionError(message, assertionError);
         }
     }
@@ -357,7 +345,7 @@ public class InvioNotificheB2bSteps {
                         .isNotNull();
             });
         } catch (AssertionError assertionError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -673,44 +661,26 @@ public class InvioNotificheB2bSteps {
 
     @Then("si verifica la corretta acquisizione della notifica")
     public void correctAcquisitionNotification() {
-        assertThatCode(() -> verifyNotificationVersioning("V23"))
-                .as("La verifica della versione della notifica non deve generare eccezioni per la versione 'V23'")
+        String version = this.sharedSteps.getVersionUsed().toString();
+        assertThatCode(() -> verifyNotificationVersioning(version))
+                .as("La verifica della versione della notifica non deve generare eccezioni per la versione " + version)
                 .doesNotThrowAnyException();
     }
 
-    @Then("si verifica la corretta acquisizione della notifica V1")
-
-    public void correctAcquisitionNotificationV1() {
-        assertThatCode(() -> verifyNotificationVersioning("V1"))
-                .as("La verifica della versione della notifica non deve generare eccezioni per la versione 'V23'")
-                .doesNotThrowAnyException();
-    }
-
-    @Then("si verifica la corretta acquisizione della notifica V2")
-    public void correctAcquisitionNotificationV2() {
-        assertThatCode(() -> verifyNotificationVersioning("V2"))
-                .as("La verifica della versione della notifica non deve generare eccezioni per la versione 'V23'")
-                .doesNotThrowAnyException();
-    }
-
-    @Then("si verifica lo scarto dell' acquisizione della notifica V1")
+    @Then("si verifica lo scarto dell' acquisizione della notifica")
     public void correctAcquisitionNotificationV1Error() {
-        verifyNotificationVersioning("V1");
-
+        String version = this.sharedSteps.getVersionUsed().toString();
+        verifyNotificationVersioning(version);
     }
 
-    @Then("si verifica lo scarto dell' acquisizione della notifica V2")
-    public void correctAcquisitionNotificationV2Error() {
-        verifyNotificationVersioning("V2");
-    }
-
+    //TODO MATTEO: ottimo candidato per refactor
     private void verifyNotificationVersioning(String version) {
         try {
             if (version.equalsIgnoreCase("V1")) {
                 b2bUtils.verifyNotificationV1(sharedSteps.getFullSentNotificationV1());
             } else if (version.equalsIgnoreCase("V2")) {
                 b2bUtils.verifyNotificationV2(sharedSteps.getFullSentNotificationV20());
-            } else if (version.equalsIgnoreCase("V23")) {
+            } else if (version.equalsIgnoreCase("V26")) {
                 b2bUtils.verifyNotification(sharedSteps.getFullSentNotificationV26());
             }
         } catch (AssertionFailedError assertionFailedError) {
@@ -813,7 +783,7 @@ public class InvioNotificheB2bSteps {
                     .as("L'importo della notifica dovrebbe essere uguale a " + price, price)
                     .isEqualTo(price);
         } catch (AssertionError assertionError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -1018,7 +988,7 @@ public class InvioNotificheB2bSteps {
                     .isNotNull();
 
         } catch (AssertionError assertionError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -1044,7 +1014,7 @@ public class InvioNotificheB2bSteps {
                     .isNotNull();
 
         } catch (AssertionError assertionError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -1069,7 +1039,7 @@ public class InvioNotificheB2bSteps {
 
 
         } catch (AssertionError assertionError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -1166,7 +1136,7 @@ public class InvioNotificheB2bSteps {
 
 
         } catch (AssertionError error) {
-            sharedSteps.throwAssertFailerWithIUN(error);
+            sharedSteps.throwAssertionErrorWithIUN(error);
         }
     }
 
@@ -1499,7 +1469,7 @@ public class InvioNotificheB2bSteps {
                     legalFactDownloadMetadataResponse.set(this.b2bClient.getDownloadLegalFact(sharedSteps.getFullSentNotificationV26().getIun(), finalKeySearch));
                 });
             } catch (AssertionFailedError assertionFailedError) {
-                sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+                sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
             }
         }
         return legalFactDownloadMetadataResponse.get();

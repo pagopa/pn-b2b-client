@@ -41,7 +41,7 @@ public class InvioNotificheB2bMultiPaSteps {
 
             Assertions.assertNotNull(notificationByIun.get());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -57,7 +57,7 @@ public class InvioNotificheB2bMultiPaSteps {
             );
             Assertions.assertNotNull(notificationByIun.get());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 

@@ -237,7 +237,7 @@ public class LegalFactContentVerifySteps {
                 Assertions.assertTrue(pnLegalFactNotificaPresaInCaricoMultiDestinatario.getDestinatariAnalogici().containsAll(destinatarioAnalogicoList));
             }
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 

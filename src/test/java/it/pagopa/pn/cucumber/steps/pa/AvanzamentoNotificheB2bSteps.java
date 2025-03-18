@@ -135,7 +135,7 @@ public class AvanzamentoNotificheB2bSteps {
             log.info("NOTIFICATION_STATUS_HISTORY_ELEMENT: {}", pnPollingResponseV26.getNotificationStatusHistoryElement());
 
         } catch (AssertionError assertionError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -162,7 +162,7 @@ public class AvanzamentoNotificheB2bSteps {
             sharedSteps.setFullSentNotificationV1(pnPollingResponseV1.getNotification());
             log.info("NOTIFICATION_STATUS_HISTORY_ELEMENT v1: " + pnPollingResponseV1.getNotificationStatusHistoryElement());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -192,7 +192,7 @@ public class AvanzamentoNotificheB2bSteps {
             }
             Assertions.assertTrue(esiste);
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -525,7 +525,7 @@ public class AvanzamentoNotificheB2bSteps {
         try {
             Assertions.assertFalse(expectedEvents.stream().anyMatch(Predicate.not(actualTimeline::contains)));
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -559,7 +559,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertEquals(ricezioneRaccomandata, refinementDate);
 
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -576,7 +576,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertTrue(checkOffsetDateTime(ricezioneRECAG012, refinementDate));
 
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -623,7 +623,7 @@ public class AvanzamentoNotificheB2bSteps {
             assertThat(sendFeedbackNotificationDate)
                     .isCloseTo(sendFeedbackTimestampDate, within(1, SECONDS));
         } catch (AssertionError assertionError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -656,7 +656,7 @@ public class AvanzamentoNotificheB2bSteps {
             assertThat(sendFeedbackNotificationDate)
                     .isCloseTo(sendFeedbackTimestampDate, within(1, SECONDS));
         } catch (AssertionError assertionError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -684,7 +684,7 @@ public class AvanzamentoNotificheB2bSteps {
             timelineElement = pnPollingResponseV26.getTimelineElement();
             log.info("TIMELINE_ELEMENT: " + timelineElement);
         } catch (AssertionError assertionError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
         return timelineElement;
     }
@@ -704,7 +704,7 @@ public class AvanzamentoNotificheB2bSteps {
             timelineElement = pnPollingResponseV26.getTimelineElement();
             log.info("TIMELINE_ELEMENT: " + timelineElement);
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
         return timelineElement;
     }
@@ -722,7 +722,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertTrue(countTimeLineEventCategory <= 1,
                     "L'elemento di timeline della notifica '" + timelineEventCategory + "' è presente solo una volta.");
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -742,7 +742,7 @@ public class AvanzamentoNotificheB2bSteps {
             sharedSteps.setFullSentNotificationV1(pnPollingResponseV1.getNotification());
             log.info("TIMELINE_ELEMENT: " + pnPollingResponseV1.getTimelineElement());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -762,7 +762,7 @@ public class AvanzamentoNotificheB2bSteps {
             sharedSteps.setFullSentNotificationV20(pnPollingResponseV20.getNotification());
             log.info("TIMELINE_ELEMENT: " + pnPollingResponseV20.getTimelineElement());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -782,7 +782,7 @@ public class AvanzamentoNotificheB2bSteps {
             sharedSteps.setFullSentNotificationV21(pnPollingResponseV21.getNotification());
             log.info("TIMELINE_ELEMENT: " + pnPollingResponseV21.getTimelineElement());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -811,7 +811,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertNull(pnPollingResponseV1.getTimelineElement());
             sharedSteps.setFullSentNotificationV1(pnPollingResponseV1.getNotification());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -829,7 +829,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertNull(pnPollingResponseV26.getTimelineElement());
             sharedSteps.setFullSentNotificationV26(pnPollingResponseV26.getNotification());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -847,7 +847,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertNull(pnPollingResponseV26.getTimelineElement());
             sharedSteps.setFullSentNotificationV26(pnPollingResponseV26.getNotification());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -869,7 +869,7 @@ public class AvanzamentoNotificheB2bSteps {
                     b2bClient.notificationCancellation(sharedSteps.getFullSentNotificationV26().getIun())
             );
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -902,7 +902,7 @@ public class AvanzamentoNotificheB2bSteps {
             }
 
         } catch (AssertionError assertionError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -914,7 +914,7 @@ public class AvanzamentoNotificheB2bSteps {
         try {
             Assertions.assertFalse(pnPollingResponseV26.getResult());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -935,7 +935,7 @@ public class AvanzamentoNotificheB2bSteps {
             sharedSteps.setFullSentNotificationV26(pnPollingResponseV26.getNotification());
             log.info("TIMELINE_ELEMENT: " + pnPollingResponseV26.getTimelineElement());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -953,7 +953,7 @@ public class AvanzamentoNotificheB2bSteps {
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             Assertions.assertEquals(Objects.requireNonNull(timelineElement.getDetails()).getNotificationDate().format(fmt), now().plusDays(delay).format(fmt));
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -984,7 +984,7 @@ public class AvanzamentoNotificheB2bSteps {
                 Assertions.assertEquals(timelineElement.getDetails().getSchedulingDate().format(fmt1), Objects.requireNonNull(digitalDeliveryCreationRequestDate).plusMinutes(delay).format(fmt1));
             }
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -1004,7 +1004,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertNotNull(timelineElement.getDetails().getAttachments().get(0).getDocumentType());
             Assertions.assertEquals(Objects.requireNonNull(timelineElement.getDetails().getAttachments().get(0).getDocumentType()), tipoDoc);
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -1029,7 +1029,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertNotNull(timelineElement.getDetails().getAttachments().get(0).getDocumentType());
             Assertions.assertTrue(Objects.requireNonNull(timelineElement.getDetails().getAttachments().get(0).getDocumentType()).equals(tipoDoc) || Objects.equals(timelineElement.getDetails().getAttachments().get(0).getDocumentType(), "Indagine"));
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -1046,7 +1046,7 @@ public class AvanzamentoNotificheB2bSteps {
             log.info("TIMELINE_ELEMENT: " + timelineElement);
             Assertions.assertEquals(Objects.requireNonNull(timelineElement.getDetails()).getDeliveryFailureCause(), deliveryCause);
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -1068,7 +1068,7 @@ public class AvanzamentoNotificheB2bSteps {
             log.info("TIMELINE_ELEMENT: " + timelineElement);
             Assertions.assertEquals(Objects.requireNonNull(timelineElement.getDetails()).getDeliveryFailureCause(), deliveryCause);
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -1099,7 +1099,7 @@ public class AvanzamentoNotificheB2bSteps {
                     .orElse(null);
             Assertions.assertNotNull(timelineElementRelative);
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -1126,7 +1126,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertNotNull(timelineElement.getDetails());
             Assertions.assertEquals(timelineElement.getDetails().getServiceLevel(), level);
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -1147,7 +1147,7 @@ public class AvanzamentoNotificheB2bSteps {
             timelineElement = pnPollingResponseV26.getTimelineElement();
             log.info("TIMELINE_ELEMENT: " + pnPollingResponseV26.getTimelineElement());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -1181,7 +1181,7 @@ public class AvanzamentoNotificheB2bSteps {
             sharedSteps.setFullSentNotificationV26(pnPollingResponseV26.getNotification());
             log.info("TIMELINE_ELEMENT: " + pnPollingResponseV26.getTimelineElement());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -1200,7 +1200,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertNull(pnPollingResponseV26.getTimelineElement());
             sharedSteps.setFullSentNotificationV26(pnPollingResponseV26.getNotification());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -1221,7 +1221,7 @@ public class AvanzamentoNotificheB2bSteps {
             log.info("TIMELINE_ELEMENT: " + timelineElement);
             Assertions.assertEquals(Objects.requireNonNull(timelineElement.getDetails()).getNumberOfPages(), numPagine);
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -1240,7 +1240,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertNull(pnPollingResponseV26.getTimelineElement());
             sharedSteps.setFullSentNotificationV26(pnPollingResponseV26.getNotification());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -1275,7 +1275,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertNull(pnPollingResponseV1.getTimelineElement());
             sharedSteps.setFullSentNotificationV1(pnPollingResponseV1.getNotification());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -1294,7 +1294,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertNull(pnPollingResponseV26.getTimelineElement());
             sharedSteps.setFullSentNotificationV26(pnPollingResponseV26.getNotification());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -1326,7 +1326,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertNotNull(timelineElement.getDetails().getLegalFactId());
 
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -1435,7 +1435,7 @@ public class AvanzamentoNotificheB2bSteps {
                 return legalFactDownloadMetadataResponse.getUrl();
             }
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
         return null;
     }
@@ -1508,7 +1508,7 @@ public class AvanzamentoNotificheB2bSteps {
                 Assertions.assertTrue(legalFactDownloadMetadataResponse.getFilename().contains(".eml"));
             }
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -1562,7 +1562,7 @@ public class AvanzamentoNotificheB2bSteps {
                 ));
             }
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -1581,7 +1581,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertNotNull(pnPollingResponseV26.getNotificationStatusHistoryElement());
             sharedSteps.setFullSentNotificationV26(pnPollingResponseV26.getNotification());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -1600,7 +1600,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertNull(pnPollingResponseV26.getNotificationStatusHistoryElement());
             sharedSteps.setFullSentNotificationV26(pnPollingResponseV26.getNotification());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -1698,7 +1698,7 @@ public class AvanzamentoNotificheB2bSteps {
                             Assertions.assertEquals(OffsetDateTime.now().toLocalDate(), notificationPrice.getRefinementDate().toLocalDate());
                         }
                     } catch (AssertionFailedError assertionFailedError) {
-                        sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+                        sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
                     }
                 }
             }
@@ -1723,7 +1723,7 @@ public class AvanzamentoNotificheB2bSteps {
                 Assertions.assertNotNull(notificationPrice.getRefinementDate());
             }
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -1740,7 +1740,7 @@ public class AvanzamentoNotificheB2bSteps {
                 Assertions.assertNotNull(notificationPrice.getRefinementDate());
             }
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -1774,7 +1774,7 @@ public class AvanzamentoNotificheB2bSteps {
                         }
 
                     } catch (AssertionFailedError assertionFailedError) {
-                        sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+                        sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
                     }
                 }
                 return listNotificationPriceV23;
@@ -1810,7 +1810,7 @@ public class AvanzamentoNotificheB2bSteps {
                 Assertions.assertNotNull(notificationProcessCost.getRefinementDate());
             }
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
 
         }
     }
@@ -1892,7 +1892,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertEquals(categoriesV26.getLegalFactCategory().getValue(), timelineElement.getLegalFactsIds().get(0).getCategory());
             Assertions.assertTrue(timelineElement.getLegalFactsIds().get(0).getKey().contains(key));
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -2151,7 +2151,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertNotNull(listTimelineElement);
             Assertions.assertEquals(number, listTimelineElement.size());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -2174,7 +2174,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertNotNull(Objects.requireNonNull(Objects.requireNonNull(timelineElement).getDetails()).getResponseStatus());
             Assertions.assertEquals(timelineElement.getDetails().getResponseStatus().getValue(), code);
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -2196,7 +2196,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertNotNull(Objects.requireNonNull(timelineElement.getDetails()).getResponseStatus());
             Assertions.assertEquals(timelineElement.getDetails().getResponseStatus().getValue(), code);
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -2219,7 +2219,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertEquals(timelineElement.getDetails().getResponseStatus().getValue(), code);
             Assertions.assertEquals(timelineElement.getDetails().getDigitalAddressSource().getValue(), digitalAddressSource);
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -2241,7 +2241,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertNotNull(Objects.requireNonNull(timelineElement.getDetails()).getPhysicalAddress().getMunicipality());
             Assertions.assertNotNull(timelineElement.getDetails().getPhysicalAddress().getForeignState());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -2264,7 +2264,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertEquals(timelineElement.getDetails().getResponseStatus().getValue(), code);
             Assertions.assertNotNull(timelineElement.getDetails().getDeliveryDetailCode());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -2288,7 +2288,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertNotNull(timelineElement.getDetails().getDeliveryDetailCode());
             Assertions.assertNotNull(timelineElement.getDetails().getDeliveryFailureCause());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -2307,19 +2307,13 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertNull(pnPollingResponseV26.getTimelineElement());
             sharedSteps.setFullSentNotificationV26(pnPollingResponseV26.getNotification());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
     @Then("si attende il corretto pagamento della notifica")
     public void siAttendeIlCorrettoPagamentoDellaNotifica() {
-        String iun;
-        if (sharedSteps.getFullSentNotificationV26() != null) {
-            iun = sharedSteps.getFullSentNotificationV26().getIun();
-        } else {
-            iun = sharedSteps.getFullSentNotificationV1().getIun();
-        }
-
+        String iun = sharedSteps.getIunVersionamento();
         String timelineEventCategory = TimelineElementCategoryV26.PAYMENT.getValue();
         PnPollingServiceTimelineRapidV26 timelineRapidV25 = (PnPollingServiceTimelineRapidV26) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_RAPID_V26);
 
@@ -2334,7 +2328,7 @@ public class AvanzamentoNotificheB2bSteps {
             sharedSteps.setFullSentNotificationV26(pnPollingResponseV26.getNotification());
             log.info("TIMELINE_ELEMENT: " + pnPollingResponseV26.getTimelineElement());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -2354,7 +2348,7 @@ public class AvanzamentoNotificheB2bSteps {
             sharedSteps.setFullSentNotificationV1(pnPollingResponseV1.getNotification());
             log.info("TIMELINE_ELEMENT: " + pnPollingResponseV1.getTimelineElement());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -2374,7 +2368,7 @@ public class AvanzamentoNotificheB2bSteps {
             sharedSteps.setFullSentNotificationV20(pnPollingResponseV20.getNotification());
             log.info("TIMELINE_ELEMENT: " + pnPollingResponseV20.getTimelineElement());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -2410,7 +2404,7 @@ public class AvanzamentoNotificheB2bSteps {
                 Assertions.assertTrue(esiste);
             }
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -2429,7 +2423,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertNull(pnPollingResponseV26.getTimelineElement());
             sharedSteps.setFullSentNotificationV26(pnPollingResponseV26.getNotification());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -2450,7 +2444,7 @@ public class AvanzamentoNotificheB2bSteps {
             sharedSteps.setFullSentNotificationV26(pnPollingResponseV26.getNotification());
             log.info("TIMELINE_ELEMENT: " + pnPollingResponseV26.getTimelineElement());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -2473,7 +2467,7 @@ public class AvanzamentoNotificheB2bSteps {
             log.info("TIMELINE_ELEMENT: " + timelineElement);
             Assertions.assertNull(Objects.requireNonNull(timelineElement.getDetails()).getIdF24());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -2494,7 +2488,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertNull(pnPollingResponseV26.getTimelineElement());
             sharedSteps.setFullSentNotificationV26(pnPollingResponseV26.getNotification());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -2515,7 +2509,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertNull(pnPollingResponseV26.getTimelineElement());
             sharedSteps.setFullSentNotificationV26(pnPollingResponseV26.getNotification());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -2538,7 +2532,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertNotNull(Objects.requireNonNull(timelineElement.getDetails()).getDigitalAddress());
             Assertions.assertFalse("DSRDNI00A01A225I@pec.pagopa.it".equalsIgnoreCase(timelineElement.getDetails().getDigitalAddress().getAddress()));
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -2561,7 +2555,7 @@ public class AvanzamentoNotificheB2bSteps {
             log.info("TIMELINE_ELEMENT: " + timelineElement);
             Assertions.assertNotNull(Objects.requireNonNull(timelineElement.getDetails()).getDigitalAddress());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -2602,7 +2596,7 @@ public class AvanzamentoNotificheB2bSteps {
                 }
             }
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -2627,7 +2621,7 @@ public class AvanzamentoNotificheB2bSteps {
                     .as("I tentativi effettuati non corrispondono a quelli attesi.")
                     .hasSameElementsAs(expectedAttemptsMade);
         } catch (AssertionError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -2661,9 +2655,9 @@ public class AvanzamentoNotificheB2bSteps {
 
             Assertions.assertTrue(fieldValue.matches(regex), "Field %s with value %s does not match regex %s".formatted(fieldPath, fieldValue, regex));
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            sharedSteps.throwAssertFailerWithIUN(new AssertionFailedError("Error accessing field %s".formatted(fieldPath)));
+            sharedSteps.throwAssertionErrorWithIUN(new AssertionFailedError("Error accessing field %s".formatted(fieldPath)));
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -2693,10 +2687,10 @@ public class AvanzamentoNotificheB2bSteps {
                     "Field %s with value %s does not match regex %s".formatted(fieldPath, fieldValue,
                             regex));
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            sharedSteps.throwAssertFailerWithIUN(
+            sharedSteps.throwAssertionErrorWithIUN(
                     new AssertionFailedError("Error accessing field %s".formatted(fieldPath)));
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -2719,7 +2713,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertEquals(scheduleDate, refinementDate);
 
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -2733,7 +2727,7 @@ public class AvanzamentoNotificheB2bSteps {
             log.info("TIMELINE_ELEMENT: " + timelineElement);
             Assertions.assertNull(timelineElement);
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -2747,7 +2741,7 @@ public class AvanzamentoNotificheB2bSteps {
             log.info("TIMELINE_ELEMENT: " + timelineElement);
             Assertions.assertNull(timelineElement);
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -2869,7 +2863,7 @@ public class AvanzamentoNotificheB2bSteps {
         try {
             Assertions.assertEquals(numEl, actualNumElements);
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -2893,7 +2887,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertNotNull(Objects.requireNonNull(timelineElement.getDetails()).getPhysicalAddress());
             Assertions.assertTrue(timelineElement.getDetails().getPhysicalAddress().getAddress().matches("^[A-Z0-9_.\\-:@' \\[\\]]*$"));
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -2915,7 +2909,7 @@ public class AvanzamentoNotificheB2bSteps {
             sharedSteps.setFullSentNotificationV26(pnPollingResponseV26.getNotification());
             log.info("TIMELINE_ELEMENT: " + pnPollingResponseV26.getTimelineElement());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -2936,7 +2930,7 @@ public class AvanzamentoNotificheB2bSteps {
             sharedSteps.setFullSentNotificationV26(pnPollingResponseV26.getNotification());
             log.info("TIMELINE_ELEMENT: " + pnPollingResponseV26.getTimelineElement());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -2999,7 +2993,7 @@ public class AvanzamentoNotificheB2bSteps {
                 Assertions.assertDoesNotThrow(() -> legalFactDownloadMetadataResponse.set(
                         this.b2bClient.getDownloadLegalFact(sharedSteps.getFullSentNotificationV26().getIun(), finalKeySearch)));
             } catch (AssertionFailedError assertionFailedError) {
-                sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+                sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
             }
         }
         return legalFactDownloadMetadataResponse.get();
@@ -3051,7 +3045,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertNotNull(Objects.requireNonNull(timelineElement.getDetails()).getPhysicalAddress());
             Assertions.assertTrue(timelineElement.getDetails().getPhysicalAddress().getAddress().matches("^[A-Z0-9_.\\-:;@' \\[\\] ]*$"));
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -3072,7 +3066,7 @@ public class AvanzamentoNotificheB2bSteps {
             log.info("TIMELINE_ELEMENT: " + pnPollingResponseV26.getTimelineElement());
             timelineElement = pnPollingResponseV26.getTimelineElement();
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -3129,7 +3123,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertEquals(mapValueFromTable(table, "physicalAddress_State"), timelineElement.getDetails().getNormalizedAddress().getForeignState());
 
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -3164,7 +3158,7 @@ public class AvanzamentoNotificheB2bSteps {
             log.info("TIMELINE_ELEMENT: " + timelineElement);
             Assertions.assertEquals(Objects.requireNonNull(timelineElement.getDetails()).getFailureCause(), failureCause);
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -3186,7 +3180,7 @@ public class AvanzamentoNotificheB2bSteps {
             log.info("TIMELINE_ELEMENT: " + timelineElement);
             Assertions.assertEquals(Objects.requireNonNull(timelineElement.getDetails()).getFailureCause(), failureCause);
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -3259,7 +3253,7 @@ public class AvanzamentoNotificheB2bSteps {
                     sharedSteps.getFullSentNotificationV26().getIun(), schedulingDateMillis, digitalDeliveryCreationMillis, diff, delayMillis, delta);
             Assertions.assertTrue(diff <= delayMillis + delta && diff >= delayMillis - delta);
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -3281,7 +3275,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertNotNull(Objects.requireNonNull(timelineElement.getDetails()).getNotRefinedRecipientIndexes());
             Assertions.assertFalse(timelineElement.getDetails().getNotRefinedRecipientIndexes().isEmpty());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -3326,7 +3320,7 @@ public class AvanzamentoNotificheB2bSteps {
             }
 
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -3385,7 +3379,7 @@ public class AvanzamentoNotificheB2bSteps {
                 Assertions.assertNotNull(notificationPriceV23.getVat());
                 log.info("notification price v23: {}", notificationPriceV23);
             } catch (AssertionFailedError assertionFailedError) {
-                sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+                sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
             }
         }
     }
@@ -3409,7 +3403,7 @@ public class AvanzamentoNotificheB2bSteps {
                 Assertions.assertEquals(paFee, notificationPriceV23.getPaFee());
                 log.info("notification price v23: {}", notificationPriceV23);
             } catch (AssertionFailedError assertionFailedError) {
-                sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+                sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
             }
         }
     }
@@ -3428,7 +3422,7 @@ public class AvanzamentoNotificheB2bSteps {
                     Assertions.assertNotNull(notificationPrice.getNotificationViewDate());
 
                 } catch (AssertionFailedError assertionFailedError) {
-                    sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+                    sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
                 }
             }
 
@@ -3552,7 +3546,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertEquals(costo, timelineElement.getDetails().getAnalogCost());
             Assertions.assertEquals(peso, timelineElement.getDetails().getEnvelopeWeight());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -3562,7 +3556,7 @@ public class AvanzamentoNotificheB2bSteps {
         try {
             Assertions.assertEquals(peso, timelineElement.getDetails().getEnvelopeWeight());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -3651,7 +3645,7 @@ public class AvanzamentoNotificheB2bSteps {
             TimelineElementV26 timelineElementV26 = pnPollingResponseV26.getTimelineElement();
             log.info("TIMELINE_ELEMENT: " + timelineElementV26);
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -3714,7 +3708,7 @@ public class AvanzamentoNotificheB2bSteps {
             timelineElement = pnPollingResponseV26.getTimelineElement();
             log.info("TIMELINE_ELEMENT: " + timelineElement);
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
         return timelineElement;
     }
@@ -3733,7 +3727,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertNull(pnPollingResponseV23.getTimelineElement());
             sharedSteps.setFullSentNotificationV23(pnPollingResponseV23.getNotification());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 

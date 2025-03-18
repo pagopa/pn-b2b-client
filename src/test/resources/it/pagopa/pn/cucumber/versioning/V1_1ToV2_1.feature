@@ -91,7 +91,7 @@ Feature: verifica compatibilità tra v1.1 a v2.1
       | senderDenomination | Comune di milano            |
     And destinatario "Mario Cucumber"
     When la notifica viene inviata tramite api b2b con la versione "V1" dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
-    Then si verifica la corretta acquisizione della notifica V1
+    Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
 
@@ -127,7 +127,7 @@ Feature: verifica compatibilità tra v1.1 a v2.1
       | feePolicy          | DELIVERY_MODE               |
     And destinatario "Mario Cucumber"
     When la notifica viene inviata tramite api b2b con la versione "V1" dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
-    Then si verifica la corretta acquisizione della notifica V1
+    Then si verifica la corretta acquisizione della notifica
     And "Mario Cucumber" legge la notifica ricevuta
     Then vengono verificati costo = "100" e data di perfezionamento della notifica
 

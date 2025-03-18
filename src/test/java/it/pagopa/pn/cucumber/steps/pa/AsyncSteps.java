@@ -242,7 +242,7 @@ public class AsyncSteps {
             log.info("Amount GPD: " + amountGPD);
             Assertions.assertEquals(amountGPD, Integer.parseInt(amount));
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithAmountGDPAndIUN(assertionFailedError, amountGPD);
+            sharedSteps.throwAssertionFailedErrorWithAmountGDPAndIUN(assertionFailedError, amountGPD);
         }
     }
 
@@ -251,7 +251,7 @@ public class AsyncSteps {
         try {
             Assertions.assertEquals(amountGPD, amountNotifica.get(user));
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithAmountGDPAndIUN(assertionFailedError, amountGPD);
+            sharedSteps.throwAssertionFailedErrorWithAmountGDPAndIUN(assertionFailedError, amountGPD);
         }
     }
 
@@ -344,7 +344,7 @@ public class AsyncSteps {
             amountGPD = amountGPD - Integer.parseInt(String.valueOf(Objects.requireNonNull(paymentPositionModel.get(0).getPaymentOption()).get(0).getAmount()));
             avanzamentoNotificheB2bSteps.priceVerificationV23(amountGPD, null, 0, tipoCosto);
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithAmountGDPAndIUN(assertionFailedError, amountGPD);
+            sharedSteps.throwAssertionFailedErrorWithAmountGDPAndIUN(assertionFailedError, amountGPD);
         }
     }
 

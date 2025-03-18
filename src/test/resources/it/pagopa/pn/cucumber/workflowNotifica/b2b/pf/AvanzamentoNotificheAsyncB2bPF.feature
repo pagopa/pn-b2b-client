@@ -201,7 +201,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | apply_cost_pagopa       | SI                   |
       | payment_multy_number    | 1                    |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED" per controllo GPD
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED per controllo GPD
     And viene aggiunto il costo della notifica totale
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS"
     And lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
@@ -226,7 +226,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | apply_cost_pagopa       | SI           |
       | payment_multy_number    | 1            |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED" per controllo GPD
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED per controllo GPD
     And viene aggiunto il costo della notifica totale
     Then  lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
     And si controlla che l'aggiornamento del costo del utente 0 sia corretto
@@ -251,7 +251,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | apply_cost_f24          | SI                   |
       | payment_multy_number    | 1                    |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED" per controllo GPD
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED per controllo GPD
     And viene aggiunto il costo della notifica totale
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" al tentativo "ATTEMPT_0"
     Then lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
@@ -280,7 +280,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | apply_cost_pagopa       | SI                    |
       | payment_multy_number    | 1                     |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED" per controllo GPD
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED per controllo GPD
     And viene aggiunto il costo della notifica totale
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_0"
     And viene effettuato il controllo del cambiamento del amount nella timeline "SEND_ANALOG_DOMICILE" del utente 0 al tentativo:
@@ -313,7 +313,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | apply_cost_pagopa       | SI           |
       | payment_multy_number    | 1            |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" per la posizione debitoria 0 del pagamento 0
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED" per controllo GPD
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED per controllo GPD
     Then viene aggiunto il costo della notifica totale
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS"
     Then lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
@@ -338,7 +338,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | apply_cost_pagopa       | SI           |
       | payment_multy_number    | 1            |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED" per controllo GPD
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED per controllo GPD
     And viene aggiunto il costo della notifica totale
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS"
     And lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
@@ -365,7 +365,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | apply_cost_pagopa       | SI           |
       | payment_multy_number    | 1            |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED" per controllo GPD
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED per controllo GPD
     Then viene aggiunto il costo della notifica totale
     Then lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
     And si controlla che l'aggiornamento del costo del utente 0 sia corretto
@@ -409,7 +409,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | paFee              | 10                          |
     And destinatario "Mario Cucumber"
     When la notifica viene inviata tramite api b2b con la versione "V1" dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
-    Then si verifica lo scarto dell' acquisizione della notifica V1
+    Then si verifica lo scarto dell' acquisizione della notifica
 
   @Async @refused
   Scenario: [B2B_ASYNC_2_MULTI] Notifica multi PF/PG-Verifica amount GPD in fase "REQUEST_REFUSED" costo aggiornato a 0
@@ -520,7 +520,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | payment_multy_number    | 2                     |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Gherkin Analogic" per la posizione debitoria 2 del pagamento 0
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Gherkin Analogic" per la posizione debitoria 3 del pagamento 1
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED" per controllo GPD
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED per controllo GPD
     And viene aggiunto il costo della notifica totale
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     And la notifica può essere annullata dal sistema tramite codice IUN
@@ -561,7 +561,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | payment_multy_number    | 1            |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" per la posizione debitoria 0 del pagamento 0
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Gherkin Analogic" per la posizione debitoria 1 del pagamento 0
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED" per controllo GPD
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED per controllo GPD
     Then viene aggiunto il costo della notifica totale
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" per l'utente 0
     And lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"

@@ -464,8 +464,8 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
     }
 
     @Override
-    public void verificaPresenzaSercQ(boolean present) {
-        String channel = present ? "SERCQ" : "PEC";
+    public void verificaPresenzaSercQ(boolean isPresent) {
+        String channel = isPresent ? "SERCQ" : "PEC";
         Assertions.assertTrue(progressResponseElementList.stream()
                 .filter(data -> data.getTimelineEventCategory() != null)
                 .filter(progressResponseElement -> progressResponseElement.getTimelineEventCategory().getValue().contains("SEND_DIGITAL_FEEDBACK"))

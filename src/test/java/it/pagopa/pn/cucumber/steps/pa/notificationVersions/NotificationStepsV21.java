@@ -123,8 +123,29 @@ public class NotificationStepsV21 implements NotificationStepsInterface {
             Assertions.assertDoesNotThrow(() -> {
                 notificationCreationDate = OffsetDateTime.now();
                 notificationResponse = (NewNotificationResponse) uploadNotification();
-                threadWait(wait);
-                fullSentNotification = waitForRequestAccepted(notificationResponse, status, pollingStrategy);
+                if (status.equalsIgnoreCase(NOTIFICATION_STATUS_ACCEPTED)) {
+                    threadWait(wait);
+                    fullSentNotification = waitForRequestAccepted(notificationResponse, pollingStrategy);
+                    threadWait(wait);
+                    Assertions.assertNotNull(fullSentNotification);
+                } else if (status.equalsIgnoreCase(NOTIFICATION_STATUS_REFUSED)) {
+                    String errorCode = waitForRequestRefused(notificationResponse, pollingStrategy);
+                    sharedSteps.setErrorCode(errorCode);
+                    threadWait(wait);
+                    Assertions.assertFalse(errorCode.isEmpty());
+                }
+                //TODO MATTEO: TUTTO DA VERIFICARE COME CASO
+                else if (status.equalsIgnoreCase(NOTIFICATION_STATUS_NOT_REFUSED)) {
+                    it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.RequestStatus response = sharedSteps.getB2bUtils().getClient().notificationCancellation(
+                            new String(Base64Utils.decodeFromString(notificationResponse.getNotificationRequestId())));
+                    Assertions.assertNotNull(response);
+                    Assertions.assertNotNull(response.getDetails());
+                    Assertions.assertFalse(response.getDetails().isEmpty());
+                    Assertions.assertTrue("NOTIFICATION_CANCELLATION_ACCEPTED".equalsIgnoreCase(response.getDetails().get(0).getCode()));
+                    boolean refused = waitForRequestNotRefused(notificationResponse, pollingStrategy);
+                    threadWait(wait);
+                    Assertions.assertFalse(refused);
+                }
             });
             threadWait(wait);
             Assertions.assertNotNull(fullSentNotification);
@@ -180,12 +201,40 @@ public class NotificationStepsV21 implements NotificationStepsInterface {
         //TODO MATTEO IMPLEMENTARE
     }
 
-    private FullSentNotificationV21 waitForRequestAccepted(NewNotificationResponse response, String status, String pollingStrategy) {
+    private FullSentNotificationV21 waitForRequestAccepted(NewNotificationResponse response, String pollingStrategy) {
         IPnPollingService pollingService = sharedSteps.getB2bUtils().getPollingFactory().getPollingService(getPollingStrategy(pollingStrategy));
-        PnPollingResponseV21 pollingResponse = (PnPollingResponseV21) pollingService.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(status).build());
+        PnPollingResponseV21 pollingResponse = (PnPollingResponseV21) pollingService.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(ACCEPTED).build());
         FullSentNotificationV21 result = pollingResponse.getNotification() == null ? null : pollingResponse.getNotification();
         sharedSteps.setFullSentNotificationV21(result);
         return result;
+    }
+
+    private String waitForRequestRefused(NewNotificationResponse response, String pollingStrategy) {
+        log.info("Request status for " + response.getNotificationRequestId());
+        long startTime = System.currentTimeMillis();
+
+        IPnPollingService pollingService = sharedSteps.getB2bUtils().getPollingFactory().getPollingService(getPollingStrategy(pollingStrategy));
+        PnPollingResponseV21 pollingResponse = (PnPollingResponseV21) pollingService.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(REFUSED).build());
+
+        long endTime = System.currentTimeMillis();
+        log.info("Execution time {}ms", (endTime - startTime));
+
+        StringBuilder error = new StringBuilder();
+        if (pollingResponse.getStatusResponse() != null
+                && pollingResponse.getStatusResponse().getErrors() != null
+                && !pollingResponse.getStatusResponse().getErrors().isEmpty()) {
+            for (ProblemError err : pollingResponse.getStatusResponse().getErrors()) {
+                error.append(" ").append(err.getDetail());
+            }
+        }
+        log.info("Detail status {}", error);
+        return error.toString();
+    }
+
+    private boolean waitForRequestNotRefused(NewNotificationResponse response, String pollingStrategy) {
+        IPnPollingService pollingService = sharedSteps.getB2bUtils().getPollingFactory().getPollingService(getPollingStrategy(pollingStrategy));
+        PnPollingResponseV21 pollingResponse = (PnPollingResponseV21) pollingService.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(REFUSED).build());
+        return pollingResponse.getResult();
     }
 
     private String getPollingStrategy(String pollingStrategy) {

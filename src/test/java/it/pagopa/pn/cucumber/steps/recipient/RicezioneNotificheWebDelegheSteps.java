@@ -519,7 +519,7 @@ public class RicezioneNotificheWebDelegheSteps {
 
             Assertions.assertNotNull(timelineElement);
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
 
         webRecipientClient.setBearerToken(baseUser);
@@ -536,7 +536,7 @@ public class RicezioneNotificheWebDelegheSteps {
 
             Assertions.assertNull(timelineElement);
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
         webRecipientClient.setBearerToken(baseUser);
     }

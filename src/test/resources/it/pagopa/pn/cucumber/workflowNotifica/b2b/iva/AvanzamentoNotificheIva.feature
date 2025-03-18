@@ -109,7 +109,7 @@ Feature: controllo costo notifiche con IVA
       | apply_cost_pagopa       | SI          |
       | payment_multy_number    | 1           |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED" per controllo GPD
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED per controllo GPD
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     Then  lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
     And viene effettuato il controllo del amount di GPD con il costo "totale" della notifica con iva inclusa
@@ -133,7 +133,7 @@ Feature: controllo costo notifiche con IVA
       | apply_cost_pagopa       | SI           |
       | payment_multy_number    | 1            |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED" per controllo GPD
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED per controllo GPD
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS"
     Then  lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
     And viene effettuato il controllo del amount di GPD con il costo "totale" della notifica con iva inclusa
@@ -194,7 +194,7 @@ Feature: controllo costo notifiche con IVA
       | payment_f24             | NULL        |
       | payment_multy_number    | 1           |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED" per controllo GPD
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED per controllo GPD
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS"
     Then  lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
     And viene effettuato il controllo del amount di GPD con il costo "totale" della notifica con iva inclusa
@@ -289,7 +289,7 @@ Feature: controllo costo notifiche con IVA
       | apply_cost_pagopa       | SI                     |
       | payment_multy_number    | 1                      |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED" per controllo GPD
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED per controllo GPD
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" al tentativo "ATTEMPT_0"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" al tentativo "ATTEMPT_1"
     Then  lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"

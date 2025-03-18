@@ -54,7 +54,7 @@ public class AppIOB2bSteps {
             );
             Assertions.assertNotNull(notificationByIun.get());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -71,7 +71,7 @@ public class AppIOB2bSteps {
 
             Assertions.assertEquals(this.sha256DocumentDownload, sentNotificationDocument.getSha256());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -87,7 +87,7 @@ public class AppIOB2bSteps {
 
             Assertions.assertEquals(this.sha256DocumentDownload, sentNotificationDocument.getSha256());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -143,7 +143,7 @@ public class AppIOB2bSteps {
             );
             Assertions.assertNotNull(notificationByIun.get());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
         String url = null;
         for (ThirdPartyAttachment tmpAtt : notificationByIun.get().getAttachments()) {
@@ -248,7 +248,7 @@ public class AppIOB2bSteps {
             );
             Assertions.assertNotNull(notificationByIun.get());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -265,7 +265,7 @@ public class AppIOB2bSteps {
 
             Assertions.assertEquals(this.sha256DocumentDownload, sentNotificationDocument.getSha256());
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 

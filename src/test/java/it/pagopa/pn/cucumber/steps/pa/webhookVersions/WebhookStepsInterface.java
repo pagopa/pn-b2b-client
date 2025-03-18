@@ -95,5 +95,5 @@ public interface WebhookStepsInterface {
 
     void checkCorrectDisabling(UUID streamId);
 
-    void verificaPresenzaSercQ(boolean present);
+    void verificaPresenzaSercQ(boolean isPresent);
 }

@@ -298,7 +298,7 @@ public class RicezioneNotificheWebSteps {
             Assertions.assertEquals(scheduleDate, refinementDate);
 
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -386,7 +386,7 @@ public class RicezioneNotificheWebSteps {
             Assertions.assertNull(this.notificationError);
             Assertions.assertNull(sharedSteps.consumeNotificationError());
         } catch (AssertionFailedError e) {
-            sharedSteps.throwAssertFailerWithIUN(e);
+            sharedSteps.throwAssertionErrorWithIUN(e);
         }
     }
 
