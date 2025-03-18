@@ -339,7 +339,7 @@ public class WebhookStepsV26 implements WebhookStepsInterface {
 
     @Override
     public boolean checkStatus(AvanzamentoNotificheWebhookB2bSteps.StatusElementSearchResult<?> statusForStream) {
-        NotificationStatus notificationInternalStatus = NotificationStatus.valueOf(((NotificationStatus) statusForStream.getNotificationStatus()).name());
+        NotificationStatusV26 notificationInternalStatus = NotificationStatusV26.valueOf(((NotificationStatusV26) statusForStream.getNotificationStatus()).name());
         boolean found = false;
         for (int i = 0; i < statusForStream.getNumCheck(); i++) {
             try {
