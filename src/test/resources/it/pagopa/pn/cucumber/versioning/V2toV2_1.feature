@@ -43,7 +43,7 @@ Feature: verifica compatibilità tra v2 a v2.1
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario "Mario Gherkin"
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm | NULL |
       | payment_f24        | NULL |
     When la notifica viene inviata tramite api b2b con la versione "V2" dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
@@ -58,7 +58,7 @@ Feature: verifica compatibilità tra v2 a v2.1
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario "Mario Gherkin"
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm | NULL |
       | payment_f24        | NULL |
     When la notifica viene inviata tramite api b2b con la versione "V2" dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
@@ -107,7 +107,7 @@ Feature: verifica compatibilità tra v2 a v2.1
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario "Mario Gherkin"
+    And destinatario "Mario Gherkin" e:
       | payment_noticeCode | 355312817721270543 |
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "409"
@@ -117,7 +117,7 @@ Feature: verifica compatibilità tra v2 a v2.1
     Given viene generata una nuova notifica con la versione "V2"
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Mario Gherkin"
+    And destinatario "Mario Gherkin" e:
       | physicalAddress_address | <indirizzo> |
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400"

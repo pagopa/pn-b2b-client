@@ -543,7 +543,6 @@ public class SharedSteps {
         sendNotification(null, status);
     }
 
-    //TODO MATTEO TEST
     @When("la notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi {string}")
     public void sendNotification(String paName, String status) {
         NotificationVersion notificationVersion = versionUsed == null ? getNotificationVersion(MOST_RECENT) : versionUsed;
@@ -675,7 +674,7 @@ public class SharedSteps {
     }
 
     //TODO: per test normalizzatore
-    //TODO MATTEO: il metodo riceveva un parametro da scenario Outline, per quello sembra non venisse richiamato (AddressValidation.feature)
+    //TODO MATTEO: il metodo riceve un parametro da scenario Outline, per quello sembra non venga richiamato (AddressValidation.feature)
     @When("la notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi HTTP_ERROR")
     public void sendNotificationHttpError(String paName) {
         NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface();

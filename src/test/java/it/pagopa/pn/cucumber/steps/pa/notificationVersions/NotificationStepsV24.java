@@ -51,7 +51,7 @@ public class NotificationStepsV24 implements NotificationStepsInterface {
     @Override
     public void setNotificationRequest(Map<String, String> data) {
         notificationRequest = sharedSteps.getDataTableTypeUtil().convertNotificationRequestV24(data);
-        sharedSteps.setNotificationRequest(notificationRequest);//TODO MATTEO: SOLO QUA, CHE E' L'ULTIMA VERSIONE
+        sharedSteps.setNotificationRequest(notificationRequest);//TODO MATTEO: SOLO IN QUESTA VERSIONE 24, CHE E' L'ULTIMA VERSIONE
         sharedSteps.setVersionUsed(version);
     }
 
@@ -119,14 +119,12 @@ public class NotificationStepsV24 implements NotificationStepsInterface {
         return notificationResponse;
     }
 
-    //TODO MATTEO TEST
     @Override
     public void sendNotification(int wait, String status, String pollingStrategy) {
         try {
             Assertions.assertDoesNotThrow(() -> {
                 notificationCreationDate = OffsetDateTime.now();
                 notificationResponse = (NewNotificationResponse) uploadNotification();
-                sharedSteps.setNewNotificationResponse(notificationResponse);//TODO MATTEO: SOLO QUA, CHE E' L'ULTIMA VERSIONE
                 if (status.equalsIgnoreCase(NOTIFICATION_STATUS_ACCEPTED)) {
                     threadWait(wait);
                     fullSentNotification = waitForRequestAccepted(notificationResponse, pollingStrategy);
@@ -330,6 +328,7 @@ public class NotificationStepsV24 implements NotificationStepsInterface {
                 throw new PnB2bException(e.getMessage());
             }
         }
+        sharedSteps.setNewNotificationResponse(response);//TODO MATTEO: SOLO IN QUESTA VERSIONE 24, CHE E' L'ULTIMA VERSIONE
         return response;
     }
 

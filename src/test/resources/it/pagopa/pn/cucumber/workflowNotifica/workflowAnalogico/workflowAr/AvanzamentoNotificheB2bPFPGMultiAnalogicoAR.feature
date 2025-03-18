@@ -276,7 +276,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico AR
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS"
     Then "Mario Gherkin" legge la notifica dopo i 10 giorni
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" abbia notificationCost ugauale a "null"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" abbia notificationCost uguale a "null"
 
 
   @workflowAnalogico

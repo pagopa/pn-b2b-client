@@ -83,7 +83,7 @@ public class RaddFsuSteps {
             case MARIO_GHERKIN -> this.currentUserCf = MARIO_GHERKIN_TAX_ID;
             case SIGNOR_CASUALE ->
                     this.currentUserCf = sharedSteps.getFullSentNotificationV26().getRecipients().get(0).getTaxId();
-            case "SIGNOR GENERATO" -> this.currentUserCf = generateCF(System.nanoTime());
+            case SIGNOR_GENERATO -> this.currentUserCf = generateCF(System.nanoTime());
             default -> this.currentUserCf = userName;
         }
     }

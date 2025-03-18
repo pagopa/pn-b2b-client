@@ -67,7 +67,7 @@ Feature: verifica compatibilità tra v1 a v2
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario "Mario Gherkin"
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm | SI |
       | apply_cost_pagopa  | SI |
     When la notifica viene inviata tramite api b2b con la versione "V2" dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
@@ -80,7 +80,7 @@ Feature: verifica compatibilità tra v1 a v2
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario "Mario Gherkin"
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm | SI |
       | apply_cost_pagopa  | SI |
     When la notifica viene inviata tramite api b2b con la versione "V1" dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
@@ -119,7 +119,7 @@ Feature: verifica compatibilità tra v1 a v2
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario "Mario Gherkin"
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm | NULL |
       | payment_f24        | NULL |
     When la notifica viene inviata tramite api b2b con la versione "V1" dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
@@ -132,7 +132,7 @@ Feature: verifica compatibilità tra v1 a v2
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | NULL                        |
-    And destinatario "Mario Gherkin"
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm | SI   |
       | payment_f24        | NULL |
     When la notifica viene inviata tramite api b2b con la versione "V2" dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
@@ -146,7 +146,7 @@ Feature: verifica compatibilità tra v1 a v2
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
       | feePolicy          | DELIVERY_MODE                   |
-    And destinatario "Mario Gherkin"
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm         | SI   |
       | payment_noticeCodeOptional | SI   |
       | payment_f24                | NULL |
@@ -159,7 +159,7 @@ Feature: verifica compatibilità tra v1 a v2
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
       | feePolicy          | DELIVERY_MODE                   |
-    And destinatario "Mario Gherkin"
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm         | SI   |
       | payment_noticeCodeOptional | NO   |
       | payment_f24flatRate        | NULL |
@@ -174,7 +174,7 @@ Feature: verifica compatibilità tra v1 a v2
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario "Mario Gherkin"
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm         | SI   |
       | payment_noticeCodeOptional | SI   |
       | payment_f24                | NULL |
@@ -187,7 +187,7 @@ Feature: verifica compatibilità tra v1 a v2
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario "Mario Gherkin"
+    And destinatario "Mario Gherkin" e:
       | payment_pagoPaForm | NULL |
       | payment_f24        | NULL |
     When la notifica viene inviata tramite api b2b con la versione "V1" dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"

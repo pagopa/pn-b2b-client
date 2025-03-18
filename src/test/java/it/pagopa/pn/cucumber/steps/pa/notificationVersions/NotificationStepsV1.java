@@ -106,7 +106,6 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
         return notificationResponse;
     }
 
-    //TODO MATTEO TEST
     @Override
     public void sendNotification(int wait, String status, String pollingStrategy) {
         try {

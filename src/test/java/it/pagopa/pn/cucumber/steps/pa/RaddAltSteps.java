@@ -673,24 +673,7 @@ public class RaddAltSteps {
         }
         //TODO MATTEO: Aggiungere all'enum dei destinatari i casi mancanti
 //        switch (cf.toUpperCase()) {
-//            case "MARIO CUCUMBER" -> {
-//                this.currentUserCf = Destinatario.MARIO_CUCUMBER.getTaxId();
-//                this.recipientType = "PF";
-//            }
-//            case "MARIO GHERKIN" -> {
-//                this.currentUserCf = Destinatario.MARIO_GHERKIN.getTaxId();
-//                this.recipientType = "PF";
-//            }
-//            case "LEONARDO DA VINCI" -> {
-//                this.currentUserCf = Destinatario.LEONARDO_DA_VINCI.getTaxId();
-//                this.recipientType = "PF";
-//            }
-//            case "CUCUMBERSPA" -> {
-//                this.currentUserCf = sharedSteps.getCucumberSpataxId();
-//                this.recipientType = "PG";
-//            }
         //TODO MATTEO: SBAGLIO O LE CASISTICHE CASUALE E GENERATO SONO INVERTITE?
-
 //            case "SIGNOR CASUALE" -> {
 //                this.currentUserCf = sharedSteps.getSentNotification().getRecipients().get(0).getTaxId();
 //                this.recipientType = "PF";
@@ -699,12 +682,6 @@ public class RaddAltSteps {
 //                this.currentUserCf = generateCF(System.nanoTime());
 //                this.recipientType = "PF";
 //            }
-//            case "GHERKIN IRREPERIBILE" -> {
-//                this.currentUserCf = sharedSteps.getGherkinIrreperibileTaxId();
-//                this.recipientType = "PG";
-//            }
-//            default -> this.currentUserCf = cf;
-//        }
     }
 
     @Given("Il cittadino {string} come destinatario {int} mostra il QRCode {string}")
