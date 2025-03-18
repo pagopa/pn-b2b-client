@@ -3,6 +3,8 @@ package it.pagopa.pn.client.b2b.pa.service.impl;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.ApiClient;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.pa.recipient.NotificationSentApi;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient.NotificationReceivedApi;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffDocumentDownloadMetadataResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffDocumentType;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffFullNotificationV1;
 import it.pagopa.pn.client.b2b.pa.service.IPnBFFRecipientNotificationClient;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
@@ -12,6 +14,8 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.UUID;
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
@@ -98,6 +102,16 @@ public class PnBFFRecipientNotificationClientImpl implements IPnBFFRecipientNoti
     @Override
     public ResponseEntity<it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffFullNotificationV1> getSentNotificationV1WithHttpInfoForSender(String iun) {
         return notificationSentApi.getSentNotificationV1WithHttpInfo(iun);
+    }
+
+    @Override
+    public BffDocumentDownloadMetadataResponse getReceivedNotificationDocumentV1(String iun, BffDocumentType documentType, UUID mandateId, Integer documentIdx, String documentId) {
+        return notificationReceivedApi.getReceivedNotificationDocumentV1(iun, documentType, mandateId, documentIdx, documentId);
+    }
+
+    @Override
+    public ResponseEntity<BffDocumentDownloadMetadataResponse> getReceivedNotificationPaymentV1WithHttpInfo(String iun, String attachmentName, UUID mandateId, Integer attachmentIdx) {
+        return notificationReceivedApi.getReceivedNotificationPaymentV1WithHttpInfo(iun, attachmentName, mandateId, attachmentIdx);
     }
 
     @Override
