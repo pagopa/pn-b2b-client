@@ -1,14 +1,5 @@
 package it.pagopa.pn.cucumber.steps;
 
-import static it.pagopa.pn.cucumber.utils.FiscalCodeGenerator.generateCF;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.DOCUMENT;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.PAYMENT;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.PAYMENT_PAGOPA_FORM;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.getDefaultValue;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.getValue;
-import static java.util.Objects.nonNull;
-import static org.awaitility.Awaitility.await;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -24,6 +15,7 @@ import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.exception.IllegalConfigurationException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.DigitalAddress;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.DigitalAddressSource;
@@ -51,21 +43,13 @@ import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
-import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.IPnTosPrivacyClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnGPDClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnServiceDeskClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnWebRecipientExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.ProgressResponseElement;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.ProgressResponseElementV26;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.StreamMetadataResponseV26;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.ProgressResponseElementV23;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v27.ProgressResponseElementV27;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v27.StreamMetadataResponseV27;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamMetadataResponseV23;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model.RequestNewApiKey;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model.ResponseNewApiKey;
@@ -73,18 +57,7 @@ import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalAndUnverifiedDigitalAddress;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.UserAddresses;
-import it.pagopa.pn.cucumber.utils.DataTest;
-import it.pagopa.pn.cucumber.utils.EventId;
-import it.pagopa.pn.cucumber.utils.GroupPosition;
-import it.pagopa.pn.cucumber.utils.NotificationValue;
-import it.pagopa.pn.cucumber.utils.TimelineEventId;
-import java.io.IOException;
-import java.security.SecureRandom;
-import java.time.Duration;
-import java.time.OffsetDateTime;
-import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.TimeUnit;
+import it.pagopa.pn.cucumber.utils.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -100,6 +73,19 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpStatusCodeException;
+
+import java.io.IOException;
+import java.security.SecureRandom;
+import java.time.Duration;
+import java.time.OffsetDateTime;
+import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.TimeUnit;
+
+import static it.pagopa.pn.cucumber.utils.FiscalCodeGenerator.generateCF;
+import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
+import static java.util.Objects.nonNull;
+import static org.awaitility.Awaitility.await;
 
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -152,17 +138,13 @@ public class SharedSteps {
     private final String gherkinSrltaxId = "12666810299";
 
     @Getter
-    private final String cucumberSpataxId = "20517490320"; //
+    private final String cucumberSpataxId = "20517490320";
 
     @Getter
     private SettableApiKey.ApiKeyType apiKeyTypeSetted = SettableApiKey.ApiKeyType.MVP_1;
 
     @Getter
     private final PnPollingFactory pollingFactory;
-
-    @Getter
-    @Setter
-    private ProgressResponseElement progressResponseElement;
 
     @Getter
     @Setter
@@ -175,14 +157,6 @@ public class SharedSteps {
     @Getter
     @Setter
     private TimelineElementV26 timelineElement;
-
-    @Getter
-    @Setter
-    private ProgressResponseElementV23 progressResponseElementV23;
-
-    @Getter
-    @Setter
-    private ProgressResponseElementV26 progressResponseElementV26;
 
     @Getter
     @Setter
@@ -206,7 +180,7 @@ public class SharedSteps {
 
     @Getter
     @Setter
-    private List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.ProgressResponseElement> progressResponseElements = null;
+    private StreamMetadataResponseV27 eventStreamV27;
 
     @Getter
     @Setter
@@ -220,19 +194,27 @@ public class SharedSteps {
 
     @Getter
     @Setter
-    private List<ProgressResponseElementV23> progressResponseElementsV23 = null;
+    private List<ProgressResponseElement> progressResponseElementList = null;
 
     @Getter
     @Setter
-    private List<ProgressResponseElementV24> progressResponseElementsV24 = null;
+    private List<ProgressResponseElementV23> progressResponseElementListV23 = null;
 
     @Getter
     @Setter
-    private List<ProgressResponseElementV25> progressResponseElementsV25 = null;
+    private List<ProgressResponseElementV24> progressResponseElementListV24 = null;
 
     @Getter
     @Setter
-    private List<ProgressResponseElementV26> progressResponseElementsV26 = null;
+    private List<ProgressResponseElementV25> progressResponseElementListV25 = null;
+
+    @Getter
+    @Setter
+    private List<ProgressResponseElementV26> progressResponseElementListV26 = null;
+
+    @Getter
+    @Setter
+    private List<ProgressResponseElementV27> progressResponseElementListV27 = null;
 
     @Value("${pn.interop.base-url}")
     private String interopBaseUrl;
@@ -290,7 +272,7 @@ public class SharedSteps {
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationRequest notificationRequestV2;
     @Getter
     @Setter
-    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.FullSentNotificationV20 notificationResponseCompleteV2;
+    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.FullSentNotificationV20 notificationResponseCompleteV20;
 
     //V21
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationResponse newNotificationResponseV21;
@@ -315,9 +297,10 @@ public class SharedSteps {
     @Setter
     private FullSentNotificationV25 notificationResponseCompleteV25;
 
+    //V26
     @Getter
     @Setter
-    private FullSentNotificationV26 notificationResponseComplete;
+    private FullSentNotificationV26 notificationResponseCompleteV26;
 
     private String settedPa = "Comune_1";
     private boolean groupToSet = true;
@@ -468,7 +451,7 @@ public class SharedSteps {
     TODO: migliorare e rendere di utilità generale
      */
     @Given("vengono inviate {int} notifiche per l'utente Signor casuale con il {string} e si aspetta fino allo stato COMPLETELY_UNREACHABLE")
-    public void vengonoInviateNotifichePerLUtenteSignorCasualeConIlESiAspettaFinoAlloStatoCOMPLETELY_UNREACHABLE(int numberOfNotification, String pa) {
+    public void sendNotificationForUserSignorCasualeAndWaitUntilCompletelyUnreacheable(int numberOfNotification, String pa) {
         List<NewNotificationRequestV24> notificationRequests = new LinkedList<>();
         String generatedFiscalCode = generateCF(System.currentTimeMillis());
         for (int i = 0; i < numberOfNotification; i++) {
@@ -513,7 +496,9 @@ public class SharedSteps {
                     threadWait(getWorkFlowWait());
                     fullSentNotificationV26 = b2bClient.getSentNotification(fullSentNotificationV26.getIun());
                     log.info("NOTIFICATION_TIMELINE: " + fullSentNotificationV26.getTimeline());
-                    timelineElement = fullSentNotificationV26.getTimeline().stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(TimelineElementCategoryV26.COMPLETELY_UNREACHABLE)).findAny().orElse(null);
+                    timelineElement = fullSentNotificationV26.getTimeline().stream().filter(
+                            elem -> Objects.requireNonNull(elem.getCategory().getValue())
+                                    .equals(TimelineElementCategoryV23.COMPLETELY_UNREACHABLE.getValue())).findAny().orElse(null);
                     if (timelineElement != null) {
                         break;
                     }
@@ -551,8 +536,8 @@ public class SharedSteps {
         }
         log.debug("End IUN list");
         //la prima notifica viene inserita
-        this.notificationResponseComplete = sentNotifications.poll();
-        log.debug("notificationResponseComplete: {}", this.notificationResponseComplete);
+        this.notificationResponseCompleteV26 = sentNotifications.poll();
+        log.debug("notificationResponseComplete: {}", this.notificationResponseCompleteV26);
     }
 
     @And("destinatario Mario Cucumber")
@@ -1262,12 +1247,12 @@ public class SharedSteps {
 
                 threadWait(wait);
 
-                notificationResponseComplete = b2bUtils.waitForRequestAcceptation(newNotificationResponse);
+                notificationResponseCompleteV26 = b2bUtils.waitForRequestAcceptation(newNotificationResponse);
             });
 
             threadWait(wait);
 
-            Assertions.assertNotNull(notificationResponseComplete);
+            Assertions.assertNotNull(notificationResponseCompleteV26);
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
                     "{RequestID: " + (newNotificationResponse == null ? "NULL" : newNotificationResponse.getNotificationRequestId()) + " }";
@@ -1282,12 +1267,12 @@ public class SharedSteps {
 
                 threadWait(wait);
 
-                notificationResponseComplete = b2bUtils.waitForRequestNoAcceptation(newNotificationResponse);
+                notificationResponseCompleteV26 = b2bUtils.waitForRequestNoAcceptation(newNotificationResponse);
             });
 
             threadWait(wait);
 
-            Assertions.assertNull(notificationResponseComplete);
+            Assertions.assertNull(notificationResponseCompleteV26);
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
                     "{RequestID: " + (newNotificationResponse == null ? "NULL" : newNotificationResponse.getNotificationRequestId()) + " }";
@@ -1303,13 +1288,13 @@ public class SharedSteps {
 
                 threadWait(wait);
 
-                notificationResponseComplete = b2bUtils.waitForRequestAcceptationShort(newNotificationResponse);
+                notificationResponseCompleteV26 = b2bUtils.waitForRequestAcceptationShort(newNotificationResponse);
             });
 
 
             threadWait(wait);
 
-            Assertions.assertNotNull(notificationResponseComplete);
+            Assertions.assertNotNull(notificationResponseCompleteV26);
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
                     "{RequestID: " + (newNotificationResponse == null ? "NULL" : newNotificationResponse.getNotificationRequestId()) + " }";
@@ -1331,7 +1316,7 @@ public class SharedSteps {
                     throw new RuntimeException(e);
                 }
 
-                notificationResponseComplete = b2bUtils.waitForRequestAcceptationExtraRapid(newNotificationResponse);
+                notificationResponseCompleteV26 = b2bUtils.waitForRequestAcceptationExtraRapid(newNotificationResponse);
             });
 
             try {
@@ -1340,7 +1325,7 @@ public class SharedSteps {
                 log.error("Thread.sleep error retry");
                 throw new RuntimeException(e);
             }
-            Assertions.assertNotNull(notificationResponseComplete);
+            Assertions.assertNotNull(notificationResponseCompleteV26);
 
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
@@ -1415,11 +1400,11 @@ public class SharedSteps {
 
                 threadWait(getWorkFlowWait());
 
-                notificationResponseCompleteV2 = b2bUtils.waitForRequestAcceptationV2(newNotificationResponseV2);
+                notificationResponseCompleteV20 = b2bUtils.waitForRequestAcceptationV2(newNotificationResponseV2);
             });
 
             threadWait(getWorkFlowWait());
-            Assertions.assertNotNull(notificationResponseCompleteV2);
+            Assertions.assertNotNull(notificationResponseCompleteV20);
 
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
@@ -1475,12 +1460,10 @@ public class SharedSteps {
     }
 
     private void sendNotificationAndCancel() {
-
         sendNotificationExtraRapid(500);
-
         Assertions.assertDoesNotThrow(() -> {
             RequestStatus resp = Assertions.assertDoesNotThrow(() ->
-                    b2bClient.notificationCancellation(notificationResponseComplete.getIun()));
+                    b2bClient.notificationCancellation(notificationResponseCompleteV26.getIun()));
             Assertions.assertNotNull(resp);
             Assertions.assertNotNull(resp.getDetails());
             Assertions.assertFalse(resp.getDetails().isEmpty());
@@ -1492,7 +1475,7 @@ public class SharedSteps {
         sendNotificationV2();
         Assertions.assertDoesNotThrow(() -> {
             RequestStatus resp = Assertions.assertDoesNotThrow(() ->
-                    b2bClient.notificationCancellation(notificationResponseCompleteV2.getIun()));
+                    b2bClient.notificationCancellation(notificationResponseCompleteV20.getIun()));
             Assertions.assertNotNull(resp);
             Assertions.assertNotNull(resp.getDetails());
             Assertions.assertFalse(resp.getDetails().isEmpty());
@@ -1835,7 +1818,7 @@ public class SharedSteps {
     }
 
     public FullSentNotificationV26 getSentNotification() {
-        return notificationResponseComplete;
+        return notificationResponseCompleteV26;
     }
 
     public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification getSentNotificationV1() {
@@ -1843,23 +1826,27 @@ public class SharedSteps {
     }
 
     public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.FullSentNotificationV20 getSentNotificationV2() {
-        return notificationResponseCompleteV2;
+        return notificationResponseCompleteV20;
     }
 
     public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.FullSentNotificationV21 getSentNotificationV21() {
         return notificationResponseCompleteV21;
     }
 
-    public FullSentNotificationV25 getSentNotificationV25() {
-        return notificationResponseCompleteV25;
-    }
-
     public FullSentNotificationV23 getSentNotificationV23() {
         return notificationResponseCompleteV23;
     }
 
+    public FullSentNotificationV24 getSentNotificationV24() {
+        return notificationResponseCompleteV24;
+    }
+
+    public FullSentNotificationV25 getSentNotificationV25() {
+        return notificationResponseCompleteV25;
+    }
+
     public void setSentNotification(FullSentNotificationV26 notificationResponseComplete) {
-        this.notificationResponseComplete = notificationResponseComplete;
+        this.notificationResponseCompleteV26 = notificationResponseComplete;
     }
 
     public void setSentNotificationV1(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification notificationResponseCompleteV1) {
@@ -1867,19 +1854,23 @@ public class SharedSteps {
     }
 
     public void setSentNotificationV2(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.FullSentNotificationV20 notificationResponseCompleteV2) {
-        this.notificationResponseCompleteV2 = notificationResponseCompleteV2;
+        this.notificationResponseCompleteV20 = notificationResponseCompleteV2;
     }
 
     public void setSentNotificationV21(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.FullSentNotificationV21 notificationResponseCompleteV21) {
         this.notificationResponseCompleteV21 = notificationResponseCompleteV21;
     }
 
-    public void setSentNotificationV25(FullSentNotificationV25 notificationResponseCompleteV25) {
-        this.notificationResponseCompleteV25 = notificationResponseCompleteV25;
-    }
-
     public void setSentNotificationV23(FullSentNotificationV23 notificationResponseCompleteV23) {
         this.notificationResponseCompleteV23 = notificationResponseCompleteV23;
+    }
+
+    public void setSentNotificationV24(FullSentNotificationV24 notificationResponseCompleteV24) {
+        this.notificationResponseCompleteV24 = notificationResponseCompleteV24;
+    }
+
+    public void setSentNotificationV25(FullSentNotificationV25 notificationResponseCompleteV25) {
+        this.notificationResponseCompleteV25 = notificationResponseCompleteV25;
     }
 
     public void selectPA(String apiKey) {
@@ -1967,55 +1958,6 @@ public class SharedSteps {
         }
     }
 
-    public PnPollingFactory getPollingFactory() {
-        return pollingFactory;
-    }
-
-    public IPnTosPrivacyClientImpl getIPnTosPrivacyClientImpl() {
-        return iPnTosPrivacyClientImpl;
-    }
-
-
-    public IPnWebPaClient getWebPaClient() {
-        return webPaClient;
-    }
-
-    public PnGPDClientImpl getPnGPDClientImpl() {
-        return pnGPDClientImpl;
-    }
-
-    public PnPaymentInfoClientImpl getPnPaymentInfoClientImpl() {
-        return pnPaymentInfoClientImpl;
-    }
-
-    public PnPaB2bUtils getB2bUtils() {
-        return b2bUtils;
-    }
-
-    public IPnWebRecipientClient getWebRecipientClient() {
-        return webRecipientClient;
-    }
-
-    public PnServiceDeskClientImpl getServiceDeskClient() {
-        return serviceDeskClient;
-    }
-
-    public String getMarioCucumberTaxID() {
-        return marioCucumberTaxID;
-    }
-
-    public String getMarioGherkinTaxID() {
-        return marioGherkinTaxID;
-    }
-
-    public String getGherkinSrltaxId() {
-        return gherkinSrltaxId;
-    }
-
-    public String getCucumberSpataxId() {
-        return cucumberSpataxId;
-    }
-
     public String getGherkinIrreperibileTaxId() {
         return gherkinIrreperibileTaxID;
     }
@@ -2032,13 +1974,13 @@ public class SharedSteps {
 
     private String decorateErrorMsg(String originalMessage) {
         return originalMessage +
-            " {IUN: " + Optional.ofNullable(getIunVersionamento())
+                " {IUN: " + Optional.ofNullable(getIunVersionamento())
                 .orElse("not found") + " }";
     }
 
     public void throwAssertFailerWithAmountGDPAndIUN(AssertionFailedError assertionFailedError, Integer amountGDP) {
         String message = assertionFailedError.getMessage() +
-                "{IUN: " + notificationResponseComplete.getIun() + ", amountGDP " + (amountGDP == null ? "NULL" : amountGDP.toString()) + "}";
+                "{IUN: " + notificationResponseCompleteV26.getIun() + ", amountGDP " + (amountGDP == null ? "NULL" : amountGDP.toString()) + "}";
         throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
     }
 
@@ -2212,12 +2154,15 @@ public class SharedSteps {
         };
     }
 
-    /** Get all timeline elements that match the given event category and data from test
+    /**
+     * Get all timeline elements that match the given event category and data from test
+     *
      * @param timelineEventCategory the category of the timeline event
-     * @param dataFromTest the data filters
-     * @return a list of timeline elements that match the given event category and data from test */
+     * @param dataFromTest          the data filters
+     * @return a list of timeline elements that match the given event category and data from test
+     */
     public List<TimelineElementV26> getTimelineElementsByEventId(String timelineEventCategory, DataTest dataFromTest) {
-        List<TimelineElementV26> timelineElementList = notificationResponseComplete.getTimeline();
+        List<TimelineElementV26> timelineElementList = notificationResponseCompleteV26.getTimeline();
         String iun = getIun(timelineEventCategory);
         if (dataFromTest != null && dataFromTest.getTimelineElement() != null) {
             // get timeline event id
@@ -2226,32 +2171,35 @@ public class SharedSteps {
                 TimelineElementV23 timelineElementFromTest = dataFromTest.getTimelineElement();
                 TimelineElementDetailsV23 timelineElementDetails = timelineElementFromTest.getDetails();
                 return timelineElementList.stream()
-                    .filter(
-                        elem -> Objects.requireNonNull(elem.getElementId()).startsWith(timelineEventId)
-                            && Objects.equals(Objects.requireNonNull(elem.getDetails()).getDeliveryDetailCode(), Objects.requireNonNull(timelineElementDetails).getDeliveryDetailCode()))
-                    .toList();
+                        .filter(
+                                elem -> Objects.requireNonNull(elem.getElementId()).startsWith(timelineEventId)
+                                        && Objects.equals(Objects.requireNonNull(elem.getDetails()).getDeliveryDetailCode(), Objects.requireNonNull(timelineElementDetails).getDeliveryDetailCode()))
+                        .toList();
             }
             return timelineElementList.stream().filter(elem -> Objects.requireNonNull(elem.getElementId()).contains(timelineEventId)).toList();
         }
         return timelineElementList.stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).getValue().equals(timelineEventCategory)).toList();
     }
 
-    /** Get all timeline elements having attempt index less or equal to the given one
+    /**
+     * Get all timeline elements having attempt index less or equal to the given one
+     *
      * @param attemptIndex the index of the attempt (starting from 0)
-     * @return a list of timeline elements that match the given event category and data from test */
+     * @return a list of timeline elements that match the given event category and data from test
+     */
     public List<TimelineElementV26> getTimelineElementsToAttempt(int attemptIndex) {
-        List<TimelineElementV26> timelineElementList = notificationResponseComplete.getTimeline();
+        List<TimelineElementV26> timelineElementList = notificationResponseCompleteV26.getTimeline();
         return timelineElementList.stream()
-            .filter(elem -> nonNull(elem.getDetails()))
-            .filter(elem -> nonNull(elem.getDetails().getSentAttemptMade()))
-            .filter(elem -> elem.getDetails().getSentAttemptMade() <= attemptIndex)
-            .toList();
+                .filter(elem -> nonNull(elem.getDetails()))
+                .filter(elem -> nonNull(elem.getDetails().getSentAttemptMade()))
+                .filter(elem -> elem.getDetails().getSentAttemptMade() <= attemptIndex)
+                .toList();
     }
 
     public TimelineElementV26 getTimelineElementByEventId(String timelineEventCategory, DataTest dataFromTest) {
         return getTimelineElementsByEventId(timelineEventCategory, dataFromTest).stream()
-            .findAny()
-            .orElse(null);
+                .findAny()
+                .orElse(null);
     }
 
     private String getIun(String timelineEventCategory) {
@@ -2262,7 +2210,7 @@ public class SharedSteps {
             iun = new String(decodedBytes);
         } else {
             // proceed with default flux
-            iun = notificationResponseComplete.getIun();
+            iun = notificationResponseCompleteV26.getIun();
         }
         return iun;
     }

@@ -154,7 +154,7 @@ Feature: arricchimento della timeline con eventi intermedi (preesiti) di postali
     And si crea il nuovo stream con versione "V23" per il "Comune_2" con un gruppo disponibile "NO_GROUPS"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
     And la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "SCHEDULE_REFINEMENT" con la versione V23
+    And vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "SCHEDULE_REFINEMENT" con la versione "V23"
     And vengono letti gli eventi dello stream versione "V23"
     And viene verificato che gli eventi dello stream non contengono l'elemento di timeline "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG008A"
 
@@ -175,7 +175,7 @@ Feature: arricchimento della timeline con eventi intermedi (preesiti) di postali
     And si crea il nuovo stream con versione "V23" per il "Comune_2" con un gruppo disponibile "NO_GROUPS"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
     And la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "SCHEDULE_REFINEMENT" con la versione V23
+    And vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "SCHEDULE_REFINEMENT" con la versione "V23"
     And vengono letti gli eventi dello stream versione "V23"
     And viene verificato che gli eventi dello stream contengono l'elemento di timeline "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG012A"
 
@@ -196,7 +196,7 @@ Feature: arricchimento della timeline con eventi intermedi (preesiti) di postali
     And si crea il nuovo stream con versione "V23" per il "Comune_2" con un gruppo disponibile "NO_GROUPS"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
     And la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "SCHEDULE_REFINEMENT" con la versione V23
+    And vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "SCHEDULE_REFINEMENT" con la versione "V23"
     And vengono letti gli eventi dello stream versione "V23"
     And viene verificato che gli eventi dello stream contengono l'elemento di timeline "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG012"
     And viene verificato che gli eventi dello stream non contengono l'elemento di timeline "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG012"
@@ -218,6 +218,6 @@ Feature: arricchimento della timeline con eventi intermedi (preesiti) di postali
     And si crea il nuovo stream con versione "V23" per il "Comune_2" con un gruppo disponibile "NO_GROUPS"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
     And la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "SCHEDULE_REFINEMENT" con la versione V23
+    And vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "SCHEDULE_REFINEMENT" con la versione "V23"
     And vengono letti gli eventi dello stream versione "V23"
     And viene verificato che gli eventi dello stream contengono l'elemento di timeline "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON018"

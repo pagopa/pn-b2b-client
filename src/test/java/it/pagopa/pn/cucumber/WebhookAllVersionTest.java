@@ -20,6 +20,6 @@ import org.junit.platform.suite.api.Suite;
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.cucumber.steps")
 @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent")
 @ExcludeTags({"ignore"})
-@IncludeTags({"webhookV23", "webhookV25"})
+@IncludeTags({"webhookV27"})
 public class WebhookAllVersionTest {
 }

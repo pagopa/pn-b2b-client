@@ -6,6 +6,7 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.awaitility.Awaitility.await;
 
 import io.cucumber.datatable.DataTable;
@@ -153,12 +154,11 @@ public class AvanzamentoNotificheB2bSteps {
     public void readingEventUpToTheStatusOfNotification(String status) {
         PnPollingPredicate pnPollingPredicate = new PnPollingPredicate();
         pnPollingPredicate.setNotificationStatusHistoryElementPredicateV26(
-                statusHistory -> statusHistory
-                        .getStatus()
-                        .getValue().equals(status)
+                statusHistory -> statusHistory.getStatus().getValue().equals(status)
         );
 
-        PnPollingServiceStatusRapidV26 statusRapidV26 = (PnPollingServiceStatusRapidV26) pnPollingFactory.getPollingService(PnPollingStrategy.STATUS_RAPID_V26);
+        PnPollingServiceStatusRapidV26 statusRapidV26 =
+                (PnPollingServiceStatusRapidV26) pnPollingFactory.getPollingService(PnPollingStrategy.STATUS_RAPID_V26);
 
         PnPollingResponseV26 pnPollingResponseV26 = statusRapidV26.waitForEvent(sharedSteps.getSentNotification().getIun(),
                 PnPollingParameter.builder()
@@ -167,12 +167,20 @@ public class AvanzamentoNotificheB2bSteps {
                         .build());
         log.info("NOTIFICATION_STATUS_HISTORY: " + pnPollingResponseV26.getNotification().getNotificationStatusHistory());
         try {
-            Assertions.assertTrue(pnPollingResponseV26.getResult());
-            Assertions.assertNotNull(pnPollingResponseV26.getNotificationStatusHistoryElement());
+            assertThat(pnPollingResponseV26.getResult())
+                    .as("Il risultato del polling deve essere valorizzato")
+                    .isTrue();
+
+            assertThat(pnPollingResponseV26.getNotificationStatusHistoryElement())
+                    .as("L'elemento dello storico degli stati non dovrebbe essere nullo")
+                    .isNotNull();
+
             sharedSteps.setSentNotification(pnPollingResponseV26.getNotification());
-            log.info("NOTIFICATION_STATUS_HISTORY_ELEMENT: " + pnPollingResponseV26.getNotificationStatusHistoryElement());
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+
+            log.info("NOTIFICATION_STATUS_HISTORY_ELEMENT: {}", pnPollingResponseV26.getNotificationStatusHistoryElement());
+
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionError);
         }
     }
 
@@ -707,24 +715,38 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
     public TimelineElementV26 readingEventUpToTheTimelineElementOfNotificationForCategory(String timelineEventCategory) {
-        PnPollingServiceTimelineSlowV26 timelineSlowV26 = (PnPollingServiceTimelineSlowV26) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_SLOW_V26);
+        PnPollingServiceTimelineSlowV26 timelineSlowV26 =
+                (PnPollingServiceTimelineSlowV26) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_SLOW_V26);
 
-        PnPollingResponseV26 pnPollingResponseV26 = timelineSlowV26.waitForEvent(sharedSteps.getIunVersionamento(),
+        PnPollingResponseV26 pnPollingResponseV26 = timelineSlowV26.waitForEvent(
+                sharedSteps.getIunVersionamento(),
                 PnPollingParameter.builder()
                         .value(timelineEventCategory)
                         .build());
         log.info("NOTIFICATION_TIMELINE: " + pnPollingResponseV26.getNotification().getTimeline());
+
         try {
-            Assertions.assertTrue(pnPollingResponseV26.getResult());
-            Assertions.assertNotNull(pnPollingResponseV26.getTimelineElement());
+            assertThat(pnPollingResponseV26.getResult())
+                    .as("Il risultato del polling dovrebbe essere valorizzato, Primo controllo: Verificare che l'elemento sia presente in timeline e le tempistiche con cui viene prodotto")
+                    .isTrue();
+
+            assertThat(pnPollingResponseV26.getTimelineElement())
+                    .as("L'elemento della timeline non dovrebbe essere nullo")
+                    .isNotNull();
+
             sharedSteps.setSentNotification(pnPollingResponseV26.getNotification());
+
             TimelineElementV26 timelineElement = pnPollingResponseV26.getTimelineElement();
             log.info("TIMELINE_ELEMENT: " + timelineElement);
             sharedSteps.setTimelineElement(timelineElement);
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+
+            return timelineElement;
+
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionError);
         }
-        return pnPollingResponseV26.getTimelineElement();
+
+        return null;
     }
 
     public TimelineElementV26 readingEventUpToTheTimelineElementOfNotificationForCategoryExtraRapid(String timelineEventCategory) {
@@ -916,14 +938,33 @@ public class AvanzamentoNotificheB2bSteps {
     public void readingEventUpToTheTimelineElementOfNotificationWithDeliveryDetailCode(String timelineEventCategory, String deliveryDetailCode) {
         PnPollingResponseV26 pnPollingResponseV26 = getPollingResponse(timelineEventCategory, deliveryDetailCode);
 
-        log.info("NOTIFICATION_TIMELINE: " + pnPollingResponseV26.getNotification().getTimeline());
+
+
+      Objects.requireNonNull( pnPollingResponseV26.getNotification(), "La notifica  non può essere null");
+            log.info("NOTIFICATION_TIMELINE: {}", pnPollingResponseV26.getNotification().getTimeline());
+
+
         try {
-            Assertions.assertTrue(pnPollingResponseV26.getResult(), "Polling failed. IUN: " + sharedSteps.getSentNotification().getIun());
-            Assertions.assertNotNull(pnPollingResponseV26.getTimelineElement(), "The timeline element was not found. IUN: " + sharedSteps.getSentNotification().getIun());
+            assertSoftly(softly -> {
+                softly.assertThat(pnPollingResponseV26.getResult())
+                        .as("Verifica che il polling abbia avuto successo per IUN: " +
+                                (sharedSteps.getSentNotification() != null ? sharedSteps.getSentNotification().getIun() : "UNKNOWN"))
+                        .isTrue();
+
+                softly.assertThat(pnPollingResponseV26.getTimelineElement())
+                        .as("Verifica che l'elemento di timeline esista per IUN: " +
+                                (sharedSteps.getSentNotification() != null ? sharedSteps.getSentNotification().getIun() : "UNKNOWN"))
+                        .isNotNull();
+            });
+
             sharedSteps.setSentNotification(pnPollingResponseV26.getNotification());
-            log.info("TIMELINE_ELEMENT: " + pnPollingResponseV26.getTimelineElement());
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+
+            if (pnPollingResponseV26.getTimelineElement() != null) {
+                log.info("TIMELINE_ELEMENT: {}", pnPollingResponseV26.getTimelineElement());
+            }
+
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionError);
         }
     }
 
@@ -3666,15 +3707,25 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("esiste l'elemento di timeline della notifica {string} abbia notificationCost uguale a {string} per l'utente {int}")
     public void TimelineElementOfNotificationUserCost(String timelineEventCategory, String cost, Integer destinatario) {
+
         TimelineElementV26 event = readingEventUpToTheTimelineElementOfNotificationForCategoryUser(timelineEventCategory, destinatario);
+
+
+
         Long notificationCost = event.getDetails().getNotificationCost();
 
         if (cost.equalsIgnoreCase("null")) {
-            Assertions.assertNull(notificationCost);
+            assertThat(notificationCost)
+                    .as("Il notificationCost dovrebbe essere null per la categoria '%s' e destinatario '%d'", timelineEventCategory, destinatario)
+                    .isNull();
         } else if (cost.equalsIgnoreCase("NotNull")) {
-            Assertions.assertNotNull(notificationCost);
+            assertThat(notificationCost)
+                    .as("Il notificationCost non dovrebbe essere null per la categoria '%s' e destinatario '%d'", timelineEventCategory, destinatario)
+                    .isNotNull();
         } else {
-            Assertions.assertEquals(Long.parseLong(cost), notificationCost);
+            assertThat(notificationCost)
+                    .as("Il notificationCost dovrebbe essere uguale a '%s' per la categoria '%s' e destinatario '%d'", cost, timelineEventCategory, destinatario)
+                    .isEqualTo(Long.parseLong(cost));
         }
     }
 
