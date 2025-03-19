@@ -74,7 +74,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
     EServiceTemplateStepContext$EServiceTemplateInfoMapperImpl.class,
     EServiceTemplateTestAssistant.class,
     EServiceTemplateStepContext.class,
-    RiskAnalysisMapperImpl.class,
+    RiskAnalysisMapperImpl.class
 })
 @EnableScheduling
 @EnableConfigurationProperties

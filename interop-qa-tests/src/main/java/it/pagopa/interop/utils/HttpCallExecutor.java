@@ -16,6 +16,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class HttpCallExecutor {
     private HttpStatus responseStatus;
+    private String errorMessage;
     private Object response;
 
     public <T> HttpStatus performCall(Supplier<T> promise) {
@@ -25,6 +26,7 @@ public class HttpCallExecutor {
             responseStatus = HttpStatus.OK;
         } catch (HttpStatusCodeException e) {
             responseStatus = e.getStatusCode();
+            errorMessage = e.getMessage();
         }
         return responseStatus;
     }
@@ -43,6 +45,7 @@ public class HttpCallExecutor {
             responseStatus = httpStatusMapper.apply(promiseResponse);
         } catch (HttpStatusCodeException e) {
             responseStatus = e.getStatusCode();
+            errorMessage = e.getMessage();
         }
         return promiseResponse;
     }
@@ -53,6 +56,7 @@ public class HttpCallExecutor {
             responseStatus = HttpStatus.OK;
         } catch (HttpStatusCodeException e) {
             responseStatus = e.getStatusCode();
+            errorMessage = e.getMessage();
         }
         return responseStatus;
     }

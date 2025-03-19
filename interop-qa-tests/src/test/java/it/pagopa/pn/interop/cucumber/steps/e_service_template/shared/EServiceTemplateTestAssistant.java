@@ -30,7 +30,8 @@ import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext.EServiceTemplateDocumentInfo;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
@@ -38,7 +39,7 @@ import lombok.Data;
 import org.jeasy.random.EasyRandom;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
-import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.PathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -140,9 +141,26 @@ public class EServiceTemplateTestAssistant {
     public void addDocumentToEServiceTemplateVersion(UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId, EServiceTemplateDocumentKind kind, String prettyName) {
         String userToken = sharedStepsContext.getUserToken();
-        String docBody = "Hello, I'm a document of type %s".formatted(kind);
-        Resource doc = new ByteArrayResource(docBody.getBytes(StandardCharsets.UTF_8));
+        Resource doc = buildResource(kind);
         addDocumentToEserviceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, kind, prettyName, userToken, doc);
+    }
+
+    private static Resource buildResource(EServiceTemplateDocumentKind kind) {
+        /* 19/03/2025 Versione precedente in cui si supponeva si potesse passare ogni genere di byte array. */
+        /*String docBody = "Hello, I'm a document of type %s".formatted(kind);
+        Resource doc = new ByteArrayResource(docBody.getBytes(StandardCharsets.UTF_8));*/
+
+        switch (kind) {
+            case DOCUMENT -> {
+                return new PathResource(Path.of("src/main/resources/dummy.pdf"));
+            }
+            case INTERFACE -> {
+                return new PathResource(Path.of("src/main/resources/interface.yaml"));
+            }
+            default -> throw new IllegalArgumentException("Unsupported %s value: %s".formatted(
+                EServiceTemplateDocumentKind.class.getSimpleName(),
+                kind));
+        }
     }
 
     public void addDocumentToEserviceTemplateVersion(UUID eServiceTemplateId, UUID eServiceTemplateVersionId,
@@ -161,6 +179,9 @@ public class EServiceTemplateTestAssistant {
              * modificare anche gli altri scenari così che si possa effettuare un check preciso dello status restituito
              */
             ResponseEntity::getStatusCode);
+        if(httpCallExecutor.getResponseStatus().isError()) {
+            fail("Errore durante l'aggiunta del documento all'e-service template: %s".formatted(httpCallExecutor.getErrorMessage()));
+        }
 
         ResponseEntity<CreatedResource> response = (ResponseEntity<CreatedResource>) httpCallExecutor.getResponse();
         try {
@@ -210,7 +231,15 @@ public class EServiceTemplateTestAssistant {
                     templateContext.getLastAddedDocument().id()),
                 res -> {
                     try {
-                        return res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody()) && Files.readLines(res.getBody(), StandardCharsets.UTF_8).get(0).equals(templateContext.getLastAddedDocument().body());
+                        /* TODO 19/03/2025: per verificare che il documento sia stato caricato
+                        *   correttamente viene effettuato un confronto completo byte-per-byte.
+                        *   Una soluzione più efficiente potrebbe essere confrontare soltanto
+                        *   dei valori di hash generati sia in fase di invio che in fase di
+                        *   ricezione, aiutandosi eventualmente con due metodi supplementari che,
+                        *   sia inviando che ricevendo, anziché restituire void o un
+                        *   oggetto File restituiscano un'oggetto hash di qualche tipo; a quel
+                        *   punto qui basterà confrontare i valori hash. */
+                        return res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody()) && Arrays.equals(Files.toByteArray(res.getBody()), templateContext.getLastAddedDocument().body());
                     } catch (IOException e) {
                         throw new RuntimeException("Errore nella lettura del body binario della risposta HTTP: %s".formatted(res), e);
                     }
@@ -354,7 +383,7 @@ public class EServiceTemplateTestAssistant {
         Predicate<ResponseEntity<EServiceTemplateVersionDetails>> pollingStopPredicate)
     {
         httpCallExecutor.performCall(templateStateMutator);
-        if (!httpCallExecutor.getResponseStatus().isError()) {
+        if (httpCallExecutor.getResponseStatus().isError()) {
             return;
         }
         pollingService.makePolling(

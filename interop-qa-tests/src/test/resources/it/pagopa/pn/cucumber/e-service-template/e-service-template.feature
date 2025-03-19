@@ -51,9 +51,7 @@ Feature: Test API of e-service template
 
   Scenario Outline: [INTEROP-EST-007] La sospensione di un e-service template può essere fatta da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
-    And l'utente effettua la creazione di un e-service template in modalità erogazione
-    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
-    And l'utente effettua la pubblicazione dell'e-service template
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     When l'utente è un "<ruolo>" di "PA1"
     And l'utente effettua la sospensione dell'e-service template
     Then si ottiene response status code 200
@@ -82,9 +80,7 @@ Feature: Test API of e-service template
 
   Scenario Outline: [INTEROP-EST-009] La riattivazione di un e-service template può essere fatta da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
-    And l'utente effettua la creazione di un e-service template in modalità erogazione
-    And l'utente effettua la pubblicazione dell'e-service template
-    And l'utente effettua la sospensione dell'e-service template
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di SUSPENDED
     When l'utente è un "<ruolo>" di "PA1"
     And l'utente effettua la riattivazione dell'e-service template
     Then si ottiene response status code 200
