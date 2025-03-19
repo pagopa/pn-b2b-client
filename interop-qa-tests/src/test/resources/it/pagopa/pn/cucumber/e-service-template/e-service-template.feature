@@ -226,7 +226,16 @@ Feature: Test API of e-service template
     When l'utente tenta delle modifiche alla versione di un e-service template inesistente
     Then si ottiene response status code 404
 
-
+  Scenario Outline: [INTEROP-EST-024] L'aggiunta di una risk analysis a un e-service template in modalità erogazione non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta l'aggiunta di una risk analysis all'e-service template
+    Then si ottiene response status code 403
+    Examples:
+      | ruolo   |
+      | admin   |
+      | api     |
 
   Scenario Outline: [INTEROP-EST-038] L'aggiunta di un documento/interfaccia a una versione di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"

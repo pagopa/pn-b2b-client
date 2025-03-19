@@ -103,17 +103,6 @@
       | admin   | SUSPENDED |
       | api     | SUSPENDED |
 
-  Scenario Outline: [INTEROP-EST-024] L'aggiunta di una risk analysis a un e-service template in modalità erogazione non può essere effettuata
-    Given l'utente è un "admin" di "PA1"
-    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
-    When l'utente è un "<ruolo>" di "PA1"
-    And l'utente tenta l'aggiunta di una risk analysis all'e-service template
-    Then si ottiene response status code 403
-    Examples:
-      | ruolo   |
-      | admin   |
-      | api     |
-
   Scenario: [INTEROP-EST-025] L'aggiunta di una risk analysis a un e-service template in stato DRAFT non può essere fatta da una PA diversa da quella creatrice del template
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
