@@ -44,6 +44,11 @@ public class NotificationStepsV24 implements NotificationStepsInterface {
     }
 
     @Override
+    public String getVersionString() {
+        return version.toString();
+    }
+
+    @Override
     public String getNotificationSentIun() {
         return fullSentNotification.getIun();
     }
@@ -156,7 +161,6 @@ public class NotificationStepsV24 implements NotificationStepsInterface {
         }
     }
 
-    //TODO MATTEO TEST (rendere private?)
     @Override
     public Object uploadNotification() throws IOException {
         //PRELOAD DOCUMENTI NOTIFICA
@@ -379,5 +383,33 @@ public class NotificationStepsV24 implements NotificationStepsInterface {
 
     private void metadataAttachmentSetDigests(NotificationMetadataAttachment notificationMetadataAttachment, String sha256) {
         notificationMetadataAttachment.digests(new NotificationAttachmentDigests().sha256(sha256));
+    }
+
+    @Override
+    public void uploadNotificationAllegatiUgualiPagamento() throws IOException {
+        List<NotificationDocument> newDocs = new ArrayList<>();
+        for (NotificationDocument doc : notificationRequest.getDocuments()) {
+            newDocs.add(preloadDocument(doc));
+        }
+        notificationRequest.setDocuments(newDocs);
+
+        for (NotificationRecipientV23 recipient : notificationRequest.getRecipients()) {
+            List<NotificationPaymentItem> paymentList = recipient.getPayments();
+            if (paymentList != null) {
+                for (NotificationPaymentItem paymentInfo : paymentList) {
+                    if (paymentInfo.getPagoPa() != null) {
+                        paymentInfo.getPagoPa().setAttachment(new NotificationPaymentAttachment()
+                                .ref(notificationRequest.getDocuments().get(0).getRef())
+                                .digests(notificationRequest.getDocuments().get(0).getDigests())
+                                .contentType(notificationRequest.getDocuments().get(0).getContentType()));
+                    }
+                    if (paymentInfo.getF24() != null) {
+                        paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
+                    }
+                }
+
+            }
+        }
+        getAndCheckSendNewNotification(notificationRequest);
     }
 }

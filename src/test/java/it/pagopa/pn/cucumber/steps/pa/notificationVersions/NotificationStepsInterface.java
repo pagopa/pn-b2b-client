@@ -5,6 +5,13 @@ import java.util.Map;
 
 public interface NotificationStepsInterface {
 
+    default void throwUnsupportedMethodException(String methodName) {
+        methodName = methodName == null ? "" : methodName + " ";
+        throw new RuntimeException("Metodo " + methodName + "non previsto per la versione " + getVersionString());
+    }
+
+    String getVersionString();
+
     String getNotificationSentIun();
 
     void setNotificationRequest(Map<String, String> data);
@@ -32,4 +39,8 @@ public interface NotificationStepsInterface {
     void addDocumentItems(int numAllegati);
 
     void performPriceVerification(String price, String date, Integer destinatario);
+
+    default void uploadNotificationAllegatiUgualiPagamento() throws IOException {
+        throwUnsupportedMethodException("uploadNotificationAllegatiUgualiPagamento");
+    }
 }

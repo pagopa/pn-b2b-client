@@ -14,7 +14,6 @@ import it.pagopa.pn.client.b2b.pa.polling.dto.*;
 import it.pagopa.pn.client.b2b.pa.polling.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnPrivateDeliveryPushExternalClient;
-import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationHistoryResponse;
@@ -65,7 +64,6 @@ public class AvanzamentoNotificheB2bSteps {
     private PnPaB2bUtils utils;
     private final IPnPaB2bClient b2bClient;
     private final SharedSteps sharedSteps;
-    private final IPnWebRecipientClient webRecipientClient;
     private final PnExternalServiceClientImpl externalClient;
     private final IPnPrivateDeliveryPushExternalClient pnPrivateDeliveryPushExternalClient;
     private HttpStatusCodeException notificationError;
@@ -88,14 +86,14 @@ public class AvanzamentoNotificheB2bSteps {
                                         IPnPrivateDeliveryPushExternalClient pnPrivateDeliveryPushExternalClient,
                                         LegalFactContentVerifySteps legalFactContentVerifySteps) {
         this.sharedSteps = sharedSteps;
-        this.pnPrivateDeliveryPushExternalClient = pnPrivateDeliveryPushExternalClient;
-        this.externalClient = sharedSteps.getPnExternalServiceClient();
         this.pnTimelineAndLegalFactV26 = new PnTimelineAndLegalFactV26();
-        this.b2bClient = sharedSteps.getB2bClient();
-        this.webRecipientClient = sharedSteps.getWebRecipientClient();
-        this.pnPollingFactory = sharedSteps.getPollingFactory();
         this.timingForPolling = timingForPolling;
         this.legalFactContentVerifySteps = legalFactContentVerifySteps;
+        this.pnPrivateDeliveryPushExternalClient = pnPrivateDeliveryPushExternalClient;
+
+        this.externalClient = sharedSteps.getPnExternalServiceClient();
+        this.b2bClient = sharedSteps.getB2bClient();
+        this.pnPollingFactory = sharedSteps.getPollingFactory();
     }
 
     @Then("vengono letti gli eventi fino allo stato della notifica {string} dalla PA {string}")
@@ -1424,7 +1422,7 @@ public class AvanzamentoNotificheB2bSteps {
             if (webRecipient) {
                 it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse =
                         Assertions.assertDoesNotThrow(() ->
-                                this.webRecipientClient.getLegalFact(sharedSteps.getFullSentNotificationV26().getIun(),
+                                sharedSteps.getWebRecipientClient().getLegalFact(sharedSteps.getFullSentNotificationV26().getIun(),
                                         sharedSteps.deepCopy(categorySearch,
                                                 it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactCategory.class),
                                         finalKeySearch
@@ -1497,10 +1495,11 @@ public class AvanzamentoNotificheB2bSteps {
 
             if (webRecipient) {
 
-                it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse = this.webRecipientClient.getLegalFact(sharedSteps.getFullSentNotificationV26().getIun(),
-                        sharedSteps.deepCopy(categorySearch,
-                                it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactCategory.class),
-                        finalKeySearch);
+                it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse =
+                        sharedSteps.getWebRecipientClient().getLegalFact(sharedSteps.getFullSentNotificationV26().getIun(),
+                                sharedSteps.deepCopy(categorySearch,
+                                        it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactCategory.class),
+                                finalKeySearch);
                 Assertions.assertNotNull(legalFactDownloadMetadataResponse);
                 Assertions.assertNotNull(legalFactDownloadMetadataResponse.getFilename());
                 Assertions.assertTrue(legalFactDownloadMetadataResponse.getFilename().contains(".eml"));
@@ -1552,7 +1551,7 @@ public class AvanzamentoNotificheB2bSteps {
 //                        sharedSteps.getSentNotification().getRecipients().get(0).getTaxId()));
 //            }
             if (webRecipient) {
-                Assertions.assertDoesNotThrow(() -> this.webRecipientClient.getLegalFact(sharedSteps.getFullSentNotificationV26().getIun(),
+                Assertions.assertDoesNotThrow(() -> sharedSteps.getWebRecipientClient().getLegalFact(sharedSteps.getFullSentNotificationV26().getIun(),
                         sharedSteps.deepCopy(categorySearch,
                                 it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactCategory.class),
                         finalKeySearch
@@ -1812,27 +1811,21 @@ public class AvanzamentoNotificheB2bSteps {
     @And("{string} tenta di leggere la notifica ricevuta")
     public void userReadReceivedNotificationWithError(String recipient) {
         sharedSteps.selectUser(recipient);
-
         String iun = sharedSteps.getIunVersionamento();
-
         try {
-            webRecipientClient.getReceivedNotification(iun, null);
+            sharedSteps.getWebRecipientClient().getReceivedNotification(iun, null);
         } catch (HttpStatusCodeException e) {
             sharedSteps.setNotificationError(e);
         }
-
     }
 
     @And("{string} legge la notifica ricevuta")
     public void userReadReceivedNotification(String recipient) {
         sharedSteps.selectUser(recipient);
-
         String iun = sharedSteps.getIunVersionamento();
-
         Assertions.assertDoesNotThrow(() -> {
-            webRecipientClient.getReceivedNotification(iun, null);
+            sharedSteps.getWebRecipientClient().getReceivedNotification(iun, null);
         });
-
         try {
             Thread.sleep(sharedSteps.getWorkFlowWait());
         } catch (InterruptedException exc) {
@@ -1843,22 +1836,18 @@ public class AvanzamentoNotificheB2bSteps {
     @And("{string} legge la notifica ricevuta {string}")
     public void userReadReceivedNotificationVersioning(String recipient, String versione) {
         sharedSteps.selectUser(recipient);
-
         String iun = sharedSteps.getIunVersionamento();
-
         try {
             if (versione.equalsIgnoreCase("V1")) {
-                webRecipientClient.getReceivedNotificationV1(iun, null);
+                sharedSteps.getWebRecipientClient().getReceivedNotificationV1(iun, null);
             } else {
-                webRecipientClient.getReceivedNotificationV2(iun, null);
+                sharedSteps.getWebRecipientClient().getReceivedNotificationV2(iun, null);
             }
-
             try {
                 Thread.sleep(sharedSteps.getWorkFlowWait());
             } catch (InterruptedException exc) {
                 throw new RuntimeException(exc);
             }
-
         } catch (HttpStatusCodeException e) {
             sharedSteps.setNotificationError(e);
         }

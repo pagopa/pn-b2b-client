@@ -65,14 +65,11 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     private final IPnWebhookB2bClient webhookB2bClient;
     @Getter
     private static IPnWebhookB2bClient webhookClientForClean;//TODO: Perché statico?
-    private final IPnWebRecipientClient webRecipientClient;
     @Getter
     private final SharedSteps sharedSteps;
     private final PnPollingFactory pollingFactory;
     @Getter
     private final TimingForPolling timingForPolling;
-    @Getter
-    private final IPnPaB2bClient b2bClient;
     private static boolean webhookTestLaunch = true;
     @Getter
     private final Set<String> paStreamOwner = new HashSet<>();
@@ -105,8 +102,14 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         this.sharedSteps = sharedSteps;
         this.timingForPolling = timingForPolling;
         this.pollingFactory = pollingFactory;
-        this.webRecipientClient = sharedSteps.getWebRecipientClient();
-        this.b2bClient = sharedSteps.getB2bClient();
+    }
+
+    public IPnPaB2bClient getB2bClient() {
+        return sharedSteps.getB2bClient();
+    }
+
+    public IPnWebRecipientClient getWebRecipientClient() {
+        return sharedSteps.getWebRecipientClient();
     }
 
     @After("@cleanWebhook")
@@ -609,7 +612,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             progressResponseElement = webhookStepsInterface.searchStatusElementInWebhook(null, 0, 0, searchElementResult);
             log.debug("PROGRESS-ELEMENT: " + progressResponseElement);
 
-            sharedSteps.setFullSentNotificationV26(b2bClient.getSentNotification(sharedSteps.getFullSentNotificationV26().getIun()));
+            sharedSteps.setFullSentNotificationV26(getB2bClient().getSentNotification(sharedSteps.getFullSentNotificationV26().getIun()));
             NotificationStatusHistoryElementV26 notificationStatusHistoryElement = sharedSteps.getFullSentNotificationV26()
                     .getNotificationStatusHistory().stream()
                     .filter(elem -> elem.getStatus().getValue().equals(notificationInternalStatus.getValue()))
@@ -817,7 +820,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     @And("{string} legge la notifica")
     public void userReadNotification(String recipient) {
         sharedSteps.selectUser(recipient);
-        Assertions.assertDoesNotThrow(() -> webRecipientClient.getReceivedNotification(sharedSteps.getFullSentNotificationV26().getIun(), null));
+        Assertions.assertDoesNotThrow(() -> getWebRecipientClient().getReceivedNotification(sharedSteps.getFullSentNotificationV26().getIun(), null));
         sleepTest(Long.valueOf(sharedSteps.getWorkFlowWait()));
     }
 
@@ -826,7 +829,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         sharedSteps.selectUser(recipient);
         sleepTest(sharedSteps.getSchedulingDaysSuccessAnalogRefinement().toMillis());
         Assertions.assertDoesNotThrow(() -> {
-            webRecipientClient.getReceivedNotification(sharedSteps.getFullSentNotificationV26().getIun(), null);
+            getWebRecipientClient().getReceivedNotification(sharedSteps.getFullSentNotificationV26().getIun(), null);
         });
         sleepTest(Long.valueOf(sharedSteps.getWorkFlowWait()));
     }

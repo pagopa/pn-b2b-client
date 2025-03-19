@@ -157,31 +157,33 @@ public class SharedSteps {
 
     @Value("${pn.bearer-token.user2.taxID}")
     private String marioGherkinTaxID;
-    private final ApplicationContext context;
 
     @Getter
     private final DataTableTypeUtil dataTableTypeUtil;
 
     @Getter
     private final HashMap<String, String> mapAllegatiNotificaSha256 = new HashMap<>();
-    private final List<String> iuvGPD;
     private IPnWebUserAttributesClient iPnWebUserAttributesClient;
 
     @Getter
     @Setter
     private String errorCode;
     private boolean groupToSet = true;
+    private final ApplicationContext context;
+    private final List<String> iuvGPD;
     private final SecureRandom secureRandom;
     private final PnB2bClientTimingConfigs timingConfigs;
     private final ObjectMapper objMapper;
 
     @Getter
     @Setter
-    private NewNotificationResponse newNotificationResponse;//Viene settato solo per l'ultima versione. Al rilascio di una nuova, sostituire con l'oggetto corrispondente
+    //Viene settato solo per l'ultima versione. Al rilascio di una nuova, sostituire con l'oggetto corrispondente
+    private NewNotificationResponse newNotificationResponse;
 
     @Getter
     @Setter
-    private NewNotificationRequestV24 notificationRequest;//Viene settato solo per l'ultima versione. Al rilascio di una nuova, sostituire con l'oggetto corrispondente
+    // Viene settato solo per l'ultima versione. Al rilascio di una nuova, sostituire con l'oggetto corrispondente
+    private NewNotificationRequestV24 notificationRequest;
 
     @Getter
     @Setter
@@ -408,17 +410,17 @@ public class SharedSteps {
 
 
             this.notificationRequest = newNotificationRequest;
-            setPaAndSenderTaxId(pa, null);
+            setPaAndSenderTaxId(pa);
             notificationRequests.add(newNotificationRequest);
         }
-
         List<Thread> threadList = new LinkedList<>();
         ConcurrentLinkedQueue<FullSentNotificationV26> sentNotifications = new ConcurrentLinkedQueue<>();
 
         for (NewNotificationRequestV24 notification : notificationRequests) {
             Thread t = new Thread(() -> {
                 //INVIO NOTIFICA ED ATTESA ACCEPTED
-                NewNotificationResponse internalNotificationResponse = Assertions.assertDoesNotThrow(() -> b2bUtils.uploadNotificationV24(notification));
+                NewNotificationResponse internalNotificationResponse = Assertions.assertDoesNotThrow(() ->
+                        b2bUtils.uploadNotificationV24(notification));
                 threadWait(getWait());
                 FullSentNotificationV26 fullSentNotificationV26 = b2bUtils.waitForRequestAcceptationV26(internalNotificationResponse);
                 Assertions.assertNotNull(fullSentNotificationV26);
@@ -559,7 +561,7 @@ public class SharedSteps {
         NotificationVersion notificationVersion = getNotificationVersion(version);
         NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface(notificationVersion);
         if (paName != null) {
-            setPaAndSenderTaxId(paName, notificationStepsInterface);
+            setPaAndSenderTaxId(paName);
         }
         //TODO MATTEO: un tempo lo stato era sempre ACCEPTED, ora che è parametrico forse la pollingStrategy andrebbe desunta con qualche metodo che si basa sullo stato
         notificationStepsInterface.sendNotification(getWorkFlowWait(), status, VALIDATION_STATUS);
@@ -567,30 +569,27 @@ public class SharedSteps {
 
     @When("la notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi ACCEPTED per controllo GPD")
     public void laNotificaVieneInviataOkGPD(String paName) {
-        NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface();
-        setPaAndSenderTaxId(paName, notificationStepsInterface);
-        notificationStepsInterface.sendNotification(WAITING_GPD, NOTIFICATION_STATUS_ACCEPTED, VALIDATION_STATUS_ACCEPTATION_SHORT);
+        setPaAndSenderTaxId(paName);
+        getNotificationStepInterface().sendNotification(WAITING_GPD, NOTIFICATION_STATUS_ACCEPTED, VALIDATION_STATUS_ACCEPTATION_SHORT);
     }
 
     @When("la notifica viene inviata tramite api b2b dal {string} e si controlla con check rapidi che lo stato diventi ACCEPTED")
     public void laNotificaVieneInviataOkRapidCheck(String paName) {
-        NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface();
-        setPaAndSenderTaxId(paName, notificationStepsInterface);
-        notificationStepsInterface.sendNotification(100, NOTIFICATION_STATUS_ACCEPTED, VALIDATION_STATUS_ACCEPTATION_SHORT);
+        setPaAndSenderTaxId(paName);
+        getNotificationStepInterface().sendNotification(100, NOTIFICATION_STATUS_ACCEPTED, VALIDATION_STATUS_ACCEPTATION_SHORT);
     }
 
     @When("verifica che la notifica inviata tramite api b2b dal {string} non diventi ACCEPTED")
     public void laNotificaVieneInviataNoAccept(String paName) {
-        NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface();
-        setPaAndSenderTaxId(paName, notificationStepsInterface);
+        setPaAndSenderTaxId(paName);
         //TODO MATTEO: prima richiamava waitForRequestNoAcceptation in b2bUtils. Ma è corretto che prenda "ACCEPTED" ?
-        notificationStepsInterface.sendNotification(getWorkFlowWait(), NOTIFICATION_STATUS_ACCEPTED, VALIDATION_STATUS_NO_ACCEPTATION);
+        getNotificationStepInterface().sendNotification(getWorkFlowWait(), NOTIFICATION_STATUS_ACCEPTED, VALIDATION_STATUS_NO_ACCEPTATION);
     }
 
     @When("la notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi ACCEPTED e successivamente annullata")
     public void laNotificaVieneInviataOkAndCancelled(String paName) {
         NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface();
-        setPaAndSenderTaxId(paName, notificationStepsInterface);
+        setPaAndSenderTaxId(paName);
         notificationStepsInterface.sendNotification(WAIT_EXTRA_RAPID, NOTIFICATION_STATUS_ACCEPTED, VALIDATION_STATUS);
         String iun = notificationStepsInterface.getNotificationSentIun();
         Assertions.assertDoesNotThrow(() -> {
@@ -603,13 +602,11 @@ public class SharedSteps {
         });
     }
 
-    //TODO MATTEO: creare metodo apposito nell'interfaccia
     @When("la notifica viene inviata tramite api b2b dal {string} con allegato uguale all'allegato di pagamento")
     public void laNotificaVieneInviataAllegatiUgualeAlPagamento(String paName) {
-        NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface();
-        setPaAndSenderTaxId(paName, notificationStepsInterface);
+        setPaAndSenderTaxId(paName);
         try {
-            newNotificationResponse = b2bUtils.uploadNotificationAllegatiUgualiPagamento(notificationRequest);
+            getNotificationStepInterface().uploadNotificationAllegatiUgualiPagamento();
         } catch (HttpStatusCodeException | IOException e) {
             if (e instanceof HttpStatusCodeException) {
                 this.notificationError = (HttpStatusCodeException) e;
@@ -643,10 +640,11 @@ public class SharedSteps {
         }
     }
 
+    //TODO MATTEO: il test che richiama questo metodo non è utilizzato, cancellare ?
     @And("viene effettuato recupero stato della notifica con la V1 dal comune {string}")
     public void retrieveStateNotification(String paName) {
-        NotificationStepsInterface notificationStepsV1 = getNotificationStepInterface(V1);
-        setPaAndSenderTaxId(paName, notificationStepsV1);
+        versionUsed = V1;
+        setPaAndSenderTaxId(paName);
         String requestId = Base64Utils.encodeToString(fullSentNotificationV26.getIun().getBytes());
         try {
             Assertions.assertDoesNotThrow(() -> b2bClient.getNotificationRequestStatusV1(requestId));
@@ -667,83 +665,78 @@ public class SharedSteps {
 
     @When("la notifica viene inviata tramite api b2b dal {string} e si annulla prima che lo stato diventi REFUSED")
     public void laNotificaVieneInviataRefusedAndCancelled(String paName) {
-        NotificationVersion notificationVersion = versionUsed == null ? getNotificationVersion(MOST_RECENT) : versionUsed;
-        NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface(notificationVersion);
-        setPaAndSenderTaxId(paName, notificationStepsInterface);
-        notificationStepsInterface.sendNotification(1000, NOTIFICATION_STATUS_NOT_REFUSED, VALIDATION_STATUS);
+        setPaAndSenderTaxId(paName);
+        getNotificationStepInterface().sendNotification(1000, NOTIFICATION_STATUS_NOT_REFUSED, VALIDATION_STATUS);
     }
 
     //TODO: per test normalizzatore
     //TODO MATTEO: il metodo riceve un parametro da scenario Outline, per quello sembra non venga richiamato (AddressValidation.feature)
     @When("la notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi HTTP_ERROR")
     public void sendNotificationHttpError(String paName) {
-        NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface();
-        setPaAndSenderTaxId(paName, notificationStepsInterface);
-        sendNotificationWithError(notificationStepsInterface);
+        setPaAndSenderTaxId(paName);
+        sendNotificationWithError(getNotificationStepInterface());
         Assertions.assertNotNull(this.notificationError);
         Assertions.assertEquals(400, this.notificationError.getStatusCode().value());
     }
 
     @When("la notifica viene inviata tramite api b2b senza preload allegato dal {string} e si attende che lo stato diventi REFUSED")
     public void laNotificaVieneInviataSenzaPreloadAllegato(String paName) {
-        setPaAndSenderTaxId(paName, null);
+        setPaAndSenderTaxId(paName);
         sendNotificationWithErrorNotFindAllegato(false);
     }
 
     @When("la notifica viene inviata tramite api b2b effettuando la preload ma senza caricare nessun allegato dal {string} e si attende che lo stato diventi REFUSED")
     public void laNotificaVieneInviataTramiteApiBBEffettuandoLaPreloadMaSenzaCaricareNessunAllegatoDalESiAttendeCheLoStatoDiventiREFUSED(String paName) {
-        setPaAndSenderTaxId(paName, null);
+        setPaAndSenderTaxId(paName);
         sendNotificationWithErrorNotFindAllegato(true);
     }
 
     @When("la notifica viene inviata tramite api b2b effettuando la preload ma senza caricare nessun allegato json dal {string} e si attende che lo stato diventi REFUSED")
     public void laNotificaVieneInviataTramiteApiBBEffettuandoLaPreloadMaSenzaCaricareNessunAllegatoJsonDalESiAttendeCheLoStatoDiventiREFUSED(String paName) {
-        setPaAndSenderTaxId(paName, null);
+        setPaAndSenderTaxId(paName);
         sendNotificationWithErrorNotFindAllegatoJson();
     }
 
     @When("la notifica viene inviata tramite api b2b con sha256 differente dal {string} e si attende che lo stato diventi REFUSED")
     public void laNotificaVieneInviataConShaDifferente(String paName) {
-        setPaAndSenderTaxId(paName, null);
+        setPaAndSenderTaxId(paName);
         sendNotificationWithErrorSha();
     }
 
     @When("la notifica viene inviata tramite api b2b con sha256 Json differente dal {string} e si attende che lo stato diventi REFUSED")
     public void laNotificaVieneInviataConShaJsonDifferente(String paName) {
-        setPaAndSenderTaxId(paName, null);
+        setPaAndSenderTaxId(paName);
         sendNotificationWithErrorShaJson();
     }
 
     @When("la notifica viene inviata tramite api b2b con estensione errata dal {string} e si attende che lo stato diventi REFUSED")
     public void laNotificaVieneInviataConEstensioneErrata(String paName) {
-        setPaAndSenderTaxId(paName, null);
+        setPaAndSenderTaxId(paName);
         sendNotificationWithWrongExtension();
     }
 
     @When("la notifica viene inviata tramite api b2b oversize preload allegato dal {string} e si attende che lo stato diventi REFUSED")
     public void laNotificaVieneInviataPreloadAllegatoOverSize(String paName) {
-        setPaAndSenderTaxId(paName, null);
+        setPaAndSenderTaxId(paName);
         sendNotificationRefusedOverSizeAllegato();
     }
 
     @When("la notifica viene inviata tramite api b2b injection preload allegato dal {string} e si attende che lo stato diventi REFUSED")
     public void laNotificaVieneInviataPreloadAllegatoInjection(String paName) {
-        setPaAndSenderTaxId(paName, null);
+        setPaAndSenderTaxId(paName);
         sendNotificationRefusedInjectionAllegato();
     }
 
     @When("la notifica viene inviata tramite api b2b over 15 preload allegato dal {string} e si attende che lo stato diventi REFUSED")
     public void laNotificaVieneInviataPreloadAllegatoOver15(String paName) {
-        setPaAndSenderTaxId(paName, null);
+        setPaAndSenderTaxId(paName);
         sendNotificationRefusedOver15Allegato();
     }
 
     @When("la notifica viene inviata dal {string}")
     public void laNotificaVieneInviataDallaPA(String paName) {
-        NotificationVersion notificationVersion = versionUsed == null ? getNotificationVersion(MOST_RECENT) : versionUsed;
-        NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface(notificationVersion);
-        setPaAndSenderTaxId(paName, notificationStepsInterface);
-        sendNotificationWithError(notificationStepsInterface);
+        setPaAndSenderTaxId(paName);
+        sendNotificationWithError(getNotificationStepInterface());
     }
 
     @When("la notifica viene inviata tramite api b2b")
@@ -764,7 +757,7 @@ public class SharedSteps {
 
     @When("la notifica viene inviata tramite api b2b senza preload allegato dal {string}")
     public void laNotificaVieneInviatatramiteApiB2bSenzaPreloadAllegato(String pa) {
-        setPaAndSenderTaxId(pa, null);
+        setPaAndSenderTaxId(pa);
         sendNotificationWithErrorNotFindAllegato(false);
     }
 
@@ -1020,12 +1013,9 @@ public class SharedSteps {
         return value;
     }
 
-    private void setPaAndSenderTaxId(String paName, NotificationStepsInterface notificationStepsInterface) {
-        if (notificationStepsInterface == null) {
-            notificationStepsInterface = getNotificationStepInterface();
-        }
+    private void setPaAndSenderTaxId(String paName) {
         setPA(paName);
-        setSenderTaxId(paName, notificationStepsInterface);
+        setSenderTaxId(paName);
     }
 
     public void setPA(String paName) {
@@ -1060,7 +1050,8 @@ public class SharedSteps {
         this.b2bUtils.setClient(b2bClient, pollingFactory);
     }
 
-    private void setSenderTaxId(String pa, NotificationStepsInterface notificationStepsInterface) {
+    private void setSenderTaxId(String pa) {
+        NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface();
         switch (pa) {
             case COMUNE_1 -> {
                 notificationStepsInterface.setSenderTaxId(COMUNE_1_TAX_ID);

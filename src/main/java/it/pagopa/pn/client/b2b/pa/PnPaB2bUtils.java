@@ -68,20 +68,20 @@ public class PnPaB2bUtils {
         E value2;
     }
 
-    public static final String PN_NOTIFICATION_ATTACHMENTS_ZBEDA_19_F_8997469_BB_75_D_28_FF_12_BDF_321_PDF = "PN_NOTIFICATION_ATTACHMENTS-zbeda19f8997469bb75d28ff12bdf321.pdf";
-    public static final String PN_F24_META_AB_2_ACAB_392_D_042_A_1_A_FD_66_F_59732791_F_2_JSON = "PN_F24_META-ab2acab392d042a1afd66f59732791f2.json";
-    public static final String LEGAL_FACT_IS_NOT_A_PDF = "LegalFact is not a PDF ";
-    public static final String WRONG_STATUS = "WRONG STATUS: ";
     private final RestTemplate restTemplate;
     private final ApplicationContext ctx;
     private IPnPaB2bClient client;
     private PnPollingFactory pollingFactory;
     private final IPnRaddFsuClient raddFsuClient;
     private final IPnRaddAlternativeClient raddAltClient;
-    // Status
+    private final Random random = new Random();
+    // Costanti
     public static final String ACCEPTED = "ACCEPTED";
     public static final String REFUSED = "REFUSED";
-
+    public static final String PN_NOTIFICATION_ATTACHMENTS_ZBEDA_19_F_8997469_BB_75_D_28_FF_12_BDF_321_PDF = "PN_NOTIFICATION_ATTACHMENTS-zbeda19f8997469bb75d28ff12bdf321.pdf";
+    public static final String PN_F24_META_AB_2_ACAB_392_D_042_A_1_A_FD_66_F_59732791_F_2_JSON = "PN_F24_META-ab2acab392d042a1afd66f59732791f2.json";
+    public static final String LEGAL_FACT_IS_NOT_A_PDF = "LegalFact is not a PDF ";
+    public static final String WRONG_STATUS = "WRONG STATUS: ";
     public static final String PAGOPA = "PAGOPA";
     public static final String F_24 = "F24";
     public static final String APPLICATION_PDF = "application/pdf";
@@ -93,7 +93,6 @@ public class PnPaB2bUtils {
     public static final String LOAD_TO_PRESIGNED = "LOAD_TO_PRESIGNED";
     public static final String LOAD_TO_PRESIGNED_METADATI = "LOAD_TO_PRESIGNED_METADATI";
     public static final String NEW_NOTIFICATION_IUN = "New Notification\n IUN {}";
-    private final Random random = new Random();
 
 
     @Autowired
@@ -280,33 +279,6 @@ public class PnPaB2bUtils {
                 setAttachmentWithSleep(paymentList);
             }
         }
-    }
-
-    public NewNotificationResponse uploadNotificationAllegatiUgualiPagamento(NewNotificationRequestV24 request) throws IOException {
-        List<NotificationDocument> newdocs = new ArrayList<>();
-        for (NotificationDocument doc : request.getDocuments()) {
-            newdocs.add(this.preloadDocument(doc));
-        }
-        request.setDocuments(newdocs);
-
-        for (NotificationRecipientV23 recipient : request.getRecipients()) {
-            List<NotificationPaymentItem> paymentList = recipient.getPayments();
-            if (paymentList != null) {
-                for (NotificationPaymentItem paymentInfo : paymentList) {
-                    if (paymentInfo.getPagoPa() != null) {
-                        paymentInfo.getPagoPa().setAttachment(new NotificationPaymentAttachment()
-                                .ref(request.getDocuments().get(0).getRef())
-                                .digests(request.getDocuments().get(0).getDigests())
-                                .contentType(request.getDocuments().get(0).getContentType()));
-                    }
-                    if (paymentInfo.getF24() != null) {
-                        paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
-                    }
-                }
-
-            }
-        }
-        return getAndCheckSendNewNotification(request);
     }
 
     private NewNotificationResponse getAndCheckSendNewNotification(NewNotificationRequestV24 request) {

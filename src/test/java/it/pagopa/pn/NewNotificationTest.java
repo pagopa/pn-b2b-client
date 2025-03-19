@@ -70,7 +70,6 @@ public class NewNotificationTest {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
-
         // README!!!!!!!!!!!!!!!!!!!! PER TE SVILUPPATORE !!!!!!!!!!!!!!!!
         // modificare a FLAT_RATE o DELIVERY_MODE a piacere
         NotificationFeePolicy policy = NotificationFeePolicy.DELIVERY_MODE;
@@ -81,7 +80,7 @@ public class NewNotificationTest {
                 .subject("Test inserimento " + dateFormat.format(calendar.getTime()))
                 .cancelledIun(null)
                 ._abstract("Abstract della notifica")
-                .senderDenomination("Comune di Sapppada")
+                .senderDenomination("Comune di Sappada")
                 .pagoPaIntMode(NewNotificationRequestV24.PagoPaIntModeEnum.SYNC)
                 .taxonomyCode("010202N")
                 .paFee(100)
@@ -89,7 +88,7 @@ public class NewNotificationTest {
                 .senderTaxId("00207190257")
                 .notificationFeePolicy(policy)
                 .physicalCommunicationType(NewNotificationRequestV24.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890)
-                .paProtocolNumber("" + System.currentTimeMillis())
+                .paProtocolNumber(String.valueOf(System.currentTimeMillis()))
                 .addDocumentsItem(newDocument("classpath:/sample.pdf"))
                 .addRecipientsItem(newRecipient(
                         policy != NotificationFeePolicy.FLAT_RATE,
@@ -121,12 +120,12 @@ public class NewNotificationTest {
         NewNotificationRequestV24 request = new NewNotificationRequestV24()
                 .cancelledIun(null)
                 ._abstract("Abstract della notifica")
-                .senderDenomination("Comune di Sapppada")
+                .senderDenomination("Comune di Sappada")
                 //.senderTaxId("01199250158")
                 .senderTaxId("00207190257")
                 .notificationFeePolicy(NotificationFeePolicy.FLAT_RATE)
                 .physicalCommunicationType(NewNotificationRequestV24.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890)
-                .paProtocolNumber("" + System.currentTimeMillis())
+                .paProtocolNumber(String.valueOf(System.currentTimeMillis()))
                 .addDocumentsItem(newDocument("classpath:/sample.pdf"))
                 .addRecipientsItem(newRecipient(false, "Leo ", "CNCGPP80A01H501J", "classpath:/sample.pdf", "classpath:/f24_flat.json", RECIPIENT_TYPE_DIGITAL.NO_DIGITAL, RECIPIENT_TYPE_ANALOG.ANALOG_KO))
                 .addRecipientsItem(newRecipient(false, "Fiera", "FRMTTR76M06B715E", "classpath:/sample.pdf", "classpath:/f24_flat.json", RECIPIENT_TYPE_DIGITAL.DIGITAL_OK, RECIPIENT_TYPE_ANALOG.ANALOG_OK));
@@ -165,7 +164,7 @@ public class NewNotificationTest {
         ANALOG_OK, ANALOG_KO
     }
 
-    private NotificationRecipientV23 newRecipient(boolean withapplycost, String prefix, String taxId, String resourcePath, String resourcePathf24, RECIPIENT_TYPE_DIGITAL recipientTypeDigital, RECIPIENT_TYPE_ANALOG recipientTypeAnalog) {
+    private NotificationRecipientV23 newRecipient(boolean withApplyCost, String prefix, String taxId, String resourcePath, String resourcePathF24, RECIPIENT_TYPE_DIGITAL recipientTypeDigital, RECIPIENT_TYPE_ANALOG recipientTypeAnalog) {
         long epochMillis = System.currentTimeMillis();
         NotificationRecipientV23 recipient = new NotificationRecipientV23()
                 .denomination(prefix + " denomination")
@@ -198,14 +197,14 @@ public class NewNotificationTest {
                 .payments(List.of(new NotificationPaymentItem()
                                 .pagoPa(new PagoPaPayment().creditorTaxId("77777777777")
                                         .noticeCode(String.format("30201%13d", epochMillis))
-                                        .applyCost(withapplycost)
+                                        .applyCost(withApplyCost)
                                         .attachment(newAttachment(resourcePath))),
                         new NotificationPaymentItem()
                                 .pagoPa(new PagoPaPayment().creditorTaxId("77777777777")
                                         .noticeCode(String.format("30202%13d", epochMillis))
                                         .applyCost(false)
                                         .attachment(newAttachment(resourcePath))),
-                        resourcePathf24 == null ?
+                        resourcePathF24 == null ?
                                 new NotificationPaymentItem()
                                         .pagoPa(new PagoPaPayment().creditorTaxId("77777777777")
                                                 .noticeCode(String.format("30203%13d", epochMillis))
@@ -213,14 +212,14 @@ public class NewNotificationTest {
                                                 .attachment(newAttachment(resourcePath))) :
                                 new NotificationPaymentItem()
                                         .f24(new F24Payment()
-                                                .applyCost(withapplycost)
+                                                .applyCost(withApplyCost)
                                                 .title("f24 qualcosa")
-                                                .metadataAttachment(newMatadataAttachment(resourcePathf24))),
+                                                .metadataAttachment(newMatadataAttachment(resourcePathF24))),
                         new NotificationPaymentItem()
                                 .f24(new F24Payment()
-                                        .applyCost(withapplycost)
+                                        .applyCost(withApplyCost)
                                         .title("f24 qualcosa 1")
-                                        .metadataAttachment(newMatadataAttachment(resourcePathf24))),
+                                        .metadataAttachment(newMatadataAttachment(resourcePathF24))),
                         new NotificationPaymentItem()
                                 .f24(new F24Payment()
                                         .applyCost(false)

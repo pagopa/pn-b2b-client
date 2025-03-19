@@ -41,6 +41,11 @@ public class NotificationStepsV2 implements NotificationStepsInterface {
     }
 
     @Override
+    public String getVersionString() {
+        return version.toString();
+    }
+
+    @Override
     public String getNotificationSentIun() {
         return fullSentNotification.getIun();
     }
@@ -144,7 +149,6 @@ public class NotificationStepsV2 implements NotificationStepsInterface {
         }
     }
 
-    //TODO MATTEO TEST (rendere private?)
     @Override
     public Object uploadNotification() throws IOException {
         List<NotificationDocument> documents = new ArrayList<>();
