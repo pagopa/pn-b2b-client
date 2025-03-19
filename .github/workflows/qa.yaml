@@ -1,0 +1,73 @@
+name: QA workflow
+
+on: 
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment where tests will be run'
+        required: true
+        type: environment
+      testSuite:
+        description: 'Choose the test suite to run'
+        required: false
+        default: InteropTracingTest
+        type: string
+
+defaults:
+    run:
+      shell: bash
+      
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  inputs:
+    runs-on: ubuntu-22.04
+    environment: ${{ inputs.environment }}
+
+    steps:
+      - name: Print Inputs
+        id: print_inputs
+        run: |
+          echo "- environment: \`${{ inputs.environment }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- branch name: \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- testSuite: \`${{ inputs.testSuite }}\`" >> $GITHUB_STEP_SUMMARY
+
+  run_test:
+    name: Run Cucumber Test Suite
+    runs-on: ubuntu-22.04
+    environment: ${{ inputs.environment }}
+    env:
+      ENVIRONMENT: ${{ inputs.environment }}
+      ST_VERBOSE_MODE: ${{ vars.ST_VERBOSE_MODE }}
+
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: ${{ vars.ECS_IAM_ROLE_ARN }}
+          role-session-name: pn-b2b-client-${{ github.job }}-${{ github.run_id }}
+          aws-region: eu-south-1
+
+      - name: Set up Maven
+        uses: s4u/setup-maven-action@6d44c18d67d9e1549907b8815efa5e4dada1801b # v1.12.0
+        with:
+          java-version: 17
+          maven-version: 3.9.8
+
+      - name: Clone the pn-b2b-client repo
+        id: clone_pn-b2b-client
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.ref_name }} # Branch name to clone
+          fetch-depth: 1  # Clone only the last commit
+
+      - name: Run QA tests
+        id: run_qa_tests
+        shell: bash
+        run: |
+          set -uo pipefail
+          echo "Running tests..."
+          cd ./interop-qa-tests && mvn -Dtest=it.pagopa.pn.interop.cucumber.InteropTracingTest clean verify
+

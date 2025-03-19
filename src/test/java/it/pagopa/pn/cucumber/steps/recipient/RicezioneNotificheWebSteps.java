@@ -7,22 +7,23 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffDocumentType;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffFullNotificationV1;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffNotificationDetailDocument;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffNotificationDetailTimeline;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffConsent;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffTosPrivacyActionBody;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.Consent;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.ConsentType;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV23;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV24;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV25;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV26;
 import it.pagopa.pn.client.b2b.pa.service.*;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.*;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.ConsentAction;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.*;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.DocumentCategory;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.utils.DataTest;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,6 @@ import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.ByteArrayInputStream;
@@ -61,7 +61,7 @@ public class RicezioneNotificheWebSteps {
     private static final Integer waitDefault = 10000;
 
     private HttpStatusCodeException notificationError;
-    private FullReceivedNotificationV23 fullNotification;
+    private FullReceivedNotificationV25 fullNotification;
     private BffFullNotificationV1 bffFullNotificationV1Recipient;
     private it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffFullNotificationV1 bffFullNotificationV1Sender;
 
@@ -124,18 +124,40 @@ public class RicezioneNotificheWebSteps {
         log.info("FULL TIMELINE RECIPIENT: " + bffFullNotificationV1Recipient.getTimeline());
     }
 
+    @And("lato destinatario viene recuperato AAR lato web dal destinatario {string}")
+    public void retrieveNotificationAAROnRecipientSideForWeb(String user) {
+        Assertions.assertNotNull(bffFullNotificationV1Recipient);
+        selectUser(user);
+        String documentId = Optional.ofNullable(bffFullNotificationV1Recipient.getOtherDocuments()).orElse(List.of()).stream()
+                .filter(x -> x != null && x.getDocumentType().equals("AAR"))
+                .map(BffNotificationDetailDocument::getDocumentId)
+                .findFirst()
+                .orElse(null);
+        Assertions.assertDoesNotThrow(() ->
+                bffRecipientNotificationClient.getReceivedNotificationDocumentV1(sharedSteps.getSentNotification().getIun(), BffDocumentType.AAR, null, null, documentId));
+    }
+
+    @And("lato destinatario è possibile recuperare correttamente l'allegato {string} dal destinatario {string}")
+    public void retrieveAttachmentOnRecipientSideForWeb(String attachmentName, String user) {
+        Assertions.assertNotNull(bffFullNotificationV1Recipient);
+        selectUser(user);
+        Assertions.assertDoesNotThrow(() ->
+                bffRecipientNotificationClient.getReceivedNotificationPaymentV1WithHttpInfo(sharedSteps.getSentNotification().getIun(), attachmentName, null, 0));
+    }
+
+
     @And("lato api l'elemento di timeline della notifica {string} con deliveryDetailCode {string} non è visibile")
     public void timelineEventWithCategoryAndDeliveryDetailCodeNotPresent(String category, String deliveryDetailCode) {
 
-        Assertions.assertNull(getTimelineElementV23(category, deliveryDetailCode));
+        Assertions.assertNull(getTimelineElementV26(category, deliveryDetailCode));
     }
 
     @And("lato api l'elemento di timeline della notifica {string} con deliveryDetailCode {string} è visibile")
     public void timelineEventWithCategoryAndDeliveryDetailCodePresent(String category, String deliveryDetailCode) {
-        Assertions.assertNotNull(getTimelineElementV23(category, deliveryDetailCode));
+        Assertions.assertNotNull(getTimelineElementV26(category, deliveryDetailCode));
     }
 
-    private it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementV23 getTimelineElementV23(String category, String deliveryDetailCode) {
+    private TimelineElementV26 getTimelineElementV26(String category, String deliveryDetailCode) {
         fullNotification.getTimeline().forEach(x -> log.info(x.toString()));
         return fullNotification.getTimeline().stream()
                 .filter(x -> x.getCategory().toString().equals(category) &&
@@ -264,8 +286,8 @@ public class RicezioneNotificheWebSteps {
         String iun = sharedSteps.getIunVersionamento();
 
         try {
-            OffsetDateTime scheduleDate = Objects.requireNonNull(webRecipientClient.getReceivedNotification(iun, null).getTimeline().stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(TimelineElementCategoryV23.SCHEDULE_REFINEMENT)).findAny().get().getDetails()).getSchedulingDate();
-            OffsetDateTime refinementDate = webRecipientClient.getReceivedNotification(iun, null).getTimeline().stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(TimelineElementCategoryV23.REFINEMENT)).findAny().get().getTimestamp();
+            OffsetDateTime scheduleDate = Objects.requireNonNull(webRecipientClient.getReceivedNotification(iun, null).getTimeline().stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(TimelineElementCategoryV26.SCHEDULE_REFINEMENT)).findAny().get().getDetails()).getSchedulingDate();
+            OffsetDateTime refinementDate = webRecipientClient.getReceivedNotification(iun, null).getTimeline().stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(TimelineElementCategoryV26.REFINEMENT)).findAny().get().getTimestamp();
             log.info("scheduleDate : {}", scheduleDate);
             log.info("refinementDate : {}", refinementDate);
 
@@ -375,10 +397,10 @@ public class RicezioneNotificheWebSteps {
             throw exc;
         }
 
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23 timelineElementInternalCategory = it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23.AAR_GENERATION;
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV24 timelineElement = null;
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26 timelineElementInternalCategory = it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26.AAR_GENERATION;
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 timelineElement = null;
 
-        for (it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV24 element : sharedSteps.getSentNotification().getTimeline()) {
+        for (it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 element : sharedSteps.getSentNotification().getTimeline()) {
             if (Objects.requireNonNull(element.getCategory()).equals(timelineElementInternalCategory)) {
                 timelineElement = element;
                 break;
@@ -396,7 +418,7 @@ public class RicezioneNotificheWebSteps {
 
             String finalKeySearch = "safestorage://" + keySearch;
             try {
-                this.webRecipientClient.getDocumentsWeb(sharedSteps.getSentNotification().getIun(), it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.DocumentCategory.AAR, finalKeySearch, null);
+                this.webRecipientClient.getDocumentsWeb(sharedSteps.getSentNotification().getIun(), DocumentCategory.AAR, finalKeySearch, null);
             } catch (HttpStatusCodeException e) {
                 this.notificationError = e;
             }
@@ -444,7 +466,7 @@ public class RicezioneNotificheWebSteps {
         searchParam.subjectRegExp = data.getOrDefault("subjectRegExp", null);
         String iun = data.getOrDefault("iunMatch", null);
         if (data.containsKey("status")) {
-            searchParam.status = NotificationStatus.valueOf(data.get("status"));
+            searchParam.status = NotificationStatusV26.valueOf(data.get("status"));
         }
         searchParam.iunMatch = ((iun != null && iun.equalsIgnoreCase("ACTUAL") ? sharedSteps.getSentNotification().getIun() : iun));
         searchParam.size = Integer.parseInt(data.getOrDefault("size", "10"));
@@ -478,7 +500,7 @@ public class RicezioneNotificheWebSteps {
         String end = data.getOrDefault("endDate", null);
 
 //        OffsetDateTime sentAt = sharedSteps.getSentNotification().getSentAt();
-        OffsetDateTime sentAt = Optional.ofNullable(sharedSteps.getSentNotification()).map(FullSentNotificationV24::getSentAt).orElse(OffsetDateTime.now());
+        OffsetDateTime sentAt = Optional.ofNullable(sharedSteps.getSentNotification()).map(FullSentNotificationV26::getSentAt).orElse(OffsetDateTime.now());
         LocalDateTime localDateStart = LocalDate.parse(start, DateTimeFormatter.ofPattern("dd/MM/yyyy")).atStartOfDay();
         OffsetDateTime startDate = OffsetDateTime.of(localDateStart, sentAt.getOffset());
 
@@ -685,12 +707,12 @@ public class RicezioneNotificheWebSteps {
 
     @And("verifico che l'atto opponibile a terzi di {string} sia lo stesso")
     public void verificoAttoOpponibileSiaUguale(String timelineEventCategory, @Transpose DataTest dataFromTest) {
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV24 timelineElement =
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 timelineElement =
                 sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         // get new timeline
         String iun = sharedSteps.getSentNotification().getIun();
         sharedSteps.setSentNotification(b2bClient.getSentNotification(iun));
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV24 newTimelineElement =
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 newTimelineElement =
                 sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         // check legal fact key
         Assertions.assertEquals(Objects.requireNonNull(timelineElement.getLegalFactsIds()).size(), Objects.requireNonNull(newTimelineElement.getLegalFactsIds()).size());
@@ -710,7 +732,7 @@ public class RicezioneNotificheWebSteps {
         OffsetDateTime endDate;
         String mandateId;
         String senderId;
-        NotificationStatus status;
+        NotificationStatusV26 status;
         String subjectRegExp;
         String iunMatch;
         Integer size = 10;
@@ -720,7 +742,7 @@ public class RicezioneNotificheWebSteps {
         OffsetDateTime startDate;
         OffsetDateTime endDate;
         String mandateId;
-        it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatus status;
+        it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatusV26 status;
         String subjectRegExp;
         String iunMatch;
         Integer size = 10;
@@ -963,9 +985,9 @@ public class RicezioneNotificheWebSteps {
 
         boolean isPresent = sharedSteps.getSentNotification().getTimeline()
                 .stream()
-                .map(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV24::getCategory)
+                .map(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26::getCategory)
                 .filter(Objects::nonNull)
-                .map(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23::toString)
+                .map(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26::toString)
                 .anyMatch(category -> category.equals(categoryToFind));
 
         if (isPresent) {
@@ -994,6 +1016,7 @@ public class RicezioneNotificheWebSteps {
             Assertions.assertEquals(data.getAccepted(), tosStatus.equalsIgnoreCase("positiva"));
         });
     }
+
 }
 
 
