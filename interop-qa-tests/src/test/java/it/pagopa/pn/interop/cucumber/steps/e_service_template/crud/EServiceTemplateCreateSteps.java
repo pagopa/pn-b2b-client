@@ -18,7 +18,7 @@ import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTem
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext.EServiceTemplateInfo;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
 import lombok.Data;
-
+import org.springframework.http.HttpStatus;
 
 // TODO perché @Data? Considerarne rimozione da questa e dalle altre classi
 /** Cucumber steps involving creation, editing, viewing or deletion
@@ -86,8 +86,23 @@ public class EServiceTemplateCreateSteps {
         String userToken = sharedStepsContext.getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);
 
-        CreatedEServiceTemplateVersion creationResponse = this.dataPreparationService.createEServiceTemplate(
-            templateSeed);
+        httpCallExecutor.performCall(() -> eServiceTemplateClient.createEServiceTemplate(
+            sharedStepsContext.getXCorrelationId(), templateSeed));
+        if (httpCallExecutor.getResponseStatus().isError()) {
+            return; // a questo punto si prevede che i passi successivi riconoscano l'errore
+        }
+
+        CreatedEServiceTemplateVersion creationResponse = (CreatedEServiceTemplateVersion) httpCallExecutor.getResponse();
+        pollingService.makePolling(
+            () -> httpCallExecutor.performCall(
+                () -> eServiceTemplateClient.getEServiceTemplateVersion(
+                    sharedStepsContext.getXCorrelationId(),
+                    creationResponse.getId(),
+                    creationResponse.getVersionId())),
+            res -> res != HttpStatus.NOT_FOUND,
+            "There was an error while retrieving the e-service template"
+        );
+
         templateContext.setLastTemplateManaged(new EServiceTemplateInfo(
             templateSeed.getName(),
             templateSeed.getIntendedTarget(),

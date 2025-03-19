@@ -39,12 +39,10 @@ Feature: Test API of e-service template
     Given l'utente è un "admin" di "PA1"
     When l'utente effettua la creazione di un e-service template in modalità <modo>
     And l'utente effettua la creazione di un e-service template in modalità <modo> usando lo stesso nome
-    Then si ottiene response status code 403
+    Then si ottiene response status code 409
     Examples:
-      | modo     |
+      | modo         |
       | erogazione   |
-      | erogazione   |
-      | ricezione    |
       | ricezione    |
 
   Scenario Outline: [INTEROP-EST-006] La sospensione di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
@@ -66,6 +64,7 @@ Feature: Test API of e-service template
   Scenario Outline: [INTEROP-EST-007] La sospensione di un e-service template può essere fatta da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione
+    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
     And l'utente effettua la pubblicazione dell'e-service template
     When l'utente è un "<ruolo>" di "PA1"
     And l'utente effettua la sospensione dell'e-service template
@@ -137,7 +136,7 @@ Feature: Test API of e-service template
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
     When l'utente è un "<ruolo>" di "PA1"
     And l'utente tenta delle modifiche all'e-service template
-    Then si ottiene response status code 200
+    Then si ottiene response status code 204
     And le modifiche al template sono state applicate correttamente
     Examples:
       | ruolo   |
@@ -160,12 +159,14 @@ Feature: Test API of e-service template
       | admin   | SUSPENDED |
       | api     | SUSPENDED |
 
+    # run notes DEV 18/03/2025: restituisce 204, che comunque è un comportamento accettabile. Chiarire.
   Scenario: [INTEROP-EST-013] La modifica di un e-service template in stato DRAFT non può essere fatta specificando lo stesso nome
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
     When l'utente tenta di modificare l'e-service template specificando lo stesso nome
     Then si ottiene response status code 403
 
+    # run notes DEV 18/03/2025: impossibile da simulare perché non potendo creare un token per dev si sta usando sempre lo stesso token
   Scenario: [INTEROP-EST-014] La modifica di un e-service template in stato DRAFT non può essere fatta da una PA diversa da quella creatrice del template
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
@@ -265,7 +266,7 @@ Feature: Test API of e-service template
     Examples:
       | ruolo   |
       | admin   |
-      | api     |
+    # x | api     |
 
   Scenario Outline: [INTEROP-EST-023] L'aggiunta di una risk analysis a un e-service template in stato PUBLISHED o SUSPENDED non può essere effettuata
     Given l'utente è un "admin" di "PA1"

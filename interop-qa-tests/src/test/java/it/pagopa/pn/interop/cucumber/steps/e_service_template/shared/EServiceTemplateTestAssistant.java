@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template.shared;
 
 import static java.util.Objects.nonNull;
+import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.fail;
 
 import com.google.common.io.Files;
@@ -11,6 +12,7 @@ import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient.EServiceTemplateDocumentKind;
 import it.pagopa.interop.e_service_template.mapper.DescriptorAttributesMapper;
+import it.pagopa.interop.e_service_template.mapper.RiskAnalysisMapper;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributes;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
@@ -21,6 +23,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVer
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionSeed;
+import it.pagopa.interop.purpose.domain.RiskAnalysis;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
@@ -30,12 +33,14 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Predicate;
 import lombok.Data;
 import org.jeasy.random.EasyRandom;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 /** It contains general utility functions used across all other classes.  */
@@ -54,12 +59,14 @@ public class EServiceTemplateTestAssistant {
     private final EServiceTemplateStepContext templateContext;
     private final EasyRandom easyRandom;
     private final DescriptorAttributesMapper descriptorAttributesMapper;
+    private final RiskAnalysisMapper riskAnalysisMapper;
 
     public EServiceTemplateTestAssistant(ClientTokenConfigurator clientTokenConfigurator,
         DataPreparationService dataPreparationService,
         SharedStepsContext sharedStepsContext,
         EServiceTemplateStepContext templateContext,
-        DescriptorAttributesMapper descriptorAttributesMapper) {
+        DescriptorAttributesMapper descriptorAttributesMapper,
+        RiskAnalysisMapper riskAnalysisMapper) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.dataPreparationService = dataPreparationService;
         this.sharedStepsContext = sharedStepsContext;
@@ -71,6 +78,7 @@ public class EServiceTemplateTestAssistant {
         this.templateContext = templateContext;
         this.easyRandom = new EasyRandom(templateContext.getEasyRandomParameters());
         this.descriptorAttributesMapper = descriptorAttributesMapper;
+        this.riskAnalysisMapper = riskAnalysisMapper;
     }
 
     public String nextTestResourceNameSuffix() {
@@ -98,7 +106,7 @@ public class EServiceTemplateTestAssistant {
     public void publishEServiceTemplate() {
         String userToken = sharedStepsContext.getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);
-        this.dataPreparationService.publishEServiceTemplate(
+        this.publishEServiceTemplate(
             templateContext.getLastTemplateManaged().id(),
             templateContext.getLastTemplateManaged().lastVersionId());
     }
@@ -106,7 +114,7 @@ public class EServiceTemplateTestAssistant {
     public void suspendEServiceTemplate() {
         String userToken = sharedStepsContext.getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);
-        this.dataPreparationService.suspendEServiceTemplate(
+        this.suspendEServiceTemplate(
             templateContext.getLastTemplateManaged().id(),
             templateContext.getLastTemplateManaged().lastVersionId());
     }
@@ -228,9 +236,15 @@ public class EServiceTemplateTestAssistant {
 
     public void addRiskAnalysisToEServiceTemplate() {
         UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
-        templateContext.setLastAddedRiskAnalysis(easyRandom.nextObject(EServiceRiskAnalysisSeed.class));
+        templateContext.setLastAddedRiskAnalysis(getEServiceRiskAnalysisSeed());
         templateContext.incrementLastAddedRiskAnalysisIndex();
         addRiskAnalysisToEServiceTemplate(eServiceTemplateId, templateContext.getLastAddedRiskAnalysis());
+    }
+
+    private EServiceRiskAnalysisSeed getEServiceRiskAnalysisSeed() {
+        RiskAnalysis riskAnalysis = this.dataPreparationService.getRiskAnalysis(
+            sharedStepsContext.getTenantType(), true);
+        return this.riskAnalysisMapper.mapToSeed(riskAnalysis);
     }
 
     public void addRiskAnalysisToEServiceTemplate(UUID eServiceTemplateId, EServiceRiskAnalysisSeed riskAnalysisSeed) {
@@ -262,7 +276,7 @@ public class EServiceTemplateTestAssistant {
                             res.getBody().getEserviceTemplate().getRiskAnalysis().get(templateContext.getLastAddedRiskAnalysisIndex())),
                 "La risk analysis non è stata aggiunta correttamente all'e-service template"
             );
-        } catch (PollingPredicateException e) {
+        } catch (IllegalArgumentException e) { // TODO altrove è stato usato PollingPredicateException, che impedirà il catch di IllegalArgumentException, correggere
             fail("La risk analysis non è stata aggiunta correttamente all'e-service template");
         }
     }
@@ -275,6 +289,10 @@ public class EServiceTemplateTestAssistant {
     }
 
     public boolean areConsistent(EServiceRiskAnalysisSeed lastRiskAnalysis, EServiceRiskAnalysis retrievedAnalysis) {
+        /* TODO: modificare usando un assertion equals di AssertJ così da avere un log preciso in caso di errore
+        *       Bisognerà introdurre un mapper per i due tipi di sopra
+        *       Dopo l'assertion basterà restituire true (se non ci sono stati AssertionError può solo essere andata bene) */
+
         return lastRiskAnalysis.getName().equals(retrievedAnalysis.getName()) &&
             lastRiskAnalysis.getRiskAnalysisForm().equals(retrievedAnalysis.getRiskAnalysisForm());
 
@@ -294,5 +312,62 @@ public class EServiceTemplateTestAssistant {
             lastUpdate.getVoucherLifespan().equals(retrievedTemplate.getVoucherLifespan()) &&
             lastUpdate.getDailyCallsTotal().equals(retrievedTemplate.getDailyCallsTotal()) &&
             lastUpdate.getDailyCallsPerConsumer().equals(retrievedTemplate.getDailyCallsPerConsumer());
+    }
+
+    public void publishEServiceTemplate(UUID templateId, UUID templateVersionId) {
+        Runnable templatePublisher = () -> eServiceTemplateClient.publishEServiceTemplate(
+            sharedStepsContext.getXCorrelationId(),
+            templateId,
+            templateVersionId);
+        Predicate<ResponseEntity<EServiceTemplateVersionDetails>> pollingStopPredicate = res ->
+            res.getStatusCode() != HttpStatus.NOT_FOUND && requireNonNull(
+                res.getBody()).getState() == EServiceTemplateVersionState.PUBLISHED;
+        mutateEServiceTemplateState(templateId, templateVersionId, templatePublisher, pollingStopPredicate);
+    }
+
+    public void suspendEServiceTemplate(UUID templateId, UUID templateVersionId) {
+        Runnable templateSuspender = () -> eServiceTemplateClient.suspendEServiceTemplate(
+            sharedStepsContext.getXCorrelationId(),
+            templateId,
+            templateVersionId);
+        Predicate<ResponseEntity<EServiceTemplateVersionDetails>> pollingStopPredicate = res ->
+            res.getStatusCode() != HttpStatus.NOT_FOUND && requireNonNull(
+                res.getBody()).getState() == EServiceTemplateVersionState.SUSPENDED;
+        mutateEServiceTemplateState(templateId, templateVersionId, templateSuspender, pollingStopPredicate);
+    }
+
+    public void activateEServiceTemplate(UUID templateId, UUID templateVersionId) {
+        Runnable templateActivator = () -> eServiceTemplateClient.activateEServiceTemplate(
+            sharedStepsContext.getXCorrelationId(),
+            templateId,
+            templateVersionId);
+        Predicate<ResponseEntity<EServiceTemplateVersionDetails>> pollingStopPredicate = res ->
+            res.getStatusCode() != HttpStatus.NOT_FOUND && requireNonNull(
+                res.getBody()).getState() == EServiceTemplateVersionState.PUBLISHED;
+        mutateEServiceTemplateState(templateId, templateVersionId, templateActivator, pollingStopPredicate);
+    }
+
+    private void mutateEServiceTemplateState(
+        UUID templateId,
+        UUID templateVersionId,
+        Runnable templateStateMutator,
+        Predicate<ResponseEntity<EServiceTemplateVersionDetails>> pollingStopPredicate)
+    {
+        httpCallExecutor.performCall(templateStateMutator);
+        if (!httpCallExecutor.getResponseStatus().isError()) {
+            return;
+        }
+        pollingService.makePolling(
+            /* NOTE: in questa chiamata NON si sta usando HttpCallExecutor perché la chiamata
+             * "principale" - quella il cui esito dovrà eventualmente essere verificato dai
+             * test - è quella appena effettuata, non questa, che serve solo ad attendere
+             * l'effettivo mutamento di stato. */
+            () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
+                sharedStepsContext.getXCorrelationId(),
+                templateId,
+                templateVersionId),
+            pollingStopPredicate,
+            "There was an error while retrieving the e-service template"
+        );
     }
 }

@@ -86,7 +86,7 @@ public class EServiceTemplateInstanceReadSteps {
 
     private Condition<EServiceTemplateInstance> instanceInState(EServiceDescriptorState state) {
         return new Condition<>(
-            instance -> instance.getActiveDescriptor().getState().equals(state),
+            instance -> instance.getLatestDescriptor().getState().equals(state),
             "instances in state %s", state);
     }
 }

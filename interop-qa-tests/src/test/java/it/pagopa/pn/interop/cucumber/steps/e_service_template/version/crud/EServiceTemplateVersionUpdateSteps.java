@@ -11,6 +11,7 @@ import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.e_service_template.mapper.DescriptorAttributesMapper;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateAttributesSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionSeed;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
@@ -71,7 +72,7 @@ public class EServiceTemplateVersionUpdateSteps {
             .attributes(testAssistant.nextAttributesSeed())
             .dailyCallsPerConsumer(500)
             .dailyCallsTotal(5000)
-            .voucherLifespan(586400)
+            .voucherLifespan(86400)
             .description("Nuova descrizione della versione");
         updateEServiceTemplateVersion(UUID.randomUUID(), UUID.randomUUID(), updateSeed);
     }
@@ -80,7 +81,7 @@ public class EServiceTemplateVersionUpdateSteps {
     public void updateEServiceTemplateVersion() {
         templateContext.setLastTemplateVersionUpdateSeed(new UpdateEServiceTemplateVersionSeed()
             .agreementApprovalPolicy(AgreementApprovalPolicy.AUTOMATIC)
-            .attributes(testAssistant.nextAttributesSeed())
+            .attributes(new EServiceTemplateAttributesSeed())
             .dailyCallsPerConsumer(100)
             .dailyCallsTotal(1000)
             .voucherLifespan(86400)

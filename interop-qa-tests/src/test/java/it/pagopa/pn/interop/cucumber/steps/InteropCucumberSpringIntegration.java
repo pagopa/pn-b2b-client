@@ -21,6 +21,7 @@ import it.pagopa.interop.delegate.service.impl.DelegationApiClientImpl;
 import it.pagopa.interop.delegate.service.impl.ProducerDelegationsApiClientImpl;
 import it.pagopa.interop.e_service_template.impl.EServiceTemplateApiClientImpl;
 import it.pagopa.interop.e_service_template.mapper.DescriptorAttributesMapperImpl;
+import it.pagopa.interop.e_service_template.mapper.RiskAnalysisMapperImpl;
 import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
 import it.pagopa.interop.purpose.service.impl.PurposeApiClientImpl;
 import it.pagopa.interop.tenant.service.ITenantsApi;
@@ -72,7 +73,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
     DescriptorAttributesMapperImpl.class,
     EServiceTemplateStepContext$EServiceTemplateInfoMapperImpl.class,
     EServiceTemplateTestAssistant.class,
-    EServiceTemplateStepContext.class
+    EServiceTemplateStepContext.class,
+    RiskAnalysisMapperImpl.class,
 })
 @EnableScheduling
 @EnableConfigurationProperties

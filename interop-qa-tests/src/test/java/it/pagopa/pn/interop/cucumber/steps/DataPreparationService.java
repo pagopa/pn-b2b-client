@@ -1,7 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps;
 
 import static it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode.RECEIVE;
-import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.BooleanUtils.isNotTrue;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
@@ -26,16 +25,12 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedTenantAttr
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactUser;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceDescriptor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTechnology;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject3;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
@@ -71,7 +66,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Predicate;
 import javax.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -80,7 +74,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 @Slf4j
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -332,79 +325,6 @@ public class DataPreparationService {
                 () -> tenantsApi.getCertifiedAttributes(tenantId),
                 res -> res.getAttributes().stream().anyMatch(attr -> attr.getId().equals(attributeId)),
                 "There was an error while retrieving the attributes"
-        );
-    }
-
-    public CreatedEServiceTemplateVersion createEServiceTemplate(
-        EServiceTemplateSeed templateSeed) {
-        httpCallExecutor.performCall(() -> eServiceTemplateClient.createEServiceTemplate(sharedStepsContext.getXCorrelationId(), templateSeed));
-        CreatedEServiceTemplateVersion creationResponse = (CreatedEServiceTemplateVersion) httpCallExecutor.getResponse();
-        pollingService.makePolling(
-            () -> httpCallExecutor.performCall(
-                () -> eServiceTemplateClient.getEServiceTemplateVersion(
-                    sharedStepsContext.getXCorrelationId(),
-                    creationResponse.getId(),
-                    creationResponse.getVersionId())),
-            res -> res != HttpStatus.NOT_FOUND,
-            "There was an error while retrieving the e-service template"
-        );
-        return creationResponse;
-    }
-
-    public void publishEServiceTemplate(UUID templateId, UUID templateVersionId) {
-        Runnable templatePublisher = () -> eServiceTemplateClient.publishEServiceTemplate(
-            sharedStepsContext.getXCorrelationId(),
-            templateId,
-            templateVersionId);
-        Predicate<ResponseEntity<EServiceTemplateVersionDetails>> pollingStopPredicate = res ->
-            res.getStatusCode() != HttpStatus.NOT_FOUND && requireNonNull(
-                res.getBody()).getState() == EServiceTemplateVersionState.PUBLISHED;
-        mutateEServiceTemplateState(templateId, templateVersionId, templatePublisher, pollingStopPredicate);
-    }
-
-    public void suspendEServiceTemplate(UUID templateId, UUID templateVersionId) {
-        Runnable templateSuspender = () -> eServiceTemplateClient.suspendEServiceTemplate(
-            sharedStepsContext.getXCorrelationId(),
-            templateId,
-            templateVersionId);
-        Predicate<ResponseEntity<EServiceTemplateVersionDetails>> pollingStopPredicate = res ->
-            res.getStatusCode() != HttpStatus.NOT_FOUND && requireNonNull(
-                res.getBody()).getState() == EServiceTemplateVersionState.SUSPENDED;
-        mutateEServiceTemplateState(templateId, templateVersionId, templateSuspender, pollingStopPredicate);
-    }
-
-    public void activateEServiceTemplate(UUID templateId, UUID templateVersionId) {
-        Runnable templateActivator = () -> eServiceTemplateClient.activateEServiceTemplate(
-            sharedStepsContext.getXCorrelationId(),
-            templateId,
-            templateVersionId);
-        Predicate<ResponseEntity<EServiceTemplateVersionDetails>> pollingStopPredicate = res ->
-            res.getStatusCode() != HttpStatus.NOT_FOUND && requireNonNull(
-                res.getBody()).getState() == EServiceTemplateVersionState.PUBLISHED;
-        mutateEServiceTemplateState(templateId, templateVersionId, templateActivator, pollingStopPredicate);
-    }
-
-    private void mutateEServiceTemplateState(
-        UUID templateId,
-        UUID templateVersionId,
-        Runnable templateStateMutator,
-        Predicate<ResponseEntity<EServiceTemplateVersionDetails>> pollingStopPredicate)
-    {
-        httpCallExecutor.performCall(templateStateMutator);
-        if (!httpCallExecutor.getResponseStatus().isError()) {
-            return;
-        }
-        pollingService.makePolling(
-            /* NOTE: in questa chiamata NON si sta usando HttpCallExecutor perché la chiamata
-             * "principale" - quella il cui esito dovrà eventualmente essere verificato dai
-             * test - è quella appena effettuata, non questa, che serve solo ad attendere
-             * l'effettivo mutamento di stato. */
-            () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
-                sharedStepsContext.getXCorrelationId(),
-                templateId,
-                templateVersionId),
-            pollingStopPredicate,
-            "There was an error while retrieving the e-service template"
         );
     }
 

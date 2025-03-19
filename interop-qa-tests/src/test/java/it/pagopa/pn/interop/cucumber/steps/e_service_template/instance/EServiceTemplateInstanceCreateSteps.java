@@ -140,7 +140,7 @@ public class EServiceTemplateInstanceCreateSteps {
                 softly.assertThat(eServiceCreatedFromTemplate)
                     .get()
                     .as("Check stato dell'istanza creata")
-                    .extracting(EServiceTemplateInstance::getActiveDescriptor)
+                    .extracting(EServiceTemplateInstance::getLatestDescriptor)
                     .extracting(CompactDescriptor::getState)
                     .isEqualTo(expectedState);
 

@@ -11,7 +11,6 @@ import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionState;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
@@ -29,13 +28,11 @@ public class EServiceTemplateVersionReactivateSteps {
     private final PollingService pollingService;
     private final EServiceTemplateTestAssistant testAssistant;
     private final EServiceTemplateStepContext templateContext;
-    private final DataPreparationService dataPreparationService;
 
     public EServiceTemplateVersionReactivateSteps(ClientTokenConfigurator clientTokenConfigurator,
         SharedStepsContext sharedStepsContext,
         EServiceTemplateTestAssistant testAssistant,
-        EServiceTemplateStepContext templateContext,
-        DataPreparationService dataPreparationService
+        EServiceTemplateStepContext templateContext
     ) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
@@ -44,14 +41,13 @@ public class EServiceTemplateVersionReactivateSteps {
         this.pollingService = sharedStepsContext.getPollingService();
         this.testAssistant = testAssistant;
         this.templateContext = templateContext;
-        this.dataPreparationService = dataPreparationService;
     }
 
     @When("l'utente effettua la riattivazione dell'e-service template")
     public void activateEServiceTemplate() {
         String userToken = sharedStepsContext.getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);
-        this.dataPreparationService.activateEServiceTemplate(
+        this.testAssistant.activateEServiceTemplate(
             templateContext.getLastTemplateManaged().id(),
             templateContext.getLastTemplateManaged().lastVersionId());
     }
