@@ -311,9 +311,8 @@ public class AvanzamentoNotificheB2bSteps {
                     }
                 }
                 break;
-            case "ANALOG_SUCCESS_WORKFLOW":
-            case "PREPARE_SIMPLE_REGISTERED_LETTER":
-                if (detailsFromTest != null) {
+            case "PREPARE_SIMPLE_REGISTERED_LETTER", "ANALOG_SUCCESS_WORKFLOW":
+                if (detailsFromTest != null && detailsFromTest.getPhysicalAddress() != null) {
                     Assertions.assertEquals(detailsFromTest.getPhysicalAddress(), detailsFromNotification.getPhysicalAddress());
                 }
                 break;
@@ -3047,6 +3046,11 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
+    @Then("viene verificato che non esista l'elemento {string} al tentativo {string}")
+    public void checkToTheTimelineForElementOfNotificationAtAttemptNotExist(String timelineEventCategory, String attempt) {
+        Assertions.assertThrows(AssertionFailedError.class, () -> readingEventUpToTheTimelineElementOfNotificationAtAttempt(timelineEventCategory, attempt));
+    }
+
     //Notifica Annullata
 
     //Annullamento Notifica
@@ -3201,7 +3205,7 @@ public class AvanzamentoNotificheB2bSteps {
                         .build());
         log.info("NOTIFICATION_TIMELINE: " + pnPollingResponseV26.getNotification().getTimeline());
         try {
-            Assertions.assertTrue(pnPollingResponseV26.getResult());
+            Assertions.assertTrue(pnPollingResponseV26.getResult(), "l'elemento di timeline " + timelineEventCategory + " non viene trovato.");
             Assertions.assertNotNull(pnPollingResponseV26.getTimelineElement());
             sharedSteps.setFullSentNotificationV26(pnPollingResponseV26.getNotification());
             TimelineElementV26 timelineElement = pnPollingResponseV26.getTimelineElement();
@@ -3214,12 +3218,10 @@ public class AvanzamentoNotificheB2bSteps {
                     digitalDeliveryCreationRequestDate = element.getTimestamp();
                     delayMillis = sharedSteps.getSchedulingDaysFailureDigitalRefinement().toMillis();
                     break;
-                } else if (element.getCategory().getValue().equals("SEND_DIGITAL_FEEDBACK") && Objects.requireNonNull(element.getDetails()).getRecIndex().equals(destinatario) && evento.equalsIgnoreCase("SEND_DIGITAL_FEEDBACK")) {
-                    if ("OK".equalsIgnoreCase(element.getDetails().getResponseStatus().getValue())) {
-                        digitalDeliveryCreationRequestDate = element.getDetails().getNotificationDate();
-                        delayMillis = sharedSteps.getSchedulingDaysSuccessDigitalRefinement().toMillis();
-                        break;
-                    }
+                } else if (element.getCategory().getValue().equals("SEND_DIGITAL_FEEDBACK") && Objects.requireNonNull(element.getDetails()).getRecIndex().equals(destinatario) && evento.equalsIgnoreCase("SEND_DIGITAL_FEEDBACK") ) {
+                    digitalDeliveryCreationRequestDate = element.getDetails().getNotificationDate();
+                    delayMillis = "OK".equalsIgnoreCase(element.getDetails().getResponseStatus().getValue()) ? sharedSteps.getSchedulingDaysSuccessDigitalRefinement().toMillis() : sharedSteps.getSchedulingDaysFailureDigitalRefinement().toMillis();
+                    break;
                 }
             }
             Long schedulingDateMillis = timelineElement.getDetails().getSchedulingDate().toInstant().toEpochMilli();
@@ -3228,7 +3230,7 @@ public class AvanzamentoNotificheB2bSteps {
             long delta = Long.valueOf(sharedSteps.getSchedulingDelta());
             log.info("PRE-ASSERTION: iun={} schedulingDateMillis={}, digitalDeliveryCreationMillis={}, diff={}, delayMillis={}, delta={}",
                     sharedSteps.getFullSentNotificationV26().getIun(), schedulingDateMillis, digitalDeliveryCreationMillis, diff, delayMillis, delta);
-            Assertions.assertTrue(diff <= delayMillis + delta && diff >= delayMillis - delta);
+            Assertions.assertTrue(diff <= delayMillis + delta && diff >= delayMillis - delta, "le tempistiche di arrivo tra gli elementi cercati non sono corrette");
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }

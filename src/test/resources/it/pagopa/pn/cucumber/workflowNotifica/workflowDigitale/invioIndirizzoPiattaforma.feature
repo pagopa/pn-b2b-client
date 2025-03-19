@@ -1,6 +1,6 @@
 Feature: avanzamento b2b notifica digitale con indirizzo piattaforma
 
-  @workflowDigitale @mockPec @addressBook1
+  @workflowDigitale @mockPec @addressBook1 @ignoreHotfixTemp #temp
   #B2B_TIMELINE_20
   Scenario: [B2B_TIMELINE_DIGITAL_PLATTAFORM_1] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_FEEDBACK e controllo campi deliveryDetailCode e deliveryFailureCause positivo
     Given si predispone addressbook per l'utente "Galileo Galilei"

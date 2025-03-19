@@ -164,9 +164,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo AR
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario
-      | denomination            | Giovanna D'Arco  |
-      | taxId                   | DRCGNN12A46A326K |
+    And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL             |
       | physicalAddress_address | Via@ok_AR        |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"

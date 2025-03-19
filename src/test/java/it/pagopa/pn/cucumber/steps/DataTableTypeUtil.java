@@ -119,6 +119,10 @@ public class DataTableTypeUtil {
             case "DOC_BS" -> document = "classpath:/verbaleBs.pdf";
             case "DOC_BS2" -> document = "classpath:/Atto2BsRadd.pdf";
             case "DOC_30MB" -> document = "classpath:/allegato_30Mb.pdf";
+            case "ALLEGATO_1_BN" -> document = "classpath:/Allegato1_BN.pdf";
+            case "ALLEGATO_2_BN" -> document = "classpath:/Allegato2_BN.pdf";
+            case "ALLEGATO_3_COLORI" -> document = "classpath:/Allegato3_COLORI.PDF";
+            case "ALLEGATO_4_COLORI" -> document = "classpath:/Allegato4_COLORI.pdf";
             default -> document = getDefaultValue(DOCUMENT.key);
         }
 

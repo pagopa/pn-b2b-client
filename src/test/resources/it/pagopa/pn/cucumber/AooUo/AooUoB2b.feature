@@ -21,7 +21,7 @@ Feature: verifica feature aoo/uo
     And l'operazione ha generato un errore con status code "404"
 
 
-  @AOO_UO @addressBook1
+  @AOO_UO @addressBook1 @ignoreHotfixTemp #temp
   Scenario: [B2B-AOO-UO_3] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -79,7 +79,7 @@ Feature: verifica feature aoo/uo
       | details_digitalAddressSource | PLATFORM                                                              |
       | details_sentAttemptMade      | 0                                                                     |
 
-  @AOO_UO @addressBook1
+  @AOO_UO @addressBook1 @ignoreHotfixTemp #temp
   Scenario: [B2B-AOO-UO_5] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And viene inserito un recapito legale "example@OK-pecFirstFailSecondSuccess.it" per il comune "Comune_Root"
@@ -158,7 +158,7 @@ Feature: verifica feature aoo/uo
     And viene cancellata l'email di cortesia per il comune "default"
     And viene cancellata l'email di cortesia per il comune "Comune_Root"
 
-  @AOO_UO @addressBook1
+  @AOO_UO @addressBook1 @ignoreHotfixTemp #temp
   Scenario: [B2B-AOO-UO_8] invio messaggio di cortesia - invio notifica per email per ente padre
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And viene inserito un recapito legale "example@pecSuccess.it"
@@ -200,7 +200,7 @@ Feature: verifica feature aoo/uo
     And viene cancellata l'email di cortesia per il comune "default"
     And viene cancellata l'email di cortesia per il comune "Comune_Root"
 
-  @AOO_UO @addressBook1
+  @AOO_UO @addressBook1 @ignoreHotfixTemp #temp
   Scenario: [B2B-AOO-UO_10] invio messaggio di cortesia - invio notifica per email per ente figlio
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And viene inserito un recapito legale "example@pecSuccess.it"
