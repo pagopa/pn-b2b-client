@@ -835,7 +835,7 @@ Feature: annullamento notifiche b2b
       | payment_pagoPaForm | SI               |
       | payment_f24        | PAYMENT_F24_FLAT |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And la notifica può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
+    And la notifica "può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When "Mario Cucumber" tenta il recupero dell'allegato "PAGOPA"
     Then il download ha prodotto un errore con status code "404"
@@ -854,7 +854,7 @@ Feature: annullamento notifiche b2b
     #And si crea il nuovo stream per il "Comune_1" con versione "V10"
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     When la notifica può essere annullata dal sistema tramite codice IUN
-    Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "NOTIFICATION_CANCELLATION_REQUEST"
+    Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "NOTIFICATION_CANCELLATION_REQUEST" con la versione "V10"
 
   @Annullamento @webhook1 @cleanWebhook
   Scenario: [B2B-STREAM_TIMELINE_24_1]Invio notifica digitale ed attesa Timeline NOTIFICATION_CANCELLED stream v2_scenario positivo
@@ -868,7 +868,7 @@ Feature: annullamento notifiche b2b
    # And si crea il nuovo stream per il "Comune_1" con versione "V10"
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     When la notifica può essere annullata dal sistema tramite codice IUN
-    Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "NOTIFICATION_CANCELLED"
+    Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "NOTIFICATION_CANCELLED" con la versione "V10"
 
   @Annullamento @webhook1 @cleanWebhook
   Scenario: [B2B-STREAM_TIMELINE_25] Invio notifica digitale ed attesa stato CANCELLED stream v2_scenario positivo
@@ -895,7 +895,7 @@ Feature: annullamento notifiche b2b
     #And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere annullata dal sistema tramite codice IUN
-    And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "NOTIFICATION_CANCELLED"
+    And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "NOTIFICATION_CANCELLED" con la versione "V10"
     And viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati "V10"
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -903,7 +903,7 @@ Feature: annullamento notifiche b2b
     And destinatario "Cucumber Analogic" e:
       | digitalDomicile_address | test@fail.it |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "DIGITAL_FAILURE_WORKFLOW"
+    And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "DIGITAL_FAILURE_WORKFLOW" con la versione "V10"
     Then viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati "V10"
 
   @Annullamento @webhook3 @ignore
@@ -918,7 +918,7 @@ Feature: annullamento notifiche b2b
     #And si crea il nuovo stream per il "Comune_2" con versione "V10"
     And la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere annullata dal sistema tramite codice IUN
-    And vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "NOTIFICATION_CANCELLED"
+    And vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "NOTIFICATION_CANCELLED" con la versione "V10"
     And viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati "V10"
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -926,14 +926,14 @@ Feature: annullamento notifiche b2b
     And destinatario "Cucumber Analogic" e:
       | digitalDomicile_address | test@fail.it |
     And la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "DIGITAL_FAILURE_WORKFLOW"
+    And vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "DIGITAL_FAILURE_WORKFLOW" con la versione "V10"
     And viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati "V10"
     And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
     And destinatario "Mario Gherkin"
     And la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "SEND_DIGITAL_DOMICILE"
+    And vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "SEND_DIGITAL_DOMICILE" con la versione "V10"
     Then viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati "V10"
 
   @Annullamento1 @webhook2 @cleanC3
@@ -947,7 +947,7 @@ Feature: annullamento notifiche b2b
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10" e filtro di timeline "NOTIFICATION_CANCELLED"
     #And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SEND_DIGITAL_DOMICILE"
+    And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SEND_DIGITAL_DOMICILE" con la versione "V10"
     And viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati "V10"
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -955,7 +955,7 @@ Feature: annullamento notifiche b2b
     And destinatario "Cucumber Analogic" e:
       | digitalDomicile_address | test@fail.it |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "DIGITAL_FAILURE_WORKFLOW"
+    And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "DIGITAL_FAILURE_WORKFLOW" con la versione "V10"
     Then viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati "V10"
 
   @Annullamento
@@ -1049,7 +1049,7 @@ Feature: annullamento notifiche b2b
       | senderDenomination | Comune di milano            |
     And destinatario "Mario Cucumber"
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
-    When la notifica non può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
+    When la notifica "non può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     Then l'operazione di annullamento ha prodotto un errore con status code "404"
 
   @Annullamento @precondition
@@ -1079,7 +1079,7 @@ Feature: annullamento notifiche b2b
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
     And destinatario "Mario Gherkin"
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED" e successivamente annullata
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
     And il documento notificato può essere recuperata tramite AppIO da "Mario Gherkin"
     Then il tentativo di recupero con appIO ha prodotto un errore con status code "404"
 

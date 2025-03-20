@@ -1378,7 +1378,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "CucumberSrl" e;
+    And destinatario "CucumberSrl" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
@@ -1430,7 +1430,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "CucumberSrl" e;
+    And destinatario "CucumberSrl" e:
       | payment_pagoPaForm   | NULL                      |
       | payment_f24          | PAYMENT_F24_STANDARD      |
       | title_payment        | F24_STANDARD_CUCUMBER_SRL |
@@ -1461,7 +1461,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "CucumberSrl" e;
+    And destinatario "CucumberSrl" e:
       | payment_pagoPaForm   | NULL                      |
       | payment_f24          | PAYMENT_F24_STANDARD      |
       | title_payment        | F24_STANDARD_CUCUMBER_SRL |
@@ -1481,7 +1481,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "CucumberSrl" e;
+    And destinatario "CucumberSrl" e:
       | payment_pagoPaForm   | NULL                      |
       | payment_f24          | PAYMENT_F24_STANDARD      |
       | title_payment        | F24_STANDARD_CUCUMBER_SRL |
@@ -1571,7 +1571,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And la notifica può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
+    And la notifica "può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When "CucumberSpa" tenta il recupero dell'allegato "PAGOPA"
     Then il download ha prodotto un errore con status code "404"
@@ -1590,7 +1590,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | apply_cost_f24       | SI                        |
       | payment_multy_number | 1                         |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And la notifica può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
+    And la notifica "può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When "GherkinSrl" tenta il recupero dell'allegato "F24"
     Then il download ha prodotto un errore con status code "404"
@@ -1614,7 +1614,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And la notifica può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
+    And la notifica "può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When "CucumberSpa" tenta il recupero dell'allegato "PAGOPA"
     Then il download ha prodotto un errore con status code "404"
@@ -1641,7 +1641,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | apply_cost_f24       | SI                        |
       | payment_multy_number | 1                         |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And la notifica può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
+    And la notifica "può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When "CucumberSpa" tenta il recupero dell'allegato "F24"
     Then il download ha prodotto un errore con status code "404"
@@ -1656,7 +1656,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "CucumberSrl" e;
+    And destinatario "CucumberSrl" e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
@@ -1676,7 +1676,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "CucumberSrl" e;
+    And destinatario "CucumberSrl" e:
       | payment_pagoPaForm   | NULL                 |
       | payment_f24          | PAYMENT_F24_STANDARD |
       | title_payment        | F24_STANDARD_MARIO   |

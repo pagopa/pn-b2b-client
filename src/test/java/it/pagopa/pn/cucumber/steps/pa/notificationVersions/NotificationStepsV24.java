@@ -44,24 +44,29 @@ public class NotificationStepsV24 implements NotificationStepsInterface {
     }
 
     @Override
+    public Object getSentNotificationAnyVersion() {
+        return fullSentNotification;
+    }
+
+    @Override
     public String getVersionString() {
         return version.toString();
     }
 
     @Override
     public String getNotificationSentIun() {
-        return fullSentNotification.getIun();
+        return fullSentNotification != null ? fullSentNotification.getIun() : null;
     }
 
     @Override
-    public void setNotificationRequest(Map<String, String> data) {
+    public void prepareNotificationRequest(Map<String, String> data) {
         notificationRequest = sharedSteps.getDataTableTypeUtil().convertNotificationRequestV24(data);
         sharedSteps.setNotificationRequest(notificationRequest);//TODO MATTEO: SOLO IN QUESTA VERSIONE 24, CHE E' L'ULTIMA VERSIONE
         sharedSteps.setVersionUsed(version);
     }
 
     @Override
-    public void addRecipitentToNotification(String recipientName, Map<String, String> data) {
+    public void addRecipientToNotification(String recipientName, Map<String, String> data) {
         NotificationRecipientV23 notificationRecipient = sharedSteps.getDataTableTypeUtil().convertNotificationRecipient(data);
         if (notificationRequest.getNotificationFeePolicy() == NotificationFeePolicy.DELIVERY_MODE
                 && NotificationValue.getValue(data, PAYMENT.key) != null) {

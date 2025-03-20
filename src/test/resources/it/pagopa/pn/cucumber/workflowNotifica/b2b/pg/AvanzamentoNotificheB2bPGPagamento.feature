@@ -55,7 +55,7 @@ Feature: avanzamento b2b persona giuridica pagamento
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario "CucumberSrl" e;
+    And destinatario "CucumberSrl" e:
       | payment_pagoPaForm | SI   |
       | payment_f24        | NULL |
       | apply_cost_pagopa  | SI   |

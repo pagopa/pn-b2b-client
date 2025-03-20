@@ -10,13 +10,15 @@ public interface NotificationStepsInterface {
         throw new RuntimeException("Metodo " + methodName + "non previsto per la versione " + getVersionString());
     }
 
+    Object getSentNotificationAnyVersion();
+
     String getVersionString();
 
     String getNotificationSentIun();
 
-    void setNotificationRequest(Map<String, String> data);
+    void prepareNotificationRequest(Map<String, String> data);
 
-    void addRecipitentToNotification(String recipientName, Map<String, String> data);
+    void addRecipientToNotification(String recipientName, Map<String, String> data);
 
     void setSenderTaxId(String senderTaxId);
 

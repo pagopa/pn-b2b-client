@@ -42,23 +42,28 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
     }
 
     @Override
+    public Object getSentNotificationAnyVersion() {
+        return fullSentNotification;
+    }
+
+    @Override
     public String getVersionString() {
         return version.toString();
     }
 
     @Override
     public String getNotificationSentIun() {
-        return fullSentNotification.getIun();
+        return fullSentNotification != null ? fullSentNotification.getIun() : null;
     }
 
     @Override
-    public void setNotificationRequest(Map<String, String> data) {
+    public void prepareNotificationRequest(Map<String, String> data) {
         notificationRequest = sharedSteps.getDataTableTypeUtil().convertNotificationRequestV1(data);
         sharedSteps.setVersionUsed(version);
     }
 
     @Override
-    public void addRecipitentToNotification(String recipientName, Map<String, String> data) {
+    public void addRecipientToNotification(String recipientName, Map<String, String> data) {
         NotificationRecipient notificationRecipient = sharedSteps.getDataTableTypeUtil().convertNotificationRecipientV1(data);
         if (recipientName != null) {
             Destinatario destinatario = Destinatario.getByName(recipientName);

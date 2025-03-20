@@ -105,7 +105,7 @@ Feature: avanzamento notifiche webhook b2b multi
       | senderDenomination | Comune di milano            |
     And destinatario "GherkinSpa" e:
       | digitalDomicile_address | test@fail.it |
-    And destinatario "CucumberSrl" e;
+    And destinatario "CucumberSrl" e:
       | digitalDomicile_address | test@fail.it |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
@@ -119,7 +119,7 @@ Feature: avanzamento notifiche webhook b2b multi
       | senderDenomination | Comune di milano            |
     And destinatario "GherkinSpa" e:
       | digitalDomicile_address | test@fail.it |
-    And destinatario "CucumberSrl" e;
+    And destinatario "CucumberSrl" e:
       | digitalDomicile_address | test@fail.it |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
@@ -133,7 +133,7 @@ Feature: avanzamento notifiche webhook b2b multi
       | senderDenomination | Comune di milano            |
     And destinatario "GherkinSpa" e:
       | digitalDomicile_address | test@fail.it |
-    And destinatario "CucumberSrl" e;
+    And destinatario "CucumberSrl" e:
       | digitalDomicile_address | test@fail.it |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"

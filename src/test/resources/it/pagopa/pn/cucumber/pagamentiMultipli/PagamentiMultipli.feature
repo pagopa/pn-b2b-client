@@ -1638,7 +1638,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And la notifica può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
+    And la notifica "può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When "Mario Cucumber" tenta il recupero dell'allegato "PAGOPA"
     Then il download ha prodotto un errore con status code "404"
@@ -1657,7 +1657,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_f24       | SI                   |
       | payment_multy_number | 1                    |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And la notifica può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
+    And la notifica "può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When "Mario Cucumber" tenta il recupero dell'allegato "F24"
     Then il download ha prodotto un errore con status code "404"
@@ -1681,7 +1681,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And la notifica può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
+    And la notifica "può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When "Mario Cucumber" tenta il recupero dell'allegato "PAGOPA"
     Then il download ha prodotto un errore con status code "404"
@@ -1708,7 +1708,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_f24       | SI                   |
       | payment_multy_number | 1                    |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And la notifica può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
+    And la notifica "può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When "Mario Cucumber" tenta il recupero dell'allegato "F24"
     Then il download ha prodotto un errore con status code "404"

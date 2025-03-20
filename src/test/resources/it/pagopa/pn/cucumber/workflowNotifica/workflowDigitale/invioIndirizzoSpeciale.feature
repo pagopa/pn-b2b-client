@@ -252,7 +252,7 @@ Feature: avanzamento b2b notifica digitale con indirizzo speciale
       | senderDenomination | Comune di milano            |
     And destinatario "GherkinSpa" e:
       | digitalDomicile_address | test@OK-pecSuccess.it |
-    And destinatario "CucumberSrl" e;
+    And destinatario "CucumberSrl" e:
       | digitalDomicile_address | test1@OK-pecSuccess.it |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"

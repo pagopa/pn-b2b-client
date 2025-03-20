@@ -43,24 +43,28 @@ public class NotificationStepsV23 implements NotificationStepsInterface {
     }
 
     @Override
+    public Object getSentNotificationAnyVersion() {
+        return fullSentNotification;
+    }
+
+    @Override
     public String getVersionString() {
         return version.toString();
     }
 
     @Override
     public String getNotificationSentIun() {
-        return fullSentNotification.getIun();
+        return fullSentNotification != null ? fullSentNotification.getIun() : null;
     }
 
     @Override
-    public void setNotificationRequest(Map<String, String> data) {
-//        TODO MATTEO
-//        notificationRequest = sharedSteps.getDataTableTypeUtil().convertNotificationRequestV23(data);
+    public void prepareNotificationRequest(Map<String, String> data) {
+        notificationRequest = sharedSteps.getDataTableTypeUtil().convertNotificationRequestV23(data);
         sharedSteps.setVersionUsed(version);
     }
 
     @Override
-    public void addRecipitentToNotification(String recipientName, Map<String, String> data) {
+    public void addRecipientToNotification(String recipientName, Map<String, String> data) {
         NotificationRecipientV23 notificationRecipient = new NotificationRecipientV23();//TODO MATTEO sharedSteps.getDataTableTypeUtil().convertNotificationRecipientV23(data);
         if (notificationRequest.getNotificationFeePolicy() == NotificationFeePolicy.DELIVERY_MODE
                 && NotificationValue.getValue(data, PAYMENT.key) != null) {
