@@ -1,6 +1,6 @@
 {
   "paProtocolNumber": null,
-  "subject": "soggetto passato dinamicamente",
+  "subject": "soggetto passato statico",
   "_abstract": "Abstract della notifica",
   "recipients": [
     {
@@ -56,7 +56,7 @@
   "physicalCommunicationType": "REGISTERED_LETTER_890",
   "senderDenomination": "Comune di palermo",
   "senderTaxId": "80016350821",
-  "group": "63f359bc72337440a40f537e",
+  "group": null,
   "taxonomyCode": "010202N",
   "paFee": 0,
   "vat": 0,

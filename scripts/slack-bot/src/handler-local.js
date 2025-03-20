@@ -2,10 +2,10 @@ const { handler } = require('./index');
 
 const event = {
     httpMethod: "POST", 
-    body: JSON.stringify({subject: "soggetto passato dinamicamente"}), 
+    body: JSON.stringify({subject: "soggetto passato dinamicamente", recipients: [{ taxId:"GLLGLL64B15G702I" }]}),
     headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer your-test-token"  // Aggiungi il token qui
+        "Authorization": "Bearer your-test-token"
     },
 
 };

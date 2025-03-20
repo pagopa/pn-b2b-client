@@ -1,14 +1,16 @@
+const dotenv = require('dotenv');
 const crypto = require('crypto');
 const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 const generateRandomValue = require('./commonLogic');
 
+const env = process.env.NODE_ENV || 'development';
+dotenv.config({ path: `.env.${env}` });
+
 // Costanti
-const HOST_NAME = 'https://api.dev.notifichedigitali.it';
-const END_POINT = '/delivery/attachments/preload';
-const API_URL = 'https://api.dev.notifichedigitali.it/delivery/attachments/preload';
-const API_KEY = '68c854bc-a234-4f08-b738-d632814c84cc';
+const API_URL = process.env.PN_EXTERNAL_BASE_URL_UPLOAD_NOTIFICATION;
+const API_KEY = process.env.PN_EXTERNAL_API_KEY_GA;
 
 // lettura e codifica esadecimale del file
 function computeSha256(resName) {
