@@ -18,6 +18,7 @@ import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v2
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -213,14 +214,16 @@ public class LegalFactContentVerifySteps {
     }
 
     private void assertLegalFactType(PnParserLegalFactResponse pnParserLegalFactResponse, String legalFactType) {
-        Assertions.assertEquals(IPnParserLegalFact.LegalFactTypeTitle.getTitleByType(IPnParserLegalFact.LegalFactType.valueOf(legalFactType)),
-                pnParserLegalFactResponse.getResponse().getField());
+        String actual = pnParserLegalFactResponse.getResponse().getField().replace("\ufb01", "fi");
+        String expected = IPnParserLegalFact.LegalFactTypeTitle.getTitleByType(IPnParserLegalFact.LegalFactType.valueOf(legalFactType));
+        Assertions.assertEquals(expected, actual);
     }
 
     private void assertLegalFactFieldValue(PnParserLegalFactResponse pnParserLegalFactResponse, String legalFactField, String legalFactValue) {
         Assertions.assertNotNull(pnParserLegalFactResponse.getResponse().getField());
-        Assertions.assertEquals(legalFactValue, pnParserLegalFactResponse.getResponse().getField());
-        Assertions.assertEquals(legalFactValue, pnParserLegalFactResponse.getResponse().getPnLegalFact().getAllLegalFactValues().fieldValue().get(IPnParserLegalFact.LegalFactField.valueOf(legalFactField)));
+        Assertions.assertEquals(legalFactValue, pnParserLegalFactResponse.getResponse().getField().replace("\ufb01", "fi"));
+        String actual = pnParserLegalFactResponse.getResponse().getPnLegalFact().getAllLegalFactValues().fieldValue().get(IPnParserLegalFact.LegalFactField.valueOf(legalFactField)).replace("\ufb01", "fi");
+        Assertions.assertEquals(legalFactValue, actual);
     }
 
     private void assertLegalFactDestinatario(PnParserLegalFactResponse pnParserLegalFactResponse, List<PnDestinatarioAnalogico> destinatarioAnalogicoList, int multiDestinatarioPosition) {

@@ -22,6 +22,11 @@ public class IPnTosPrivacyClientImpl implements IPnTosPrivacyClient {
     private final String aldameriniPGBearerToken;
     private final String mariaMontessoriPGBearerToken;
     private final String nildeIottiPGBearerToken;
+    private final String marioCucumberBearerToken;
+    private final String marioGherkinBearerToken;
+    private final String leonardoBearerToken;
+    private final String galileoBearerToken;
+    private final String dinoBearerToken;
 
     private String basePath;
 
@@ -33,10 +38,20 @@ public class IPnTosPrivacyClientImpl implements IPnTosPrivacyClient {
                                    @Value("${pn.webapi.external.base-url}") String basePath,
                                    @Value("${pn.bearer-token.pg3}") String aldameriniPGBearerToken,
                                    @Value("${pn.bearer-token.pg4}") String mariaMontessoriPGBearerToken,
-                                   @Value("${pn.bearer-token.pg5}") String nildeIottiPGBearerToken) {
+                                   @Value("${pn.bearer-token.pg5}") String nildeIottiPGBearerToken,
+                                   @Value("${pn.bearer-token.user1}") String marioCucumberBearerToken,
+                                   @Value("${pn.bearer-token.user2}") String marioGherkinBearerToken,
+                                   @Value("${pn.bearer-token.user4}") String galileoBearerToken,
+                                   @Value("${pn.bearer-token.user5}") String dinoBearerToken,
+                                   @Value("${pn.bearer-token.user3}") String leonardoBearerToken) {
         this.aldameriniPGBearerToken = aldameriniPGBearerToken;
         this.mariaMontessoriPGBearerToken = mariaMontessoriPGBearerToken;
         this.nildeIottiPGBearerToken = nildeIottiPGBearerToken;
+        this.marioCucumberBearerToken = marioCucumberBearerToken;
+        this.marioGherkinBearerToken = marioGherkinBearerToken;
+        this.leonardoBearerToken = leonardoBearerToken;
+        this.galileoBearerToken = galileoBearerToken;
+        this.dinoBearerToken = dinoBearerToken;
         this.basePath = basePath;
         this.restTemplate = restTemplate;
         this.userConsentsApi = new UserConsentsApi(newApiClient(aldameriniPGBearerToken));
@@ -72,10 +87,33 @@ public class IPnTosPrivacyClientImpl implements IPnTosPrivacyClient {
     @Override
     public void setBearerToken(SettableBearerToken.BearerTokenType bearerToken) {
         switch (bearerToken) {
-            case PG_3 -> this.userConsentsApi.setApiClient(newApiClient(aldameriniPGBearerToken));
-            case PG_4 -> this.userConsentsApi.setApiClient(newApiClient(mariaMontessoriPGBearerToken));
-            case PG_5 -> this.userConsentsApi.setApiClient(newApiClient(nildeIottiPGBearerToken));
-            default -> this.userConsentsApi.setApiClient(newApiClient(aldameriniPGBearerToken));
+            case PG_3 -> {
+                this.userConsentsApi.setApiClient(newApiClient(aldameriniPGBearerToken));
+            }
+            case PG_4 -> {
+                this.userConsentsApi.setApiClient(newApiClient(mariaMontessoriPGBearerToken));
+            }
+            case PG_5 -> {
+                this.userConsentsApi.setApiClient(newApiClient(nildeIottiPGBearerToken));
+            }
+            case USER_1 -> {
+                this.userConsentsApi.setApiClient(newApiClient(marioCucumberBearerToken));
+            }
+            case USER_2 -> {
+                this.userConsentsApi.setApiClient(newApiClient(marioGherkinBearerToken));
+            }
+            case USER_3 -> {
+                this.userConsentsApi.setApiClient(newApiClient(leonardoBearerToken));
+            }
+            case USER_4 -> {
+                this.userConsentsApi.setApiClient(newApiClient(galileoBearerToken));
+            }
+            case USER_5 -> {
+                this.userConsentsApi.setApiClient(newApiClient(dinoBearerToken));
+            }
+            default ->  {
+                this.userConsentsApi.setApiClient(newApiClient(aldameriniPGBearerToken));
+            }
         }
     }
 }

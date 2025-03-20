@@ -121,7 +121,11 @@ public class DataTableTypeUtil {
             case "DOC_BS" -> document = "classpath:/verbaleBs.pdf";
             case "DOC_BS2" -> document = "classpath:/Atto2BsRadd.pdf";
             case "DOC_30MB" -> document = "classpath:/allegato_30Mb.pdf";
-            default -> document = getDefaultValue(DOCUMENT.key);
+            case "ALLEGATO_1_BN" -> document = "classpath:/Allegato1_BN.pdf";
+            case "ALLEGATO_2_BN" -> document = "classpath:/Allegato2_BN.pdf";
+            case "ALLEGATO_3_COLORI" -> document = "classpath:/Allegato3_COLORI.PDF";
+            case "ALLEGATO_4_COLORI" -> document = "classpath:/Allegato4_COLORI.pdf";
+            default ->  document = getDefaultValue(DOCUMENT.key);
         }
 
         return utils.newDocument(document);
@@ -456,7 +460,16 @@ public class DataTableTypeUtil {
                         //                                  utils.newAttachment(getDefaultValue(PAYMENT_F24_STANDARD.key)):null))
                 )
         );
+        /* TEST
+        if(getValue(data,DIGITAL_DOMICILE.key) != null && !getValue(data,DIGITAL_DOMICILE.key).equalsIgnoreCase(EXCLUDE_VALUE)){
+            notificationRecipient = notificationRecipient.digitalDomicile(getValue(data,DIGITAL_DOMICILE.key) == null? null : (new NotificationDigitalAddress()
+                    .type((getValue(data,DIGITAL_DOMICILE_TYPE.key) == null?
+                            null : NotificationDigitalAddress.TypeEnum.PEC ))
+                    .address( getValue(data,DIGITAL_DOMICILE_ADDRESS.key)))
+            );
+        }
 
+         */
         try {
             Thread.sleep(2);
         } catch (InterruptedException e) {
@@ -506,7 +519,16 @@ public class DataTableTypeUtil {
                         //                                  utils.newAttachment(getDefaultValue(PAYMENT_F24_STANDARD.key)):null))
                 )
         );
+        /* TEST
+        if(getValue(data,DIGITAL_DOMICILE.key) != null && !getValue(data,DIGITAL_DOMICILE.key).equalsIgnoreCase(EXCLUDE_VALUE)){
+            notificationRecipient = notificationRecipient.digitalDomicile(getValue(data,DIGITAL_DOMICILE.key) == null? null : (new NotificationDigitalAddress()
+                    .type((getValue(data,DIGITAL_DOMICILE_TYPE.key) == null?
+                            null : NotificationDigitalAddress.TypeEnum.PEC ))
+                    .address( getValue(data,DIGITAL_DOMICILE_ADDRESS.key)))
+            );
+        }
 
+         */
         try {
             Thread.sleep(2);
         } catch (InterruptedException e) {
