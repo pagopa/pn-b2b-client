@@ -370,29 +370,6 @@ public class SharedSteps {
         getNotificationStepInterface().addRecipientToNotification(destinatario, data);
     }
 
-    @And("senza destinatario")
-    public void senzaDestinatario() {
-//        NotificationVersion notificationVersion = versionUsed == null ? getNotificationVersion(MOST_RECENT) : versionUsed;
-//        NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface(notificationVersion);
-//        notificationStepsInterface.addRecipitentToNotification("nessuno", new HashMap<>());
-        //TODO MATTEO: TEST SE IL COMPORTAMENTO DI SOPRA (NUOVO) E' IDENTICO A QUELLO DI SOTTO (VECCHIO)
-        NotificationRecipientV23 notificationRecipientV23 = dataTableTypeUtil.convertNotificationRecipient(new HashMap<>());
-        addRecipientToNotification(this.notificationRequest, notificationRecipientV23, new HashMap<>());
-    }
-
-    private void addRecipientToNotification(NewNotificationRequestV24 notificationRequest, NotificationRecipientV23 notificationRecipient, Map<String, String> recipientData) {
-        if (notificationRequest.getNotificationFeePolicy() == NotificationFeePolicy.DELIVERY_MODE
-                && NotificationValue.getValue(recipientData, PAYMENT.key) != null) {
-            String pagopaFormValue = getValue(recipientData, PAYMENT_PAGOPA_FORM.key);
-            if (pagopaFormValue != null && !pagopaFormValue.equalsIgnoreCase("NO")) {
-                for (NotificationPaymentItem payments : Objects.requireNonNull(notificationRecipient.getPayments())) {
-                    Objects.requireNonNull(payments.getPagoPa()).setApplyCost(true);
-                }
-            }
-        }
-        notificationRequest.addRecipientsItem(notificationRecipient);
-    }
-
     @And("al destinatario viene associato lo iuv creato mediante partita debitoria alla posizione {int}")
     public void destinatarioAddIuvGPD(Integer posizione) {
         String iuvGPD = getIuvGPD(posizione);
@@ -402,6 +379,7 @@ public class SharedSteps {
     /*
     Invio massivo di notifiche irreperibili utili per i test radd
     TODO: migliorare e rendere di utilità generale
+    //TODO MATTEO -> questo metodo va assolutamente rifattorizzato, magari anche riscrivendo gli step
      */
     @Given("vengono inviate {int} notifiche per l'utente Signor Casuale con il {string} e si aspetta fino allo stato COMPLETELY_UNREACHABLE")
     public void sendNotificationForUserSignorCasualeAndWaitUntilCompletelyUnreachable(int numberOfNotification, String pa) {
@@ -491,6 +469,19 @@ public class SharedSteps {
         //la prima notifica viene inserita
         this.fullSentNotificationV26 = sentNotifications.poll();
         log.debug("notificationResponseComplete: {}", this.fullSentNotificationV26);
+    }
+
+    private void addRecipientToNotification(NewNotificationRequestV24 notificationRequest, NotificationRecipientV23 notificationRecipient, Map<String, String> recipientData) {
+        if (notificationRequest.getNotificationFeePolicy() == NotificationFeePolicy.DELIVERY_MODE
+                && NotificationValue.getValue(recipientData, PAYMENT.key) != null) {
+            String pagopaFormValue = getValue(recipientData, PAYMENT_PAGOPA_FORM.key);
+            if (pagopaFormValue != null && !pagopaFormValue.equalsIgnoreCase("NO")) {
+                for (NotificationPaymentItem payments : Objects.requireNonNull(notificationRecipient.getPayments())) {
+                    Objects.requireNonNull(payments.getPagoPa()).setApplyCost(true);
+                }
+            }
+        }
+        notificationRequest.addRecipientsItem(notificationRecipient);
     }
 
     @And("viene generata una nuova notifica con uguale codice fiscale del creditore e diverso codice avviso")

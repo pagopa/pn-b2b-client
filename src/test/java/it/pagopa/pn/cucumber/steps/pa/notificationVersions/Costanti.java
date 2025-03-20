@@ -33,6 +33,7 @@ public class Costanti {
     public static final String SIGNOR_GENERATO = "Signor Generato";
     public static final String ALDA_MERINI = "Alda Merini";
     public static final String MARIO_CREDENZIALI_SCADUTE = "Mario Credenziali Scadute";
+    public static final String NESSUNO = "nessuno";
     // PA
     public static final String COMUNE_1 = "Comune_1";
     public static final String COMUNE_2 = "Comune_2";

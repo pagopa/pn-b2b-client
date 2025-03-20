@@ -65,6 +65,8 @@ public class NotificationStepsV21 implements NotificationStepsInterface {
 
     @Override
     public void addRecipientToNotification(String recipientName, Map<String, String> data) {
+        Destinatario destinatario = Destinatario.getByName(recipientName);
+        if (destinatario != null && destinatario.equals(Destinatario.DESTINATARIO_NESSUNO)) return;
         NotificationRecipientV21 notificationRecipient = sharedSteps.getDataTableTypeUtil().convertNotificationRecipientV21(data);
         if (notificationRequest.getNotificationFeePolicy() == NotificationFeePolicy.DELIVERY_MODE
                 && NotificationValue.getValue(data, PAYMENT.key) != null) {
@@ -75,8 +77,7 @@ public class NotificationStepsV21 implements NotificationStepsInterface {
                 }
             }
         }
-        if (recipientName != null) {
-            Destinatario destinatario = Destinatario.getByName(recipientName);
+        if (destinatario != null) {
             notificationRecipient.setDenomination(destinatario.getDenomination());
             notificationRecipient.setTaxId(destinatario.getTaxId());
             notificationRecipient.setRecipientType(NotificationRecipientV21.RecipientTypeEnum.valueOf(destinatario.getRecipientType()));

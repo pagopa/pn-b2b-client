@@ -32,6 +32,6 @@ Feature: verifica funzionamento api rest
     Given viene generata una nuova notifica
       | subject            | invio notifica multi cucumber |
       | senderDenomination | Comune di palermo             |
-    And senza destinatario
+    And destinatario "nessuno"
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400"

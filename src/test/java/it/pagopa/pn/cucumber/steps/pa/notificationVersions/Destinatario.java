@@ -27,7 +27,7 @@ public enum Destinatario {
     DESTINATARIO_GHERKIN_IRREPERIBILE(GHERKIN_IRREPERIBILE, GHERKIN_IRREPERIBILE_TAX_ID, PG, null),
     DESTINATARIO_CUCUMBER_SOCIETY(CUCUMBER_SOCIETY, CUCUMBER_SOCIETY_TAX_ID, PG, PEC),
     DESTINATARIO_SIGNOR_GENERATO(SIGNOR_GENERATO, FiscalCodeGenerator.generateCF(System.currentTimeMillis()), PF, PEC),
-    DESTINATARIO_NESSUNO("Nessuno", null, null, null);//TODO MATTEO finire
+    DESTINATARIO_NESSUNO(NESSUNO, null, null, null);
 
     private final String denomination;
     private final String taxId;

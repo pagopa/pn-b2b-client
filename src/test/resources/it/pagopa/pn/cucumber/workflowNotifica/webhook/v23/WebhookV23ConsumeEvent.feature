@@ -263,8 +263,8 @@ Feature: avanzamento notifiche webhook b2b V23
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
-      | denomination            | Giovanna D'Arco  |
-      | taxId                   | DRCGNN12A46A326K |
+      | denomination            | Mario Gherkin    |
+      | taxId                   | CLMCST42R12D969Z |
       | digitalDomicile         | NULL             |
       | physicalAddress_address | Via@ok_AR        |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V23"
@@ -291,8 +291,8 @@ Feature: avanzamento notifiche webhook b2b V23
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
-      | denomination            | Giovanna D'Arco  |
-      | taxId                   | DRCGNN12A46A326K |
+      | denomination            | Mario Gherkin    |
+      | taxId                   | CLMCST42R12D969Z |
       | digitalDomicile         | NULL             |
       | physicalAddress_address | Via@ok_AR        |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V23"
