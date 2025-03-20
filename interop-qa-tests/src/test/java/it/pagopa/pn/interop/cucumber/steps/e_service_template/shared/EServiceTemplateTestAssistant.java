@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.e_service_template.shared;
 
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.assertj.core.api.Assertions.fail;
 
 import com.google.common.io.Files;
@@ -179,24 +180,28 @@ public class EServiceTemplateTestAssistant {
              * modificare anche gli altri scenari così che si possa effettuare un check preciso dello status restituito
              */
             ResponseEntity::getStatusCode);
-        if(httpCallExecutor.getResponseStatus().isError()) {
-            fail("Errore durante l'aggiunta del documento all'e-service template: %s".formatted(httpCallExecutor.getErrorMessage()));
+        if(!httpCallExecutor.getResponseStatus().isError()) {
+            ResponseEntity<CreatedResource> response = (ResponseEntity<CreatedResource>) httpCallExecutor.getResponse();
+            try {
+                templateContext.setLastAddedDocument(new EServiceTemplateDocumentInfo(response.getBody().getId(), prettyName,
+                    doc.getInputStream().readAllBytes()));
+            } catch (IOException e) {
+                fail("Errore imprevisto: il body del documento costruito non restituisce correttamente un InputStream", e);
+            }
+        } else {
+            templateContext.setLastAddedDocument(new EServiceTemplateDocumentInfo(null, null, null, httpCallExecutor.getErrorMessage()));
         }
 
-        ResponseEntity<CreatedResource> response = (ResponseEntity<CreatedResource>) httpCallExecutor.getResponse();
-        try {
-            templateContext.setLastAddedDocument(response.getStatusCode().is2xxSuccessful()
-                ? new EServiceTemplateDocumentInfo(response.getBody().getId(), prettyName,
-                doc.getInputStream().readAllBytes())
-                : null);
-        } catch (IOException e) {
-            fail("Errore imprevisto: il body del documento costruito non restituisce correttamente un InputStream", e);
-        }
     }
 
     public void checkDocumentAddedToEServiceTemplateVersion(EServiceTemplateDocumentKind kind) {
         UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
         UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
+        EServiceTemplateDocumentInfo lastAddedDocument = templateContext.getLastAddedDocument();
+
+        if(isNotEmpty(lastAddedDocument.errorMessage())) {
+            fail("Il documento non è stato aggiunto correttamente alla versione dell'e-service template. Ultimo errore noto: %s".formatted(lastAddedDocument.errorMessage()));
+        }
 
         try {
             // controlla la coerenza con quanto contenuto nel template
@@ -208,13 +213,14 @@ public class EServiceTemplateTestAssistant {
                 res -> {
                     if(res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody())) {
                         EServiceDoc doc = switch (kind) {
-                            case DOCUMENT -> res.getBody().getDocs().stream().filter(d -> d.getId().equals(templateContext.getLastAddedDocument().id())).findFirst().orElse(null);
+                            case DOCUMENT -> res.getBody().getDocs().stream().filter(d -> d.getId().equals(
+                                lastAddedDocument.id())).findFirst().orElse(null);
                             case INTERFACE -> res.getBody().getInterface();
                             default -> throw new IllegalArgumentException("Unsupported %s value: %s".formatted(
                                 EServiceTemplateDocumentKind.class.getSimpleName(),
                                 kind));
                         };
-                        return doc.getPrettyName().equals(templateContext.getLastAddedDocument().prettyName());
+                        return doc.getPrettyName().equals(lastAddedDocument.prettyName());
                     }
                     return false;
 
@@ -228,7 +234,7 @@ public class EServiceTemplateTestAssistant {
                     sharedStepsContext.getXCorrelationId(),
                     eServiceTemplateId,
                     eServiceTemplateVersionId,
-                    templateContext.getLastAddedDocument().id()),
+                    lastAddedDocument.id()),
                 res -> {
                     try {
                         /* TODO 19/03/2025: per verificare che il documento sia stato caricato
@@ -239,7 +245,7 @@ public class EServiceTemplateTestAssistant {
                         *   sia inviando che ricevendo, anziché restituire void o un
                         *   oggetto File restituiscano un'oggetto hash di qualche tipo; a quel
                         *   punto qui basterà confrontare i valori hash. */
-                        return res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody()) && Arrays.equals(Files.toByteArray(res.getBody()), templateContext.getLastAddedDocument().body());
+                        return res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody()) && Arrays.equals(Files.toByteArray(res.getBody()), lastAddedDocument.body());
                     } catch (IOException e) {
                         throw new RuntimeException("Errore nella lettura del body binario della risposta HTTP: %s".formatted(res), e);
                     }

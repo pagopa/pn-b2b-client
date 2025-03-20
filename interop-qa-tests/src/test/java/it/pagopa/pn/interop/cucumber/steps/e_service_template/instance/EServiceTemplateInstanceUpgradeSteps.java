@@ -10,7 +10,7 @@ import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceDescriptor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
 import it.pagopa.interop.utils.HttpCallExecutor;
@@ -105,7 +105,7 @@ public class EServiceTemplateInstanceUpgradeSteps {
                 uuid),
             ResponseEntity::getStatusCode);
 
-        ResponseEntity<CreatedEServiceDescriptor> response = (ResponseEntity<CreatedEServiceDescriptor>) httpCallExecutor.getResponse();
+        ResponseEntity<CreatedResource> response = (ResponseEntity<CreatedResource>) httpCallExecutor.getResponse();
         this.lastEServiceIdUpdatedFromTemplate = response.getBody().getId();
         this.lastEServiceDescriptorIdUpdatedFromTemplate = response.getBody().getId();
     }

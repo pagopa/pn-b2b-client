@@ -8,6 +8,7 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
+import it.pagopa.interop.e_service_template.IEServiceTemplateClient.EServiceTemplateDocumentKind;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionDocumentSeed;
@@ -15,7 +16,6 @@ import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -32,7 +32,6 @@ public class EServiceTemplateDocumentUpdateSteps {
     private final IEServiceTemplateClient eServiceTemplateClient;
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
-    private final EServiceTemplateTestAssistant testAssistant;
     private final EServiceTemplateStepContext templateContext;
     private final EasyRandom easyRandom;
 
@@ -40,7 +39,6 @@ public class EServiceTemplateDocumentUpdateSteps {
 
     public EServiceTemplateDocumentUpdateSteps(ClientTokenConfigurator clientTokenConfigurator,
         SharedStepsContext sharedStepsContext,
-        EServiceTemplateTestAssistant testAssistant,
         EServiceTemplateStepContext templateContext
     ) {
         this.clientTokenConfigurator = clientTokenConfigurator;
@@ -48,7 +46,6 @@ public class EServiceTemplateDocumentUpdateSteps {
         this.eServiceTemplateClient = clientTokenConfigurator.getEServiceTemplateClient();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
-        this.testAssistant = testAssistant;
         this.templateContext = templateContext;
         this.easyRandom = new EasyRandom(templateContext.getEasyRandomParameters());
     }
@@ -108,8 +105,8 @@ public class EServiceTemplateDocumentUpdateSteps {
         editDocumentFromEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, documentId, updateSeed);
     }
 
-    @Then("la modifica del documento dell'e-service template è stata effettuata correttamente")
-    public void checkDocumentEditedFromEServiceTemplateVersion() {
+    @Then("la modifica del documento di tipo {eServiceTemplateDocumentKind} dell'e-service template è stata effettuata correttamente")
+    public void checkDocumentEditedFromEServiceTemplateVersion(EServiceTemplateDocumentKind kind) {
         UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
         UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
         UUID documentId = templateContext.getLastAddedDocument().id();
@@ -123,8 +120,7 @@ public class EServiceTemplateDocumentUpdateSteps {
                     eServiceTemplateVersionId),
                 res -> {
                     if(res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody())) {
-                        Optional<EServiceDoc> foundDoc = res.getBody().getDocs().stream()
-                            .filter(d -> d.getId().equals(documentId)).findFirst();
+                        Optional<EServiceDoc> foundDoc = getDoc(kind, res.getBody(), documentId);
                         return foundDoc.isPresent() && this.areConsistent(lastDocumentUpdateSeed, foundDoc.get());
                     }
                     return false;
@@ -134,6 +130,15 @@ public class EServiceTemplateDocumentUpdateSteps {
         } catch (PollingPredicateException e) {
             fail("Il documento non è stato modificato correttamente dalla versione dell'e-service template: " + e.getMessage());
         }
+    }
+
+    private Optional<EServiceDoc> getDoc(EServiceTemplateDocumentKind kind, EServiceTemplateVersionDetails version, UUID documentId) {
+        return switch (kind) {
+            case DOCUMENT -> version.getDocs().stream()
+                .filter(d -> d.getId().equals(documentId)).findFirst();
+            case INTERFACE -> Optional.ofNullable(version.getInterface());
+            default -> throw new IllegalArgumentException("Unsupported document kind: " + kind);
+        };
     }
 
     private void editDocumentFromEServiceTemplateVersion(UUID eServiceTemplateId, UUID eServiceTemplateVersionId, UUID documentId, UpdateEServiceTemplateVersionDocumentSeed seed) {

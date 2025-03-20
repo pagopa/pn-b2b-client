@@ -101,7 +101,7 @@ public class EServiceApiClientImpl implements IEServiceClient {
     }
 
     @Override
-    public ResponseEntity<CreatedEServiceDescriptor> upgradeEServiceInstanceWithHttpInfo(
+    public ResponseEntity<CreatedResource> upgradeEServiceInstanceWithHttpInfo(
         String xCorrelationId,
         UUID eServiceId) {
         return this.eservicesApi.upgradeEServiceInstanceWithHttpInfo(xCorrelationId, eServiceId);

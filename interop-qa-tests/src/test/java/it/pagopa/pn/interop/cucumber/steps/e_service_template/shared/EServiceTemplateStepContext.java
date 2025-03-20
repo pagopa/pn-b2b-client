@@ -33,7 +33,11 @@ public class EServiceTemplateStepContext {
     public record EServiceTemplateInfo(String name, String intendedTarget, String eServiceDescription, UUID id, UUID lastVersionId){}
 
     /** Stores data on an e-service template document useful for testing */
-    public record EServiceTemplateDocumentInfo(UUID id, String prettyName, byte[] body){}
+    public record EServiceTemplateDocumentInfo(UUID id, String prettyName, byte[] body, String errorMessage){
+        public EServiceTemplateDocumentInfo(UUID id, String prettyName, byte[] body) {
+            this(id, prettyName, body, null);
+        }
+    }
 
     private EServiceTemplateInfo lastTemplateManaged;
     private EServiceTemplateDocumentInfo lastAddedDocument;

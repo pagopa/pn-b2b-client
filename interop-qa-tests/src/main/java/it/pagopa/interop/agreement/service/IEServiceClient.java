@@ -35,7 +35,7 @@ public interface IEServiceClient extends SettableBearerToken {
         String xCorrelationId, UUID templateId, Integer offset, Integer limit, String producerName,
         List<EServiceDescriptorState> states);
 
-    ResponseEntity<CreatedEServiceDescriptor> upgradeEServiceInstanceWithHttpInfo(String xCorrelationId, UUID eServiceId);
+    ResponseEntity<CreatedResource> upgradeEServiceInstanceWithHttpInfo(String xCorrelationId, UUID eServiceId);
     
     ResponseEntity<ProducerEServiceDescriptor> getProducerEServiceDescriptorWithHttpInfo(
         String xCorrelationId, UUID eserviceId, UUID descriptorId);

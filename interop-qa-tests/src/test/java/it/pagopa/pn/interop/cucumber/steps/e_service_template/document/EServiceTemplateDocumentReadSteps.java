@@ -62,7 +62,7 @@ public class EServiceTemplateDocumentReadSteps {
 
     @When("l'utente tenta il reperimento di un documento da un e-service template inesistente")
     public void getDocumentFromNonExistentEServiceTemplate() {
-        getDocumentFromEServiceTemplateVersion(UUID.randomUUID(), UUID.randomUUID(), templateContext.getLastAddedDocument().id());
+        getDocumentFromEServiceTemplateVersion(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID());
     }
 
     @When("l'utente tenta il reperimento di un documento inesistente dalla versione dell'e-service template")
