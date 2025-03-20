@@ -2,15 +2,15 @@ const https = require('https');
 const fs = require('fs');
 const axios = require('axios');
 const path = require('path');
+const PropertiesReader = require('properties-reader');
 const uploadNotification = require('./preloadDocument');
+const generateRandomValue = require('./commonLogic');
 const { verifySlackToken } = require('./slackAuth');
 
 const defaultRequestPath = path.join(__dirname, 'default-request.json');
 const defaultRequest = JSON.parse(fs.readFileSync(defaultRequestPath, 'utf8'));
 const API_KEY = '68c854bc-a234-4f08-b738-d632814c84cc';
 const NEW_NOTIFICATION_URL = 'https://api.dev.notifichedigitali.it/delivery/v2.4/requests';
-
-const BEARER_TOKEN_PA_1 = 'token'
 
 /**
  * Creazione della notifica in base a dei parametri forniti e restituzione dello IUN appena creato.
@@ -20,12 +20,12 @@ const BEARER_TOKEN_PA_1 = 'token'
 exports.handler = async (event) => {
     console.log("Contollo accesso ai test di compilazione");
     const token = event.headers?.Authorization || event.headers?.authorization;
-    //console.log('token' + token);
     
     try {
         params = JSON.parse(event.body); 
         let defaultParams = defaultRequest;
         const updateParams = setDefaultValues(defaultParams, params);
+
         const finalParams = await uploadNotification(updateParams);
              //.catch(err => console.error('Failed to preload:', err));
         console.log('request finale: ' + finalParams)
@@ -44,8 +44,9 @@ exports.handler = async (event) => {
 
 const setDefaultValues = (defaults, params) => {
     return {
-        ...defaults,                   
-        ...params                      
+        ...defaults,
+        paProtocolNumber: generateRandomValue(),
+        ...params
     };
 };
 

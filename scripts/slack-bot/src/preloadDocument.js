@@ -2,6 +2,7 @@ const crypto = require('crypto');
 const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
+const generateRandomValue = require('./commonLogic');
 
 // Costanti
 const HOST_NAME = 'https://api.dev.notifichedigitali.it';
@@ -15,20 +16,6 @@ function computeSha256(resName) {
     const fileData = fs.readFileSync(absolutePath); // Lettura sincrona del file
     const hash = crypto.createHash('sha256').update(fileData).digest('base64');
     return hash;
-       
-    //return new Promise((resolve, reject) => {        
-        // fs.readFile(absolutePath, (err, data) => {
-        //     if (err) {
-        //         console.error("Errore nella lettura del file:", err);
-        //         return reject(err);
-        //     }
-        //     console.log('controllo dentro computeSha256 ' + data);
-        //     const hash = crypto.createHash('sha256');
-        //     hash.update(data);
-        //     const base64Hash = hash.digest('base64');
-        //     resolve(base64Hash);
-        // });
-    //});
 }
 
 // ottenere la risposta di pre-caricamento
@@ -57,13 +44,6 @@ const getPreLoadResponse = async (sha256) => {
 const loadToPresigned = async (url, secret, sha256, resource, resourceType, depth = 0) => {
     const absolutePath = path.resolve(__dirname, resource);
     const data = fs.readFileSync(absolutePath);
-    // const headers = {
-    //     'Content-Type': resourceType,
-    //     'x-amz-checksum-sha256': sha256,
-    //     'x-amz-meta-secret': secret,
-    //     'Content-Length' : data.byteLength,
-    //     'x-api-key': API_KEY
-    // };
     const paramsSafeStorage = {
         headers: {
             'Content-Type': 'application/pdf',
@@ -78,20 +58,6 @@ const loadToPresigned = async (url, secret, sha256, resource, resourceType, dept
     
     try {
         const response = await axios.put(url, data, paramsSafeStorage);
-        // const response = await axios({
-        //     url: url,
-        //     data: data,
-        //     method: "put",
-        //     headers: headers,
-        //     transformRequest: [
-        //         (data, headers) => {
-        //             console.log('headers ' + headers);
-        //             delete headers.common.Authorization;
-        //             console.log('headers dopo ' + headers);
-        //             return data;
-        //         }
-        //     ]
-        // })
         console.log('Upload successful:', response.data);
     } catch (error) {
         if (depth >= 5) throw error;
@@ -169,6 +135,7 @@ const setAttachmentWithSleepV23 = async (paymentList) => {
             await new Promise(resolve => setTimeout(resolve, Math.random() * 350));
 
             if (paymentInfo.pagoPa) {
+                paymentInfo.pagoPa.noticeCode = generateRandomValue();
                 paymentInfo.pagoPa.attachment = await preloadAttachment(paymentInfo.pagoPa.attachment);
             }
 

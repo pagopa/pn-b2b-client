@@ -1,71 +1,64 @@
 {
-    "idempotenceToken": null,
-    "paProtocolNumber": 302120130767576623,
-    "subject": "invio notifica GA cucumber",
-    "_abstract": "Abstract della notifica",
-    "recipients": [
+  "paProtocolNumber": null,
+  "subject": "soggetto passato dinamicamente",
+  "_abstract": "Abstract della notifica",
+  "recipients": [
+    {
+      "recipientType": "PF",
+      "taxId": "CLMCST42R12D969Z",
+      "denomination": "Mario Gherkin",
+      "digitalDomicile": {
+        "type": "PEC",
+        "address": "notifichedigitali-dev@pec.pagopa.it"
+      },
+      "physicalAddress": {
+        "at": "Presso",
+        "address": "Via senza nome",
+        "addressDetails": "scala b",
+        "zip": "87100",
+        "municipality": "Cosenza",
+        "municipalityDetails": "Cosenza",
+        "province": "CS",
+        "foreignState": "ITALIA"
+      },
+      "payments": [
         {
-            "recipientType": "PF",
-            "taxId": "CLMCST42R12D969Z",
-            "denomination": "Mario Gherkin",
-            "digitalDomicile": {
-                "type": "PEC",
-                "address": "notifichedigitali-dev@pec.pagopa.it"
-            },
-            "physicalAddress": {
-                "at": "Presso",
-                "address": "Via senza nome",
-                "addressDetails": "scala b",
-                "zip": 87100,
-                "municipality": "Cosenza",
-                "municipalityDetails": "Cosenza",
-                "province": "CS",
-                "foreignState": "ITALIA"
-            },
-            "payments": [
-                {
-                    "pagoPa": {
-                        "noticeCode": "302100115447437736",
-                        "creditorTaxId": "77777777777",
-                        "applyCost": false,
-                        "attachment": {
-                            "digests": null,
-                            "contentType": "application/pdf",
-                            "ref": {
-                                "key": "./AvvisoPagoPA.pdf",
-                                "versionToken": null
-                            }
-                        }
-                    },
-                    "f24": null
-                }
-            ]
-        }
-    ],
-    "documents": [
-        {
-            "digests": {
-                "sha256" : null
-            },
-            "contentType": "application/pdf",
-            "ref": {
-                "key": "./sample.pdf",
+          "pagoPa": {
+            "noticeCode": null,
+            "creditorTaxId": "77777777777",
+            "applyCost": false,
+            "attachment": {
+              "digests": null,
+              "contentType": "application/pdf",
+              "ref": {
+                "key": "./AvvisoPagoPA.pdf",
                 "versionToken": null
-            },
-            "title": null,
-            "docIdx": null
+              }
+            }
+          }
         }
-    ],
-    "notificationFeePolicy": "FLAT_RATE",
-    "cancelledIun": null,
-    "physicalCommunicationType": "REGISTERED_LETTER_890",
-    "senderDenomination": "Comune di palermo",
-    "senderTaxId": "80016350821",
-    "group": "63f359bc72337440a40f537e",
-    "amount": null,
-    "paymentExpirationDate": null,
-    "taxonomyCode": "010202N",
-    "paFee": 0,
-    "vat": 0,
-    "pagoPaIntMode": "NONE"
+      ]
+    }
+  ],
+  "documents": [
+    {
+      "digests": {
+        "sha256" : null
+      },
+      "contentType": "application/pdf",
+      "ref": {
+        "key": "./sample.pdf",
+        "versionToken": null
+      }
+    }
+  ],
+  "notificationFeePolicy": "FLAT_RATE",
+  "physicalCommunicationType": "REGISTERED_LETTER_890",
+  "senderDenomination": "Comune di palermo",
+  "senderTaxId": "80016350821",
+  "group": "63f359bc72337440a40f537e",
+  "taxonomyCode": "010202N",
+  "paFee": 0,
+  "vat": 0,
+  "pagoPaIntMode": "NONE"
 }
