@@ -321,16 +321,15 @@ public class PnPaB2bUtils {
     }
 
     public NewNotificationResponse uploadNotificationNotEqualSha(NewNotificationRequestV24 request) throws IOException {
-//TODO Modificare.............
         NotificationDocument notificationDocument = null;
+        composeNewNotification(request, notificationDocument, true, false, 0);
         if (!request.getDocuments().isEmpty()) {
             notificationDocument = request.getDocuments().get(0);
             // the document uploaded to safe storage is multa.pdf
             // I compute a different sha256 and I replace the old one
             String sha256 = computeSha256("classpath:/multa.pdf");
-            notificationDocument.getDigests().setSha256(sha256);
+            notificationDocument.setDigests(new NotificationAttachmentDigests().sha256(sha256));
         }
-        composeNewNotification(request, notificationDocument, true, false, 0);
         return sendNewNotification(request);
     }
 

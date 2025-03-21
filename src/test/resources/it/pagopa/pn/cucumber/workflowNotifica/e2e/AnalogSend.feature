@@ -66,20 +66,20 @@ Feature: Analog send e2e
       | loadTimeline            | true                                                                                                                                                                      |
       | details                 | NOT_NULL                                                                                                                                                                  |
       | details_recIndex        | 0                                                                                                                                                                         |
-      | details_physicalAddress | {"address": "via@sequence.5s-CON080.5s-RECRN001A.5s-RECRN001B[DOC:AR].5s-RECRN001C", "municipality": "Milano", "province": "MI", "zip": "20121", "foreignState": "Italia"} |
+      | details_physicalAddress | {"address": "via@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECRN001A.5s-RECRN001B[DOC:AR].5s-RECRN001C", "municipality": "Milano", "province": "MI", "zip": "20121", "foreignState": "Italia"} |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
       | details                    | NOT_NULL                                                                                                                                                                                            |
       | details_recIndex           | 0                                                                                                                                                                                                   |
       | details_sentAttemptMade    | 0                                                                                                                                                                                                   |
       | details_deliveryDetailCode | RECRN002F                                                                                                                                                                                           |
-      | details_physicalAddress    | {"address": "VIA@FAIL-DISCOVERY_AR", "municipality": "COSENZA", "municipalityDetails": "", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
+      | details_physicalAddress    | {"address": "VIA@FAIL-DISCOVERY_AR", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
       | details_responseStatus     | KO                                                                                                                                                                                                  |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
       | details                    | NOT_NULL                                                                                                                                                                  |
       | details_recIndex           | 0                                                                                                                                                                         |
       | details_sentAttemptMade    | 1                                                                                                                                                                         |
       | details_deliveryDetailCode | RECRN001C                                                                                                                                                                 |
-      | details_physicalAddress    | {"address": "via@sequence.5s-CON080.5s-RECRN001A.5s-RECRN001B[DOC:AR].5s-RECRN001C", "municipality": "Milano", "province": "MI", "zip": "20121", "foreignState": "Italia"} |
+      | details_physicalAddress    | {"address": "via@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECRN001A.5s-RECRN001B[DOC:AR].5s-RECRN001C", "municipality": "Milano", "province": "MI", "zip": "20121", "foreignState": "Italia"} |
       | details_responseStatus     | OK                                                                                                                                                                        |
 
     And viene verificato che l'elemento di timeline "SCHEDULE_REFINEMENT" esista
@@ -130,7 +130,7 @@ Feature: Analog send e2e
       | details_recIndex           | 0                                                                                                                                                                                                                |
       | details_sentAttemptMade    | 0                                                                                                                                                                                                                |
       | details_deliveryDetailCode | RECAG003F                                                                                                                                                                                                        |
-      | details_physicalAddress    | {"address": "VIA@FAIL-DISCOVERYIRREPERIBILE_890", "municipality": "COSENZA", "municipalityDetails": "", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
+      | details_physicalAddress    | {"address": "VIA@FAIL-DISCOVERYIRREPERIBILE_890", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
       | details_responseStatus     | KO                                                                                                                                                                                                               |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
       | details                    | NOT_NULL                                                                                                                                                                                     |

@@ -15,7 +15,7 @@ Feature: Invio messaggi cortesia e2e
         And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
             | loadTimeline | true |
             | details | NOT_NULL |
-            | details_digitalAddress | {"address": "provaemail@test.it", "type": "EMAIL"} |
+            | details_digitalAddress | {"address": "provaemail2@test.it", "type": "EMAIL"} |
             | details_recIndex | 0 |
 
     @e2e
