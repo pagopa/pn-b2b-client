@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template.document;
 
+import static it.pagopa.pn.interop.cucumber.steps.e_service_template.document.DocumentUpdateStrategy.from;
 import static java.util.Objects.nonNull;
 import static org.assertj.core.api.Assertions.fail;
 
@@ -16,7 +17,6 @@ import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.Data;
@@ -80,8 +80,9 @@ public class EServiceTemplateDocumentUpdateSteps {
         editDocumentFromEServiceTemplateVersion(templateContext.getLastTemplateManaged().id(), templateContext.getLastTemplateManaged().lastVersionId(), UUID.randomUUID(), easyRandom.nextObject(UpdateEServiceTemplateVersionDocumentSeed.class));
     }
 
-    @When("l'utente tenta la modifica di un documento inserendo il nome di un altro documento")
-    public void editDocumentFromEServiceTemplateVersionWithSameName() {
+    @When("l'utente tenta la modifica di un documento di tipo {eServiceTemplateDocumentKind} inserendo il nome di un altro documento di tipo {eServiceTemplateDocumentKind}")
+    public void editDocumentFromEServiceTemplateVersionWithSameName(EServiceTemplateDocumentKind kind1, EServiceTemplateDocumentKind kind2) {
+        DocumentUpdateStrategy updateStrategy = from(kind1, kind2);
         UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
         UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
 
@@ -92,16 +93,14 @@ public class EServiceTemplateDocumentUpdateSteps {
                     eServiceTemplateId,
                     eServiceTemplateVersionId),
                 ResponseEntity::getStatusCode),
-            res -> res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody()) && res.getBody().getDocs().size() >= 2,
+            res -> res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody()) && updateStrategy.hasExpectedDocuments(res.getBody()),
             "Condizioni di polling non rispettate. NOTA: questo step prevede l'esistenza di almeno 2 documenti nell'e-service template"
         );
 
-        @SuppressWarnings("unchecked, DataFlowIssue")
-        List<EServiceDoc> docs = ((ResponseEntity<EServiceTemplateVersionDetails>) httpCallExecutor.getResponse()).getBody().getDocs();
-
-        UUID documentId = docs.get(0).getId();
-        UpdateEServiceTemplateVersionDocumentSeed updateSeed = easyRandom.nextObject(UpdateEServiceTemplateVersionDocumentSeed.class)
-            .prettyName(docs.get(1).getPrettyName());
+        @SuppressWarnings("unchecked")
+        EServiceTemplateVersionDetails templateVersion = ((ResponseEntity<EServiceTemplateVersionDetails>) httpCallExecutor.getResponse()).getBody();
+        UUID documentId = updateStrategy.getDocumentToUpdate(templateVersion);
+        UpdateEServiceTemplateVersionDocumentSeed updateSeed = updateStrategy.buildDocumentUpdateSeed(templateVersion);
         editDocumentFromEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, documentId, updateSeed);
     }
 

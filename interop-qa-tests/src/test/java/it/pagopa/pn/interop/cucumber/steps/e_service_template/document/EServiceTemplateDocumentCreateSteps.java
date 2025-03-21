@@ -47,12 +47,17 @@ public class EServiceTemplateDocumentCreateSteps {
 
     @Given("l'utente effettua l'aggiunta di un documento di tipo {eServiceTemplateDocumentKind} alla versione dell'e-service template con successo")
     public void addDocumentToEServiceTemplateVersionSuccessfully(EServiceTemplateDocumentKind kind) {
-        testAssistant.addDocumentToEServiceTemplateVersionSuccessfully(kind);
+        testAssistant.addDocumentToEServiceTemplateVersionSuccessfully(kind, 0);
+    }
+
+    @Given("l'utente effettua l'aggiunta di un altro documento di tipo {eServiceTemplateDocumentKind} alla versione dell'e-service template con successo")
+    public void addAnotherDocumentToEServiceTemplateVersionSuccessfully(EServiceTemplateDocumentKind kind) {
+        testAssistant.addDocumentToEServiceTemplateVersionSuccessfully(kind, 1);
     }
 
     @When("l'utente tenta l'aggiunta di un documento di tipo {eServiceTemplateDocumentKind} alla versione dell'e-service template")
     public void addDocumentToEServiceTemplateVersion(EServiceTemplateDocumentKind kind) {
-        testAssistant.addDocumentToEServiceTemplateVersion(kind);
+        testAssistant.addDocumentToEServiceTemplateVersion(kind, 0);
     }
 
     @When("l'utente tenta l'aggiunta di un documento di tipo {eServiceTemplateDocumentKind} alla versione dell'e-service template specificando un contenuto vuoto")
@@ -67,17 +72,17 @@ public class EServiceTemplateDocumentCreateSteps {
     public void addDocumentToEServiceTemplateVersionWithSameName(EServiceTemplateDocumentKind kind) {
         UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
         UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
-        testAssistant.addDocumentToEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, kind, templateContext.getLastAddedDocument().prettyName());
+        testAssistant.addDocumentToEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, kind, templateContext.getLastAddedDocument().prettyName(), 0);
     }
 
     @When("l'utente tenta l'aggiunta di un documento di tipo {eServiceTemplateDocumentKind} a un e-service template inesistente")
     public void addDocumentToNonExistentEServiceTemplate(EServiceTemplateDocumentKind kind) {
-        testAssistant.addDocumentToEServiceTemplateVersion(UUID.randomUUID(), UUID.randomUUID(), kind);
+        testAssistant.addDocumentToEServiceTemplateVersion(UUID.randomUUID(), UUID.randomUUID(), kind, 0);
     }
 
     @When("l'utente tenta l'aggiunta di un documento di tipo {eServiceTemplateDocumentKind} a una versione inesistente dell'e-service template")
     public void addDocumentToNonExistentEServiceTemplateVersion(EServiceTemplateDocumentKind kind) {
-        testAssistant.addDocumentToEServiceTemplateVersion(templateContext.getLastTemplateManaged().id(), UUID.randomUUID(), kind);
+        testAssistant.addDocumentToEServiceTemplateVersion(templateContext.getLastTemplateManaged().id(), UUID.randomUUID(), kind, 0);
     }
 
     @Then("l'aggiunta del documento di tipo {eServiceTemplateDocumentKind} alla versione dell'e-service template è stata effettuata correttamente")

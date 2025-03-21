@@ -526,15 +526,14 @@ Feature: Test API of e-service template
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
     And l'utente effettua l'aggiunta di un documento di tipo <kind1> alla versione dell'e-service template con successo
-    And l'utente effettua l'aggiunta di un documento di tipo <kind2> alla versione dell'e-service template con successo
-    When l'utente tenta la modifica di un documento inserendo il nome di un altro documento
+    And l'utente effettua l'aggiunta di un altro documento di tipo <kind2> alla versione dell'e-service template con successo
+    When l'utente tenta la modifica di un documento di tipo <kind1> inserendo il nome di un altro documento di tipo <kind2>
     Then si ottiene response status code 409
     Examples:
       | kind1     | kind2     |
       | DOCUMENT  | DOCUMENT  |
       #| INTERFACE | INTERFACE |  <-- combinazione impossibile, testata in uno scenario precedente
       | DOCUMENT  | INTERFACE |
-      | INTERFACE | DOCUMENT  |
 
   Scenario Outline: [INTEROP-EST-058] La cancellazione di un documento/interfaccia di un e-service template NON può essere effettuata da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"

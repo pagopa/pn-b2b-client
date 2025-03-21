@@ -91,7 +91,7 @@ public class EServiceTemplateTestAssistant {
     // TODO generalizzabile in "mutateVersionState"
     public void mutateLastVersionState(EServiceTemplateVersionState desiredState) {
         Runnable publisher = () -> {
-            this.addDocumentToEServiceTemplateVersionSuccessfully(EServiceTemplateDocumentKind.INTERFACE); // perché ogni template deve avere almeno un'interfaccia
+            this.addDocumentToEServiceTemplateVersionSuccessfully(EServiceTemplateDocumentKind.INTERFACE, 0); // perché ogni template deve avere almeno un'interfaccia
             publishEServiceTemplate();
         };
         switch (desiredState) {
@@ -121,42 +121,53 @@ public class EServiceTemplateTestAssistant {
             templateContext.getLastTemplateManaged().lastVersionId());
     }
 
-    public void addDocumentToEServiceTemplateVersionSuccessfully(EServiceTemplateDocumentKind kind) {
-        addDocumentToEServiceTemplateVersion(kind);
+    /** Adds a document of the specified kind to the last managed e-service template version.
+     * It then checks that the document has been correctly added to the e-service template version.
+     * @param kind the kind of document to add
+     * @param fileIndex index of the pre-defined file to use as document body. Index starts by 0.
+     * */
+    public void addDocumentToEServiceTemplateVersionSuccessfully(EServiceTemplateDocumentKind kind, int fileIndex) {
+        addDocumentToEServiceTemplateVersion(kind, fileIndex);
         checkDocumentAddedToEServiceTemplateVersion(kind);
     }
 
-    public void addDocumentToEServiceTemplateVersion(EServiceTemplateDocumentKind kind) {
+    public void addDocumentToEServiceTemplateVersion(EServiceTemplateDocumentKind kind, int fileIndex) {
         UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
         UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
-        addDocumentToEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, kind);
+        addDocumentToEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, kind, fileIndex);
     }
 
     // TODO troppe varianti di questi metodi, standardizzarne 1 o 2 al massimo
     public void addDocumentToEServiceTemplateVersion(UUID eServiceTemplateId,
-        UUID eServiceTemplateVersionId, EServiceTemplateDocumentKind kind) {
+        UUID eServiceTemplateVersionId, EServiceTemplateDocumentKind kind, int fileIndex) {
         String prettyName = buildPrettyName(kind);
-        addDocumentToEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, kind, prettyName);
+        addDocumentToEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, kind, prettyName, fileIndex);
     }
 
     public void addDocumentToEServiceTemplateVersion(UUID eServiceTemplateId,
-        UUID eServiceTemplateVersionId, EServiceTemplateDocumentKind kind, String prettyName) {
+        UUID eServiceTemplateVersionId, EServiceTemplateDocumentKind kind, String prettyName, int fileIndex) {
         String userToken = sharedStepsContext.getUserToken();
-        Resource doc = buildResource(kind);
+        Resource doc = buildResource(kind, fileIndex);
         addDocumentToEserviceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, kind, prettyName, userToken, doc);
     }
 
-    private static Resource buildResource(EServiceTemplateDocumentKind kind) {
+    private static Resource buildResource(EServiceTemplateDocumentKind kind, int fileIndex) {
         /* 19/03/2025 Versione precedente in cui si supponeva si potesse passare ogni genere di byte array. */
         /*String docBody = "Hello, I'm a document of type %s".formatted(kind);
         Resource doc = new ByteArrayResource(docBody.getBytes(StandardCharsets.UTF_8));*/
 
+        String basePath = "src/main/resources/";
+        String strFileIndex = fileIndex == 0 ? "" : String.valueOf(fileIndex);
+
+        String documentPath = basePath + "dummy" + strFileIndex + ".pdf";
+        String interfacePath = basePath + "interface" + strFileIndex + ".yaml";
+
         switch (kind) {
             case DOCUMENT -> {
-                return new PathResource(Path.of("src/main/resources/dummy.pdf"));
+                return new PathResource(Path.of(documentPath));
             }
             case INTERFACE -> {
-                return new PathResource(Path.of("src/main/resources/interface.yaml"));
+                return new PathResource(Path.of(interfacePath));
             }
             default -> throw new IllegalArgumentException("Unsupported %s value: %s".formatted(
                 EServiceTemplateDocumentKind.class.getSimpleName(),
