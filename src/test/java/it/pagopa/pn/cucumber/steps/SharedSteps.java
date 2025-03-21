@@ -384,7 +384,7 @@ public class SharedSteps {
     @Given("vengono inviate {int} notifiche per l'utente Signor Casuale con il {string} e si aspetta fino allo stato COMPLETELY_UNREACHABLE")
     public void sendNotificationForUserSignorCasualeAndWaitUntilCompletelyUnreachable(int numberOfNotification, String pa) {
         List<NewNotificationRequestV24> notificationRequests = new LinkedList<>();
-        String generatedFiscalCode = generateCF(System.currentTimeMillis());
+        String generatedFiscalCode = generateCF(System.nanoTime());
         for (int i = 0; i < numberOfNotification; i++) {
             NewNotificationRequestV24 newNotificationRequest = dataTableTypeUtil.convertNotificationRequestV24(new HashMap<>())
                     .subject("notifica analogica con cucumber")

@@ -77,7 +77,6 @@ public class RaddFsuSteps {
     }
 
     private void selectUser(String userName) {
-        //TODO MATTEO OCCHIO A CASUALE E GENERATO QUA (PRIMA ERA TO UPPER CASE)
         switch (userName) {
             case MARIO_CUCUMBER -> this.currentUserCf = MARIO_CUCUMBER_TAX_ID;
             case MARIO_GHERKIN -> this.currentUserCf = MARIO_GHERKIN_TAX_ID;

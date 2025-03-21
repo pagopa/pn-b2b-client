@@ -7,6 +7,7 @@ import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV21;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
+import it.pagopa.pn.cucumber.utils.FiscalCodeGenerator;
 import it.pagopa.pn.cucumber.utils.NotificationValue;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,8 @@ import java.util.Objects;
 import static it.pagopa.pn.client.b2b.pa.PnPaB2bUtils.*;
 import static it.pagopa.pn.cucumber.steps.SharedSteps.threadWait;
 import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.*;
+import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Destinatario.DESTINATARIO_NESSUNO;
+import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Destinatario.DESTINATARIO_SIGNOR_CASUALE;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
 
 @Data
@@ -66,7 +69,7 @@ public class NotificationStepsV21 implements NotificationStepsInterface {
     @Override
     public void addRecipientToNotification(String recipientName, Map<String, String> data) {
         Destinatario destinatario = Destinatario.getByName(recipientName);
-        if (destinatario != null && destinatario.equals(Destinatario.DESTINATARIO_NESSUNO)) return;
+        if (destinatario != null && destinatario.equals(DESTINATARIO_NESSUNO)) return;
         NotificationRecipientV21 notificationRecipient = sharedSteps.getDataTableTypeUtil().convertNotificationRecipientV21(data);
         if (notificationRequest.getNotificationFeePolicy() == NotificationFeePolicy.DELIVERY_MODE
                 && NotificationValue.getValue(data, PAYMENT.key) != null) {
@@ -79,7 +82,8 @@ public class NotificationStepsV21 implements NotificationStepsInterface {
         }
         if (destinatario != null) {
             notificationRecipient.setDenomination(destinatario.getDenomination());
-            notificationRecipient.setTaxId(destinatario.getTaxId());
+            notificationRecipient.setTaxId(destinatario.equals(DESTINATARIO_SIGNOR_CASUALE) ?
+                    FiscalCodeGenerator.generateCF(System.nanoTime()) : destinatario.getTaxId());
             notificationRecipient.setRecipientType(NotificationRecipientV21.RecipientTypeEnum.valueOf(destinatario.getRecipientType()));
             /** Nei vecchi metodi @And("Destinatario xxx") denomination e taxId venivano sempre settati
              * (recipientType veniva spesso passato null, ma in quei casi subentrava il valore di default PG)

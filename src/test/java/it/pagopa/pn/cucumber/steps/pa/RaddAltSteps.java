@@ -15,6 +15,7 @@ import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.notificationVersions.Destinatario;
 import it.pagopa.pn.cucumber.utils.Compress;
+import it.pagopa.pn.cucumber.utils.FiscalCodeGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
@@ -39,6 +40,8 @@ import java.util.stream.IntStream;
 
 import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.CUCUMBER_SPA_TAX_ID;
 import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.MARIO_CUCUMBER_TAX_ID;
+import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Destinatario.DESTINATARIO_SIGNOR_CASUALE;
+import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Destinatario.DESTINATARIO_SIGNOR_GENERATO;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.generateRandomNumber;
 
 @Slf4j
@@ -666,22 +669,12 @@ public class RaddAltSteps {
     protected void selectUserRaddAlternative(String denomination) {
         Destinatario destinatario = Destinatario.getByName(denomination);
         if (destinatario != null) {
-            this.currentUserCf = destinatario.getTaxId();
+            this.currentUserCf = destinatario.equals(DESTINATARIO_SIGNOR_CASUALE) ? sharedSteps.getFullSentNotificationV26().getRecipients().get(0).getTaxId() :
+                    destinatario.equals(DESTINATARIO_SIGNOR_GENERATO) ? FiscalCodeGenerator.generateCF(System.nanoTime()) : destinatario.getTaxId();
             this.recipientType = destinatario.getRecipientType();
         } else {
             this.currentUserCf = denomination;
         }
-        //TODO MATTEO: Aggiungere all'enum dei destinatari i casi mancanti
-//        switch (cf.toUpperCase()) {
-        //TODO MATTEO: SBAGLIO O LE CASISTICHE CASUALE E GENERATO SONO INVERTITE?
-//            case "SIGNOR CASUALE" -> {
-//                this.currentUserCf = sharedSteps.getSentNotification().getRecipients().get(0).getTaxId();
-//                this.recipientType = "PF";
-//            }
-//            case "SIGNOR GENERATO" -> {
-//                this.currentUserCf = generateCF(System.nanoTime());
-//                this.recipientType = "PF";
-//            }
     }
 
     @Given("Il cittadino {string} come destinatario {int} mostra il QRCode {string}")

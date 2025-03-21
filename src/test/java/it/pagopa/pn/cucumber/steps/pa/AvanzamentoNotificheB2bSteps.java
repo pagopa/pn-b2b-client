@@ -246,8 +246,7 @@ public class AvanzamentoNotificheB2bSteps {
                     Assertions.assertEquals(detailsFromNotification.getDigitalAddress(), detailsFromTest.getDigitalAddress());
                 }
                 break;
-            case "DIGITAL_SUCCESS_WORKFLOW":
-            case "DIGITAL_FAILURE_WORKFLOW":
+            case "DIGITAL_SUCCESS_WORKFLOW", "DIGITAL_FAILURE_WORKFLOW":
                 Assertions.assertNotNull(elementFromNotification.getLegalFactsIds());
                 Assertions.assertEquals(elementFromNotification.getLegalFactsIds().size(), elementFromTest.getLegalFactsIds().size());
                 for (int i = 0; i < elementFromNotification.getLegalFactsIds().size(); i++) {
@@ -266,18 +265,24 @@ public class AvanzamentoNotificheB2bSteps {
                 break;
             case "SEND_ANALOG_FEEDBACK":
                 if (detailsFromTest != null) {
-                    if (Objects.nonNull(detailsFromTest.getDeliveryDetailCode()))
+                    if (detailsFromTest.getDeliveryDetailCode() != null) {
                         Assertions.assertEquals(detailsFromTest.getDeliveryDetailCode(), detailsFromNotification.getDeliveryDetailCode());
-                    Assertions.assertEquals(detailsFromTest.getPhysicalAddress(), detailsFromNotification.getPhysicalAddress());
-                    Assertions.assertEquals(detailsFromTest.getResponseStatus().getValue(), detailsFromNotification.getResponseStatus().getValue());
-                    if (Objects.nonNull(detailsFromTest.getDeliveryFailureCause())) {
+                    }
+                    //TODO: ignorare i commenti di Sonar che dice che questa condizione è sempre true (in quanto il campo è annotato con @NotNull)
+                    // A causa di questo suggerimento errato, in precedenza era stato rimosso l'if, causando il fail di alcuni test
+                    if (detailsFromTest.getPhysicalAddress() != null) {
+                        Assertions.assertEquals(detailsFromTest.getPhysicalAddress(), detailsFromNotification.getPhysicalAddress());
+                    }
+                    if (detailsFromTest.getResponseStatus() != null && detailsFromTest.getResponseStatus().getValue() != null) {
+                        Assertions.assertEquals(detailsFromTest.getResponseStatus().getValue(), detailsFromNotification.getResponseStatus().getValue());
+                    }
+                    if (detailsFromTest.getDeliveryFailureCause() != null) {
                         List<String> failureCauses = Arrays.asList(detailsFromTest.getDeliveryFailureCause().split(" "));
-                        Assertions.assertTrue(failureCauses.contains(elementFromNotification.getDetails().getDeliveryFailureCause()), "DeliveryFailureCause not match. IUN: " + sharedSteps.getFullSentNotificationV26().getIun());
+                        Assertions.assertTrue(failureCauses.contains(elementFromNotification.getDetails().getDeliveryFailureCause()), "DeliveryFailureCause not match. IUN: " + sharedSteps.getIunVersionamento());
                     }
                 }
                 break;
-            case "SEND_ANALOG_PROGRESS":
-            case "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS":
+            case "SEND_ANALOG_PROGRESS", "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS":
                 if (detailsFromTest != null) {
                     if (Objects.nonNull(elementFromTest.getLegalFactsIds())) {
                         Assertions.assertEquals(elementFromNotification.getLegalFactsIds().size(), elementFromTest.getLegalFactsIds().size());
@@ -3056,32 +3061,18 @@ public class AvanzamentoNotificheB2bSteps {
     //Annullamento Notifica
     @And("la notifica può essere annullata dal sistema tramite codice IUN")
     public void notificationCanBeCanceledWithIUN() {
+        String iun = sharedSteps.getIunVersionamento();
+        Assertions.assertNotNull(iun);
+        Assertions.assertDoesNotThrow(() -> {
+            RequestStatus resp = Assertions.assertDoesNotThrow(() ->
+                    this.b2bClient.notificationCancellation(iun));
 
-        if (sharedSteps.getFullSentNotificationV26() != null) {
-            Assertions.assertDoesNotThrow(() -> {
-                RequestStatus resp = Assertions.assertDoesNotThrow(() ->
-                        this.b2bClient.notificationCancellation(sharedSteps.getFullSentNotificationV26().getIun()));
+            Assertions.assertNotNull(resp);
+            Assertions.assertNotNull(resp.getDetails());
+            Assertions.assertTrue(resp.getDetails().size() > 0);
+            Assertions.assertTrue("NOTIFICATION_CANCELLATION_ACCEPTED".equalsIgnoreCase(resp.getDetails().get(0).getCode()));
 
-                Assertions.assertNotNull(resp);
-                Assertions.assertNotNull(resp.getDetails());
-                Assertions.assertTrue(resp.getDetails().size() > 0);
-                Assertions.assertTrue("NOTIFICATION_CANCELLATION_ACCEPTED".equalsIgnoreCase(resp.getDetails().get(0).getCode()));
-
-            });
-        } else if (sharedSteps.getFullSentNotificationV1() != null) {
-            Assertions.assertDoesNotThrow(() -> {
-                RequestStatus resp = Assertions.assertDoesNotThrow(() ->
-                        this.b2bClient.notificationCancellation(sharedSteps.getFullSentNotificationV1().getIun()));
-
-                Assertions.assertNotNull(resp);
-                Assertions.assertNotNull(resp.getDetails());
-                Assertions.assertTrue(resp.getDetails().size() > 0);
-                Assertions.assertTrue("NOTIFICATION_CANCELLATION_ACCEPTED".equalsIgnoreCase(resp.getDetails().get(0).getCode()));
-
-            });
-        }
-
-
+        });
     }
 
 
@@ -3218,7 +3209,7 @@ public class AvanzamentoNotificheB2bSteps {
                     digitalDeliveryCreationRequestDate = element.getTimestamp();
                     delayMillis = sharedSteps.getSchedulingDaysFailureDigitalRefinement().toMillis();
                     break;
-                } else if (element.getCategory().getValue().equals("SEND_DIGITAL_FEEDBACK") && Objects.requireNonNull(element.getDetails()).getRecIndex().equals(destinatario) && evento.equalsIgnoreCase("SEND_DIGITAL_FEEDBACK") ) {
+                } else if (element.getCategory().getValue().equals("SEND_DIGITAL_FEEDBACK") && Objects.requireNonNull(element.getDetails()).getRecIndex().equals(destinatario) && evento.equalsIgnoreCase("SEND_DIGITAL_FEEDBACK")) {
                     digitalDeliveryCreationRequestDate = element.getDetails().getNotificationDate();
                     delayMillis = "OK".equalsIgnoreCase(element.getDetails().getResponseStatus().getValue()) ? sharedSteps.getSchedulingDaysSuccessDigitalRefinement().toMillis() : sharedSteps.getSchedulingDaysFailureDigitalRefinement().toMillis();
                     break;
