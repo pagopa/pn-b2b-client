@@ -116,7 +116,7 @@ public class EServiceTemplateCreateSteps {
      * @return a new {@link EServiceTemplateSeed} instance
      */
     private EServiceTemplateSeed getEServiceTemplateSeed(EServiceMode eServiceMode) {
-        String templateName = String.format("eservice-template-%s", testAssistant.nextTestResourceNameSuffix());
+        String templateName = testAssistant.nextEServiceTemplateName();
         VersionSeedForEServiceTemplateCreation version = new VersionSeedForEServiceTemplateCreation()
             .voucherLifespan(86400);
         return new EServiceTemplateSeed()

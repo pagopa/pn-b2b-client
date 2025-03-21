@@ -14,6 +14,7 @@ import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
+import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
 import java.util.UUID;
 import lombok.Data;
 import org.jeasy.random.EasyRandom;
@@ -27,13 +28,15 @@ public class EServiceTemplateNameUpdateSteps {
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
     private final EServiceTemplateStepContext templateContext;
+    private final EServiceTemplateTestAssistant testAssistant;
 
     private EServiceTemplateNameUpdateSeed lastTemplateNameUpdateSeed;
     private final EasyRandom easyRandom;
 
     public EServiceTemplateNameUpdateSteps(ClientTokenConfigurator clientTokenConfigurator,
                                 SharedStepsContext sharedStepsContext,
-                                EServiceTemplateStepContext templateContext
+                                EServiceTemplateStepContext templateContext,
+                                EServiceTemplateTestAssistant testAssistant
         ) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
@@ -42,12 +45,14 @@ public class EServiceTemplateNameUpdateSteps {
         this.pollingService = sharedStepsContext.getPollingService();
         this.templateContext = templateContext;
         this.easyRandom = new EasyRandom(templateContext.getEasyRandomParameters());
+        this.testAssistant = testAssistant;
     }
 
     @When("l'utente tenta la modifica del nome dell'e-service template")
     public void editEServiceTemplateName() {
         UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
-        lastTemplateNameUpdateSeed = easyRandom.nextObject(EServiceTemplateNameUpdateSeed.class);
+        lastTemplateNameUpdateSeed = easyRandom.nextObject(EServiceTemplateNameUpdateSeed.class)
+            .name(testAssistant.nextEServiceTemplateName());
         editEServiceTemplateName(eServiceTemplateId, lastTemplateNameUpdateSeed);
     }
 

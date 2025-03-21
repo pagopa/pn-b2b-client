@@ -21,6 +21,7 @@ import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTem
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
 import java.util.UUID;
 import lombok.Data;
+import org.jeasy.random.EasyRandom;
 import org.springframework.http.ResponseEntity;
 
 /** Cucumber steps involving creation, editing, viewing or deletion
@@ -37,6 +38,7 @@ public class EServiceTemplateVersionUpdateSteps {
     private final EServiceTemplateStepContext templateContext;
     private final EServiceTemplateInfoMapper templateInfoMapper;
     private final DescriptorAttributesMapper descriptorAttributesMapper;
+    private final EasyRandom easyRandom;
 
     /* TODO 13/03/2025: molte di queste assegnazioni sono condivise da tutte la classi di step.
     *   Provare a racchiudere il codice comune in un costruttore in una classe astratta da far
@@ -57,6 +59,7 @@ public class EServiceTemplateVersionUpdateSteps {
         this.templateContext = templateContext;
         this.templateInfoMapper = templateInfoMapper;
         this.descriptorAttributesMapper = descriptorAttributesMapper;
+        this.easyRandom = new EasyRandom(templateContext.getEasyRandomParameters());
     }
 
     @Given("l'utente effettua delle modifiche alla versione dell'e-service template con successo")
@@ -82,6 +85,8 @@ public class EServiceTemplateVersionUpdateSteps {
         templateContext.setLastTemplateVersionUpdateSeed(new UpdateEServiceTemplateVersionSeed()
             .agreementApprovalPolicy(AgreementApprovalPolicy.AUTOMATIC)
             .attributes(new EServiceTemplateAttributesSeed())
+            //.attributes(new EServiceTemplateAttributesSeed().declared(
+            //    List.of(List.of(new EServiceTemplateVersionAttributeSeed().id(UUID.randomUUID()).explicitAttributeVerification(false)))))
             .dailyCallsPerConsumer(100)
             .dailyCallsTotal(1000)
             .voucherLifespan(86400)
@@ -104,6 +109,12 @@ public class EServiceTemplateVersionUpdateSteps {
     public void checkEServiceTemplateVersionUpdate() {
         UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
         UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
+
+        if(!httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            fail("Le modifiche alla versione dell'e-service template non sono state "
+                    + "applicate correttamente. Ultimo errore noto: %s", httpCallExecutor.getErrorMessage());
+        }
+
         try {
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(

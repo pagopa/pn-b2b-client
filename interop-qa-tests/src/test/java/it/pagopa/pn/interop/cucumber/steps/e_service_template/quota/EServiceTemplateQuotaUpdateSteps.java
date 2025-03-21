@@ -51,13 +51,17 @@ public class EServiceTemplateQuotaUpdateSteps {
         UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
         UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
 
-        lastTemplateVersionQuotasUpdateSeed = easyRandom.nextObject(
-            EServiceTemplateVersionQuotasUpdateSeed.class);
-        lastTemplateVersionQuotasUpdateSeed.setVoucherLifespan(abs(lastTemplateVersionQuotasUpdateSeed.getVoucherLifespan()));
-        lastTemplateVersionQuotasUpdateSeed.setDailyCallsTotal(abs(lastTemplateVersionQuotasUpdateSeed.getDailyCallsPerConsumer() + 1));
-        lastTemplateVersionQuotasUpdateSeed.setDailyCallsPerConsumer(abs(lastTemplateVersionQuotasUpdateSeed.getDailyCallsPerConsumer()));
-
+        lastTemplateVersionQuotasUpdateSeed = nextQuotasUpdateSeed();
         editEServiceTemplateVersionQuotas(eServiceTemplateId, eServiceTemplateVersionId, lastTemplateVersionQuotasUpdateSeed);
+    }
+
+    private EServiceTemplateVersionQuotasUpdateSeed nextQuotasUpdateSeed() {
+        EServiceTemplateVersionQuotasUpdateSeed seed = easyRandom.nextObject(
+            EServiceTemplateVersionQuotasUpdateSeed.class);
+        seed.setVoucherLifespan(86400);
+        seed.setDailyCallsTotal(abs(seed.getDailyCallsPerConsumer() + 1));
+        seed.setDailyCallsPerConsumer(abs(seed.getDailyCallsPerConsumer()));
+        return seed;
     }
 
     @When("l'utente tenta la modifica delle quote della versione dell'e-service template indicando una specifica vuota")
@@ -73,23 +77,21 @@ public class EServiceTemplateQuotaUpdateSteps {
         UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
         UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
 
-        lastTemplateVersionQuotasUpdateSeed = easyRandom.nextObject(
-            EServiceTemplateVersionQuotasUpdateSeed.class);
-        lastTemplateVersionQuotasUpdateSeed.setVoucherLifespan(abs(lastTemplateVersionQuotasUpdateSeed.getVoucherLifespan()));
+        lastTemplateVersionQuotasUpdateSeed = nextQuotasUpdateSeed();
         lastTemplateVersionQuotasUpdateSeed.setDailyCallsTotal(abs(lastTemplateVersionQuotasUpdateSeed.getDailyCallsPerConsumer() - 1));
-        lastTemplateVersionQuotasUpdateSeed.setDailyCallsPerConsumer(abs(lastTemplateVersionQuotasUpdateSeed.getDailyCallsPerConsumer()));
 
         editEServiceTemplateVersionQuotas(eServiceTemplateId, eServiceTemplateVersionId, lastTemplateVersionQuotasUpdateSeed);
     }
 
     @When("l'utente tenta la modifica delle quote della versione di un e-service template inesistente")
     public void editNonExistentEServiceTemplateVersionQuotas() {
-        editEServiceTemplateVersionQuotas(UUID.randomUUID(), UUID.randomUUID(), easyRandom.nextObject(EServiceTemplateVersionQuotasUpdateSeed.class));
+        EServiceTemplateVersionQuotasUpdateSeed seed = nextQuotasUpdateSeed();
+        editEServiceTemplateVersionQuotas(UUID.randomUUID(), UUID.randomUUID(), seed);
     }
 
     @When("l'utente tenta la modifica delle quote di una versione inesistente dell'e-service template")
     public void editEServiceTemplateNonExistentVersionQuotas() {
-        editEServiceTemplateVersionQuotas(templateContext.getLastTemplateManaged().id(), UUID.randomUUID(), easyRandom.nextObject(EServiceTemplateVersionQuotasUpdateSeed.class));
+        editEServiceTemplateVersionQuotas(templateContext.getLastTemplateManaged().id(), UUID.randomUUID(), nextQuotasUpdateSeed());
     }
 
     @Then("la modifica delle quote della versione dell'e-service template è stata effettuata correttamente")

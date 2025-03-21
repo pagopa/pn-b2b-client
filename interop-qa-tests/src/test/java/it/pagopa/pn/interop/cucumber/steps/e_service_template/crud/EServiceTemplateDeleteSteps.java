@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template.crud;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
 import io.cucumber.java.en.Then;
@@ -11,6 +12,7 @@ import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
+import java.util.Objects;
 import java.util.UUID;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
@@ -57,9 +59,19 @@ public class EServiceTemplateDeleteSteps {
                         sharedStepsContext.getXCorrelationId(),
                         eServiceTemplateId),
                     ResponseEntity::getStatusCode),
-                res -> res.getStatusCode().equals(HttpStatus.NOT_FOUND),
+                Objects::isNull, // perché in caso di errore come 404 al momento HttpCallExecutor non valorizza la response
                 "L'e-service template non è stato cancellato correttamente"
             );
+
+            HttpStatus expectedErrorCode = HttpStatus.NOT_FOUND;
+            assertThat(httpCallExecutor.getResponseStatus())
+                .as("Check assenza e-service template")
+                .withFailMessage(
+                    "Atteso errore %s, ma ottenuto %s. Ultimo messaggio d'errore noto: %s",
+                    expectedErrorCode,
+                    httpCallExecutor.getResponseStatus(),
+                    httpCallExecutor.getErrorMessage())
+                .isEqualTo(expectedErrorCode);
         } catch (PollingPredicateException e) {
             fail("L'e-service template non è stato cancellato correttamente");
         }

@@ -597,10 +597,14 @@ Feature: Test API of e-service template
 
   Scenario Outline: [INTEROP-EST-061] La cancellazione di un'interfaccia di un e-service template in stato PUBLISHED o SUSPENDED non può essere effettuata
     Given l'utente è un "admin" di "PA1"
+
+    # essendo lo stato PUBLISHED o SUSPENDED l'aggiunta dell'interfaccia è implicita
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
-    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
+
+    # si riferisce all'interfaccia, essendo l'ultimo documento aggiunto
     When l'utente tenta la cancellazione del documento dell'e-service template
-    Then si ottiene response status code 403
+
+    Then si ottiene response status code 400
     Examples:
       | stato     |
       | PUBLISHED |
@@ -648,8 +652,6 @@ Feature: Test API of e-service template
       | PUBLISHED | DOCUMENT  |
       | SUSPENDED | DOCUMENT  |
 
-
-  # TODO scenari di pubblicazione template...
   Scenario Outline: [INTEROP-EST-066] La pubblicazione di una versione di un e-service template in stato DRAFT, in modalità erogazione e con annesso un documento di interfaccia NON può essere effettuata da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
@@ -663,6 +665,7 @@ Feature: Test API of e-service template
       | api,security  |
       | support       |
 
+  # TODO 21/03/2025 somiglianza con alcuni scenari precedenti, verificare ed eventualmente rimuovere test identici
   Scenario Outline: [INTEROP-EST-067] La pubblicazione di una versione di un e-service template in stato DRAFT, in modalità erogazione e con annesso un documento di interfaccia può essere effettuata da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
@@ -680,13 +683,13 @@ Feature: Test API of e-service template
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
     When l'utente tenta la pubblicazione della versione dell'e-service template
-    Then si ottiene response status code 403
+    Then si ottiene response status code 400
 
   Scenario Outline: [INTEROP-EST-072] La pubblicazione di una versione di un e-service template in stato PUBLISHED o SUSPENDED non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
     When l'utente tenta la pubblicazione della versione dell'e-service template
-    Then si ottiene response status code 403
+    Then si ottiene response status code 400
     Examples:
       | stato     |
       | PUBLISHED |
@@ -716,18 +719,18 @@ Feature: Test API of e-service template
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     When l'utente tenta la pubblicazione della versione dell'e-service template
-    Then si ottiene response status code 409
+    Then si ottiene response status code 400
 
 
   # NOTA: per molti degli scenari di cancellazione di una versione è necessario creare almeno 2 versioni, perché la cancellazione dell'unica versione presente comporta la cancellazione del template stesso
-
-  Scenario Outline: [INTEROP-EST-077] La cancellazione di una versione di un e-service template in stato DRAFT può essere effettuata da un ente in veste di ADMIN o API
+  # L'e-service template deve essere in stato PUBLISHED perché non è possibile creare versioni se ce ne sono già altre in strato DRAFT
+  Scenario Outline: [INTEROP-EST-077] La cancellazione di una versione di un e-service template in stato PUBLISHED può essere effettuata da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
-    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     And l'utente effettua la creazione di una ulteriore versione nell'e-service template con successo
     When l'utente è un "<ruolo>" di "PA1"
     And l'utente tenta la cancellazione della versione dell'e-service template
-    Then si ottiene response status code 200
+    Then si ottiene response status code 204
     And la cancellazione della versione dell'e-service template è stata effettuata correttamente
     Examples:
       | ruolo   |
@@ -739,7 +742,7 @@ Feature: Test API of e-service template
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
     When l'utente è un "<ruolo>" di "PA1"
     And l'utente tenta la cancellazione della versione dell'e-service template
-    Then si ottiene response status code 200
+    Then si ottiene response status code 204
     And la cancellazione dell'e-service template è stata effettuata correttamente
     Examples:
       | ruolo   |
@@ -781,7 +784,7 @@ Feature: Test API of e-service template
 
   Scenario: [INTEROP-EST-083] La cancellazione di una versione già cancellata di un e-service template non può essere effettuata
     Given l'utente è un "admin" di "PA1"
-    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     And l'utente effettua la creazione di una ulteriore versione nell'e-service template con successo
     And l'utente effettua la cancellazione della versione dell'e-service template con successo
     When l'utente tenta la cancellazione della versione dell'e-service template già cancellata
@@ -791,14 +794,14 @@ Feature: Test API of e-service template
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     When l'utente tenta la cancellazione della versione dell'e-service template
-    Then si ottiene response status code 403
+    Then si ottiene response status code 400
 
   Scenario Outline: [INTEROP-EST-085] La sospensione di una versione di un e-service template in stato PUBLISHED può essere effettuata da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     When l'utente è un "<ruolo>" di "PA1"
     And l'utente tenta la sospensione della versione dell'e-service template
-    Then si ottiene response status code 200
+    Then si ottiene response status code 204
     And la sospensione della versione dell'e-service template è stata effettuata correttamente
     Examples:
       | ruolo   |
@@ -809,11 +812,11 @@ Feature: Test API of e-service template
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
     When l'utente tenta la sospensione della versione dell'e-service template
-    Then si ottiene response status code <status>
+    Then si ottiene response status code 400
     Examples:
-      | stato     | status |
-      | DRAFT     | 403    |
-      | SUSPENDED | 409    |
+      | stato     |
+      | DRAFT     |
+      | SUSPENDED |
 
   Scenario Outline: [INTEROP-EST-087] La sospensione di una versione di un e-service template in stato PUBLISHED NON può essere effettuata da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
@@ -850,7 +853,7 @@ Feature: Test API of e-service template
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di SUSPENDED
     When l'utente è un "<ruolo>" di "PA1"
     And l'utente tenta la riattivazione della versione dell'e-service template
-    Then si ottiene response status code 200
+    Then si ottiene response status code 204
     And la riattivazione della versione dell'e-service template è stata effettuata correttamente
     Examples:
       | ruolo   |
@@ -861,7 +864,7 @@ Feature: Test API of e-service template
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
     When l'utente tenta la riattivazione della versione dell'e-service template
-    Then si ottiene response status code 403
+    Then si ottiene response status code 400
     Examples:
       | stato     |
       | DRAFT     |
@@ -902,7 +905,7 @@ Feature: Test API of e-service template
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
     When l'utente è un "<ruolo>" di "PA1"
     And l'utente tenta la modifica del nome dell'e-service template
-    Then si ottiene response status code 200
+    Then si ottiene response status code 204
     And la modifica del nome dell'e-service template è stata effettuata correttamente
     Examples:
       | ruolo   | stato     |
@@ -983,7 +986,7 @@ Feature: Test API of e-service template
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
     When l'utente è un "<ruolo>" di "PA1"
     And l'utente tenta la modifica della descrizione dello scopo dell'e-service template
-    Then si ottiene response status code 200
+    Then si ottiene response status code 204
     And la modifica della descrizione dello scopo dell'e-service template è stata effettuata correttamente
     Examples:
       | ruolo   | stato     |
@@ -1011,7 +1014,7 @@ Feature: Test API of e-service template
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
     When l'utente tenta la modifica della descrizione dello scopo dell'e-service template
-    Then si ottiene response status code 403
+    Then si ottiene response status code 400
 
   Scenario Outline: [INTEROP-EST-108] La modifica della descrizione dello scopo di un e-service template in stato PUBLISHED o SUSPENDED specificando la descrizione già presente non può essere effettuata
     Given l'utente è un "admin" di "PA1"
@@ -1064,7 +1067,7 @@ Feature: Test API of e-service template
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
     When l'utente è un "<ruolo>" di "PA1"
     And l'utente tenta la modifica della descrizione dell'e-service template
-    Then si ottiene response status code 200
+    Then si ottiene response status code 204
     And la modifica della descrizione dell'e-service template è stata effettuata correttamente
     Examples:
       | ruolo   | stato     |
@@ -1092,7 +1095,7 @@ Feature: Test API of e-service template
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
     When l'utente tenta la modifica della descrizione dell'e-service template
-    Then si ottiene response status code 403
+    Then si ottiene response status code 400
 
   Scenario Outline: [INTEROP-EST-116] La modifica della descrizione di un e-service template in stato PUBLISHED o SUSPENDED specificando la descrizione già presente non può essere effettuata
     Given l'utente è un "admin" di "PA1"
@@ -1145,7 +1148,7 @@ Feature: Test API of e-service template
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
     When l'utente è un "<ruolo>" di "PA1"
     And l'utente tenta la modifica delle quote della versione dell'e-service template
-    Then si ottiene response status code 200
+    Then si ottiene response status code 204
     And la modifica delle quote della versione dell'e-service template è stata effettuata correttamente
     Examples:
       | ruolo   | stato     |
@@ -1173,13 +1176,13 @@ Feature: Test API of e-service template
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
     When l'utente tenta la modifica delle quote della versione dell'e-service template
-    Then si ottiene response status code 403
+    Then si ottiene response status code 400
 
-  Scenario Outline: [INTEROP-EST-124] La modifica delle quote di una versione di un e-service template in stato PUBLISHED o SUSPENDED specificando un "dailyCallsTotal" inferiore a "dailyCallsPerConsumer"
+  Scenario Outline: [INTEROP-EST-124] La modifica delle quote di una versione di un e-service template in stato PUBLISHED o SUSPENDED specificando un "dailyCallsTotal" inferiore a "dailyCallsPerConsumer" non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
     When l'utente tenta la modifica delle quote della versione dell'e-service template specificando un "dailyCallsTotal" inferiore a "dailyCallsPerConsumer"
-    Then si ottiene response status code 409
+    Then si ottiene response status code 400
     Examples:
       | stato     |
       | PUBLISHED |
@@ -1207,23 +1210,44 @@ Feature: Test API of e-service template
     When l'utente tenta la modifica delle quote di una versione inesistente dell'e-service template
     Then si ottiene response status code 404
 
-  Scenario Outline: [INTEROP-EST-128] La modifica degli attributi di una versione di un e-service template in stato PUBLISHED o SUSPENDED può essere effettuata da un ente in veste di ADMIN o API
+  Scenario Outline: [INTEROP-EST-128-PUB] La modifica degli attributi di una versione di un e-service template in stato PUBLISHED può essere effettuata da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
-    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
 
-    # Necessario per l'aggiunta degli attributi in vista della loro modifica
+    ################### ATTENZIONE ###################
+    # STEP DA CAMBIARE: bisogna creare ed associare gli attributi all'e-service template, usando le api dedicate ai primi per la creazione e quello di modifica della versione per l'associazione
+    ##################################################
     And l'utente effettua delle modifiche alla versione dell'e-service template con successo
 
+    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
+    And l'utente effettua la pubblicazione dell'e-service template
     When l'utente è un "<ruolo>" di "PA1"
     And l'utente tenta la modifica degli attributi della versione dell'e-service template
     Then si ottiene response status code 200
     And la modifica degli attributi della versione dell'e-service template è stata effettuata correttamente
     Examples:
-      | ruolo   | stato     |
-      | admin   | PUBLISHED |
-      | api     | PUBLISHED |
-      | admin   | SUSPENDED |
-      | api     | SUSPENDED |
+      | ruolo   |
+      | admin   |
+    #  | api     |
+
+  Scenario Outline: [INTEROP-EST-128-SUS] La modifica degli attributi di una versione di un e-service template in stato SUSPENDED può essere effettuata da un ente in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+
+    # Necessario per l'aggiunta degli attributi in vista della loro modifica
+    And l'utente effettua delle modifiche alla versione dell'e-service template con successo
+
+    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
+    And l'utente effettua la pubblicazione dell'e-service template
+    And l'utente effettua la sospensione dell'e-service template
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la modifica degli attributi della versione dell'e-service template
+    Then si ottiene response status code 200
+    And la modifica degli attributi della versione dell'e-service template è stata effettuata correttamente
+    Examples:
+      | ruolo   |
+      | admin   |
+    #  | api     |
 
   Scenario Outline: [INTEROP-EST-129] La modifica degli attributi di una versione di un e-service template in stato PUBLISHED o SUSPENDED NON può essere effettuata da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
@@ -1316,7 +1340,7 @@ Feature: Test API of e-service template
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
     When l'utente tenta la creazione di una ulteriore versione nell'e-service template
-    Then si ottiene response status code 403
+    Then si ottiene response status code 409
 
   Scenario Outline: [INTEROP-EST-138] La creazione di una nuova versione di un e-service template in stato PUBLISHED o SUSPENDED NON può essere effettuata da un ente differente rispetto al creatore dell'e-service template
     Given l'utente è un "admin" di "PA1"

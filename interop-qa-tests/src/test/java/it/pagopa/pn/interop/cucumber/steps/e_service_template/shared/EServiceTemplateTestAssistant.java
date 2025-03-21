@@ -83,6 +83,10 @@ public class EServiceTemplateTestAssistant {
         this.riskAnalysisMapper = riskAnalysisMapper;
     }
 
+    public String nextEServiceTemplateName() {
+        return String.format("eservice-template-%s", this.nextTestResourceNameSuffix());
+    }
+
     public String nextTestResourceNameSuffix() {
         int randomInt = ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE);
         return String.format("%d-%d", sharedStepsContext.getTestSeed(), randomInt);

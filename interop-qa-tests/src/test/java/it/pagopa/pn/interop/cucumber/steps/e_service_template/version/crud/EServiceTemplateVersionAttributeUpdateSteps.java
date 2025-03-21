@@ -20,6 +20,7 @@ import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTem
 import java.util.List;
 import java.util.UUID;
 import lombok.Data;
+import org.apache.commons.lang3.BooleanUtils;
 import org.jeasy.random.EasyRandom;
 import org.springframework.http.ResponseEntity;
 
@@ -64,9 +65,14 @@ public class EServiceTemplateVersionAttributeUpdateSteps {
         //lastTemplateVersionUpdateSeed contiene, tra le altre, cose, gli attributi aggiunti l'ultima volta
         lastAttributesUpdateSeed = this.descriptorAttributesMapper.mapSeedsToSeeds(this.templateContext.getLastTemplateVersionUpdateSeed().getAttributes());
 
-        Boolean explicitAttributeVerification = lastAttributesUpdateSeed.getCertified().get(0)
-            .get(0).getExplicitAttributeVerification();
-        lastAttributesUpdateSeed.getCertified().get(0).get(0).setExplicitAttributeVerification(!explicitAttributeVerification); // modifico 1 campo di 1 attributo
+        List<List<DescriptorAttributeSeed>> certified = lastAttributesUpdateSeed.getCertified();
+        certified.add(List.of(new DescriptorAttributeSeed())); // aggiungo 1 attributo
+
+        Boolean newAttribute = !BooleanUtils.toBoolean(certified.get(0).get(0).getExplicitAttributeVerification());
+
+        certified.get(0).get(0).setId(UUID.randomUUID());
+
+        certified.get(0).get(0).setExplicitAttributeVerification(newAttribute); // modifico 1 campo di 1 attributo
         editEServiceTemplateVersionAttributes(eServiceTemplateId, eServiceTemplateVersionId, lastAttributesUpdateSeed);
     }
 
