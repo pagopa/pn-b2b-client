@@ -86,7 +86,6 @@ Feature: disabilitazione stream
     And l'apiKey viene cancellata
 
 
-
   @webhookV25 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_65] Disabilitazione di uno stream notifica senza gruppo, con eventType "STATUS"  utilizzando un apikey master.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V25"
@@ -192,7 +191,7 @@ Feature: disabilitazione stream
     And viene aggiornata la apiKey utilizzata per gli stream
     And si crea il nuovo stream per il "Comune_Multi" con versione "V25"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V25"
-    When si disabilita lo stream che non esiste e apiKey aggiornata
+    When si disabilita lo stream che non esiste con la versione "V25" e apiKey aggiornata
     Then l'operazione ha prodotto un errore con status code "404"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
