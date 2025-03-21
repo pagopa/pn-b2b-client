@@ -569,8 +569,8 @@ Feature: Test API of e-service template
     And l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo
     When l'utente è un "<ruolo>" di "PA1"
     And l'utente tenta la cancellazione del documento dell'e-service template
-    Then si ottiene response status code 200
-    And la cancellazione del documento dell'e-service template è stata effettuata correttamente
+    Then si ottiene response status code 204
+    And la cancellazione del documento di tipo <kind> dell'e-service template è stata effettuata correttamente
     Examples:
       | ruolo   | stato     | kind      |
       | admin   | DRAFT     | DOCUMENT  |
@@ -638,7 +638,7 @@ Feature: Test API of e-service template
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
     And l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo
-    And l'utente effettua la cancellazione del documento dall'e-service template con successo
+    And l'utente effettua la cancellazione del documento di tipo <kind> dall'e-service template con successo
     When l'utente tenta la cancellazione del documento dell'e-service template
     Then si ottiene response status code 404
     Examples:

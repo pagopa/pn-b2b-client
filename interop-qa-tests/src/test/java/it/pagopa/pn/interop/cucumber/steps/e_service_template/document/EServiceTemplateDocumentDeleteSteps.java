@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template.document;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.assertj.core.api.Assertions.fail;
 
@@ -9,6 +10,8 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
+import it.pagopa.interop.e_service_template.IEServiceTemplateClient.EServiceTemplateDocumentKind;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionDocumentSeed;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
@@ -16,6 +19,7 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
 import java.util.UUID;
+import java.util.function.Predicate;
 import lombok.Data;
 import org.springframework.http.ResponseEntity;
 
@@ -47,10 +51,10 @@ public class EServiceTemplateDocumentDeleteSteps {
         this.templateContext = templateContext;
     }
 
-    @Given("l'utente effettua la cancellazione del documento dall'e-service template con successo")
-    public void deleteDocumentFromEServiceTemplateVersionSuccessfully() {
+    @Given("l'utente effettua la cancellazione del documento di tipo {eServiceTemplateDocumentKind} dall'e-service template con successo")
+    public void deleteDocumentFromEServiceTemplateVersionSuccessfully(EServiceTemplateDocumentKind kind) {
         deleteDocumentFromEServiceTemplateVersion();
-        checkDocumentDeletedFromEServiceTemplateVersion();
+        checkDocumentDeletedFromEServiceTemplateVersion(kind);
     }
 
     @When("l'utente tenta la cancellazione del documento dell'e-service template")
@@ -88,12 +92,14 @@ public class EServiceTemplateDocumentDeleteSteps {
         deleteDocumentFromEServiceTemplateVersion(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID());
     }
 
-    @Then("la cancellazione del documento dell'e-service template è stata effettuata correttamente")
-    public void checkDocumentDeletedFromEServiceTemplateVersion() {
+    @Then("la cancellazione del documento di tipo {eServiceTemplateDocumentKind} dell'e-service template è stata effettuata correttamente")
+    public void checkDocumentDeletedFromEServiceTemplateVersion(EServiceTemplateDocumentKind kind) {
         UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
         UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
         UUID documentId = templateContext.getLastAddedDocument().id();
-
+        Predicate<EServiceTemplateVersionDetails> noDocument = kind == EServiceTemplateDocumentKind.DOCUMENT
+            ? version -> version.getDocs().stream().noneMatch(d -> d.getId().equals(documentId))
+            : version -> isNull(version.getInterface()) || isNull(version.getInterface().getId());
         try {
             pollingService.makePolling(
                 () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
@@ -102,7 +108,7 @@ public class EServiceTemplateDocumentDeleteSteps {
                     eServiceTemplateVersionId),
                 res -> {
                     if(res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody())) {
-                        return res.getBody().getDocs().stream().noneMatch(d -> d.getId().equals(documentId));
+                        return noDocument.test(res.getBody());
                     }
                     return false;
                 },
