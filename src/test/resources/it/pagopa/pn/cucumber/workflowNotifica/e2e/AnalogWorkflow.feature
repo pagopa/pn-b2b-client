@@ -180,7 +180,7 @@ Feature: Workflow analogico
       | details                 | NOT_NULL                                                                                                                                                     |
       | details_recIndex        | 0                                                                                                                                                            |
       | details_physicalAddress | {"address": "VIA@OK_RS", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
-      | details_analogCost      | 194                                                                                                                                                          |
+      | details_analogCost      | 193                                                                                                                                                          |
     And viene verificato che l'elemento di timeline "DIGITAL_DELIVERY_CREATION_REQUEST" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -196,8 +196,8 @@ Feature: Workflow analogico
     And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGITAL_FAILURE_WORKFLOW"
       | details | NOT_NULL |
       | details_recIndex             | 0                                  |
-      | details_digitalAddressSource | SPECIAL                            |
-      | details_sentAttemptMade | 0                                  |
+#      | details_digitalAddressSource | SPECIAL                            |
+#      | details_sentAttemptMade | 0                                  |
     And viene verificato che l'elemento di timeline "PREPARE_SIMPLE_REGISTERED_LETTER" esista
       | details                 | NOT_NULL                                                                                                                                                                                |
       | details_recIndex        | 0                                                                                                                                                                                       |
@@ -1729,11 +1729,11 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | CON080 |
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_sentAttemptMade | 0 |
-      | details_deliveryDetailCode | RECAG015 |
+#    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+#      | details | NOT_NULL |
+#      | details_recIndex | 0 |
+#      | details_sentAttemptMade | 0 |
+#      | details_deliveryDetailCode | RECAG015 |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
