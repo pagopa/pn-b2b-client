@@ -234,7 +234,7 @@ public class DataTableTypeUtil {
                                 (getValue(data, PHYSICAL_COMMUNICATION_TYPE.key).equalsIgnoreCase("REGISTERED_LETTER_890") ?
                                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationRequest.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 :
                                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationRequest.PhysicalCommunicationTypeEnum.AR_REGISTERED_LETTER)))
-                .addDocumentsItem(getValue(data, DOCUMENT.key) == null ? null : utils.newDocumentV2(getDefaultValue(DOCUMENT.key)))
+                .addDocumentsItem(getValue(data, DOCUMENT.key) == null ? null : utils.newDocumentV20(getDefaultValue(DOCUMENT.key)))
                 .pagoPaIntMode(
                         (getValue(data, PAGOPAINTMODE.key) == null ? null :
                                 (getValue(data, PAGOPAINTMODE.key).equalsIgnoreCase("SYNC") ?
@@ -584,7 +584,7 @@ public class DataTableTypeUtil {
                                 .noticeCodeAlternative(getValue(data, PAYMENT_NOTICE_CODE_OPTIONAL.key).equalsIgnoreCase("SI") ? getDefaultValue(PAYMENT_NOTICE_CODE_OPTIONAL.key) : null)
 
                                 .pagoPaForm(getValue(data, PAYMENT_PAGOPA_FORM.key) == null ?
-                                        null : utils.newAttachmentV2(getDefaultValue(PAYMENT_PAGOPA_FORM.key)))
+                                        null : utils.newAttachmentV20(getDefaultValue(PAYMENT_PAGOPA_FORM.key)))
                         //                  .f24flatRate(getValue(data, PAYMENT_F24_FLAT.key) == null ? null :
                         //                  (getValue(data, PAYMENT_F24_FLAT.key).equalsIgnoreCase("SI")?
                         //                                  utils.newAttachment(getDefaultValue(PAYMENT_F24_FLAT.key)):null))

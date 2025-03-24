@@ -677,7 +677,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             throw new IllegalStateException(
                     "LOP: PROGRESS-ELEMENTS: " + progressResponseElements
                             + " WEBHOOK: " + streamId
-                            + " IUN: " + sharedSteps.getFullSentNotificationV26().getIun()
+                            + " IUN: " + sharedSteps.getIunVersionamento()
                             + " DEEP: " + deepCount);
         }
         for (ProgressResponseElement elem : progressResponseElements) {

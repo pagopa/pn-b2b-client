@@ -684,55 +684,58 @@ public class SharedSteps {
     @When("la notifica viene inviata tramite api b2b senza preload allegato dal {string} e si attende che lo stato diventi REFUSED")
     public void laNotificaVieneInviataSenzaPreloadAllegato(String paName) {
         setPaAndSenderTaxId(paName);
-        sendNotificationWithErrorNotFindAllegato(false);
+        sendNotificationRefusedDueToError("NOT_FOUND_ALLEGATO", false);
     }
 
     @When("la notifica viene inviata tramite api b2b effettuando la preload ma senza caricare nessun allegato dal {string} e si attende che lo stato diventi REFUSED")
     public void laNotificaVieneInviataTramiteApiBBEffettuandoLaPreloadMaSenzaCaricareNessunAllegatoDalESiAttendeCheLoStatoDiventiREFUSED(String paName) {
         setPaAndSenderTaxId(paName);
-        sendNotificationWithErrorNotFindAllegato(true);
+        sendNotificationRefusedDueToError("NOT_FOUND_ALLEGATO", true);
     }
 
     @When("la notifica viene inviata tramite api b2b effettuando la preload ma senza caricare nessun allegato json dal {string} e si attende che lo stato diventi REFUSED")
     public void laNotificaVieneInviataTramiteApiBBEffettuandoLaPreloadMaSenzaCaricareNessunAllegatoJsonDalESiAttendeCheLoStatoDiventiREFUSED(String paName) {
         setPaAndSenderTaxId(paName);
-        sendNotificationWithErrorNotFindAllegatoJson();
+        sendNotificationRefusedDueToError("NOT_FOUND_ALLEGATO_JSON", true);
     }
 
     @When("la notifica viene inviata tramite api b2b con sha256 differente dal {string} e si attende che lo stato diventi REFUSED")
     public void laNotificaVieneInviataConShaDifferente(String paName) {
         setPaAndSenderTaxId(paName);
-        sendNotificationWithErrorSha();
+        sendNotificationRefusedDueToError("NOT_EQUAL_SHA", null);
     }
 
     @When("la notifica viene inviata tramite api b2b con sha256 Json differente dal {string} e si attende che lo stato diventi REFUSED")
     public void laNotificaVieneInviataConShaJsonDifferente(String paName) {
         setPaAndSenderTaxId(paName);
-        sendNotificationWithErrorShaJson();
+        sendNotificationRefusedDueToError("NOT_EQUAL_SHA_JSON", null);
     }
 
     @When("la notifica viene inviata tramite api b2b con estensione errata dal {string} e si attende che lo stato diventi REFUSED")
     public void laNotificaVieneInviataConEstensioneErrata(String paName) {
         setPaAndSenderTaxId(paName);
-        sendNotificationWithWrongExtension();
+        sendNotificationRefusedDueToError("WRONG_EXTENSION", null);
     }
 
+    //Non viene richiamato da nessuno step: rimuovere?
     @When("la notifica viene inviata tramite api b2b oversize preload allegato dal {string} e si attende che lo stato diventi REFUSED")
     public void laNotificaVieneInviataPreloadAllegatoOverSize(String paName) {
         setPaAndSenderTaxId(paName);
-        sendNotificationRefusedOverSizeAllegato();
+        sendNotificationRefusedDueToError("OVERSIZE_ALLEGATO", null);
     }
 
+    //Non viene richiamato da nessuno step: rimuovere?
     @When("la notifica viene inviata tramite api b2b injection preload allegato dal {string} e si attende che lo stato diventi REFUSED")
     public void laNotificaVieneInviataPreloadAllegatoInjection(String paName) {
         setPaAndSenderTaxId(paName);
-        sendNotificationRefusedInjectionAllegato();
+        sendNotificationRefusedDueToError("NOTIFICATION_INJECTION_ALLEGATO", null);
     }
 
+    //Non viene richiamato da nessuno step: rimuovere?
     @When("la notifica viene inviata tramite api b2b over 15 preload allegato dal {string} e si attende che lo stato diventi REFUSED")
     public void laNotificaVieneInviataPreloadAllegatoOver15(String paName) {
         setPaAndSenderTaxId(paName);
-        sendNotificationRefusedOver15Allegato();
+        sendNotificationRefusedDueToError("OVER_15_ALLEGATO", null);
     }
 
     @When("la notifica viene inviata dal {string}")
@@ -760,7 +763,7 @@ public class SharedSteps {
     @When("la notifica viene inviata tramite api b2b senza preload allegato dal {string}")
     public void laNotificaVieneInviatatramiteApiB2bSenzaPreloadAllegato(String pa) {
         setPaAndSenderTaxId(pa);
-        sendNotificationWithErrorNotFindAllegato(false);
+        sendNotificationRefusedDueToError("NOT_FOUND_ALLEGATO", false);
     }
 
     @And("al destinatario viene associato lo iuv creato mediante partita debitoria per {string} alla posizione {int}")
@@ -835,7 +838,6 @@ public class SharedSteps {
         );
     }
 
-    //TODO MATTEO TEST (editato in maniera più compatta)
     @Then("si verifica che la notifica non viene accettata causa {string}")
     public void verificaNotificaNoAccept(String causa) {
         String expectedErrorCode = switch (causa) {
@@ -850,11 +852,39 @@ public class SharedSteps {
         Assertions.assertTrue(expectedErrorCode.equalsIgnoreCase(errorCode));
     }
 
-    private void sendNotificationWithErrorNotFindAllegato(boolean noUpload) {
+    //TODO MATTEO TEST: 8 vecchi metodi sono stati mergiati in questo. Il prossimo step sarebbe capire meglio cosa fanno quei metodi di
+    // utility richiamati nello switch e rimuoverli da B2bUtils (dove non c'azzeccano poco, non sono vere utils se vengono richiamate solo qua)
+    // Altra possibile miglioria: sostituire le stringhe delle tipologie d'errore con costanti all'interno della classe Costanti
+    private void sendNotificationRefusedDueToError(String errorType, Boolean noUpload) {
         try {
             Assertions.assertDoesNotThrow(() -> {
                 notificationCreationDate = OffsetDateTime.now();
-                newNotificationResponse = b2bUtils.uploadNotificationNotFindAllegato(notificationRequest, noUpload);
+                switch (errorType.toUpperCase()) {
+                    case "NOT_FOUND_ALLEGATO":
+                        newNotificationResponse = b2bUtils.uploadNotificationNotFindAllegato(notificationRequest, noUpload);
+                        break;
+                    case "NOT_FOUND_ALLEGATO_JSON":
+                        newNotificationResponse = b2bUtils.uploadNotificationNotFindAllegatoJson(notificationRequest, true);
+                        break;
+                    case "NOT_EQUAL_SHA":
+                        newNotificationResponse = b2bUtils.uploadNotificationNotEqualSha(notificationRequest);
+                        break;
+                    case "NOT_EQUAL_SHA_JSON":
+                        newNotificationResponse = b2bUtils.uploadNotificationNotEqualShaJson(notificationRequest);
+                        break;
+                    case "WRONG_EXTENSION":
+                        newNotificationResponse = b2bUtils.uploadNotificationWrongExtension(notificationRequest);
+                        break;
+                    case "OVERSIZE_ALLEGATO":
+                        newNotificationResponse = b2bUtils.uploadNotificationOverSizeAllegato(notificationRequest);
+                        break;
+                    case "NOTIFICATION_INJECTION_ALLEGATO":
+                        newNotificationResponse = b2bUtils.uploadNotificationInjectionAllegato(notificationRequest);
+                        break;
+                    case "OVER_15_ALLEGATO":
+                        newNotificationResponse = b2bUtils.uploadNotificationOver15Allegato(notificationRequest);
+                        break;
+                }
                 errorCode = b2bUtils.waitForRequestRefusedV25(newNotificationResponse);
             });
             threadWait(getWorkFlowWait());
@@ -862,137 +892,12 @@ public class SharedSteps {
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
                     "{RequestID: " + (newNotificationResponse == null ? "NULL" : newNotificationResponse.getNotificationRequestId()) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-        }
-    }
-
-    private void sendNotificationWithErrorNotFindAllegatoJson() {
-        try {
-            Assertions.assertDoesNotThrow(() -> {
-                notificationCreationDate = OffsetDateTime.now();
-                newNotificationResponse = b2bUtils.uploadNotificationNotFindAllegatoJson(notificationRequest, true);
-                errorCode = b2bUtils.waitForRequestRefusedV25(newNotificationResponse);
-            });
-
-            threadWait(getWorkFlowWait());
-
-            Assertions.assertNotNull(errorCode);
-        } catch (AssertionFailedError assertionFailedError) {
-            String message = assertionFailedError.getMessage() +
-                    "{RequestID: " + (newNotificationResponse == null ? "NULL" : newNotificationResponse.getNotificationRequestId()) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-        }
-    }
-
-    private void sendNotificationWithErrorSha() {
-        try {
-            Assertions.assertDoesNotThrow(() -> {
-                notificationCreationDate = OffsetDateTime.now();
-                newNotificationResponse = b2bUtils.uploadNotificationNotEqualSha(notificationRequest);
-                errorCode = b2bUtils.waitForRequestRefusedV25(newNotificationResponse);
-            });
-
-            threadWait(getWorkFlowWait());
-
-            Assertions.assertNotNull(errorCode);
-        } catch (AssertionFailedError assertionFailedError) {
-            String message = assertionFailedError.getMessage() +
-                    "{RequestID: " + (newNotificationResponse == null ? "NULL" : newNotificationResponse.getNotificationRequestId()) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-        }
-    }
-
-    private void sendNotificationWithErrorShaJson() {
-        try {
-            Assertions.assertDoesNotThrow(() -> {
-                notificationCreationDate = OffsetDateTime.now();
-                newNotificationResponse = b2bUtils.uploadNotificationNotEqualShaJson(notificationRequest);
-                errorCode = b2bUtils.waitForRequestRefusedV25(newNotificationResponse);
-            });
-
-            threadWait(getWorkFlowWait());
-
-            Assertions.assertFalse(errorCode.isEmpty());
-
-        } catch (AssertionFailedError assertionFailedError) {
-            String message = assertionFailedError.getMessage() +
-                    "{RequestID: " + (newNotificationResponse == null ? "NULL" : newNotificationResponse.getNotificationRequestId()) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-        }
-    }
-
-    private void sendNotificationWithWrongExtension() {
-        try {
-            Assertions.assertDoesNotThrow(() -> {
-                notificationCreationDate = OffsetDateTime.now();
-                newNotificationResponse = b2bUtils.uploadNotificationWrongExtension(notificationRequest);
-
-                errorCode = b2bUtils.waitForRequestRefusedV25(newNotificationResponse);
-            });
-
-            threadWait(getWorkFlowWait());
-
-            Assertions.assertFalse(errorCode.isEmpty());
-
-        } catch (AssertionFailedError assertionFailedError) {
-            String message = assertionFailedError.getMessage() +
-                    "{RequestID: " + (newNotificationResponse == null ? "NULL" : newNotificationResponse.getNotificationRequestId()) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-        }
-    }
-
-    private void sendNotificationRefusedOverSizeAllegato() {
-        try {
-            Assertions.assertDoesNotThrow(() -> {
-                newNotificationResponse = b2bUtils.uploadNotificationOverSizeAllegato(notificationRequest);
-                errorCode = b2bUtils.waitForRequestRefusedV25(newNotificationResponse);
-            });
-
-            threadWait(getWorkFlowWait());
-            Assertions.assertFalse(errorCode.isEmpty());
-
-
-        } catch (AssertionFailedError assertionFailedError) {
-            String message = assertionFailedError.getMessage() +
-                    "{RequestID: " + (newNotificationResponse == null ? "NULL" : newNotificationResponse.getNotificationRequestId()) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-        }
-    }
-
-    private void sendNotificationRefusedInjectionAllegato() {
-        try {
-            Assertions.assertDoesNotThrow(() -> {
-                newNotificationResponse = b2bUtils.uploadNotificationInjectionAllegato(notificationRequest);
-                errorCode = b2bUtils.waitForRequestRefusedV25(newNotificationResponse);
-            });
-
-            threadWait(getWorkFlowWait());
-            Assertions.assertFalse(errorCode.isEmpty());
-
-
-        } catch (AssertionFailedError assertionFailedError) {
-            String message = assertionFailedError.getMessage() +
-                    "{RequestID: " + (newNotificationResponse == null ? "NULL" : newNotificationResponse.getNotificationRequestId()) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-        }
-    }
-
-    private void sendNotificationRefusedOver15Allegato() {
-        try {
-            Assertions.assertDoesNotThrow(() -> {
-                newNotificationResponse = b2bUtils.uploadNotificationOver15Allegato(notificationRequest);
-                errorCode = b2bUtils.waitForRequestRefusedV25(newNotificationResponse);
-            });
-
-            threadWait(getWorkFlowWait());
-
-            Assertions.assertFalse(errorCode.isEmpty());
-
-        } catch (AssertionFailedError assertionFailedError) {
-            String message = assertionFailedError.getMessage() +
-                    "{RequestID: " + (newNotificationResponse == null ? "NULL" : newNotificationResponse.getNotificationRequestId()) + " }";
-            Assertions.assertTrue(message.contains("400") && message.contains("Max attachment count reached"));
-            errorCode = "INVALID_PARAMETER_MAX_ATTACHMENT";
+            if (errorType.equalsIgnoreCase("OVER_15_ALLEGATO")) {
+                Assertions.assertTrue(message.contains("400") && message.contains("Max attachment count reached"));
+                errorCode = "INVALID_PARAMETER_MAX_ATTACHMENT";
+            } else {
+                throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+            }
         }
     }
 

@@ -10,12 +10,10 @@ import it.pagopa.pn.client.b2b.pa.polling.exception.PnPollingException;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
-import java.lang.invoke.MethodHandles;
+
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 
@@ -54,12 +52,12 @@ public class PnPollingServiceStatusRapidV20 extends PnPollingTemplate<PnPollingR
     @Override
     protected Predicate<PnPollingResponseV20> checkCondition(String iun, PnPollingParameter pnPollingParameter) {
         return pnPollingResponse -> {
-            if(pnPollingResponse.getNotification() == null) {
+            if (pnPollingResponse.getNotification() == null) {
                 pnPollingResponse.setResult(false);
                 return false;
             }
 
-            if(!isEqualStatus(pnPollingResponse, pnPollingParameter)) {
+            if (!isEqualStatus(pnPollingResponse, pnPollingParameter)) {
                 pnPollingResponse.setResult(false);
                 return false;
             }
@@ -108,16 +106,16 @@ public class PnPollingServiceStatusRapidV20 extends PnPollingTemplate<PnPollingR
                 .getNotificationStatusHistory()
                 .stream()
                 .filter(pnPollingParameter.getPnPollingPredicate() == null
-                    ?
+                        ?
                         statusHistory -> statusHistory
-                            .getStatus()
-                            .getValue().equals(pnPollingParameter.getValue())
-                    :
+                                .getStatus()
+                                .getValue().equals(pnPollingParameter.getValue())
+                        :
                         pnPollingParameter.getPnPollingPredicate().getNotificationStatusHistoryElementPredicateV20())
                 .findAny()
                 .orElse(null);
 
-        if(notificationStatusHistoryElement != null) {
+        if (notificationStatusHistoryElement != null) {
             pnPollingResponse.setNotificationStatusHistoryElement(notificationStatusHistoryElement);
             pnPollingResponse.setResult(true);
             return true;

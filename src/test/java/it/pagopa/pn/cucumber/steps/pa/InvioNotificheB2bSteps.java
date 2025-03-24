@@ -388,7 +388,7 @@ public class InvioNotificheB2bSteps {
     public void preLoadingOfMetaDatiAttachmentF24() {
         NotificationMetadataAttachment notificationPaymentAttachment = b2bUtils.newMetadataAttachment("classpath:/METADATA_CORRETTO.json");
         AtomicReference<NotificationMetadataAttachment> notificationDocumentAtomic = new AtomicReference<>();
-        assertThatCode(() -> notificationDocumentAtomic.set(b2bUtils.preloadMetadataAttachment(notificationPaymentAttachment)))
+        assertThatCode(() -> notificationDocumentAtomic.set(b2bUtils.preloadMetadataAttachmentV21(notificationPaymentAttachment)))
                 .as("Il caricamento e l'assegnazione dei metadati dell'allegato di notifica non devono generare eccezioni")
                 .doesNotThrowAnyException();
         try {

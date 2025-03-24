@@ -1,8 +1,7 @@
 package it.pagopa.pn.cucumber.steps.pa.webhookVersions;
 
-
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationStatusHistoryElement;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.FullSentNotificationV20;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationStatusHistoryElement;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.TimelineElementV20;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
@@ -24,6 +23,7 @@ import java.util.UUID;
 
 @Data
 @Slf4j
+//NOTA BENE: A discapito del nome, questa classe utilizza in toto i metodi della V20
 public class WebhookStepsV10 implements WebhookStepsInterface {
 
     private ProgressResponseElement progressResponseElement;
@@ -321,8 +321,8 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
             } catch (InterruptedException exc) {
                 throw new RuntimeException(exc);
             }
-            webhookSteps.getSharedSteps().setFullSentNotificationV1(webhookSteps.getB2bClient().getSentNotificationV1(webhookSteps.getSharedSteps().getFullSentNotificationV26().getIun()));
-            NotificationStatusHistoryElement notificationStatusHistoryElement = webhookSteps.getSharedSteps().getFullSentNotificationV1().getNotificationStatusHistory().
+            webhookSteps.getSharedSteps().setFullSentNotificationV20(webhookSteps.getB2bClient().getSentNotificationV2(webhookSteps.getSharedSteps().getFullSentNotificationV26().getIun()));
+            NotificationStatusHistoryElement notificationStatusHistoryElement = webhookSteps.getSharedSteps().getFullSentNotificationV20().getNotificationStatusHistory().
                     stream().filter(elem -> elem.getStatus().getValue().equals(notificationInternalStatus.getValue())).findAny().orElse(null);
             if (notificationStatusHistoryElement != null) {
                 found = true;
@@ -343,7 +343,7 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
 
     @Override
     public String getSentNotificationIun() {
-        return webhookSteps.getSharedSteps().getFullSentNotificationV1().getIun();
+        return webhookSteps.getSharedSteps().getFullSentNotificationV20().getIun();
     }
 
     @Override
@@ -396,8 +396,8 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
 
     @Override
     public void getTimelineElementVersionB2B(String iun) {
-        FullSentNotification fullSentNotification = webhookSteps.getB2bClient().getSentNotificationV1(iun);
-        webhookSteps.getSharedSteps().setFullSentNotificationV1(fullSentNotification);
+        FullSentNotificationV20 fullSentNotification = webhookSteps.getB2bClient().getSentNotificationV2(iun);
+        webhookSteps.getSharedSteps().setFullSentNotificationV20(fullSentNotification);
     }
 
     @Override

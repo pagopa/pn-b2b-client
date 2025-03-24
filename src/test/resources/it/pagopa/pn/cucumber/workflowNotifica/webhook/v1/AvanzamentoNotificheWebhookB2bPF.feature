@@ -1,10 +1,9 @@
 Feature: avanzamento notifiche webhook b2b
 
-  #Background:
-   # Given vengono cancellati tutti gli stream presenti del "Comune_1" con versione "V10"
-  Scenario: [B2B-STREAM_STATUS_7777] Creazione stream notifica
-    Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V10" - ONLY FOR DEBUG
-
+  Scenario: [ONLY_FOR_DEBUG] Cancellazione stream notifica
+    Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V10"
+    Given vengono cancellati tutti gli stream presenti del "Comune_1" con versione "V10"
+    Given vengono cancellati tutti gli stream presenti del "Comune_2" con versione "V10"
 
   @oldWebhookTest @cleanWebhook @webhook1
   Scenario: [B2B-STREAM_STATUS_1] Creazione stream notifica
@@ -281,7 +280,7 @@ Feature: avanzamento notifiche webhook b2b
     Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "PAYMENT" con la versione "V10"
 
   @oldWebhookTest @cleanWebhook @webhook1
-  Scenario: [B2B-STREAM_TIMELINE_26] Invio notifica digitale ed attesa elemento di timeline REFINEMENT e verifica corretteza data PN-9059
+  Scenario: [B2B-STREAM_TIMELINE_26] Invio notifica digitale ed attesa elemento di timeline REFINEMENT e verifica correttezza data PN-9059
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |

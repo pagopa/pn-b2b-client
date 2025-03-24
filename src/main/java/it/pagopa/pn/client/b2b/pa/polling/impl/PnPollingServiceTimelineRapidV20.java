@@ -10,12 +10,10 @@ import it.pagopa.pn.client.b2b.pa.polling.exception.PnPollingException;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
-import java.lang.invoke.MethodHandles;
+
 import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
@@ -24,7 +22,7 @@ import java.util.function.Predicate;
 @Service(PnPollingStrategy.TIMELINE_RAPID_V20)
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
-public class PnPollingServiceTimelineRapidV20  extends PnPollingTemplate<PnPollingResponseV20> {
+public class PnPollingServiceTimelineRapidV20 extends PnPollingTemplate<PnPollingResponseV20> {
     protected final TimingForPolling timingForPolling;
     private final IPnPaB2bClient pnPaB2bClient;
     private FullSentNotificationV20 notificationV20;
@@ -55,12 +53,12 @@ public class PnPollingServiceTimelineRapidV20  extends PnPollingTemplate<PnPolli
     @Override
     protected Predicate<PnPollingResponseV20> checkCondition(String iun, PnPollingParameter pnPollingParameter) {
         return pnPollingResponse -> {
-            if(pnPollingResponse.getNotification() == null) {
+            if (pnPollingResponse.getNotification() == null) {
                 pnPollingResponse.setResult(false);
                 return false;
             }
 
-            if(pnPollingResponse.getNotification().getTimeline().isEmpty() ||
+            if (pnPollingResponse.getNotification().getTimeline().isEmpty() ||
                     !isPresentCategory(pnPollingResponse, pnPollingParameter)) {
                 pnPollingResponse.setResult(false);
                 return false;
@@ -111,16 +109,16 @@ public class PnPollingServiceTimelineRapidV20  extends PnPollingTemplate<PnPolli
                 .getTimeline()
                 .stream()
                 .filter(pnPollingParameter.getPnPollingPredicate() == null
-                    ?
-                        timelineElement->
+                        ?
+                        timelineElement ->
                                 timelineElement.getCategory() != null
                                         && Objects.requireNonNull(timelineElement.getCategory().getValue()).equals(pnPollingParameter.getValue())
-                    :
+                        :
                         pnPollingParameter.getPnPollingPredicate().getTimelineElementPredicateV20())
                 .findAny()
                 .orElse(null);
 
-        if(timelineElementV20 != null) {
+        if (timelineElementV20 != null) {
             pnPollingResponse.setTimelineElement(timelineElementV20);
             pnPollingResponse.setResult(true);
             return true;
