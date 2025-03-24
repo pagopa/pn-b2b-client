@@ -412,7 +412,7 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
     @Override
     public ResponseEntity<CatalogEServiceTemplates> getEServiceTemplatesCatalog(
         String xCorrelationId) {
-        return this.getEServiceTemplatesCatalog(xCorrelationId, 0, 100, null, null);
+        return this.getEServiceTemplatesCatalog(xCorrelationId, 0, 50, null, null);
     }
 
     @Override
