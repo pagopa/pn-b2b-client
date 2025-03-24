@@ -30,14 +30,14 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 70010 | 918   | ADELFIA               | BA       | notifica analogica RECAPITISTA |
       | 10010 | 987   | ANDRATE               | TO       | notifica analogica RECAPITISTA |
       | 60012 | 1044   | MONTERADO             | AN       | notifica analogica RECAPITISTA |
-      | 35049 | 916   | SANTA CATERINA D'ESTE | PD       | notifica analogica RECAPITISTA |
-      | 90052 | 853   | CERDA                 | PA       | notifica analogica RECAPITISTA |
+      | 35049 | 987   | SANTA CATERINA D'ESTE | PD       | notifica analogica RECAPITISTA |
+      | 90052 | 918   | CERDA                 | PA       | notifica analogica RECAPITISTA |
       | 06012 | 948   | CERBARA               | PG       | notifica analogica RECAPITISTA |
       | 17011 | 1092  | ALBISOLA CAPO         | SV       | notifica analogica RECAPITISTA |
       | 87020 | 948   | ACQUAPPESA            | CS       | notifica analogica RECAPITISTA |
 
-      | 21009 | 898   | BARDELLO              | VA       | notifica analogica RECAPITISTA |
-      | 14027 | 916   | TONENGO               | AT       | notifica analogica RECAPITISTA |
+      | 21009 | 967   | BARDELLO              | VA       | notifica analogica RECAPITISTA |
+      | 14027 | 987   | TONENGO               | AT       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoAprile25
@@ -99,7 +99,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 70010 | 1030  | ADELFIA        | BA       | notifica analogica RECAPITISTA |
       | 10010 | 1106  | ANDRATE        | TO       | notifica analogica RECAPITISTA |
       | 60012 | 1171  | MONTERADO      | AN       | notifica analogica RECAPITISTA |
-      | 90054 | 1019  | GERACI SICULO  | PA       | notifica analogica RECAPITISTA |
+      | 90054 | 1030  | GERACI SICULO  | PA       | notifica analogica RECAPITISTA |
       | 88071 | 1053  | STALETTI       | CZ       | notifica analogica RECAPITISTA |
       | 06012 | 1053  | CERBARA        | PG       | notifica analogica RECAPITISTA |
 
@@ -164,7 +164,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 70010 | 1062  | ADELFIA        | BA       | notifica analogica RECAPITISTA |
       | 10010 | 1139  | ANDRATE        | TO       | notifica analogica RECAPITISTA |
       | 60012 | 1204  | MONTERADO      | AN       | notifica analogica RECAPITISTA |
-      | 90072 | 1052  | ALTOFONTE      | PA       | notifica analogica RECAPITISTA |
+      | 90072 | 1062  | ALTOFONTE      | PA       | notifica analogica RECAPITISTA |
 
       | 06012 | 1085  | CERBARA        | PG       | notifica analogica RECAPITISTA |
 
@@ -228,7 +228,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 70010 | 1232  | ADELFIA             | BA       | notifica analogica RECAPITISTA |
       | 10010 | 1314  | ANDRATE             | TO       | notifica analogica RECAPITISTA |
       | 60012 | 1384  | MONTERADO           | AN       | notifica analogica RECAPITISTA |
-      | 90082 | 1219  | SANTA CRISTINA GELA | PA       | notifica analogica RECAPITISTA |
+      | 90082 | 1232  | SANTA CRISTINA GELA | PA       | notifica analogica RECAPITISTA |
 
       | 06012 | 1257  | CERBARA             | PG       | notifica analogica RECAPITISTA |
 
@@ -292,7 +292,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 70010 | 1297  | ADELFIA        | BA       | notifica analogica RECAPITISTA |
       | 10010 | 1380  | ANDRATE        | TO       | notifica analogica RECAPITISTA |
       | 60012 | 1450  | MONTERADO      | AN       | notifica analogica RECAPITISTA |
-      | 94028 | 1285  | VILLAROSA      | EN       | notifica analogica RECAPITISTA |
+      | 94028 | 1297  | VILLAROSA      | EN       | notifica analogica RECAPITISTA |
 
       | 06012 | 1323  | CERBARA        | PG       | notifica analogica RECAPITISTA |
 
@@ -355,7 +355,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 70010 | 1814  | ADELFIA             | BA       | notifica analogica RECAPITISTA |
       | 10010 | 1905  | ANDRATE             | TO       | notifica analogica RECAPITISTA |
       | 60012 | 1983  | MONTERADO           | AN       | notifica analogica RECAPITISTA |
-      | 95055 | 1800  | SAN PIETRO CLARENZA | CT       | notifica analogica RECAPITISTA |
+      | 95055 | 1814  | SAN PIETRO CLARENZA | CT       | notifica analogica RECAPITISTA |
       | 06012 | 1843  | CERBARA             | PG       | notifica analogica RECAPITISTA |
 
   @costoAnalogicoAprile25
