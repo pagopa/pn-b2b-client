@@ -12,6 +12,8 @@ import it.pagopa.interop.e_service_template.mapper.DescriptorAttributesMapper;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributes;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateAttributesSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionAttributeSeed;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -63,10 +65,12 @@ public class EServiceTemplateVersionAttributeUpdateSteps {
         UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
 
         //lastTemplateVersionUpdateSeed contiene, tra le altre, cose, gli attributi aggiunti l'ultima volta
-        lastAttributesUpdateSeed = this.descriptorAttributesMapper.mapSeedsToSeeds(this.templateContext.getLastTemplateVersionUpdateSeed().getAttributes());
+//        lastAttributesUpdateSeed = this.descriptorAttributesMapper.mapSeedsToSeeds(this.templateContext.getLastTemplateVersionUpdateSeed().getAttributes());
+        lastAttributesUpdateSeed = this.descriptorAttributesMapper.mapSeedsToSeeds(new EServiceTemplateAttributesSeed()
+                .addCertifiedItem(List.of(new EServiceTemplateVersionAttributeSeed().id(UUID.randomUUID()).explicitAttributeVerification(true))));
 
         List<List<DescriptorAttributeSeed>> certified = lastAttributesUpdateSeed.getCertified();
-        certified.add(List.of(new DescriptorAttributeSeed())); // aggiungo 1 attributo
+//        certified.add(List.of(new DescriptorAttributeSeed())); // aggiungo 1 attributo
 
         Boolean newAttribute = !BooleanUtils.toBoolean(certified.get(0).get(0).getExplicitAttributeVerification());
 

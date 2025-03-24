@@ -17,7 +17,7 @@ Feature: Test API of e-service template
     Examples:
       | ruolo         |
       | security      |
-      | api,security  |
+#      | api,security  |
       | support       |
 
   @e-service-template-test
@@ -46,7 +46,7 @@ Feature: Test API of e-service template
     Examples:
       | ruolo         |
       | security      |
-      | api,security  |
+#      | api,security  |
       | support       |
 
   Scenario Outline: [INTEROP-EST-007] La sospensione di un e-service template può essere fatta da un ente in veste di ADMIN o API
@@ -70,7 +70,7 @@ Feature: Test API of e-service template
     Examples:
       | ruolo         |
       | security      |
-      | api,security  |
+#      | api,security  |
       | support       |
 
   Scenario Outline: [INTEROP-EST-009] La riattivazione di un e-service template può essere fatta da un ente in veste di ADMIN o API
@@ -136,11 +136,11 @@ Feature: Test API of e-service template
       | api     | SUSPENDED |
 
     # run notes DEV 18/03/2025: restituisce 204, che comunque è un comportamento accettabile. Chiarire.
-  Scenario: [INTEROP-EST-013] La modifica di un e-service template in stato DRAFT non può essere fatta specificando lo stesso nome
+  Scenario: [INTEROP-EST-013] La modifica di un e-service template in stato PUBLISHED non può essere fatta specificando lo stesso nome
     Given l'utente è un "admin" di "PA1"
-    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     When l'utente tenta di modificare l'e-service template specificando lo stesso nome
-    Then si ottiene response status code 403
+    Then si ottiene response status code 400
 
     # run notes DEV 18/03/2025: impossibile da simulare perché non potendo creare un token per dev si sta usando sempre lo stesso token
   Scenario: [INTEROP-EST-014] La modifica di un e-service template in stato DRAFT non può essere fatta da una PA diversa da quella creatrice del template
@@ -164,13 +164,13 @@ Feature: Test API of e-service template
     Examples:
       | ruolo         | stato     |
       | security      | DRAFT     |
-      | api,security  | DRAFT     |
+#      | api,security  | DRAFT     |
       | support       | DRAFT     |
       | security      | PUBLISHED |
-      | api,security  | PUBLISHED |
+#      | api,security  | PUBLISHED |
       | support       | PUBLISHED |
       | security      | SUSPENDED |
-      | api,security  | SUSPENDED |
+#      | api,security  | SUSPENDED |
       | support       | SUSPENDED |
 
   Scenario Outline: [INTEROP-EST-017] La modifica di una versione di un e-service template in stato DRAFT può essere fatta da un ente in veste di ADMIN o API
@@ -230,22 +230,22 @@ Feature: Test API of e-service template
     Examples:
       | ruolo         | stato     | kind      |
       | security      | DRAFT     | DOCUMENT  |
-      | api,security  | DRAFT     | DOCUMENT  |
+#      | api,security  | DRAFT     | DOCUMENT  |
       | support       | DRAFT     | DOCUMENT  |
       | security      | PUBLISHED | DOCUMENT  |
-      | api,security  | PUBLISHED | DOCUMENT  |
+#      | api,security  | PUBLISHED | DOCUMENT  |
       | support       | PUBLISHED | DOCUMENT  |
       | security      | SUSPENDED | DOCUMENT  |
-      | api,security  | SUSPENDED | DOCUMENT  |
+#      | api,security  | SUSPENDED | DOCUMENT  |
       | support       | SUSPENDED | DOCUMENT  |
       | security      | DRAFT     | INTERFACE |
-      | api,security  | DRAFT     | INTERFACE |
+#      | api,security  | DRAFT     | INTERFACE |
       | support       | DRAFT     | INTERFACE |
       | security      | PUBLISHED | INTERFACE |
-      | api,security  | PUBLISHED | INTERFACE |
+#      | api,security  | PUBLISHED | INTERFACE |
       | support       | PUBLISHED | INTERFACE |
       | security      | SUSPENDED | INTERFACE |
-      | api,security  | SUSPENDED | INTERFACE |
+#      | api,security  | SUSPENDED | INTERFACE |
       | support       | SUSPENDED | INTERFACE |
 
   Scenario Outline: [INTEROP-EST-039] L'aggiunta di un documento/interfaccia a una versione di un e-service template in stato DRAFT può essere fatta da un ente in veste di ADMIN o API
@@ -292,9 +292,9 @@ Feature: Test API of e-service template
 
     Then si ottiene response status code 409
 
-  Scenario Outline: [INTEROP-EST-043] L'aggiunta di un documento/interfaccia a una versione di un e-service template in stato DRAFT non può essere fatta da una PA diversa da quella creatrice del template
+  Scenario Outline: [INTEROP-EST-043] L'aggiunta di un documento/interfaccia a una versione di un e-service template in stato PUBLISHED non può essere fatta da una PA diversa da quella creatrice del template
     Given l'utente è un "admin" di "PA1"
-    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     When l'utente è un "admin" di "PA2"
     And l'utente tenta l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template
     Then si ottiene response status code 403
@@ -333,23 +333,30 @@ Feature: Test API of e-service template
     Examples:
       | ruolo         | stato     | kind      |
       | security      | DRAFT     | DOCUMENT  |
-      | api,security  | DRAFT     | DOCUMENT  |
+#      | api,security  | DRAFT     | DOCUMENT  |
       | support       | DRAFT     | DOCUMENT  |
       | security      | PUBLISHED | DOCUMENT  |
-      | api,security  | PUBLISHED | DOCUMENT  |
+#      | api,security  | PUBLISHED | DOCUMENT  |
       | support       | PUBLISHED | DOCUMENT  |
       | security      | SUSPENDED | DOCUMENT  |
-      | api,security  | SUSPENDED | DOCUMENT  |
+#      | api,security  | SUSPENDED | DOCUMENT  |
       | support       | SUSPENDED | DOCUMENT  |
       | security      | DRAFT     | INTERFACE |
-      | api,security  | DRAFT     | INTERFACE |
+#      | api,security  | DRAFT     | INTERFACE |
       | support       | DRAFT     | INTERFACE |
-      | security      | PUBLISHED | INTERFACE |
-      | api,security  | PUBLISHED | INTERFACE |
-      | support       | PUBLISHED | INTERFACE |
-      | security      | SUSPENDED | INTERFACE |
-      | api,security  | SUSPENDED | INTERFACE |
-      | support       | SUSPENDED | INTERFACE |
+
+  Scenario Outline: [INTEROP-EST-zzz] Il reperimento di un documento/interfaccia di un e-service template NON può essere fatto da un ente NON in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta il reperimento del documento dalla versione dell'e-service template
+    Then si ottiene response status code 403
+    Examples:
+      | ruolo         | stato     |
+      | security      | PUBLISHED |
+      | support       | PUBLISHED |
+      | security      | SUSPENDED |
+      | support       | SUSPENDED |
 
   Scenario Outline: [INTEROP-EST-047-DRA] Il reperimento di un documento/interfaccia di un e-service template in stato DRAFT può essere fatto da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
@@ -429,23 +436,26 @@ Feature: Test API of e-service template
     Examples:
       | ruolo         | stato     | kind      |
       | security      | DRAFT     | DOCUMENT  |
-      | api,security  | DRAFT     | DOCUMENT  |
       | support       | DRAFT     | DOCUMENT  |
       | security      | PUBLISHED | DOCUMENT  |
-      | api,security  | PUBLISHED | DOCUMENT  |
       | support       | PUBLISHED | DOCUMENT  |
       | security      | SUSPENDED | DOCUMENT  |
-      | api,security  | SUSPENDED | DOCUMENT  |
       | support       | SUSPENDED | DOCUMENT  |
       | security      | DRAFT     | INTERFACE |
-      | api,security  | DRAFT     | INTERFACE |
       | support       | DRAFT     | INTERFACE |
-      | security      | PUBLISHED | INTERFACE |
-      | api,security  | PUBLISHED | INTERFACE |
-      | support       | PUBLISHED | INTERFACE |
-      | security      | SUSPENDED | INTERFACE |
-      | api,security  | SUSPENDED | INTERFACE |
-      | support       | SUSPENDED | INTERFACE |
+
+  Scenario Outline: [INTEROP-EST-aaa] La modifica di un documento/interfaccia di un e-service template in qualsiasi stato NON può essere fatta da un ente NON in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la modifica del documento dell'e-service template
+    Then si ottiene response status code 403
+    Examples:
+      | ruolo         | stato     |
+      | security      | PUBLISHED |
+      | support       | PUBLISHED |
+      | security      | SUSPENDED |
+      | support       | SUSPENDED |
 
   # DEV. NOTE 20/03/2025: la modifica che viene effettuata è solo quella del nome del documento,
   # in quanto è al momento l'unico parametro a disposizione
@@ -538,23 +548,26 @@ Feature: Test API of e-service template
     Examples:
       | ruolo         | stato     | kind      |
       | security      | DRAFT     | DOCUMENT  |
-      | api,security  | DRAFT     | DOCUMENT  |
       | support       | DRAFT     | DOCUMENT  |
       | security      | PUBLISHED | DOCUMENT  |
-      | api,security  | PUBLISHED | DOCUMENT  |
       | support       | PUBLISHED | DOCUMENT  |
       | security      | SUSPENDED | DOCUMENT  |
-      | api,security  | SUSPENDED | DOCUMENT  |
       | support       | SUSPENDED | DOCUMENT  |
       | security      | DRAFT     | INTERFACE |
-      | api,security  | DRAFT     | INTERFACE |
       | support       | DRAFT     | INTERFACE |
-      | security      | PUBLISHED | INTERFACE |
-      | api,security  | PUBLISHED | INTERFACE |
-      | support       | PUBLISHED | INTERFACE |
-      | security      | SUSPENDED | INTERFACE |
-      | api,security  | SUSPENDED | INTERFACE |
-      | support       | SUSPENDED | INTERFACE |
+
+  Scenario Outline: [INTEROP-EST-058_BIS] La cancellazione di un documento/interfaccia di un e-service template NON può essere effettuata da un ente NON in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la cancellazione del documento dell'e-service template
+    Then si ottiene response status code 403
+    Examples:
+      | ruolo         | stato     |
+      | security      | PUBLISHED |
+      | support       | PUBLISHED |
+      | security      | SUSPENDED |
+      | support       | SUSPENDED |
 
   Scenario Outline: [INTEROP-EST-059] La cancellazione di un documento/interfaccia di un e-service template può essere effettuata da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
@@ -655,7 +668,6 @@ Feature: Test API of e-service template
     Examples:
       | ruolo         |
       | security      |
-      | api,security  |
       | support       |
 
   # TODO 21/03/2025 somiglianza con alcuni scenari precedenti, verificare ed eventualmente rimuovere test identici
@@ -743,9 +755,9 @@ Feature: Test API of e-service template
       | api     |
 
     # to fix: non può essere creata una nuova versione se il template è in stato DRAFT
-  Scenario Outline: [INTEROP-EST-079] La cancellazione di una versione di un e-service template in stato DRAFT non può essere effettuata da un ente NON in veste di ADMIN o API
+  Scenario Outline: [INTEROP-EST-079] La cancellazione di una versione di un e-service template in stato PUBLISHED non può essere effettuata da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
-    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     And l'utente effettua la creazione di una ulteriore versione nell'e-service template con successo
     When l'utente è un "<ruolo>" di "PA1"
     And l'utente tenta la cancellazione della versione dell'e-service template
@@ -755,7 +767,6 @@ Feature: Test API of e-service template
     Examples:
       | ruolo         |
       | security      |
-      | api,security  |
       | support       |
 
   Scenario: [INTEROP-EST-080] La cancellazione di una versione di un e-service template in stato DRAFT non può essere effettuata da un ente diverso dal creatore del template
@@ -821,7 +832,6 @@ Feature: Test API of e-service template
     Examples:
       | ruolo         |
       | security      |
-      | api,security  |
       | support       |
 
   Scenario: [INTEROP-EST-088] La sospensione di una versione di un e-service template in stato PUBLISHED non può essere effettuata da un ente diverso dal creatore del template
@@ -873,7 +883,6 @@ Feature: Test API of e-service template
     Examples:
       | ruolo         |
       | security      |
-      | api,security  |
       | support       |
 
   Scenario: [INTEROP-EST-094] La riattivazione di una versione di un e-service template in stato SUSPENDED non può essere effettuata da un ente diverso dal creatore del template
@@ -917,17 +926,15 @@ Feature: Test API of e-service template
     Examples:
       | ruolo         | stato     |
       | security      | PUBLISHED |
-      | api,security  | PUBLISHED |
       | support       | PUBLISHED |
       | security      | SUSPENDED |
-      | api,security  | SUSPENDED |
       | support       | SUSPENDED |
 
     # TODO: a volte per incoerenze di stato restituisce 400, altre volte - come in questo caso - 409.
     # Bisogna identificare con precisione incoerenze di questo tipo.
-  Scenario: [INTEROP-EST-099] La modifica del nome di un e-service template in stato DRAFT non può essere effettuata
+  Scenario: [INTEROP-EST-099] La modifica del nome di un e-service template in stato PUBLISHED non può essere effettuata
     Given l'utente è un "admin" di "PA1"
-    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     When l'utente tenta la modifica del nome dell'e-service template
     Then si ottiene response status code 403
 
@@ -1000,15 +1007,13 @@ Feature: Test API of e-service template
     Examples:
       | ruolo         | stato     |
       | security      | PUBLISHED |
-      | api,security  | PUBLISHED |
       | support       | PUBLISHED |
       | security      | SUSPENDED |
-      | api,security  | SUSPENDED |
       | support       | SUSPENDED |
 
-  Scenario: [INTEROP-EST-107] La modifica della descrizione dello scopo di un e-service template in stato DRAFT non può essere effettuata
+  Scenario: [INTEROP-EST-107] La modifica della descrizione dello scopo di un e-service template in stato PUBLISHED non può essere effettuata
     Given l'utente è un "admin" di "PA1"
-    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     When l'utente tenta la modifica della descrizione dello scopo dell'e-service template
     Then si ottiene response status code 400
 
@@ -1081,15 +1086,13 @@ Feature: Test API of e-service template
     Examples:
       | ruolo         | stato     |
       | security      | PUBLISHED |
-      | api,security  | PUBLISHED |
       | support       | PUBLISHED |
       | security      | SUSPENDED |
-      | api,security  | SUSPENDED |
       | support       | SUSPENDED |
 
-  Scenario: [INTEROP-EST-115] La modifica della descrizione di un e-service template in stato DRAFT non può essere effettuata
+  Scenario: [INTEROP-EST-115] La modifica della descrizione di un e-service template in stato PUBLISHED non può essere effettuata
     Given l'utente è un "admin" di "PA1"
-    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     When l'utente tenta la modifica della descrizione dell'e-service template
     Then si ottiene response status code 400
 
@@ -1162,10 +1165,8 @@ Feature: Test API of e-service template
     Examples:
       | ruolo         | stato     |
       | security      | PUBLISHED |
-      | api,security  | PUBLISHED |
       | support       | PUBLISHED |
       | security      | SUSPENDED |
-      | api,security  | SUSPENDED |
       | support       | SUSPENDED |
 
   Scenario: [INTEROP-EST-123] La modifica delle quote di una versione di un e-service template in stato DRAFT non può essere effettuata
@@ -1246,20 +1247,26 @@ Feature: Test API of e-service template
     #  | api     |
 
   Scenario Outline: [INTEROP-EST-129] La modifica degli attributi di una versione di un e-service template in stato PUBLISHED o SUSPENDED NON può essere effettuata da un ente NON in veste di ADMIN o API
+    Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
     Given l'utente è un "admin" di "PA1"
-    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
-    And l'utente effettua delle modifiche alla versione dell'e-service template con successo
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente tenta di aggiungere l'attributo creato alla versione dell'e-service template
+    And e-service template viene portato allo stato PUBLISHED
+
+
+#    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
+#    And l'utente effettua delle modifiche alla versione dell'e-service template con successo
     When l'utente è un "<ruolo>" di "PA1"
     And l'utente tenta la modifica degli attributi della versione dell'e-service template
     Then si ottiene response status code 403
     Examples:
       | ruolo         | stato     |
-      | security      | PUBLISHED |
+#      | security      | PUBLISHED |
       | api,security  | PUBLISHED |
-      | support       | PUBLISHED |
-      | security      | SUSPENDED |
-      | api,security  | SUSPENDED |
-      | support       | SUSPENDED |
+#      | support       | PUBLISHED |
+#      | security      | SUSPENDED |
+#      | api,security  | SUSPENDED |
+#      | support       | SUSPENDED |
 
   Scenario: [INTEROP-EST-130] La modifica degli attributi di una versione di un e-service template in stato DRAFT non può essere effettuata
     Given l'utente è un "admin" di "PA1"

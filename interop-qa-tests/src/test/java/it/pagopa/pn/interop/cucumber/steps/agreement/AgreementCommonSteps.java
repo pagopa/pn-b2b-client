@@ -75,7 +75,7 @@ public class AgreementCommonSteps {
 
     @Given("{string} ha creato un attributo certificato e lo ha assegnato a {string}")
     public void tenantHasCreatedCertifiedAttribute(String certifier, String tenantType) {
-        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        clientTokenConfigurator.setBearerToken(identityService.getToken(certifier, null));
         UUID tenantId = identityService.getOrganizationId(tenantType);
         UUID attributeId = dataPreparationService.createAttribute(AttributeKind.CERTIFIED, null);
         dataPreparationService.assignCertifiedAttributeToTenant(tenantId, attributeId);
