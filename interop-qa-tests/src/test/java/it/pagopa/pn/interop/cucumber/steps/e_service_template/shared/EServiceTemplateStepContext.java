@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template.shared;
 
+import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
@@ -40,11 +41,15 @@ public class EServiceTemplateStepContext {
         }
     }
 
+    /** Stores data on attributes for testing */
+    public record Attribute(UUID id, UUID assignedTenant, AttributeKind kind){}
+
     private List<EServiceTemplateInfo> templatesManaged = new ArrayList<>();
     private EServiceTemplateDocumentInfo lastAddedDocument;
     private UpdateEServiceTemplateVersionSeed lastTemplateVersionUpdateSeed;
     private UUID lastEServiceIdCreatedFromTemplate;
     private CompactDescriptor lastEServiceDescriptorCreatedFromTemplate;
+    private Attribute lastCreatedAttribute;
 
     private final EasyRandomParameters easyRandomParameters = new EasyRandomParameters()
         .seed(123L)

@@ -4,19 +4,23 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.agreement.service.IAgreementClient;
-import it.pagopa.interop.agreement.service.impl.AgreementClientImpl;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
-import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
+import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext.Attribute;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
-
 import lombok.Builder;
 import lombok.Data;
 
@@ -75,9 +79,12 @@ public class AgreementCommonSteps {
 
     @Given("{string} ha creato un attributo certificato e lo ha assegnato a {string}")
     public void tenantHasCreatedCertifiedAttribute(String certifier, String tenantType) {
-        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        clientTokenConfigurator.setBearerToken(identityService.getToken(certifier, null));
+        AttributeKind certified = AttributeKind.CERTIFIED;
         UUID tenantId = identityService.getOrganizationId(tenantType);
-        UUID attributeId = dataPreparationService.createAttribute(AttributeKind.CERTIFIED, null);
+        UUID attributeId = dataPreparationService.createAttribute(certified, null);
+        sharedStepsContext.getEServiceTemplateStepContext().setLastCreatedAttribute(new Attribute(attributeId, tenantId,
+            certified));
         dataPreparationService.assignCertifiedAttributeToTenant(tenantId, attributeId);
     }
 

@@ -12,13 +12,15 @@ import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.e_service_template.mapper.DescriptorAttributesMapper;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateAttributesSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionSeed;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
+import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext.Attribute;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext.EServiceTemplateInfoMapper;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
+import java.util.List;
 import java.util.UUID;
 import lombok.Data;
 import org.jeasy.random.EasyRandom;
@@ -92,6 +94,23 @@ public class EServiceTemplateVersionUpdateSteps {
             this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(),
             this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId(),
             this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateVersionUpdateSeed());
+    }
+
+    @When("l'utente tenta di aggiungere l'attributo creato alla versione dell'e-service template")
+    public void assignAttributeToEServiceTemplateVersion() {
+        Attribute lastCreatedAttribute = sharedStepsContext.getEServiceTemplateStepContext().getLastCreatedAttribute();
+        sharedStepsContext.getEServiceTemplateStepContext().setLastTemplateVersionUpdateSeed(new UpdateEServiceTemplateVersionSeed()
+                .agreementApprovalPolicy(AgreementApprovalPolicy.AUTOMATIC)
+                .attributes(new EServiceTemplateAttributesSeed().certified(
+                    List.of(List.of(new EServiceTemplateVersionAttributeSeed().id(lastCreatedAttribute.id()).explicitAttributeVerification(false)))))
+                .dailyCallsPerConsumer(100)
+                .dailyCallsTotal(1000)
+                .voucherLifespan(86400)
+                .description("Nuova descrizione della versione"));
+        updateEServiceTemplateVersion(
+                this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(),
+                this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId(),
+                this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateVersionUpdateSeed());
     }
 
     @When("l'utente tenta di modificare la versione dell'e-service template indicando una specifica vuota")

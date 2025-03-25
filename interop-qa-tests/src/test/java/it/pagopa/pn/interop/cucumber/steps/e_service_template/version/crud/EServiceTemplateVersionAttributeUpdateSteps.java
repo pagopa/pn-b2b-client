@@ -12,6 +12,8 @@ import it.pagopa.interop.e_service_template.mapper.DescriptorAttributesMapper;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributes;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateAttributesSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionAttributeSeed;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -60,10 +62,17 @@ public class EServiceTemplateVersionAttributeUpdateSteps {
         UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
 
         //lastTemplateVersionUpdateSeed contiene, tra le altre, cose, gli attributi aggiunti l'ultima volta
-        lastAttributesUpdateSeed = this.descriptorAttributesMapper.mapSeedsToSeeds(this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateVersionUpdateSeed().getAttributes());
+
+    // 25/03/2025 versione precedente, la si tiene in attesa di validare le modifiche fatte sulla parte attributi e-service template
+//        lastAttributesUpdateSeed = this.descriptorAttributesMapper.mapSeedsToSeeds(this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateVersionUpdateSeed().getAttributes());
+
+        lastAttributesUpdateSeed = this.descriptorAttributesMapper.mapSeedsToSeeds(new EServiceTemplateAttributesSeed()
+                .addCertifiedItem(List.of(new EServiceTemplateVersionAttributeSeed().id(UUID.randomUUID()).explicitAttributeVerification(true))));
 
         List<List<DescriptorAttributeSeed>> certified = lastAttributesUpdateSeed.getCertified();
-        certified.add(List.of(new DescriptorAttributeSeed())); // aggiungo 1 attributo
+
+        // 25/03/2025 versione precedente, la si tiene in attesa di validare le modifiche fatte sulla parte attributi e-service template
+//        certified.add(List.of(new DescriptorAttributeSeed())); // aggiungo 1 attributo
 
         Boolean newAttribute = !BooleanUtils.toBoolean(certified.get(0).get(0).getExplicitAttributeVerification());
 

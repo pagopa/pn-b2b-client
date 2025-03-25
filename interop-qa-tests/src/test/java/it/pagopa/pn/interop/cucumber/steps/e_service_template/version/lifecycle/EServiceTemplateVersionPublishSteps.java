@@ -3,6 +3,7 @@ package it.pagopa.pn.interop.cucumber.steps.e_service_template.version.lifecycle
 import static java.util.Objects.nonNull;
 import static org.assertj.core.api.Assertions.fail;
 
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
@@ -12,7 +13,6 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVer
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
 import java.util.UUID;
 import lombok.Data;
@@ -84,6 +84,12 @@ public class EServiceTemplateVersionPublishSteps {
         } catch (PollingPredicateException e) {
             fail("La versione dell'e-service template non è stata pubblicata correttamente");
         }
+    }
+
+    @Given("l'utente effettua la pubblicazione della versione dell'e-service template con successo")
+    public void givenPublishEServiceTemplateVersion() {
+        publishEServiceTemplateVersion();
+        checkEServiceTemplateVersionPublished();
     }
 
     /* TODO 17/03/2025: questo e tutti gli altri metodi che conducono al dataPreparationService
