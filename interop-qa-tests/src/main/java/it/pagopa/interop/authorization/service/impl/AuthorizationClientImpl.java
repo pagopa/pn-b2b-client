@@ -1,43 +1,38 @@
 package it.pagopa.interop.authorization.service.impl;
 
-import java.util.List;
-import java.util.UUID;
-
-import org.springframework.web.client.RestTemplate;
-
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
-import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
-import it.pagopa.interop.conf.springconfig.InteropClientConfigs;
+import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.ClientsApi;
-import it.pagopa.interop.generated.openapi.clients.bff.api.PurposesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Client;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientKind;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactClients;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactUser;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject2;
+import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject3;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKey;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKeys;
-import it.pagopa.interop.generated.openapi.clients.bff.model.Purpose;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeAdditionDetailsSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionResource;
+import java.util.List;
+import java.util.UUID;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
+@Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class AuthorizationClientImpl implements IAuthorizationClient {
     private final ClientsApi clientsApi;
     private final RestTemplate restTemplate;
-    private final InteropClientConfigs interopClientConfigs;
     private final String basePath;
-    private final String bearerToken;
 
     public AuthorizationClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
-        this.interopClientConfigs = interopClientConfigs;
         this.basePath = interopClientConfigs.getBaseUrl();
-        this.bearerToken = "apiBearerToken";
-        this.clientsApi = new ClientsApi(createApiClient(bearerToken));
+        this.clientsApi = new ClientsApi(createApiClient("dummyBearer"));
     }
 
     private ApiClient createApiClient(String bearerToken) {
@@ -120,8 +115,8 @@ public class AuthorizationClientImpl implements IAuthorizationClient {
     }
 
     @Override
-    public CreatedResource addUsersToClient(String xCorrelationId, UUID clientId, InlineObject2 inlineObject2) {
-        return clientsApi.addUsersToClient(xCorrelationId, clientId, inlineObject2);
+    public CreatedResource addUsersToClient(String xCorrelationId, UUID clientId, InlineObject3 inlineObject3) {
+        return clientsApi.addUsersToClient(xCorrelationId, clientId, inlineObject3);
     }
 
     @Override

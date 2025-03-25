@@ -1,16 +1,16 @@
 package it.pagopa.interop.purpose.domain;
 
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisForm;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
 import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.SuperBuilder;
 
 import java.util.UUID;
+import lombok.ToString;
 
 @Getter
+@ToString
+@EqualsAndHashCode
 @Builder
 public class TEServiceMode {
     private final UUID eserviceId;

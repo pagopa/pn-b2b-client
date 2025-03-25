@@ -53,7 +53,7 @@ Feature: Listing chiavi client
       | security     |
       | api,security |
 
-  Scenario Outline: Un utente admin; appartenente all'ente che ha creato il client; richiede l’elenco delle chiavi caricate per il client da uno specifico utente. L’operazione va a buon fine
+  Scenario: Un utente admin; appartenente all'ente che ha creato il client; richiede l’elenco delle chiavi caricate per il client da uno specifico utente. L’operazione va a buon fine
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato 1 client "CONSUMER"
     Given "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
@@ -64,7 +64,7 @@ Feature: Listing chiavi client
     When l'utente richiede una operazione di listing delle chiavi di quel client create dall'utente "security"
     Then si ottiene status code 200 e la lista di 2 chiavi
 
-  Scenario Outline: Un utente admin; appartenente all'ente che ha creato il client; richiede l’elenco delle chiavi caricate per il client; nel client non ci sono chiavi. L’operazione va a buon fine
+  Scenario: Un utente admin; appartenente all'ente che ha creato il client; richiede l’elenco delle chiavi caricate per il client; nel client non ci sono chiavi. L’operazione va a buon fine
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato 1 client "CONSUMER"
     When l'utente richiede una operazione di listing delle chiavi di quel client create dall'utente "security"

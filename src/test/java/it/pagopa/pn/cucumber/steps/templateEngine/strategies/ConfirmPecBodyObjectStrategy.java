@@ -18,4 +18,9 @@ public class ConfirmPecBodyObjectStrategy implements ITemplateEngineStrategy {
         String file = templateEngineClient.pecsubject(selectLanguage(language));
         return new TemplateEngineResult(file);
     }
+
+    @Override
+    public String getTextToCheckLanguage(String language) {
+        return "SEND - Conferma la tua PEC";
+    }
 }

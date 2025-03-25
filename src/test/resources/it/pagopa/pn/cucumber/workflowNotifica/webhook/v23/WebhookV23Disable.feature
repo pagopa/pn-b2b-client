@@ -8,13 +8,13 @@ Feature: disabilitazione stream
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    And si crea il nuovo stream V23 per il "Comune_Multi" con un gruppo disponibile "FIRST"
+    And si crea il nuovo stream con versione "V23" per il "Comune_Multi" con un gruppo disponibile "FIRST"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con gruppo differente dallo stream
     And viene impostata l'apikey appena generata
-    When si disabilita lo stream creato per il comune "Comune_Multi" con versione V23 e apiKey aggiornata
+    When si disabilita lo stream creato per il comune "Comune_Multi" con versione "V23" e apiKey aggiornata
     Then l'operazione ha prodotto un errore con status code "403"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
@@ -25,9 +25,9 @@ Feature: disabilitazione stream
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    And si crea il nuovo stream V23 per il "Comune_Multi" con un gruppo disponibile "FIRST"
+    And si crea il nuovo stream con versione "V23" per il "Comune_Multi" con un gruppo disponibile "FIRST"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
-    When si disabilita lo stream V23 creato per il comune "Comune_Multi"
+    When si disabilita lo stream "V23" creato per il comune "Comune_Multi"
     Then l'operazione non ha prodotto errori
     And si cancella lo stream creato per il "Comune_Multi" con versione "V23"
     And viene verificata la corretta cancellazione con versione "V23"
@@ -40,13 +40,13 @@ Feature: disabilitazione stream
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    And si crea il nuovo stream V23 per il "Comune_Multi" con un gruppo disponibile "FIRST"
+    And si crea il nuovo stream con versione "V23" per il "Comune_Multi" con un gruppo disponibile "FIRST"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
-    When si disabilita lo stream creato per il comune "Comune_Multi" con versione V23 e apiKey aggiornata
+    When si disabilita lo stream creato per il comune "Comune_Multi" con versione "V23" e apiKey aggiornata
     Then l'operazione non ha prodotto errori
     And si cancella lo stream creato per il "Comune_Multi" con versione "V23"
     And viene verificata la corretta cancellazione con versione "V23"
@@ -59,13 +59,13 @@ Feature: disabilitazione stream
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    And si crea il nuovo stream V23 per il "Comune_Multi" con un gruppo disponibile "FIRST"
+    And si crea il nuovo stream con versione "V23" per il "Comune_Multi" con un gruppo disponibile "FIRST"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con gruppo differente dallo stream
     And viene impostata l'apikey appena generata
-    When si disabilita lo stream creato per il comune "Comune_Multi" con versione V23 e apiKey aggiornata
+    When si disabilita lo stream creato per il comune "Comune_Multi" con versione "V23" e apiKey aggiornata
     Then l'operazione ha prodotto un errore con status code "403"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
@@ -76,15 +76,14 @@ Feature: disabilitazione stream
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    And si crea il nuovo stream V23 per il "Comune_Multi" con un gruppo disponibile "FIRST"
+    And si crea il nuovo stream con versione "V23" per il "Comune_Multi" con un gruppo disponibile "FIRST"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
-    When si disabilita lo stream V23 creato per il comune "Comune_Multi"
+    When si disabilita lo stream "V23" creato per il comune "Comune_Multi"
     Then l'operazione non ha prodotto errori
     And si cancella lo stream creato per il "Comune_Multi" con versione "V23"
     And viene verificata la corretta cancellazione con versione "V23"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
-
 
 
   @webhookV23 @precondition @cleanWebhook @webhook2
@@ -95,7 +94,7 @@ Feature: disabilitazione stream
     And viene aggiornata la apiKey utilizzata per gli stream
     And si crea il nuovo stream per il "Comune_Multi" con versione "V23"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
-    When si disabilita lo stream V23 creato per il comune "Comune_Multi"
+    When si disabilita lo stream "V23" creato per il comune "Comune_Multi"
     Then l'operazione non ha prodotto errori
     And si cancella lo stream creato per il "Comune_Multi" con versione "V23"
     And viene verificata la corretta cancellazione con versione "V23"
@@ -115,7 +114,7 @@ Feature: disabilitazione stream
     And l'apiKey viene cancellata
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
-    When si disabilita lo stream creato per il comune "Comune_Multi" con versione V23 e apiKey aggiornata
+    When si disabilita lo stream creato per il comune "Comune_Multi" con versione "V23" e apiKey aggiornata
     Then l'operazione ha prodotto un errore con status code "403"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
@@ -128,7 +127,7 @@ Feature: disabilitazione stream
     And viene aggiornata la apiKey utilizzata per gli stream
     And si crea il nuovo stream per il "Comune_Multi" con versione "V23"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
-    When si disabilita lo stream V23 creato per il comune "Comune_Multi"
+    When si disabilita lo stream "V23" creato per il comune "Comune_Multi"
     Then l'operazione non ha prodotto errori
     And si cancella lo stream creato per il "Comune_Multi" con versione "V23"
     And viene verificata la corretta cancellazione con versione "V23"
@@ -147,7 +146,7 @@ Feature: disabilitazione stream
     And l'apiKey viene cancellata
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
-    When si disabilita lo stream creato per il comune "Comune_Multi" con versione V23 e apiKey aggiornata
+    When si disabilita lo stream creato per il comune "Comune_Multi" con versione "V23" e apiKey aggiornata
     Then l'operazione ha prodotto un errore con status code "403"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
@@ -158,9 +157,9 @@ Feature: disabilitazione stream
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con due gruppi
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    And si crea il nuovo stream V23 per il "Comune_Multi" con un gruppo disponibile "LAST"
+    And si crea il nuovo stream con versione "V23" per il "Comune_Multi" con un gruppo disponibile "LAST"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
-    When si disabilita lo stream creato per il comune "Comune_Multi" con versione V23 e apiKey aggiornata
+    When si disabilita lo stream creato per il comune "Comune_Multi" con versione "V23" e apiKey aggiornata
     Then l'operazione non ha prodotto errori
     And si cancella lo stream creato per il "Comune_Multi" con versione "V23"
     And viene verificata la corretta cancellazione con versione "V23"
@@ -173,12 +172,12 @@ Feature: disabilitazione stream
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con due gruppi
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    And si crea il nuovo stream V23 per il "Comune_Multi" con un gruppo disponibile "UGUALI"
+    And si crea il nuovo stream con versione "V23" per il "Comune_Multi" con un gruppo disponibile "UGUALI"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
-    When si disabilita lo stream creato per il comune "Comune_Multi" con versione V23 e apiKey aggiornata
+    When si disabilita lo stream creato per il comune "Comune_Multi" con versione "V23" e apiKey aggiornata
     Then l'operazione ha prodotto un errore con status code "403"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
@@ -192,7 +191,7 @@ Feature: disabilitazione stream
     And viene aggiornata la apiKey utilizzata per gli stream
     And si crea il nuovo stream per il "Comune_Multi" con versione "V23"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
-    When si disabilita lo stream che non esiste e apiKey aggiornata
+    When si disabilita lo stream che non esiste con la versione "V23" e apiKey aggiornata
     Then l'operazione ha prodotto un errore con status code "404"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
@@ -206,9 +205,9 @@ Feature: disabilitazione stream
     And viene aggiornata la apiKey utilizzata per gli stream
     And si crea il nuovo stream per il "Comune_Multi" con versione "V23"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
-    When si disabilita lo stream V23 creato per il comune "Comune_Multi"
+    When si disabilita lo stream "V23" creato per il comune "Comune_Multi"
     Then l'operazione non ha prodotto errori
-    When si disabilita lo stream V23 creato per il comune "Comune_Multi"
+    When si disabilita lo stream "V23" creato per il comune "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "403"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
@@ -221,7 +220,7 @@ Feature: disabilitazione stream
     And viene aggiornata la apiKey utilizzata per gli stream
     And si crea il nuovo stream per il "Comune_Multi" con versione "V23"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
-    When si disabilita lo stream V23 creato per il comune "Comune_Multi"
+    When si disabilita lo stream "V23" creato per il comune "Comune_Multi"
     Then l'operazione non ha prodotto errori
     When si cancella lo stream creato per il "Comune_Multi" con versione "V23"
     Then l'operazione non ha prodotto errori
@@ -236,7 +235,7 @@ Feature: disabilitazione stream
     And viene aggiornata la apiKey utilizzata per gli stream
     And si crea il nuovo stream per il "Comune_Multi" con versione "V23"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
-    When si disabilita lo stream V23 creato per il comune "Comune_Multi"
+    When si disabilita lo stream "V23" creato per il comune "Comune_Multi"
     Then l'operazione non ha prodotto errori
     When si aggiorna lo stream creato con versione "V23"
     Then l'operazione ha prodotto un errore con status code "403"
@@ -251,7 +250,7 @@ Feature: disabilitazione stream
     And viene aggiornata la apiKey utilizzata per gli stream
     And si crea il nuovo stream per il "Comune_Multi" con versione "V23"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
-    When si disabilita lo stream V23 creato per il comune "Comune_Multi"
+    When si disabilita lo stream "V23" creato per il comune "Comune_Multi"
     Then l'operazione non ha prodotto errori
     When lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
     Then l'operazione non ha prodotto errori

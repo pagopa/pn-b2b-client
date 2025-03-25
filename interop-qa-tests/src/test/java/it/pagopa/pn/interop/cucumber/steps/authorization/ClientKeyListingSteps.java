@@ -2,9 +2,10 @@ package it.pagopa.pn.interop.cucumber.steps.authorization;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKeys;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
-import it.pagopa.interop.authorization.service.utils.CommonUtils;
+import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import org.junit.jupiter.api.Assertions;
@@ -12,16 +13,18 @@ import org.junit.jupiter.api.Assertions;
 import java.util.List;
 
 public class ClientKeyListingSteps {
+    private final ClientTokenConfigurator clientTokenConfigurator;
     private final IAuthorizationClient authorizationClient;
     private final SharedStepsContext sharedStepsContext;
-    private final CommonUtils commonUtils;
+    private final IdentityService identityService;
     private final HttpCallExecutor httpCallExecutor;
 
-    public ClientKeyListingSteps(IAuthorizationClient authorizationClient,
+    public ClientKeyListingSteps(ClientTokenConfigurator clientTokenConfigurator,
                                  SharedStepsContext sharedStepsContext) {
-        this.authorizationClient = authorizationClient;
+        this.clientTokenConfigurator = clientTokenConfigurator;
+        this.authorizationClient = clientTokenConfigurator.getAuthorizationClient();
         this.sharedStepsContext = sharedStepsContext;
-        this.commonUtils = sharedStepsContext.getCommonUtils();
+        this.identityService = sharedStepsContext.getIdentityService();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
     }
 
@@ -39,6 +42,6 @@ public class ClientKeyListingSteps {
     @When("l'utente richiede una operazione di listing delle chiavi di quel client create dall'utente {string}")
     public void retrieveKeysCreatedByUser(String role) {
         httpCallExecutor.performCall(() -> authorizationClient.getClientKeys(sharedStepsContext.getXCorrelationId(), sharedStepsContext.getClientCommonContext().getFirstClient(),
-                List.of(commonUtils.getUserId(sharedStepsContext.getTenantType(), role))));
+                List.of(identityService.getUserId(sharedStepsContext.getTenantType(), role))));
     }
 }

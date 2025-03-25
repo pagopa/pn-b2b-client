@@ -4,20 +4,21 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.*;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.service.IPnDowntimeLogsClient;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.LegalFactDownloadMetadataResponse;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.PnDowntimeEntry;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.PnDowntimeHistoryResponse;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.PnFunctionality;
+import java.io.ByteArrayInputStream;
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.util.Collections;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestClientResponseException;
-
-import java.io.ByteArrayInputStream;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.*;
 
 
 @Slf4j
@@ -40,18 +41,12 @@ public class DowntimeLogsSteps {
 
     @Given("vengono letti gli eventi di disservizio degli ultimi {int} giorni relativi al(la) {string}")
     public void vengonoLettiGliEventiDegliUltimiGiorniRelativiAlla(int time, String eventType) {
-        PnFunctionality pnFunctionality = null;
-        switch (eventType){
-            case "creazione notifiche":
-                pnFunctionality = PnFunctionality.NOTIFICATION_CREATE;
-                break;
-            case "visualizzazione notifiche":
-                pnFunctionality = PnFunctionality.NOTIFICATION_VISUALIZATION;
-                break;
-            case "workflow notifiche":
-                pnFunctionality = PnFunctionality.NOTIFICATION_WORKFLOW;
-                break;
-        }
+        PnFunctionality pnFunctionality = switch (eventType) {
+            case "creazione notifiche" -> PnFunctionality.NOTIFICATION_CREATE;
+            case "visualizzazione notifiche" -> PnFunctionality.NOTIFICATION_VISUALIZATION;
+            case "workflow notifiche" -> PnFunctionality.NOTIFICATION_WORKFLOW;
+            default -> null;
+        };
         List<PnFunctionality> pnFunctionalities = Collections.singletonList(pnFunctionality);
 
         this.pnDowntimeHistoryResponse = downtimeLogsClient.statusHistory(OffsetDateTime.now().minusDays(time), OffsetDateTime.now(),
@@ -176,10 +171,12 @@ public class DowntimeLogsSteps {
     @Given("viene chiamata l’API per il download dell'atto opponibile ai terzi con id {string}")
     public void vieneChiamataLAPIPerIlDownloadDellAttoOpponibileAiTerziConId(String idType) {
         try {
-            siChiamaLApiDiRecuperoElencoDisserviziNellAnnoEMeseCorrente();
-            Assertions.assertNotNull(pnDowntimeHistoryResponse);
-            Assertions.assertNotNull(pnDowntimeHistoryResponse.getResult());
-            Assertions.assertFalse(pnDowntimeHistoryResponse.getResult().isEmpty());
+            if (idType.equalsIgnoreCase("CORRETTO")) {
+                siChiamaLApiDiRecuperoElencoDisserviziNellAnnoEMeseCorrente();
+                Assertions.assertNotNull(pnDowntimeHistoryResponse);
+                Assertions.assertNotNull(pnDowntimeHistoryResponse.getResult());
+                Assertions.assertFalse(pnDowntimeHistoryResponse.getResult().isEmpty());
+            }
             String legalFactId = getLegalFactId(idType);
             legalFact = downtimeLogsClient.getLegalFact(idType.equals("null") ? null : legalFactId);
         } catch (RestClientResponseException e) {
@@ -203,7 +200,7 @@ public class DowntimeLogsSteps {
     public void vieneChiamataLAPIPerIlDownloadDellAttoOpponibileProdottoPiuDiGiorniPrecedenti() {
         try {
             LocalDate date = LocalDate.now();
-            LocalDate before = date.minusDays(365);
+            LocalDate before = LocalDate.of(2024, 01, 27);
             siChiamaLApiDiRecuperoElencoDisserviziNellAnnoEMese(before.getYear(), before.getMonthValue());
             Assertions.assertNotNull(pnDowntimeHistoryResponse.getResult());
             Assertions.assertFalse(pnDowntimeHistoryResponse.getResult().isEmpty());

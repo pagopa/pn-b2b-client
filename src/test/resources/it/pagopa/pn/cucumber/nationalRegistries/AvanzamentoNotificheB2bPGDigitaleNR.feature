@@ -1,23 +1,67 @@
 Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry (INAD-IPA-INIPEC)
 
+  @mockNR @liberiProfessionisti # scenario 11
+  Scenario: [B2B_TIMELINE_RECAPITI_PG_3] Invio Notifica multi destinatario a PF con recupero del domicilio digitale – (INI-PEC Si / IPA Si)
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario
+      | taxId           | 05370920653 |
+      | digitalDomicile_address| testpagopa3@pec.pagopa.it |
+      | recipientType   | PG               |
+    And destinatario
+      | taxId           | 10959831008 |
+      | digitalDomicile_address| testpagopa3@pec.pagopa.it |
+      | recipientType   | PG               |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 0
+    Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry per l utente 0
+    Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry per l utente 1
+    And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
+      | loadTimeline | true |
+      | details | NOT_NULL |
+      | details_responseStatus | OK |
+      | details_sendingReceipts | [{"id": null, "system": null}] |
+      | details_digitalAddress | {"address": "05370920653@pec.it", "type": "PEC"} |
+      | details_recIndex | 0 |
+      | details_digitalAddressSource | GENERAL |
+      | details_sentAttemptMade | 0 |
+    And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
+      | loadTimeline | true |
+      | details | NOT_NULL |
+      | details_responseStatus | OK |
+      | details_sendingReceipts | [{"id": null, "system": null}] |
+      | details_digitalAddress | {"address": "10959831008@pec.it", "type": "PEC"} |
+      | details_recIndex | 1 |
+      | details_digitalAddressSource | GENERAL |
+      | details_sentAttemptMade | 0 |
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
-  @dev @workflowDigitale @testLite @mockNR
+  @dev @workflowDigitale @testLite @liberiProfessionisti @mockNR #scenario 9
   Scenario: [B2B_TIMELINE_7915_1] Invio Notifica mono destinatario a PG con recupero del domicilio digitale - IPA Trovato - Mock
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
     And destinatario
       | denomination    | Test digitale ok |
-      | taxId           | 10959831008      |
+      | taxId           | 00883601007      |
       | digitalDomicile | NULL             |
       | recipientType   | PG               |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK" con responseStatus "OK" e digitalAddressSource "GENERAL"
+    And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
+      | loadTimeline | true |
+      | details | NOT_NULL |
+      | details_responseStatus | OK |
+      | details_sendingReceipts | [{"id": null, "system": null}] |
+      | details_digitalAddress | {"address": "example2@OK-pecSuccess.it", "type": "PEC"} |
+      | details_recIndex | 0 |
+      | details_digitalAddressSource | GENERAL |
+      | details_sentAttemptMade | 0 |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
-
-  @dev @workflowDigitale @testLite @mockNR
+  @dev @workflowDigitale @testLite @mockNR #da rimuovere una volta che abbiamo liberi professionisti con feature flag a true
   Scenario: [B2B_TIMELINE_7915_2] Invio Notifica mono destinatario a PG con recupero del domicilio digitale - IPA KO - INIPEC OK
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -30,6 +74,29 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK" con responseStatus "OK" e digitalAddressSource "GENERAL"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
+
+  @liberiProfessionisti @mockNR #scenario 7
+  Scenario: [B2B_TIMELINE_RECAPITI_PG_4] Invio Notifica mono destinatario a PG con recupero del domicilio digitale - IPA KO - INIPEC OK
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario
+      | denomination    | Test digitale ok |
+      | taxId           | 05370920653      |
+      | digitalDomicile_address| testpagopa3@pec.pagopa.it |
+      | recipientType   | PG               |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
+    And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
+      | loadTimeline | true |
+      | details | NOT_NULL |
+      | details_responseStatus | OK |
+      | details_sendingReceipts | [{"id": null, "system": null}] |
+      | details_digitalAddress | {"address": "05370920653@pec.it", "type": "PEC"} |
+      | details_recIndex | 0 |
+      | details_digitalAddressSource | GENERAL |
+      | details_sentAttemptMade | 0 |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
 
@@ -151,8 +218,3 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
     Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK" con responseStatus "OK" e digitalAddressSource "GENERAL"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
-
-
-
-
-
