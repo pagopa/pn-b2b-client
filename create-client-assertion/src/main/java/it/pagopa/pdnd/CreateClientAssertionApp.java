@@ -33,7 +33,13 @@ public class CreateClientAssertionApp {
         CommandLine cmd = parsingOptions(options, args);
 
         // Reading private key from file
-        String keyPath = cmd.getOptionValue("keyPath");
+        public static final String KEY_PATH = "keyPath";
+        public static final String AUDIENCE = "audience";
+        public static final String ISSUER = "issuer";
+        public static final String PURPOSE_ID = "purposeId";
+        public static final String SUBJECT = "subject";
+        
+        String keyPath = cmd.getOptionValue(KEY_PATH);
         String key = new String(Files.readAllBytes(Paths.get(keyPath)), Charset.defaultCharset());
         String privateKeyPEM = key
                 .replace("-----BEGIN PRIVATE KEY-----", "")
@@ -54,10 +60,10 @@ public class CreateClientAssertionApp {
 
         // Creating JWT claims
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
-                .issuer(cmd.getOptionValue("issuer"))
-                .subject(cmd.getOptionValue("subject"))
-                .audience(cmd.getOptionValue("audience"))
-                .claim("purposeId", cmd.getOptionValue("purposeId"))
+                .issuer(cmd.getOptionValue(ISSUER))
+                .subject(cmd.getOptionValue(SUBJECT))
+                .audience(cmd.getOptionValue(AUDIENCE))
+                .claim(PURPOSE_ID, cmd.getOptionValue(PURPOSE_ID))
                 .jwtID(UUID.randomUUID().toString())
                 .issueTime(Date.from(Instant.now()))
                 .expirationTime(Date.from(Instant.now().plus(Duration.ofMinutes(43200))))
@@ -80,11 +86,11 @@ public class CreateClientAssertionApp {
         options.addRequiredOption("kid", "kid", true, "Key ID");
         options.addRequiredOption("alg", "alg", true, "Algorithm");
         options.addRequiredOption("typ", "typ", true, "Type");
-        options.addRequiredOption("issuer", "issuer", true, "Issuer");
-        options.addRequiredOption("subject", "subject", true, "Subject");
-        options.addRequiredOption("audience", "audience", true, "Audience");
-        options.addRequiredOption("purposeId", "purposeId", true, "Purpose ID");
-        options.addRequiredOption("keyPath", "keyPath", true, "Key Path");
+        options.addRequiredOption(ISSUER, ISSUER, true, "Issuer");
+        options.addRequiredOption(SUBJECT, SUBJECT, true, "Subject");
+        options.addRequiredOption(AUDIENCE, AUDIENCE, true, "Audience");
+        options.addRequiredOption(PURPOSE_ID, PURPOSE_ID, true, "Purpose ID");
+        options.addRequiredOption(KEY_PATH, KEY_PATH, true, "Key Path");
 
         return options;
     }

@@ -71,18 +71,18 @@ public class ApiServiceDeskSteps {
     @Value("${pn.retention.videotime.preload}")
     private Integer retentionTimePreLoad;
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ01234556789";
-    private static final String CF_corretto = "CLMCST42R12D969Z";
-    private static final String CF_ada = "LVLDAA85T50G702B";
-    private static final String CF_errato = "CPNTMS85T15H703WCPNTMS85T15H703W|";
-    private static final String PIVA_errata = "1234567899999999999999999999999999999";
-    private static final String CF_errato2 = "CPNTM@85T15H703W";
-    private final String CF_vuoto = null;
-    private static final String ticketid_errato = "XXXXXXXXXXXXXXXXXxxxxxxxxxxxxxxxX";
-    private final String ticketid_vuoto = null;
-    private static final String ticketoperationid_errato = "abcdfeghilm";
-    private final String ticketoperationid_vuoto = null;
-    private static final Integer delay = 420000;
-    private static final Integer workFlowWaitDefault = 31000;
+    private static final String CF_CORRETTO = "CLMCST42R12D969Z";
+    private static final String CF_ADA = "LVLDAA85T50G702B";
+    private static final String CF_ERRATO = "CPNTMS85T15H703WCPNTMS85T15H703W|";
+    private static final String PIVA_ERRATA = "1234567899999999999999999999999999999";
+    private static final String CF_ERRATO_2 = "CPNTM@85T15H703W";
+    private final String cfVuoto = null;
+    private static final String TICKET_ID_ERRATO = "XXXXXXXXXXXXXXXXXxxxxxxxxxxxxxxxX";
+    private final String ticketIdVuoto = null;
+    private static final String TICKET_OPERATION_ID_ERRATO = "abcdfeghilm";
+    private final String ticketOperationIdVuoto = null;
+    private static final Integer DELAY = 420000;
+    private static final Integer WORK_FLOW_WAIT_DEFAULT = 31000;
     private List<PaSummary> listPa = null;
     private HttpStatusCodeException notificationError;
     private SearchNotificationsResponse searchNotificationsResponse;
@@ -141,7 +141,7 @@ public class ApiServiceDeskSteps {
 
     @Given("viene creata una nuova richiesta per invocare il servizio UNREACHABLE con cf vuoto")
     public void createVerifyUnreachableRequest() {
-        createRequestByFiscalCode(CF_vuoto, true);
+        createRequestByFiscalCode(cfVuoto, true);
     }
 
     @When("viene invocato il servizio UNREACHABLE")
@@ -203,18 +203,18 @@ public class ApiServiceDeskSteps {
     @Given("viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION per con {string} {string} {string}")
     public void createOperationReq(String cf, String ticketid, String ticketOperationid) {
         if (cf.equals("CF_vuoto")) {
-            createOperationRequest.setTaxId(CF_vuoto);
+            createOperationRequest.setTaxId(cfVuoto);
         } else {
             createOperationRequest.setTaxId(cf);
         }
 
         switch (ticketid) {
             case "ticketid_vuoto":
-                createOperationRequest.setTicketId(ticketid_vuoto);
+                createOperationRequest.setTicketId(ticketIdVuoto);
                 break;
 
             case "ticketid_errato":
-                createOperationRequest.setTicketId(ticketid_errato);
+                createOperationRequest.setTicketId(TICKET_ID_ERRATO);
                 break;
             default:
                 createOperationRequest.setTicketId(ticketid);
@@ -222,10 +222,10 @@ public class ApiServiceDeskSteps {
 
         switch (ticketOperationid) {
             case "ticketoperationid_vuoto":
-                createOperationRequest.setTicketOperationId(ticketoperationid_vuoto);
+                createOperationRequest.setTicketOperationId(ticketOperationIdVuoto);
                 break;
             case "ticketoperationid_errato":
-                createOperationRequest.setTicketOperationId(ticketoperationid_errato);
+                createOperationRequest.setTicketOperationId(TICKET_OPERATION_ID_ERRATO);
                 break;
             default:
                 createOperationRequest.setTicketOperationId(ticketOperationid);
@@ -235,7 +235,7 @@ public class ApiServiceDeskSteps {
 
     @Given("viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con cf vuoto")
     public void createOperationReqCFVuoto() {
-        createOperationRequestSteps(CF_vuoto);
+        createOperationRequestSteps(cfVuoto);
     }
 
     @When("viene invocato il servizio CREATE_OPERATION con errore")
@@ -384,7 +384,7 @@ public class ApiServiceDeskSteps {
 
     @When("viene invocato il servizio SEARCH con delay")
     public void searchResponseWithDelay() {
-        threadWait(delay);
+        threadWait(DELAY);
         searchResponseSteps();
     }
 
@@ -469,7 +469,6 @@ public class ApiServiceDeskSteps {
     public void verifySearchResponseEmpty() {
         List<OperationResponse> lista = searchResponse.getOperations();
         log.info("STAMPA LISTA " + Objects.requireNonNull(lista));
-        //   Assertions.assertNull(lista);
         Assertions.assertEquals("[]", lista.toString());
     }
 
@@ -629,7 +628,7 @@ public class ApiServiceDeskSteps {
 
     @Given("l'operatore richiede l'elenco di tutti i messaggi di cortesia inviati con cf vuoto")
     public void lOperatoreRichiedeLElencoDiDiTuttiIMessaggiDiCortesiaInviatiConCfVuoto() {
-        lOperatoreRichiedeLElencoDiDiTuttiIMessaggiDiCortesiaInviatiSteps(CF_vuoto);
+        lOperatoreRichiedeLElencoDiDiTuttiIMessaggiDiCortesiaInviatiSteps(cfVuoto);
     }
 
     @Given("l'operatore richiede l'elenco di tutti i messaggi di cortesia inviati con cf errato {string}")
@@ -641,7 +640,7 @@ public class ApiServiceDeskSteps {
     public void lOperatoreRichiedeLElencoDiDiTuttiIMessaggiDiCortesiaInviatiConRecipientTypeVuoto() {
         try {
             searchNotificationsRequest = new SearchNotificationsRequest();
-            searchNotificationsRequest.setTaxId(CF_corretto);
+            searchNotificationsRequest.setTaxId(CF_CORRETTO);
             searchNotificationsRequest.setRecipientType(null);
             searchNotificationsResponse = ipServiceDeskClient.searchNotificationsFromTaxId(10, null, null, null, searchNotificationsRequest);
             threadWait(getWorkFlowWait());
@@ -704,9 +703,9 @@ public class ApiServiceDeskSteps {
                 profileRequest.setTaxId("");
             } else if ("ERRATO".equalsIgnoreCase(taxId)) {
                 if ("PF".equalsIgnoreCase(recipientType)) {
-                    profileRequest.setTaxId(CF_errato);
+                    profileRequest.setTaxId(CF_ERRATO);
                 } else {
-                    profileRequest.setTaxId(PIVA_errata);
+                    profileRequest.setTaxId(PIVA_ERRATA);
                 }
 
             } else {
@@ -737,9 +736,9 @@ public class ApiServiceDeskSteps {
                 searchNotificationsRequest.setTaxId("");
             } else if ("ERRATO".equalsIgnoreCase(taxId)) {
                 if ("PF".equalsIgnoreCase(recipientType)) {
-                    searchNotificationsRequest.setTaxId(CF_errato);
+                    searchNotificationsRequest.setTaxId(CF_ERRATO);
                 } else {
-                    searchNotificationsRequest.setTaxId(PIVA_errata);
+                    searchNotificationsRequest.setTaxId(PIVA_ERRATA);
                 }
             } else {
                 searchNotificationsRequest.setTaxId(setTaxID(taxId));
@@ -830,9 +829,9 @@ public class ApiServiceDeskSteps {
             } else if ("VUOTO".equalsIgnoreCase(taxid)) {
                 searchNotificationsRequest.setTaxId("");
             } else if ("ERRATO".equalsIgnoreCase(taxid)) {
-                searchNotificationsRequest.setTaxId(CF_errato);
+                searchNotificationsRequest.setTaxId(CF_ERRATO);
             } else if ("ADA".equalsIgnoreCase(taxid)) {
-                searchNotificationsRequest.setTaxId(CF_errato);
+                searchNotificationsRequest.setTaxId(CF_ERRATO);
             } else {
                 String resultTaxID = setTaxID(taxid);
                 searchNotificationsRequest.setTaxId(resultTaxID);
@@ -859,9 +858,9 @@ public class ApiServiceDeskSteps {
             } else if ("VUOTO".equalsIgnoreCase(taxId)) {
                 searchNotificationsRequest.setTaxId("");
             } else if ("ERRATO".equalsIgnoreCase(taxId)) {
-                searchNotificationsRequest.setTaxId(CF_errato);
+                searchNotificationsRequest.setTaxId(CF_ERRATO);
             } else if ("ADA".equalsIgnoreCase(taxId)) {
-                searchNotificationsRequest.setTaxId(CF_ada);
+                searchNotificationsRequest.setTaxId(CF_ADA);
             } else {
                 searchNotificationsRequest.setTaxId(setTaxID(taxId));
             }
@@ -954,7 +953,6 @@ public class ApiServiceDeskSteps {
             Assertions.assertNotNull(searchNotificationsResponse);
             Assertions.assertNotNull(searchNotificationsResponse.getResults());
             Assertions.assertFalse(searchNotificationsResponse.getResults().isEmpty());
-            //  Assertions.assertTrue(searchNotificationsResponse.getResults().get(0).getIun().equalsIgnoreCase(sharedSteps.getSentNotification().getIun()));
         } catch (HttpStatusCodeException exception) {
             this.notificationError = exception;
         }
@@ -1034,30 +1032,30 @@ public class ApiServiceDeskSteps {
 
     private void createRequestByFiscalCode(String cf, boolean isNotificationRequest) {
         if (cf == null) {
-            notificationRequest.setTaxId(CF_vuoto);
+            notificationRequest.setTaxId(cfVuoto);
             return;
         }
 
         switch (cf) {
             case "CF_vuoto":
                 if (isNotificationRequest) {
-                    notificationRequest.setTaxId(CF_vuoto);
+                    notificationRequest.setTaxId(cfVuoto);
                 } else {
-                    searchNotificationRequest.setTaxId(CF_vuoto);
+                    searchNotificationRequest.setTaxId(cfVuoto);
                 }
                 break;
             case "CF_errato":
                 if (isNotificationRequest) {
-                    notificationRequest.setTaxId(CF_errato);
+                    notificationRequest.setTaxId(CF_ERRATO);
                 } else {
-                    searchNotificationRequest.setTaxId(CF_errato);
+                    searchNotificationRequest.setTaxId(CF_ERRATO);
                 }
                 break;
             case "CF_errato2":
                 if (isNotificationRequest) {
-                    notificationRequest.setTaxId(CF_errato2);
+                    notificationRequest.setTaxId(CF_ERRATO_2);
                 } else {
-                    searchNotificationRequest.setTaxId(CF_errato2);
+                    searchNotificationRequest.setTaxId(CF_ERRATO_2);
                 }
                 break;
             default:
@@ -1199,7 +1197,6 @@ public class ApiServiceDeskSteps {
     }
 
     private void loadFileSafeStorageSteps() {
-        // notificationDocument = newDocument("classpath:/video.mp4");
         String resourceName = notificationDocument.getRef().getKey();
         log.info("Resouce name" + resourceName);
         loadToPresigned(videoUploadResponse.getUrl(), videoUploadResponse.getSecret(), videoUploadRequest.getSha256(), resourceName);
@@ -1312,7 +1309,7 @@ public class ApiServiceDeskSteps {
     }
 
     public Integer getWorkFlowWait() {
-        if (workFlowWait == null) return workFlowWaitDefault;
+        if (workFlowWait == null) return WORK_FLOW_WAIT_DEFAULT;
         return workFlowWait;
     }
 
@@ -1544,7 +1541,7 @@ public class ApiServiceDeskSteps {
                 yield "";
             }
             case "ERRATO" -> {
-                yield CF_errato;
+                yield CF_ERRATO;
             }
             default -> {
                 yield setTaxID(user);

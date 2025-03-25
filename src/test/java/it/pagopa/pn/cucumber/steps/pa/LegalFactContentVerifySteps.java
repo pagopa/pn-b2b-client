@@ -94,7 +94,7 @@ public class LegalFactContentVerifySteps {
                 .toList();
 
         if (!listOfMapCleaned.isEmpty()) {
-            listOfMapCleaned.forEach((map) -> map.forEach((legalFactField, legalFactValue) -> checkLegalFactFieldValue(source, legalFactField, legalFactValue)));
+            listOfMapCleaned.forEach(map -> map.forEach((legalFactField, legalFactValue) -> checkLegalFactFieldValue(source, legalFactField, legalFactValue)));
         }
     }
 
@@ -114,7 +114,7 @@ public class LegalFactContentVerifySteps {
                     .filter(map -> map.keySet().stream().noneMatch(key -> key.contains(IPnParserLegalFact.DESTINATARIO)))
                     .toList();
 
-            listOfMapCleaned.forEach((map) -> map.forEach((legalFactField, legalFactValue) -> checkLegalFactFieldValue(source, legalFactField, legalFactValue)));
+            listOfMapCleaned.forEach(map -> map.forEach((legalFactField, legalFactValue) -> checkLegalFactFieldValue(source, legalFactField, legalFactValue)));
             checkLegalFactDestinatario(source, PnDestinatarioAnalogico.mapToDestinatarioAnalogico(listOfMap), 0);
         } else {
             dataTable
@@ -273,6 +273,7 @@ public void checkLegalFactType(byte[] source, String legalFactType) {
                     Assertions.assertNull(target);
                 }
             }
+            default -> throw new IllegalArgumentException("Valore di versione non riconosciuto: " + version);
         }
     }
 }
