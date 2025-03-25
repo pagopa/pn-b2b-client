@@ -1,6 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template.crud;
 
-import io.cucumber.java.en.And;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
@@ -74,13 +73,6 @@ public class EServiceTemplateCreateSteps {
         }
         testAssistant.mutateLastVersionState(desiredState);
     }
-
-    @And("e-service template viene portato allo stato {eServiceTemplateVersionState}")
-    public void assignAttributesToEService(EServiceTemplateVersionState desiredState) {
-        testAssistant.mutateLastVersionState(desiredState);
-
-    }
-
 
     @When("l'utente effettua la creazione di un e-service template in modalità {eServiceMode} usando lo stesso nome")
     public void createEServiceTemplateWithSameName(EServiceMode eServiceMode) {
