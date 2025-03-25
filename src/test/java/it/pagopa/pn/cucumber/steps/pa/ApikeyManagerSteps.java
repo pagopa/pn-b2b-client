@@ -240,7 +240,7 @@ public class ApikeyManagerSteps {
                 apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.ROOT);
                 break;
             default:
-                break;
+                throw new IllegalArgumentException("Valore PA non valido: " + settedPa);
         }
     }
 
@@ -352,7 +352,7 @@ public class ApikeyManagerSteps {
                 apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.ROOT);
                 break;
             default:
-                break;
+                throw new IllegalArgumentException("Valore PA non valido: " + settedPa);
         }
 
         }
