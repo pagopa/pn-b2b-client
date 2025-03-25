@@ -96,4 +96,6 @@ public interface WebhookStepsInterface {
     void checkCorrectDisabling(UUID streamId);
 
     void verificaPresenzaSercQ(boolean isPresent);
+
+    void checkLegalFactCategory(String timelineCategory, String legalFactCategory);
 }

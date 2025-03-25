@@ -46,18 +46,6 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @workflowAnalogico
-    #TODO MATTEO, scommentare le righe commentate (TEST PER VERSIONE SHARED STEPS REFATTORIZZATA)
-  Scenario: [B2B_TIMELINE_ANALOG_890_3test] Attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_FAIL-Discovery_890_scenario positivo
-    Given viene generata una nuova notifica
-      | subject            | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo               |
-    And destinatario "Mario Gherkin" e:
-      | digitalDomicile         | NULL                   |
-      | physicalAddress_address | Via@fail-Discovery_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "ACCEPTED"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-
-  @workflowAnalogico
   Scenario: [B2B-TIMELINE_HOTFIX-BUG-PEC_3] ordinamento non rispettato nella costruzione della richiesta di postalizzazione
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |

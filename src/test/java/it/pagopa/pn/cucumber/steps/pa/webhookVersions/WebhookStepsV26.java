@@ -26,6 +26,7 @@ import java.util.UUID;
 @Slf4j
 public class WebhookStepsV26 implements WebhookStepsInterface {
 
+    private FullSentNotificationV26 fullSentNotification;
     private ProgressResponseElementV26 progressResponseElement;
     private List<ProgressResponseElementV26> progressResponseElementList;
     private List<StreamCreationRequestV26> streamCreationRequestList;
@@ -323,9 +324,9 @@ public class WebhookStepsV26 implements WebhookStepsInterface {
             } catch (InterruptedException exc) {
                 throw new RuntimeException(exc);
             }
-            webhookSteps.getSharedSteps().setFullSentNotificationV26(webhookSteps.getB2bClient().getSentNotification(webhookSteps.getSharedSteps().getFullSentNotificationV26().getIun()));
-            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 timelineElement = webhookSteps.getSharedSteps()
-                    .getFullSentNotificationV26().getTimeline().stream()
+            fullSentNotification = webhookSteps.getB2bClient().getSentNotification(webhookSteps.getSharedSteps().getIunVersionamento());
+            webhookSteps.getSharedSteps().setFullSentNotificationV26(fullSentNotification);
+            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 timelineElement = fullSentNotification.getTimeline().stream()
                     .filter(elem -> elem.getCategory().getValue().equals(timelineElementInternalCategory.getValue()))
                     .findAny()
                     .orElse(null);
@@ -347,8 +348,9 @@ public class WebhookStepsV26 implements WebhookStepsInterface {
             } catch (InterruptedException exc) {
                 throw new RuntimeException(exc);
             }
-            webhookSteps.getSharedSteps().setFullSentNotificationV26(webhookSteps.getB2bClient().getSentNotification(webhookSteps.getSharedSteps().getFullSentNotificationV26().getIun()));
-            NotificationStatusHistoryElementV26 notificationStatusHistoryElement = webhookSteps.getSharedSteps().getFullSentNotificationV26().getNotificationStatusHistory().
+            fullSentNotification = webhookSteps.getB2bClient().getSentNotification(webhookSteps.getSharedSteps().getIunVersionamento());
+            webhookSteps.getSharedSteps().setFullSentNotificationV26(fullSentNotification);
+            NotificationStatusHistoryElementV26 notificationStatusHistoryElement = fullSentNotification.getNotificationStatusHistory().
                     stream().filter(elem -> elem.getStatus().getValue().equals(notificationInternalStatus.getValue())).findAny().orElse(null);
             if (notificationStatusHistoryElement != null) {
                 found = true;
@@ -380,7 +382,7 @@ public class WebhookStepsV26 implements WebhookStepsInterface {
 
         } catch (AssertionFailedError assertionFailedError) {
             String message = String.format("%s {IUN: %s -WEBHOOK %s }", assertionFailedError.getMessage(),
-                    webhookSteps.getSharedSteps().getFullSentNotificationV26().getIun(), eventStreamList.get(0).getStreamId());
+                    fullSentNotification.getIun(), eventStreamList.get(0).getStreamId());
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
     }
@@ -443,7 +445,7 @@ public class WebhookStepsV26 implements WebhookStepsInterface {
 
     @Override
     public void getTimelineElementVersionB2B(String iun) {
-        FullSentNotificationV26 fullSentNotification = webhookSteps.getB2bClient().getSentNotification(iun);
+        fullSentNotification = webhookSteps.getB2bClient().getSentNotification(iun);
         webhookSteps.getSharedSteps().setFullSentNotificationV26(fullSentNotification);
     }
 
@@ -561,5 +563,15 @@ public class WebhookStepsV26 implements WebhookStepsInterface {
                 .allMatch(elementDetails -> "OK".equals(elementDetails.getElement().getDetails().getResponseStatus().toString())
                         && channel.equals(elementDetails.getElement().getDetails().getDigitalAddress().getType())
                 ));
+    }
+
+    @Override
+    public void checkLegalFactCategory(String timelineCategory, String legalFactCategory) {
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 timelineElementWithTargetCategory =
+                fullSentNotification.getTimeline().stream().filter(
+                        x -> x.getCategory().getValue().equals(timelineCategory)).findFirst().orElse(null);
+        Assertions.assertNotNull(timelineElementWithTargetCategory);
+        timelineElementWithTargetCategory.getLegalFactsIds().forEach(
+                x -> Assertions.assertNotEquals(x.getCategory(), legalFactCategory));
     }
 }

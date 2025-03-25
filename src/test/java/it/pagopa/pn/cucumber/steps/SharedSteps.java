@@ -55,7 +55,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 
-import static it.pagopa.pn.cucumber.steps.SharedSteps.NotificationVersion.V1;
+import static it.pagopa.pn.cucumber.steps.SharedSteps.NotificationVersion.*;
 import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.*;
 import static it.pagopa.pn.cucumber.utils.FiscalCodeGenerator.generateCF;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
@@ -213,11 +213,13 @@ public class SharedSteps {
     @Setter
     private FullSentNotificationV26 fullSentNotificationV26;
 
-    private final NotificationStepsV1 notificationStepsV1 = new NotificationStepsV1(this);
-    private final NotificationStepsV2 notificationStepsV2 = new NotificationStepsV2(this);
-    private final NotificationStepsV21 notificationStepsV21 = new NotificationStepsV21(this);
-    private final NotificationStepsV23 notificationStepsV23 = new NotificationStepsV23(this);
-    private final NotificationStepsV24 notificationStepsV24 = new NotificationStepsV24(this);
+    private final Map<NotificationVersion, NotificationStepsInterface> mapOfVersionSteps = Map.ofEntries(
+            Map.entry(V1, new NotificationStepsV1(this)),
+            Map.entry(V2, new NotificationStepsV2(this)),
+            Map.entry(V21, new NotificationStepsV21(this)),
+            Map.entry(V23, new NotificationStepsV23(this)),
+            Map.entry(V24, new NotificationStepsV24(this))
+    );
 
     @Getter
     @Setter
@@ -304,6 +306,7 @@ public class SharedSteps {
      * con cui è stato creato. In tal modo si potrebbe alleggerire la classe di tutti gli N campi fullSentNotificationV xyz
      * Gli attuali metodi che adesso richiamano il getFullSentNotificationV xyz a priori dovrebbero eseguire il casting, ma sarebbe
      * un casting safe, in quanto sanno già di operare con la versione xyz
+     * TODO al momento non è utilizzato, è solo un'idea
      */
     public Object getSentNotificationAnyVersion() {
         return getNotificationStepInterface().getSentNotificationAnyVersion();
@@ -323,24 +326,7 @@ public class SharedSteps {
     }
 
     private NotificationStepsInterface getNotificationStepInterface(NotificationVersion notificationVersion) {
-        switch (notificationVersion) {
-            case V1 -> {
-                return notificationStepsV1;
-            }
-            case V2 -> {
-                return notificationStepsV2;
-            }
-            case V21 -> {
-                return notificationStepsV21;
-            }
-            case V23 -> {
-                return notificationStepsV23;
-            }
-            case V24 -> {
-                return notificationStepsV24;
-            }
-            default -> throw new IllegalArgumentException("Version not supported!: " + notificationVersion);
-        }
+        return mapOfVersionSteps.get(notificationVersion);
     }
 
     @Given("viene generata una nuova notifica")
@@ -468,7 +454,7 @@ public class SharedSteps {
         log.debug("End IUN list");
         //la prima notifica viene inserita
         this.fullSentNotificationV26 = sentNotifications.poll();
-        log.debug("notificationResponseComplete: {}", this.fullSentNotificationV26);
+        log.debug("notificationResponseComplete: {}", getIunVersionamento());
     }
 
     private void addRecipientToNotification(NewNotificationRequestV24 notificationRequest, NotificationRecipientV23 notificationRecipient, Map<String, String> recipientData) {
@@ -544,9 +530,7 @@ public class SharedSteps {
 
     @And("aggiungo {int} numero allegati")
     public void aggiungoNumeroAllegati(int numAllegati) {
-        NotificationVersion notificationVersion = versionUsed == null ? getNotificationVersion(MOST_RECENT) : versionUsed;
-        NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface(notificationVersion);
-        notificationStepsInterface.addDocumentItems(numAllegati);
+        getNotificationStepInterface().addDocumentItems(numAllegati);
     }
 
     @When("la notifica viene inviata tramite api b2b e si attende che lo stato diventi {string}")
@@ -556,11 +540,11 @@ public class SharedSteps {
 
     @When("la notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi {string}")
     public void sendNotification(String paName, String status) {
-        NotificationVersion notificationVersion = versionUsed == null ? getNotificationVersion(MOST_RECENT) : versionUsed;
-        String versionString = notificationVersion.name();
         if (status.equalsIgnoreCase("HTTP_ERROR")) {
             sendNotificationHttpError(paName);
         } else {
+            NotificationVersion notificationVersion = versionUsed == null ? getNotificationVersion(MOST_RECENT) : versionUsed;
+            String versionString = notificationVersion.name();
             sendNotificationWithVersion(versionString, paName, status);
         }
     }
@@ -591,7 +575,7 @@ public class SharedSteps {
     @When("verifica che la notifica inviata tramite api b2b dal {string} non diventi ACCEPTED")
     public void laNotificaVieneInviataNoAccept(String paName) {
         setPaAndSenderTaxId(paName);
-        //TODO MATTEO: prima richiamava waitForRequestNoAcceptation in b2bUtils. Ma è corretto che prenda "ACCEPTED" ?
+        //TODO MATTEO: prima richiamava waitForRequestNoAcceptation in b2bUtils. Ma è corretto che prenda "ACCEPTED" anche se non viene accettata ?
         getNotificationStepInterface().sendNotification(getWorkFlowWait(), NOTIFICATION_STATUS_ACCEPTED, VALIDATION_STATUS_NO_ACCEPTATION);
     }
 
@@ -647,12 +631,12 @@ public class SharedSteps {
     public void retrieveStateNotification(String paName) {
         versionUsed = V1;
         setPaAndSenderTaxId(paName);
-        String requestId = Base64Utils.encodeToString(fullSentNotificationV26.getIun().getBytes());
+        String requestId = Base64Utils.encodeToString(getIunVersionamento().getBytes());
         try {
             Assertions.assertDoesNotThrow(() -> b2bClient.getNotificationRequestStatusV1(requestId));
         } catch (AssertionFailedError assertionFailedError) {
             it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model_v1.NewNotificationResponse notificationResponse =
-                    (it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model_v1.NewNotificationResponse) notificationStepsV1.retrieveNotificationResponse();
+                    (it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model_v1.NewNotificationResponse) mapOfVersionSteps.get(V1).retrieveNotificationResponse();
             String message = assertionFailedError.getMessage() +
                     "{RequestID: " + (notificationResponse == null ? "NULL" : notificationResponse.getNotificationRequestId()) + " }";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
@@ -766,17 +750,10 @@ public class SharedSteps {
         sendNotificationRefusedDueToError("NOT_FOUND_ALLEGATO", false);
     }
 
+    //TODO MATTEO TEST
     @And("al destinatario viene associato lo iuv creato mediante partita debitoria per {string} alla posizione {int}")
     public void destinatarioAddIuvGPD(String denominazione, Integer posizione) {
-        if (this.notificationRequest != null) {
-            Objects.requireNonNull(Objects.requireNonNull(Objects.requireNonNull(this.notificationRequest.getRecipients().get(0).denomination(denominazione).getPayments())).get(posizione).getPagoPa()).setNoticeCode(getIuvGPD(posizione));
-        } else {
-            NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface(NotificationVersion.V21);
-            NewNotificationRequestV21 notificationRequestV21 = (NewNotificationRequestV21) notificationStepsInterface.retrieveNotificationRequest();
-            if (notificationRequestV21 != null) {
-                Objects.requireNonNull(Objects.requireNonNull(Objects.requireNonNull(notificationRequestV21.getRecipients().get(0).denomination(denominazione).getPayments())).get(posizione).getPagoPa()).setNoticeCode(getIuvGPD(posizione));
-            }
-        }
+        getNotificationStepInterface().addIuvGdpToDestinatario(denominazione, getIuvGPD(posizione), posizione);
     }
 
     @And("al destinatario viene associato lo iuv creato mediante partita debitoria per {string} per la posizione debitoria {int} del pagamento {int}")
@@ -852,9 +829,9 @@ public class SharedSteps {
         Assertions.assertTrue(expectedErrorCode.equalsIgnoreCase(errorCode));
     }
 
-    //TODO MATTEO TEST: 8 vecchi metodi sono stati mergiati in questo. Il prossimo step sarebbe capire meglio cosa fanno quei metodi di
-    // utility richiamati nello switch e rimuoverli da B2bUtils (dove non c'azzeccano poco, non sono vere utils se vengono richiamate solo qua)
-    // Altra possibile miglioria: sostituire le stringhe delle tipologie d'errore con costanti all'interno della classe Costanti
+    // TODO MATTEO TEST: 8 vecchi metodi sono stati mergiati in questo. Il prossimo step sarebbe capire meglio cosa fanno quei metodi di
+    //  utility richiamati nello switch e rimuoverli da B2bUtils (dove c'azzeccano poco, non sono vere utils se vengono richiamate solo qua)
+    //  Altra possibile miglioria: sostituire le stringhe delle tipologie d'errore con costanti all'interno della classe Costanti
     private void sendNotificationRefusedDueToError(String errorType, Boolean noUpload) {
         try {
             Assertions.assertDoesNotThrow(() -> {
@@ -1073,7 +1050,7 @@ public class SharedSteps {
 
     public void throwAssertionFailedErrorWithAmountGDPAndIUN(AssertionFailedError assertionFailedError, Integer amountGDP) {
         String message = assertionFailedError.getMessage() +
-                "{IUN: " + fullSentNotificationV26.getIun() + ", amountGDP " + (amountGDP == null ? "NULL" : amountGDP.toString()) + "}";
+                "{IUN: " + getIunVersionamento() + ", amountGDP " + (amountGDP == null ? "NULL" : amountGDP.toString()) + "}";
         throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
     }
 
@@ -1289,6 +1266,8 @@ public class SharedSteps {
         List<TimelineElementV26> timelineElementList = fullSentNotificationV26.getTimeline();
         return timelineElementList.stream()
                 .filter(elem -> nonNull(elem.getDetails()))
+                //TODO: ignorare Sonar che dice che questo nonNull è inutile in quanto sempre true, non è vero
+                .filter(elem -> nonNull(elem.getDetails().getSentAttemptMade()))
                 .filter(elem -> elem.getDetails().getSentAttemptMade() <= attemptIndex)
                 .toList();
     }
@@ -1307,7 +1286,7 @@ public class SharedSteps {
             iun = new String(decodedBytes);
         } else {
             // proceed with default flux
-            iun = fullSentNotificationV26.getIun();
+            iun = getIunVersionamento();
         }
         return iun;
     }
@@ -1327,26 +1306,9 @@ public class SharedSteps {
         return this.iuvGPD.get(posizione);
     }
 
+    //TODO MATTEO TEST
     public List<String> getDatiPagamentoVersionamento(Integer destinatario, Integer pagamento) {
-        NotificationVersion notificationVersion = versionUsed == null ? getNotificationVersion(MOST_RECENT) : versionUsed;
-        NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface(notificationVersion);
-        //TODO MATTEO FINIRE
-
-        List<String> datiPagamento = new ArrayList<>();
-        if (fullSentNotificationV1 != null) {
-            datiPagamento.add(Objects.requireNonNull(fullSentNotificationV1.getRecipients().get(destinatario).getPayment()).getCreditorTaxId());
-            datiPagamento.add(Objects.requireNonNull(fullSentNotificationV1.getRecipients().get(destinatario).getPayment()).getNoticeCode());
-        } else if (fullSentNotificationV20 != null) {
-            datiPagamento.add(Objects.requireNonNull(fullSentNotificationV20.getRecipients().get(destinatario).getPayment()).getCreditorTaxId());
-            datiPagamento.add(Objects.requireNonNull(fullSentNotificationV20.getRecipients().get(destinatario).getPayment()).getNoticeCode());
-        } else if (fullSentNotificationV21 != null) {
-            datiPagamento.add(Objects.requireNonNull(Objects.requireNonNull(fullSentNotificationV21.getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getCreditorTaxId());
-            datiPagamento.add(Objects.requireNonNull(Objects.requireNonNull(fullSentNotificationV21.getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getNoticeCode());
-        } else if (fullSentNotificationV26 != null) {
-            datiPagamento.add(Objects.requireNonNull(Objects.requireNonNull(fullSentNotificationV26.getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getCreditorTaxId());
-            datiPagamento.add(Objects.requireNonNull(Objects.requireNonNull(fullSentNotificationV26.getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getNoticeCode());
-        }
-        return datiPagamento;
+        return getNotificationStepInterface().getDatiPagamento(destinatario, pagamento);
     }
 
     public static void threadWait(int wait) {
@@ -1408,43 +1370,9 @@ public class SharedSteps {
         return notificationRecipient;
     }
 
-    //TODO MATTEO: spostato da AvanzamentoNotificheWebhookB2BSteps, dove non c'entrava nulla
-    @Then("tra gli elementi di timeline versione {string} di categoria {string} nessuno contiene un legalFact con categoria {string}")
-    public void checkTimelineElementVersionLegalFacts(String version, String timelineCategory, String legalFactCategory) {
-        NotificationVersion notificationVersion = getNotificationVersion(version);
-        NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface(notificationVersion);
-        Object sentNotificationAnyVersion = notificationStepsInterface.getSentNotificationAnyVersion();
-        Assertions.assertNotNull(sentNotificationAnyVersion);
-
-        if (version.equalsIgnoreCase("V26") || version.equalsIgnoreCase("V27")) {
-            TimelineElementV26 timelineElementWithTargetCategory = fullSentNotificationV26.getTimeline().stream().filter(
-                    x -> x.getCategory().getValue().equals(timelineCategory)).findFirst().orElse(null);
-            Assertions.assertNotNull(timelineElementWithTargetCategory);
-            timelineElementWithTargetCategory.getLegalFactsIds().forEach(
-                    x -> Assertions.assertNotEquals(x.getCategory(), legalFactCategory));
-        } else if (version.equalsIgnoreCase("V25")) {
-            TimelineElementV25 timelineElementWithTargetCategory = fullSentNotificationV25.getTimeline().stream().filter(
-                    x -> x.getCategory().getValue().equals(timelineCategory)).findFirst().orElse(null);
-            Assertions.assertNotNull(timelineElementWithTargetCategory);
-            timelineElementWithTargetCategory.getLegalFactsIds().forEach(
-                    x -> Assertions.assertNotEquals(x.getCategory(), legalFactCategory));
-        } else if (version.equalsIgnoreCase("V24")) {
-            TimelineElementV24 timelineElementWithTargetCategory = fullSentNotificationV24.getTimeline().stream().filter(
-                    x -> x.getCategory().getValue().equals(timelineCategory)).findFirst().orElse(null);
-            Assertions.assertNotNull(timelineElementWithTargetCategory);
-            timelineElementWithTargetCategory.getLegalFactsIds().forEach(
-                    x -> Assertions.assertNotEquals(x.getCategory().getValue(), legalFactCategory));
-        } else if (version.equalsIgnoreCase("V23")) {
-            TimelineElementV23 timelineElementWithTargetCategory = fullSentNotificationV23.getTimeline().stream().filter(
-                    x -> x.getCategory().getValue().equals(timelineCategory)).findFirst().orElse(null);
-            Assertions.assertNotNull(timelineElementWithTargetCategory);
-            timelineElementWithTargetCategory.getLegalFactsIds().forEach(
-                    x -> Assertions.assertNotEquals(x.getCategory().getValue(), legalFactCategory));
-        }
-    }
 
     @Then("stampa log dello IUN della notifica {string} con allegato {string} su comune {string}")
     public void stampaLogDelloIUNDellaNotificaConAllegatoSuComune(String notificationType, String attachment, String municipality) {
-        log.info("notifica STAMPA COLORI IUN: {}, notifica: {}, allegato: {}, comune: {}", fullSentNotificationV26.getIun(), notificationType, attachment, municipality);
+        log.info("notifica STAMPA COLORI IUN: {}, notifica: {}, allegato: {}, comune: {}", getIunVersionamento(), notificationType, attachment, municipality);
     }
 }

@@ -728,10 +728,7 @@ Feature: annullamento notifiche b2b
     And viene inserita l'email di cortesia "provaemail2@test.it" per il comune "default"
     And viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-    And destinatario
-      | denomination    | Galileo Galilei  |
-      | taxId           | GLLGLL64B15G702I |
-      | digitalDomicile | NULL             |
+    And destinatario "Galileo Galilei"
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
       | loadTimeline           | true                                                |
@@ -753,10 +750,7 @@ Feature: annullamento notifiche b2b
     And viene inserito un recapito legale "example@sequence.90s-C000.90s-C001.90s-C005.90s-C003"
     And viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-    And destinatario
-      | denomination    | Galileo Galilei  |
-      | taxId           | GLLGLL64B15G702I |
-      | digitalDomicile | NULL             |
+    And destinatario "Galileo Galilei"
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
     When vengono letti gli eventi fino all'elemento di timeline della notifica annullata "NOTIFICATION_CANCELLATION_REQUEST"
     Then viene controllato che l'elemento di timeline della notifica "SEND_COURTESY_MESSAGE" non esiste

@@ -40,6 +40,7 @@ import java.lang.reflect.Field;
 import java.time.OffsetDateTime;
 import java.util.*;
 
+import static it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps.StreamVersion.*;
 import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.*;
 
 @Slf4j
@@ -77,12 +78,16 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     @Setter
     private HttpStatusCodeException notificationError;
     private Integer requestNumber;
-    private final WebhookStepsV10 webhookStepsV10 = new WebhookStepsV10(this);
-    private final WebhookStepsV23 webhookStepsV23 = new WebhookStepsV23(this);
-    private final WebhookStepsV24 webhookStepsV24 = new WebhookStepsV24(this);
-    private final WebhookStepsV25 webhookStepsV25 = new WebhookStepsV25(this);
-    private final WebhookStepsV26 webhookStepsV26 = new WebhookStepsV26(this);
-    private final WebhookStepsV27 webhookStepsV27 = new WebhookStepsV27(this);
+
+    private final Map<StreamVersion, WebhookStepsInterface> mapOfWebhookVersionSteps = Map.ofEntries(
+            Map.entry(StreamVersion.V10, new WebhookStepsV10(this)),
+            Map.entry(StreamVersion.V23, new WebhookStepsV23(this)),
+            Map.entry(StreamVersion.V24, new WebhookStepsV24(this)),
+            Map.entry(StreamVersion.V25, new WebhookStepsV25(this)),
+            Map.entry(StreamVersion.V26, new WebhookStepsV26(this)),
+            Map.entry(StreamVersion.V27, new WebhookStepsV27(this))
+    );
+
     private static final Map<String, SettableApiKey.ApiKeyType> paForStream =
             Map.of(
                     COMUNE_1, SettableApiKey.ApiKeyType.MVP_1,
@@ -163,27 +168,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }
 
     private WebhookStepsInterface getWebhookStep(StreamVersion streamVersion) {
-        switch (streamVersion) {
-            case V10 -> {
-                return webhookStepsV10;
-            }
-            case V23 -> {
-                return webhookStepsV23;
-            }
-            case V24 -> {
-                return webhookStepsV24;
-            }
-            case V25 -> {
-                return webhookStepsV25;
-            }
-            case V26 -> {
-                return webhookStepsV26;
-            }
-            case V27 -> {
-                return webhookStepsV27;
-            }
-            default -> throw new IllegalArgumentException("Version not supported!: " + streamVersion);
-        }
+        return mapOfWebhookVersionSteps.get(streamVersion);
     }
 
     private void logError(AssertionFailedError assertionFailedError, String iun, UUID streamId) {
@@ -579,6 +564,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }
 
     private boolean searchSpecificTimelineEvent(String timelineEvent, String deliveryDetailCode) {
+        WebhookStepsV23 webhookStepsV23 = (WebhookStepsV23) mapOfWebhookVersionSteps.get(V23);
         Assertions.assertNotNull(webhookStepsV23.getProgressResponseElementList());
         return webhookStepsV23.getProgressResponseElementList().stream()
                 .filter(Objects::nonNull)
@@ -595,7 +581,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     public void readStreamEventsStateValidatore(String pa, String status) {
         setPaWebhook(pa);
 
-        WebhookStepsInterface webhookStepsInterface = getWebhookStep(StreamVersion.V10);
+        WebhookStepsInterface webhookStepsInterface = getWebhookStep(V10);
 
         StatusElementSearchResult<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.NotificationStatus> searchElementResult =
                 webhookStepsInterface.getStatusEventForStream(status, timingForPolling.getTimingForElement(status));
@@ -667,7 +653,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         if (!(timeLineOrStatus instanceof TimelineElementCategoryV23) && !(timeLineOrStatus instanceof NotificationStatus)) {
             throw new IllegalArgumentException();
         }
-        WebhookStepsInterface webhookStepsInterface = getWebhookStep(StreamVersion.V10);
+        WebhookStepsInterface webhookStepsInterface = getWebhookStep(V10);
         UUID streamId = webhookStepsInterface.getStreamId();
 
         ProgressResponseElement progressResponseElement = null;
@@ -896,6 +882,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     @Then("l'ultima creazione ha prodotto un errore con status code {string}")
     public void lastCreationProducedAnErrorWithStatusCode(String statusCode) {
         List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamListElement> streamListElements = webhookB2bClient.listEventStreams();
+        WebhookStepsV10 webhookStepsV10 = (WebhookStepsV10) mapOfWebhookVersionSteps.get(V10);
         System.out.println("streamListElements: " + streamListElements.size());
         System.out.println("eventStreamList: " + webhookStepsV10.getEventStreamList().size());
         System.out.println("requestNumber: " + requestNumber);
@@ -1139,9 +1126,11 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     @Then("gli elementi di timeline restituiti dal Webhook contengono i campi attesi in accordo alla versione {string}")
     public void checkTimelineElementVersionWebHook(String version) {
         if (version.equalsIgnoreCase("V24")) {
+            WebhookStepsV24 webhookStepsV24 = (WebhookStepsV24) mapOfWebhookVersionSteps.get(V24);
             Assertions.assertNotNull(webhookStepsV24.getProgressResponseElementList());
             webhookStepsV24.getProgressResponseElementList().forEach(pre -> checkTimelineElement(pre.getElement()));
         } else if (version.equalsIgnoreCase("V23")) {
+            WebhookStepsV23 webhookStepsV23 = (WebhookStepsV23) mapOfWebhookVersionSteps.get(V23);
             Assertions.assertNotNull(webhookStepsV23.getProgressResponseElementList());
             webhookStepsV23.getProgressResponseElementList().forEach(pre -> checkTimelineElement(pre.getElement()));
         }
@@ -1201,5 +1190,10 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     public void getTimelineElementVersionB2B(String version) {
         String iun = sharedSteps.getFullSentNotificationV26().getIun();
         getWebhookStep(version).getTimelineElementVersionB2B(iun);
+    }
+
+    @Then("tra gli elementi di timeline versione {string} di categoria {string} nessuno contiene un legalFact con categoria {string}")
+    public void checkTimelineElementVersionLegalFacts(String version, String timelineCategory, String legalFactCategory) {
+        getWebhookStep(version).checkLegalFactCategory(timelineCategory, legalFactCategory);
     }
 }

@@ -18,10 +18,7 @@ import org.springframework.util.Base64Utils;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static it.pagopa.pn.client.b2b.pa.PnPaB2bUtils.*;
 import static it.pagopa.pn.cucumber.steps.SharedSteps.threadWait;
@@ -150,9 +147,7 @@ public class NotificationStepsV24 implements NotificationStepsInterface {
                     sharedSteps.setErrorCode(errorCode);
                     threadWait(wait);
                     Assertions.assertFalse(errorCode.isEmpty());
-                }
-                //TODO MATTEO: TUTTO DA VERIFICARE COME CASO
-                else if (status.equalsIgnoreCase(NOTIFICATION_STATUS_NOT_REFUSED)) {
+                } else if (status.equalsIgnoreCase(NOTIFICATION_STATUS_NOT_REFUSED)) {
                     RequestStatus response = sharedSteps.getB2bUtils().getClient().notificationCancellation(
                             new String(Base64Utils.decodeFromString(notificationResponse.getNotificationRequestId())));
                     Assertions.assertNotNull(response);
@@ -421,5 +416,17 @@ public class NotificationStepsV24 implements NotificationStepsInterface {
             }
         }
         getAndCheckSendNewNotification(notificationRequest);
+    }
+
+    @Override
+    public void addIuvGdpToDestinatario(String denominazione, String iuvGdp, Integer posizione) {
+        notificationRequest.getRecipients().get(0).denomination(denominazione).getPayments().get(posizione).getPagoPa().setNoticeCode(iuvGdp);
+    }
+
+    @Override
+    public List<String> getDatiPagamento(Integer destinatario, Integer pagamento) {
+        return Arrays.asList(
+                Objects.requireNonNull(Objects.requireNonNull(fullSentNotification.getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getCreditorTaxId(),
+                Objects.requireNonNull(Objects.requireNonNull(fullSentNotification.getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getNoticeCode());
     }
 }

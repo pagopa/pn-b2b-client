@@ -1,6 +1,7 @@
 package it.pagopa.pn.cucumber.steps.pa.notificationVersions;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 public interface NotificationStepsInterface {
@@ -42,7 +43,9 @@ public interface NotificationStepsInterface {
 
     void performPriceVerification(String price, String date, Integer destinatario);
 
-    default void uploadNotificationAllegatiUgualiPagamento() throws IOException {
-        throwUnsupportedMethodException("uploadNotificationAllegatiUgualiPagamento");
-    }
+    void uploadNotificationAllegatiUgualiPagamento() throws IOException;
+
+    void addIuvGdpToDestinatario(String denominazione, String iuvGdp, Integer posizione);
+
+    List<String> getDatiPagamento(Integer destinatario, Integer pagamento);
 }

@@ -26,6 +26,7 @@ import java.util.UUID;
 //NOTA BENE: A discapito del nome, questa classe utilizza in toto i metodi della V20
 public class WebhookStepsV10 implements WebhookStepsInterface {
 
+    private FullSentNotificationV20 fullSentNotification;
     private ProgressResponseElement progressResponseElement;
     private List<ProgressResponseElement> progressResponseElementList;
     private List<StreamCreationRequest> streamCreationRequestList;
@@ -297,9 +298,9 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
             } catch (InterruptedException exc) {
                 throw new RuntimeException(exc);
             }
-            webhookSteps.getSharedSteps().setFullSentNotificationV20(webhookSteps.getB2bClient().getSentNotificationV2(webhookSteps.getSharedSteps().getFullSentNotificationV26().getIun()));
-            TimelineElementV20 timelineElement = webhookSteps.getSharedSteps()
-                    .getFullSentNotificationV20().getTimeline().stream()
+            fullSentNotification = webhookSteps.getB2bClient().getSentNotificationV2(webhookSteps.getSharedSteps().getIunVersionamento());
+            webhookSteps.getSharedSteps().setFullSentNotificationV20(fullSentNotification);
+            TimelineElementV20 timelineElement = fullSentNotification.getTimeline().stream()
                     .filter(elem -> elem.getCategory().getValue().equals(timelineElementInternalCategory.getValue()))
                     .findAny()
                     .orElse(null);
@@ -321,8 +322,9 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
             } catch (InterruptedException exc) {
                 throw new RuntimeException(exc);
             }
-            webhookSteps.getSharedSteps().setFullSentNotificationV20(webhookSteps.getB2bClient().getSentNotificationV2(webhookSteps.getSharedSteps().getFullSentNotificationV26().getIun()));
-            NotificationStatusHistoryElement notificationStatusHistoryElement = webhookSteps.getSharedSteps().getFullSentNotificationV20().getNotificationStatusHistory().
+            fullSentNotification = webhookSteps.getB2bClient().getSentNotificationV2(webhookSteps.getSharedSteps().getIunVersionamento());
+            webhookSteps.getSharedSteps().setFullSentNotificationV20(fullSentNotification);
+            NotificationStatusHistoryElement notificationStatusHistoryElement = fullSentNotification.getNotificationStatusHistory().
                     stream().filter(elem -> elem.getStatus().getValue().equals(notificationInternalStatus.getValue())).findAny().orElse(null);
             if (notificationStatusHistoryElement != null) {
                 found = true;
@@ -396,7 +398,7 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
 
     @Override
     public void getTimelineElementVersionB2B(String iun) {
-        FullSentNotificationV20 fullSentNotification = webhookSteps.getB2bClient().getSentNotificationV2(iun);
+        fullSentNotification = webhookSteps.getB2bClient().getSentNotificationV2(iun);
         webhookSteps.getSharedSteps().setFullSentNotificationV20(fullSentNotification);
     }
 
@@ -470,5 +472,15 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
                 .filter(data -> data.getTimelineEventCategory() != null)
                 .filter(progressResponseElement -> progressResponseElement.getTimelineEventCategory().getValue().contains("SEND_DIGITAL_FEEDBACK"))
                 .allMatch(progressResponseElement -> channel.equals(progressResponseElement.getChannel())));
+    }
+
+    @Override
+    public void checkLegalFactCategory(String timelineCategory, String legalFactCategory) {
+        TimelineElementV20 timelineElementWithTargetCategory =
+                fullSentNotification.getTimeline().stream().filter(
+                        x -> x.getCategory().getValue().equals(timelineCategory)).findFirst().orElse(null);
+        Assertions.assertNotNull(timelineElementWithTargetCategory);
+        timelineElementWithTargetCategory.getLegalFactsIds().forEach(
+                x -> Assertions.assertNotEquals(x.getCategory().getValue(), legalFactCategory));
     }
 }

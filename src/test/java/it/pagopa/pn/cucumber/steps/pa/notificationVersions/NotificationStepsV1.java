@@ -16,9 +16,7 @@ import org.springframework.util.Base64Utils;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static it.pagopa.pn.client.b2b.pa.PnPaB2bUtils.*;
 import static it.pagopa.pn.cucumber.steps.SharedSteps.threadWait;
@@ -137,9 +135,7 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
                     sharedSteps.setErrorCode(errorCode);
                     threadWait(wait);
                     Assertions.assertFalse(errorCode.isEmpty());
-                }
-                //TODO MATTEO: TUTTO DA VERIFICARE COME CASO
-                else if (status.equalsIgnoreCase(NOTIFICATION_STATUS_NOT_REFUSED)) {
+                } else if (status.equalsIgnoreCase(NOTIFICATION_STATUS_NOT_REFUSED)) {
                     RequestStatus response = sharedSteps.getB2bUtils().getClient().notificationCancellation(
                             new String(Base64Utils.decodeFromString(notificationResponse.getNotificationRequestId())));
                     Assertions.assertNotNull(response);
@@ -181,7 +177,7 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
 
     @Override
     public void setIuvToRecipient(Integer posizione, String iuvGPD) {
-        throw new RuntimeException("Metodo non previsto per la versione V21");
+        throw new RuntimeException("Metodo non previsto per la versione V1");
     }
 
     @Override
@@ -213,6 +209,11 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
+    }
+
+    @Override
+    public void uploadNotificationAllegatiUgualiPagamento() {
+        throwUnsupportedMethodException("uploadNotificationAllegatiUgualiPagamento");
     }
 
     public FullSentNotification waitForRequestAccepted(NewNotificationResponse response, String pollingStrategy) {
@@ -304,5 +305,17 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
 
     private void attachmentSetDigests(NotificationPaymentAttachment notificationPaymentAttachment, String sha256) {
         notificationPaymentAttachment.digests(new NotificationAttachmentDigests().sha256(sha256));
+    }
+
+    @Override
+    public void addIuvGdpToDestinatario(String denominazione, String iuvGdp, Integer posizione) {
+        throw new RuntimeException("Metodo non previsto per la versione V1");
+    }
+
+    @Override
+    public List<String> getDatiPagamento(Integer destinatario, Integer pagamento) {
+        return Arrays.asList(
+                Objects.requireNonNull(fullSentNotification.getRecipients().get(destinatario).getPayment()).getCreditorTaxId(),
+                Objects.requireNonNull(fullSentNotification.getRecipients().get(destinatario).getPayment()).getNoticeCode());
     }
 }
