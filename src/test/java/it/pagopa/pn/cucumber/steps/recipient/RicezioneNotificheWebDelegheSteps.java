@@ -7,8 +7,6 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV25;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebMandateClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
@@ -393,9 +391,7 @@ public class RicezioneNotificheWebDelegheSteps {
         sharedSteps.selectUser(recipient);
 
         try {
-            Assertions.assertDoesNotThrow(() -> {
-                getReceivedNotificationDocument();
-            });
+            Assertions.assertDoesNotThrow(this::getReceivedNotificationDocument);
         } catch (AssertionFailedError assertionFailedError) {
             System.out.println(assertionFailedError.getCause().toString());
             System.out.println(assertionFailedError.getCause().getMessage());
@@ -439,13 +435,13 @@ public class RicezioneNotificheWebDelegheSteps {
     }
 
     private void verifySha256(NotificationAttachmentDownloadMetadataResponse downloadResponse) {
-        AtomicReference<String> Sha256 = new AtomicReference<>("");
+        AtomicReference<String> sha256 = new AtomicReference<>("");
         Assertions.assertDoesNotThrow(() -> {
             byte[] bytes = Assertions.assertDoesNotThrow(() ->
                     b2bUtils.downloadFile(Objects.requireNonNull(downloadResponse).getUrl()));
-            Sha256.set(b2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
+            sha256.set(b2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
         });
-        Assertions.assertEquals(Sha256.get(), Objects.requireNonNull(downloadResponse).getSha256());
+        Assertions.assertEquals(sha256.get(), Objects.requireNonNull(downloadResponse).getSha256());
     }
 
     @And("{string} revoca la delega a {string}")
@@ -762,18 +758,6 @@ public class RicezioneNotificheWebDelegheSteps {
             case "EMPTY_DISPLAY_NAME" -> createUserDto(null, "Mario", "Cucumber", "CLMCST42R12D969Z", null, true);
             case "DISPLAY_NAME_NOT_VALID" -> createUserDto("PippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippo", "Mario", "Cucumber", "CLMCST42R12D969Z", null, true);
             default -> throw new IllegalStateException("Unexpected value: " + delegator);
-        };
-    }
-
-    private String getDate(String date) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        return switch (date) {
-            case "TODAY" -> sdf.format(new Date());
-            case "TOMORROW" -> sdf.format(DateUtils.addDays(new Date(), 1));
-            case "PAST_DATE" -> "2023-01-01";
-            case "INVALID_FORMAT" -> "01-01-2023";
-            case "EMPTY_DATE" -> null;
-            default -> throw new IllegalStateException("Unexpected value: " + date);
         };
     }
 

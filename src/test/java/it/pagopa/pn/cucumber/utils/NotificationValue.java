@@ -66,7 +66,7 @@ public enum NotificationValue {
     /*TIMELINE DETAILS*/
     PROGRESS_INDEX("progressIndex", "-1", false),
     POLLING_TIME("pollingTime", null, false),
-    POLLING_Type("pollingType", null, false),
+    POLLING_TYPE("pollingType", null, false),
     NUM_CHECK("numCheck", null, false),
     LOAD_TIMELINE("loadTimeline", "false", false),
     IS_FIRST_SEND_RETRY("isFirstSendRetry", "false", false),
@@ -122,7 +122,7 @@ public enum NotificationValue {
         String timeNano = System.nanoTime()+"";
         String randomClassePagamento = new Random().nextInt(14)+"";
         randomClassePagamento = randomClassePagamento.length() < 2 ? "0"+randomClassePagamento : randomClassePagamento;
-        String finalNumber = "" + String.format("302" +randomClassePagamento + numberOfThread + timeNano.substring(0, timeNano.length()-4));
+        String finalNumber = "" + String.format("302%s%s%s", randomClassePagamento, numberOfThread, timeNano.substring(0, timeNano.length() - 4));
         // String finalNumber = "" + String.format("30210" +randomClassePagamento + numberOfThread + timeNano.substring(0, timeNano.length()-6));
         if(finalNumber.length() > NOTICE_CODE_LENGTH){
             finalNumber = finalNumber.substring(0,NOTICE_CODE_LENGTH);

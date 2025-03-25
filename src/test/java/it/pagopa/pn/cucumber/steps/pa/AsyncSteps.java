@@ -75,7 +75,7 @@ public class AsyncSteps {
 
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         PaymentPositionModel paymentPositionModelSend = new PaymentPositionModel()
-                .iupd(String.format(organitationCode+"-64c8e41bfec846e04"+  iuv, System.currentTimeMillis()))
+                .iupd(String.format("%s-64c8e41bfec846e04%s-%d", organitationCode, iuv, System.currentTimeMillis()))
                 .type(PaymentPositionModel.TypeEnum.F)
                 .companyName("Automation")
                 .fullName(name)
