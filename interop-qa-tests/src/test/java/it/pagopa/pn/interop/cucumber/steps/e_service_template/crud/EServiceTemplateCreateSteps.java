@@ -14,7 +14,6 @@ import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext.EServiceTemplateInfo;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
 import lombok.Data;
@@ -32,7 +31,6 @@ public class EServiceTemplateCreateSteps {
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
     private final EServiceTemplateTestAssistant testAssistant;
-    private final EServiceTemplateStepContext templateContext;
 
     private UpdateEServiceTemplateSeed lastTemplateUpdateSeed;
 
@@ -42,8 +40,7 @@ public class EServiceTemplateCreateSteps {
     public EServiceTemplateCreateSteps(ClientTokenConfigurator clientTokenConfigurator,
         DataPreparationService dataPreparationService,
         SharedStepsContext sharedStepsContext,
-        EServiceTemplateTestAssistant testAssistant,
-        EServiceTemplateStepContext templateContext) {
+        EServiceTemplateTestAssistant testAssistant) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.dataPreparationService = dataPreparationService;
         this.sharedStepsContext = sharedStepsContext;
@@ -51,7 +48,6 @@ public class EServiceTemplateCreateSteps {
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
         this.testAssistant = testAssistant;
-        this.templateContext = templateContext;
     }
 
     @When("l'utente effettua la creazione di un e-service template in modalità {eServiceMode}")
@@ -76,7 +72,7 @@ public class EServiceTemplateCreateSteps {
 
     @When("l'utente effettua la creazione di un e-service template in modalità {eServiceMode} usando lo stesso nome")
     public void createEServiceTemplateWithSameName(EServiceMode eServiceMode) {
-        String lastTemplateNameUsed = templateContext.getLastTemplateManaged().name();
+        String lastTemplateNameUsed = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().name();
         EServiceTemplateSeed sameNameTemplateSeed = this.getEServiceTemplateSeed(eServiceMode)
             .name(lastTemplateNameUsed);
         createEServiceTemplate(sameNameTemplateSeed);
@@ -103,7 +99,7 @@ public class EServiceTemplateCreateSteps {
             "There was an error while retrieving the e-service template"
         );
 
-        templateContext.setLastTemplateManaged(new EServiceTemplateInfo(
+        sharedStepsContext.getEServiceTemplateStepContext().setLastTemplateManaged(new EServiceTemplateInfo(
             templateSeed.getName(),
             templateSeed.getIntendedTarget(),
             templateSeed.getDescription(),

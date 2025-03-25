@@ -58,7 +58,6 @@ public class EServiceTemplateTestAssistant {
     private final IEServiceTemplateClient eServiceTemplateClient;
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
-    private final EServiceTemplateStepContext templateContext;
     private final EasyRandom easyRandom;
     private final DescriptorAttributesMapper descriptorAttributesMapper;
     private final RiskAnalysisMapper riskAnalysisMapper;
@@ -66,7 +65,6 @@ public class EServiceTemplateTestAssistant {
     public EServiceTemplateTestAssistant(ClientTokenConfigurator clientTokenConfigurator,
         DataPreparationService dataPreparationService,
         SharedStepsContext sharedStepsContext,
-        EServiceTemplateStepContext templateContext,
         DescriptorAttributesMapper descriptorAttributesMapper,
         RiskAnalysisMapper riskAnalysisMapper) {
         this.clientTokenConfigurator = clientTokenConfigurator;
@@ -77,8 +75,7 @@ public class EServiceTemplateTestAssistant {
         this.eServiceTemplateClient = clientTokenConfigurator.getEServiceTemplateClient();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
-        this.templateContext = templateContext;
-        this.easyRandom = new EasyRandom(templateContext.getEasyRandomParameters());
+        this.easyRandom = new EasyRandom(sharedStepsContext.getEServiceTemplateStepContext().getEasyRandomParameters());
         this.descriptorAttributesMapper = descriptorAttributesMapper;
         this.riskAnalysisMapper = riskAnalysisMapper;
     }
@@ -113,16 +110,16 @@ public class EServiceTemplateTestAssistant {
         String userToken = sharedStepsContext.getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);
         this.publishEServiceTemplate(
-            templateContext.getLastTemplateManaged().id(),
-            templateContext.getLastTemplateManaged().lastVersionId());
+            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(),
+            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId());
     }
 
     public void suspendEServiceTemplate() {
         String userToken = sharedStepsContext.getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);
         this.suspendEServiceTemplate(
-            templateContext.getLastTemplateManaged().id(),
-            templateContext.getLastTemplateManaged().lastVersionId());
+            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(),
+            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId());
     }
 
     /** Adds a document of the specified kind to the last managed e-service template version.
@@ -136,8 +133,8 @@ public class EServiceTemplateTestAssistant {
     }
 
     public void addDocumentToEServiceTemplateVersion(EServiceTemplateDocumentKind kind, int fileIndex) {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
         addDocumentToEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, kind, fileIndex);
     }
 
@@ -198,21 +195,21 @@ public class EServiceTemplateTestAssistant {
         if(!httpCallExecutor.getResponseStatus().isError()) {
             ResponseEntity<CreatedResource> response = (ResponseEntity<CreatedResource>) httpCallExecutor.getResponse();
             try {
-                templateContext.setLastAddedDocument(new EServiceTemplateDocumentInfo(response.getBody().getId(), prettyName,
+                sharedStepsContext.getEServiceTemplateStepContext().setLastAddedDocument(new EServiceTemplateDocumentInfo(response.getBody().getId(), prettyName,
                     doc.getInputStream().readAllBytes()));
             } catch (IOException e) {
                 fail("Errore imprevisto: il body del documento costruito non restituisce correttamente un InputStream", e);
             }
         } else {
-            templateContext.setLastAddedDocument(new EServiceTemplateDocumentInfo(null, null, null, httpCallExecutor.getErrorMessage()));
+            sharedStepsContext.getEServiceTemplateStepContext().setLastAddedDocument(new EServiceTemplateDocumentInfo(null, null, null, httpCallExecutor.getErrorMessage()));
         }
 
     }
 
     public void checkDocumentAddedToEServiceTemplateVersion(EServiceTemplateDocumentKind kind) {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
-        EServiceTemplateDocumentInfo lastAddedDocument = templateContext.getLastAddedDocument();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
+        EServiceTemplateDocumentInfo lastAddedDocument = sharedStepsContext.getEServiceTemplateStepContext().getLastAddedDocument();
 
         if(isNotEmpty(lastAddedDocument.errorMessage())) {
             fail("Il documento non è stato aggiunto correttamente alla versione dell'e-service template. Ultimo errore noto: %s".formatted(lastAddedDocument.errorMessage()));
@@ -285,10 +282,10 @@ public class EServiceTemplateTestAssistant {
     }
 
     public void addRiskAnalysisToEServiceTemplate() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
-        templateContext.setLastAddedRiskAnalysis(getEServiceRiskAnalysisSeed());
-        templateContext.incrementLastAddedRiskAnalysisIndex();
-        addRiskAnalysisToEServiceTemplate(eServiceTemplateId, templateContext.getLastAddedRiskAnalysis());
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        sharedStepsContext.getEServiceTemplateStepContext().setLastAddedRiskAnalysis(getEServiceRiskAnalysisSeed());
+        sharedStepsContext.getEServiceTemplateStepContext().incrementLastAddedRiskAnalysisIndex();
+        addRiskAnalysisToEServiceTemplate(eServiceTemplateId, sharedStepsContext.getEServiceTemplateStepContext().getLastAddedRiskAnalysis());
     }
 
     private EServiceRiskAnalysisSeed getEServiceRiskAnalysisSeed() {
@@ -308,8 +305,8 @@ public class EServiceTemplateTestAssistant {
     }
 
     public void checkRiskAnalysisAddedToEServiceTemplate() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
 
         try {
             pollingService.makePolling(
@@ -322,8 +319,8 @@ public class EServiceTemplateTestAssistant {
                 res ->
                     nonNull(res.getBody()) &&
                         this.areConsistent(
-                            templateContext.getLastAddedRiskAnalysis(),
-                            res.getBody().getEserviceTemplate().getRiskAnalysis().get(templateContext.getLastAddedRiskAnalysisIndex())),
+                            sharedStepsContext.getEServiceTemplateStepContext().getLastAddedRiskAnalysis(),
+                            res.getBody().getEserviceTemplate().getRiskAnalysis().get(sharedStepsContext.getEServiceTemplateStepContext().getLastAddedRiskAnalysisIndex())),
                 "La risk analysis non è stata aggiunta correttamente all'e-service template"
             );
         } catch (IllegalArgumentException e) { // TODO altrove è stato usato PollingPredicateException, che impedirà il catch di IllegalArgumentException, correggere

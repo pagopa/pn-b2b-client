@@ -65,11 +65,16 @@ public class EServiceTemplateVersionAttributeUpdateSteps {
         UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
 
         //lastTemplateVersionUpdateSeed contiene, tra le altre, cose, gli attributi aggiunti l'ultima volta
+
+    // 25/03/2025 versione precedente, la si tiene in attesa di validare le modifiche fatte sulla parte attributi e-service template
 //        lastAttributesUpdateSeed = this.descriptorAttributesMapper.mapSeedsToSeeds(this.templateContext.getLastTemplateVersionUpdateSeed().getAttributes());
+
         lastAttributesUpdateSeed = this.descriptorAttributesMapper.mapSeedsToSeeds(new EServiceTemplateAttributesSeed()
                 .addCertifiedItem(List.of(new EServiceTemplateVersionAttributeSeed().id(UUID.randomUUID()).explicitAttributeVerification(true))));
 
         List<List<DescriptorAttributeSeed>> certified = lastAttributesUpdateSeed.getCertified();
+
+        // 25/03/2025 versione precedente, la si tiene in attesa di validare le modifiche fatte sulla parte attributi e-service template
 //        certified.add(List.of(new DescriptorAttributeSeed())); // aggiungo 1 attributo
 
         Boolean newAttribute = !BooleanUtils.toBoolean(certified.get(0).get(0).getExplicitAttributeVerification());

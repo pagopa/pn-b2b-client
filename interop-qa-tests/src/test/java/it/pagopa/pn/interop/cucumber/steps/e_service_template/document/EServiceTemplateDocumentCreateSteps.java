@@ -10,7 +10,6 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTempl
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
 import java.util.UUID;
 import lombok.Data;
@@ -27,14 +26,12 @@ public class EServiceTemplateDocumentCreateSteps {
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
     private final EServiceTemplateTestAssistant testAssistant;
-    private final EServiceTemplateStepContext templateContext;
 
     private UpdateEServiceTemplateVersionDocumentSeed lastDocumentUpdateSeed;
 
     public EServiceTemplateDocumentCreateSteps(ClientTokenConfigurator clientTokenConfigurator,
         SharedStepsContext sharedStepsContext,
-        EServiceTemplateTestAssistant testAssistant,
-        EServiceTemplateStepContext templateContext
+        EServiceTemplateTestAssistant testAssistant
     ) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
@@ -42,7 +39,6 @@ public class EServiceTemplateDocumentCreateSteps {
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
         this.testAssistant = testAssistant;
-        this.templateContext = templateContext;
     }
 
     @Given("l'utente effettua l'aggiunta di un documento di tipo {eServiceTemplateDocumentKind} alla versione dell'e-service template con successo")
@@ -62,17 +58,17 @@ public class EServiceTemplateDocumentCreateSteps {
 
     @When("l'utente tenta l'aggiunta di un documento di tipo {eServiceTemplateDocumentKind} alla versione dell'e-service template specificando un contenuto vuoto")
     public void addUnspecifiedDocumentToEServiceTemplateVersion(EServiceTemplateDocumentKind kind) {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
         ByteArrayResource emptyByteArray = new ByteArrayResource(new byte[]{});
         addDocumentToEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, kind, emptyByteArray);
     }
 
     @When("l'utente tenta l'aggiunta di un documento di tipo {eServiceTemplateDocumentKind} alla versione dell'e-service template specificando lo stesso nome")
     public void addDocumentToEServiceTemplateVersionWithSameName(EServiceTemplateDocumentKind kind) {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
-        testAssistant.addDocumentToEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, kind, templateContext.getLastAddedDocument().prettyName(), 0);
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
+        testAssistant.addDocumentToEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, kind, sharedStepsContext.getEServiceTemplateStepContext().getLastAddedDocument().prettyName(), 0);
     }
 
     @When("l'utente tenta l'aggiunta di un documento di tipo {eServiceTemplateDocumentKind} a un e-service template inesistente")
@@ -82,7 +78,7 @@ public class EServiceTemplateDocumentCreateSteps {
 
     @When("l'utente tenta l'aggiunta di un documento di tipo {eServiceTemplateDocumentKind} a una versione inesistente dell'e-service template")
     public void addDocumentToNonExistentEServiceTemplateVersion(EServiceTemplateDocumentKind kind) {
-        testAssistant.addDocumentToEServiceTemplateVersion(templateContext.getLastTemplateManaged().id(), UUID.randomUUID(), kind, 0);
+        testAssistant.addDocumentToEServiceTemplateVersion(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), UUID.randomUUID(), kind, 0);
     }
 
     @Then("l'aggiunta del documento di tipo {eServiceTemplateDocumentKind} alla versione dell'e-service template è stata effettuata correttamente")
