@@ -438,6 +438,8 @@ public class DataTableTypeUtil {
             case "PAYMENT_F24_FLAT_0" -> metadati = "classpath:/METADATA_CORRETTO_FLAT_0.json";
             case "PAYMENT_F24_FLAT_1" -> metadati = "classpath:/METADATA_CORRETTO_FLAT_1.json";
             case "PAYMENT_F24_FLAT_2" -> metadati = "classpath:/METADATA_CORRETTO_FLAT_2.json";
+            case "PAYMENT_F24_SIMPLIFIED_VALIDATION_OFF_1" -> metadati = "classpath:/f24_delivery_simplified_validation_off_1.json";
+            case "PAYMENT_F24_SIMPLIFIED_VALIDATION_OFF_2" -> metadati = "classpath:/f24_delivery_simplified_validation_off_2.json";
 
             default ->  metadati = getDefaultValue(PAYMENT_F24.key);
         }
