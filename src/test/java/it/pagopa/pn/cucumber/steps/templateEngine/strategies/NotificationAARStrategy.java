@@ -13,7 +13,7 @@ import java.util.Optional;
 @Component
 public class NotificationAARStrategy implements ITemplateEngineStrategy {
 
-    private ITemplateEngineClient templateEngineClient;
+    private final ITemplateEngineClient templateEngineClient;
 
     public NotificationAARStrategy(ITemplateEngineClient templateEngineClient) {
         this.templateEngineClient = templateEngineClient;
@@ -22,7 +22,7 @@ public class NotificationAARStrategy implements ITemplateEngineStrategy {
     @Override
     public TemplateEngineResult retrieveTemplate(String language, boolean body, TemplateRequestContext context) {
         NotificationAar legalFact = createRequest(body, context);
-        Resource file = templateEngineClient. notificationAAR(selectLanguage(language), legalFact);
+        Resource file = templateEngineClient.notificationAAR(selectLanguage(language), legalFact);
         return new TemplateEngineResult(file);
     }
 
@@ -30,7 +30,7 @@ public class NotificationAARStrategy implements ITemplateEngineStrategy {
     public String getTextToCheckLanguage(String language) {
         return switch (language.toUpperCase()) {
             case  "ITALIANA" -> {
-                yield "AVVISO DI AVVENUTA RICEZIONE 1. 2. 3. Inquadra il codice QR o vai su string Entra con SPID o CIE (Carta d'Identità Elettronica); Accedi ai documenti notificati.";
+                yield "Hai ricevuto una comunicazione a valore legale da string con oggetto: string Prendi visione della copia dei documenti allegati o accedi ai documenti originali online seguendo le istruzioni. Tieni presente che il contenuto della comunicazione produrrà effetti giuridici nei tuoi confronti anche senza la tua presa visione dei documenti.";
             }
             case "TEDESCA" -> {
                 yield "AVVISO DI AVVENUTA RICEZIONE Empfangsbestätigung Feststellungs • Avviso di Avvenuta Ricezione (AAR): string Du hast eine rechtsgültige Mitteilung von string: . Wenn sie nicht in diesem siehe die zugestellten Dokumente Bescheid enthalten sind,";

@@ -1,5 +1,7 @@
 package it.pagopa.pn.cucumber.steps.templateEngine;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -177,11 +179,15 @@ public class TemplateEngineSteps {
         TemplateType templateTypeObject = TemplateType.fromValue(templateType.toUpperCase());
         String textToFind = getTextToRetrieve(languange, templateTypeObject);
         if (fileType.equals("pdf")) {
-            Assertions.assertNotNull(result.getFileTextRetrieved());
-            Assertions.assertTrue(result.retrieveFormattedText().contains(textToFind));
+            assertThat(result.getFileTextRetrieved()).isNotNull();
+            assertThat(result.retrieveFormattedText())
+                    .as("Checking if formatted text contains: " + textToFind)
+                    .contains(textToFind);
         } else {
-            Assertions.assertNotNull(result.getTemplateHtmlReturned());
-            Assertions.assertTrue(result.getTemplateHtmlReturned().contains(textToFind));
+            assertThat(result.getTemplateHtmlReturned()).isNotNull();
+            assertThat(result.getTemplateHtmlReturned())
+                    .as("Checking if formatted text contains: " + textToFind)
+                    .contains(textToFind);
         }
     }
 

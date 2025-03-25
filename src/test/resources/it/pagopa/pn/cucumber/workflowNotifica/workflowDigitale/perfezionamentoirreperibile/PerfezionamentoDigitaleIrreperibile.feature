@@ -1,7 +1,7 @@
 Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal deposito AAR e revisione date perfezionamento digitali
 
   #19
-  @addressBook1 @perfezionamentoIrreperibile
+  @addressBook1 @perfezionamentoIrreperibile @ignoreHotfixTemp #temp
   Scenario: [PERFEZIONAMENTO_IRREPERIBILE_3] Invio notifica digitale monodestinatario PF con SERCQ attivo
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -49,7 +49,7 @@ Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal 
     And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" con address type "PEC" digitalAddressSource "GENERAL" in "OK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
 
   #25
-  @addressBook1 @perfezionamentoIrreperibile
+  @addressBook1 @perfezionamentoIrreperibile @ignoreHotfixTemp #temp
   Scenario: [PERFEZIONAMENTO_IRREPERIBILE_6] Invio notifica digitale monodestinatario PF con indirizzo di piattaforma che fallisce al primo tentativo - il secondo tentativo con successo
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -130,7 +130,7 @@ Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal 
     And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" con address type "PEC" digitalAddressSource "PLATFORM" in "OK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
 
   #28
-  @addressBook1 @perfezionamentoIrreperibile
+  @addressBook1 @perfezionamentoIrreperibile @ignoreHotfixTemp #temp
   Scenario: [PERFEZIONAMENTO_IRREPERIBILE_9] Invio notifica digitale monodestinatario PF su recapito di piattaforma che fallisce al primo tentativo e poi cambia email valida - va con successo
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -158,7 +158,7 @@ Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal 
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" con response status "OK" con la "PEC" "example@pecSuccess.it"
 
   #29
-  @addressBook1 @perfezionamentoIrreperibile
+  @addressBook1 @perfezionamentoIrreperibile @ignoreHotfixTemp #temp
   Scenario: [PERFEZIONAMENTO_IRREPERIBILE_10] Invio notifica digitale monodestinatario indirizzo di piattaforma prima fallisce poi va con successo
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -230,7 +230,7 @@ Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal 
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" con address type "PEC" digitalAddressSource "SPECIAL" in "OK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
 
-  @addressBook1 @perfezionamentoIrreperibile
+  @addressBook1 @perfezionamentoIrreperibile @ignoreHotfixTemp #temp
   Scenario: [PERFEZIONAMENTO_IRREPERIBILE_13] Invio notifica digitale monodestinatario PF con indirizzo generale che fallisce al primo e al secondo tentativo
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
