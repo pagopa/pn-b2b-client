@@ -104,8 +104,9 @@ public class EServiceTemplateVersionUpdateSteps {
     public void assingAttributeToEServiceTemplateVersion() {
         templateContext.setLastTemplateVersionUpdateSeed(new UpdateEServiceTemplateVersionSeed()
                 .agreementApprovalPolicy(AgreementApprovalPolicy.AUTOMATIC)
-                .attributes(new EServiceTemplateAttributesSeed())
+//                .attributes(new EServiceTemplateAttributesSeed())
                 .attributes(new EServiceTemplateAttributesSeed().certified(
+                        // sostituire "cd30e495-e0d0-4b79-95af-1d67f3c5e75b" con l'attributo certificato creato al primo step
                     List.of(List.of(new EServiceTemplateVersionAttributeSeed().id(UUID.fromString("cd30e495-e0d0-4b79-95af-1d67f3c5e75b")).explicitAttributeVerification(false)))))
                 .dailyCallsPerConsumer(100)
                 .dailyCallsTotal(1000)
