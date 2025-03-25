@@ -491,7 +491,7 @@ Feature: Digital send e2e
       | details                 | NOT_NULL                                                                                                                                                      |
       | details_recIndex        | 0                                                                                                                                                             |
       | details_physicalAddress | {"address": "VIA@OK_890", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
-      | details_analogCost      | 194                                                                                                                                                           |
+      | details_analogCost      | 195                                                                                                                                                           |
     And viene verificato che l'elemento di timeline "DIGITAL_DELIVERY_CREATION_REQUEST" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |

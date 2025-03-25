@@ -180,7 +180,7 @@ Feature: Workflow analogico
       | details                 | NOT_NULL                                                                                                                                                     |
       | details_recIndex        | 0                                                                                                                                                            |
       | details_physicalAddress | {"address": "VIA@OK_RS", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
-      | details_analogCost      | 193                                                                                                                                                          |
+      | details_analogCost      | 195                                                                                                                                                          |
     And viene verificato che l'elemento di timeline "DIGITAL_DELIVERY_CREATION_REQUEST" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -1522,7 +1522,7 @@ Feature: Workflow analogico
       | details                 | NOT_NULL                                                                                                                                                                   |
       | details_recIndex        | 0                                                                                                                                                                          |
       | details_sentAttemptMade | 1                                                                                                                                                                          |
-      | details_physicalAddress | {"address": "via@sequence.5s-CON080.5s-RECAG001A.5s-RECAG001B[DOC:23L].5s-RECAG001C", "municipality": "Milano", "province": "MI", "zip": "20121", "foreignState": "Italia"} |
+      | details_physicalAddress | {"address": "via@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG001A.5s-RECAG001B[DOC:23L].5s-RECAG001C", "municipality": "Milano", "province": "MI", "zip": "20121", "foreignState": "Italia"} |
 
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details | NOT_NULL |

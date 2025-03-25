@@ -137,7 +137,7 @@ Feature: Analog send e2e
       | details_recIndex           | 0                                                                                                                                                                                            |
       | details_sentAttemptMade    | 1                                                                                                                                                                                            |
       | details_deliveryDetailCode | RECAG003F                                                                                                                                                                                    |
-      | details_physicalAddress    | {"address": "via@sequence.5s-CON080.5s-RECAG003D[FAILCAUSE:M03].5s-RECAG003E[DOC:Plico].5s-RECAG003F", "municipality": "Milano", "province": "MI", "zip": "20121", "foreignState": "Italia"} |
+      | details_physicalAddress    | {"address": "via@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG003D[FAILCAUSE:M03].5s-RECAG003E[DOC:Plico].5s-RECAG003F", "municipality": "Milano", "province": "MI", "zip": "20121", "foreignState": "Italia"} |
       | details_responseStatus     | KO                                                                                                                                                                                           |
 
     And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_FAILURE_WORKFLOW"
