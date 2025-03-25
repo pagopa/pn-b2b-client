@@ -107,9 +107,9 @@ public class EServiceTemplateVersionCreateSteps {
         if(httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             UUID idOfNewVersion = ((ResponseEntity<CreatedResource>) httpCallExecutor.getResponse()).getBody()
                 .getId();
-            templateContext.setLastTemplateManaged(this.templateInfoMapper.withVersionId(templateContext.getLastTemplateManaged(), idOfNewVersion));
+            templateContext.addTemplateManaged(this.templateInfoMapper.withVersionId(templateContext.getLastTemplateManaged(), idOfNewVersion));
         } else {
-            templateContext.setLastTemplateManaged(this.templateInfoMapper.withVersionId(templateContext.getLastTemplateManaged(), null));
+            templateContext.addTemplateManaged(this.templateInfoMapper.withVersionId(templateContext.getLastTemplateManaged(), null));
         }
     }
 }

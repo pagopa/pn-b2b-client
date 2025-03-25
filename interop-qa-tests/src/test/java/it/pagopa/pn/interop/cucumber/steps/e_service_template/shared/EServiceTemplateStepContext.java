@@ -6,6 +6,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSee
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionSeed;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +40,7 @@ public class EServiceTemplateStepContext {
         }
     }
 
-    private EServiceTemplateInfo lastTemplateManaged;
+    private List<EServiceTemplateInfo> templatesManaged = new ArrayList<>();
     private EServiceTemplateDocumentInfo lastAddedDocument;
     private UpdateEServiceTemplateVersionSeed lastTemplateVersionUpdateSeed;
     private UUID lastEServiceIdCreatedFromTemplate;
@@ -83,5 +84,13 @@ public class EServiceTemplateStepContext {
 
     public int incrementLastAddedRiskAnalysisIndex() {
         return ++lastAddedRiskAnalysisIndex;
+    }
+
+    public EServiceTemplateInfo getLastTemplateManaged() {
+        return this.templatesManaged.get(templatesManaged.size() - 1);
+    }
+
+    public void addTemplateManaged(EServiceTemplateInfo templateInfo) {
+        this.templatesManaged.add(templateInfo);
     }
 }

@@ -103,7 +103,7 @@ public class EServiceTemplateCreateSteps {
             "There was an error while retrieving the e-service template"
         );
 
-        templateContext.setLastTemplateManaged(new EServiceTemplateInfo(
+        templateContext.addTemplateManaged(new EServiceTemplateInfo(
             templateSeed.getName(),
             templateSeed.getIntendedTarget(),
             templateSeed.getDescription(),
