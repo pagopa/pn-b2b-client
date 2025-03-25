@@ -14,7 +14,6 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceTem
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import java.util.List;
 import lombok.Data;
 import org.springframework.http.ResponseEntity;
@@ -27,18 +26,15 @@ public class EServiceTemplateSteps {
     private final IEServiceTemplateClient eServiceTemplateClient;
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
-    private final EServiceTemplateStepContext templateContext;
 
     public EServiceTemplateSteps(ClientTokenConfigurator clientTokenConfigurator,
-                                SharedStepsContext sharedStepsContext,
-                                EServiceTemplateStepContext templateContext
+                                SharedStepsContext sharedStepsContext
         ) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.eServiceTemplateClient = clientTokenConfigurator.getEServiceTemplateClient();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
-        this.templateContext = templateContext;
     }
 
     @When("l'utente tenta la visualizzazione dell'elenco producers degli e-service templates")

@@ -29,28 +29,25 @@ public class EServiceTemplateInstanceUpgradeSteps {
     private final IEServiceTemplateClient eServiceTemplateClient;
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
-    private final EServiceTemplateStepContext templateContext;
     private final IEServiceClient eServiceClient;
 
     private UUID lastEServiceIdUpdatedFromTemplate;
     private UUID lastEServiceDescriptorIdUpdatedFromTemplate;
 
     public EServiceTemplateInstanceUpgradeSteps(ClientTokenConfigurator clientTokenConfigurator,
-        SharedStepsContext sharedStepsContext,
-        EServiceTemplateStepContext templateContext
+        SharedStepsContext sharedStepsContext
     ) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.eServiceTemplateClient = clientTokenConfigurator.getEServiceTemplateClient();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
-        this.templateContext = templateContext;
         this.eServiceClient = clientTokenConfigurator.getEServiceClient();
     }
 
     @When("l'utente tenta l'aggiornamento dell'istanza dell'e-service template all'ultima versione")
     public void updateEServiceInstanceToLatestVersion() {
-        UUID eServiceId = templateContext.getLastEServiceIdCreatedFromTemplate();
+        UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
         upgradeEServiceInstance(eServiceId);
     }
 

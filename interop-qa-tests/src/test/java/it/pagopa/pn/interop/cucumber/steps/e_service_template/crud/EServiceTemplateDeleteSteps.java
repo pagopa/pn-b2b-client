@@ -30,7 +30,6 @@ public class EServiceTemplateDeleteSteps {
     private final IEServiceTemplateClient eServiceTemplateClient;
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
-    private final EServiceTemplateStepContext templateContext;
 
     private UpdateEServiceTemplateSeed lastTemplateUpdateSeed;
 
@@ -38,20 +37,18 @@ public class EServiceTemplateDeleteSteps {
     *   Provare a racchiudere il codice comune in un costruttore in una classe astratta da far
     *   ereditare a questa e a tutte le altre. */
     public EServiceTemplateDeleteSteps(ClientTokenConfigurator clientTokenConfigurator,
-        SharedStepsContext sharedStepsContext,
-        EServiceTemplateStepContext templateContext) {
+        SharedStepsContext sharedStepsContext) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.eServiceTemplateClient = clientTokenConfigurator.getEServiceTemplateClient();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
-        this.templateContext = templateContext;
     }
 
     // TODO gli step sono pieni di pattern ricorrenti, questo step ne è un'esempio. Potrebbero essere astratti e portati in classi di utility esterne.
     @Then("la cancellazione dell'e-service template è stata effettuata correttamente")
     public void checkEServiceTemplateDeleted() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
         try {
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(

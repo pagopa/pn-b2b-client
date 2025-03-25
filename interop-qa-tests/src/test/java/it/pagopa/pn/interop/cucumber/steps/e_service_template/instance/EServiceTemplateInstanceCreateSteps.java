@@ -39,7 +39,6 @@ public class EServiceTemplateInstanceCreateSteps {
     private final IEServiceTemplateClient eServiceTemplateClient;
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
-    private final EServiceTemplateStepContext templateContext;
     private final EasyRandom easyRandom;
     private final IEServiceClient eServiceClient;
 
@@ -47,8 +46,7 @@ public class EServiceTemplateInstanceCreateSteps {
 
     public EServiceTemplateInstanceCreateSteps(DataPreparationService dataPreparationService,
         ClientTokenConfigurator clientTokenConfigurator,
-        SharedStepsContext sharedStepsContext,
-        EServiceTemplateStepContext templateContext
+        SharedStepsContext sharedStepsContext
     ) {
         this.dataPreparationService = dataPreparationService;
         this.clientTokenConfigurator = clientTokenConfigurator;
@@ -56,20 +54,19 @@ public class EServiceTemplateInstanceCreateSteps {
         this.eServiceTemplateClient = clientTokenConfigurator.getEServiceTemplateClient();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
-        this.templateContext = templateContext;
-        this.easyRandom = new EasyRandom(templateContext.getEasyRandomParameters());
+        this.easyRandom = new EasyRandom(sharedStepsContext.getEServiceTemplateStepContext().getEasyRandomParameters());
         this.eServiceClient = clientTokenConfigurator.getEServiceClient();
     }
 
     @When("l'utente tenta la creazione di un nuovo e-service a partire dal template indicando solo le specifiche strettamente necessarie")
     public void createEServiceFromTemplateMinimalSpec() {
-        createEServiceFromTemplate(templateContext.getLastTemplateManaged().id(), null);
+        createEServiceFromTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), null);
     }
 
     @When("l'utente tenta la creazione di un nuovo e-service a partire dal template indicando tutte le specifiche")
     public void createEServiceFromTemplateFullSpec() {
         InstanceEServiceSeed seed = easyRandom.nextObject(InstanceEServiceSeed.class);
-        createEServiceFromTemplate(templateContext.getLastTemplateManaged().id(), seed);
+        createEServiceFromTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), seed);
     }
 
     @When("l'utente tenta la creazione di un nuovo e-service indicando un template inesistente")
@@ -90,14 +87,14 @@ public class EServiceTemplateInstanceCreateSteps {
         createEServiceFromTemplateMinimalSpec();
         checkEServiceCreated(EServiceDescriptorState.DRAFT);
 
-        if(anyNull(templateContext.getLastEServiceIdCreatedFromTemplate(), templateContext.getLastEServiceDescriptorCreatedFromTemplate())) {
+        if(anyNull(sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate(), sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorCreatedFromTemplate())) {
             throw new IllegalStateException(("Una o più precondizioni necessarie al mutamento di "
                 + "stato dell'e-service non sono rispettate: eServiceId = %s, eServiceDescriptor = %s")
-                .formatted(templateContext.getLastEServiceIdCreatedFromTemplate(), templateContext.getLastEServiceDescriptorCreatedFromTemplate()));
+                .formatted(sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate(), sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorCreatedFromTemplate()));
         }
         this.dataPreparationService.bringDescriptorToGivenState(
-            templateContext.getLastEServiceIdCreatedFromTemplate(),
-            templateContext.getLastEServiceDescriptorCreatedFromTemplate().getId(),
+            sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate(),
+            sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorCreatedFromTemplate().getId(),
             expectedState,
             false);
     }
@@ -109,7 +106,7 @@ public class EServiceTemplateInstanceCreateSteps {
                 () -> httpCallExecutor.performCall(
                     () -> eServiceClient.getEServiceTemplateInstancesWithHttpInfo(
                         sharedStepsContext.getXCorrelationId(),
-                        templateContext.getLastTemplateManaged().id()
+                        sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id()
                     ),
                     ResponseEntity::getStatusCode),
                 res -> res.getStatusCode().is2xxSuccessful() && !res.getBody().getResults().isEmpty(),
@@ -118,12 +115,12 @@ public class EServiceTemplateInstanceCreateSteps {
 
             EServiceTemplateVersionDetails eServiceSourceTemplate = this.eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
                 sharedStepsContext.getXCorrelationId(),
-                templateContext.getLastTemplateManaged().id(),
-                templateContext.getLastTemplateManaged().lastVersionId()).getBody();
+                sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(),
+                sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId()).getBody();
             Optional<EServiceTemplateInstance> eServiceCreatedFromTemplate = ((ResponseEntity<EServiceTemplateInstances>) httpCallExecutor.getResponse()).getBody()
                 .getResults()
                 .stream()
-                .filter(instance -> instance.getId().equals(templateContext.getLastEServiceIdCreatedFromTemplate()))
+                .filter(instance -> instance.getId().equals(sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate()))
                 .findAny();
 
             assertSoftly(softly -> {
@@ -135,7 +132,7 @@ public class EServiceTemplateInstanceCreateSteps {
                 if(eServiceCreatedFromTemplate.get().getDescriptors().size() != 1) {
                     throw new IllegalStateException("L'e-service appena creato ha più di un descriptor: ciò rende incerto quale descriptor considerare per le successive operazioni di test");
                 }
-                this.templateContext.setLastEServiceDescriptorCreatedFromTemplate(eServiceCreatedFromTemplate.get().getDescriptors().get(0));
+                this.sharedStepsContext.getEServiceTemplateStepContext().setLastEServiceDescriptorCreatedFromTemplate(eServiceCreatedFromTemplate.get().getDescriptors().get(0));
 
                 softly.assertThat(eServiceCreatedFromTemplate)
                     .get()
@@ -182,7 +179,7 @@ public class EServiceTemplateInstanceCreateSteps {
                 seed),
             ResponseEntity::getStatusCode);
 
-        this.templateContext.setLastEServiceIdCreatedFromTemplate(((ResponseEntity<CreatedResource>) httpCallExecutor.getResponse()).getBody().getId());
+        this.sharedStepsContext.getEServiceTemplateStepContext().setLastEServiceIdCreatedFromTemplate(((ResponseEntity<CreatedResource>) httpCallExecutor.getResponse()).getBody().getId());
         this.lastEServiceCreatedFromTemplate = seed;
     }
 }

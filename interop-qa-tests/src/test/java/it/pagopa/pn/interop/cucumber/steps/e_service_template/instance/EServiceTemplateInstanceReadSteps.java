@@ -28,25 +28,22 @@ public class EServiceTemplateInstanceReadSteps {
     private final IEServiceTemplateClient eServiceTemplateClient;
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
-    private final EServiceTemplateStepContext templateContext;
     private final IEServiceClient eServiceClient;
 
     public EServiceTemplateInstanceReadSteps(ClientTokenConfigurator clientTokenConfigurator,
-        SharedStepsContext sharedStepsContext,
-        EServiceTemplateStepContext templateContext
+        SharedStepsContext sharedStepsContext
     ) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.eServiceTemplateClient = clientTokenConfigurator.getEServiceTemplateClient();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
-        this.templateContext = templateContext;
         this.eServiceClient = clientTokenConfigurator.getEServiceClient();
     }
 
     @When("l'utente tenta la visualizzazione dell'elenco di tutte le istanze dell'e-service template")
     public void getEServiceTemplateInstances() {
-        getEserviceTemplateInstances(templateContext.getLastTemplateManaged().id());
+        getEserviceTemplateInstances(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id());
     }
 
     @When("l'utente tenta la visualizzazione dell'elenco di tutte le istanze di un e-service template inesistente")

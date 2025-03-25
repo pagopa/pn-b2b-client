@@ -28,12 +28,10 @@ public class EServiceTemplateVersionSuspendSteps {
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
     private final EServiceTemplateTestAssistant testAssistant;
-    private final EServiceTemplateStepContext templateContext;
 
     public EServiceTemplateVersionSuspendSteps(ClientTokenConfigurator clientTokenConfigurator,
         SharedStepsContext sharedStepsContext,
-        EServiceTemplateTestAssistant testAssistant,
-        EServiceTemplateStepContext templateContext
+        EServiceTemplateTestAssistant testAssistant
     ) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
@@ -41,7 +39,6 @@ public class EServiceTemplateVersionSuspendSteps {
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
         this.testAssistant = testAssistant;
-        this.templateContext = templateContext;
     }
 
     @Given("l'utente effettua la sospensione della versione dell'e-service template con successo")
@@ -52,8 +49,8 @@ public class EServiceTemplateVersionSuspendSteps {
 
     @When("l'utente tenta la sospensione della versione dell'e-service template")
     public void suspendEServiceTemplateVersion() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
         suspendEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId);
     }
 
@@ -63,7 +60,7 @@ public class EServiceTemplateVersionSuspendSteps {
          * annunciata, in quanto è il comportamento di default del client OpenApi
          * generato. Ciò implica che la chiamata non raggiungerà mai il server. Non è stato
          * trovato un modo per passare stringa vuota senza bypassare il client OpenApi. */
-        suspendEServiceTemplateVersion(templateContext.getLastTemplateManaged().id(), null);
+        suspendEServiceTemplateVersion(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), null);
     }
 
 
@@ -74,13 +71,13 @@ public class EServiceTemplateVersionSuspendSteps {
 
     @When("l'utente tenta la sospensione di una versione inesistente nell'e-service template")
     public void suspendNonExistentEServiceTemplateVersion() {
-        suspendEServiceTemplateVersion(templateContext.getLastTemplateManaged().id(), UUID.randomUUID());
+        suspendEServiceTemplateVersion(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), UUID.randomUUID());
     }
 
     @Then("la sospensione della versione dell'e-service template è stata effettuata correttamente")
     public void checkEServiceTemplateVersionSuspended() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
         try {
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(

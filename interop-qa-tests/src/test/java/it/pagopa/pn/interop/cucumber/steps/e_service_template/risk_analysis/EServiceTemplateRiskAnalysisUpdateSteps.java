@@ -33,13 +33,11 @@ public class EServiceTemplateRiskAnalysisUpdateSteps {
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
     private final EServiceTemplateTestAssistant testAssistant;
-    private final EServiceTemplateStepContext templateContext;
     private final EasyRandom easyRandom;
 
     public EServiceTemplateRiskAnalysisUpdateSteps(ClientTokenConfigurator clientTokenConfigurator,
         SharedStepsContext sharedStepsContext,
-        EServiceTemplateTestAssistant testAssistant,
-        EServiceTemplateStepContext templateContext
+        EServiceTemplateTestAssistant testAssistant
     ) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
@@ -47,13 +45,12 @@ public class EServiceTemplateRiskAnalysisUpdateSteps {
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
         this.testAssistant = testAssistant;
-        this.templateContext = templateContext;
-        this.easyRandom = new EasyRandom(templateContext.getEasyRandomParameters());
+        this.easyRandom = new EasyRandom(sharedStepsContext.getEServiceTemplateStepContext().getEasyRandomParameters());
     }
 
     @When("l'utente tenta la modifica della risk analysis dell'e-service template")
     public void editRiskAnalysisFromEServiceTemplate() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
 
         List<EServiceRiskAnalysis> riskAnalysis = eServiceTemplateClient.getEServiceTemplate(
             sharedStepsContext.getXCorrelationId(),
@@ -62,7 +59,7 @@ public class EServiceTemplateRiskAnalysisUpdateSteps {
             throw new IllegalStateException("Nessuna risk analysis presente nell'e-service template");
         }
 
-        UUID riskAnalysisId = riskAnalysis.get(templateContext.getLastAddedRiskAnalysisIndex()).getId();
+        UUID riskAnalysisId = riskAnalysis.get(sharedStepsContext.getEServiceTemplateStepContext().getLastAddedRiskAnalysisIndex()).getId();
         EServiceRiskAnalysisSeed editedRiskAnalysisSeed = easyRandom.nextObject(EServiceRiskAnalysisSeed.class);
         editRiskAnalysisFromEServiceTemplate(eServiceTemplateId, riskAnalysisId, editedRiskAnalysisSeed);
     }
@@ -75,26 +72,26 @@ public class EServiceTemplateRiskAnalysisUpdateSteps {
         // gli altri id
         List<EServiceRiskAnalysis> riskAnalysis = eServiceTemplateClient.getEServiceTemplate(
             sharedStepsContext.getXCorrelationId(),
-            templateContext.getLastTemplateManaged().id()).getRiskAnalysis();
+            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id()).getRiskAnalysis();
         if(isEmpty(riskAnalysis)) { // TODO aggiungere controlli simili anche nei passi di cancellazione risk analysis
             throw new IllegalStateException("Nessuna risk analysis presente nell'e-service template");
         }
 
-        UUID riskAnalysisId = riskAnalysis.get(templateContext.getLastAddedRiskAnalysisIndex()).getId();
+        UUID riskAnalysisId = riskAnalysis.get(sharedStepsContext.getEServiceTemplateStepContext().getLastAddedRiskAnalysisIndex()).getId();
         EServiceRiskAnalysisSeed editedRiskAnalysisSeed = new EServiceRiskAnalysisSeed();
-        editRiskAnalysisFromEServiceTemplate(templateContext.getLastTemplateManaged().id(), riskAnalysisId, editedRiskAnalysisSeed);
+        editRiskAnalysisFromEServiceTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), riskAnalysisId, editedRiskAnalysisSeed);
     }
 
     @When("l'utente tenta la modifica di una risk analysis inesistente nell'e-service template")
     public void editNonExistentRiskAnalysisFromEServiceTemplate() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
         EServiceRiskAnalysisSeed editedRiskAnalysisSeed = easyRandom.nextObject(EServiceRiskAnalysisSeed.class);
         editRiskAnalysisFromEServiceTemplate(eServiceTemplateId, UUID.randomUUID(), editedRiskAnalysisSeed);
     }
 
     @When("l'utente tenta la modifica di una risk analysis inserendo il nome di un'altra risk analysis")
     public void editRiskAnalysisFromEServiceTemplateWithSameName() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
 
         pollingService.makePolling(
             () -> httpCallExecutor.performCall(
@@ -117,7 +114,7 @@ public class EServiceTemplateRiskAnalysisUpdateSteps {
 
     @Then("la modifica della risk analysis dell'e-service è stata effettuata correttamente")
     public void checkRiskAnalysisEditedFromEServiceTemplate() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
 
         try {
             pollingService.makePolling(
@@ -126,7 +123,7 @@ public class EServiceTemplateRiskAnalysisUpdateSteps {
                         sharedStepsContext.getXCorrelationId(),
                         eServiceTemplateId),
                     ResponseEntity::getStatusCode),
-                res -> res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody()) && testAssistant.areConsistent(templateContext.getLastAddedRiskAnalysis(), res.getBody().getRiskAnalysis().get(templateContext.getLastAddedRiskAnalysisIndex())),
+                res -> res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody()) && testAssistant.areConsistent(sharedStepsContext.getEServiceTemplateStepContext().getLastAddedRiskAnalysis(), res.getBody().getRiskAnalysis().get(sharedStepsContext.getEServiceTemplateStepContext().getLastAddedRiskAnalysisIndex())),
                 "La risk analysis non è stata modificata correttamente nell'e-service template"
             );
         } catch (PollingPredicateException e) {
@@ -144,7 +141,7 @@ public class EServiceTemplateRiskAnalysisUpdateSteps {
                 throw new IllegalStateException("Nessuna risk analysis presente nell'e-service template, possibile uso errato di questo step o precedente inserimento di risk analysis non riuscito");
             }
 
-            fail("La risk analysis non è stata modificata correttamente nell'e-service template: lo stato attuale è %s, quello atteso era %s", riskAnalysis.get(0), templateContext.getLastAddedRiskAnalysis());
+            fail("La risk analysis non è stata modificata correttamente nell'e-service template: lo stato attuale è %s, quello atteso era %s", riskAnalysis.get(0), sharedStepsContext.getEServiceTemplateStepContext().getLastAddedRiskAnalysis());
         }
     }
 

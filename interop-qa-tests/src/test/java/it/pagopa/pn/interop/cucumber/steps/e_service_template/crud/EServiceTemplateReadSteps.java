@@ -29,7 +29,6 @@ public class EServiceTemplateReadSteps {
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
     private final EServiceTemplateTestAssistant testAssistant;
-    private final EServiceTemplateStepContext templateContext;
 
     private UpdateEServiceTemplateSeed lastTemplateUpdateSeed;
 
@@ -39,8 +38,7 @@ public class EServiceTemplateReadSteps {
     public EServiceTemplateReadSteps(ClientTokenConfigurator clientTokenConfigurator,
         DataPreparationService dataPreparationService,
         SharedStepsContext sharedStepsContext,
-        EServiceTemplateTestAssistant testAssistant,
-        EServiceTemplateStepContext templateContext) {
+        EServiceTemplateTestAssistant testAssistant) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.dataPreparationService = dataPreparationService;
         this.sharedStepsContext = sharedStepsContext;
@@ -48,12 +46,11 @@ public class EServiceTemplateReadSteps {
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
         this.testAssistant = testAssistant;
-        this.templateContext = templateContext;
     }
 
     @When("l'utente tenta la visualizzazione dei dettagli dell'e-service template")
     public void getEServiceTemplateDetails() {
-        getEServiceTemplateDetails(templateContext.getLastTemplateManaged().id());
+        getEServiceTemplateDetails(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id());
     }
 
     @When("l'utente tenta la visualizzazione dei dettagli di un e-service template inesistente")

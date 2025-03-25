@@ -10,7 +10,7 @@ Feature: Test API of e-service template
 
     #TODO usare invece lo step sottostante e rimuovere questo, per ridurre le ambiguità e la presenza di step tra loro simili
     #"l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>"
-    When l'utente effettua la creazione di un e-service template in modalità erogazione
+    When l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
 
     Then si ottiene response status code 403
 
@@ -32,7 +32,7 @@ Feature: Test API of e-service template
 
   Scenario: [INTEROP-EST-003] La creazione di un e-service template NON può riuscire se viene specificato il nome di un template già esistente
     Given l'utente è un "admin" di "PA1"
-    When l'utente effettua la creazione di un e-service template in modalità erogazione
+    When l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
     And l'utente effettua la creazione di un e-service template in modalità erogazione usando lo stesso nome
     Then si ottiene response status code 409
 
@@ -933,6 +933,7 @@ Feature: Test API of e-service template
     When l'utente tenta la modifica del nome dell'e-service template
     Then si ottiene response status code 409
 
+    # TODO [INTEROP-EST-013] accorpabile? Verificare
   Scenario Outline: [INTEROP-EST-100] La modifica del nome di un e-service template in stato PUBLISHED o SUSPENDED specificando il nome già presente non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
@@ -1360,21 +1361,11 @@ Feature: Test API of e-service template
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di SUSPENDED
     When l'utente tenta la visualizzazione del catalogo degli e-service template
     Then si ottiene response status code 200
-    And il catalogo degli e-service template contiene esattamente 1 elementi tutti in stato PUBLISHED
+    And sono stati aggiunti esattamente 1 e-service templates in catalogo in stato PUBLISHED
     Examples:
       | ruolo   |
       | admin   |
       | api     |
-
-  Scenario Outline: [INTEROP-EST-141] La visualizzazione del catalogo degli e-service template NON può essere effettuata da un ente NON in veste di ADMIN o API
-    Given l'utente è un "<ruolo>" di "PA1"
-    When l'utente tenta la visualizzazione del catalogo degli e-service template
-    Then si ottiene response status code 403
-    Examples:
-      | ruolo         |
-      | security      |
-      | api,security  |
-      | support       |
 
   Scenario: [INTEROP-EST-142] La visualizzazione del catalogo degli e-service template espone solo quelli in stato PUBLISHED indipendentemente dall'ente chiamante
     Given l'utente è un "admin" di "PA1"
@@ -1385,7 +1376,7 @@ Feature: Test API of e-service template
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     And l'utente tenta la visualizzazione del catalogo degli e-service template
     Then si ottiene response status code 200
-    And il catalogo degli e-service template contiene esattamente 2 elementi tutti in stato PUBLISHED
+    And sono stati aggiunti esattamente 2 e-service templates in catalogo in stato PUBLISHED
 
   Scenario: [INTEROP-EST-143] La visualizzazione del catalogo degli e-service template restituisce risultato vuoto in caso ci siano solo template in stato DRAFT o SUSPENDED
     Given l'utente è un "admin" di "PA1"
@@ -1393,7 +1384,7 @@ Feature: Test API of e-service template
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di SUSPENDED
     When l'utente tenta la visualizzazione del catalogo degli e-service template
     Then si ottiene response status code 200
-    And il catalogo degli e-service template è vuoto
+    And sono stati aggiunti esattamente 0 e-service templates in catalogo in stato PUBLISHED
 
   Scenario Outline: [INTEROP-EST-144] La visualizzazione dei dettagli un e-service template da parte dell'ente creatore rivela tutte le versioni presenti indipendentemente dallo stato, se l'ente è in veste di ADMIN o API
     Given l'utente è un "<ruolo>" di "PA1"

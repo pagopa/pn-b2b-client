@@ -33,7 +33,6 @@ public class EServiceTemplateUpdateSteps {
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
     private final EServiceTemplateTestAssistant testAssistant;
-    private final EServiceTemplateStepContext templateContext;
 
     private UpdateEServiceTemplateSeed lastTemplateUpdateSeed;
 
@@ -43,8 +42,7 @@ public class EServiceTemplateUpdateSteps {
     public EServiceTemplateUpdateSteps(ClientTokenConfigurator clientTokenConfigurator,
         DataPreparationService dataPreparationService,
         SharedStepsContext sharedStepsContext,
-        EServiceTemplateTestAssistant testAssistant,
-        EServiceTemplateStepContext templateContext) {
+        EServiceTemplateTestAssistant testAssistant) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.dataPreparationService = dataPreparationService;
         this.sharedStepsContext = sharedStepsContext;
@@ -52,14 +50,13 @@ public class EServiceTemplateUpdateSteps {
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
         this.testAssistant = testAssistant;
-        this.templateContext = templateContext;
     }
 
     @When("l'utente tenta delle modifiche all'e-service template")
     public void updateEServiceTemplate() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
         lastTemplateUpdateSeed = new UpdateEServiceTemplateSeed()
-            .name(templateContext.getLastTemplateManaged().name() + " - modificato")
+            .name(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().name() + " - modificato")
             .intendedTarget("Nuovo intended target")
             .description("Nuova descrizione")
             .technology(EServiceTechnology.SOAP)
@@ -71,12 +68,12 @@ public class EServiceTemplateUpdateSteps {
     @When("l'utente tenta di modificare l'e-service template specificando lo stesso nome")
     public void updateEServiceTemplateWithSameName() {
         UpdateEServiceTemplateSeed sameNameUpdateSeed = new UpdateEServiceTemplateSeed()
-            .name(templateContext.getLastTemplateManaged().name())
+            .name(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().name())
             .intendedTarget("Nuova intended target")
             .description("Nuova descrizione del servizio")
             .technology(EServiceTechnology.SOAP)
             .mode(EServiceMode.RECEIVE);
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
         updateEServiceTemplate(eServiceTemplateId, sameNameUpdateSeed);
     }
 
@@ -84,7 +81,7 @@ public class EServiceTemplateUpdateSteps {
     public void updateEServiceTemplateWithEmptyName() {
         UpdateEServiceTemplateSeed emptyNameUpdateSeed = new UpdateEServiceTemplateSeed()
             .name("");
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
         updateEServiceTemplate(eServiceTemplateId, emptyNameUpdateSeed);
     }
 
@@ -102,13 +99,13 @@ public class EServiceTemplateUpdateSteps {
 
     @When("l'utente tenta di modificare l'e-service template indicando una specifica vuota")
     public void updateEServiceTemplateWithEmptySpec() {
-        updateEServiceTemplate(templateContext.getLastTemplateManaged().id(), new UpdateEServiceTemplateSeed());
+        updateEServiceTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), new UpdateEServiceTemplateSeed());
     }
 
     @Then("le modifiche al template sono state applicate correttamente")
     public void checkEServiceTemplateUpdate() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
 
         try {
             pollingService.makePolling(

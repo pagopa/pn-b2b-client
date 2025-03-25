@@ -24,13 +24,11 @@ public class EServiceTemplateRiskAnalysisCreateSteps {
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
     private final EServiceTemplateTestAssistant testAssistant;
-    private final EServiceTemplateStepContext templateContext;
     private final EasyRandom easyRandom;
 
     public EServiceTemplateRiskAnalysisCreateSteps(ClientTokenConfigurator clientTokenConfigurator,
         SharedStepsContext sharedStepsContext,
-        EServiceTemplateTestAssistant testAssistant,
-        EServiceTemplateStepContext templateContext
+        EServiceTemplateTestAssistant testAssistant
     ) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
@@ -38,8 +36,7 @@ public class EServiceTemplateRiskAnalysisCreateSteps {
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
         this.testAssistant = testAssistant;
-        this.templateContext = templateContext;
-        this.easyRandom = new EasyRandom(templateContext.getEasyRandomParameters());
+        this.easyRandom = new EasyRandom(sharedStepsContext.getEServiceTemplateStepContext().getEasyRandomParameters());
     }
 
     @Given("l'utente effettua l'aggiunta di una risk analysis all'e-service template con successo")
@@ -54,7 +51,7 @@ public class EServiceTemplateRiskAnalysisCreateSteps {
 
     @When("l'utente tenta la creazione di una risk analysis indicando una specifica vuota")
     public void addRiskAnalysisWithEmptySpecToEServiceTemplate() {
-        testAssistant.addRiskAnalysisToEServiceTemplate(templateContext.getLastTemplateManaged().id(), new EServiceRiskAnalysisSeed());
+        testAssistant.addRiskAnalysisToEServiceTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), new EServiceRiskAnalysisSeed());
     }
 
     @When("l'utente tenta l'aggiunta di una risk analysis a un e-service template inesistente")
@@ -67,8 +64,8 @@ public class EServiceTemplateRiskAnalysisCreateSteps {
     public void addRiskAnalysisToEServiceTemplateWithSameName() {
         EServiceRiskAnalysisSeed sameNameRiskAnalysisSeed = easyRandom
             .nextObject(EServiceRiskAnalysisSeed.class)
-            .name(templateContext.getLastAddedRiskAnalysis().getName());
-        testAssistant.addRiskAnalysisToEServiceTemplate(templateContext.getLastTemplateManaged().id(), sameNameRiskAnalysisSeed);
+            .name(sharedStepsContext.getEServiceTemplateStepContext().getLastAddedRiskAnalysis().getName());
+        testAssistant.addRiskAnalysisToEServiceTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), sameNameRiskAnalysisSeed);
     }
 
     @Then("l'aggiunta della risk analysis all'e-service è stata effettuata correttamente")

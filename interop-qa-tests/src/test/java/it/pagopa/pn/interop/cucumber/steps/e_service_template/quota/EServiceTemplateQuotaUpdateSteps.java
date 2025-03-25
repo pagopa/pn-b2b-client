@@ -28,28 +28,25 @@ public class EServiceTemplateQuotaUpdateSteps {
     private final IEServiceTemplateClient eServiceTemplateClient;
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
-    private final EServiceTemplateStepContext templateContext;
     private final EasyRandom easyRandom;
 
     private EServiceTemplateVersionQuotasUpdateSeed lastTemplateVersionQuotasUpdateSeed;
 
     public EServiceTemplateQuotaUpdateSteps(ClientTokenConfigurator clientTokenConfigurator,
-        SharedStepsContext sharedStepsContext,
-        EServiceTemplateStepContext templateContext
+        SharedStepsContext sharedStepsContext
     ) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.eServiceTemplateClient = clientTokenConfigurator.getEServiceTemplateClient();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
-        this.templateContext = templateContext;
-        this.easyRandom = new EasyRandom(templateContext.getEasyRandomParameters());
+        this.easyRandom = new EasyRandom(sharedStepsContext.getEServiceTemplateStepContext().getEasyRandomParameters());
     }
 
     @When("l'utente tenta la modifica delle quote della versione dell'e-service template")
     public void editEServiceTemplateVersionQuotas() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
 
         lastTemplateVersionQuotasUpdateSeed = nextQuotasUpdateSeed();
         editEServiceTemplateVersionQuotas(eServiceTemplateId, eServiceTemplateVersionId, lastTemplateVersionQuotasUpdateSeed);
@@ -67,15 +64,15 @@ public class EServiceTemplateQuotaUpdateSteps {
     @When("l'utente tenta la modifica delle quote della versione dell'e-service template indicando una specifica vuota")
     public void editEServiceTemplateVersionQuotasWithEmptySpec() {
         editEServiceTemplateVersionQuotas(
-            templateContext.getLastTemplateManaged().id(),
-            templateContext.getLastTemplateManaged().lastVersionId(),
+            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(),
+            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId(),
             new EServiceTemplateVersionQuotasUpdateSeed());
     }
 
     @When("l'utente tenta la modifica delle quote della versione dell'e-service template specificando un \"dailyCallsTotal\" inferiore a \"dailyCallsPerConsumer\"")
     public void editEServiceTemplateVersionQuotasWithDailyCallsTotalLessThanDailyCallsPerConsumer() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
 
         lastTemplateVersionQuotasUpdateSeed = nextQuotasUpdateSeed();
         lastTemplateVersionQuotasUpdateSeed.setDailyCallsTotal(abs(lastTemplateVersionQuotasUpdateSeed.getDailyCallsPerConsumer() - 1));
@@ -91,7 +88,7 @@ public class EServiceTemplateQuotaUpdateSteps {
 
     @When("l'utente tenta la modifica delle quote di una versione inesistente dell'e-service template")
     public void editEServiceTemplateNonExistentVersionQuotas() {
-        editEServiceTemplateVersionQuotas(templateContext.getLastTemplateManaged().id(), UUID.randomUUID(), nextQuotasUpdateSeed());
+        editEServiceTemplateVersionQuotas(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), UUID.randomUUID(), nextQuotasUpdateSeed());
     }
 
     @Then("la modifica delle quote della versione dell'e-service template è stata effettuata correttamente")
@@ -101,8 +98,8 @@ public class EServiceTemplateQuotaUpdateSteps {
                 () -> httpCallExecutor.performCall( // TODO usare la versione invece del template
                     () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
                         sharedStepsContext.getXCorrelationId(),
-                        templateContext.getLastTemplateManaged().id(),
-                        templateContext.getLastTemplateManaged().lastVersionId()),
+                        sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(),
+                        sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId()),
                     ResponseEntity::getStatusCode),
                 res -> {
                     if(res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody())) {

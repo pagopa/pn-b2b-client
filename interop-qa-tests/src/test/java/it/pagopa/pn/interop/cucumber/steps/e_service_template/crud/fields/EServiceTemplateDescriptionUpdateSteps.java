@@ -26,27 +26,24 @@ public class EServiceTemplateDescriptionUpdateSteps {
     private final IEServiceTemplateClient eServiceTemplateClient;
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
-    private final EServiceTemplateStepContext templateContext;
     private final EasyRandom easyRandom;
 
     private EServiceTemplateDescriptionUpdateSeed lastTemplateDescriptionUpdateSeed;
 
     public EServiceTemplateDescriptionUpdateSteps(ClientTokenConfigurator clientTokenConfigurator,
-                                SharedStepsContext sharedStepsContext,
-                                EServiceTemplateStepContext templateContext
+                                SharedStepsContext sharedStepsContext
         ) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.eServiceTemplateClient = clientTokenConfigurator.getEServiceTemplateClient();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
-        this.templateContext = templateContext;
-        this.easyRandom = new EasyRandom(templateContext.getEasyRandomParameters());
+        this.easyRandom = new EasyRandom(sharedStepsContext.getEServiceTemplateStepContext().getEasyRandomParameters());
     }
 
     @When("l'utente tenta la modifica della descrizione dell'e-service template")
     public void editEServiceTemplateDescription() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
+        UUID eServiceTemplateId = getTemplateContext().getLastTemplateManaged().id();
         lastTemplateDescriptionUpdateSeed = easyRandom.nextObject(
             EServiceTemplateDescriptionUpdateSeed.class);
         editEServiceTemplateDescription(eServiceTemplateId, lastTemplateDescriptionUpdateSeed);
@@ -54,7 +51,7 @@ public class EServiceTemplateDescriptionUpdateSteps {
 
     @When("l'utente tenta la modifica della descrizione dell'e-service template specificando la stessa descrizione")
     public void editEServiceTemplateDescriptionWithSameDescription() {
-        editEServiceTemplateDescriptionWith(templateContext.getLastTemplateManaged().eServiceDescription());
+        editEServiceTemplateDescriptionWith(getTemplateContext().getLastTemplateManaged().eServiceDescription());
     }
 
     @When("l'utente tenta la modifica della descrizione dell'e-service template specificando la stringa vuota")
@@ -74,7 +71,7 @@ public class EServiceTemplateDescriptionUpdateSteps {
 
     @Then("la modifica della descrizione dell'e-service template è stata effettuata correttamente")
     public void checkEServiceTemplateDescriptionEdited() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
+        UUID eServiceTemplateId = getTemplateContext().getLastTemplateManaged().id();
         try {
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(
@@ -98,7 +95,7 @@ public class EServiceTemplateDescriptionUpdateSteps {
     }
 
     private void editEServiceTemplateDescriptionWith(String description) {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
+        UUID eServiceTemplateId = getTemplateContext().getLastTemplateManaged().id();
         lastTemplateDescriptionUpdateSeed = easyRandom.nextObject(EServiceTemplateDescriptionUpdateSeed.class)
             .description(description);
         editEServiceTemplateDescription(eServiceTemplateId, lastTemplateDescriptionUpdateSeed);
@@ -114,5 +111,10 @@ public class EServiceTemplateDescriptionUpdateSteps {
                 eServiceTemplateId,
                 lastTemplateDescriptionUpdateSeed),
             ResponseEntity::getStatusCode);
+    }
+    
+    // TODO candidato a eventuale superclasse di tutti gli step e-service template
+    private EServiceTemplateStepContext getTemplateContext() {
+        return sharedStepsContext.getEServiceTemplateStepContext();
     }
 }
