@@ -27,12 +27,10 @@ public class EServiceTemplateVersionReactivateSteps {
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
     private final EServiceTemplateTestAssistant testAssistant;
-    private final EServiceTemplateStepContext templateContext;
 
     public EServiceTemplateVersionReactivateSteps(ClientTokenConfigurator clientTokenConfigurator,
         SharedStepsContext sharedStepsContext,
-        EServiceTemplateTestAssistant testAssistant,
-        EServiceTemplateStepContext templateContext
+        EServiceTemplateTestAssistant testAssistant
     ) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
@@ -40,7 +38,6 @@ public class EServiceTemplateVersionReactivateSteps {
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
         this.testAssistant = testAssistant;
-        this.templateContext = templateContext;
     }
 
     @When("l'utente effettua la riattivazione dell'e-service template")
@@ -48,14 +45,14 @@ public class EServiceTemplateVersionReactivateSteps {
         String userToken = sharedStepsContext.getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);
         this.testAssistant.activateEServiceTemplate(
-            templateContext.getLastTemplateManaged().id(),
-            templateContext.getLastTemplateManaged().lastVersionId());
+            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(),
+            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId());
     }
 
     @When("l'utente tenta la riattivazione della versione dell'e-service template")
     public void reactivateEServiceTemplateVersion() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
         reactivateEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId);
     }
 
@@ -65,7 +62,7 @@ public class EServiceTemplateVersionReactivateSteps {
          * annunciata, in quanto è il comportamento di default del client OpenApi
          * generato. Ciò implica che la chiamata non raggiungerà mai il server. Non è stato
          * trovato un modo per passare stringa vuota senza bypassare il client OpenApi. */
-        reactivateEServiceTemplateVersion(templateContext.getLastTemplateManaged().id(), null);
+        reactivateEServiceTemplateVersion(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), null);
     }
 
     @When("l'utente tenta la riattivazione di una versione di un e-service template inesistente")
@@ -75,15 +72,15 @@ public class EServiceTemplateVersionReactivateSteps {
 
     @When("l'utente tenta la riattivazione di una versione inesistente nell'e-service template")
     public void reactivateNonExistentEServiceTemplateVersion() {
-        reactivateEServiceTemplateVersion(templateContext.getLastTemplateManaged().id(), UUID.randomUUID());
+        reactivateEServiceTemplateVersion(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), UUID.randomUUID());
     }
 
     // TODO gli step delle classi andrebbero ordinati per Given -> When -> Then, rinominando gli And in modo da rendere chiaro il contesto
 
     @Then("la riattivazione della versione dell'e-service template è stata effettuata correttamente")
     public void checkEServiceTemplateVersionReactivated() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
         try {
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(

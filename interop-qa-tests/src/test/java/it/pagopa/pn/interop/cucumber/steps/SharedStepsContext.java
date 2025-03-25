@@ -8,6 +8,7 @@ import it.pagopa.pn.interop.cucumber.steps.common.ClientCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.DelegationCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
+import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +36,7 @@ public class SharedStepsContext {
     private PurposeCommonContext purposeCommonContext;
     private EServicesCommonContext eServicesCommonContext;
     private DelegationCommonContext delegationCommonContext;
+    private EServiceTemplateStepContext eServiceTemplateStepContext;
 
     public SharedStepsContext(
         HttpCallExecutor httpCallExecutor,
@@ -52,6 +54,7 @@ public class SharedStepsContext {
         purposeCommonContext = new PurposeCommonContext();
         eServicesCommonContext = new EServicesCommonContext();
         delegationCommonContext = new DelegationCommonContext();
+        eServiceTemplateStepContext = new EServiceTemplateStepContext();
     }
 
     public String getXCorrelationId() {

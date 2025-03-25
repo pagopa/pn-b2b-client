@@ -27,7 +27,6 @@ public class EServiceTemplateNameUpdateSteps {
     private final IEServiceTemplateClient eServiceTemplateClient;
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
-    private final EServiceTemplateStepContext templateContext;
     private final EServiceTemplateTestAssistant testAssistant;
 
     private EServiceTemplateNameUpdateSeed lastTemplateNameUpdateSeed;
@@ -35,7 +34,6 @@ public class EServiceTemplateNameUpdateSteps {
 
     public EServiceTemplateNameUpdateSteps(ClientTokenConfigurator clientTokenConfigurator,
                                 SharedStepsContext sharedStepsContext,
-                                EServiceTemplateStepContext templateContext,
                                 EServiceTemplateTestAssistant testAssistant
         ) {
         this.clientTokenConfigurator = clientTokenConfigurator;
@@ -43,14 +41,13 @@ public class EServiceTemplateNameUpdateSteps {
         this.eServiceTemplateClient = clientTokenConfigurator.getEServiceTemplateClient();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
-        this.templateContext = templateContext;
-        this.easyRandom = new EasyRandom(templateContext.getEasyRandomParameters());
+        this.easyRandom = new EasyRandom(sharedStepsContext.getEServiceTemplateStepContext().getEasyRandomParameters());
         this.testAssistant = testAssistant;
     }
 
     @When("l'utente tenta la modifica del nome dell'e-service template")
     public void editEServiceTemplateName() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
         lastTemplateNameUpdateSeed = easyRandom.nextObject(EServiceTemplateNameUpdateSeed.class)
             .name(testAssistant.nextEServiceTemplateName());
         editEServiceTemplateName(eServiceTemplateId, lastTemplateNameUpdateSeed);
@@ -58,7 +55,7 @@ public class EServiceTemplateNameUpdateSteps {
 
     @When("l'utente tenta la modifica del nome dell'e-service template specificando lo stesso nome")
     public void editEServiceTemplateNameWithSameName() {
-        editEServiceTemplateNameWith(templateContext.getLastTemplateManaged().name());
+        editEServiceTemplateNameWith(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().name());
     }
 
     @When("l'utente tenta la modifica del nome dell'e-service template specificando la stringa vuota")
@@ -78,7 +75,7 @@ public class EServiceTemplateNameUpdateSteps {
 
     @Then("la modifica del nome dell'e-service template è stata effettuata correttamente")
     public void checkEServiceTemplateNameEdited() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
         try {
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(
@@ -100,7 +97,7 @@ public class EServiceTemplateNameUpdateSteps {
     }
 
     private void editEServiceTemplateNameWith(String name) {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
         lastTemplateNameUpdateSeed = easyRandom.nextObject(EServiceTemplateNameUpdateSeed.class)
             .name(name);
         editEServiceTemplateName(eServiceTemplateId, lastTemplateNameUpdateSeed);

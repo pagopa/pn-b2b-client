@@ -30,7 +30,6 @@ public class EServiceTemplateVersionDeleteSteps {
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
     private final EServiceTemplateTestAssistant testAssistant;
-    private final EServiceTemplateStepContext templateContext;
     private final EServiceTemplateInfoMapper templateInfoMapper;
     private final DescriptorAttributesMapper descriptorAttributesMapper;
 
@@ -39,7 +38,6 @@ public class EServiceTemplateVersionDeleteSteps {
     public EServiceTemplateVersionDeleteSteps(ClientTokenConfigurator clientTokenConfigurator,
         SharedStepsContext sharedStepsContext,
         EServiceTemplateTestAssistant testAssistant,
-        EServiceTemplateStepContext templateContext,
         EServiceTemplateInfoMapper templateInfoMapper,
         DescriptorAttributesMapper descriptorAttributesMapper
     ) {
@@ -49,7 +47,6 @@ public class EServiceTemplateVersionDeleteSteps {
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
         this.testAssistant = testAssistant;
-        this.templateContext = templateContext;
         this.templateInfoMapper = templateInfoMapper;
         this.descriptorAttributesMapper = descriptorAttributesMapper;
     }
@@ -58,13 +55,13 @@ public class EServiceTemplateVersionDeleteSteps {
     public void deleteEServiceTemplateVersionSuccessfully() {
         deleteEServiceTemplateVersion();
         checkEServiceTemplateVersionDeleted();
-        this.lastDeletedVersion = templateContext.getLastTemplateManaged().lastVersionId();
+        this.lastDeletedVersion = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
     }
 
     @When("l'utente tenta la cancellazione della versione dell'e-service template")
     public void deleteEServiceTemplateVersion() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
         deleteEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId);
     }
 
@@ -74,12 +71,12 @@ public class EServiceTemplateVersionDeleteSteps {
          * annunciata, in quanto è il comportamento di default del client OpenApi
          * generato. Ciò implica che la chiamata non raggiungerà mai il server. Non è stato
          * trovato un modo per passare stringa vuota senza bypassare il client OpenApi. */
-        deleteEServiceTemplateVersion(templateContext.getLastTemplateManaged().id(), null);
+        deleteEServiceTemplateVersion(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), null);
     }
 
     @Then("la cancellazione della versione dell'e-service template è stata effettuata correttamente")
     public void checkEServiceTemplateVersionDeleted() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
         try {
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(
@@ -102,12 +99,12 @@ public class EServiceTemplateVersionDeleteSteps {
 
     @When("l'utente tenta la cancellazione di una versione inesistente dell'e-service template")
     public void deleteNonExistentEServiceTemplateVersion() {
-        deleteEServiceTemplateVersion(templateContext.getLastTemplateManaged().id(), UUID.randomUUID());
+        deleteEServiceTemplateVersion(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), UUID.randomUUID());
     }
 
     @When("l'utente tenta la cancellazione della versione dell'e-service template già cancellata")
     public void deleteAlreadyDeletedEServiceTemplateVersion() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
         UUID eServiceTemplateVersionId = this.lastDeletedVersion;
         deleteEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId);
     }

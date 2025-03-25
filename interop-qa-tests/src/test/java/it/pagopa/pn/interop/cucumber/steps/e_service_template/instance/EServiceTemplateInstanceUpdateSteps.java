@@ -31,7 +31,6 @@ public class EServiceTemplateInstanceUpdateSteps {
     private final IEServiceTemplateClient eServiceTemplateClient;
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
-    private final EServiceTemplateStepContext templateContext;
     private final EasyRandom easyRandom;
     private final IEServiceClient eServiceClient;
 
@@ -39,8 +38,7 @@ public class EServiceTemplateInstanceUpdateSteps {
 
     public EServiceTemplateInstanceUpdateSteps(DataPreparationService dataPreparationService,
         ClientTokenConfigurator clientTokenConfigurator,
-        SharedStepsContext sharedStepsContext,
-        EServiceTemplateStepContext templateContext
+        SharedStepsContext sharedStepsContext
     ) {
         this.dataPreparationService = dataPreparationService;
         this.clientTokenConfigurator = clientTokenConfigurator;
@@ -48,14 +46,13 @@ public class EServiceTemplateInstanceUpdateSteps {
         this.eServiceTemplateClient = clientTokenConfigurator.getEServiceTemplateClient();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
-        this.templateContext = templateContext;
-        this.easyRandom = new EasyRandom(templateContext.getEasyRandomParameters());
+        this.easyRandom = new EasyRandom(sharedStepsContext.getEServiceTemplateStepContext().getEasyRandomParameters());
         this.eServiceClient = clientTokenConfigurator.getEServiceClient();
     }
 
     @When("l'utente tenta la modifica dei campi dell'istanza dell'e-service template")
     public void editEServiceInstanceFields() {
-        UUID eServiceId = templateContext.getLastEServiceIdCreatedFromTemplate();
+        UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
         lastUpdateEServiceTemplateInstanceSeed = easyRandom.nextObject(
             UpdateEServiceTemplateInstanceSeed.class);
         editEServiceInstanceFields(eServiceId, lastUpdateEServiceTemplateInstanceSeed);
@@ -83,12 +80,12 @@ public class EServiceTemplateInstanceUpdateSteps {
                 () -> httpCallExecutor.performCall(
                     () -> eServiceClient.getEServiceTemplateInstancesWithHttpInfo(
                         sharedStepsContext.getXCorrelationId(),
-                        templateContext.getLastTemplateManaged().id()),
+                        sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id()),
                     ResponseEntity::getStatusCode),
                 res ->
                     res.getStatusCode().is2xxSuccessful() &&
                         nonNull(res.getBody()) &&
-                        res.getBody().getResults().stream().anyMatch(instance -> instance.getId().equals(templateContext.getLastEServiceIdCreatedFromTemplate())) &&
+                        res.getBody().getResults().stream().anyMatch(instance -> instance.getId().equals(sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate())) &&
                         res.getBody().getResults().stream().anyMatch(instance -> instance.getInstanceLabel().equals(lastUpdateEServiceTemplateInstanceSeed.getInstanceLabel())),
                 "L'istanza non è presente nell'elenco delle istanze dell'e-service template oppure non è stata modificata correttamente. Visionare i log delle call HTTP per maggiori dettagli."
             );
@@ -105,9 +102,9 @@ public class EServiceTemplateInstanceUpdateSteps {
     @Given("l'utente effettua l'aggiunta di una versione in stato {eServiceDescriptorState} all'e-service con successo")
     public void createEServiceVersionDraftSuccessfully(EServiceDescriptorState descriptorState) {
         UUID newDescriptor = this.dataPreparationService.createNextDraftDescriptor(
-            templateContext.getLastEServiceIdCreatedFromTemplate());
+            sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate());
         this.dataPreparationService.bringDescriptorToGivenState(
-            templateContext.getLastEServiceIdCreatedFromTemplate(),
+            sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate(),
             newDescriptor,
             descriptorState,
             false

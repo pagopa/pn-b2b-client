@@ -23,14 +23,12 @@ public class EServiceTemplateDocumentReadSteps {
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
     private final EServiceTemplateTestAssistant testAssistant;
-    private final EServiceTemplateStepContext templateContext;
 
     private UpdateEServiceTemplateVersionDocumentSeed lastDocumentUpdateSeed;
 
     public EServiceTemplateDocumentReadSteps(ClientTokenConfigurator clientTokenConfigurator,
         SharedStepsContext sharedStepsContext,
-        EServiceTemplateTestAssistant testAssistant,
-        EServiceTemplateStepContext templateContext
+        EServiceTemplateTestAssistant testAssistant
     ) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
@@ -38,20 +36,19 @@ public class EServiceTemplateDocumentReadSteps {
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
         this.testAssistant = testAssistant;
-        this.templateContext = templateContext;
     }
 
     @When("l'utente tenta il reperimento del documento dalla versione dell'e-service template")
     public void getDocumentFromEServiceTemplateVersion() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
-        getDocumentFromEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, templateContext.getLastAddedDocument().id());
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
+        getDocumentFromEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, sharedStepsContext.getEServiceTemplateStepContext().getLastAddedDocument().id());
     }
 
     @When("l'utente tenta il reperimento del documento dalla versione dell'e-service template indicando un identificativo vuoto")
     public void getUnspecifiedDocumentFromEServiceTemplateVersion() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
 
         /* DEV. NOTE 11/03/2025: il passaggio di NULL come identificativo è una BAD_REQUEST
          * annunciata, in quanto è il comportamento di default del client OpenApi
@@ -67,8 +64,8 @@ public class EServiceTemplateDocumentReadSteps {
 
     @When("l'utente tenta il reperimento di un documento inesistente dalla versione dell'e-service template")
     public void getNonExistentDocumentFromEServiceTemplateVersion() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
         getDocumentFromEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, UUID.randomUUID());
     }
 

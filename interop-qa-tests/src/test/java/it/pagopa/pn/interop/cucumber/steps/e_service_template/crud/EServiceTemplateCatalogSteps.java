@@ -27,17 +27,14 @@ public class EServiceTemplateCatalogSteps {
     private final IEServiceTemplateClient eServiceTemplateClient;
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
-    private final EServiceTemplateStepContext templateContext;
 
     public EServiceTemplateCatalogSteps(ClientTokenConfigurator clientTokenConfigurator,
-        SharedStepsContext sharedStepsContext,
-        EServiceTemplateStepContext templateContext) {
+        SharedStepsContext sharedStepsContext) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.eServiceTemplateClient = clientTokenConfigurator.getEServiceTemplateClient();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
-        this.templateContext = templateContext;
     }
 
     @When("l'utente tenta la visualizzazione del catalogo degli e-service template")
@@ -56,7 +53,7 @@ public class EServiceTemplateCatalogSteps {
          * con un framework con le Precondition come Google Guava. Spunti: https://www.sw-engineering-candies.com/blog-1/comparison-of-ways-to-check-preconditions-in-java
          */
 
-        List<CatalogEServiceTemplate> templatesInCatalog = this.getFromCatalogBy(templateContext.getTemplatesManaged());
+        List<CatalogEServiceTemplate> templatesInCatalog = this.getFromCatalogBy(sharedStepsContext.getEServiceTemplateStepContext().getTemplatesManaged());
         Condition<CatalogEServiceTemplate> ofExpectedState = new Condition<>(
             template -> template.getPublishedVersion().getState() == expectedState,
             "of state %s", expectedState);

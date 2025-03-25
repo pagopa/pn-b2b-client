@@ -32,7 +32,6 @@ public class EServiceTemplateVersionCreateSteps {
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
     private final EServiceTemplateTestAssistant testAssistant;
-    private final EServiceTemplateStepContext templateContext;
     private final EServiceTemplateInfoMapper templateInfoMapper;
 
     /* TODO 13/03/2025: molte di queste assegnazioni sono condivise da tutte la classi di step.
@@ -41,7 +40,6 @@ public class EServiceTemplateVersionCreateSteps {
     public EServiceTemplateVersionCreateSteps(ClientTokenConfigurator clientTokenConfigurator,
         SharedStepsContext sharedStepsContext,
         EServiceTemplateTestAssistant testAssistant,
-        EServiceTemplateStepContext templateContext,
         EServiceTemplateInfoMapper templateInfoMapper
     ) {
         this.clientTokenConfigurator = clientTokenConfigurator;
@@ -50,7 +48,6 @@ public class EServiceTemplateVersionCreateSteps {
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
         this.testAssistant = testAssistant;
-        this.templateContext = templateContext;
         this.templateInfoMapper = templateInfoMapper;
     }
 
@@ -67,19 +64,19 @@ public class EServiceTemplateVersionCreateSteps {
 
     @When("l'utente tenta la creazione di una ulteriore versione nell'e-service template")
     public void createAnotherEServiceTemplateVersion() {
-        createAnotherEServiceTemplateVersion(templateContext.getLastTemplateManaged().id());
+        createAnotherEServiceTemplateVersion(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id());
     }
 
     @When("l'utente aggiunge all'e-service template una versione in stato {eServiceTemplateVersionState}")
     public void addEServiceTemplateVersion(EServiceTemplateVersionState state) {
-        createAnotherEServiceTemplateVersion(templateContext.getLastTemplateManaged().id());
+        createAnotherEServiceTemplateVersion(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id());
         testAssistant.mutateLastVersionState(state);
         checkEServiceTemplateVersionCreated();
     }
 
     @Then("la creazione di una ulteriore versione nell'e-service template è stata effettuata correttamente")
     public void checkEServiceTemplateVersionCreated() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
         try {
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(
@@ -87,7 +84,7 @@ public class EServiceTemplateVersionCreateSteps {
                         sharedStepsContext.getXCorrelationId(),
                         eServiceTemplateId),
                     ResponseEntity::getStatusCode),
-                res -> res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody()) && res.getBody().getVersions().stream().anyMatch(v -> v.getId().equals(templateContext.getLastTemplateManaged().lastVersionId())),
+                res -> res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody()) && res.getBody().getVersions().stream().anyMatch(v -> v.getId().equals(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId())),
                 "La versione dell'e-service template non è stata creata correttamente"
             );
         } catch (PollingPredicateException e) {
@@ -107,9 +104,9 @@ public class EServiceTemplateVersionCreateSteps {
         if(httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             UUID idOfNewVersion = ((ResponseEntity<CreatedResource>) httpCallExecutor.getResponse()).getBody()
                 .getId();
-            templateContext.addTemplateManaged(this.templateInfoMapper.withVersionId(templateContext.getLastTemplateManaged(), idOfNewVersion));
+            sharedStepsContext.getEServiceTemplateStepContext().addTemplateManaged(this.templateInfoMapper.withVersionId(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged(), idOfNewVersion));
         } else {
-            templateContext.addTemplateManaged(this.templateInfoMapper.withVersionId(templateContext.getLastTemplateManaged(), null));
+            sharedStepsContext.getEServiceTemplateStepContext().addTemplateManaged(this.templateInfoMapper.withVersionId(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged(), null));
         }
     }
 }

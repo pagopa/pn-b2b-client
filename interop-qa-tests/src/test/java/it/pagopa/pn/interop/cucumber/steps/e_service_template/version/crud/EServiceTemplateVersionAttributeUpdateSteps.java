@@ -34,7 +34,6 @@ public class EServiceTemplateVersionAttributeUpdateSteps {
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
     private final EServiceTemplateTestAssistant testAssistant;
-    private final EServiceTemplateStepContext templateContext;
     private final DescriptorAttributesMapper descriptorAttributesMapper;
     private final EasyRandom easyRandom;
 
@@ -43,7 +42,6 @@ public class EServiceTemplateVersionAttributeUpdateSteps {
     public EServiceTemplateVersionAttributeUpdateSteps(ClientTokenConfigurator clientTokenConfigurator,
         SharedStepsContext sharedStepsContext,
         EServiceTemplateTestAssistant testAssistant,
-        EServiceTemplateStepContext templateContext,
         DescriptorAttributesMapper descriptorAttributesMapper
     ) {
         this.clientTokenConfigurator = clientTokenConfigurator;
@@ -52,18 +50,17 @@ public class EServiceTemplateVersionAttributeUpdateSteps {
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
         this.testAssistant = testAssistant;
-        this.templateContext = templateContext;
         this.descriptorAttributesMapper = descriptorAttributesMapper;
-        this.easyRandom = new EasyRandom(templateContext.getEasyRandomParameters());
+        this.easyRandom = new EasyRandom(sharedStepsContext.getEServiceTemplateStepContext().getEasyRandomParameters());
     }
 
     @When("l'utente tenta la modifica degli attributi della versione dell'e-service template")
     public void editEServiceTemplateVersionAttributes() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
 
         //lastTemplateVersionUpdateSeed contiene, tra le altre, cose, gli attributi aggiunti l'ultima volta
-        lastAttributesUpdateSeed = this.descriptorAttributesMapper.mapSeedsToSeeds(this.templateContext.getLastTemplateVersionUpdateSeed().getAttributes());
+        lastAttributesUpdateSeed = this.descriptorAttributesMapper.mapSeedsToSeeds(this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateVersionUpdateSeed().getAttributes());
 
         List<List<DescriptorAttributeSeed>> certified = lastAttributesUpdateSeed.getCertified();
         certified.add(List.of(new DescriptorAttributeSeed())); // aggiungo 1 attributo
@@ -79,16 +76,16 @@ public class EServiceTemplateVersionAttributeUpdateSteps {
     @When("l'utente tenta la modifica degli attributi della versione dell'e-service template indicando una specifica vuota")
     public void editEServiceTemplateVersionAttributesWithEmptySpec() {
         editEServiceTemplateVersionAttributes(
-            templateContext.getLastTemplateManaged().id(),
-            templateContext.getLastTemplateManaged().lastVersionId(),
+            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(),
+            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId(),
             new DescriptorAttributesSeed());
     }
 
     @When("l'utente tenta la modifica degli attributi della versione dell'e-service template aggiungendone di nuovi")
     public void editEServiceTemplateVersionAttributesAddingNew() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
-        lastAttributesUpdateSeed = this.descriptorAttributesMapper.mapSeedsToSeeds(this.templateContext.getLastTemplateVersionUpdateSeed().getAttributes());
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
+        lastAttributesUpdateSeed = this.descriptorAttributesMapper.mapSeedsToSeeds(this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateVersionUpdateSeed().getAttributes());
         DescriptorAttributeSeed newAttribute = easyRandom.nextObject(DescriptorAttributeSeed.class);
         lastAttributesUpdateSeed.getCertified().add(List.of(newAttribute));
         editEServiceTemplateVersionAttributes(eServiceTemplateId, eServiceTemplateVersionId, lastAttributesUpdateSeed);
@@ -101,7 +98,7 @@ public class EServiceTemplateVersionAttributeUpdateSteps {
 
     @When("l'utente tenta la modifica degli attributi di una versione inesistente dell'e-service template")
     public void editEServiceTemplateNonExistentVersionAttributes() {
-        editEServiceTemplateVersionAttributes(templateContext.getLastTemplateManaged().id(), UUID.randomUUID(), nextDescriptorAttributesSeed());
+        editEServiceTemplateVersionAttributes(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), UUID.randomUUID(), nextDescriptorAttributesSeed());
     }
 
     @Then("la modifica degli attributi della versione dell'e-service template è stata effettuata correttamente")
@@ -111,8 +108,8 @@ public class EServiceTemplateVersionAttributeUpdateSteps {
                 () -> httpCallExecutor.performCall(
                     () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
                         sharedStepsContext.getXCorrelationId(),
-                        templateContext.getLastTemplateManaged().id(),
-                        templateContext.getLastTemplateManaged().lastVersionId()),
+                        sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(),
+                        sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId()),
                     ResponseEntity::getStatusCode),
                 res -> {
                     if(res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody())) {

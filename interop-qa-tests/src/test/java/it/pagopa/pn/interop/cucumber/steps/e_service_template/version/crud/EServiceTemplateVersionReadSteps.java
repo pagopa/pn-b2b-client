@@ -32,7 +32,6 @@ public class EServiceTemplateVersionReadSteps {
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
     private final EServiceTemplateTestAssistant testAssistant;
-    private final EServiceTemplateStepContext templateContext;
     private final EServiceTemplateInfoMapper templateInfoMapper;
     private final DescriptorAttributesMapper descriptorAttributesMapper;
 
@@ -42,7 +41,6 @@ public class EServiceTemplateVersionReadSteps {
     public EServiceTemplateVersionReadSteps(ClientTokenConfigurator clientTokenConfigurator,
         SharedStepsContext sharedStepsContext,
         EServiceTemplateTestAssistant testAssistant,
-        EServiceTemplateStepContext templateContext,
         EServiceTemplateInfoMapper templateInfoMapper,
         DescriptorAttributesMapper descriptorAttributesMapper
     ) {
@@ -52,14 +50,13 @@ public class EServiceTemplateVersionReadSteps {
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
         this.testAssistant = testAssistant;
-        this.templateContext = templateContext;
         this.templateInfoMapper = templateInfoMapper;
         this.descriptorAttributesMapper = descriptorAttributesMapper;
     }
 
     @When("l'utente tenta la visualizzazione dei dettagli della versione dell'e-service template")
     public void getEServiceTemplateVersionDetails() {
-        getEServiceTemplateVersionDetails(templateContext.getLastTemplateManaged().id(), templateContext.getLastTemplateManaged().lastVersionId());
+        getEServiceTemplateVersionDetails(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId());
     }
 
     @When("l'utente tenta la visualizzazione dei dettagli della versione dell'e-service template indicando un identificativo vuoto")
@@ -68,7 +65,7 @@ public class EServiceTemplateVersionReadSteps {
          * annunciata, in quanto è il comportamento di default del client OpenApi
          * generato. Ciò implica che la chiamata non raggiungerà mai il server. Non è stato
          * trovato un modo per passare stringa vuota senza bypassare il client OpenApi. */
-        getEServiceTemplateVersionDetails(templateContext.getLastTemplateManaged().id(), null);
+        getEServiceTemplateVersionDetails(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), null);
     }
 
     @When("l'utente tenta la visualizzazione dei dettagli di una versione di un e-service template inesistente")
@@ -92,8 +89,8 @@ public class EServiceTemplateVersionReadSteps {
     @Then("i dettagli della versione dell'e-service template sono coerenti con quelli inseriti")
     public void checkEServiceTemplateVersionDetailsConsistent() {
         EServiceTemplateVersionDetails version = ((ResponseEntity<EServiceTemplateVersionDetails>) httpCallExecutor.getResponse()).getBody();
-        assertThat(areConsistent(this.templateContext.getLastTemplateVersionUpdateSeed(), version))
-            .withFailMessage("I dettagli della versione dell'e-service template ottenuti '%s' non sono coerenti con quelli inseriti '%s'", version, this.templateContext.getLastTemplateVersionUpdateSeed())
+        assertThat(areConsistent(this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateVersionUpdateSeed(), version))
+            .withFailMessage("I dettagli della versione dell'e-service template ottenuti '%s' non sono coerenti con quelli inseriti '%s'", version, this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateVersionUpdateSeed())
             .isTrue();
     }
 

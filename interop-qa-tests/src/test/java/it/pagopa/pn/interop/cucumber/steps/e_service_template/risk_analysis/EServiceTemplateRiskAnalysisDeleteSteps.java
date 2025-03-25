@@ -27,12 +27,10 @@ public class EServiceTemplateRiskAnalysisDeleteSteps {
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
     private final EServiceTemplateTestAssistant testAssistant;
-    private final EServiceTemplateStepContext templateContext;
 
     public EServiceTemplateRiskAnalysisDeleteSteps(ClientTokenConfigurator clientTokenConfigurator,
         SharedStepsContext sharedStepsContext,
-        EServiceTemplateTestAssistant testAssistant,
-        EServiceTemplateStepContext templateContext
+        EServiceTemplateTestAssistant testAssistant
     ) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
@@ -40,7 +38,6 @@ public class EServiceTemplateRiskAnalysisDeleteSteps {
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
         this.testAssistant = testAssistant;
-        this.templateContext = templateContext;
     }
 
     @Given("l'utente effettua la cancellazione della risk analysis dell'e-service template con successo")
@@ -51,7 +48,7 @@ public class EServiceTemplateRiskAnalysisDeleteSteps {
 
     @When("l'utente tenta la cancellazione della risk analysis dell'e-service template")
     public void deleteRiskAnalysisFromEServiceTemplate() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
 
         UUID riskAnalysisId = eServiceTemplateClient.getEServiceTemplate(
             sharedStepsContext.getXCorrelationId(),
@@ -65,17 +62,17 @@ public class EServiceTemplateRiskAnalysisDeleteSteps {
          * è una BAD_REQUEST annunciata, in quanto è il comportamento di default del client OpenApi
          * generato. Ciò implica che la chiamata non raggiungerà mai il server. Non è stato
          * trovato un modo per passare stringa vuota senza bypassare il client OpenApi generato. */
-        deleteRiskAnalysisFromEServiceTemplate(templateContext.getLastTemplateManaged().id(), null);
+        deleteRiskAnalysisFromEServiceTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), null);
     }
 
     @When("l'utente tenta la cancellazione di una risk analysis inesistente nell'e-service template")
     public void deleteNonExistentRiskAnalysisFromEServiceTemplate() {
-        deleteRiskAnalysisFromEServiceTemplate(templateContext.getLastTemplateManaged().id(), UUID.randomUUID());
+        deleteRiskAnalysisFromEServiceTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), UUID.randomUUID());
     }
 
     @Then("la cancellazione della risk analysis dell'e-service è stata effettuata correttamente")
     public void checkRiskAnalysisDeletedFromEServiceTemplate() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
         try {
             pollingService.makePolling(
                 () -> eServiceTemplateClient.getEServiceTemplateWithHttpInfo(

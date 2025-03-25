@@ -35,7 +35,6 @@ public class EServiceTemplateVersionUpdateSteps {
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
     private final EServiceTemplateTestAssistant testAssistant;
-    private final EServiceTemplateStepContext templateContext;
     private final EServiceTemplateInfoMapper templateInfoMapper;
     private final DescriptorAttributesMapper descriptorAttributesMapper;
     private final EasyRandom easyRandom;
@@ -46,7 +45,6 @@ public class EServiceTemplateVersionUpdateSteps {
     public EServiceTemplateVersionUpdateSteps(ClientTokenConfigurator clientTokenConfigurator,
         SharedStepsContext sharedStepsContext,
         EServiceTemplateTestAssistant testAssistant,
-        EServiceTemplateStepContext templateContext,
         EServiceTemplateInfoMapper templateInfoMapper,
         DescriptorAttributesMapper descriptorAttributesMapper
     ) {
@@ -56,10 +54,9 @@ public class EServiceTemplateVersionUpdateSteps {
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
         this.testAssistant = testAssistant;
-        this.templateContext = templateContext;
         this.templateInfoMapper = templateInfoMapper;
         this.descriptorAttributesMapper = descriptorAttributesMapper;
-        this.easyRandom = new EasyRandom(templateContext.getEasyRandomParameters());
+        this.easyRandom = new EasyRandom(sharedStepsContext.getEServiceTemplateStepContext().getEasyRandomParameters());
     }
 
     @Given("l'utente effettua delle modifiche alla versione dell'e-service template con successo")
@@ -82,7 +79,7 @@ public class EServiceTemplateVersionUpdateSteps {
 
     @When("l'utente tenta delle modifiche alla versione dell'e-service template")
     public void updateEServiceTemplateVersion() {
-        templateContext.setLastTemplateVersionUpdateSeed(new UpdateEServiceTemplateVersionSeed()
+        sharedStepsContext.getEServiceTemplateStepContext().setLastTemplateVersionUpdateSeed(new UpdateEServiceTemplateVersionSeed()
             .agreementApprovalPolicy(AgreementApprovalPolicy.AUTOMATIC)
             .attributes(new EServiceTemplateAttributesSeed())
             //.attributes(new EServiceTemplateAttributesSeed().declared(
@@ -92,23 +89,23 @@ public class EServiceTemplateVersionUpdateSteps {
             .voucherLifespan(86400)
             .description("Nuova descrizione della versione"));
         updateEServiceTemplateVersion(
-            this.templateContext.getLastTemplateManaged().id(),
-            this.templateContext.getLastTemplateManaged().lastVersionId(),
-            this.templateContext.getLastTemplateVersionUpdateSeed());
+            this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(),
+            this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId(),
+            this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateVersionUpdateSeed());
     }
 
     @When("l'utente tenta di modificare la versione dell'e-service template indicando una specifica vuota")
     public void updateEServiceTemplateVersionWithEmptySpec() {
         updateEServiceTemplateVersion(
-            this.templateContext.getLastTemplateManaged().id(),
-            this.templateContext.getLastTemplateManaged().lastVersionId(),
+            this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(),
+            this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId(),
             new UpdateEServiceTemplateVersionSeed());
     }
 
     @Then("le modifiche alla versione sono state applicate correttamente")
     public void checkEServiceTemplateVersionUpdate() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
-        UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
 
         if(!httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             fail("Le modifiche alla versione dell'e-service template non sono state "
@@ -123,13 +120,13 @@ public class EServiceTemplateVersionUpdateSteps {
                         eServiceTemplateId,
                         eServiceTemplateVersionId),
                     ResponseEntity::getStatusCode),
-                res -> nonNull(res.getBody()) && testAssistant.areConsistent(this.templateContext.getLastTemplateVersionUpdateSeed(), res.getBody()),
+                res -> nonNull(res.getBody()) && testAssistant.areConsistent(this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateVersionUpdateSeed(), res.getBody()),
                 "La versione dell'e-service template non corrisponde alle modifiche apportate"
             );
         } catch (PollingPredicateException e) {
             fail("Le modifiche alla versione dell'e-service template non sono state "
                     + "applicate correttamente: le modifiche apportate '%s' non sono compatibili con il risultato ricevuto '%s'",
-                this.templateContext.getLastTemplateVersionUpdateSeed(), httpCallExecutor.getResponse());
+                this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateVersionUpdateSeed(), httpCallExecutor.getResponse());
         }
     }
 

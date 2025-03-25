@@ -13,7 +13,6 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateInt
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import java.util.UUID;
 import lombok.Data;
 import org.jeasy.random.EasyRandom;
@@ -26,27 +25,24 @@ public class EServiceTemplateIntendedTargetUpdateSteps {
     private final IEServiceTemplateClient eServiceTemplateClient;
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
-    private final EServiceTemplateStepContext templateContext;
     private final EasyRandom easyRandom;
 
     private EServiceTemplateIntendedTargetUpdateSeed lastTemplateIntendedTargetUpdateSeed;
 
     public EServiceTemplateIntendedTargetUpdateSteps(ClientTokenConfigurator clientTokenConfigurator,
-                                SharedStepsContext sharedStepsContext,
-                                EServiceTemplateStepContext templateContext
+                                SharedStepsContext sharedStepsContext
         ) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.eServiceTemplateClient = clientTokenConfigurator.getEServiceTemplateClient();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
-        this.templateContext = templateContext;
-        this.easyRandom = new EasyRandom(templateContext.getEasyRandomParameters());
+        this.easyRandom = new EasyRandom(sharedStepsContext.getEServiceTemplateStepContext().getEasyRandomParameters());
     }
 
     @When("l'utente tenta la modifica della descrizione dello scopo dell'e-service template")
     public void editEServiceTemplateIntendedTarget() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
         lastTemplateIntendedTargetUpdateSeed = easyRandom.nextObject(
             EServiceTemplateIntendedTargetUpdateSeed.class);
         editEServiceTemplateIntendedTarget(eServiceTemplateId, lastTemplateIntendedTargetUpdateSeed);
@@ -54,7 +50,7 @@ public class EServiceTemplateIntendedTargetUpdateSteps {
 
     @When("l'utente tenta la modifica della descrizione dello scopo dell'e-service template specificando la stessa descrizione")
     public void editEServiceTemplateIntendedTargetWithSameIntendedTarget() {
-        editEServiceTemplateIntendedTargetWith(templateContext.getLastTemplateManaged().intendedTarget());
+        editEServiceTemplateIntendedTargetWith(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().intendedTarget());
     }
 
     @When("l'utente tenta la modifica della descrizione dello scopo dell'e-service template specificando la stringa vuota")
@@ -74,7 +70,7 @@ public class EServiceTemplateIntendedTargetUpdateSteps {
 
     @Then("la modifica della descrizione dello scopo dell'e-service template è stata effettuata correttamente")
     public void checkEServiceTemplateIntendedTargetEdited() {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
         try {
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(
@@ -98,7 +94,7 @@ public class EServiceTemplateIntendedTargetUpdateSteps {
     }
 
     private void editEServiceTemplateIntendedTargetWith(String description) {
-        UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
         lastTemplateIntendedTargetUpdateSeed = easyRandom.nextObject(EServiceTemplateIntendedTargetUpdateSeed.class)
             .intendedTarget(description);
         editEServiceTemplateIntendedTarget(eServiceTemplateId, lastTemplateIntendedTargetUpdateSeed);

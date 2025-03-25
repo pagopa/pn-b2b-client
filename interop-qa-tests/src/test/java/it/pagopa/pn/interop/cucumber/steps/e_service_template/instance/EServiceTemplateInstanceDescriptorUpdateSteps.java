@@ -28,30 +28,27 @@ public class EServiceTemplateInstanceDescriptorUpdateSteps {
     private final IEServiceTemplateClient eServiceTemplateClient;
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
-    private final EServiceTemplateStepContext templateContext;
     private final EasyRandom easyRandom;
     private final IEServiceClient eServiceClient;
 
     private UpdateEServiceDescriptorTemplateInstanceSeed lastUpdateEServiceDescriptorTemplateInstanceSeed;
 
     public EServiceTemplateInstanceDescriptorUpdateSteps(ClientTokenConfigurator clientTokenConfigurator,
-        SharedStepsContext sharedStepsContext,
-        EServiceTemplateStepContext templateContext
+        SharedStepsContext sharedStepsContext
     ) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.eServiceTemplateClient = clientTokenConfigurator.getEServiceTemplateClient();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
-        this.templateContext = templateContext;
-        this.easyRandom = new EasyRandom(templateContext.getEasyRandomParameters());
+        this.easyRandom = new EasyRandom(sharedStepsContext.getEServiceTemplateStepContext().getEasyRandomParameters());
         this.eServiceClient = clientTokenConfigurator.getEServiceClient();
     }
     
     @When("l'utente tenta la modifica del descriptor dell'istanza dell'e-service template")
     public void editEServiceTemplateInstanceDescriptor() {
-        UUID eServiceTemplateInstanceId = templateContext.getLastEServiceIdCreatedFromTemplate();
-        UUID eServiceTemplateInstanceDescriptorId = templateContext.getLastEServiceDescriptorCreatedFromTemplate().getId();
+        UUID eServiceTemplateInstanceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
+        UUID eServiceTemplateInstanceDescriptorId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorCreatedFromTemplate().getId();
 
         lastUpdateEServiceDescriptorTemplateInstanceSeed = easyRandom.nextObject(
             UpdateEServiceDescriptorTemplateInstanceSeed.class);
@@ -60,7 +57,7 @@ public class EServiceTemplateInstanceDescriptorUpdateSteps {
 
     @When("l'utente tenta la modifica di un descriptor inesistente dell'istanza dell'e-service template")
     public void editNonExistentEServiceTemplateInstanceDescriptor() {
-        UUID eServiceId = templateContext.getLastEServiceIdCreatedFromTemplate();
+        UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
         UUID eServiceDescriptorId = UUID.randomUUID();
         lastUpdateEServiceDescriptorTemplateInstanceSeed = easyRandom.nextObject(UpdateEServiceDescriptorTemplateInstanceSeed.class);
         editEServiceTemplateInstanceDescriptor(eServiceId, eServiceDescriptorId, lastUpdateEServiceDescriptorTemplateInstanceSeed);
@@ -68,16 +65,16 @@ public class EServiceTemplateInstanceDescriptorUpdateSteps {
 
     @When("l'utente tenta la modifica del descriptor dell'istanza dell'e-service template indicando una specifica vuota")
     public void editEServiceTemplateInstanceDescriptorWithEmptySpec() {
-        UUID eServiceId = templateContext.getLastEServiceIdCreatedFromTemplate();
-        UUID eServiceDescriptorId = templateContext.getLastEServiceDescriptorCreatedFromTemplate().getId();
+        UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
+        UUID eServiceDescriptorId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorCreatedFromTemplate().getId();
         UpdateEServiceDescriptorTemplateInstanceSeed emptySeed = new UpdateEServiceDescriptorTemplateInstanceSeed();
         editEServiceTemplateInstanceDescriptor(eServiceId, eServiceDescriptorId, emptySeed);
     }
 
     @Then("il descriptor dell'istanza dell'e-service template è stato modificato correttamente")
     public void checkEServiceTemplateInstanceDescriptorEdited() {
-        UUID eServiceTemplateInstanceId = templateContext.getLastEServiceIdCreatedFromTemplate();
-        UUID eServiceTemplateInstanceDescriptorId = templateContext.getLastEServiceDescriptorCreatedFromTemplate().getId();
+        UUID eServiceTemplateInstanceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
+        UUID eServiceTemplateInstanceDescriptorId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorCreatedFromTemplate().getId();
         try {
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(
