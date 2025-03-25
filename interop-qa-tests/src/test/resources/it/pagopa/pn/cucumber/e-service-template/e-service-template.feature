@@ -1250,8 +1250,9 @@ Feature: Test API of e-service template
     Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
     And l'utente tenta di aggiungere l'attributo creato alla versione dell'e-service template
-    And e-service template viene portato allo stato PUBLISHED
+    And l'utente tenta la pubblicazione della versione dell'e-service template
 
 
 #    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>

@@ -45,9 +45,19 @@ public class EServiceTemplateVersionPublishSteps {
 
     @When("l'utente tenta la pubblicazione della versione dell'e-service template")
     public void publishEServiceTemplateVersion() {
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         UUID eServiceTemplateId = templateContext.getLastTemplateManaged().id();
         UUID eServiceTemplateVersionId = templateContext.getLastTemplateManaged().lastVersionId();
         publishEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId);
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @When("l'utente tenta la pubblicazione di una versione di un e-service template inesistente")
