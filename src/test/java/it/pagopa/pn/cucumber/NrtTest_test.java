@@ -17,7 +17,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 })
 @ExcludeTags({"ignore","uat","appIo", "integration","realNR","mockNormalizzatore","giacenza890Complex","raddAlternativeCsv", "rasterScartoCON996"})
 @IncludeTags({"workflowDigitale", "workflowAnalogico", "pagamentiMultipli", "giacenza890Simplified",
-            "Async", "f24", "version","AOO_UO", "raddTechnicalAnnex", "raddAlt",
+            "Async", "f24", "version","AOO_UO", "Annullamento", "raddTechnicalAnnex", "raddAlt",
             "validation", "RetentionAllegati", "apiKeyManager", "downtimeLogs", "recuperoDisservizi",
             "legalFact", "letturaDestinatario", "raddAnagrafica", "raddAttoIntero", "restApiValidation"}) //TMP EXCLUDED: ,"partitaIva","raddAlt"
 public class NrtTest_test {
