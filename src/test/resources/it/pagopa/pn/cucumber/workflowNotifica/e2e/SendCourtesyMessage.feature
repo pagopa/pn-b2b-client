@@ -4,6 +4,7 @@ Feature: Invio messaggi cortesia e2e
     Scenario: [E2E-SEND_COURTESY_MESSAGE_1] invio messaggio di cortesia - invio per email
         Given si predispone addressbook per l'utente "Galileo Galilei"
         And viene inserito un recapito legale "example@pecSuccess.it"
+        And viene inserita l'email di cortesia "provaemail2@test.it" per il comune "Comune_1"
         And viene generata una nuova notifica
             | subject | invio notifica con cucumber |
         And destinatario
@@ -15,7 +16,7 @@ Feature: Invio messaggi cortesia e2e
         And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
             | loadTimeline | true |
             | details | NOT_NULL |
-            | details_digitalAddress | {"address": "provaemail@test.it", "type": "EMAIL"} |
+            | details_digitalAddress | {"address": "provaemail2@test.it", "type": "EMAIL"} |
             | details_recIndex | 0 |
 
     @e2e

@@ -321,29 +321,29 @@ public class PnPaB2bUtils {
     }
 
     public NewNotificationResponse uploadNotificationNotEqualSha(NewNotificationRequestV24 request) throws IOException {
-//TODO Modificare.............
         NotificationDocument notificationDocument = null;
+        composeNewNotification(request, notificationDocument, true, false, 0);
         if (!request.getDocuments().isEmpty()) {
             notificationDocument = request.getDocuments().get(0);
             // the document uploaded to safe storage is multa.pdf
             // I compute a different sha256 and I replace the old one
             String sha256 = computeSha256("classpath:/multa.pdf");
-            notificationDocument.getDigests().setSha256(sha256);
+            notificationDocument.setDigests(new NotificationAttachmentDigests().sha256(sha256));
         }
-        composeNewNotification(request, notificationDocument, true, false, 0);
         return sendNewNotification(request);
     }
 
     public NewNotificationResponse uploadNotificationNotEqualShaJson(NewNotificationRequestV24 request) throws IOException {
 //TODO Modificare.............
         NotificationDocument notificationDocument = null;
+        String sha256 = null;
         if (!request.getRecipients().isEmpty()) {
             // the document uploaded to safe storage is multa.pdf
             // I compute a different sha256 and I replace the old one
-            String sha256 = computeSha256("classpath:/multa.pdf");
-            Objects.requireNonNull(Objects.requireNonNull(request.getRecipients().get(0).getPayments()).get(0).getF24()).getMetadataAttachment().getDigests().setSha256(sha256);
+            sha256 = computeSha256("classpath:/multa.pdf");
         }
         composeNewNotification(request, notificationDocument, true, false, 0);
+        Objects.requireNonNull(Objects.requireNonNull(request.getRecipients().get(0).getPayments()).get(0).getF24()).getMetadataAttachment().getDigests().setSha256(sha256);
         return sendNewNotification(request);
     }
 

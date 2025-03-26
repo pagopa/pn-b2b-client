@@ -69,6 +69,11 @@ public class PnPollingServiceValidationStatusV25 extends PnPollingTemplate<PnPol
                 return false;
             }
 
+            if (pnPollingResponse.getStatusResponse().getNotificationRequestStatus().equalsIgnoreCase(pnPollingParameter.getValue().trim())) {
+                pnPollingResponse.setResult(true);
+                return true;
+            }
+
             if (pnPollingResponse.getNotification() == null) {
                 pnPollingResponse.setResult(false);
                 return false;
