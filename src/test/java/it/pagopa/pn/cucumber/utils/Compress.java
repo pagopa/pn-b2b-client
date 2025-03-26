@@ -7,7 +7,7 @@ import java.util.zip.ZipOutputStream;
 
 public class Compress {
 
-    private static int BUFFER = 2048;
+    private static final int BUFFER = 2048;
     private String[] files;
     private InputStream[] filesJson;
     private String zipFile;
@@ -22,7 +22,7 @@ public class Compress {
         BufferedInputStream origin = null;
         FileOutputStream dest = new FileOutputStream(zipFile);
         ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(dest));
-        byte data[] = new byte[BUFFER];
+        byte[] data = new byte[BUFFER];
         System.out.println(zipFile);
 
         for (int i = 0; i < files.length; i++) {

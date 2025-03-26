@@ -76,13 +76,13 @@ public class ApiServiceDeskSteps {
     private static final String CF_ERRATO = "CPNTMS85T15H703WCPNTMS85T15H703W|";
     private static final String PIVA_ERRATA = "1234567899999999999999999999999999999";
     private static final String CF_ERRATO_2 = "CPNTM@85T15H703W";
-    private static final String CF_VUOTO = null;
+    private final String cfVuoto = null;
     private static final String TICKET_ID_ERRATO = "XXXXXXXXXXXXXXXXXxxxxxxxxxxxxxxxX";
-    private static final String TICKET_ID_VUOTO = null;
+    private final String ticketIdVuoto = null;
     private static final String TICKET_OPERATION_ID_ERRATO = "abcdfeghilm";
-    private static final String TICKET_OPERATION_ID_VUOTO = null;
+    private final String ticketOperationIdVuoto = null;
     private static final Integer DELAY = 420000;
-    private static final Integer WORKFLOW_WAIT_DEFAULT = 31000;
+    private static final Integer WORK_FLOW_WAIT_DEFAULT = 31000;
     private List<PaSummary> listPa = null;
     private HttpStatusCodeException notificationError;
     private SearchNotificationsResponse searchNotificationsResponse;
@@ -141,7 +141,7 @@ public class ApiServiceDeskSteps {
 
     @Given("viene creata una nuova richiesta per invocare il servizio UNREACHABLE con cf vuoto")
     public void createVerifyUnreachableRequest() {
-        createRequestByFiscalCode(CF_VUOTO, true);
+        createRequestByFiscalCode(cfVuoto, true);
     }
 
     @When("viene invocato il servizio UNREACHABLE")
@@ -203,19 +203,19 @@ public class ApiServiceDeskSteps {
     @Given("viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION per con {string} {string} {string}")
     public void createOperationReq(String cf, String ticketid, String ticketOperationid) {
         if (cf.equals("CF_vuoto")) {
-            createOperationRequest.setTaxId(CF_VUOTO);
+            createOperationRequest.setTaxId(cfVuoto);
         } else {
             createOperationRequest.setTaxId(cf);
         }
 
         switch (ticketid) {
-            case "ticketid_vuoto" -> createOperationRequest.setTicketId(TICKET_ID_VUOTO);
+            case "ticketid_vuoto" -> createOperationRequest.setTicketId(ticketIdVuoto);
             case "ticketid_errato" -> createOperationRequest.setTicketId(TICKET_ID_ERRATO);
             default -> createOperationRequest.setTicketId(ticketid);
         }
 
         switch (ticketOperationid) {
-            case "ticketoperationid_vuoto" -> createOperationRequest.setTicketOperationId(TICKET_OPERATION_ID_VUOTO);
+            case "ticketoperationid_vuoto" -> createOperationRequest.setTicketOperationId(ticketOperationIdVuoto);
             case "ticketoperationid_errato" -> createOperationRequest.setTicketOperationId(TICKET_OPERATION_ID_ERRATO);
             default -> createOperationRequest.setTicketOperationId(ticketOperationid);
         }
@@ -224,7 +224,7 @@ public class ApiServiceDeskSteps {
 
     @Given("viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con cf vuoto")
     public void createOperationReqCFVuoto() {
-        createOperationRequestSteps(CF_VUOTO);
+        createOperationRequestSteps(cfVuoto);
     }
 
     @When("viene invocato il servizio CREATE_OPERATION con errore")
@@ -617,7 +617,7 @@ public class ApiServiceDeskSteps {
 
     @Given("l'operatore richiede l'elenco di tutti i messaggi di cortesia inviati con cf vuoto")
     public void lOperatoreRichiedeLElencoDiDiTuttiIMessaggiDiCortesiaInviatiConCfVuoto() {
-        lOperatoreRichiedeLElencoDiDiTuttiIMessaggiDiCortesiaInviatiSteps(CF_VUOTO);
+        lOperatoreRichiedeLElencoDiDiTuttiIMessaggiDiCortesiaInviatiSteps(cfVuoto);
     }
 
     @Given("l'operatore richiede l'elenco di tutti i messaggi di cortesia inviati con cf errato {string}")
@@ -1021,16 +1021,16 @@ public class ApiServiceDeskSteps {
 
     private void createRequestByFiscalCode(String cf, boolean isNotificationRequest) {
         if (cf == null) {
-            notificationRequest.setTaxId(CF_VUOTO);
+            notificationRequest.setTaxId(cfVuoto);
             return;
         }
 
         switch (cf) {
             case "CF_vuoto" -> {
                 if (isNotificationRequest) {
-                    notificationRequest.setTaxId(CF_VUOTO);
+                    notificationRequest.setTaxId(cfVuoto);
                 } else {
-                    searchNotificationRequest.setTaxId(CF_VUOTO);
+                    searchNotificationRequest.setTaxId(cfVuoto);
                 }
             }
             case "CF_errato" -> {
@@ -1299,7 +1299,7 @@ public class ApiServiceDeskSteps {
     }
 
     public Integer getWorkFlowWait() {
-        if (workFlowWait == null) return WORKFLOW_WAIT_DEFAULT;
+        if (workFlowWait == null) return WORK_FLOW_WAIT_DEFAULT;
         return workFlowWait;
     }
 
@@ -1516,9 +1516,16 @@ public class ApiServiceDeskSteps {
 
     private String createTaxId(String user) {
         return switch (user.toUpperCase()) {
-            case "VUOTO" -> "";
-            case "ERRATO" -> CF_ERRATO;
-            default -> setTaxID(user);
+
+            case "VUOTO" -> {
+                yield "";
+            }
+            case "ERRATO" -> {
+                yield CF_ERRATO;
+            }
+            default -> {
+                yield setTaxID(user);
+            }
         };
     }
 

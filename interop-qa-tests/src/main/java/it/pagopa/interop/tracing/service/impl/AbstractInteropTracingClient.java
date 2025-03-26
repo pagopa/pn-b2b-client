@@ -25,7 +25,7 @@ public abstract class AbstractInteropTracingClient implements IInteropTracingCli
     private final TracingClientConfigs tracingClientConfigs;
     protected BearerTokenType bearerTokenSetted;
 
-    public AbstractInteropTracingClient(RestTemplate restTemplate, TracingClientConfigs tracingClientConfigs) {
+    protected AbstractInteropTracingClient(RestTemplate restTemplate, TracingClientConfigs tracingClientConfigs) {
         this.restTemplate = restTemplate;
         this.tracingClientConfigs = tracingClientConfigs;
         this.tracingsApi = new TracingsApi(createApiClient(tracingClientConfigs.getBaseUrl(), "dummyBearer"));
@@ -50,18 +50,18 @@ public abstract class AbstractInteropTracingClient implements IInteropTracingCli
     }
 
     @Override
-    public RecoverTracingResponse recoverTracing(UUID tracingId, Resource _file) throws RestClientException {
-        return tracingsApi.recoverTracing(tracingId, _file);
+    public RecoverTracingResponse recoverTracing(UUID tracingId, Resource file) throws RestClientException {
+        return tracingsApi.recoverTracing(tracingId, file);
     }
 
     @Override
-    public ReplaceTracingResponse replaceTracing(UUID tracingId, Resource _file) throws RestClientException {
-        return tracingsApi.replaceTracing(tracingId, _file);
+    public ReplaceTracingResponse replaceTracing(UUID tracingId, Resource file) throws RestClientException {
+        return tracingsApi.replaceTracing(tracingId, file);
     }
 
     @Override
-    public SubmitTracingResponse submitTracing(Resource _file, String date) throws RestClientException {
-        return tracingsApi.submitTracing(_file, date);
+    public SubmitTracingResponse submitTracing(Resource file, String date) throws RestClientException {
+        return tracingsApi.submitTracing(file, date);
     }
 
     @Override

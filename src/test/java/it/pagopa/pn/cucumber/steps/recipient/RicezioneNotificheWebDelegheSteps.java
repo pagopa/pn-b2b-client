@@ -767,18 +767,6 @@ public class RicezioneNotificheWebDelegheSteps {
         };
     }
 
-    private String getDate(String date) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        return switch (date) {
-            case "TODAY" -> sdf.format(new Date());
-            case "TOMORROW" -> sdf.format(DateUtils.addDays(new Date(), 1));
-            case "PAST_DATE" -> "2023-01-01";
-            case "INVALID_FORMAT" -> "01-01-2023";
-            case "EMPTY_DATE" -> null;
-            default -> throw new IllegalStateException("Unexpected value: " + date);
-        };
-    }
-
     private UserDto createUserDto(String displayName, String firstName, String lastName, String fiscalCode, String companyName, boolean isPerson) {
     return new UserDto()
                 .displayName(displayName)

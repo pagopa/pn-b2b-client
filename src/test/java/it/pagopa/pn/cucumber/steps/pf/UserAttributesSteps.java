@@ -55,5 +55,6 @@ public class UserAttributesSteps {
 
     @Given("viene testato l'otp")
     public void vieneTestatoLOtp() {
+        // TODO: implementare
     }
 }
