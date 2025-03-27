@@ -8,6 +8,7 @@ import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Attribute;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
@@ -17,7 +18,6 @@ import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext.Attribute;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
@@ -79,13 +79,27 @@ public class AgreementCommonSteps {
 
     @Given("{string} ha creato un attributo certificato e lo ha assegnato a {string}")
     public void tenantHasCreatedCertifiedAttribute(String certifier, String tenantType) {
-        clientTokenConfigurator.setBearerToken(identityService.getToken(certifier, null));
         AttributeKind certified = AttributeKind.CERTIFIED;
+        clientTokenConfigurator.setBearerToken(identityService.getToken(certifier, null));
         UUID tenantId = identityService.getOrganizationId(tenantType);
-        UUID attributeId = dataPreparationService.createAttribute(certified, null);
-        sharedStepsContext.getEServiceTemplateStepContext().setLastCreatedAttribute(new Attribute(attributeId, tenantId,
-            certified));
-        dataPreparationService.assignCertifiedAttributeToTenant(tenantId, attributeId);
+        Attribute attribute = dataPreparationService.createAttribute(
+            certified, null);
+        sharedStepsContext.getEServiceTemplateStepContext().addCreatedAttribute(attribute);
+        dataPreparationService.assignCertifiedAttributeToTenant(tenantId, attribute.getId());
+    }
+
+    /* NOTA 26/03/2025: al momento usato solo in scenari di test negativi (in altri termini: non
+    * è stato testato in situazioni in cui ci si aspetta che funzioni) */
+    @Given("{string} ha creato un attributo dichiarato e lo ha assegnato a {string}")
+    public void tenantHasCreatedDeclaredAttribute(String certifier, String tenantType) {
+        AttributeKind attributeKind = AttributeKind.DECLARED;
+        clientTokenConfigurator.setBearerToken(identityService.getToken(certifier, null));
+        UUID tenantId = identityService.getOrganizationId(tenantType);
+        Attribute attribute = dataPreparationService.createAttribute(
+            attributeKind, null);
+        sharedStepsContext.getEServiceTemplateStepContext().addCreatedAttribute(attribute);
+        dataPreparationService.assignDeclaredAttributeToTenant(
+            sharedStepsContext.getXCorrelationId(), tenantId, attribute.getId());
     }
 
     @Given("{string} ha già creato e pubblicato {int} e-service(s)")

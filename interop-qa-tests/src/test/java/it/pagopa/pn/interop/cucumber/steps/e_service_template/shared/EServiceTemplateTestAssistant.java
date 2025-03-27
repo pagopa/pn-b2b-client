@@ -417,4 +417,27 @@ public class EServiceTemplateTestAssistant {
             "There was an error while retrieving the e-service template"
         );
     }
+
+    public void checkEServiceTemplateVersion(Predicate<EServiceTemplateVersionDetails> versionIsAsExpected, String errorMsg) {
+        try {
+            pollingService.makePolling(
+                () -> httpCallExecutor.performCall(
+                    () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
+                        sharedStepsContext.getXCorrelationId(),
+                        sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(),
+                        sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId()),
+                    ResponseEntity::getStatusCode),
+                res -> {
+                    if(res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody())) {
+                        return versionIsAsExpected.test(res.getBody());
+                    }
+                    return false;
+                },
+                errorMsg
+            );
+        } catch (PollingPredicateException e) {
+            // TODO occorrerebbero più dettagli, sul modello di quelli dati solitamente in automatico da AssertJ
+            fail(errorMsg);
+        }
+    }
 }

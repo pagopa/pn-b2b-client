@@ -1,8 +1,10 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template.shared;
 
-import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Attribute;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactDescriptor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateAttributesSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionSeed;
 import java.lang.reflect.Field;
@@ -13,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import lombok.Data;
+import org.apache.commons.collections4.IterableUtils;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 import org.mapstruct.Mapper;
@@ -41,15 +44,14 @@ public class EServiceTemplateStepContext {
         }
     }
 
-    /** Stores data on attributes for testing */
-    public record Attribute(UUID id, UUID assignedTenant, AttributeKind kind){}
-
     private List<EServiceTemplateInfo> templatesManaged = new ArrayList<>();
     private EServiceTemplateDocumentInfo lastAddedDocument;
     private UpdateEServiceTemplateVersionSeed lastTemplateVersionUpdateSeed;
+    private EServiceTemplateAttributesSeed lastTemplateVersionAttributesSeed;
     private UUID lastEServiceIdCreatedFromTemplate;
     private CompactDescriptor lastEServiceDescriptorCreatedFromTemplate;
-    private Attribute lastCreatedAttribute;
+    private List<Attribute> createdAttributes = new ArrayList<>();
+    private DescriptorAttributesSeed lastDescriptorAttributesSeed;
 
     private final EasyRandomParameters easyRandomParameters = new EasyRandomParameters()
         .seed(123L)
@@ -92,10 +94,22 @@ public class EServiceTemplateStepContext {
     }
 
     public EServiceTemplateInfo getLastTemplateManaged() {
-        return this.templatesManaged.get(templatesManaged.size() - 1);
+        return lastOf(templatesManaged);
     }
 
     public void addTemplateManaged(EServiceTemplateInfo templateInfo) {
         this.templatesManaged.add(templateInfo);
+    }
+
+    public Attribute getLastCreatedAttribute() {
+        return lastOf(createdAttributes);
+    }
+
+    public void addCreatedAttribute(Attribute attribute) {
+        this.createdAttributes.add(attribute);
+    }
+
+    private <T> T lastOf(List<T> list) {
+        return IterableUtils.isEmpty(list) ? null : list.get(list.size() - 1);
     }
 }

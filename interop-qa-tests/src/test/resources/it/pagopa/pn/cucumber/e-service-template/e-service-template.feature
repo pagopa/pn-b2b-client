@@ -184,6 +184,22 @@ Feature: Test API of e-service template
       | api           |
       | api,security  |
 
+  # TODO accorpabile allo scenario precedente facendo in modo che le modifiche alla versione includano gli attributi
+    # e che la verifica finale delle modifiche fatta includa gli attributi
+  Scenario Outline: [INTEROP-EST-017-ATT] La modifica degli attributi di una versione di un e-service template in stato DRAFT può essere effettuata da un ente in veste di ADMIN o API usando l'API generica
+    Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
+    And l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta di aggiungere l'attributo creato alla versione dell'e-service template
+    Then si ottiene response status code 200
+    And la modifica degli attributi della versione dell'e-service template è stata effettuata correttamente
+    Examples:
+      | ruolo         |
+      | admin         |
+      | api           |
+      | api,security  |
+
   Scenario Outline: [INTEROP-EST-018] La modifica di una versione un e-service template in stato PUBLISHED o SUSPENDED non può essere fatta
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
@@ -1252,20 +1268,17 @@ Feature: Test API of e-service template
     Then si ottiene response status code 404
 
   Scenario Outline: [INTEROP-EST-128-PUB] La modifica degli attributi di una versione di un e-service template in stato PUBLISHED può essere effettuata da un ente in veste di ADMIN o API
-    Given l'utente è un "admin" di "PA1"
+    Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
+    And l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
-
-    ################### ATTENZIONE ###################
-    # STEP DA CAMBIARE: bisogna creare ed associare gli attributi all'e-service template, usando le api dedicate ai primi per la creazione e quello di modifica della versione per l'associazione
-    ##################################################
-    And l'utente effettua delle modifiche alla versione dell'e-service template con successo
-
     And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
-    And l'utente effettua la pubblicazione dell'e-service template
+    And l'utente effettua l'aggiunta dell'attributo creato alla versione dell'e-service template con successo
+    And l'utente effettua la pubblicazione della versione dell'e-service template con successo
+    And "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
     When l'utente è un "<ruolo>" di "PA1"
-    And l'utente tenta la modifica degli attributi della versione dell'e-service template
-    Then si ottiene response status code 200
-    And la modifica degli attributi della versione dell'e-service template è stata effettuata correttamente
+    And l'utente tenta di aggiungere l'attributo creato alla versione dell'e-service template usando l'API specifica
+    Then si ottiene response status code 204
+    And la modifica degli attributi è stata effettuata correttamente
     Examples:
       | ruolo         |
       | admin         |
@@ -1273,38 +1286,51 @@ Feature: Test API of e-service template
       | api,security  |
 
   Scenario Outline: [INTEROP-EST-128-SUS] La modifica degli attributi di una versione di un e-service template in stato SUSPENDED può essere effettuata da un ente in veste di ADMIN o API
-    Given l'utente è un "admin" di "PA1"
+    Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
+    And l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
-
-    # Necessario per l'aggiunta degli attributi in vista della loro modifica
-    And l'utente effettua delle modifiche alla versione dell'e-service template con successo
-
     And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
-    And l'utente effettua la pubblicazione dell'e-service template
-    And l'utente effettua la sospensione dell'e-service template
+    And l'utente effettua l'aggiunta dell'attributo creato alla versione dell'e-service template con successo
+    And l'utente effettua la pubblicazione della versione dell'e-service template con successo
+    And l'utente effettua la sospensione della versione dell'e-service template con successo
+    And "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
     When l'utente è un "<ruolo>" di "PA1"
-    And l'utente tenta la modifica degli attributi della versione dell'e-service template
-    Then si ottiene response status code 200
-    And la modifica degli attributi della versione dell'e-service template è stata effettuata correttamente
+    And l'utente tenta di aggiungere l'attributo creato alla versione dell'e-service template usando l'API specifica
+    Then si ottiene response status code 204
+    And la modifica degli attributi è stata effettuata correttamente
     Examples:
       | ruolo         |
       | admin         |
       | api           |
       | api,security  |
 
-  Scenario Outline: [INTEROP-EST-129] La modifica degli attributi di una versione di un e-service template in stato PUBLISHED o SUSPENDED NON può essere effettuata da un ente NON in veste di ADMIN o API
+  Scenario Outline: [INTEROP-EST-129-PUB] La modifica degli attributi di una versione di un e-service template in stato PUBLISHED può essere effettuata da un ente in veste di ADMIN o API
     Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
     And l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
     And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
-    And l'utente tenta di aggiungere l'attributo creato alla versione dell'e-service template
+    And l'utente effettua l'aggiunta dell'attributo creato alla versione dell'e-service template con successo
     And l'utente effettua la pubblicazione della versione dell'e-service template con successo
-
-
-#    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
-#    And l'utente effettua delle modifiche alla versione dell'e-service template con successo
+    And "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
     When l'utente è un "<ruolo>" di "PA1"
-    And l'utente tenta la modifica degli attributi della versione dell'e-service template
+    And l'utente tenta di aggiungere l'attributo creato alla versione dell'e-service template usando l'API specifica
+    Then si ottiene response status code 403
+    Examples:
+      | ruolo         |
+      | security      |
+      | support       |
+
+  Scenario Outline: [INTEROP-EST-129-SUS] La modifica degli attributi di una versione di un e-service template in stato SUSPENDED può essere effettuata da un ente in veste di ADMIN o API
+    Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
+    And l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
+    And l'utente effettua l'aggiunta dell'attributo creato alla versione dell'e-service template con successo
+    And l'utente effettua la pubblicazione della versione dell'e-service template con successo
+    And l'utente effettua la sospensione della versione dell'e-service template con successo
+    And "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta di aggiungere l'attributo creato alla versione dell'e-service template usando l'API specifica
     Then si ottiene response status code 403
     Examples:
       | ruolo         |
@@ -1312,34 +1338,59 @@ Feature: Test API of e-service template
       | support       |
 
   Scenario: [INTEROP-EST-130] La modifica degli attributi di una versione di un e-service template in stato DRAFT non può essere effettuata
-    Given l'utente è un "admin" di "PA1"
+    Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
+    And l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
-    And l'utente effettua delle modifiche alla versione dell'e-service template con successo
-    When l'utente tenta la modifica degli attributi della versione dell'e-service template
-    Then si ottiene response status code 403
+    And l'utente effettua l'aggiunta dell'attributo creato alla versione dell'e-service template con successo
+    And "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
+    When l'utente tenta di aggiungere l'attributo creato alla versione dell'e-service template usando l'API specifica
+    Then si ottiene response status code 400
 
-  Scenario Outline: [INTEROP-EST-131] La modifica degli attributi di una versione di un e-service template in stato PUBLISHED o SUSPENDED non può coinvolgere l'aggiunta di nuovi attributi, ma solo la modifica di quelli già presenti
-    Given l'utente è un "admin" di "PA1"
-    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
-    And l'utente effettua delle modifiche alla versione dell'e-service template con successo
-    When l'utente tenta la modifica degli attributi della versione dell'e-service template aggiungendone di nuovi
-    Then si ottiene response status code 409
-    Examples:
-      | stato     |
-      | PUBLISHED |
-      | SUSPENDED |
+  Scenario: [INTEROP-EST-131-PUB] La modifica degli attributi di una versione di un e-service template in stato PUBLISHED o SUSPENDED non può coinvolgere l'aggiunta di nuovi gruppi di attributi, ma solo la modifica di quelli già presenti
+    Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
+    And l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
+    And l'utente effettua l'aggiunta dell'attributo creato alla versione dell'e-service template con successo
+    And l'utente effettua la pubblicazione della versione dell'e-service template con successo
+    And "GSP" ha creato un attributo dichiarato e lo ha assegnato a "PA1"
+    And l'utente tenta di aggiungere l'attributo creato alla versione dell'e-service template usando l'API specifica
+    Then si ottiene response status code 400
 
-  Scenario Outline: [INTEROP-EST-132] La modifica degli attributi di una versione di un e-service template in stato PUBLISHED o SUSPENDED non può essere effettuata da un ente diverso dal creatore del template
-    Given l'utente è un "admin" di "PA1"
-    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
-    And l'utente effettua delle modifiche alla versione dell'e-service template con successo
+  Scenario: [INTEROP-EST-131-SUS] La modifica degli attributi di una versione di un e-service template in stato PUBLISHED o SUSPENDED non può coinvolgere l'aggiunta di nuovi gruppi di attributi, ma solo la modifica di quelli già presenti
+    Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
+    And l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
+    And l'utente effettua l'aggiunta dell'attributo creato alla versione dell'e-service template con successo
+    And l'utente effettua la pubblicazione della versione dell'e-service template con successo
+    And l'utente effettua la sospensione della versione dell'e-service template con successo
+    And "GSP" ha creato un attributo dichiarato e lo ha assegnato a "PA1"
+    And l'utente tenta di aggiungere l'attributo creato alla versione dell'e-service template usando l'API specifica
+    Then si ottiene response status code 400
+
+  Scenario: [INTEROP-EST-132-PUB] La modifica degli attributi di una versione di un e-service template in stato PUBLISHED non può essere effettuata da un ente diverso dal creatore del template
+    Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
+    And l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
+    And l'utente effettua l'aggiunta dell'attributo creato alla versione dell'e-service template con successo
+    And l'utente effettua la pubblicazione della versione dell'e-service template con successo
     When l'utente è un "admin" di "PA2"
-    And l'utente tenta la modifica degli attributi della versione dell'e-service template
+    And l'utente tenta di aggiungere l'attributo creato alla versione dell'e-service template usando l'API specifica
     Then si ottiene response status code 403
-    Examples:
-      | stato     |
-      | PUBLISHED |
-      | SUSPENDED |
+
+  Scenario: [INTEROP-EST-132-SUS] La modifica degli attributi di una versione di un e-service template in stato SUSPENDED non può essere effettuata da un ente diverso dal creatore del template
+    Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
+    And l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
+    And l'utente effettua l'aggiunta dell'attributo creato alla versione dell'e-service template con successo
+    And l'utente effettua la pubblicazione della versione dell'e-service template con successo
+    And l'utente effettua la sospensione della versione dell'e-service template con successo
+    When l'utente è un "admin" di "PA2"
+    And l'utente tenta di aggiungere l'attributo creato alla versione dell'e-service template usando l'API specifica
+    Then si ottiene response status code 403
 
   Scenario: [INTEROP-EST-133] La modifica degli attributi di una versione di un e-service template inesistente non può essere effettuata
     Given l'utente è un "admin" di "PA1"
@@ -1347,9 +1398,12 @@ Feature: Test API of e-service template
     Then si ottiene response status code 404
 
   Scenario: [INTEROP-EST-134] La modifica degli attributi di una versione inesistente di un e-service template non può essere effettuata
-    Given l'utente è un "admin" di "PA1"
-    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
-    And l'utente effettua delle modifiche alla versione dell'e-service template con successo
+    Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
+    And l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
+    And l'utente effettua l'aggiunta dell'attributo creato alla versione dell'e-service template con successo
+    And l'utente effettua la pubblicazione della versione dell'e-service template con successo
     When l'utente tenta la modifica degli attributi di una versione inesistente dell'e-service template
     Then si ottiene response status code 404
 
@@ -1438,10 +1492,11 @@ Feature: Test API of e-service template
     And sono stati aggiunti esattamente 0 e-service templates in catalogo in stato PUBLISHED
 
   Scenario Outline: [INTEROP-EST-144] La visualizzazione dei dettagli un e-service template da parte dell'ente creatore rivela tutte le versioni presenti indipendentemente dallo stato, se l'ente è in veste di ADMIN o API
-    Given l'utente è un "<ruolo>" di "PA1"
+    Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
-    And l'utente aggiunge all'e-service template una versione in stato DRAFT
-    And l'utente aggiunge all'e-service template una versione in stato SUSPENDED
+    And l'utente aggiunge all'e-service template una versione in stato SUSPENDED con successo
+    And l'utente aggiunge all'e-service template una versione in stato DRAFT con successo
+    Given l'utente è un "<ruolo>" di "PA1"
     When l'utente tenta la visualizzazione dei dettagli dell'e-service template
     Then si ottiene response status code 200
     And i dettagli dell'e-service template contengono esattamente 3 versioni
@@ -1454,8 +1509,8 @@ Feature: Test API of e-service template
   Scenario: [INTEROP-EST-145] La visualizzazione dei dettagli un e-service template da parte di un ente diverso dal creatore rivela le versioni in stato PUBLISHED o SUSPENDED, se l'ente è in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
-    And l'utente aggiunge all'e-service template una versione in stato DRAFT
-    And l'utente aggiunge all'e-service template una versione in stato SUSPENDED
+    And l'utente aggiunge all'e-service template una versione in stato SUSPENDED con successo
+    And l'utente aggiunge all'e-service template una versione in stato DRAFT con successo
     When l'utente è un "admin" di "PA2"
     And l'utente tenta la visualizzazione dei dettagli dell'e-service template
     Then si ottiene response status code 200
@@ -1469,20 +1524,16 @@ Feature: Test API of e-service template
   Scenario: [INTEROP-EST-147] La visualizzazione dei dettagli di un e-service template restituisce risultato vuoto in caso ci siano solo versioni in stato DRAFT
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
-
-    # OPERAZIONE LEGALE? Verificare che possano esserci più versioni in stato DRAFT
-    And l'utente aggiunge all'e-service template una versione in stato DRAFT
-
+    When l'utente è un "admin" di "PA2"
     When l'utente tenta la visualizzazione dei dettagli dell'e-service template
-    Then si ottiene response status code 200
-    And i dettagli dell'e-service template contengono esattamente 0 versioni
+    Then si ottiene response status code 404
 
   Scenario Outline: [INTEROP-EST-148] La visualizzazione dei dettagli della versione di un e-service template da parte dell'ente creatore può essere effettuata quale che sia lo stato della versione in questione, se l'ente è in veste di ADMIN o API
     Given l'utente è un "<ruolo>" di "PA1"
-    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente aggiunge all'e-service template una versione in stato <stato> con successo
     When l'utente tenta la visualizzazione dei dettagli della versione dell'e-service template
     Then si ottiene response status code 200
-    And i dettagli della versione dell'e-service template sono coerenti con quelli inseriti
     Examples:
       | ruolo         | stato     |
       | admin         | PUBLISHED |
@@ -1501,7 +1552,6 @@ Feature: Test API of e-service template
     When l'utente è un "admin" di "PA2"
     And l'utente tenta la visualizzazione dei dettagli della versione dell'e-service template
     Then si ottiene response status code 200
-    And i dettagli della versione dell'e-service template sono coerenti con quelli inseriti
     Examples:
       | stato     |
       | PUBLISHED |

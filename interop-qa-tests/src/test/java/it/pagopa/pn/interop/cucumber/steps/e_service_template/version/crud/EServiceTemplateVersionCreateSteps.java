@@ -1,12 +1,9 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template.version.crud;
 
-import static java.util.Objects.nonNull;
-import static org.assertj.core.api.Assertions.fail;
-
+import com.google.common.base.Predicates;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
@@ -14,7 +11,6 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVer
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext.EServiceTemplateInfoMapper;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
 import java.util.UUID;
@@ -67,29 +63,22 @@ public class EServiceTemplateVersionCreateSteps {
         createAnotherEServiceTemplateVersion(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id());
     }
 
-    @When("l'utente aggiunge all'e-service template una versione in stato {eServiceTemplateVersionState}")
+    @When("l'utente aggiunge all'e-service template una versione in stato {eServiceTemplateVersionState} con successo")
     public void addEServiceTemplateVersion(EServiceTemplateVersionState state) {
         createAnotherEServiceTemplateVersion(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id());
-        testAssistant.mutateLastVersionState(state);
         checkEServiceTemplateVersionCreated();
+        testAssistant.mutateLastVersionState(state);
+        checkEServiceTemplateVersionCreated(state);
     }
 
     @Then("la creazione di una ulteriore versione nell'e-service template è stata effettuata correttamente")
     public void checkEServiceTemplateVersionCreated() {
-        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
-        try {
-            pollingService.makePolling(
-                () -> httpCallExecutor.performCall(
-                    () -> eServiceTemplateClient.getEServiceTemplateWithHttpInfo(
-                        sharedStepsContext.getXCorrelationId(),
-                        eServiceTemplateId),
-                    ResponseEntity::getStatusCode),
-                res -> res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody()) && res.getBody().getVersions().stream().anyMatch(v -> v.getId().equals(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId())),
-                "La versione dell'e-service template non è stata creata correttamente"
-            );
-        } catch (PollingPredicateException e) {
-            fail("La versione dell'e-service template non è stata creata correttamente");
-        }
+        testAssistant.checkEServiceTemplateVersion(Predicates.alwaysTrue(), "La versione dell'e-service template non è stata creata correttamente");
+    }
+
+    @Then("la creazione di una ulteriore versione in stato {eServiceTemplateVersionState} nell'e-service template è stata effettuata correttamente")
+    public void checkEServiceTemplateVersionCreated(EServiceTemplateVersionState state) {
+        testAssistant.checkEServiceTemplateVersion(version -> version.getState().equals(state), "La versione dell'e-service template non è stata creata correttamente in stato " + state);
     }
 
     private void createAnotherEServiceTemplateVersion(UUID eServiceTemplateId) {

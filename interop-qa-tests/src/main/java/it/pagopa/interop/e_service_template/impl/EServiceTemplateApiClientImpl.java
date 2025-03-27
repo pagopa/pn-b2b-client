@@ -418,7 +418,7 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
     @Override
     public ResponseEntity<ProducerEServiceTemplates> getCreatorEServiceTemplates(
         String xCorrelationId) {
-        return this.eserviceTemplatesApi.getCreatorEServiceTemplatesWithHttpInfo(xCorrelationId, 0, 100, null);
+        return this.eserviceTemplatesApi.getCreatorEServiceTemplatesWithHttpInfo(xCorrelationId, 0, 50, null);
     }
 
     @Override
@@ -432,7 +432,7 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
 
     @Override
     public ResponseEntity<CompactOrganizations> getEServiceTemplateCreators(String xCorrelationId) {
-        return this.getEServiceTemplateCreators(xCorrelationId, 0, 100, null);
+        return this.getEServiceTemplateCreators(xCorrelationId, 0, 50, null);
     }
 
     @Override

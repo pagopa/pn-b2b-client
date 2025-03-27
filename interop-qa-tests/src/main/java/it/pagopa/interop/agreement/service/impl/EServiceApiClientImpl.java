@@ -90,7 +90,7 @@ public class EServiceApiClientImpl implements IEServiceClient {
     @Override
     public ResponseEntity<EServiceTemplateInstances> getEServiceTemplateInstancesWithHttpInfo(
         String xCorrelationId, UUID templateId) {
-        return this.eservicesApi.getEServiceTemplateInstancesWithHttpInfo(xCorrelationId, templateId, 0, 100, null, null);
+        return this.eservicesApi.getEServiceTemplateInstancesWithHttpInfo(xCorrelationId, templateId, 0, 50, null, null);
     }
 
     @Override

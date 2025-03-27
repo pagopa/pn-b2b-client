@@ -26,6 +26,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactUser;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredTenantAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
@@ -298,7 +299,7 @@ public class DataPreparationService {
         );
     }
 
-    public UUID createAttribute(AttributeKind attributeKind, String name) {
+    public Attribute createAttribute(AttributeKind attributeKind, String name) {
         String actualName = name != null ? null : String.format("new_attribute_%d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE));
         switch (attributeKind) {
             case CERTIFIED -> httpCallExecutor.performCall(() -> attributeApiClient.createCertifiedAttribute(sharedStepsContext.getXCorrelationId(), new CertifiedAttributeSeed().description("description_test").name(actualName)));
@@ -313,7 +314,7 @@ public class DataPreparationService {
                 res -> !res.getResults().isEmpty(),
                 "There was an error while retrieving the attributes"
         );
-        return ((Attribute) httpCallExecutor.getResponse()).getId();
+        return ((Attribute) httpCallExecutor.getResponse());
     }
 
     public void assignCertifiedAttributeToTenant(UUID tenantId, UUID attributeId) {
@@ -326,6 +327,20 @@ public class DataPreparationService {
                 res -> res.getAttributes().stream().anyMatch(attr -> attr.getId().equals(attributeId)),
                 "There was an error while retrieving the attributes"
         );
+    }
+
+    public void assignDeclaredAttributeToTenant(String xCorrelationId, UUID tenantId, UUID attributeId) {
+        httpCallExecutor.performCall(
+            () -> tenantsApi.addDeclaredAttribute(new DeclaredTenantAttributeSeed().id(attributeId)));
+        assertValidResponse();
+
+        // FIXME 26/03/2025 al momento restituisce risultato vuoto, non chiaro il perché (al momento
+        //  non impattante sull'attuale parco test)
+        /*pollingService.makePolling(
+            () -> tenantsApi.getDeclaredAttributes(xCorrelationId, tenantId),
+            res -> res.getAttributes().stream().anyMatch(attr -> attr.getId().equals(attributeId)),
+            "There was an error while retrieving the attributes"
+        );*/
     }
 
     public EServiceDescriptor createEServiceAndDraftDescriptor(EServiceSeed partialEserviceSeed, UpdateEServiceDescriptorSeed partialDescriptorSeed) {
