@@ -215,7 +215,7 @@ public class ApikeyManagerSteps {
             case COMUNE_MULTI -> apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.GA);
             case COMUNE_SON -> apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.SON);
             case COMUNE_ROOT -> apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.ROOT);
-            default -> throw new IllegalArgumentException("Valore PA non valido: " + settedPa);
+            default -> throw new IllegalArgumentException("Valore PA non valido: " + paName);
         }
     }
 
@@ -315,7 +315,7 @@ public class ApikeyManagerSteps {
             case COMUNE_MULTI -> apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.GA);
             case COMUNE_SON -> apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.SON);
             case COMUNE_ROOT -> apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.ROOT);
-            default -> throw new IllegalArgumentException("Valore PA non valido: " + settedPa);
+            default -> throw new IllegalArgumentException("Valore PA non valido: " + paName);
         }
     }
 
