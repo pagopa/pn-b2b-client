@@ -589,7 +589,7 @@ Feature: Digital send e2e
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@OK-pecFirstFailSecondSuccess.it |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista

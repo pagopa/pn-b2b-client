@@ -15,7 +15,7 @@ Feature: Allegati notifica
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Cucumber Society"
+    And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"
@@ -25,7 +25,7 @@ Feature: Allegati notifica
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Cucumber Society"
+    And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And viene effettuato un controllo sulla durata della retention di "PAGOPA"
@@ -35,7 +35,7 @@ Feature: Allegati notifica
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"
@@ -45,7 +45,7 @@ Feature: Allegati notifica
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And viene effettuato un controllo sulla durata della retention di "PAGOPA"
@@ -55,7 +55,7 @@ Feature: Allegati notifica
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "GherkinSpa"
+    And destinatario GherkinSpa
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"
@@ -65,7 +65,7 @@ Feature: Allegati notifica
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "GherkinSpa"
+    And destinatario GherkinSpa
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And viene effettuato un controllo sulla durata della retention di "PAGOPA"
@@ -79,7 +79,7 @@ Feature: Allegati notifica
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | digitalDomicile_address | test@pecOk.it |
       | payment_pagoPaForm      | SI            |
       | payment_f24             | NULL          |
@@ -112,7 +112,7 @@ Feature: Allegati notifica
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_RS |
       | payment_pagoPaForm      | SI        |
@@ -147,7 +147,7 @@ Feature: Allegati notifica
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | digitalDomicile_address | test@pecOk.it |
       | payment_pagoPaForm      | SI            |
       | payment_f24             | NULL          |
@@ -173,7 +173,7 @@ Feature: Allegati notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                 |
       | physicalAddress_address | Via@ok_AR            |
       | payment_pagoPaForm      | SI                   |
@@ -192,7 +192,7 @@ Feature: Allegati notifica
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"

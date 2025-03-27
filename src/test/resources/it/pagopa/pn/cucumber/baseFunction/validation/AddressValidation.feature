@@ -223,7 +223,7 @@ Feature: address validation feature
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile                     | NULL                  |
       | physicalAddress_address             | <address>             |
       | at                                  | <at>                  |

@@ -10,7 +10,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_AR      |
       | physicalAddress_municipality | <MUNICIPALITY> |
@@ -31,7 +31,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | FLAT_RATE                       |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_AR      |
       | physicalAddress_municipality | <MUNICIPALITY> |
@@ -53,7 +53,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_AR      |
       | physicalAddress_municipality | <MUNICIPALITY> |
@@ -82,7 +82,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | FLAT_RATE                       |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_AR      |
       | physicalAddress_municipality | <MUNICIPALITY> |
@@ -112,7 +112,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL           |
       | physicalAddress_State        | BRASILE        |
       | physicalAddress_municipality | Florianopolis  |
@@ -131,7 +131,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | FLAT_RATE                       |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | payment_pagoPaForm           | SI             |
       | digitalDomicile              | NULL           |
       | physicalAddress_State        | BRASILE        |
@@ -152,7 +152,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL       |
       | physicalAddress_State        | FRANCIA    |
       | physicalAddress_municipality | Parigi     |
@@ -170,7 +170,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | FLAT_RATE                       |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL       |
       | physicalAddress_State        | FRANCIA    |
       | physicalAddress_municipality | Parigi     |
@@ -190,7 +190,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL       |
       | physicalAddress_State        | AUSTRALIA  |
       | physicalAddress_municipality | Hobart     |
@@ -209,7 +209,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | FLAT_RATE                       |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL       |
       | physicalAddress_State        | AUSTRALIA  |
       | physicalAddress_municipality | Hobart     |

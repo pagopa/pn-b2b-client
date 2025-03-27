@@ -6,7 +6,7 @@ Feature: avanzamento b2b persona giuridica pagamento
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario "CucumberSpa" e:
+    And destinatario CucumberSpa e:
       | payment_pagoPaForm | SI   |
       | payment_f24        | NULL |
       | apply_cost_pagopa  | SI   |
@@ -20,7 +20,7 @@ Feature: avanzamento b2b persona giuridica pagamento
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario "CucumberSpa" e:
+    And destinatario CucumberSpa e:
       | payment_pagoPaForm | SI   |
       | payment_f24        | NULL |
       | apply_cost_pagopa  | SI   |
@@ -32,7 +32,7 @@ Feature: avanzamento b2b persona giuridica pagamento
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | FLAT_RATE                   |
-    And destinatario "CucumberSpa"
+    And destinatario CucumberSpa
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "0" della notifica
 
@@ -41,7 +41,7 @@ Feature: avanzamento b2b persona giuridica pagamento
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario "CucumberSpa" e:
+    And destinatario CucumberSpa e:
       | payment_pagoPaForm | SI   |
       | payment_f24        | NULL |
       | apply_cost_pagopa  | SI   |
@@ -55,7 +55,7 @@ Feature: avanzamento b2b persona giuridica pagamento
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario "CucumberSrl" e:
+    And destinatario CucumberSrl e:
       | payment_pagoPaForm | SI   |
       | payment_f24        | NULL |
       | apply_cost_pagopa  | SI   |

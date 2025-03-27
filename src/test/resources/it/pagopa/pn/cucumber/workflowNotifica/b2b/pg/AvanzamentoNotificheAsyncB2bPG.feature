@@ -8,7 +8,7 @@ Feature: avanzamento notifiche asincrone b2b PG - controllo costi
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | SYNC                        |
       | paFee              | 10                          |
-    And destinatario "Cucumber Society" e:
+    And destinatario Cucumber Society e:
       | payment_creditorTaxId | 77777777777 |
       | payment_pagoPaForm    | SI          |
       | payment_f24           | NULL        |
@@ -26,7 +26,7 @@ Feature: avanzamento notifiche asincrone b2b PG - controllo costi
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                          |
-    And destinatario "Gherkin Analogic" e:
+    And destinatario Gherkin Analogic e:
       | payment_creditorTaxId | 77777777777 |
       | payment_pagoPaForm    | SI          |
       | payment_f24           | NULL        |
@@ -46,7 +46,7 @@ Feature: avanzamento notifiche asincrone b2b PG - controllo costi
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                          |
-    And destinatario "Gherkin Analogic" e:
+    And destinatario Gherkin Analogic e:
       | payment_creditorTaxId | 77777777777 |
       | payment_pagoPaForm    | SI          |
       | payment_f24           | NULL        |
@@ -66,7 +66,7 @@ Feature: avanzamento notifiche asincrone b2b PG - controllo costi
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                          |
-    And destinatario "Gherkin Analogic" e:
+    And destinatario Gherkin Analogic e:
       | payment_creditorTaxId   | 77777777777           |
       | digitalDomicile         | NULL                  |
       | physicalAddress_address | Via@FAIL-Discovery_AR |
@@ -91,7 +91,7 @@ Feature: avanzamento notifiche asincrone b2b PG - controllo costi
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                          |
-    And destinatario "Gherkin Analogic" e:
+    And destinatario Gherkin Analogic e:
       | payment_creditorTaxId   | 77777777777  |
       | digitalDomicile_address | test@fail.it |
       | payment_pagoPaForm      | SI           |
@@ -120,7 +120,7 @@ Feature: avanzamento notifiche asincrone b2b PG - controllo costi
       | feePolicy     | DELIVERY_MODE               |
       | pagoPaIntMode | ASYNC                       |
       | paFee         | 10                          |
-    And destinatario "Gherkin Analogic" e:
+    And destinatario Gherkin Analogic e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | via@FAIL-Irreperibile_AR_SLOW |
       | payment_creditorTaxId   | 77777777777                   |

@@ -8,7 +8,7 @@ Feature: Api b2b per destinatari strutturati
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "CucumberSpa"
+    And destinatario CucumberSpa
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente letta da "Mario Gherkin" con delega
 
@@ -20,7 +20,7 @@ Feature: Api b2b per destinatari strutturati
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "CucumberSpa"
+    And destinatario CucumberSpa
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente letta da "GherkinSrl" con delega
 
@@ -32,7 +32,7 @@ Feature: Api b2b per destinatari strutturati
     Given viene generata una nuova notifica
       | subject            | invio notifica CucumberSpa |
       | senderDenomination | Comune di Milano           |
-    And destinatario "CucumberSpa"
+    And destinatario CucumberSpa
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente letta da "Mario Gherkin" con delega
 
@@ -44,7 +44,7 @@ Feature: Api b2b per destinatari strutturati
     Given viene generata una nuova notifica
       | subject            | invio notifica CucumberSpa |
       | senderDenomination | Comune di Milano           |
-    And destinatario "CucumberSpa"
+    And destinatario CucumberSpa
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente letta da "GherkinSrl" con delega
 
@@ -180,7 +180,7 @@ Feature: Api b2b per destinatari strutturati
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "GherkinSrl"
+    And destinatario GherkinSrl
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then il documento notificato può essere correttamente recuperato da "CucumberSpa" con delega
 
@@ -220,7 +220,7 @@ Feature: Api b2b per destinatari strutturati
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "GherkinSrl" e:
+    And destinatario GherkinSrl e:
       | payment_pagoPaForm | SI |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then l'allegato "PAGOPA" può essere correttamente recuperato da "CucumberSpa" con delega
@@ -327,7 +327,7 @@ Feature: Api b2b per destinatari strutturati
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "CucumberSpa"
+    And destinatario CucumberSpa
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     Then "CucumberSpa" richiede il download dell'attestazione opponibile "SENDER_ACK"
@@ -337,7 +337,7 @@ Feature: Api b2b per destinatari strutturati
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "CucumberSpa"
+    And destinatario CucumberSpa
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     Then "CucumberSpa" richiede il download dell'attestazione opponibile "DIGITAL_DELIVERY"
@@ -347,7 +347,7 @@ Feature: Api b2b per destinatari strutturati
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "CucumberSpa"
+    And destinatario CucumberSpa
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_PROGRESS"
     Then "CucumberSpa" richiede il download dell'attestazione opponibile "PEC_RECEIPT"
@@ -357,7 +357,7 @@ Feature: Api b2b per destinatari strutturati
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "CucumberSpa"
+    And destinatario CucumberSpa
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And "CucumberSpa" legge la notifica ricevuta
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
@@ -368,6 +368,6 @@ Feature: Api b2b per destinatari strutturati
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "CucumberSpa"
+    And destinatario CucumberSpa
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente recuperata da "CucumberSpa"

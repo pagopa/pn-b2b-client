@@ -9,10 +9,10 @@ Feature: avanzamento b2b notifica multi destinatario analogico 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
-    And destinatario "Cucumber Society"
+    And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
@@ -24,10 +24,10 @@ Feature: avanzamento b2b notifica multi destinatario analogico 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL         |
       | physicalAddress_address | Via@fail_890 |
-    And destinatario "Cucumber Society"
+    And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con responseStatus "OK" per l'utente 0
@@ -44,7 +44,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico 890
       | taxId                   | DVNLRD52D15M059P |
       | digitalDomicile         | NULL             |
       | physicalAddress_address | Via1@ok_890      |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL        |
       | physicalAddress_address | Via2@ok_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -58,10 +58,10 @@ Feature: avanzamento b2b notifica multi destinatario analogico 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                   |
       | physicalAddress_address | Via@fail-Discovery_890 |
-    And destinatario "Cucumber Society"
+    And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
@@ -77,7 +77,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico 890
       | taxId                   | DVNLRD52D15M059P          |
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | Via@FAIL-Irreperibile_890 |
-    And destinatario "Cucumber Society"
+    And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE_FAILURE" con failureCause "D00" per l'utente 0
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
@@ -94,7 +94,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico 890
       | taxId                   | NNVFNC80A01H501G          |
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | Via@FAIL-Irreperibile_890 |
-    And destinatario "Cucumber Society"
+    And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE_FAILURE" con failureCause "D01" per l'utente 0
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
@@ -106,10 +106,10 @@ Feature: avanzamento b2b notifica multi destinatario analogico 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
-    And destinatario "Cucumber Society"
+    And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
@@ -126,10 +126,10 @@ Feature: avanzamento b2b notifica multi destinatario analogico 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -147,10 +147,10 @@ Feature: avanzamento b2b notifica multi destinatario analogico 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                           |
       | physicalAddress_address | Via@OK-RITARDO_PERFEZIONAMENTO |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -168,7 +168,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                           |
       | physicalAddress_address | Via@OK-RITARDO_PERFEZIONAMENTO |
     And destinatario
@@ -191,10 +191,10 @@ Feature: avanzamento b2b notifica multi destinatario analogico 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL              |
       | physicalAddress_address | Via@OK-REC008_890 |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"

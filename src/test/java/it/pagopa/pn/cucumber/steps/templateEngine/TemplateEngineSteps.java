@@ -207,6 +207,7 @@ public class TemplateEngineSteps {
                 int count = countOccurrences("TEST_digest_allegato");
                 Assertions.assertEquals(2, count);
             }
+            default -> throw new IllegalArgumentException("Notifica non supportata: " + notificationType);
         }
     }
 }

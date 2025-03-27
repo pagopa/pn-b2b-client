@@ -5,7 +5,7 @@ Feature: Verifica del contenuto dei differenti tipi di legalFact prodotti nei wo
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo          |
-    And destinatario "Mario Gherkin"
+    And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     And ricerca ed effettua download del legalFact con la categoria "SENDER_ACK"
@@ -26,10 +26,10 @@ Feature: Verifica del contenuto dei differenti tipi di legalFact prodotti nei wo
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -59,10 +59,10 @@ Feature: Verifica del contenuto dei differenti tipi di legalFact prodotti nei wo
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -87,7 +87,7 @@ Feature: Verifica del contenuto dei differenti tipi di legalFact prodotti nei wo
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo          |
-    And destinatario "Mario Gherkin"
+    And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     And ricerca ed effettua download del legalFact con la categoria "DIGITAL_DELIVERY"
@@ -104,7 +104,7 @@ Feature: Verifica del contenuto dei differenti tipi di legalFact prodotti nei wo
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And "Mario Cucumber" legge la notifica ricevuta
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
@@ -122,7 +122,7 @@ Feature: Verifica del contenuto dei differenti tipi di legalFact prodotti nei wo
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere correttamente letta da "Mario Gherkin" con delega
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
@@ -140,7 +140,7 @@ Feature: Verifica del contenuto dei differenti tipi di legalFact prodotti nei wo
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo          |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@fail.it |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW"

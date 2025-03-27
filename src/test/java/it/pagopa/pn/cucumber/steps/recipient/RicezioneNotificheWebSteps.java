@@ -60,7 +60,7 @@ public class RicezioneNotificheWebSteps {
     private final IPnBFFRecipientNotificationClient bffRecipientNotificationClient;
     private final IPnTosPrivacyClient iPnTosPrivacyClient;
     private final PnB2bClientTimingConfigs timingConfigs;
-    private static final Integer waitDefault = 10000;
+    private static final Integer WAIT_DEFAULT = 10000;
 
     private HttpStatusCodeException notificationError;
     private FullReceivedNotificationV25 fullNotification;
@@ -69,7 +69,6 @@ public class RicezioneNotificheWebSteps {
 
     private static final String TOS_VERSION = "2";
     private static final String ACCEPT_TOS = "ACCETTA";
-
 
     @Value("${pn.external.senderId}")
     private String senderId;
@@ -253,13 +252,13 @@ public class RicezioneNotificheWebSteps {
     public void theDocumentCanBeProperlyRetrievedBy(String recipient) {
         sharedSteps.selectUser(recipient);
         NotificationAttachmentDownloadMetadataResponse downloadResponse = getReceivedNotificationDocument();
-        AtomicReference<String> Sha256 = new AtomicReference<>("");
+        AtomicReference<String> sha256 = new AtomicReference<>("");
         Assertions.assertDoesNotThrow(() -> {
             byte[] bytes = Assertions.assertDoesNotThrow(() ->
                     b2bUtils.downloadFile(downloadResponse.getUrl()));
-            Sha256.set(b2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
+            sha256.set(b2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
         });
-        Assertions.assertEquals(Sha256.get(), downloadResponse.getSha256());
+        Assertions.assertEquals(sha256.get(), downloadResponse.getSha256());
     }
 
     @Then("il documento notificato non può essere correttamente recuperato da {string}")
@@ -317,14 +316,14 @@ public class RicezioneNotificheWebSteps {
         }
 
         if (!"F24".equalsIgnoreCase(attachmentName)) {
-            AtomicReference<String> Sha256 = new AtomicReference<>("");
+            AtomicReference<String> sha256 = new AtomicReference<>("");
             NotificationAttachmentDownloadMetadataResponse finalDownloadResponse = downloadResponse;
             Assertions.assertDoesNotThrow(() -> {
                 byte[] bytes = Assertions.assertDoesNotThrow(() ->
                         b2bUtils.downloadFile(Objects.requireNonNull(finalDownloadResponse).getUrl()));
-                Sha256.set(b2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
+                sha256.set(b2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
             });
-            Assertions.assertEquals(Sha256.get(), Objects.requireNonNull(downloadResponse).getSha256());
+            Assertions.assertEquals(sha256.get(), Objects.requireNonNull(downloadResponse).getSha256());
         } else {
             NotificationAttachmentDownloadMetadataResponse finalDownloadResponse = downloadResponse;
             Assertions.assertDoesNotThrow(() ->
@@ -471,7 +470,7 @@ public class RicezioneNotificheWebSteps {
         if (data.containsKey("status")) {
             searchParam.status = NotificationStatusV26.valueOf(data.get("status"));
         }
-        searchParam.iunMatch = ((iun != null && iun.equalsIgnoreCase("ACTUAL") ? sharedSteps.getNotificationIun() : iun));
+        searchParam.iunMatch = iun != null && iun.equalsIgnoreCase("ACTUAL") ? sharedSteps.getNotificationIun() : iun;
         searchParam.size = Integer.parseInt(data.getOrDefault("size", "10"));
         if (searchParam.size == -1) searchParam.size = null;
         return searchParam;
@@ -487,7 +486,7 @@ public class RicezioneNotificheWebSteps {
         searchParam.endDate = dates.getValue2();
         searchParam.subjectRegExp = data.getOrDefault("subjectRegExp", null);
         String iun = data.getOrDefault("iunMatch", null);
-        searchParam.iunMatch = ((iun != null && iun.equalsIgnoreCase("ACTUAL") ? sharedSteps.getNotificationIun() : iun));
+        searchParam.iunMatch = iun != null && iun.equalsIgnoreCase("ACTUAL") ? sharedSteps.getNotificationIun() : iun;
         searchParam.size = Integer.parseInt(data.getOrDefault("size", "10"));
         return searchParam;
     }
@@ -576,17 +575,17 @@ public class RicezioneNotificheWebSteps {
     @When("si predispone addressbook per l'utente {string}")
     public void siPredisponeAddressbook(String user) {
         switch (user) {
-            case "Mario Cucumber" ->
+            case MARIO_CUCUMBER ->
                     this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
-            case "Mario Gherkin" ->
+            case MARIO_GHERKIN ->
                     this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
-            case "Galileo Galilei" ->
+            case GALILEO_GALILEI ->
                     this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_4);
-            case "Lucio Anneo Seneca", "CucumberSpa" ->
+            case LUCIO_ANNEO_SENECA, CUCUMBER_SPA ->
                     this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
-            case "GherkinSrl" ->
+            case GHERKIN_SRL ->
                     this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
-            case "Alda Merini" ->
+            case ALDA_MERINI ->
                     this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_3);
             default -> throw new IllegalArgumentException();
         }
@@ -674,11 +673,12 @@ public class RicezioneNotificheWebSteps {
 
     private void postRecipientLegalAddressWrongCode(String senderIdPa, String addressVerification, String verificationCode) {
         String[] code = {verificationCode};
-        Assertions.assertThrows(HttpStatusCodeException.class, () ->
-                this.iPnWebUserAttributesClient.postRecipientLegalAddress(
-                        senderIdPa,
-                        LegalChannelType.PEC,
-                        (new AddressVerification().value(addressVerification).verificationCode(code[0]))));
+        AddressVerification verification = new AddressVerification()
+                .value(addressVerification)
+                .verificationCode(code[0]);
+
+        Assertions.assertThrows(HttpStatusCodeException.class,
+                () -> this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.PEC, verification));
     }
 
     @And("viene cancellata l'email di cortesia per il comune {string}")
@@ -726,7 +726,7 @@ public class RicezioneNotificheWebSteps {
 
     @And("attendo che gli elementi di timeline SEND_ANALOG_PROGRESS vengano ricevuti tutti")
     public void attendoCheGliElementiDiTimelineSEND_ANALOG_PROGRESSVenganoRicevutiTutti() {
-        Integer waiting = timingConfigs.getWaitMillisForSendAnalogEvents() == null ? waitDefault : timingConfigs.getWaitMillisForSendAnalogEvents();
+        Integer waiting = timingConfigs.getWaitMillisForSendAnalogEvents() == null ? WAIT_DEFAULT : timingConfigs.getWaitMillisForSendAnalogEvents();
         waitState(waiting);
     }
 
@@ -996,6 +996,7 @@ public class RicezioneNotificheWebSteps {
         Assertions.assertFalse(privacyConsentV1.isEmpty());
         privacyConsentV1.forEach(data -> {
             Assertions.assertNotNull(data.getConsentType());
+            Assertions.assertEquals(ConsentType.TOS_SERCQ, data.getConsentType());
             Assertions.assertEquals(data.getAccepted(), tosStatus.equalsIgnoreCase("positiva"));
         });
     }

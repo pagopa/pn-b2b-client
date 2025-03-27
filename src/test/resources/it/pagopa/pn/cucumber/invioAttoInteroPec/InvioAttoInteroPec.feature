@@ -5,7 +5,7 @@ Feature: Invio atto intero via PEC (fase 2 - estensione F24)
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@pecOk.it |
       | payment                 | NULL          |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -20,7 +20,7 @@ Feature: Invio atto intero via PEC (fase 2 - estensione F24)
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | document           | DOC_1_PG; DOC_2_PG          |
-    And destinatario "Cucumber Society" e:
+    And destinatario Cucumber Society e:
       | digitalDomicile_address | test@pecOk.it |
       | payment                 | NULL          |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -34,7 +34,7 @@ Feature: Invio atto intero via PEC (fase 2 - estensione F24)
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@pecOk.it |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
@@ -47,9 +47,9 @@ Feature: Invio atto intero via PEC (fase 2 - estensione F24)
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@pecOk.it |
-    And destinatario "Cucumber Society" e:
+    And destinatario Cucumber Society e:
       | digitalDomicile_address | test@pecOk.it |
       | payment                 | NULL          |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -68,7 +68,7 @@ Feature: Invio atto intero via PEC (fase 2 - estensione F24)
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@pecOk.it |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
@@ -83,9 +83,9 @@ Feature: Invio atto intero via PEC (fase 2 - estensione F24)
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@pecOk.it |
-    And destinatario "Cucumber Society" e:
+    And destinatario Cucumber Society e:
       | digitalDomicile_address | test@pecOk.it |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 0
@@ -106,7 +106,7 @@ Feature: Invio atto intero via PEC (fase 2 - estensione F24)
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@pecOk.it        |
       | payment_pagoPaForm      | SI                   |
       | payment_f24             | PAYMENT_F24_STANDARD |
@@ -128,7 +128,7 @@ Feature: Invio atto intero via PEC (fase 2 - estensione F24)
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@pecOk.it        |
       | payment_pagoPaForm      | SI                   |
       | payment_f24             | PAYMENT_F24_STANDARD |
@@ -136,7 +136,7 @@ Feature: Invio atto intero via PEC (fase 2 - estensione F24)
       | apply_cost_pagopa       | SI                   |
       | apply_cost_f24          | SI                   |
       | payment_multy_number    | 3                    |
-    And destinatario "Cucumber Society" e:
+    And destinatario Cucumber Society e:
       | digitalDomicile_address | test@pecOk.it        |
       | payment_pagoPaForm      | SI                   |
       | payment_f24             | PAYMENT_F24_STANDARD |
@@ -163,12 +163,12 @@ Feature: Invio atto intero via PEC (fase 2 - estensione F24)
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@pecOk.it |
       | payment_pagoPaForm      | SI            |
       | apply_cost_pagopa       | SI            |
       | payment_multy_number    | 5             |
-    And destinatario "Cucumber Society" e:
+    And destinatario Cucumber Society e:
       | digitalDomicile_address | test@pecOk.it        |
       | payment_pagoPaForm      | NULL                 |
       | payment_f24             | PAYMENT_F24_STANDARD |

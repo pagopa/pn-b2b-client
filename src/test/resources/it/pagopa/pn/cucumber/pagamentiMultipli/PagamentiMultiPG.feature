@@ -765,7 +765,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "CucumberSpa" e:
+    And destinatario CucumberSpa e:
       | payment_pagoPaForm   | NULL                      |
       | payment_f24          | PAYMENT_F24_STANDARD      |
       | title_payment        | F24_STANDARD_CUCUMBER_SRL |
@@ -785,7 +785,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "CucumberSpa" e:
+    And destinatario CucumberSpa e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
@@ -1378,7 +1378,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "CucumberSrl" e:
+    And destinatario CucumberSrl e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
@@ -1430,7 +1430,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "CucumberSrl" e:
+    And destinatario CucumberSrl e:
       | payment_pagoPaForm   | NULL                      |
       | payment_f24          | PAYMENT_F24_STANDARD      |
       | title_payment        | F24_STANDARD_CUCUMBER_SRL |
@@ -1461,7 +1461,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "CucumberSrl" e:
+    And destinatario CucumberSrl e:
       | payment_pagoPaForm   | NULL                      |
       | payment_f24          | PAYMENT_F24_STANDARD      |
       | title_payment        | F24_STANDARD_CUCUMBER_SRL |
@@ -1481,7 +1481,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "CucumberSrl" e:
+    And destinatario CucumberSrl e:
       | payment_pagoPaForm   | NULL                      |
       | payment_f24          | PAYMENT_F24_STANDARD      |
       | title_payment        | F24_STANDARD_CUCUMBER_SRL |
@@ -1504,7 +1504,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "CucumberSpa" e:
+    And destinatario CucumberSpa e:
       | payment_pagoPaForm   | NULL                      |
       | payment_f24          | PAYMENT_F24_STANDARD      |
       | title_payment        | F24_STANDARD_CUCUMBER_SRL |
@@ -1528,7 +1528,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "CucumberSpa" e:
+    And destinatario CucumberSpa e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_f24       | NO   |
@@ -1547,7 +1547,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "CucumberSpa" e:
+    And destinatario CucumberSpa e:
       | payment_pagoPaForm   | NULL                      |
       | payment_f24          | PAYMENT_F24_STANDARD      |
       | title_payment        | F24_STANDARD_CUCUMBER_SRL |
@@ -1565,7 +1565,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | senderDenomination | comune di palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "CucumberSpa" e:
+    And destinatario CucumberSpa e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
@@ -1583,7 +1583,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | senderDenomination | comune di palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "GherkinSrl" e:
+    And destinatario GherkinSrl e:
       | payment_pagoPaForm   | NULL                      |
       | payment_f24          | PAYMENT_F24_STANDARD      |
       | title_payment        | F24_STANDARD_CUCUMBER_SRL |
@@ -1603,12 +1603,12 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | senderDenomination | comune di palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "CucumberSpa" e:
+    And destinatario CucumberSpa e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
-    And destinatario "GherkinSrl" e:
+    And destinatario GherkinSrl e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
@@ -1628,13 +1628,13 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | senderDenomination | comune di palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "CucumberSpa" e:
+    And destinatario CucumberSpa e:
       | payment_pagoPaForm   | NULL                      |
       | payment_f24          | PAYMENT_F24_STANDARD      |
       | title_payment        | F24_STANDARD_CUCUMBER_SRL |
       | apply_cost_f24       | SI                        |
       | payment_multy_number | 1                         |
-    And destinatario "GherkinSrl" e:
+    And destinatario GherkinSrl e:
       | payment_pagoPaForm   | NULL                      |
       | payment_f24          | PAYMENT_F24_STANDARD      |
       | title_payment        | F24_STANDARD_GHERKING_SPA |
@@ -1656,7 +1656,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "CucumberSrl" e:
+    And destinatario CucumberSrl e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
@@ -1676,7 +1676,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "CucumberSrl" e:
+    And destinatario CucumberSrl e:
       | payment_pagoPaForm   | NULL                 |
       | payment_f24          | PAYMENT_F24_STANDARD |
       | title_payment        | F24_STANDARD_MARIO   |

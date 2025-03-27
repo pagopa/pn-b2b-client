@@ -9,7 +9,7 @@ Feature: controllo costo notifiche con IVA
       | physicalCommunication | REGISTERED_LETTER_890       |
       | vat                   | 10                          |
       | paFee                 | 100                         |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -26,7 +26,7 @@ Feature: controllo costo notifiche con IVA
       | physicalCommunication | AR_REGISTERED_LETTER        |
       | vat                   | 10                          |
       | paFee                 | 100                         |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -43,7 +43,7 @@ Feature: controllo costo notifiche con IVA
       | physicalCommunication | AR_REGISTERED_LETTER        |
       | vat                   | 10                          |
       | paFee                 | 100                         |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL       |
       | physicalAddress_State        | FRANCIA    |
       | physicalAddress_municipality | Parigi     |
@@ -63,7 +63,7 @@ Feature: controllo costo notifiche con IVA
       | feePolicy          | DELIVERY_MODE               |
       | vat                | 10                          |
       | paFee              | 100                         |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@fail.it |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
@@ -78,7 +78,7 @@ Feature: controllo costo notifiche con IVA
       | feePolicy          | DELIVERY_MODE               |
       | vat                | 10                          |
       | paFee              | 100                         |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | physicalAddress_State        | FRANCIA      |
       | physicalAddress_municipality | Parigi       |
       | physicalAddress_zip          | ZONE_1       |
@@ -100,7 +100,7 @@ Feature: controllo costo notifiche con IVA
       | pagoPaIntMode         | ASYNC                       |
       | vat                   | 10                          |
       | paFee                 | 10                          |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL        |
       | physicalAddress_address | via@ok_890  |
       | payment_creditorTaxId   | 77777777777 |
@@ -125,7 +125,7 @@ Feature: controllo costo notifiche con IVA
       | pagoPaIntMode      | ASYNC                       |
       | vat                | 10                          |
       | paFee              | 10                          |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@fail.it |
       | payment_creditorTaxId   | 77777777777  |
       | payment_pagoPaForm      | SI           |
@@ -148,7 +148,7 @@ Feature: controllo costo notifiche con IVA
       | physicalCommunication | REGISTERED_LETTER_890       |
       | vat                   | 10                          |
       | paFee                 | 100                         |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | Via@ok_890                    |
       | payment_f24             | PAYMENT_F24_STANDARD_0        |
@@ -169,7 +169,7 @@ Feature: controllo costo notifiche con IVA
       | physicalCommunication | REGISTERED_LETTER_890       |
       | vat                   | 10                          |
       | paFee                 | 100                         |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -186,7 +186,7 @@ Feature: controllo costo notifiche con IVA
       | pagoPaIntMode      | ASYNC                       |
       | vat                | 10                          |
       | paFee              | 10                          |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL        |
       | physicalAddress_address | via@ok_890  |
       | payment_creditorTaxId   | 77777777777 |
@@ -209,7 +209,7 @@ Feature: controllo costo notifiche con IVA
       | physicalCommunication | REGISTERED_LETTER_890       |
       | vat                   | 10                          |
       | paFee                 | 100                         |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL             |
       | physicalAddress_address | Via@ok_890       |
       | payment_f24             | PAYMENT_F24_FLAT |
@@ -227,7 +227,7 @@ Feature: controllo costo notifiche con IVA
       | physicalCommunication | REGISTERED_LETTER_890       |
       | vat                   | NULL                        |
       | paFee                 | 100                         |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -244,7 +244,7 @@ Feature: controllo costo notifiche con IVA
       | physicalCommunication | REGISTERED_LETTER_890       |
       | vat                   | 20                          |
       | paFee                 | NULL                        |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -261,7 +261,7 @@ Feature: controllo costo notifiche con IVA
       | physicalCommunication | REGISTERED_LETTER_890       |
       | vat                   | 10                          |
       | paFee                 | 10                          |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                   |
       | physicalAddress_address | Via@FAIL-Discovery_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -280,7 +280,7 @@ Feature: controllo costo notifiche con IVA
       | pagoPaIntMode      | ASYNC                       |
       | vat                | 10                          |
       | paFee              | 10                          |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                   |
       | physicalAddress_address | Via@FAIL-Discovery_890 |
       | payment_creditorTaxId   | 77777777777            |
@@ -305,7 +305,7 @@ Feature: controllo costo notifiche con IVA
       | physicalCommunication | REGISTERED_LETTER_890       |
       | vat                   | 10                          |
       | paFee                 | 10                          |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | Via@FAIL-Discovery_890        |
       | payment_f24             | PAYMENT_F24_STANDARD_0        |
@@ -327,7 +327,7 @@ Feature: controllo costo notifiche con IVA
       | physicalCommunication | REGISTERED_LETTER_890       |
       | vat                   | 10                          |
       | paFee                 | 10                          |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                   |
       | physicalAddress_address | Via@FAIL-Discovery_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -346,7 +346,7 @@ Feature: controllo costo notifiche con IVA
       | feePolicy             | DELIVERY_MODE                   |
       | vat                   | 10                              |
       | paFee                 | 100                             |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_890     |
       | physicalAddress_municipality | <MUNICIPALITY> |
@@ -369,7 +369,7 @@ Feature: controllo costo notifiche con IVA
       | feePolicy          | DELIVERY_MODE               |
       | vat                | 10                          |
       | paFee              | 100                         |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
       | payment_pagoPaForm      | SI         |
@@ -389,12 +389,12 @@ Feature: controllo costo notifiche con IVA
       | feePolicy          | DELIVERY_MODE               |
       | vat                | 10                          |
       | paFee              | 100                         |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
       | payment_pagoPaForm      | SI         |
       | apply_cost_pagopa       | SI         |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL                   |
       | physicalAddress_address | Via@FAIL-Discovery_890 |
       | payment_pagoPaForm      | SI                     |

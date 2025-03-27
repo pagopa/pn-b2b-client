@@ -6,7 +6,7 @@ Feature: avanzamento notifiche analogico 890 persona giuridica
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Gherkin Analogic" e:
+    And destinatario Gherkin Analogic e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -18,7 +18,7 @@ Feature: avanzamento notifiche analogico 890 persona giuridica
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di milano                |
-    And destinatario "Gherkin Analogic" e:
+    And destinatario Gherkin Analogic e:
       | digitalDomicile         | NULL         |
       | physicalAddress_address | Via@fail_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -30,7 +30,7 @@ Feature: avanzamento notifiche analogico 890 persona giuridica
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di milano                |
-    And destinatario "Gherkin Analogic" e:
+    And destinatario Gherkin Analogic e:
       | digitalDomicile         | NULL                   |
       | physicalAddress_address | Via@fail-Discovery_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -53,7 +53,7 @@ Feature: avanzamento notifiche analogico 890 persona giuridica
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Gherkin Analogic" e:
+    And destinatario Gherkin Analogic e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -66,7 +66,7 @@ Feature: avanzamento notifiche analogico 890 persona giuridica
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Gherkin Analogic" e:
+    And destinatario Gherkin Analogic e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -79,7 +79,7 @@ Feature: avanzamento notifiche analogico 890 persona giuridica
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Gherkin Analogic" e:
+    And destinatario Gherkin Analogic e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -92,7 +92,7 @@ Feature: avanzamento notifiche analogico 890 persona giuridica
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di milano                |
-    And destinatario "Gherkin Irreperibile" e:
+    And destinatario Gherkin Irreperibile e:
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | Via@FAIL-Irreperibile_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -104,7 +104,7 @@ Feature: avanzamento notifiche analogico 890 persona giuridica
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di milano                |
-    And destinatario "Gherkin Analogic" e:
+    And destinatario Gherkin Analogic e:
       | digitalDomicile         | NULL             |
       | physicalAddress_address | Via@ok_890_SLOW  |
       | payment_f24             | PAYMENT_F24_FLAT |

@@ -10,7 +10,7 @@ Feature: Ricezione notifiche destinate al delegante
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente letta da "Mario Gherkin" con delega
 
@@ -21,7 +21,7 @@ Feature: Ricezione notifiche destinate al delegante
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then il documento notificato può essere correttamente recuperato da "Mario Gherkin" con delega
 
@@ -32,7 +32,7 @@ Feature: Ricezione notifiche destinate al delegante
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | payment_pagoPaForm | SI               |
       | payment_f24        | PAYMENT_F24_FLAT |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
@@ -45,7 +45,7 @@ Feature: Ricezione notifiche destinate al delegante
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | payment_pagoPaForm | SI               |
       | payment_f24        | PAYMENT_F24_FLAT |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
@@ -58,7 +58,7 @@ Feature: Ricezione notifiche destinate al delegante
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | payment_pagoPaForm | SI                   |
       | payment_f24        | PAYMENT_F24_STANDARD |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
@@ -71,7 +71,7 @@ Feature: Ricezione notifiche destinate al delegante
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And "Mario Cucumber" revoca la delega a "Mario Gherkin"
     Then si tenta la lettura della notifica da parte del delegato "Mario Gherkin" che produce un errore con status code "404"
@@ -83,7 +83,7 @@ Feature: Ricezione notifiche destinate al delegante
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then si tenta la lettura della notifica da parte del delegato "Mario Gherkin" che produce un errore con status code "404"
 
@@ -106,7 +106,7 @@ Feature: Ricezione notifiche destinate al delegante
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente letta da "Mario Gherkin" con delega
     And la notifica può essere correttamente letta da "Mario Cucumber"
@@ -118,7 +118,7 @@ Feature: Ricezione notifiche destinate al delegante
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente letta da "Mario Cucumber"
     And la notifica può essere correttamente letta da "Mario Gherkin" con delega
@@ -130,7 +130,7 @@ Feature: Ricezione notifiche destinate al delegante
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente letta da "Mario Gherkin" con delega
     And si verifica che l'elemento di timeline della lettura riporti i dati di "Mario Gherkin"
@@ -142,7 +142,7 @@ Feature: Ricezione notifiche destinate al delegante
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente letta da "Mario Cucumber"
     And si verifica che l'elemento di timeline della lettura non riporti i dati del delegato
@@ -154,8 +154,8 @@ Feature: Ricezione notifiche destinate al delegante
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo          |
-    And destinatario "Mario Gherkin"
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Gherkin
+    And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente letta da "Mario Cucumber"
     And la notifica può essere correttamente letta da "Mario Gherkin" con delega
@@ -178,8 +178,8 @@ Feature: Ricezione notifiche destinate al delegante
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo          |
-    And destinatario "Mario Gherkin"
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Gherkin
+    And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
     And download attestazione opponibile AAR
@@ -193,7 +193,7 @@ Feature: Ricezione notifiche destinate al delegante
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And l'utente "Mario Cucumber" controlla che la data di refinement sia corretta

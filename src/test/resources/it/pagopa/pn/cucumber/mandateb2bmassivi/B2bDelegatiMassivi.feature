@@ -116,7 +116,7 @@ Feature: Pn-mandate api b2b per intermediari massivi
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di Aglientu         |
-    And destinatario "GherkinSrl"
+    And destinatario GherkinSrl
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And la notifica non può essere recuperata da "CucumberSpa"
 
@@ -132,7 +132,7 @@ Feature: Pn-mandate api b2b per intermediari massivi
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di Aglientu         |
-    And destinatario "GherkinSrl"
+    And destinatario GherkinSrl
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And "CucumberSpa" rifiuta se presente la delega ricevuta "GherkinSrl"
     And la notifica non può essere recuperata da "CucumberSpa"

@@ -6,7 +6,7 @@ Feature: avanzamento notifiche b2b persona fisica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di milano                |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario "Cucumber Analogic" e:
+    And destinatario Cucumber Analogic e:
       | digitalDomicile         | NULL           |
       | physicalAddress_address | Via@OK-WO-011B |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -18,7 +18,7 @@ Feature: avanzamento notifiche b2b persona fisica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di milano                |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario "Cucumber Analogic" e:
+    And destinatario Cucumber Analogic e:
       | digitalDomicile         | NULL                        |
       | physicalAddress_address | Via@OK-Giacenza-lte10_890-2 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -30,7 +30,7 @@ Feature: avanzamento notifiche b2b persona fisica
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di milano                |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL                                                                                         |
       | physicalAddress_address | Via @sequence.5s-CON080.5s-RECRN001A.15m-RECRN001B[DOC:AR;DELAY:15m].5s-RECRN001C[DELAY:15m] |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -42,7 +42,7 @@ Feature: avanzamento notifiche b2b persona fisica
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di milano                |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL                                                                                         |
       | physicalAddress_address | Via @sequence.5s-CON080.5s-RECRN001A.15m-RECRN001B[DOC:AR;DELAY:15m].5s-RECRN001C[DELAY:15m] |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -52,7 +52,7 @@ Feature: avanzamento notifiche b2b persona fisica
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And "Mario Credenziali Scadute" tenta di leggere la notifica ricevuta
     Then l'operazione ha prodotto un errore con status code "403"
@@ -63,7 +63,7 @@ Feature: avanzamento notifiche b2b persona fisica
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di milano                |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL                            |
       | physicalAddress_address | Via @OK-RITARDO_PERFEZIONAMENTO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -75,7 +75,7 @@ Feature: avanzamento notifiche b2b persona fisica
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di milano                |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL                            |
       | physicalAddress_address | Via @OK-RITARDO_PERFEZIONAMENTO |
     And destinatario
@@ -90,10 +90,10 @@ Feature: avanzamento notifiche b2b persona fisica
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di milano                |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL                            |
       | physicalAddress_address | Via @OK-RITARDO_PERFEZIONAMENTO |
-    And destinatario "Cucumber Analogic" e:
+    And destinatario Cucumber Analogic e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -105,7 +105,7 @@ Feature: avanzamento notifiche b2b persona fisica
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di milano                |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL                            |
       | physicalAddress_address | Via @OK-RITARDO_PERFEZIONAMENTO |
     And destinatario
@@ -120,10 +120,10 @@ Feature: avanzamento notifiche b2b persona fisica
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di milano                |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL                            |
       | physicalAddress_address | Via @OK-RITARDO_PERFEZIONAMENTO |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | via@fail-Discovery_AR     |
       | payment_pagoPaForm      | NULL                      |
@@ -142,10 +142,10 @@ Feature: avanzamento notifiche b2b persona fisica
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di milano                |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL                            |
       | physicalAddress_address | Via @OK-RITARDO_PERFEZIONAMENTO |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | via@fail-Discovery_AR     |
       | payment_pagoPaForm      | NULL                      |
@@ -167,10 +167,10 @@ Feature: avanzamento notifiche b2b persona fisica
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di milano                |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL                            |
       | physicalAddress_address | Via @OK-RITARDO_PERFEZIONAMENTO |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | via@fail-Discovery_AR     |
       | payment_pagoPaForm      | NULL                      |
@@ -192,10 +192,10 @@ Feature: avanzamento notifiche b2b persona fisica
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di milano                |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL                            |
       | physicalAddress_address | Via @OK-RITARDO_PERFEZIONAMENTO |
-    And destinatario "Cucumber Analogic" e:
+    And destinatario Cucumber Analogic e:
       | digitalDomicile         | NULL         |
       | physicalAddress_address | Via@fail_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -206,10 +206,10 @@ Feature: avanzamento notifiche b2b persona fisica
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di milano                |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL        |
       | physicalAddress_address | Via @OK_890 |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                                                                                                                                                                                 |
       | physicalAddress_address | via @sequence.5s-CON080.5s-RECRN002D[DISCOVERY;FAILCAUSE:M01].5s-RECRN002E[DOC:Plico;DOC:Indagine].5s-RECRN002F@discovered.10m-CON080.5s-RECRN001A.5m-RECRN001B[DOC:AR].5m-RECRN001C |
       | payment_pagoPaForm      | NULL                                                                                                                                                                                 |
@@ -228,10 +228,10 @@ Feature: avanzamento notifiche b2b persona fisica
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di milano                |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL                            |
       | physicalAddress_address | Via @OK-RITARDO_PERFEZIONAMENTO |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | via @FAIL-Irreperibile_AR |
       | payment_pagoPaForm      | NULL                      |
@@ -250,7 +250,7 @@ Feature: avanzamento notifiche b2b persona fisica
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di milano                |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL                         |
       | physicalAddress_address | Via @FAIL-EVENTO-INESISTENTE |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -262,7 +262,7 @@ Feature: avanzamento notifiche b2b persona fisica
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di milano                |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via @OK-SEQUENCE-NORMALE |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -273,7 +273,7 @@ Feature: avanzamento notifiche b2b persona fisica
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di milano                |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | Via @FAIL-ASSOCIAZIONE-ERRATA |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -284,7 +284,7 @@ Feature: avanzamento notifiche b2b persona fisica
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di milano                |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | Via @OK-ASSOCIAZIONE-CORRETTA |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -296,7 +296,7 @@ Feature: avanzamento notifiche b2b persona fisica
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di milano                |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | Via @OK-CAUSE-EVENTO-NO-MAPPA |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -307,7 +307,7 @@ Feature: avanzamento notifiche b2b persona fisica
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di milano                |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL                             |
       | physicalAddress_address | Via  @FAIL-CAUSE-EVENTO-NO-LISTA |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -320,8 +320,8 @@ Feature: avanzamento notifiche b2b persona fisica
     And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "GherkinSpa"
-    And destinatario "Mario Cucumber"
+    And destinatario GherkinSpa
+    And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
 
@@ -332,7 +332,7 @@ Feature: avanzamento notifiche b2b persona fisica
       | senderDenomination | Comune di milano            |
       | document           | DOC_1_PG;DOC_30MB           |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI |
       | apply_cost_pagopa    | SI |
       | payment_multy_number | 60 |
@@ -345,6 +345,6 @@ Feature: avanzamento notifiche b2b persona fisica
       | senderDenomination | Comune di milano            |
       | document           | DOC_1_PG;DOC_30MB           |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario "Mario Gherkin"
+    And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
 

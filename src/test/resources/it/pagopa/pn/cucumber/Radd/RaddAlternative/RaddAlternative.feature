@@ -44,7 +44,7 @@ Feature: Radd Alternative
       | senderDenomination | Comune di Palermo                            |
       | feePolicy          | DELIVERY_MODE                                |
       | paFee              | 0                                            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | Via @ok_890                   |
       | payment_pagoPaForm      | SI                            |
@@ -71,7 +71,7 @@ Feature: Radd Alternative
       | senderDenomination | Comune di Palermo                            |
       | feePolicy          | DELIVERY_MODE                                |
       | paFee              | 0                                            |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | Via @ok_890                   |
       | payment_pagoPaForm      | NULL                          |
@@ -99,7 +99,7 @@ Feature: Radd Alternative
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL           |
       | physicalAddress_address | Via@OK_890_ZIP |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -124,7 +124,7 @@ Feature: Radd Alternative
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL          |
       | physicalAddress_address | Via@OK_AR_ZIP |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -148,7 +148,7 @@ Feature: Radd Alternative
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario "Gherkin Analogic" e:
+    And destinatario Gherkin Analogic e:
       | digitalDomicile         | NULL          |
       | physicalAddress_address | Via@OK_AR_ZIP |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -166,7 +166,7 @@ Feature: Radd Alternative
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di Palermo                            |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
@@ -197,7 +197,7 @@ Feature: Radd Alternative
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di Palermo                            |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
@@ -210,7 +210,7 @@ Feature: Radd Alternative
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di Palermo                            |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
@@ -224,7 +224,7 @@ Feature: Radd Alternative
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di milano                             |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
@@ -239,7 +239,7 @@ Feature: Radd Alternative
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di Palermo                            |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
@@ -255,7 +255,7 @@ Feature: Radd Alternative
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di Palermo                            |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
@@ -283,7 +283,7 @@ Feature: Radd Alternative
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di Palermo                            |
-    And destinatario "CucumberSpa"
+    And destinatario CucumberSpa
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
@@ -306,7 +306,7 @@ Feature: Radd Alternative
       | senderDenomination | Comune di Palermo                            |
       | feePolicy          | DELIVERY_MODE                                |
       | paFee              | 0                                            |
-    And destinatario "CucumberSpa" e:
+    And destinatario CucumberSpa e:
       | payment_pagoPaForm   | SI                   |
       | payment_f24          | PAYMENT_F24_STANDARD |
       | title_payment        | F24_STANDARD_PG      |
@@ -333,7 +333,7 @@ Feature: Radd Alternative
       | senderDenomination | Comune di Palermo                            |
       | feePolicy          | DELIVERY_MODE                                |
       | paFee              | 0                                            |
-    And destinatario "CucumberSpa" e:
+    And destinatario CucumberSpa e:
       | payment_pagoPaForm   | NULL                 |
       | payment_f24          | PAYMENT_F24_STANDARD |
       | title_payment        | F24_STANDARD_PG      |
@@ -360,7 +360,7 @@ Feature: Radd Alternative
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di Palermo                            |
-    And destinatario "CucumberSpa"
+    And destinatario CucumberSpa
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
@@ -381,7 +381,7 @@ Feature: Radd Alternative
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario "Gherkin Analogic" e:
+    And destinatario Gherkin Analogic e:
       | digitalDomicile         | NULL           |
       | physicalAddress_address | Via@OK_890_ZIP |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -408,7 +408,7 @@ Feature: Radd Alternative
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di Palermo                            |
-    And destinatario "CucumberSpa"
+    And destinatario CucumberSpa
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
@@ -421,7 +421,7 @@ Feature: Radd Alternative
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di Palermo                            |
-    And destinatario "CucumberSpa"
+    And destinatario CucumberSpa
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
@@ -434,7 +434,7 @@ Feature: Radd Alternative
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di Palermo                            |
-    And destinatario "CucumberSpa"
+    And destinatario CucumberSpa
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
@@ -450,7 +450,7 @@ Feature: Radd Alternative
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di Palermo                            |
-    And destinatario "CucumberSpa"
+    And destinatario CucumberSpa
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
@@ -479,14 +479,14 @@ Feature: Radd Alternative
       | senderDenomination | Comune di Palermo                            |
       | feePolicy          | DELIVERY_MODE                                |
       | paFee              | 0                                            |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | payment_pagoPaForm   | SI                            |
       | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa    | SI                            |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
-    And destinatario "CucumberSpa" e:
+    And destinatario CucumberSpa e:
       | payment_pagoPaForm   | SI                   |
       | payment_f24          | PAYMENT_F24_STANDARD |
       | title_payment        | F24_STANDARD_PG      |
@@ -523,7 +523,7 @@ Feature: Radd Alternative
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di Palermo                            |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
@@ -542,7 +542,7 @@ Feature: Radd Alternative
       | senderDenomination | Comune di Palermo                            |
       | feePolicy          | DELIVERY_MODE                                |
       | paFee              | 0                                            |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL        |
       | physicalAddress_address | Via @ok_890 |
       | payment_pagoPaForm      | SI          |
@@ -569,7 +569,7 @@ Feature: Radd Alternative
       | senderDenomination | Comune di Palermo                            |
       | feePolicy          | DELIVERY_MODE                                |
       | paFee              | 0                                            |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | Via @ok_890                   |
       | payment_pagoPaForm      | SI                            |
@@ -607,7 +607,7 @@ Feature: Radd Alternative
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di Palermo                            |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
@@ -621,7 +621,7 @@ Feature: Radd Alternative
       | senderDenomination | Comune di Palermo                            |
       | feePolicy          | DELIVERY_MODE                                |
       | paFee              | 0                                            |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | Via @ok_890                   |
       | payment_pagoPaForm      | SI                            |
@@ -645,7 +645,7 @@ Feature: Radd Alternative
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di Palermo                            |
-    And destinatario "CucumberSpa"
+    And destinatario CucumberSpa
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
@@ -667,7 +667,7 @@ Feature: Radd Alternative
       | senderDenomination | Comune di Palermo                            |
       | feePolicy          | DELIVERY_MODE                                |
       | paFee              | 0                                            |
-    And destinatario "CucumberSpa" e:
+    And destinatario CucumberSpa e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
@@ -692,7 +692,7 @@ Feature: Radd Alternative
       | senderDenomination | Comune di Palermo                            |
       | feePolicy          | DELIVERY_MODE                                |
       | paFee              | 0                                            |
-    And destinatario "CucumberSpa" e:
+    And destinatario CucumberSpa e:
       | payment_pagoPaForm   | SI                   |
       | payment_f24          | PAYMENT_F24_STANDARD |
       | title_payment        | F24_STANDARD_PG      |
@@ -720,7 +720,7 @@ Feature: Radd Alternative
 #    Given viene generata una nuova notifica
 #      | subject            | invio notifica con cucumber radd alternative  |
 #      | senderDenomination | Comune di Palermo           |
-#    And destinatario "CucumberSpa"
+#    And destinatario CucumberSpa
 #    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
 #    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
 #    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
@@ -739,7 +739,7 @@ Feature: Radd Alternative
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di Palermo                            |
-    And destinatario "CucumberSpa"
+    And destinatario CucumberSpa
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
@@ -763,7 +763,7 @@ Feature: Radd Alternative
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di Palermo                            |
-    And destinatario "CucumberSpa"
+    And destinatario CucumberSpa
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
@@ -779,7 +779,7 @@ Feature: Radd Alternative
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario "Signor Casuale" e:
+    And destinatario Signor Casuale e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -800,7 +800,7 @@ Feature: Radd Alternative
       | senderDenomination | Comune di Palermo                            |
       | feePolicy          | DELIVERY_MODE                                |
       | paFee              | 0                                            |
-    And destinatario "Signor Casuale" e:
+    And destinatario Signor Casuale e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR      |
       | payment_pagoPaForm      | SI                            |
@@ -826,7 +826,7 @@ Feature: Radd Alternative
       | senderDenomination | Comune di Palermo                            |
       | feePolicy          | DELIVERY_MODE                                |
       | paFee              | 0                                            |
-    And destinatario "Signor Casuale" e:
+    And destinatario Signor Casuale e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
       | payment_pagoPaForm      | SI                                           |
@@ -852,7 +852,7 @@ Feature: Radd Alternative
       | senderDenomination | Comune di Palermo                            |
       | feePolicy          | DELIVERY_MODE                                |
       | paFee              | 0                                            |
-    And destinatario "Signor Casuale" e:
+    And destinatario Signor Casuale e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
       | payment_pagoPaForm      | NULL                                         |
@@ -878,7 +878,7 @@ Feature: Radd Alternative
       | senderDenomination | Comune di Palermo                            |
       | feePolicy          | DELIVERY_MODE                                |
       | paFee              | 0                                            |
-    And destinatario "Signor Casuale" e:
+    And destinatario Signor Casuale e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
       | payment_pagoPaForm      | SI                                           |
@@ -908,7 +908,7 @@ Feature: Radd Alternative
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di milano                             |
-    And destinatario "Signor Casuale"
+    And destinatario Signor Casuale
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
@@ -920,7 +920,7 @@ Feature: Radd Alternative
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di milano                             |
-    And destinatario "Signor Casuale" e:
+    And destinatario Signor Casuale e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -940,7 +940,7 @@ Feature: Radd Alternative
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di milano                             |
-    And destinatario "Signor Casuale" e:
+    And destinatario Signor Casuale e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -959,7 +959,7 @@ Feature: Radd Alternative
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di milano                             |
-    And destinatario "Signor Casuale" e:
+    And destinatario Signor Casuale e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -982,7 +982,7 @@ Feature: Radd Alternative
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario "Gherkin Irreperibile" e:
+    And destinatario Gherkin Irreperibile e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -1002,7 +1002,7 @@ Feature: Radd Alternative
       | senderDenomination | Comune di Palermo                            |
       | feePolicy          | DELIVERY_MODE                                |
       | paFee              | 0                                            |
-    And destinatario "Gherkin Irreperibile" e:
+    And destinatario Gherkin Irreperibile e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
       | payment_pagoPaForm      | SI                                           |
@@ -1027,7 +1027,7 @@ Feature: Radd Alternative
       | senderDenomination | Comune di Palermo                            |
       | feePolicy          | DELIVERY_MODE                                |
       | paFee              | 0                                            |
-    And destinatario "Gherkin Irreperibile" e:
+    And destinatario Gherkin Irreperibile e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
       | payment_pagoPaForm      | NULL                                         |
@@ -1052,7 +1052,7 @@ Feature: Radd Alternative
       | senderDenomination | Comune di Palermo                            |
       | feePolicy          | DELIVERY_MODE                                |
       | paFee              | 0                                            |
-    And destinatario "Gherkin Irreperibile" e:
+    And destinatario Gherkin Irreperibile e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
       | payment_pagoPaForm      | SI                                           |
@@ -1076,7 +1076,7 @@ Feature: Radd Alternative
       | senderDenomination | Comune di Palermo                            |
       | feePolicy          | DELIVERY_MODE                                |
       | paFee              | 0                                            |
-    And destinatario "Gherkin Irreperibile" e:
+    And destinatario Gherkin Irreperibile e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
       | payment_pagoPaForm      | SI                                           |
@@ -1106,7 +1106,7 @@ Feature: Radd Alternative
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario "CucumberSpa"
+    And destinatario CucumberSpa
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Given la persona giuridica "CucumberSpa" chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile genera un errore "Non ci sono notifiche non consegnate per questo codice fiscale" con codice 99 su radd alternative
@@ -1116,7 +1116,7 @@ Feature: Radd Alternative
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di milano                             |
-    And destinatario "Gherkin Irreperibile" e:
+    And destinatario Gherkin Irreperibile e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -1140,7 +1140,7 @@ Feature: Radd Alternative
       | senderDenomination | Comune di Palermo                            |
       | feePolicy          | DELIVERY_MODE                                |
       | paFee              | 0                                            |
-    And destinatario "Signor Casuale" e:
+    And destinatario Signor Casuale e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
       | payment_pagoPaForm      | SI                                           |
@@ -1149,7 +1149,7 @@ Feature: Radd Alternative
       | apply_cost_pagopa       | SI                                           |
       | apply_cost_f24          | SI                                           |
       | payment_multy_number    | 1                                            |
-    And destinatario "Gherkin Irreperibile" e:
+    And destinatario Gherkin Irreperibile e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
       | payment_pagoPaForm      | SI                                           |
@@ -1184,7 +1184,7 @@ Feature: Radd Alternative
 #    Given viene generata una nuova notifica
 #      | subject            | invio notifica con cucumber radd alternative  |
 #      | senderDenomination | Comune di Palermo           |
-#    And destinatario "Mario Cucumber"
+#    And destinatario Mario Cucumber
 #    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
 #    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
 #    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
@@ -1202,7 +1202,7 @@ Feature: Radd Alternative
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di Palermo                            |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
@@ -1223,7 +1223,7 @@ Feature: Radd Alternative
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario "Signor Casuale" e:
+    And destinatario Signor Casuale e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -1242,7 +1242,7 @@ Feature: Radd Alternative
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario "Signor Casuale" e:
+    And destinatario Signor Casuale e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -1258,7 +1258,7 @@ Feature: Radd Alternative
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di Palermo                            |
-    And destinatario "Signor Casuale" e:
+    And destinatario Signor Casuale e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -1284,7 +1284,7 @@ Feature: Radd Alternative
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di Palermo                            |
-    And destinatario "Signor Casuale" e:
+    And destinatario Signor Casuale e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -1303,7 +1303,7 @@ Feature: Radd Alternative
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di Palermo                            |
-    And destinatario "CucumberSpa"
+    And destinatario CucumberSpa
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
@@ -1321,7 +1321,7 @@ Feature: Radd Alternative
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di Palermo                            |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     When L'operatore usa lo IUN "corretto" per recuperare gli atti di "Mario Cucumber"

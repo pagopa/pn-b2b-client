@@ -22,7 +22,7 @@ Feature: avanzamento b2b notifica digitale con indirizzo piattaforma
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Cucumber Society"
+    And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
@@ -31,7 +31,7 @@ Feature: avanzamento b2b notifica digitale con indirizzo piattaforma
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Cucumber Society"
+    And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "GET_ADDRESS"
 

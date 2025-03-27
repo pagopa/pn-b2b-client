@@ -486,6 +486,8 @@ public class DataTableTypeUtil {
             case "PAYMENT_F24_FLAT_0" -> metadati = "classpath:/METADATA_CORRETTO_FLAT_0.json";
             case "PAYMENT_F24_FLAT_1" -> metadati = "classpath:/METADATA_CORRETTO_FLAT_1.json";
             case "PAYMENT_F24_FLAT_2" -> metadati = "classpath:/METADATA_CORRETTO_FLAT_2.json";
+            case "PAYMENT_F24_SIMPLIFIED_VALIDATION_OFF_1" -> metadati = "classpath:/f24_delivery_simplified_validation_off_1.json";
+            case "PAYMENT_F24_SIMPLIFIED_VALIDATION_OFF_2" -> metadati = "classpath:/f24_delivery_simplified_validation_off_2.json";
 
             default -> metadati = getDefaultValue(PAYMENT_F24.key);
         }
@@ -707,7 +709,7 @@ public class DataTableTypeUtil {
         String analogCost = getValue(data, DETAILS_ANALOG_COST.key);
         String pollingTime = getValue(data, POLLING_TIME.key);
         String numCheck = getValue(data, NUM_CHECK.key);
-        String pollingType = getValue(data, POLLING_Type.key);
+        String pollingType = getValue(data, POLLING_TYPE.key);
         String loadTimeline = getValue(data, LOAD_TIMELINE.key);
 
         if (data.size() == 1 && data.get("NULL") != null) {

@@ -381,8 +381,11 @@ Feature: Abilitazione domicilio digitale
     And viene verificato che Sercq sia "abilitato" per il comune "default"
     Given viene generata una nuova notifica
       | subject | invio notifica a Galileo Galilei |
-    And destinatario "Galileo Galilei"
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+    And destinatario
+      | denomination    | Galileo Galilei  |
+      | taxId           | GLLGLL64B15G702I |
+      | digitalDomicile | NULL             |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And si verifica la corretta acquisizione della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     Then Viene verificato che non sia arrivato un evento di "SEND_DIGITAL_PROGRESS"
@@ -397,7 +400,10 @@ Feature: Abilitazione domicilio digitale
     And viene verificato che Sercq sia "abilitato" per il comune "Comune_1"
     Given viene generata una nuova notifica
       | subject | invio notifica a Galileo Galilei |
-    And destinatario "Galileo Galilei"
+    And destinatario
+      | denomination    | Galileo Galilei  |
+      | taxId           | GLLGLL64B15G702I |
+      | digitalDomicile | NULL             |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And Viene creata una nuova apiKey per il comune "Comune_1" senza gruppo
     And viene impostata l'apikey appena generata
@@ -417,7 +423,10 @@ Feature: Abilitazione domicilio digitale
     And viene verificato che Sercq sia "abilitato" per il comune "Comune_1"
     Given viene generata una nuova notifica
       | subject | invio notifica a Galileo Galilei |
-    And destinatario "Galileo Galilei"
+    And destinatario
+      | denomination    | Galileo Galilei  |
+      | taxId           | GLLGLL64B15G702I |
+      | digitalDomicile | NULL             |
     And si predispone 1 nuovo stream denominato "stream-test23" con eventType "TIMELINE" con versione "V23"
     And Viene creata una nuova apiKey per il comune "Comune_1" senza gruppo
     And viene impostata l'apikey appena generata
@@ -437,7 +446,7 @@ Feature: Abilitazione domicilio digitale
     And viene verificato che Sercq sia "abilitato" per il comune "default"
     Given viene generata una nuova notifica
       | subject | invio notifica a CucumberSpa |
-    And destinatario "CucumberSpa"
+    And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And si verifica la corretta acquisizione della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
@@ -455,8 +464,11 @@ Feature: Abilitazione domicilio digitale
     And viene verificato che Sercq sia "abilitato" per il comune "Comune_1"
     Given viene generata una nuova notifica
       | subject | invio notifica a Galileo Galilei |
-    And destinatario "Galileo Galilei"
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+    And destinatario
+      | denomination    | Galileo Galilei  |
+      | taxId           | GLLGLL64B15G702I |
+      | digitalDomicile | NULL             |
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And si verifica la corretta acquisizione della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     Then Viene verificato che non sia arrivato un evento di "SEND_DIGITAL_PROGRESS"
@@ -472,7 +484,7 @@ Feature: Abilitazione domicilio digitale
     And viene verificato che Sercq sia "abilitato" per il comune "Comune_1"
     Given viene generata una nuova notifica
       | subject | invio notifica a CucumberSpa |
-    And destinatario "CucumberSpa"
+    And destinatario CucumberSpa
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And si verifica la corretta acquisizione della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
@@ -490,8 +502,11 @@ Feature: Abilitazione domicilio digitale
     Then viene verificata la presenza di 2 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     Given viene generata una nuova notifica
       | subject | invio notifica a Galileo Galilei |
-    And destinatario "Galileo Galilei"
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+    And destinatario
+      | denomination    | Galileo Galilei  |
+      | taxId           | GLLGLL64B15G702I |
+      | digitalDomicile | NULL             |
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And si verifica la corretta acquisizione della notifica
     And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
       | loadTimeline           | true                                               |
@@ -513,7 +528,7 @@ Feature: Abilitazione domicilio digitale
     And viene verificata la presenza di 2 recapiti di cortesia inseriti per l'utente "CucumberSpa"
     Given viene generata una nuova notifica
       | subject | invio notifica a CucumberSpa |
-    And destinatario "CucumberSpa"
+    And destinatario CucumberSpa
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And si verifica la corretta acquisizione della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
@@ -564,7 +579,7 @@ Feature: Abilitazione domicilio digitale
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo          |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@fail.it |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW"
@@ -619,7 +634,7 @@ Feature: Abilitazione domicilio digitale
     And viene verificato che Sercq sia "abilitato" per il comune "default"
     Given viene generata una nuova notifica
       | subject | invio notifica a CucumberSpa |
-    And destinatario "CucumberSpa"
+    And destinatario CucumberSpa
     And destinatario
       | denomination    | Galileo Galilei        |
       | taxId           | GLLGLL64B15G702I       |
@@ -641,9 +656,12 @@ Feature: Abilitazione domicilio digitale
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
     Given viene generata una nuova notifica
       | subject | invio notifica a CucumberSpa |
-    And destinatario "Galileo Galilei"
-    And destinatario "CucumberSpa"
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And destinatario
+      | denomination    | Galileo Galilei  |
+      | taxId           | GLLGLL64B15G702I |
+      | digitalDomicile | NULL             |
+    And destinatario CucumberSpa
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi e verifico che l'utente 0 non abbia associato un evento "SEND_DIGITAL_PROGRESS"
     And esiste l'elemento di timeline della notifica "SEND_DIGITAL_PROGRESS" per l'utente 1
 
@@ -655,8 +673,11 @@ Feature: Abilitazione domicilio digitale
     And viene verificato che Sercq sia "abilitato" per il comune "default"
     Given viene generata una nuova notifica
       | subject | invio notifica a CucumberSpa |
-    And destinatario "Galileo Galilei"
-    And destinatario "Gherkin Analogic" e:
+    And destinatario
+      | denomination    | Galileo Galilei  |
+      | taxId           | GLLGLL64B15G702I |
+      | digitalDomicile | NULL             |
+    And destinatario Gherkin Analogic e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"

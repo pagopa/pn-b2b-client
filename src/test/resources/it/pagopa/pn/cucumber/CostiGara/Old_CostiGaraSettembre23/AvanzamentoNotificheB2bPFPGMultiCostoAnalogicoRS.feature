@@ -10,13 +10,13 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
       | feePolicy          | DELIVERY_MODE                   |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address      | test@fail.it   |
       | physicalAddress_address      | Via@ok_RS      |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
-    And destinatario "Cucumber Society"
+    And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
@@ -33,13 +33,13 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
       | feePolicy          | FLAT_RATE                       |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address      | test@fail.it   |
       | physicalAddress_address      | Via@ok_RS      |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
-    And destinatario "Cucumber Society"
+    And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
@@ -55,14 +55,14 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
       | feePolicy          | DELIVERY_MODE                   |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | physicalAddress_State        | FRANCIA      |
       | physicalAddress_municipality | Parigi       |
       | physicalAddress_zip          | ZONE_1       |
       | physicalAddress_province     | Paris        |
       | digitalDomicile_address      | test@fail.it |
       | physicalAddress_address      | Via@ok_RIS   |
-    And destinatario "Cucumber Society"
+    And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
@@ -76,14 +76,14 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
       | feePolicy          | FLAT_RATE                       |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address      | test@fail.it |
       | physicalAddress_State        | FRANCIA      |
       | physicalAddress_municipality | Parigi       |
       | physicalAddress_zip          | ZONE_1       |
       | physicalAddress_province     | Paris        |
       | physicalAddress_address      | Via@ok_RIS   |
-    And destinatario "Cucumber Society"
+    And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
@@ -96,13 +96,13 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
       | feePolicy          | DELIVERY_MODE                   |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address      | test@fail.it   |
       | physicalAddress_address      | Via@ok_RS      |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
-    And destinatario "Cucumber Society"
+    And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
@@ -126,13 +126,13 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
       | feePolicy          | FLAT_RATE                       |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address      | test@fail.it   |
       | physicalAddress_address      | Via@ok_RS      |
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
-    And destinatario "Cucumber Society"
+    And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
@@ -156,14 +156,14 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
       | feePolicy          | DELIVERY_MODE                   |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address      | test@fail.it   |
       | physicalAddress_State        | BRASILE        |
       | physicalAddress_municipality | Florianopolis  |
       | physicalAddress_zip          | ZONA_2         |
       | physicalAddress_province     | Santa Catarina |
       | physicalAddress_address      | Via@ok_RIS     |
-    And destinatario "Cucumber Society"
+    And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
@@ -176,14 +176,14 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
       | feePolicy          | FLAT_RATE                       |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address      | test@fail.it   |
       | physicalAddress_State        | BRASILE        |
       | physicalAddress_municipality | Florianopolis  |
       | physicalAddress_zip          | ZONA_2         |
       | physicalAddress_province     | Santa Catarina |
       | physicalAddress_address      | Via@ok_RIS     |
-    And destinatario "Cucumber Society"
+    And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
@@ -197,14 +197,14 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
       | feePolicy          | DELIVERY_MODE                   |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address      | test@fail.it |
       | physicalAddress_State        | AUSTRALIA    |
       | physicalAddress_municipality | Hobart       |
       | physicalAddress_zip          | ZONA_3       |
       | physicalAddress_province     | Tasmania     |
       | physicalAddress_address      | Via@ok_RIS   |
-    And destinatario "Cucumber Society"
+    And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
@@ -217,14 +217,14 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
       | feePolicy          | FLAT_RATE                       |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address      | test@fail.it |
       | physicalAddress_State        | AUSTRALIA    |
       | physicalAddress_municipality | Hobart       |
       | physicalAddress_zip          | ZONA_3       |
       | physicalAddress_province     | Tasmania     |
       | physicalAddress_address      | Via@ok_RIS   |
-    And destinatario "Cucumber Society"
+    And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0

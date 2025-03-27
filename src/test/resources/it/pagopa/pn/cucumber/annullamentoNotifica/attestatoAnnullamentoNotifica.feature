@@ -5,7 +5,7 @@ Feature: produzione del documento di annullamento notifica
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune_Multi                    |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL        |
       | physicalAddress_address | Via @ok_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -20,7 +20,7 @@ Feature: produzione del documento di annullamento notifica
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune_Multi                    |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL        |
       | physicalAddress_address | Via @ok_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -42,7 +42,7 @@ Feature: produzione del documento di annullamento notifica
     And viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune_Multi                    |
-    And destinatario "Mario Gherkin"
+    And destinatario Mario Gherkin
     And si predispone 1 nuovo stream denominato "stream-testV10" con eventType "TIMELINE" con versione "V10"
     And si predispone 1 nuovo stream denominato "stream-testV23" con eventType "TIMELINE" con versione "V23"
     And si predispone 1 nuovo stream denominato "stream-testV24" con eventType "TIMELINE" con versione "V24"

@@ -5,7 +5,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
@@ -16,7 +16,7 @@ Feature: verifica validazione sincrona
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
       | idempotenceToken   | AME2E3626070001.1           |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And si verifica la corretta acquisizione della notifica
     When viene generata una nuova notifica con uguale paProtocolNumber e idempotenceToken "AME2E3626070001.2"
@@ -32,7 +32,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | payment_creditorTaxId | 77777777777 |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And si verifica la corretta acquisizione della notifica
@@ -48,7 +48,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | physicalAddress | NULL |
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "instance type (null)"
@@ -59,7 +59,7 @@ Feature: verifica validazione sincrona
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | taxonomyCode       | <taxonomyCode>              |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
     Examples:
@@ -75,7 +75,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And si verifica la corretta acquisizione della notifica
     And viene generata una nuova notifica con uguale paProtocolNumber
@@ -99,7 +99,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     And aggiungo 16 numero allegati
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "Max attachment count reached"
@@ -109,7 +109,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b senza preload allegato dal "Comune_Multi" e si attende che lo stato diventi REFUSED
     Then viene generata una nuova notifica valida con uguale codice fiscale del creditore e uguale codice avviso
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -121,10 +121,10 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo          |
-    And destinatario "GherkinSpa" e:
+    And destinatario GherkinSpa e:
       | digitalDomicile_address | testpagopa1@pec.pagopa.it |
       | payment                 | NULL                      |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | digitalDomicile_address | FRMTTR76M06B715E@pec.pagopa.it |
       | payment                 | NULL                           |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -135,8 +135,8 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo          |
-    And destinatario "GherkinSpa"
-    And destinatario "Mario Cucumber" con uguale codice avviso del destinario numero 1
+    And destinatario GherkinSpa
+    And destinatario Mario Cucumber con uguale codice avviso del destinario numero 1
       | digitalDomicile_address | FRMTTR76M06B715E@pec.pagopa.it |
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "Duplicated iuv"
@@ -146,8 +146,8 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo          |
-    And destinatario "Mario Gherkin"
-    And destinatario "Mario Gherkin"
+    And destinatario Mario Gherkin
+    And destinatario Mario Gherkin
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "Duplicated recipient taxId"
 
@@ -196,7 +196,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Cucumber Society" e:
+    And destinatario Cucumber Society e:
       | payment_creditorTaxId | 77777777777 |
       | payment_pagoPaForm    | NOALLEGATO  |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
@@ -248,7 +248,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | <name>           |
       | senderDenomination | comune di milano |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     When la notifica viene inviata dal "Comune_Multi"
     Then l'invio della notifica non ha prodotto errori
     Examples:
@@ -261,7 +261,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | physicalAddress_municipality | <comune> |
       | physicalAddress_zip          | 20121    |
       | physicalAddress_province     | MILANO   |
@@ -280,7 +280,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | physicalAddress_municipalityDetails | <localita> |
     When la notifica viene inviata dal "Comune_Multi"
     Then l'invio della notifica non ha prodotto errori
@@ -327,7 +327,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | payment_creditorTaxId | <creditorTaxId> |
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400"
@@ -346,7 +346,7 @@ Feature: verifica validazione sincrona
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
       | senderTaxId        | <senderTaxId>               |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400"
     Examples:
@@ -364,7 +364,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | <subject>        |
       | senderDenomination | comune di milano |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400"
     Examples:
@@ -379,7 +379,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | physicalAddress_State | <stato> |
     When la notifica viene inviata dal "Comune_Multi"
     Then l'invio della notifica non ha prodotto errori
@@ -399,7 +399,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | physicalAddress_address | <indirizzo> |
     When la notifica viene inviata dal "Comune_Multi"
     Then l'invio della notifica non ha prodotto errori
@@ -430,7 +430,7 @@ Feature: verifica validazione sincrona
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
       | abstract           | <abstract>                  |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400"
     Examples:
@@ -444,7 +444,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL       |
       | physicalAddress_State        | <state>    |
       | physicalAddress_municipality | Parigi     |
@@ -464,7 +464,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL       |
       | physicalAddress_State        | FRANCIA    |
       | physicalAddress_municipality | Parigi     |
@@ -484,7 +484,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | physicalAddress_State    | ITALIA     |
       | physicalAddress_province | <province> |
     When la notifica viene inviata dal "Comune_Multi"
@@ -500,7 +500,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | physicalAddress_State    | FRANCIA |
       | physicalAddress_province | NULL    |
     When la notifica viene inviata dal "Comune_Multi"
@@ -527,7 +527,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | physicalAddress_address        | <indirizzo> |
       | physicalAddress_addressDetails | <indirizzo> |
     When la notifica viene inviata dal "Comune_1"
@@ -544,7 +544,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | physicalAddress_municipality | <comune>   |
       | physicalAddress_zip          | <zip_code> |
       | physicalAddress_province     | <province> |
@@ -565,7 +565,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | physicalAddress_municipality | Milano     |
       | physicalAddress_zip          | 20121      |
       | physicalAddress_province     | <province> |
@@ -583,7 +583,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | physicalAddress_address | <indirizzo> |
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400"
@@ -597,7 +597,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | physicalAddress_addressDetails | <indirizzo> |
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400"
@@ -610,7 +610,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | physicalAddress_municipality | <comune> |
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400"
@@ -623,7 +623,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | physicalAddress_municipalityDetails | <localita> |
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400"
@@ -637,7 +637,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | physicalAddress_State | <state> |
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400"
@@ -651,7 +651,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | physicalAddress_zip | <zip_code> |
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400"
@@ -665,7 +665,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | physicalAddress_province | <province> |
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400"
@@ -678,7 +678,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | at | ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ |
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400"
@@ -689,7 +689,7 @@ Feature: verifica validazione sincrona
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
       | idempotenceToken   | <idempotenceToken>          |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
     Examples:
@@ -703,7 +703,7 @@ Feature: verifica validazione sincrona
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
       | paProtocolNumber   | <paProtocolNumber>          |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
     Examples:
@@ -718,7 +718,7 @@ Feature: verifica validazione sincrona
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
       | feePolicy          | NULL                        |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "instance type (null) does not match any allowed primitive type"
 
@@ -729,7 +729,7 @@ Feature: verifica validazione sincrona
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
       | cancelledIun       | <cancelledIun>              |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
     Examples:
@@ -744,7 +744,7 @@ Feature: verifica validazione sincrona
       | subject               | invio notifica con cucumber |
       | senderDenomination    | comune di milano            |
       | physicalCommunication | NULL                        |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "instance type (null) does not match any allowed primitive type"
 
@@ -754,7 +754,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | <senderDenomination>        |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
     Examples:
@@ -770,7 +770,7 @@ Feature: verifica validazione sincrona
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
       | group              | <group>                     |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
     Examples:
@@ -785,7 +785,7 @@ Feature: verifica validazione sincrona
       | subject               | invio notifica con cucumber |
       | senderDenomination    | comune di milano            |
       | paymentExpirationDate | <paymentExpirationDate>     |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
     Examples:
@@ -810,7 +810,7 @@ Feature: verifica validazione sincrona
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
       | document           | NULL                        |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "instance type (null) does not match any allowed primitive type"
 
@@ -820,7 +820,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Cucumber" e:
+    And destinatario Mario Cucumber e:
       | recipientType | NULL |
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "instance type (null) does not match any allowed primitive type"
@@ -831,7 +831,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_type | NULL |
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "instance type (null) does not match any allowed primitive type"
@@ -841,7 +841,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address | <digitalDomicileAddress> |
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
@@ -856,7 +856,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | at | <at> |
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
@@ -870,7 +870,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | physicalAddress_address | <address> |
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
@@ -886,7 +886,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | physicalAddress_addressDetails | <addressDetails> |
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
@@ -901,7 +901,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | physicalAddress_municipality | <municipality> |
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
@@ -917,7 +917,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | physicalAddress_municipalityDetails | <municipalityDetails> |
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
@@ -931,7 +931,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | physicalAddress_province | <province> |
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
@@ -945,7 +945,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | physicalAddress_State | <state> |
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
@@ -959,7 +959,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | payment_noticeCode | <noticeCode> |
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
@@ -975,7 +975,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | payment_creditorTaxId | <creditorTaxId> |
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
@@ -991,7 +991,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | apply_cost_pagopa | NULL |
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "instance type (null) does not match any allowed primitive type"
@@ -1001,7 +1001,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | payment_f24        | PAYMENT_F24_FLAT |
       | title_payment      | NULL             |
       | apply_cost_f24     | NO               |
@@ -1014,7 +1014,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | payment_f24    | PAYMENT_F24_FLAT |
       | apply_cost_f24 | NULL             |
     When la notifica viene inviata dal "Comune_1"
@@ -1025,7 +1025,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | payment_f24 | NO_METADATA_ATTACHMENT |
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "instance type (null) does not match any allowed primitive type"
@@ -1035,7 +1035,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Mario Gherkin"
+    And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" con allegato uguale all'allegato di pagamento
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "Same attachment compares more then once in the same request"
 
@@ -1044,8 +1044,8 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Mario Gherkin"
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Gherkin
+    And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" con allegato uguale all'allegato di pagamento
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "Same attachment compares more then once in the same request"
 
@@ -1109,7 +1109,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address | <email> |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Examples:
@@ -1122,7 +1122,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address | <email> |
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
@@ -1141,7 +1141,7 @@ Feature: verifica validazione sincrona
       | document           | DOC_BS           |
       | feePolicy          | DELIVERY_MODE    |
       | taxonomyCode       | <taxonomyCode>   |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Examples:
       | taxonomyCode |

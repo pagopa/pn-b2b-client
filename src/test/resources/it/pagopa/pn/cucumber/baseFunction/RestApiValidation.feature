@@ -6,7 +6,7 @@ Feature: verifica funzionamento api rest
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | idempotenceToken   | AME2E3626070001.3           |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     When la notifica viene inviata dal "Comune_1"
     Then viene verificato lo stato di accettazione con requestID
 
@@ -22,7 +22,7 @@ Feature: verifica funzionamento api rest
     Given viene generata una nuova notifica
       | subject            | invio notifica multi cucumber |
       | senderDenomination | Comune di verona              |
-    And destinatario "Mario Gherkin"
+    And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "ACCEPTED"
     Then si tenta il recupero dal sistema tramite codice IUN dalla PA "Comune_1"
     And l'operazione ha generato un errore con status code "404"
@@ -32,6 +32,6 @@ Feature: verifica funzionamento api rest
     Given viene generata una nuova notifica
       | subject            | invio notifica multi cucumber |
       | senderDenomination | Comune di palermo             |
-    And destinatario "nessuno"
+    And destinatario nessuno
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400"
