@@ -1577,14 +1577,19 @@ Feature: Test API of e-service template
     When l'utente è un "<ruolo>" di "PA1"
     And l'utente tenta la visualizzazione dell'elenco producers degli e-service templates
     Then si ottiene response status code 200
-    And l'elenco producers degli e-service templates contiene esattamente 3 elementi
+    And l'elenco producers degli e-service templates contiene i 3 elementi inseriti
     Examples:
       | ruolo         |
       | admin         |
       | api           |
       | api,security  |
 
-  Scenario Outline: [INTEROP-EST-153] La visualizzazione dell'elenco dei creatori di e-service templates attivi può essere effettuata se l'ente è in veste di ADMIN o API
+  # ATTENZIONE 27/03/2025: l'api restituisce tutti i creatori di e-service templates attivi MAI creati: si
+  # effettua la verifica controllando che l'ente creatore sia presente nell'elenco, fermo restando
+  # che potrebbe essere presente in virtù di un'aggiunta fatta in precedenza. L'unico modo affinché
+  # questo test sia affidabile al 100% sarebbe partire da un'ambiente vergine, senza operazioni
+  # precedenti.
+  Scenario Outline: [INTEROP-EST-153] La visualizzazione dell'elenco dei creatori di e-service templates attivi può essere effettuata da un altro ente se questo è in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di SUSPENDED
@@ -1594,20 +1599,22 @@ Feature: Test API of e-service template
     When l'utente è un "<ruolo>" di "PA1"
     And l'utente tenta la visualizzazione dell'elenco dei creatori di e-service templates attivi
     Then si ottiene response status code 200
-    And l'unico ente presente nell'elenco dei creatori di e-service templates attivi è "PA1"
+    And l'ente "PA1" è presente nell'elenco dei creatori di servizi attivi
     Examples:
       | ruolo         |
       | admin         |
       | api           |
       | api,security  |
 
-    # TODO L'api potrebbe semplicemente restituire risultato positivo ma vuoto anziché un errore, verificare
-  Scenario: [INTEROP-EST-154] La visualizzazione dell'elenco dei creatori di e-service templates attivi non può essere effettuata se non ci sono templates attivi
-    Given l'utente è un "admin" di "PA1"
-    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
-    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di SUSPENDED
-    When l'utente tenta la visualizzazione dell'elenco dei creatori di e-service templates attivi
-    Then si ottiene response status code 404
+    # 27/03/2025 Scenario al momento impossibile da mettere in atto: essendo che i test partono da un ambiente
+    # non-vergine saranno sempre presente dei test attivi, frutto si test precedenti sia
+    # automatici che manuali.
+  #Scenario: [INTEROP-EST-154] La visualizzazione dell'elenco dei creatori di e-service templates attivi non può essere effettuata se non ci sono templates attivi
+  #  Given l'utente è un "admin" di "PA1"
+  #  And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+  #  And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di SUSPENDED
+  #  When l'utente tenta la visualizzazione dell'elenco dei creatori di e-service templates attivi
+  #  Then si ottiene response status code 404
 
   Scenario Outline: [INTEROP-EST-155] La creazione di un nuovo e-service a partire da un template attivo può essere effettuata da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
@@ -2008,13 +2015,4 @@ Feature: Test API of e-service template
 
 
 
-  #TODO la maggior parte dei test sono fatti su template in mod. EROGAZIONE. Valutare che non sia il caso di testare per entrambe le modalità.
-
-    #TODO smistare gli scenari in file .feature più piccoli e i relativi step in classi più piccole. Possibile divisione:
-      # test che riguardano il template
-      # test che riguardano la versione
-      # test che riguardano la risk analysis
-      # test che riguardano i documenti (nota: test di caricamento e lettura sono inter-dipendenti, la creazione non può essere verificata senza la lettura, e viceversa)
-      # ...
-
-    #TODO associare un tag per ogni risorsa testata: template, version, riskAnalysis, document...
+    #TODO associare un tag per ogni risorsa testata: template, version, document, instance...

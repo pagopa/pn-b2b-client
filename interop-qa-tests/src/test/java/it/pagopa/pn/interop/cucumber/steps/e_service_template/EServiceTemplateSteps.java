@@ -10,11 +10,12 @@ import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganization;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganizations;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceTemplate;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceTemplates;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext.EServiceTemplateInfo;
 import java.util.List;
+import java.util.UUID;
 import lombok.Data;
 import org.springframework.http.ResponseEntity;
 
@@ -46,29 +47,45 @@ public class EServiceTemplateSteps {
             ResponseEntity::getStatusCode);
     }
 
-    @Then("l'elenco producers degli e-service templates contiene esattamente {int} elementi")
+    @Then("l'elenco producers degli e-service templates contiene i {int} elementi inseriti")
     public void checkEServiceTemplatesProducersCount(int expectedCount) {
-        List<ProducerEServiceTemplate> producers = ((ResponseEntity<ProducerEServiceTemplates>) httpCallExecutor.getResponse()).getBody().getResults();
+        List<ProducerEServiceTemplate> producers = this.getFromProducersBy(sharedStepsContext.getEServiceTemplateStepContext().getTemplatesManaged());
         assertThat(producers).hasSize(expectedCount);
+    }
+
+    private List<ProducerEServiceTemplate> getFromProducersBy(List<EServiceTemplateInfo> templatesManaged) {
+        return templatesManaged.stream()
+            .map(t -> eServiceTemplateClient.getCreatorEServiceTemplates(
+                sharedStepsContext.getXCorrelationId(),
+                0,
+                50,
+                t.name()))
+            .map(response -> response.getBody().getResults())
+            .flatMap(List::stream)
+            .toList();
     }
 
     @When("l'utente tenta la visualizzazione dell'elenco dei creatori di e-service templates attivi")
     public void getActiveEServiceTemplatesCreators() {
         String userToken = getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);
+
         httpCallExecutor.performCall(
-            () -> eServiceTemplateClient.getEServiceTemplateCreators(sharedStepsContext.getXCorrelationId()),
+            () -> eServiceTemplateClient.getEServiceTemplateCreators(
+                sharedStepsContext.getXCorrelationId(),
+                0,
+                50,
+                null),
             ResponseEntity::getStatusCode);
     }
 
-    @Then("l'unico ente presente nell'elenco dei creatori di e-service templates attivi è {string}")
+    @Then("l'ente {string} è presente nell'elenco dei creatori di servizi attivi")
     public void checkActiveEServiceTemplatesCreators(String tenant) {
         List<CompactOrganization> creators = ((ResponseEntity<CompactOrganizations>) httpCallExecutor.getResponse()).getBody().getResults();
+        UUID expectedTenantId = sharedStepsContext.getIdentityService().getOrganizationId(tenant);
         assertThat(creators)
-            .hasSize(1)
-            .first()
-            .extracting(CompactOrganization::getName)
-            .isEqualTo(tenant);
+            .extracting(CompactOrganization::getId)
+            .contains(expectedTenantId);
     }
 
     private String getUserToken() {
