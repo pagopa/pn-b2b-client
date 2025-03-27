@@ -36,7 +36,7 @@ public class InvioNotificheB2bMultiPaSteps {
         AtomicReference<FullSentNotificationV26> notificationByIun = new AtomicReference<>();
         try {
             Assertions.assertDoesNotThrow(() ->
-                    notificationByIun.set(b2bUtils.getNotificationByIun(sharedSteps.getFullSentNotificationV26().getIun()))
+                    notificationByIun.set(b2bUtils.getNotificationByIun(sharedSteps.getNotificationIun()))
             );
 
             Assertions.assertNotNull(notificationByIun.get());
@@ -53,7 +53,7 @@ public class InvioNotificheB2bMultiPaSteps {
         AtomicReference<NotificationSearchResponse> notificationByIun = new AtomicReference<>();
         try {
             Assertions.assertDoesNotThrow(() ->
-                    notificationByIun.set(webPaClient.searchSentNotification(OffsetDateTime.now().minusDays(1), OffsetDateTime.now(), null, null, null, sharedSteps.getFullSentNotificationV26().getIun(), 1, null))
+                    notificationByIun.set(webPaClient.searchSentNotification(OffsetDateTime.now().minusDays(1), OffsetDateTime.now(), null, null, null, sharedSteps.getNotificationIun(), 1, null))
             );
             Assertions.assertNotNull(notificationByIun.get());
         } catch (AssertionFailedError assertionFailedError) {
@@ -65,7 +65,7 @@ public class InvioNotificheB2bMultiPaSteps {
     public void retrievalAttemptedIUNFromPA(String paName) {
         sharedSteps.setPA(paName);
         try {
-            b2bUtils.getNotificationByIun(sharedSteps.getFullSentNotificationV26().getIun());
+            b2bUtils.getNotificationByIun(sharedSteps.getNotificationIun());
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
         }

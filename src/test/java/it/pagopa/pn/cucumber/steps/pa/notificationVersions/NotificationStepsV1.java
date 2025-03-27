@@ -35,7 +35,7 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
     private FullSentNotification fullSentNotification;
     private OffsetDateTime notificationCreationDate;
     private final SharedSteps.NotificationVersion version;
-    private SharedSteps sharedSteps;
+    private final SharedSteps sharedSteps;
 
     public NotificationStepsV1(SharedSteps sharedSteps) {
         version = SharedSteps.NotificationVersion.V1;
@@ -105,11 +105,6 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
     }
 
     @Override
-    public void retrieveFullSentNotification(String iun) {
-        fullSentNotification = sharedSteps.getB2bClient().getSentNotificationV1(iun);
-    }
-
-    @Override
     public Object retrieveNotificationRequest() {
         return notificationRequest;
     }
@@ -130,6 +125,7 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
                     fullSentNotification = waitForRequestAccepted(notificationResponse, pollingStrategy);
                     threadWait(wait);
                     Assertions.assertNotNull(fullSentNotification);
+                    sharedSteps.setNotificationIun(fullSentNotification.getIun());
                 } else if (status.equalsIgnoreCase(NOTIFICATION_STATUS_REFUSED)) {
                     String errorCode = waitForRequestRefused(notificationResponse, pollingStrategy);
                     sharedSteps.setErrorCode(errorCode);
@@ -147,8 +143,6 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
                     Assertions.assertFalse(refused);
                 }
             });
-            threadWait(wait);
-            Assertions.assertNotNull(fullSentNotification);
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
                     "{RequestID: " + (notificationResponse == null ? "NULL" : notificationResponse.getNotificationRequestId()) + " }";
@@ -198,7 +192,7 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPriceResponse notificationPrice =
                 sharedSteps.getB2bClient().getNotificationPrice(datiPagamento.get(0), datiPagamento.get(1));
         try {
-            Assertions.assertEquals(notificationPrice.getIun(), sharedSteps.getIunVersionamento());
+            Assertions.assertEquals(notificationPrice.getIun(), sharedSteps.getNotificationIun());
             if (price != null) {
                 log.info("Costo notifica: {} destinatario: {}", notificationPrice.getAmount(), destinatario);
                 Assertions.assertEquals(Integer.parseInt(price), notificationPrice.getAmount());
@@ -220,7 +214,7 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
         IPnPollingService pollingService = sharedSteps.getB2bUtils().getPollingFactory().getPollingService(getPollingStrategy(pollingStrategy));
         PnPollingResponseV1 pollingResponse = (PnPollingResponseV1) pollingService.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(ACCEPTED).build());
         FullSentNotification result = pollingResponse.getNotification() == null ? null : pollingResponse.getNotification();
-        sharedSteps.setFullSentNotificationV1(result);
+//        sharedSteps.setFullSentNotificationV1(result);//TODO MATTEO TEST PER RIMUOVERE FSN
         return result;
     }
 

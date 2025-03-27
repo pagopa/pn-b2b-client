@@ -27,8 +27,6 @@ public interface NotificationStepsInterface {
 
     void setNotificationRequestGroup(String group);
 
-    void retrieveFullSentNotification(String iun);
-
     Object retrieveNotificationRequest();
 
     Object retrieveNotificationResponse();

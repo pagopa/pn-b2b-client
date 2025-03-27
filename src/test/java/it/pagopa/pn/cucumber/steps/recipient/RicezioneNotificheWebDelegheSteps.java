@@ -6,6 +6,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV26;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebMandateClient;
@@ -304,7 +305,7 @@ public class RicezioneNotificheWebDelegheSteps {
     public void notificationCanBeCorrectlyReadFromWithMandate(String recipient) {
         sharedSteps.selectUser(recipient);
         Assertions.assertDoesNotThrow(() -> {
-            webRecipientClient.getReceivedNotification(sharedSteps.getFullSentNotificationV26().getIun(), mandateToSearch.getMandateId());
+            webRecipientClient.getReceivedNotification(sharedSteps.getNotificationIun(), mandateToSearch.getMandateId());
         });
     }
 
@@ -397,9 +398,10 @@ public class RicezioneNotificheWebDelegheSteps {
     }
 
     private NotificationAttachmentDownloadMetadataResponse getReceivedNotificationDocument() {
+        FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         return webRecipientClient.getReceivedNotificationDocument(
-                sharedSteps.getFullSentNotificationV26().getIun(),
-                Integer.parseInt(Objects.requireNonNull(sharedSteps.getFullSentNotificationV26().getDocuments().get(0).getDocIdx())),
+                fullSentNotification.getIun(),
+                Integer.parseInt(Objects.requireNonNull(fullSentNotification.getDocuments().get(0).getDocIdx())),
                 UUID.fromString(Objects.requireNonNull(mandateToSearch.getMandateId()))
         );
     }
@@ -409,7 +411,7 @@ public class RicezioneNotificheWebDelegheSteps {
         //TODO Modificare attachmentIdx al momento e 0...............
         sharedSteps.selectUser(recipient);
         NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
-                sharedSteps.getFullSentNotificationV26().getIun(),
+                sharedSteps.getNotificationIun(),
                 attachmentName,
                 UUID.fromString(Objects.requireNonNull(mandateToSearch.getMandateId())), 0);
 
@@ -417,7 +419,7 @@ public class RicezioneNotificheWebDelegheSteps {
             try {
                 await().atMost(downloadResponse.getRetryAfter() * 3L, TimeUnit.MILLISECONDS);
                 downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
-                        sharedSteps.getFullSentNotificationV26().getIun(),
+                        sharedSteps.getNotificationIun(),
                         attachmentName,
                         UUID.fromString(mandateToSearch.getMandateId()), 0);
             } catch (RuntimeException exc) {
@@ -484,7 +486,7 @@ public class RicezioneNotificheWebDelegheSteps {
         sharedSteps.selectUser(recipient);
         HttpClientErrorException httpClientErrorException = null;
         try {
-            webRecipientClient.getReceivedNotification(sharedSteps.getFullSentNotificationV26().getIun(), mandateToSearch.getMandateId());
+            webRecipientClient.getReceivedNotification(sharedSteps.getNotificationIun(), mandateToSearch.getMandateId());
         } catch (HttpClientErrorException e) {
             httpClientErrorException = e;
         }
@@ -503,7 +505,7 @@ public class RicezioneNotificheWebDelegheSteps {
     public void notificationCanBeCorrectlyReadFrom(String recipient) {
         sharedSteps.selectUser(recipient);
         Assertions.assertDoesNotThrow(() -> {
-            webRecipientClient.getReceivedNotification(sharedSteps.getFullSentNotificationV26().getIun(), null);
+            webRecipientClient.getReceivedNotification(sharedSteps.getNotificationIun(), null);
         });
         webRecipientClient.setBearerToken(baseUser);
     }
@@ -542,15 +544,13 @@ public class RicezioneNotificheWebDelegheSteps {
     }
 
     private it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementV26 getTimelineElementV23WebRecipient(it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV26 timelineElementCategoryV23) {
-
-        FullReceivedNotificationV25 result = webRecipientClient.getReceivedNotification(sharedSteps.getFullSentNotificationV26().getIun(), null);
-        log.info("NOTIFICATION_TIMELINE: " + sharedSteps.getFullSentNotificationV26().getTimeline());
-
+        FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullReceivedNotificationV25 result = webRecipientClient.getReceivedNotification(fullSentNotification.getIun(), null);
+        log.info("NOTIFICATION_TIMELINE: " + fullSentNotification.getTimeline());
         return result
                 .getTimeline()
                 .stream()
-                .filter(elem -> Objects.requireNonNull(elem.getCategory())
-                        .equals(timelineElementCategoryV23))
+                .filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(timelineElementCategoryV23))
                 .findAny()
                 .orElse(null);
     }
@@ -559,9 +559,7 @@ public class RicezioneNotificheWebDelegheSteps {
     public void notificationCanBeCorrectlyReadFromAtPa(String recipient, String paName) {
         sharedSteps.setPA(paName);
         sharedSteps.selectUser(recipient);
-        Assertions.assertDoesNotThrow(() -> {
-            webRecipientClient.getReceivedNotification(sharedSteps.getFullSentNotificationV26().getIun(), null);
-        });
+        Assertions.assertDoesNotThrow(() -> webRecipientClient.getReceivedNotification(sharedSteps.getNotificationIun(), null));
     }
 
     private NotificationSearchResponse notificationSearchResponse;
@@ -640,10 +638,8 @@ public class RicezioneNotificheWebDelegheSteps {
         } catch (RuntimeException exception) {
             exception.printStackTrace();
         }
-        sharedSteps.setFullSentNotificationV26(sharedSteps.getB2bClient().getSentNotification(sharedSteps.getFullSentNotificationV26().getIun()));
-
-        return sharedSteps
-                .getFullSentNotificationV26()
+        FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        return fullSentNotification
                 .getTimeline()
                 .stream()
                 .filter(elem -> Objects.requireNonNull(elem.getCategory()).getValue()

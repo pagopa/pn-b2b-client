@@ -6,6 +6,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV26;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationAttachmentBodyRef;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationAttachmentDigests;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationDocument;
@@ -122,8 +123,8 @@ public class ApiServiceDeskSteps {
 
     @And("viene chiamato service desk e si controlla la presenza dell'elemento {string} nella response")
     public void invocazioneServizioPerVerificaElementoTimelineNEllaResponse(String elemento) {
-        if (sharedSteps.getFullSentNotificationV26() != null) {
-            timelineResponse = ipServiceDeskClient.getTimelineOfIUN(sharedSteps.getFullSentNotificationV26().getIun());
+        if (sharedSteps.getNotificationIun() != null) {
+            timelineResponse = ipServiceDeskClient.getTimelineOfIUN(sharedSteps.getNotificationIun());
 
             Assertions.assertNotNull(timelineResponse);
             Assertions.assertNotNull(timelineResponse.getTimeline());
@@ -772,7 +773,7 @@ public class ApiServiceDeskSteps {
     public void comeOperatoreDevoAccedereAiDettagliDiUnaNotificaDiCuiConoscoLIdentificativoIUN() {
         try {
             profileRequest = new ProfileRequest();
-            notificationDetailResponse = ipServiceDeskClient.getNotificationFromIUN(sharedSteps.getIunVersionamento());
+            notificationDetailResponse = ipServiceDeskClient.getNotificationFromIUN(sharedSteps.getNotificationIun());
 
         } catch (HttpStatusCodeException exception) {
             this.notificationError = exception;
@@ -794,7 +795,7 @@ public class ApiServiceDeskSteps {
     @And("verifica IsMultiRecipients nel dettaglio notifica")
     public void recuperoVerifyIsMultiRecipientsDettaglioNotifica() {
         try {
-            notificationDetailResponse = ipServiceDeskClient.getNotificationFromIUN(sharedSteps.getFullSentNotificationV26().getIun());
+            notificationDetailResponse = ipServiceDeskClient.getNotificationFromIUN(sharedSteps.getNotificationIun());
             Assertions.assertNotNull(notificationDetailResponse);
             Assertions.assertNotEquals(Boolean.TRUE, notificationDetailResponse.getIsMultiRecipients());
         } catch (HttpStatusCodeException exception) {
@@ -874,9 +875,10 @@ public class ApiServiceDeskSteps {
     @Given("come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN {string} e taxId {string}  recipientType  {string}")
     public void comeOperatoreDevoEffettuareUnCheckSullaDisponibilitaValiditaEDimensioneDegliAllegatiConIUNRecipientType(String iun, String taxId, String recipientType) {
         try {
+            FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
             documentsRequest = new DocumentsRequest();
-            if (sharedSteps.getFullSentNotificationV26() != null) {
-                setRecipientType(sharedSteps.getFullSentNotificationV26().getRecipients().get(0).getRecipientType().getValue());
+            if (fullSentNotification != null) {
+                setRecipientType(fullSentNotification.getRecipients().get(0).getRecipientType().getValue());
             } else {
                 setRecipientType(recipientType);
             }
@@ -886,7 +888,7 @@ public class ApiServiceDeskSteps {
             } else if ("VUOTO".equalsIgnoreCase(taxId)) {
                 documentsRequest.setTaxId("");
             } else if ("NO_SET".equalsIgnoreCase(taxId)) {
-                documentsRequest.setTaxId(sharedSteps.getFullSentNotificationV26().getRecipients().get(0).getTaxId());
+                documentsRequest.setTaxId(fullSentNotification.getRecipients().get(0).getTaxId());
             } else {
                 documentsRequest.setTaxId(setTaxID(taxId));
             }
@@ -1008,7 +1010,7 @@ public class ApiServiceDeskSteps {
 
     @And("invocazione servizio per recupero timeline notifica con iun")
     public void invocazioneServizioPerRecuperoTimelineNotificaConIun() {
-        invocazioneServizioPerRecuperoDettaglioNotificaConIunSteps(sharedSteps.getIunVersionamento(), false);
+        invocazioneServizioPerRecuperoDettaglioNotificaConIunSteps(sharedSteps.getNotificationIun(), false);
     }
 
     @Given("come operatore devo accedere alle informazioni relative alle richieste di API Key avanzate da un Ente mittente di notifiche sulla Piattaforma {string}")
@@ -1429,8 +1431,8 @@ public class ApiServiceDeskSteps {
         } else if ("NO_SET".equalsIgnoreCase(iun)) {
             if (searchNotificationsResponse != null && searchNotificationsResponse.getResults() != null && !searchNotificationsResponse.getResults().isEmpty()) {
                 iunSearch = searchNotificationsResponse.getResults().get(0).getIun();
-            } else if (sharedSteps.getFullSentNotificationV26() != null) {
-                iunSearch = sharedSteps.getFullSentNotificationV26().getIun();
+            } else if (sharedSteps.getNotificationIun() != null) {
+                iunSearch = sharedSteps.getNotificationIun();
             }
         } else {
             iunSearch = iun;

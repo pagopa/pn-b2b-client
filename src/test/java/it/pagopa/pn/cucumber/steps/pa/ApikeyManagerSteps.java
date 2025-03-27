@@ -290,7 +290,7 @@ public class ApikeyManagerSteps {
     @Then("si tenta il recupero dal sistema tramite codice IUN")
     public void siTentaIlRecuperoDalSistemaTramiteCodiceIUN() {
         try {
-            sharedSteps.getB2bUtils().getNotificationByIun(sharedSteps.getFullSentNotificationV26().getIun());
+            sharedSteps.getB2bUtils().getNotificationByIun(sharedSteps.getNotificationIun());
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
         }
@@ -299,7 +299,7 @@ public class ApikeyManagerSteps {
     @Then("si tenta il recupero dal sistema tramite codice IUN con api v1")
     public void siTentaIlRecuperoDalSistemaTramiteCodiceIUNV1() {
         try {
-            sharedSteps.getB2bUtils().getNotificationByIunV1(sharedSteps.getFullSentNotificationV26().getIun());
+            sharedSteps.getB2bUtils().getNotificationByIunV1(sharedSteps.getNotificationIun());
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
         }

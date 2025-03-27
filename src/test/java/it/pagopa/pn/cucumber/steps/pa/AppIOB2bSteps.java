@@ -5,6 +5,7 @@ import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.ThirdPartyAttachment;
 import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.ThirdPartyMessage;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV26;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationDocument;
 import it.pagopa.pn.client.b2b.pa.service.IPnAppIOB2bClient;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
@@ -20,8 +21,7 @@ import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.MARIO_CUCUMBER_TAX_ID;
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.MARIO_GHERKIN_TAX_ID;
+import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.*;
 
 
 @Slf4j
@@ -29,10 +29,8 @@ public class AppIOB2bSteps {
     private final IPnAppIOB2bClient iPnAppIOB2bClient;
     private final SharedSteps sharedSteps;
     private final PnPaB2bUtils b2bUtils;
-    private HttpStatusCodeException notficationServerError;
+    private HttpStatusCodeException notificationServerError;
     private String sha256DocumentDownload;
-    private final String marioCucumberTaxID;
-    private final String marioGherkinTaxID;
 
 
     @Autowired
@@ -40,18 +38,15 @@ public class AppIOB2bSteps {
         this.iPnAppIOB2bClient = iPnAppIOB2bClient;
         this.sharedSteps = sharedSteps;
         this.b2bUtils = sharedSteps.getB2bUtils();
-        this.marioCucumberTaxID = MARIO_CUCUMBER_TAX_ID;
-        this.marioGherkinTaxID = MARIO_GHERKIN_TAX_ID;
     }
 
     @Then("la notifica può essere recuperata tramite AppIO")
     public void notificationCanBeRetrievedAppIO() {
         AtomicReference<ThirdPartyMessage> notificationByIun = new AtomicReference<>();
         try {
+            FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
             Assertions.assertDoesNotThrow(() ->
-                    notificationByIun.set(this.iPnAppIOB2bClient.getReceivedNotification(sharedSteps.getFullSentNotificationV26().getIun(),
-                            sharedSteps.getFullSentNotificationV26().getRecipients().get(0).getTaxId()))
-            );
+                    notificationByIun.set(this.iPnAppIOB2bClient.getReceivedNotification(fullSentNotification.getIun(), fullSentNotification.getRecipients().get(0).getTaxId())));
             Assertions.assertNotNull(notificationByIun.get());
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
@@ -60,13 +55,13 @@ public class AppIOB2bSteps {
 
     @Then("il documento notificato può essere recuperata tramite AppIO")
     public void notifiedDocumentCanBeRetrievedAppIO() {
-        List<NotificationDocument> documents = sharedSteps.getFullSentNotificationV26().getDocuments();
+        FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        List<NotificationDocument> documents = fullSentNotification.getDocuments();
         it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.NotificationAttachmentDownloadMetadataResponse sentNotificationDocument =
-                iPnAppIOB2bClient.getSentNotificationDocument(sharedSteps.getFullSentNotificationV26().getIun(), Integer.parseInt(documents.get(0).getDocIdx()),
-                        sharedSteps.getFullSentNotificationV26().getRecipients().get(0).getTaxId());
+                iPnAppIOB2bClient.getSentNotificationDocument(fullSentNotification.getIun(), Integer.parseInt(documents.get(0).getDocIdx()),
+                        fullSentNotification.getRecipients().get(0).getTaxId());
         try {
-            byte[] bytes = Assertions.assertDoesNotThrow(() ->
-                    b2bUtils.downloadFile(sentNotificationDocument.getUrl()));
+            byte[] bytes = Assertions.assertDoesNotThrow(() -> b2bUtils.downloadFile(sentNotificationDocument.getUrl()));
             this.sha256DocumentDownload = b2bUtils.computeSha256(new ByteArrayInputStream(bytes));
 
             Assertions.assertEquals(this.sha256DocumentDownload, sentNotificationDocument.getSha256());
@@ -77,12 +72,12 @@ public class AppIOB2bSteps {
 
     @Then("il documento di pagamento {string} può essere recuperata tramite AppIO")
     public void notifiedDocumentPaymentCanBeRetrievedAppIO(String typeDocument) {
-        List<NotificationDocument> documents = sharedSteps.getFullSentNotificationV26().getDocuments();
+        FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        List<NotificationDocument> documents = fullSentNotification.getDocuments();
         it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.NotificationAttachmentDownloadMetadataResponse sentNotificationDocument =
-                iPnAppIOB2bClient.getReceivedNotificationAttachment(sharedSteps.getFullSentNotificationV26().getIun(), typeDocument, sharedSteps.getFullSentNotificationV26().getRecipients().get(0).getTaxId(), Integer.parseInt(documents.get(0).getDocIdx()));
+                iPnAppIOB2bClient.getReceivedNotificationAttachment(fullSentNotification.getIun(), typeDocument, fullSentNotification.getRecipients().get(0).getTaxId(), Integer.parseInt(documents.get(0).getDocIdx()));
         try {
-            byte[] bytes = Assertions.assertDoesNotThrow(() ->
-                    b2bUtils.downloadFile(sentNotificationDocument.getUrl()));
+            byte[] bytes = Assertions.assertDoesNotThrow(() -> b2bUtils.downloadFile(sentNotificationDocument.getUrl()));
             this.sha256DocumentDownload = b2bUtils.computeSha256(new ByteArrayInputStream(bytes));
 
             Assertions.assertEquals(this.sha256DocumentDownload, sentNotificationDocument.getSha256());
@@ -93,7 +88,6 @@ public class AppIOB2bSteps {
 
     @Then("il documento di pagamento {string} può essere recuperata tramite AppIO da {string}")
     public void paymentDocumentCanBeRetrievedAppIO(String typeDocument, String recipient) {
-
         if ("F24".equalsIgnoreCase(typeDocument)) {
             downloadF24AppIo(typeDocument, recipient);
         } else if ("PAGOPA".equalsIgnoreCase(typeDocument)) {
@@ -103,15 +97,16 @@ public class AppIOB2bSteps {
 
     public void downloadPAGOPAAppIo(String typeDocument, String recipient) {
         try {
-            List<NotificationDocument> documents = sharedSteps.getFullSentNotificationV26().getDocuments();
+            FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+            List<NotificationDocument> documents = fullSentNotification.getDocuments();
             it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.NotificationAttachmentDownloadMetadataResponse downloadResponse =
-                    iPnAppIOB2bClient.getReceivedNotificationAttachment(sharedSteps.getFullSentNotificationV26().getIun(), typeDocument, selectTaxIdUser(recipient), Integer.parseInt(documents.get(0).getDocIdx()));
+                    iPnAppIOB2bClient.getReceivedNotificationAttachment(fullSentNotification.getIun(), typeDocument, selectTaxIdUser(recipient), Integer.parseInt(documents.get(0).getDocIdx()));
 
             if ((downloadResponse != null && downloadResponse.getRetryAfter() != null && downloadResponse.getRetryAfter() > 0)) {
                 try {
                     System.out.println("SECONDO TENTATIVO");
                     Thread.sleep(downloadResponse.getRetryAfter() * 3);
-                    downloadResponse = iPnAppIOB2bClient.getReceivedNotificationAttachment(sharedSteps.getFullSentNotificationV26().getIun(), typeDocument, selectTaxIdUser(recipient), Integer.parseInt(documents.get(0).getDocIdx()));
+                    downloadResponse = iPnAppIOB2bClient.getReceivedNotificationAttachment(fullSentNotification.getIun(), typeDocument, selectTaxIdUser(recipient), Integer.parseInt(documents.get(0).getDocIdx()));
 
                 } catch (InterruptedException exc) {
                     throw new RuntimeException(exc);
@@ -120,16 +115,12 @@ public class AppIOB2bSteps {
             System.out.println(downloadResponse.toString());
 
             it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.NotificationAttachmentDownloadMetadataResponse downloadResponseFinal = downloadResponse;
-            byte[] bytes = Assertions.assertDoesNotThrow(() ->
-                    b2bUtils.downloadFile(downloadResponseFinal.getUrl()));
+            byte[] bytes = Assertions.assertDoesNotThrow(() -> b2bUtils.downloadFile(downloadResponseFinal.getUrl()));
             this.sha256DocumentDownload = b2bUtils.computeSha256(new ByteArrayInputStream(bytes));
 
             Assertions.assertEquals(this.sha256DocumentDownload, downloadResponse.getSha256());
-
         } catch (HttpClientErrorException | HttpServerErrorException e) {
-            if (e instanceof HttpStatusCodeException) {
-                this.notficationServerError = e;
-            }
+            this.notificationServerError = e;
         }
     }
 
@@ -137,10 +128,9 @@ public class AppIOB2bSteps {
 
         AtomicReference<ThirdPartyMessage> notificationByIun = new AtomicReference<>();
         try {
+            FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
             Assertions.assertDoesNotThrow(() ->
-                    notificationByIun.set(this.iPnAppIOB2bClient.getReceivedNotification(sharedSteps.getFullSentNotificationV26().getIun(),
-                            sharedSteps.getFullSentNotificationV26().getRecipients().get(0).getTaxId()))
-            );
+                    notificationByIun.set(this.iPnAppIOB2bClient.getReceivedNotification(fullSentNotification.getIun(), fullSentNotification.getRecipients().get(0).getTaxId())));
             Assertions.assertNotNull(notificationByIun.get());
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
@@ -182,56 +172,48 @@ public class AppIOB2bSteps {
             }
 
         } catch (HttpClientErrorException | HttpServerErrorException e) {
-            if (e instanceof HttpStatusCodeException) {
-                this.notficationServerError = e;
-            }
+            this.notificationServerError = e;
         }
     }
 
 
     @Then("il documento notificato può essere recuperata tramite AppIO da {string}")
     public void notifiedDocumentCanBeRetrievedAppIO(String recipient) {
-
         try {
-            List<NotificationDocument> documents = sharedSteps.getFullSentNotificationV26().getDocuments();
+            FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+            List<NotificationDocument> documents = fullSentNotification.getDocuments();
             it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.NotificationAttachmentDownloadMetadataResponse sentNotificationDocument =
-                    iPnAppIOB2bClient.getSentNotificationDocument(sharedSteps.getFullSentNotificationV26().getIun(), Integer.parseInt(documents.get(0).getDocIdx()),
-                            selectTaxIdUser(recipient));
+                    iPnAppIOB2bClient.getSentNotificationDocument(fullSentNotification.getIun(), Integer.parseInt(documents.get(0).getDocIdx()), selectTaxIdUser(recipient));
 
-            byte[] bytes = Assertions.assertDoesNotThrow(() ->
-                    b2bUtils.downloadFile(sentNotificationDocument.getUrl()));
+            byte[] bytes = Assertions.assertDoesNotThrow(() -> b2bUtils.downloadFile(sentNotificationDocument.getUrl()));
             this.sha256DocumentDownload = b2bUtils.computeSha256(new ByteArrayInputStream(bytes));
 
             Assertions.assertEquals(this.sha256DocumentDownload, sentNotificationDocument.getSha256());
         } catch (HttpClientErrorException | HttpServerErrorException e) {
-            if (e instanceof HttpStatusCodeException) {
-                this.notficationServerError = e;
-            }
+            this.notificationServerError = e;
         }
     }
 
     @And("{string} tenta il recupero della notifica tramite AppIO")
     public void attemptsNotificationRetrievalAppIO(String recipient) {
         try {
-            this.iPnAppIOB2bClient.getReceivedNotification(sharedSteps.getFullSentNotificationV26().getIun(), selectTaxIdUser(recipient));
+            this.iPnAppIOB2bClient.getReceivedNotification(sharedSteps.getNotificationIun(), selectTaxIdUser(recipient));
         } catch (HttpClientErrorException | HttpServerErrorException e) {
-            if (e instanceof HttpStatusCodeException) {
-                this.notficationServerError = e;
-            }
+            this.notificationServerError = e;
         }
     }
 
     @Then("il tentativo di recupero con appIO ha prodotto un errore con status code {string}")
     public void retrievalAttemptWithAppIOProducedAnErrorWithStatusCode(String statusCode) {
-        Assertions.assertTrue((this.notficationServerError != null) &&
-                (this.notficationServerError.getStatusCode().toString().substring(0, 3).equals(statusCode)));
+        Assertions.assertTrue((this.notificationServerError != null) &&
+                (this.notificationServerError.getStatusCode().toString().substring(0, 3).equals(statusCode)));
     }
 
     private String selectTaxIdUser(String recipient) {
-        if (recipient.trim().equalsIgnoreCase("mario cucumber")) {
-            return this.marioCucumberTaxID;
-        } else if (recipient.trim().equalsIgnoreCase("mario gherkin")) {
-            return this.marioGherkinTaxID;
+        if (recipient.trim().equalsIgnoreCase(MARIO_CUCUMBER)) {
+            return MARIO_CUCUMBER_TAX_ID;
+        } else if (recipient.trim().equalsIgnoreCase(MARIO_GHERKIN)) {
+            return MARIO_GHERKIN_TAX_ID;
         } else {
             throw new IllegalArgumentException();
         }
@@ -243,9 +225,7 @@ public class AppIOB2bSteps {
         AtomicReference<ThirdPartyMessage> notificationByIun = new AtomicReference<>();
         try {
             Assertions.assertDoesNotThrow(() ->
-                    notificationByIun.set(this.iPnAppIOB2bClient.getReceivedNotification(sharedSteps.getFullSentNotificationV26().getIun(),
-                            selectTaxIdUser(recipient)))
-            );
+                    notificationByIun.set(this.iPnAppIOB2bClient.getReceivedNotification(sharedSteps.getNotificationIun(), selectTaxIdUser(recipient))));
             Assertions.assertNotNull(notificationByIun.get());
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
@@ -254,13 +234,13 @@ public class AppIOB2bSteps {
 
     @Then("{string} recupera il documento notificato tramite AppIO")
     public void recuperaIlDocumentoNotificatoTramiteAppIO(String recipient) {
-        List<NotificationDocument> documents = sharedSteps.getFullSentNotificationV26().getDocuments();
+        FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        List<NotificationDocument> documents = fullSentNotification.getDocuments();
         it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.NotificationAttachmentDownloadMetadataResponse sentNotificationDocument =
-                iPnAppIOB2bClient.getSentNotificationDocument(sharedSteps.getFullSentNotificationV26().getIun(), Integer.parseInt(documents.get(0).getDocIdx()),
+                iPnAppIOB2bClient.getSentNotificationDocument(fullSentNotification.getIun(), Integer.parseInt(documents.get(0).getDocIdx()),
                         selectTaxIdUser(recipient));
         try {
-            byte[] bytes = Assertions.assertDoesNotThrow(() ->
-                    b2bUtils.downloadFile(sentNotificationDocument.getUrl()));
+            byte[] bytes = Assertions.assertDoesNotThrow(() -> b2bUtils.downloadFile(sentNotificationDocument.getUrl()));
             this.sha256DocumentDownload = b2bUtils.computeSha256(new ByteArrayInputStream(bytes));
 
             Assertions.assertEquals(this.sha256DocumentDownload, sentNotificationDocument.getSha256());

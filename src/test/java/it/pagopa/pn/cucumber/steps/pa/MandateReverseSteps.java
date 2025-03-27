@@ -86,7 +86,7 @@ public class MandateReverseSteps {
     public void notificationDelegatedNotVisible(String delegate) {
         selectPG(delegate);
         Assertions.assertThrows(HttpClientErrorException.NotFound.class,
-                () -> b2BRecipientExternalClient.getReceivedNotification(sharedSteps.getIunVersionamento(), reverseMandateResponse));
+                () -> b2BRecipientExternalClient.getReceivedNotification(sharedSteps.getNotificationIun(), reverseMandateResponse));
     }
 
     @Then("si verifica che la delega è stata creata senza un gruppo associato")

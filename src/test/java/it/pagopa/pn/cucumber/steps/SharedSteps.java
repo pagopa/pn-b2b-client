@@ -185,33 +185,9 @@ public class SharedSteps {
     // Viene settato solo per l'ultima versione. Al rilascio di una nuova, sostituire con l'oggetto corrispondente
     private NewNotificationRequestV24 notificationRequest;
 
-    @Getter
-    @Setter
-    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification fullSentNotificationV1;
-
-    @Getter
-    @Setter
-    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.FullSentNotificationV20 fullSentNotificationV20;
-
-    @Getter
-    @Setter
-    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.FullSentNotificationV21 fullSentNotificationV21;
-
-    @Getter
-    @Setter
-    private FullSentNotificationV23 fullSentNotificationV23;
-
-    @Getter
-    @Setter
-    private FullSentNotificationV24 fullSentNotificationV24;
-
-    @Getter
-    @Setter
-    private FullSentNotificationV25 fullSentNotificationV25;
-
-    @Getter
-    @Setter
-    private FullSentNotificationV26 fullSentNotificationV26;
+//    @Getter
+//    @Setter
+//    private FullSentNotificationV26 fullSentNotificationV26;
 
     private final Map<NotificationVersion, NotificationStepsInterface> mapOfVersionSteps = Map.ofEntries(
             Map.entry(V1, new NotificationStepsV1(this)),
@@ -224,6 +200,13 @@ public class SharedSteps {
     @Getter
     @Setter
     private NotificationVersion versionUsed;
+
+    @Getter
+    @Setter
+    /** Anzichè avere 10.000 istanze di FullSentNotification da impostare ogni volta, ora setteremo solo lo IUN della notifica creata.
+     * Dove prima si richiama sharedSteps.getFullSentNotificationX, adesso si recupererà direttamente la versione chiamando il metodo
+     * del B2bClient relativo alla versione che ci interessa, passandogli questo IUN (che è universale) */
+    private String notificationIun;
 
     public enum NotificationVersion {
         V1(1), V2(2), V21(21), V23(23), V24(24);
@@ -295,23 +278,16 @@ public class SharedSteps {
     }
 
     /**
-     * Restituisce lo IUN della notifica, a prescindere dalla versione con cui è stata creata
+     * Restituisce lo FullSentNotification aggiornata all'ultima versione (quella maggiormente utilizzata a codice)
+     * TODO: se e quando verrà introdotta una nuova versione, rifattorizzare il tipo di oggetto ritornato e cambiare
+     * i punti di codice che richiamano questo metodo
      */
-    public String getIunVersionamento() {
-        return getNotificationStepInterface().getNotificationSentIun();
+    public FullSentNotificationV26 getSentNotificationLastVersion() {
+        if (notificationIun != null) {
+            return b2bClient.getSentNotification(notificationIun);
+        }
+        throw new RuntimeException("Lo IUN non è valorizzato, qualcosa è andato storto nei passaggi precedenti");
     }
-
-    /**
-     * L'idea alla base di metodo sarebbe di far restituire l'oggetto FullSentNotification a prescindere dalla versione
-     * con cui è stato creato. In tal modo si potrebbe alleggerire la classe di tutti gli N campi fullSentNotificationV xyz
-     * Gli attuali metodi che adesso richiamano il getFullSentNotificationV xyz a priori dovrebbero eseguire il casting, ma sarebbe
-     * un casting safe, in quanto sanno già di operare con la versione xyz
-     * TODO al momento non è utilizzato, è solo un'idea
-     */
-    public Object getSentNotificationAnyVersion() {
-        return getNotificationStepInterface().getSentNotificationAnyVersion();
-    }
-
 
     private NotificationVersion getNotificationVersion(String version) {
         if (version.trim().equalsIgnoreCase(MOST_RECENT)) {
@@ -453,8 +429,9 @@ public class SharedSteps {
         }
         log.debug("End IUN list");
         //la prima notifica viene inserita
-        this.fullSentNotificationV26 = sentNotifications.poll();
-        log.debug("notificationResponseComplete: {}", getIunVersionamento());
+        FullSentNotificationV26 fullSentNotification = sentNotifications.poll();
+        this.notificationIun = fullSentNotification.getIun();
+        log.debug("notificationResponseComplete: {}", getNotificationIun());
     }
 
     private void addRecipientToNotification(NewNotificationRequestV24 notificationRequest, NotificationRecipientV23 notificationRecipient, Map<String, String> recipientData) {
@@ -583,7 +560,7 @@ public class SharedSteps {
     public void laNotificaVieneInviataOkAndCancelled(String paName) {
         setPaAndSenderTaxId(paName);
         getNotificationStepInterface().sendNotification(WAIT_EXTRA_RAPID, NOTIFICATION_STATUS_ACCEPTED, VALIDATION_STATUS);
-        String iun = getIunVersionamento();
+        String iun = getNotificationIun();
         Assertions.assertDoesNotThrow(() -> {
             RequestStatus resp = Assertions.assertDoesNotThrow(() -> b2bClient.notificationCancellation(iun));
             Assertions.assertNotNull(resp);
@@ -608,7 +585,7 @@ public class SharedSteps {
     @And("la notifica {string} essere annullata dal sistema tramite codice IUN dal comune {string}")
     public void notificationCanBeCanceledWithIunByComune(String annullabile, String paName) {
         setPA(paName);
-        String iun = getIunVersionamento();
+        String iun = getNotificationIun();
         if (annullabile.equalsIgnoreCase("può")) {
             Assertions.assertDoesNotThrow(() -> {
                 RequestStatus response = b2bClient.notificationCancellation(iun);
@@ -631,7 +608,7 @@ public class SharedSteps {
     public void retrieveStateNotification(String paName) {
         versionUsed = V1;
         setPaAndSenderTaxId(paName);
-        String requestId = Base64Utils.encodeToString(getIunVersionamento().getBytes());
+        String requestId = Base64Utils.encodeToString(getNotificationIun().getBytes());
         try {
             Assertions.assertDoesNotThrow(() -> b2bClient.getNotificationRequestStatusV1(requestId));
         } catch (AssertionFailedError assertionFailedError) {
@@ -837,30 +814,22 @@ public class SharedSteps {
             Assertions.assertDoesNotThrow(() -> {
                 notificationCreationDate = OffsetDateTime.now();
                 switch (errorType.toUpperCase()) {
-                    case "NOT_FOUND_ALLEGATO":
-                        newNotificationResponse = b2bUtils.uploadNotificationNotFindAllegato(notificationRequest, noUpload);
-                        break;
-                    case "NOT_FOUND_ALLEGATO_JSON":
-                        newNotificationResponse = b2bUtils.uploadNotificationNotFindAllegatoJson(notificationRequest, true);
-                        break;
-                    case "NOT_EQUAL_SHA":
-                        newNotificationResponse = b2bUtils.uploadNotificationNotEqualSha(notificationRequest);
-                        break;
-                    case "NOT_EQUAL_SHA_JSON":
-                        newNotificationResponse = b2bUtils.uploadNotificationNotEqualShaJson(notificationRequest);
-                        break;
-                    case "WRONG_EXTENSION":
-                        newNotificationResponse = b2bUtils.uploadNotificationWrongExtension(notificationRequest);
-                        break;
-                    case "OVERSIZE_ALLEGATO":
-                        newNotificationResponse = b2bUtils.uploadNotificationOverSizeAllegato(notificationRequest);
-                        break;
-                    case "NOTIFICATION_INJECTION_ALLEGATO":
-                        newNotificationResponse = b2bUtils.uploadNotificationInjectionAllegato(notificationRequest);
-                        break;
-                    case "OVER_15_ALLEGATO":
-                        newNotificationResponse = b2bUtils.uploadNotificationOver15Allegato(notificationRequest);
-                        break;
+                    case "NOT_FOUND_ALLEGATO" ->
+                            newNotificationResponse = b2bUtils.uploadNotificationNotFindAllegato(notificationRequest, noUpload);
+                    case "NOT_FOUND_ALLEGATO_JSON" ->
+                            newNotificationResponse = b2bUtils.uploadNotificationNotFindAllegatoJson(notificationRequest, true);
+                    case "NOT_EQUAL_SHA" ->
+                            newNotificationResponse = b2bUtils.uploadNotificationNotEqualSha(notificationRequest);
+                    case "NOT_EQUAL_SHA_JSON" ->
+                            newNotificationResponse = b2bUtils.uploadNotificationNotEqualShaJson(notificationRequest);
+                    case "WRONG_EXTENSION" ->
+                            newNotificationResponse = b2bUtils.uploadNotificationWrongExtension(notificationRequest);
+                    case "OVERSIZE_ALLEGATO" ->
+                            newNotificationResponse = b2bUtils.uploadNotificationOverSizeAllegato(notificationRequest);
+                    case "NOTIFICATION_INJECTION_ALLEGATO" ->
+                            newNotificationResponse = b2bUtils.uploadNotificationInjectionAllegato(notificationRequest);
+                    case "OVER_15_ALLEGATO" ->
+                            newNotificationResponse = b2bUtils.uploadNotificationOver15Allegato(notificationRequest);
                 }
                 errorCode = b2bUtils.waitForRequestRefusedV25(newNotificationResponse);
             });
@@ -1044,13 +1013,13 @@ public class SharedSteps {
 
     private String decorateErrorMsg(String originalMessage) {
         return originalMessage +
-                " {IUN: " + Optional.ofNullable(getIunVersionamento())
+                " {IUN: " + Optional.ofNullable(getNotificationIun())
                 .orElse("not found") + " }";
     }
 
     public void throwAssertionFailedErrorWithAmountGDPAndIUN(AssertionFailedError assertionFailedError, Integer amountGDP) {
         String message = assertionFailedError.getMessage() +
-                "{IUN: " + getIunVersionamento() + ", amountGDP " + (amountGDP == null ? "NULL" : amountGDP.toString()) + "}";
+                "{IUN: " + getNotificationIun() + ", amountGDP " + (amountGDP == null ? "NULL" : amountGDP.toString()) + "}";
         throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
     }
 
@@ -1237,7 +1206,8 @@ public class SharedSteps {
      * @return a list of timeline elements that match the given event category and data from test
      */
     public List<TimelineElementV26> getTimelineElementsByEventId(String timelineEventCategory, DataTest dataFromTest) {
-        List<TimelineElementV26> timelineElementList = fullSentNotificationV26.getTimeline();
+        FullSentNotificationV26 fullSentNotification = getSentNotificationLastVersion();
+        List<TimelineElementV26> timelineElementList = fullSentNotification.getTimeline();
         String iun = getIun(timelineEventCategory);
         if (dataFromTest != null && dataFromTest.getTimelineElement() != null) {
             // get timeline event id
@@ -1263,7 +1233,8 @@ public class SharedSteps {
      * @return a list of timeline elements that match the given event category and data from test
      */
     public List<TimelineElementV26> getTimelineElementsToAttempt(int attemptIndex) {
-        List<TimelineElementV26> timelineElementList = fullSentNotificationV26.getTimeline();
+        FullSentNotificationV26 fullSentNotification = getSentNotificationLastVersion();
+        List<TimelineElementV26> timelineElementList = fullSentNotification.getTimeline();
         return timelineElementList.stream()
                 .filter(elem -> nonNull(elem.getDetails()))
                 //TODO: ignorare Sonar che dice che questo nonNull è inutile in quanto sempre true, non è vero
@@ -1286,7 +1257,7 @@ public class SharedSteps {
             iun = new String(decodedBytes);
         } else {
             // proceed with default flux
-            iun = getIunVersionamento();
+            iun = getNotificationIun();
         }
         return iun;
     }
@@ -1373,6 +1344,6 @@ public class SharedSteps {
 
     @Then("stampa log dello IUN della notifica {string} con allegato {string} su comune {string}")
     public void stampaLogDelloIUNDellaNotificaConAllegatoSuComune(String notificationType, String attachment, String municipality) {
-        log.info("notifica STAMPA COLORI IUN: {}, notifica: {}, allegato: {}, comune: {}", getIunVersionamento(), notificationType, attachment, municipality);
+        log.info("notifica STAMPA COLORI IUN: {}, notifica: {}, allegato: {}, comune: {}", getNotificationIun(), notificationType, attachment, municipality);
     }
 }

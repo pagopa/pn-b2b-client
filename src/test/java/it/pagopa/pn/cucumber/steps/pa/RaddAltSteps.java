@@ -7,6 +7,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV26;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddAlternativeClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.RaddOperator;
@@ -106,7 +107,7 @@ public class RaddAltSteps {
                 this.currentUserCf,
                 this.recipientType,
                 null,
-                tipologiaIun.equalsIgnoreCase("corretto") ? this.iun = sharedSteps.getIunVersionamento() :
+                tipologiaIun.equalsIgnoreCase("corretto") ? this.iun = sharedSteps.getNotificationIun() :
                         tipologiaIun.equalsIgnoreCase("errato") ? this.iun = "GLDZ-MGZD-AGAR-202402-Y-1" : null);
 
         log.info("actInquiryResponse: {}", actInquiryResponse);
@@ -123,7 +124,7 @@ public class RaddAltSteps {
                     this.currentUserCf,
                     this.recipientType,
                     null,
-                    tipologiaIun.equalsIgnoreCase("corretto") ? this.iun = sharedSteps.getIunVersionamento() :
+                    tipologiaIun.equalsIgnoreCase("corretto") ? this.iun = sharedSteps.getNotificationIun() :
                             tipologiaIun.equalsIgnoreCase("errato") ? this.iun = "GLDZ-MGZD-AGAR-202402-Y-1" : null);
         } catch (HttpStatusCodeException exception) {
             sharedSteps.setNotificationError(exception);
@@ -141,7 +142,7 @@ public class RaddAltSteps {
                     this.currentUserCf,
                     this.recipientType,
                     null,
-                    iun.equalsIgnoreCase("corretto") ? this.iun = sharedSteps.getIunVersionamento() :
+                    iun.equalsIgnoreCase("corretto") ? this.iun = sharedSteps.getNotificationIun() :
                             iun.equalsIgnoreCase("errato") ? this.iun = "GLDZ-MGZD-AGAR-202402-Y-1" : null);
         } catch (HttpStatusCodeException exception) {
             sharedSteps.setNotificationError(exception);
@@ -669,12 +670,17 @@ public class RaddAltSteps {
     protected void selectUserRaddAlternative(String denomination) {
         Destinatario destinatario = Destinatario.getByName(denomination);
         if (destinatario != null) {
-            this.currentUserCf = destinatario.equals(DESTINATARIO_SIGNOR_CASUALE) ? sharedSteps.getFullSentNotificationV26().getRecipients().get(0).getTaxId() :
+            this.currentUserCf = destinatario.equals(DESTINATARIO_SIGNOR_CASUALE) ? getRecipientZeroTaxId() :
                     destinatario.equals(DESTINATARIO_SIGNOR_GENERATO) ? FiscalCodeGenerator.generateCF(System.nanoTime()) : destinatario.getTaxId();
             this.recipientType = destinatario.getRecipientType();
         } else {
             this.currentUserCf = denomination;
         }
+    }
+
+    private String getRecipientZeroTaxId() {
+        FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        return fullSentNotification.getRecipients().get(0).getTaxId();
     }
 
     @Given("Il cittadino {string} come destinatario {int} mostra il QRCode {string}")
@@ -683,23 +689,22 @@ public class RaddAltSteps {
         qrCodeType = qrCodeType.toLowerCase();
         switch (qrCodeType) {
             case "malformato" -> {
-                vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getFullSentNotificationV26().getIun(), destinatario);
+                vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), destinatario);
                 this.qrCode = this.qrCode + "MALF";
             }
             case "inesistente" -> {
-                vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getFullSentNotificationV26().getIun(), destinatario);
+                vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), destinatario);
                 char toReplace = this.qrCode.charAt(0);
                 char replace = toReplace == 'B' ? 'C' : 'B';
                 this.qrCode = this.qrCode.replace(toReplace, replace);
             }
             case "appartenente a terzo" -> {
-                if (this.currentUserCf.equalsIgnoreCase(sharedSteps.getFullSentNotificationV26().getRecipients().get(0).getTaxId())) {
+                if (this.currentUserCf.equalsIgnoreCase(getRecipientZeroTaxId())) {
                     throw new IllegalArgumentException();
                 }
-                vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getFullSentNotificationV26().getIun(), destinatario);
+                vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), destinatario);
             }
-            case "corretto" ->
-                    vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getFullSentNotificationV26().getIun(), destinatario);
+            case "corretto" -> vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), destinatario);
             case "dopo 120gg" -> {
                 if (this.currentUserCf.equalsIgnoreCase(MARIO_CUCUMBER_TAX_ID)) {
                     vieneRichiestoIlCodiceQRPerLoIUN(this.iunFieramosca120gg, destinatario);

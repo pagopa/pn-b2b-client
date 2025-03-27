@@ -24,7 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -247,7 +246,7 @@ public class LegalFactContentVerifySteps {
     @Then("l'utente {string} recupera i legalFacts richiamando l'api versione {int} e tra questi {string} il legalFact con categoria {string}")
     public void downloadLegalFactWithIdUsingApiVersion(String user, Integer version, String presente, String legalFactCategory) {
         sharedSteps.selectUser(user);
-        String iun = this.sharedSteps.getFullSentNotificationV26().getIun();
+        String iun = this.sharedSteps.getNotificationIun();
         boolean isPresent = presente.toUpperCase().equals("COMPARE");
         Assertions.assertNotNull(this.legalFactType);
         Assertions.assertNotNull(this.legalFactUrl);

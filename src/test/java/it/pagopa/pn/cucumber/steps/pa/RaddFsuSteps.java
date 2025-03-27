@@ -5,6 +5,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV26;
 import it.pagopa.pn.client.b2b.pa.service.IPnRaddFsuClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.*;
@@ -80,11 +81,15 @@ public class RaddFsuSteps {
         switch (userName) {
             case MARIO_CUCUMBER -> this.currentUserCf = MARIO_CUCUMBER_TAX_ID;
             case MARIO_GHERKIN -> this.currentUserCf = MARIO_GHERKIN_TAX_ID;
-            case SIGNOR_CASUALE ->
-                    this.currentUserCf = sharedSteps.getFullSentNotificationV26().getRecipients().get(0).getTaxId();
+            case SIGNOR_CASUALE -> this.currentUserCf = getRecipientZeroTaxId();
             case SIGNOR_GENERATO -> this.currentUserCf = generateCF(System.nanoTime());
             default -> this.currentUserCf = userName;
         }
+    }
+
+    private String getRecipientZeroTaxId() {
+        FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        return fullSentNotification.getRecipients().get(0).getTaxId();
     }
 
     @Given("Il cittadino {string} mostra il QRCode {string}")
@@ -93,24 +98,22 @@ public class RaddFsuSteps {
         qrCodeType = qrCodeType.toLowerCase();
         switch (qrCodeType) {
             case "malformato" -> {
-                vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getFullSentNotificationV26().getIun());
+                vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun());
                 this.qrCode = this.qrCode + "MALF";
             }
             case "inesistente" -> {
-                vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getFullSentNotificationV26().getIun());
+                vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun());
                 char toReplace = this.qrCode.charAt(0);
                 char replace = toReplace == 'B' ? 'C' : 'B';
                 this.qrCode = this.qrCode.replace(toReplace, replace);
             }
             case "appartenente a terzo" -> {
-                if (this.currentUserCf.equalsIgnoreCase(sharedSteps.getFullSentNotificationV26().getRecipients().get(0).getTaxId())) {
+                if (this.currentUserCf.equalsIgnoreCase(getRecipientZeroTaxId())) {
                     throw new IllegalArgumentException();
                 }
-                vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getFullSentNotificationV26().getIun());
+                vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun());
             }
-            case "corretto" -> {
-                vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getFullSentNotificationV26().getIun());
-            }
+            case "corretto" -> vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun());
             default -> throw new IllegalArgumentException();
         }
     }
@@ -336,13 +339,12 @@ public class RaddFsuSteps {
     public void laVerificaDellaPresenzaDiNotificheInStatoIrreperibiGeneraUnErroreConCodice(String errorType, int errorCode) {
         errorType = errorType.toLowerCase();
         ResponseStatus.CodeEnum error = getAorErrorCode(errorCode);
-        switch (errorType) {
-            case "non ci sono notifiche non consegnate per questo codice fiscale" -> {
-                Assertions.assertEquals(false, this.aorInquiryResponse.getResult());
-                Assertions.assertNotNull(this.aorInquiryResponse.getStatus());
-                Assertions.assertEquals(error, this.aorInquiryResponse.getStatus().getCode());
-            }
-            default -> throw new IllegalArgumentException();
+        if (errorType.equals("non ci sono notifiche non consegnate per questo codice fiscale")) {
+            Assertions.assertEquals(false, this.aorInquiryResponse.getResult());
+            Assertions.assertNotNull(this.aorInquiryResponse.getStatus());
+            Assertions.assertEquals(error, this.aorInquiryResponse.getStatus().getCode());
+        } else {
+            throw new IllegalArgumentException();
         }
 
         log.info("aorInquiryResponse: {}", this.aorInquiryResponse);
