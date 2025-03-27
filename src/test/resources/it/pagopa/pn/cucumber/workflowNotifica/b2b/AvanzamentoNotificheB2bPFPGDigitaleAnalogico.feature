@@ -11,7 +11,7 @@ Feature: avanzamento b2b notifica analogico difgitale
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok_RS    |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -35,8 +35,8 @@ Feature: avanzamento b2b notifica analogico difgitale
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    #And destinatario "Cucumber Society"
-    And destinatario "Gherkin Analogic" e:
+    #And destinatario Cucumber Society
+    And destinatario Gherkin Analogic e:
       | digitalDomicile_address | test@fail.it |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_DELIVERY_CREATION_REQUEST"
@@ -52,7 +52,7 @@ Feature: avanzamento b2b notifica analogico difgitale
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Mario Gherkin"
+    And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_DELIVERY_CREATION_REQUEST" per l'utente 0
     And verifica generazione Atto opponibile senza la messa a disposizione in "DIGITAL_DELIVERY_CREATION_REQUEST"
@@ -70,7 +70,7 @@ Feature: avanzamento b2b notifica analogico difgitale
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario "Cucumber Society"
+    And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_DELIVERY_CREATION_REQUEST" per l'utente 0
     And verifica generazione Atto opponibile senza la messa a disposizione in "DIGITAL_DELIVERY_CREATION_REQUEST"
@@ -107,9 +107,9 @@ Feature: avanzamento b2b notifica analogico difgitale
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@fail.it |
-    And destinatario "Cucumber Analogic" e:
+    And destinatario Cucumber Analogic e:
       | digitalDomicile_address | test1@fail.it |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
@@ -128,10 +128,10 @@ Feature: avanzamento b2b notifica analogico difgitale
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok_RS    |
-    And destinatario "Cucumber Society"
+    And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_DELIVERY_CREATION_REQUEST" per l'utente 0
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_DELIVERY_CREATION_REQUEST" per l'utente 1
@@ -159,7 +159,7 @@ Feature: avanzamento b2b notifica analogico difgitale
       | taxId                   | DVNLRD52D15M059P         |
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -175,7 +175,7 @@ Feature: avanzamento b2b notifica analogico difgitale
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario "Cucumber Society"
+    And destinatario Cucumber Society
     And destinatario
       | denomination            | Test AR Fail 2           |
       | taxId                   | DVNLRD52D15M059P         |
@@ -198,7 +198,7 @@ Feature: avanzamento b2b notifica analogico difgitale
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario "Cucumber Society"
+    And destinatario Cucumber Society
     And destinatario
       | denomination            | Test AR Fail 2           |
       | taxId                   | DVNLRD52D15M059P         |
@@ -224,9 +224,9 @@ Feature: avanzamento b2b notifica analogico difgitale
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario "Gherkin Analogic" e:
+    And destinatario Gherkin Analogic e:
       | digitalDomicile_address | test@OK-pecSuccess.it |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address | test1@OK-pecSuccess.it |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_DELIVERY_CREATION_REQUEST" per l'utente 0
@@ -242,7 +242,7 @@ Feature: avanzamento b2b notifica analogico difgitale
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@OK-pecSuccess.it |
     And destinatario
       | taxId                   | GLLGLL64B15G702I       |

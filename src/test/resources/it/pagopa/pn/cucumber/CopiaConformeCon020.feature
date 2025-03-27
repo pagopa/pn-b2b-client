@@ -6,7 +6,7 @@ Feature: test per la visualizzazione della copia conforme
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                   |
       | physicalAddress_address | Via @OK_AR-CON020-7Z1P |
     Then si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V24"
@@ -21,7 +21,7 @@ Feature: test per la visualizzazione della copia conforme
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL               |
       | physicalAddress_address | Via @OK_890-CON020 |
     Then si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V24"
@@ -36,7 +36,7 @@ Feature: test per la visualizzazione della copia conforme
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@fail.it      |
       | physicalAddress_address | Via @OK_RS-CON020 |
     Then si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V24"
@@ -51,7 +51,7 @@ Feature: test per la visualizzazione della copia conforme
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | <SEQUENCE> |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -73,9 +73,9 @@ Feature: test per la visualizzazione della copia conforme
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
-    And destinatario "GherkinSrl" e:
+    And destinatario GherkinSrl e:
       | digitalDomicile | NULL |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                    |
       | physicalAddress_address | Via @OK_AR-CON020-ZIP3P |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"

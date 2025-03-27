@@ -18,7 +18,7 @@ Feature: Sperimentazione Radd wave 1
       | senderDenomination | Comune di palermo |
       | feePolicy          | DELIVERY_MODE     |
       | document           | DOC_1_PG;         |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address      | test@pecOk.it        |
       | physicalAddress_municipality | BARI                 |
       | physicalAddress_province     | BA                   |
@@ -42,7 +42,7 @@ Feature: Sperimentazione Radd wave 1
       | senderDenomination | Comune di palermo |
       | feePolicy          | DELIVERY_MODE     |
       | document           | DOC_1_PG;         |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | physicalAddress_municipality | BARI                 |
       | physicalAddress_province     | BA                   |
       | physicalAddress_zip          | 70129                |
@@ -63,7 +63,7 @@ Feature: Sperimentazione Radd wave 1
       | physicalCommunication | AR_REGISTERED_LETTER |
       | feePolicy             | DELIVERY_MODE        |
       | document              | DOC_1_PG;            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL                 |
       | physicalAddress_address      | Via@ok_AR            |
       | physicalAddress_municipality | NAPOLI               |
@@ -85,7 +85,7 @@ Feature: Sperimentazione Radd wave 1
       | senderDenomination | Comune di palermo            |
       | feePolicy          | DELIVERY_MODE                |
       | document           | DOC_1_PG;                    |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address      | test@fail.it         |
       | physicalAddress_address      | Via@ok_RS            |
       | physicalAddress_municipality | NAPOLI               |
@@ -107,7 +107,7 @@ Feature: Sperimentazione Radd wave 1
       | senderDenomination | Comune di palermo |
       | feePolicy          | DELIVERY_MODE     |
       | document           | DOC_1_PG;         |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address      | test@pecOk.it        |
       | physicalAddress_municipality | NAPOLI               |
       | physicalAddress_province     | NA                   |
@@ -131,7 +131,7 @@ Feature: Sperimentazione Radd wave 1
       | senderDenomination | Comune di palermo |
       | feePolicy          | DELIVERY_MODE     |
       | document           | DOC_1_PG;         |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | physicalAddress_municipality | NAPOLI               |
       | physicalAddress_province     | NA                   |
       | physicalAddress_zip          | 80124                |
@@ -150,7 +150,7 @@ Feature: Sperimentazione Radd wave 1
       | senderDenomination | Comune di palermo  |
       | feePolicy          | FLAT_RATE          |
       | document           | DOC_1_PG;          |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL                 |
       | physicalAddress_address      | Via@ok_890           |
       | physicalAddress_municipality | BARI                 |
@@ -171,7 +171,7 @@ Feature: Sperimentazione Radd wave 1
       | senderDenomination | Comune di palermo            |
       | feePolicy          | DELIVERY_MODE                |
       | document           | DOC_1_PG;                    |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address      | test@fail.it         |
       | physicalAddress_address      | Via@ok_RS            |
       | physicalAddress_municipality | BARI                 |
@@ -193,7 +193,7 @@ Feature: Sperimentazione Radd wave 1
       | senderDenomination | Comune di palermo  |
       | feePolicy          | DELIVERY_MODE      |
       | document           | DOC_1_PG;          |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL                 |
       | physicalAddress_address      | Via@ok_890           |
       | physicalAddress_municipality | CARDITELLO           |
@@ -214,7 +214,7 @@ Feature: Sperimentazione Radd wave 1
       | subject            | notifica digitale |
       | senderDenomination | Comune di palermo |
       | feePolicy          | DELIVERY_MODE     |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address      | test@pecOk.it        |
       | physicalAddress_municipality | CARDITELLO           |
       | physicalAddress_province     | NA                   |
@@ -237,7 +237,7 @@ Feature: Sperimentazione Radd wave 1
       | subject            | notifica digitale |
       | senderDenomination | Comune di palermo |
       | feePolicy          | DELIVERY_MODE     |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | physicalAddress_municipality | CARDITELLO           |
       | physicalAddress_province     | NA                   |
       | physicalAddress_zip          | 80024                |
@@ -256,7 +256,7 @@ Feature: Sperimentazione Radd wave 1
       | senderDenomination | Comune di palermo            |
       | feePolicy          | DELIVERY_MODE                |
       | document           | DOC_1_PG;                    |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address      | test@fail.it         |
       | physicalAddress_address      | Via@ok_RS            |
       | physicalAddress_municipality | CARDITELLO           |
@@ -279,7 +279,7 @@ Feature: Sperimentazione Radd wave 1
       | physicalCommunication | AR_REGISTERED_LETTER      |
       | feePolicy             | DELIVERY_MODE             |
       | document              | DOC_1_PG;                 |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL                 |
       | physicalAddress_address      | Via@ok_AR            |
       | physicalAddress_municipality | PARIGI               |
@@ -381,7 +381,7 @@ Feature: Sperimentazione Radd wave 1
       | senderDenomination | Comune di palermo              |
       | feePolicy          | DELIVERY_MODE                  |
       | document           | DOC_1_PG;                      |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL                   |
       | physicalAddress_address      | Via@FAIL-Discovery_890 |
       | physicalAddress_municipality | COSENZA                |

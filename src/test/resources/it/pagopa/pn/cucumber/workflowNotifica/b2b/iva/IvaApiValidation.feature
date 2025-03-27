@@ -8,7 +8,7 @@ Feature: Validazione campi per feature calcoloIva
       | feePolicy          | DELIVERY_MODE               |
       | vat                | <vat>                       |
       | paFee              | <paFee>                     |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
     When la notifica viene inviata dal "Comune_Multi"
@@ -29,7 +29,7 @@ Feature: Validazione campi per feature calcoloIva
       | pagoPaIntMode      | ASYNC                       |
       | vat                | <vat>                       |
       | paFee              | <paFee>                     |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL        |
       | physicalAddress_address | via@ok_890  |
       | payment_creditorTaxId   | 77777777777 |
@@ -55,7 +55,7 @@ Feature: Validazione campi per feature calcoloIva
       | physicalCommunication | REGISTERED_LETTER_890       |
       | vat                   | <vat>                       |
       | paFee                 | <paFee>                     |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | Via@ok_890                    |
       | payment_f24             | PAYMENT_F24_STANDARD          |
@@ -76,7 +76,7 @@ Feature: Validazione campi per feature calcoloIva
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
       | vat                | <iva>                       |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
     When la notifica viene inviata dal "Comune_Multi"
@@ -93,7 +93,7 @@ Feature: Validazione campi per feature calcoloIva
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | <paFee>                     |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
     When la notifica viene inviata dal "Comune_Multi"

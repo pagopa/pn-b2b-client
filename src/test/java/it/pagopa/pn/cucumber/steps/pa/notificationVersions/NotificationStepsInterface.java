@@ -19,7 +19,7 @@ public interface NotificationStepsInterface {
 
     void prepareNotificationRequest(Map<String, String> data);
 
-    void addRecipientToNotification(String recipientName, Map<String, String> data);
+    void addRecipientToNotification(Destinatario destinatario, Map<String, String> data);
 
     void setSenderTaxId(String senderTaxId);
 

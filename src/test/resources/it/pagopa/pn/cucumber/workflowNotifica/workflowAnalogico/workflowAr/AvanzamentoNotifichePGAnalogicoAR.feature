@@ -7,7 +7,7 @@ Feature: avanzamento notifiche analogico AR persona giuridica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di milano            |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario "Gherkin Analogic" e:
+    And destinatario Gherkin Analogic e:
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -20,7 +20,7 @@ Feature: avanzamento notifiche analogico AR persona giuridica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di milano                |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario "Gherkin Analogic" e:
+    And destinatario Gherkin Analogic e:
       | digitalDomicile         | NULL        |
       | physicalAddress_address | Via@fail_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -33,7 +33,7 @@ Feature: avanzamento notifiche analogico AR persona giuridica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di milano                |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario "Gherkin Analogic" e:
+    And destinatario Gherkin Analogic e:
       | digitalDomicile         | NULL                  |
       | physicalAddress_address | Via@fail-Discovery_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -46,7 +46,7 @@ Feature: avanzamento notifiche analogico AR persona giuridica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di milano            |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario "Gherkin Analogic" e:
+    And destinatario Gherkin Analogic e:
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -60,7 +60,7 @@ Feature: avanzamento notifiche analogico AR persona giuridica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di milano            |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario "Gherkin Analogic" e:
+    And destinatario Gherkin Analogic e:
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -74,7 +74,7 @@ Feature: avanzamento notifiche analogico AR persona giuridica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di milano            |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario "Gherkin Analogic" e:
+    And destinatario Gherkin Analogic e:
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -88,7 +88,7 @@ Feature: avanzamento notifiche analogico AR persona giuridica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di milano                |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario "Gherkin Irreperibile" e:
+    And destinatario Gherkin Irreperibile e:
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -156,7 +156,7 @@ Feature: avanzamento notifiche analogico AR persona giuridica
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Gherkin Analogic" e:
+    And destinatario Gherkin Analogic e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_RIR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -168,7 +168,7 @@ Feature: avanzamento notifiche analogico AR persona giuridica
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di milano                |
-    And destinatario "Gherkin Analogic" e:
+    And destinatario Gherkin Analogic e:
       | digitalDomicile         | NULL         |
       | physicalAddress_address | Via@fail_RIR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"

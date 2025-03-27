@@ -92,7 +92,7 @@ Feature: avanzamento notifiche webhook b2b V27
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Mario Gherkin"
+    And destinatario Mario Gherkin
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V27"
     And Viene creata una nuova apiKey per il comune "Comune_1" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
@@ -109,7 +109,7 @@ Feature: avanzamento notifiche webhook b2b V27
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Mario Gherkin"
+    And destinatario Mario Gherkin
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V27"
     And Viene creata una nuova apiKey per il comune "Comune_1" con due gruppi
     And viene impostata l'apikey appena generata
@@ -165,7 +165,7 @@ Feature: avanzamento notifiche webhook b2b V27
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Verono            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | payment | NULL |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V27"
     And Viene creata una nuova apiKey per il comune "Comune_2" senza gruppo
@@ -185,7 +185,7 @@ Feature: avanzamento notifiche webhook b2b V27
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Verona            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | payment | NULL |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V27"
     And Viene creata una nuova apiKey per il comune "Comune_2" con il primo gruppo disponibile
@@ -211,7 +211,7 @@ Feature: avanzamento notifiche webhook b2b V27
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Verona            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | payment | NULL |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_2" con versione "V10"
@@ -282,7 +282,7 @@ Feature: avanzamento notifiche webhook b2b V27
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
-    And destinatario "Mario Gherkin"
+    And destinatario Mario Gherkin
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V27"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
@@ -309,7 +309,7 @@ Feature: avanzamento notifiche webhook b2b V27
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
-    And destinatario "Mario Gherkin"
+    And destinatario Mario Gherkin
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -328,7 +328,7 @@ Feature: avanzamento notifiche webhook b2b V27
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
-    And destinatario "Mario Gherkin"
+    And destinatario Mario Gherkin
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V27"
     And Viene creata una nuova apiKey per il comune "Comune_1" senza gruppo
     And viene impostata l'apikey appena generata
@@ -355,7 +355,7 @@ Feature: avanzamento notifiche webhook b2b V27
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
-    And destinatario "Mario Gherkin"
+    And destinatario Mario Gherkin
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V27"
     And Viene creata una nuova apiKey per il comune "Comune_2" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
@@ -386,7 +386,7 @@ Feature: avanzamento notifiche webhook b2b V27
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
-    And destinatario "Mario Gherkin"
+    And destinatario Mario Gherkin
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_1" con versione "V10" e filtro di timeline "NOTIFICATION_RADD_RETRIEVED"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V10"

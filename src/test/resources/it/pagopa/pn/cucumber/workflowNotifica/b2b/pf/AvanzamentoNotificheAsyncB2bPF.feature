@@ -8,7 +8,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | SYNC                        |
       | paFee              | 10                          |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | payment_creditorTaxId | 77777777777 |
       | payment_pagoPaForm    | SI          |
       | payment_f24           | NULL        |
@@ -24,7 +24,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | feePolicy          | FLAT_RATE                   |
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                          |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | payment_creditorTaxId | 77777777777 |
       | payment_pagoPaForm    | SI          |
       | payment_f24           | NULL        |
@@ -41,7 +41,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                          |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | payment_creditorTaxId | 77777777777 |
       | payment_pagoPaForm    | SI          |
       | payment_f24           | NULL        |
@@ -61,7 +61,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                          |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | payment_creditorTaxId | 77777777777 |
       | payment_pagoPaForm    | SI          |
       | payment_f24           | NULL        |
@@ -80,7 +80,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                          |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | physicalAddress_municipality | Palermo     |
       | physicalAddress_zip          | 20019       |
       | physicalAddress_province     | MI          |
@@ -105,7 +105,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                          |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@fail.it |
       | payment_creditorTaxId   | 77777777777  |
       | payment_pagoPaForm      | SI           |
@@ -134,7 +134,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                          |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | payment_creditorTaxId   | 77777777777  |
       | digitalDomicile_address | test@fail.it |
       | payment_pagoPaForm      | SI           |
@@ -162,7 +162,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                          |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | payment_creditorTaxId   | 77777777777  |
       | digitalDomicile_address | test@fail.it |
       | payment_pagoPaForm      | SI           |
@@ -192,7 +192,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                          |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | payment_creditorTaxId   | 77777777777          |
       | digitalDomicile_address | test@fail.it         |
       | payment_pagoPaForm      | SI                   |
@@ -218,7 +218,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                          |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | payment_creditorTaxId   | 77777777777  |
       | digitalDomicile_address | test@fail.it |
       | payment_pagoPaForm      | SI           |
@@ -241,7 +241,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                          |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                 |
       | physicalAddress_address | Via@ok_890           |
       | payment_creditorTaxId   | 77777777777          |
@@ -271,7 +271,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                          |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                  |
       | physicalAddress_address | via@fail-Discovery_AR |
       | payment_creditorTaxId   | 77777777777           |
@@ -305,7 +305,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                          |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@fail.it |
       | payment_creditorTaxId   | 77777777777  |
       | payment_pagoPaForm      | SI           |
@@ -330,7 +330,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                          |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@fail.it |
       | payment_creditorTaxId   | 77777777777  |
       | payment_pagoPaForm      | SI           |
@@ -356,7 +356,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                          |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | payment_creditorTaxId   | 77777777777  |
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@OK_RS    |
@@ -380,7 +380,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                          |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@fail.it |
       | payment_creditorTaxId   | 77777777777  |
       | payment_pagoPaForm      | SI           |
@@ -407,7 +407,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                          |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b con la versione "V1" dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica lo scarto dell' acquisizione della notifica
 
@@ -421,7 +421,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                          |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | physicalAddress_municipality | Palermo     |
       | physicalAddress_zip          | 20019       |
       | physicalAddress_province     | MI          |
@@ -431,7 +431,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | payment_f24                  | NULL        |
       | apply_cost_pagopa            | SI          |
       | payment_multy_number         | 1           |
-    And destinatario "Gherkin Analogic" e:
+    And destinatario Gherkin Analogic e:
       | physicalAddress_municipality | Palermo     |
       | physicalAddress_zip          | 20019       |
       | physicalAddress_province     | MI          |
@@ -461,7 +461,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                          |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | payment_creditorTaxId   | 77777777777           |
       | digitalDomicile         | NULL                  |
       | physicalAddress_address | Via@FAIL-Discovery_AR |
@@ -469,7 +469,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | payment_f24             | NULL                  |
       | apply_cost_pagopa       | SI                    |
       | payment_multy_number    | 1                     |
-    And destinatario "Gherkin Analogic" e:
+    And destinatario Gherkin Analogic e:
       | payment_creditorTaxId   | 77777777777           |
       | digitalDomicile         | NULL                  |
       | physicalAddress_address | Via@FAIL-Discovery_AR |
@@ -500,7 +500,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                          |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | payment_creditorTaxId   | 77777777777           |
       | digitalDomicile         | NULL                  |
       | physicalAddress_address | Via@FAIL-Discovery_AR |
@@ -510,7 +510,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | payment_multy_number    | 2                     |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" per la posizione debitoria 0 del pagamento 0
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" per la posizione debitoria 1 del pagamento 1
-    And destinatario "Gherkin Analogic" e:
+    And destinatario Gherkin Analogic e:
       | payment_creditorTaxId   | 77777777777           |
       | digitalDomicile         | NULL                  |
       | physicalAddress_address | Via@FAIL-Discovery_AR |
@@ -545,14 +545,14 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                          |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@fail.it |
       | payment_creditorTaxId   | 77777777777  |
       | payment_pagoPaForm      | SI           |
       | payment_f24             | NULL         |
       | apply_cost_pagopa       | SI           |
       | payment_multy_number    | 1            |
-    And destinatario "Gherkin Analogic" e:
+    And destinatario Gherkin Analogic e:
       | digitalDomicile_address | test@fail.it |
       | payment_creditorTaxId   | 77777777777  |
       | payment_pagoPaForm      | SI           |

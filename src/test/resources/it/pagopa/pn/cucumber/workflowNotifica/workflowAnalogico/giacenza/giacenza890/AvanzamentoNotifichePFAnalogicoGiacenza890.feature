@@ -9,7 +9,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | via@OK-Giacenza-lte10_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -21,7 +21,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | denomination            | OK-Giacenza-gt10_890     |
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | via@OK-Giacenza-gt10_890 |
@@ -34,7 +34,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | denomination            | OK-GiacenzaDelegato-gt10_890     |
       | digitalDomicile         | NULL                             |
       | physicalAddress_address | via@OK-GiacenzaDelegato-gt10_890 |
@@ -47,7 +47,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | denomination            | FAIL-Giacenza-gt10_890     |
       | digitalDomicile         | NULL                       |
       | physicalAddress_address | via@FAIL-Giacenza-gt10_890 |
@@ -60,7 +60,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | denomination            | OK-CompiutaGiacenza_890     |
       | digitalDomicile         | NULL                        |
       | physicalAddress_address | via@OK-CompiutaGiacenza_890 |
@@ -140,7 +140,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | denomination            | OK-Giacenza-gt10_890     |
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | via@OK-Giacenza-gt10_890 |
@@ -190,7 +190,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                           |
       | physicalAddress_address | via@FAIL-Giacenza-gt10-23L_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -208,7 +208,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL               |
       | physicalAddress_address | via@OK-NO012-lte10 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -221,7 +221,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL              |
       | physicalAddress_address | via@OK-NO012-gt10 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -234,7 +234,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                        |
       | physicalAddress_address | Via@OK-Giacenza-lte10_890-2 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -247,7 +247,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                        |
       | physicalAddress_address | Via@OK-Giacenza-lte10_890-3 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -262,7 +262,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                   |
       | physicalAddress_address | Via@OK-MISSING-ARCAD-1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -277,10 +277,10 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                   |
       | physicalAddress_address | Via@OK-MISSING-ARCAD-1 |
-    And destinatario "Cucumber Society"
+    And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
@@ -296,7 +296,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                   |
       | physicalAddress_address | Via@OK-MISSING-ARCAD-2 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -311,10 +311,10 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                   |
       | physicalAddress_address | Via@OK-MISSING-ARCAD-2 |
-    And destinatario "Cucumber Society"
+    And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0

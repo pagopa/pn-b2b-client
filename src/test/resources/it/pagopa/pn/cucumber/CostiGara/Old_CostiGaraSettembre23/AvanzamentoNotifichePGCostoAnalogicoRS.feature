@@ -6,7 +6,7 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
       | feePolicy          | DELIVERY_MODE                   |
-    And destinatario "Cucumber Analogic" e:
+    And destinatario Cucumber Analogic e:
       | digitalDomicile_address      | test@fail.it   |
       | physicalAddress_address      | Via@ok_RS      |
       | physicalAddress_municipality | <MUNICIPALITY> |
@@ -27,7 +27,7 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
       | feePolicy          | FLAT_RATE                       |
-    And destinatario "Cucumber Analogic" e:
+    And destinatario Cucumber Analogic e:
       | digitalDomicile_address      | test@fail.it   |
       | physicalAddress_address      | Via@ok_RS      |
       | physicalAddress_municipality | <MUNICIPALITY> |
@@ -48,7 +48,7 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
       | feePolicy          | DELIVERY_MODE                   |
-    And destinatario "Cucumber Analogic" e:
+    And destinatario Cucumber Analogic e:
       | physicalAddress_State        | FRANCIA      |
       | physicalAddress_municipality | Parigi       |
       | physicalAddress_zip          | ZONE_1       |
@@ -67,7 +67,7 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
       | feePolicy          | FLAT_RATE                       |
-    And destinatario "Cucumber Analogic" e:
+    And destinatario Cucumber Analogic e:
       | digitalDomicile_address      | test@fail.it |
       | physicalAddress_State        | FRANCIA      |
       | physicalAddress_municipality | Parigi       |
@@ -87,7 +87,7 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
       | feePolicy          | DELIVERY_MODE                   |
-    And destinatario "Cucumber Analogic" e:
+    And destinatario Cucumber Analogic e:
       | digitalDomicile_address      | test@fail.it   |
       | physicalAddress_address      | Via@ok_RS      |
       | physicalAddress_municipality | <MUNICIPALITY> |
@@ -116,7 +116,7 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
       | feePolicy          | FLAT_RATE                       |
-    And destinatario "Cucumber Analogic" e:
+    And destinatario Cucumber Analogic e:
       | digitalDomicile_address      | test@fail.it   |
       | physicalAddress_address      | Via@ok_RS      |
       | physicalAddress_municipality | <MUNICIPALITY> |
@@ -144,7 +144,7 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
       | feePolicy          | DELIVERY_MODE                   |
-    And destinatario "Cucumber Analogic" e:
+    And destinatario Cucumber Analogic e:
       | digitalDomicile_address      | test@fail.it   |
       | physicalAddress_State        | BRASILE        |
       | physicalAddress_municipality | Florianopolis  |
@@ -162,7 +162,7 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
       | feePolicy          | FLAT_RATE                       |
-    And destinatario "Cucumber Analogic" e:
+    And destinatario Cucumber Analogic e:
       | digitalDomicile_address      | test@fail.it   |
       | physicalAddress_State        | BRASILE        |
       | physicalAddress_municipality | Florianopolis  |
@@ -180,7 +180,7 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
       | feePolicy          | DELIVERY_MODE                   |
-    And destinatario "Cucumber Analogic" e:
+    And destinatario Cucumber Analogic e:
       | digitalDomicile_address      | test@fail.it |
       | physicalAddress_State        | AUSTRALIA    |
       | physicalAddress_municipality | Hobart       |
@@ -198,7 +198,7 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
       | feePolicy          | FLAT_RATE                       |
-    And destinatario "Cucumber Analogic" e:
+    And destinatario Cucumber Analogic e:
       | digitalDomicile_address      | test@fail.it |
       | physicalAddress_State        | AUSTRALIA    |
       | physicalAddress_municipality | Hobart       |

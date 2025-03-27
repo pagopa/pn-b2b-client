@@ -32,7 +32,7 @@ Feature: avanzamento notifiche webhook b2b V26
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Mario Gherkin"
+    And destinatario Mario Gherkin
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V26"
     And Viene creata una nuova apiKey per il comune "Comune_1" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
@@ -48,7 +48,7 @@ Feature: avanzamento notifiche webhook b2b V26
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Mario Gherkin"
+    And destinatario Mario Gherkin
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V26"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con due gruppi
     And viene impostata l'apikey appena generata
@@ -90,7 +90,7 @@ Feature: avanzamento notifiche webhook b2b V26
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Verono            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | payment | NULL |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V26"
     And Viene creata una nuova apiKey per il comune "Comune_2" senza gruppo
@@ -110,7 +110,7 @@ Feature: avanzamento notifiche webhook b2b V26
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Verona            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | payment | NULL |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V26"
     And Viene creata una nuova apiKey per il comune "Comune_2" con il primo gruppo disponibile

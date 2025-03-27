@@ -5,7 +5,7 @@ Feature: invio notifiche e2e web PA
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN web PA
@@ -16,7 +16,7 @@ Feature: invio notifiche e2e web PA
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo          |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | payment | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla web PA "Comune_Multi"
@@ -27,7 +27,7 @@ Feature: invio notifiche e2e web PA
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Mario Gherkin"
+    And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
     Then la notifica può essere correttamente recuperata dal sistema tramite Stato "ACCEPTED" dalla web PA "Comune_1"
@@ -37,7 +37,7 @@ Feature: invio notifiche e2e web PA
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Gherkin"
+    And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente recuperata con una ricerca da web PA "Comune_1"
       | startDate     | 01/01/2022 |
@@ -50,7 +50,7 @@ Feature: invio notifiche e2e web PA
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Gherkin"
+    And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente recuperata con una ricerca da web PA "Comune_1"
       |  |  |
@@ -60,7 +60,7 @@ Feature: invio notifiche e2e web PA
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Gherkin"
+    And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente recuperata con una ricerca da web PA "Comune_1"
       | subjectRegExp | cucumber |
@@ -70,7 +70,7 @@ Feature: invio notifiche e2e web PA
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Gherkin"
+    And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente recuperata con una ricerca da web PA "Comune_1"
       | startDate     | 01/01/2022 |

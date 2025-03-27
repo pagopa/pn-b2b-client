@@ -7,7 +7,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI               |
       | payment_f24          | PAYMENT_F24_FLAT |
       | apply_cost_pagopa    | SI               |
@@ -23,7 +23,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI               |
       | payment_f24          | PAYMENT_F24_FLAT |
       | apply_cost_pagopa    | NO               |
@@ -40,7 +40,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI                 |
       | payment_f24          | NULL               |
       | apply_cost_pagopa    | NO                 |
@@ -56,7 +56,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI                 |
       | payment_f24          | NULL               |
       | apply_cost_pagopa    | NO                 |
@@ -81,7 +81,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | NO   |
@@ -177,7 +177,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                        |
       | apply_cost_pagopa    | NULL                        |
@@ -197,7 +197,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                        |
       | apply_cost_pagopa    | NULL                        |
@@ -216,7 +216,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                        |
       | apply_cost_pagopa    | NULL                        |
@@ -237,7 +237,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                   |
       | apply_cost_pagopa    | NULL                                   |
@@ -254,7 +254,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                    |
       | apply_cost_pagopa    | NULL                                    |
@@ -272,7 +272,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                      |
       | apply_cost_pagopa    | NULL                                      |
@@ -290,7 +290,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | NOALLEGATO |
       | payment_f24          | NULL       |
       | apply_cost_pagopa    | SI         |
@@ -307,7 +307,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | NOALLEGATO |
       | payment_f24          | NULL       |
       | apply_cost_pagopa    | SI         |
@@ -323,7 +323,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                            |
       | apply_cost_pagopa    | NULL                            |
@@ -342,7 +342,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                               |
       | apply_cost_pagopa    | NULL                               |
@@ -360,7 +360,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                 |
       | apply_cost_pagopa    | NULL                                 |
@@ -377,7 +377,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                 |
       | apply_cost_pagopa    | NULL                                 |
@@ -395,7 +395,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                 |
       | apply_cost_pagopa    | NULL                                 |
@@ -412,7 +412,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                 |
       | apply_cost_pagopa    | NULL                                 |
@@ -429,7 +429,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                |
       | apply_cost_pagopa    | NULL                                |
@@ -447,7 +447,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | NULL                        |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | NULL                          |
       | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
@@ -469,7 +469,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                 |
       | apply_cost_pagopa    | NULL                                 |
@@ -486,7 +486,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                     |
       | apply_cost_pagopa    | NULL                                     |
@@ -508,7 +508,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                        |
       | apply_cost_pagopa    | NULL                                        |
@@ -528,7 +528,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                        |
       | apply_cost_pagopa    | NULL                                        |
@@ -548,7 +548,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                         |
       | apply_cost_pagopa    | NULL                                         |
@@ -569,7 +569,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                       |
       | apply_cost_pagopa    | NULL                                       |

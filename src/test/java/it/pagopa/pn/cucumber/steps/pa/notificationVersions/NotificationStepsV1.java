@@ -64,8 +64,7 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
     }
 
     @Override
-    public void addRecipientToNotification(String recipientName, Map<String, String> data) {
-        Destinatario destinatario = Destinatario.getByName(recipientName);
+    public void addRecipientToNotification(Destinatario destinatario, Map<String, String> data) {
         if (destinatario != null && destinatario.equals(DESTINATARIO_NESSUNO)) return;
         NotificationRecipient notificationRecipient = sharedSteps.getDataTableTypeUtil().convertNotificationRecipientV1(data);
         if (destinatario != null) {

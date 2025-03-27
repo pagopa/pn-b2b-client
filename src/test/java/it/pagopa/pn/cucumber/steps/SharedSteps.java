@@ -346,13 +346,13 @@ public class SharedSteps {
         getNotificationStepInterface().addRecipientToNotification(null, data);
     }
 
-    @And("destinatario {string}")
-    public void addDestinatario(String destinatario) {
+    @And("destinatario {destinatario}")
+    public void addDestinatario(Destinatario destinatario) {
         getNotificationStepInterface().addRecipientToNotification(destinatario, new HashMap<>());
     }
 
-    @And("destinatario {string} e:")
-    public void addDestinatarioWithParams(String destinatario, Map<String, String> data) {
+    @And("destinatario {destinatario} e:")
+    public void addDestinatarioWithParams(Destinatario destinatario, Map<String, String> data) {
         getNotificationStepInterface().addRecipientToNotification(destinatario, data);
     }
 

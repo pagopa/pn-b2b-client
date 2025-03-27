@@ -9,7 +9,7 @@ Feature: Aggiunta lingua aggiuntiva notifiche
       | physicalCommunication | REGISTERED_LETTER_890       |
       | vat                   | 10                          |
       | paFee                 | 100                         |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
       | payment_pagoPaForm      | SI         |
@@ -26,7 +26,7 @@ Feature: Aggiunta lingua aggiuntiva notifiche
       | vat                   | 10                          |
       | paFee                 | 100                         |
       | additionalLanguages   | <LANGUAGE>                  |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
       | payment_pagoPaForm      | SI         |
@@ -48,7 +48,7 @@ Feature: Aggiunta lingua aggiuntiva notifiche
       | vat                   | 10                          |
       | paFee                 | 100                         |
       | additionalLanguages   | DE,FR                       |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
       | payment_pagoPaForm      | SI         |
@@ -66,7 +66,7 @@ Feature: Aggiunta lingua aggiuntiva notifiche
       | vat                   | 10                          |
       | paFee                 | 100                         |
       | additionalLanguages   | POLACCO                     |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
       | payment_pagoPaForm      | SI         |

@@ -279,7 +279,7 @@ Feature: Radd Alternative Anagrafica Sportelli
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL            |
       | physicalAddress_address      | Via@ok_890      |
       | physicalAddress_municipality | SAN MAURO FORTE |
@@ -305,7 +305,7 @@ Feature: Radd Alternative Anagrafica Sportelli
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL        |
       | physicalAddress_address      | Via@ok_890  |
       | physicalAddress_municipality | LAGO PATRIA |
@@ -476,7 +476,7 @@ Feature: Radd Alternative Anagrafica Sportelli
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL       |
       | physicalAddress_address      | Via@ok_890 |
       | physicalAddress_municipality | QUALIANO   |

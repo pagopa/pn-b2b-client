@@ -10,7 +10,7 @@ Feature: Radd Alternative Atto Intero
       | physicalCommunication | REGISTERED_LETTER_890          |
       | feePolicy             | DELIVERY_MODE                  |
       | document              | DOC_3_PG;                      |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL                 |
       | physicalAddress_address      | Via@ok_890           |
       | physicalAddress_municipality | VENEZIA              |
@@ -31,7 +31,7 @@ Feature: Radd Alternative Atto Intero
       | physicalCommunication | AR_REGISTERED_LETTER           |
       | feePolicy             | DELIVERY_MODE                  |
       | document              | DOC_3_PG;                      |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL                 |
       | physicalAddress_address      | Via@ok_AR            |
       | physicalAddress_municipality | VENEZIA              |
@@ -51,7 +51,7 @@ Feature: Radd Alternative Atto Intero
       | senderDenomination | Comune di palermo              |
       | feePolicy          | DELIVERY_MODE                  |
       | document           | DOC_3_PG;                      |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address      | test@fail.it         |
       | physicalAddress_address      | Via@ok_RS            |
       | physicalAddress_municipality | VENEZIA              |
@@ -72,7 +72,7 @@ Feature: Radd Alternative Atto Intero
       | physicalCommunication | REGISTERED_LETTER_890 |
       | feePolicy             | DELIVERY_MODE         |
       | document              | DOC_3_PG;             |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL                 |
       | physicalAddress_address      | Via@ok_890           |
       | physicalAddress_municipality | <MUNICIPALITY>       |
@@ -97,7 +97,7 @@ Feature: Radd Alternative Atto Intero
       | senderDenomination | Comune di palermo                        |
       | feePolicy          | DELIVERY_MODE                            |
       | document           | DOC_3_PG;                                |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address      | test@fail.it         |
       | physicalAddress_address      | Via@ok_RS            |
       | physicalAddress_municipality | VENEZIA              |
@@ -118,7 +118,7 @@ Feature: Radd Alternative Atto Intero
       | physicalCommunication | AR_REGISTERED_LETTER |
       | feePolicy             | DELIVERY_MODE        |
       | document              | DOC_3_PG;            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL                 |
       | physicalAddress_address      | Via@ok_AR            |
       | physicalAddress_municipality | <MUNICIPALITY>       |
@@ -144,7 +144,7 @@ Feature: Radd Alternative Atto Intero
       | physicalCommunication | AR_REGISTERED_LETTER                               |
       | feePolicy             | DELIVERY_MODE                                      |
       | document              | DOC_3_PG;                                          |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL                 |
       | physicalAddress_address      | Via@ok_AR            |
       | physicalAddress_municipality | VENEZIA              |
@@ -165,7 +165,7 @@ Feature: Radd Alternative Atto Intero
       | physicalCommunication | REGISTERED_LETTER_890          |
       | feePolicy             | DELIVERY_MODE                  |
       | document              | DOC_3_PG;                      |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL                 |
       | physicalAddress_address      | Via@ok_890           |
       | physicalAddress_municipality | VENEZIA              |

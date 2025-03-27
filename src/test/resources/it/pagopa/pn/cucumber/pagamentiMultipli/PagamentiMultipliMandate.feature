@@ -10,7 +10,7 @@ Feature: verifica feature pagamenti multipli con deleghe
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "GherkinSrl" e:
+    And destinatario GherkinSrl e:
       | payment_pagoPaForm   | SI                        |
       | payment_f24          | PAYMENT_F24_STANDARD      |
       | title_payment        | F24_STANDARD_GHERKING_SRL |
@@ -37,7 +37,7 @@ Feature: verifica feature pagamenti multipli con deleghe
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario "GherkinSrl" e:
+    And destinatario GherkinSrl e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |

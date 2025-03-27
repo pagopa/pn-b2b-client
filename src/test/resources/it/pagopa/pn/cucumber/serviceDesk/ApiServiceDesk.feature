@@ -767,7 +767,7 @@ Feature: Api Service Desk
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | denomination            | Test OK          |
       | digitalDomicile         | NULL             |
       | taxId                   | TMTDGI62C01A271W |
@@ -910,7 +910,7 @@ Feature: Api Service Desk
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario "Mario Gherkin"
+    And destinatario Mario Gherkin
     And destinatario
       | denomination            | Test AR Fail 2           |
       | taxId                   | TMTCRL80A01F205A         |

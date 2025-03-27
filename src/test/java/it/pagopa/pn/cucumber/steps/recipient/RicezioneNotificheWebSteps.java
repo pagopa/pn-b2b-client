@@ -576,17 +576,17 @@ public class RicezioneNotificheWebSteps {
     @When("si predispone addressbook per l'utente {string}")
     public void siPredisponeAddressbook(String user) {
         switch (user) {
-            case "Mario Cucumber" ->
+            case MARIO_CUCUMBER ->
                     this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
-            case "Mario Gherkin" ->
+            case MARIO_GHERKIN ->
                     this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
-            case "Galileo Galilei" ->
+            case GALILEO_GALILEI ->
                     this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_4);
-            case "Lucio Anneo Seneca", "CucumberSpa" ->
+            case LUCIO_ANNEO_SENECA, CUCUMBER_SPA ->
                     this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
-            case "GherkinSrl" ->
+            case GHERKIN_SRL ->
                     this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
-            case "Alda Merini" ->
+            case ALDA_MERINI ->
                     this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_3);
             default -> throw new IllegalArgumentException();
         }

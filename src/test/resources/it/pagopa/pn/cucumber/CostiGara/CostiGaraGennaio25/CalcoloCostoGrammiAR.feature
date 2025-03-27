@@ -11,7 +11,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER |
       | feePolicy             | DELIVERY_MODE        |
       | document              | DOC_4_PG;            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_AR      |
       | physicalAddress_municipality | <MUNICIPALITY> |
@@ -49,7 +49,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER |
       | feePolicy             | DELIVERY_MODE        |
       | document              | DOC_5_PG;            |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_AR      |
       | physicalAddress_municipality | <MUNICIPALITY> |
@@ -83,7 +83,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER |
       | feePolicy             | DELIVERY_MODE        |
       | document              | DOC_8_PG;DOC_8_PG;   |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_AR      |
       | physicalAddress_municipality | <MUNICIPALITY> |
@@ -119,7 +119,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER        |
       | feePolicy             | DELIVERY_MODE               |
       | document              | DOC_8_PG;DOC_8_PG;DOC_1_PG; |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_AR      |
       | physicalAddress_municipality | <MUNICIPALITY> |
@@ -152,7 +152,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                          |
       | feePolicy             | DELIVERY_MODE                                 |
       | document              | DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_4_PG; |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_AR      |
       | physicalAddress_municipality | <MUNICIPALITY> |
@@ -186,7 +186,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                         |
       | feePolicy             | DELIVERY_MODE                                |
       | document              | DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_5_PG |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_AR      |
       | physicalAddress_municipality | <MUNICIPALITY> |
@@ -221,7 +221,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                            |
       | feePolicy             | DELIVERY_MODE                                                   |
       | document              | DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_6_PG |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_AR      |
       | physicalAddress_municipality | <MUNICIPALITY> |
@@ -255,7 +255,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                            |
       | feePolicy             | DELIVERY_MODE                                                   |
       | document              | DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_7_PG |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_AR      |
       | physicalAddress_municipality | <MUNICIPALITY> |
@@ -290,7 +290,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                             |
       | feePolicy             | DELIVERY_MODE                                                    |
       | document              | DOC_50_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_4_PG |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_AR      |
       | physicalAddress_municipality | <MUNICIPALITY> |
@@ -324,7 +324,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                             |
       | feePolicy             | DELIVERY_MODE                                                    |
       | document              | DOC_50_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_5_PG |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_AR      |
       | physicalAddress_municipality | <MUNICIPALITY> |
@@ -356,7 +356,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                                                             |
       | feePolicy             | DELIVERY_MODE                                                                                    |
       | document              | DOC_100_PG;DOC_100_PG;DOC_100_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_6_PG |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_AR      |
       | physicalAddress_municipality | <MUNICIPALITY> |
@@ -390,7 +390,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                                                             |
       | feePolicy             | DELIVERY_MODE                                                                                    |
       | document              | DOC_100_PG;DOC_100_PG;DOC_100_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_7_PG |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_AR      |
       | physicalAddress_municipality | <MUNICIPALITY> |
@@ -422,7 +422,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                                                             |
       | feePolicy             | DELIVERY_MODE                                                                                    |
       | document              | DOC_300_PG;DOC_300_PG;DOC_100_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_6_PG |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_AR      |
       | physicalAddress_municipality | <MUNICIPALITY> |
@@ -454,7 +454,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
       | document              | DOC_4_PG;                       |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | <STATE>    |
       | physicalAddress_zip     | ZONE_2     |
@@ -476,7 +476,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
       | document              | DOC_5_PG;                       |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | MESSICO    |
       | physicalAddress_zip     | ZONE_2     |
@@ -494,7 +494,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
       | document              | DOC_8_PG;DOC_8_PG;              |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | MESSICO    |
       | physicalAddress_zip     | ZONE_2     |
@@ -512,7 +512,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
       | document              | DOC_8_PG;DOC_8_PG;DOC_1_PG      |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | MESSICO    |
       | physicalAddress_zip     | ZONE_2     |
@@ -530,7 +530,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                          |
       | feePolicy             | DELIVERY_MODE                                 |
       | document              | DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_4_PG; |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | MESSICO    |
       | physicalAddress_zip     | ZONE_2     |
@@ -548,7 +548,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                         |
       | feePolicy             | DELIVERY_MODE                                |
       | document              | DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_5_PG |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | MESSICO    |
       | physicalAddress_zip     | ZONE_2     |
@@ -566,7 +566,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                            |
       | feePolicy             | DELIVERY_MODE                                                   |
       | document              | DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_6_PG |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | MESSICO    |
       | physicalAddress_zip     | ZONE_2     |
@@ -584,7 +584,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                            |
       | feePolicy             | DELIVERY_MODE                                                   |
       | document              | DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_7_PG |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | MESSICO    |
       | physicalAddress_zip     | ZONE_2     |
@@ -602,7 +602,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                             |
       | feePolicy             | DELIVERY_MODE                                                    |
       | document              | DOC_50_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_4_PG |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | MESSICO    |
       | physicalAddress_zip     | ZONE_2     |
@@ -620,7 +620,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                             |
       | feePolicy             | DELIVERY_MODE                                                    |
       | document              | DOC_50_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_5_PG |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | MESSICO    |
       | physicalAddress_zip     | ZONE_2     |
@@ -638,7 +638,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                                                             |
       | feePolicy             | DELIVERY_MODE                                                                                    |
       | document              | DOC_100_PG;DOC_100_PG;DOC_100_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_6_PG |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | MESSICO    |
       | physicalAddress_zip     | ZONE_2     |
@@ -656,7 +656,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                                                             |
       | feePolicy             | DELIVERY_MODE                                                                                    |
       | document              | DOC_100_PG;DOC_100_PG;DOC_100_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_7_PG |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | MESSICO    |
       | physicalAddress_zip     | ZONE_2     |
@@ -674,7 +674,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                                                             |
       | feePolicy             | DELIVERY_MODE                                                                                    |
       | document              | DOC_300_PG;DOC_300_PG;DOC_100_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_6_PG |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | MESSICO    |
       | physicalAddress_zip     | ZONE_2     |
@@ -692,7 +692,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
       | document              | DOC_4_PG;                       |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | ALBANIA    |
       | physicalAddress_zip     | ZONE_1     |
@@ -710,7 +710,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
       | document              | DOC_5_PG;                       |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | ALBANIA    |
       | physicalAddress_zip     | ZONE_1     |
@@ -728,7 +728,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
       | document              | DOC_8_PG;DOC_8_PG;              |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | ALBANIA    |
       | physicalAddress_zip     | ZONE_1     |
@@ -746,7 +746,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
       | document              | DOC_8_PG;DOC_8_PG;DOC_1_PG      |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | ALBANIA    |
       | physicalAddress_zip     | ZONE_1     |
@@ -764,7 +764,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                          |
       | feePolicy             | DELIVERY_MODE                                 |
       | document              | DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_4_PG; |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | ALBANIA    |
       | physicalAddress_zip     | ZONE_1     |
@@ -782,7 +782,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                         |
       | feePolicy             | DELIVERY_MODE                                |
       | document              | DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_5_PG |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | ALBANIA    |
       | physicalAddress_zip     | ZONE_1     |
@@ -800,7 +800,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                            |
       | feePolicy             | DELIVERY_MODE                                                   |
       | document              | DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_6_PG |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | ALBANIA    |
       | physicalAddress_zip     | ZONE_1     |
@@ -818,7 +818,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                            |
       | feePolicy             | DELIVERY_MODE                                                   |
       | document              | DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_7_PG |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | ALBANIA    |
       | physicalAddress_zip     | ZONE_1     |
@@ -836,7 +836,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                             |
       | feePolicy             | DELIVERY_MODE                                                    |
       | document              | DOC_50_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_4_PG |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | ALBANIA    |
       | physicalAddress_zip     | ZONE_1     |
@@ -854,7 +854,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                             |
       | feePolicy             | DELIVERY_MODE                                                    |
       | document              | DOC_50_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_5_PG |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | ALBANIA    |
       | physicalAddress_zip     | ZONE_1     |
@@ -872,7 +872,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                                                             |
       | feePolicy             | DELIVERY_MODE                                                                                    |
       | document              | DOC_100_PG;DOC_100_PG;DOC_100_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_6_PG |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | ALBANIA    |
       | physicalAddress_zip     | ZONE_1     |
@@ -890,7 +890,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                                                             |
       | feePolicy             | DELIVERY_MODE                                                                                    |
       | document              | DOC_100_PG;DOC_100_PG;DOC_100_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_7_PG |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | ALBANIA    |
       | physicalAddress_zip     | ZONE_1     |
@@ -908,7 +908,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                                                             |
       | feePolicy             | DELIVERY_MODE                                                                                    |
       | document              | DOC_300_PG;DOC_300_PG;DOC_100_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_6_PG |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | ALBANIA    |
       | physicalAddress_zip     | ZONE_1     |
@@ -926,7 +926,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
       | document              | DOC_4_PG;                       |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | AUSTRALIA  |
       | physicalAddress_zip     | ZONE_3     |
@@ -944,7 +944,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
       | document              | DOC_5_PG;                       |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | AUSTRALIA  |
       | physicalAddress_zip     | ZONE_3     |
@@ -962,7 +962,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
       | document              | DOC_8_PG;DOC_8_PG;              |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | AUSTRALIA  |
       | physicalAddress_zip     | ZONE_3     |
@@ -980,7 +980,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
       | document              | DOC_8_PG;DOC_8_PG;DOC_1_PG      |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | AUSTRALIA  |
       | physicalAddress_zip     | ZONE_3     |
@@ -998,7 +998,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                          |
       | feePolicy             | DELIVERY_MODE                                 |
       | document              | DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_4_PG; |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | AUSTRALIA  |
       | physicalAddress_zip     | ZONE_3     |
@@ -1016,7 +1016,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                         |
       | feePolicy             | DELIVERY_MODE                                |
       | document              | DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_5_PG |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | AUSTRALIA  |
       | physicalAddress_zip     | ZONE_3     |
@@ -1034,7 +1034,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                            |
       | feePolicy             | DELIVERY_MODE                                                   |
       | document              | DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_6_PG |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | AUSTRALIA  |
       | physicalAddress_zip     | ZONE_3     |
@@ -1052,7 +1052,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                            |
       | feePolicy             | DELIVERY_MODE                                                   |
       | document              | DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_7_PG |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | AUSTRALIA  |
       | physicalAddress_zip     | ZONE_3     |
@@ -1070,7 +1070,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                             |
       | feePolicy             | DELIVERY_MODE                                                    |
       | document              | DOC_50_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_4_PG |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | AUSTRALIA  |
       | physicalAddress_zip     | ZONE_3     |
@@ -1088,7 +1088,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                             |
       | feePolicy             | DELIVERY_MODE                                                    |
       | document              | DOC_50_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_5_PG |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | AUSTRALIA  |
       | physicalAddress_zip     | ZONE_3     |
@@ -1106,7 +1106,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                                                             |
       | feePolicy             | DELIVERY_MODE                                                                                    |
       | document              | DOC_100_PG;DOC_100_PG;DOC_100_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_6_PG |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | AUSTRALIA  |
       | physicalAddress_zip     | ZONE_3     |
@@ -1124,7 +1124,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                                                             |
       | feePolicy             | DELIVERY_MODE                                                                                    |
       | document              | DOC_100_PG;DOC_100_PG;DOC_100_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_7_PG |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | AUSTRALIA  |
       | physicalAddress_zip     | ZONE_3     |
@@ -1142,7 +1142,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                                                             |
       | feePolicy             | DELIVERY_MODE                                                                                    |
       | document              | DOC_300_PG;DOC_300_PG;DOC_100_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_6_PG |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | AUSTRALIA  |
       | physicalAddress_zip     | ZONE_3     |
@@ -1161,7 +1161,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                          |
       | feePolicy             | DELIVERY_MODE                                 |
       | document              | DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_4_PG; |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | ALBANIA    |
       | physicalAddress_zip     | ZONE_1     |
@@ -1179,7 +1179,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                         |
       | feePolicy             | DELIVERY_MODE                                |
       | document              | DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_5_PG |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | MESSICO    |
       | physicalAddress_zip     | ZONE_2     |
@@ -1198,7 +1198,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalCommunication | AR_REGISTERED_LETTER                                            |
       | feePolicy             | DELIVERY_MODE                                                   |
       | document              | DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_6_PG |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_State   | AUSTRALIA  |
       | physicalAddress_zip     | ZONE_3     |

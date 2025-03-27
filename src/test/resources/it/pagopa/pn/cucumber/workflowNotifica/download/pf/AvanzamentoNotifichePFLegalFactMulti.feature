@@ -5,8 +5,8 @@ Feature: Download legalFact multi destinatario
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo          |
-    And destinatario "Mario Gherkin"
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Gherkin
+    And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And "Mario Gherkin" legge la notifica ricevuta
     And "Mario Cucumber" legge la notifica ricevuta

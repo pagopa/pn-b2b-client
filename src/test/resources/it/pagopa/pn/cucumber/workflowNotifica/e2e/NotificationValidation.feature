@@ -4,7 +4,7 @@ Feature: Validazione notifica e2e
   Scenario: [E2E-NOTIFICATION_VALIDATION_ATTACHMENT_1] validazione fallita allegati notifica - file non caricato su SafeStorage
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-    And destinatario "Cristoforo Colombo"
+    And destinatario Cristoforo Colombo
     When la notifica viene inviata tramite api b2b senza preload allegato dal "Comune_Multi" e si attende che lo stato diventi REFUSED
         #Then si verifica che la notifica non viene accettata causa "ALLEGATO"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
@@ -16,7 +16,7 @@ Feature: Validazione notifica e2e
   Scenario: [E2E-NOTIFICATION_VALIDATION_ATTACHMENT_2] validazione fallita allegati notifica - Sha256 differenti
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-    And destinatario "Cristoforo Colombo"
+    And destinatario Cristoforo Colombo
     When la notifica viene inviata tramite api b2b con sha256 differente dal "Comune_Multi" e si attende che lo stato diventi REFUSED
         #Then si verifica che la notifica non viene accettata causa "SHA_256"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
@@ -28,7 +28,7 @@ Feature: Validazione notifica e2e
   Scenario: [E2E-NOTIFICATION_VALIDATION_ATTACHMENT_3] validazione fallita allegati notifica - estensione errata
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-    And destinatario "Cristoforo Colombo"
+    And destinatario Cristoforo Colombo
     When la notifica viene inviata tramite api b2b con estensione errata dal "Comune_Multi" e si attende che lo stato diventi REFUSED
         #Then si verifica che la notifica non viene accettata causa "EXTENSION"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
@@ -41,7 +41,7 @@ Feature: Validazione notifica e2e
   Scenario: [E2E-NOTIFICATION_VALIDATION_ATTACHMENT_4] validazione fallita allegati notifica - file non caricato su SafeStorage
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-    And destinatario "Cristoforo Colombo"
+    And destinatario Cristoforo Colombo
     When la notifica viene inviata tramite api b2b effettuando la preload ma senza caricare nessun allegato dal "Comune_Multi" e si attende che lo stato diventi REFUSED
        #Then si verifica che la notifica non viene accettata causa "ALLEGATO"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
@@ -54,7 +54,7 @@ Feature: Validazione notifica e2e
     Given viene generata una nuova notifica
       | subject   | invio notifica con cucumber |
       | feePolicy | DELIVERY_MODE               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | NULL                 |
       | payment_f24          | PAYMENT_F24_STANDARD |
       | apply_cost_f24       | SI                   |
@@ -74,7 +74,7 @@ Feature: Validazione notifica e2e
     Given viene generata una nuova notifica
       | subject   | invio notifica con cucumber |
       | feePolicy | DELIVERY_MODE               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | NULL                 |
       | payment_f24          | PAYMENT_F24_STANDARD |
       | apply_cost_f24       | SI                   |
@@ -103,7 +103,7 @@ Feature: Validazione notifica e2e
   Scenario: [E2E-NOTIFICATION_VALIDATION_PHYSICAL_ADDRESS] Invio notifica mono destinatario con indirizzo fisico non valido scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-    And destinatario "Cristoforo Colombo" e:
+    And destinatario Cristoforo Colombo e:
       | physicalAddress_zip | 00000 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
     Then si verifica che la notifica non viene accettata causa "ADDRESS"
@@ -118,7 +118,7 @@ Feature: Validazione notifica e2e
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Cristoforo Colombo"
+    And destinatario Cristoforo Colombo
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And viene verificato che l'elemento di timeline "REQUEST_ACCEPTED" esista
       | loadTimeline  | true                         |
@@ -130,7 +130,7 @@ Feature: Validazione notifica e2e
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Cristoforo Colombo"
+    And destinatario Cristoforo Colombo
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che l'elemento di timeline "AAR_GENERATION" esista
       | loadTimeline            | true     |

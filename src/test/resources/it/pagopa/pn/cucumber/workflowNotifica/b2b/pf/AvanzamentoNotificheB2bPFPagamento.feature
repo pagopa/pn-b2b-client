@@ -19,7 +19,7 @@ Feature: avanzamento notifiche b2b persona fisica pagamento
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL        |
       | physicalAddress_address | Via@ok_890  |
       | payment_creditorTaxId   | 77777777777 |

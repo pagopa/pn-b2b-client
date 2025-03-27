@@ -10,7 +10,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche RS
       | senderDenomination | Comune di palermo |
       | feePolicy          | DELIVERY_MODE     |
       | document           | DOC_4_PG;         |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address      | test@fail.it   |
       | physicalAddress_address      | Via@ok_RS      |
       | physicalAddress_municipality | <MUNICIPALITY> |
@@ -44,7 +44,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche RS
       | senderDenomination | Comune di palermo               |
       | feePolicy          | DELIVERY_MODE                   |
       | document           | DOC_4_PG;                       |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_State   | ALBANIA      |
       | physicalAddress_zip     | ZONE_1       |
@@ -61,7 +61,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche RS
       | senderDenomination | Comune di palermo               |
       | feePolicy          | DELIVERY_MODE                   |
       | document           | DOC_4_PG;                       |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_State   | MESSICO      |
       | physicalAddress_zip     | ZONE_2       |
@@ -78,7 +78,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche RS
       | senderDenomination | Comune di palermo               |
       | feePolicy          | DELIVERY_MODE                   |
       | document           | DOC_4_PG;                       |
-    And destinatario "Mario Gherkin" e:
+    And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_State   | AUSTRALIA    |
       | physicalAddress_zip     | ZONE_3       |

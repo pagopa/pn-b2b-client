@@ -5,8 +5,8 @@ Feature: recupero notifiche tramite api AppIO b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Mario Cucumber"
-    And destinatario "Mario Gherkin"
+    And destinatario Mario Cucumber
+    And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere recuperata tramite AppIO
 
@@ -16,8 +16,8 @@ Feature: recupero notifiche tramite api AppIO b2b
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
       | idempotenceToken   | AME2E3626070001.1           |
-    And destinatario "Mario Cucumber"
-    And destinatario "Mario Gherkin"
+    And destinatario Mario Cucumber
+    And destinatario Mario Gherkin
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere recuperata tramite AppIO
     And viene generata una nuova notifica con uguale paProtocolNumber e idempotenceToken "AME2E3626070001.2"
@@ -29,8 +29,8 @@ Feature: recupero notifiche tramite api AppIO b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario "Mario Cucumber"
-    And destinatario "Mario Gherkin"
+    And destinatario Mario Cucumber
+    And destinatario Mario Gherkin
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere recuperata tramite AppIO
     And viene generata una nuova notifica con uguale codice fiscale del creditore e diverso codice avviso
@@ -42,8 +42,8 @@ Feature: recupero notifiche tramite api AppIO b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Mario Cucumber"
-    And destinatario "Mario Gherkin"
+    And destinatario Mario Cucumber
+    And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then "Mario Cucumber" recupera il documento notificato tramite AppIO
 
@@ -52,8 +52,8 @@ Feature: recupero notifiche tramite api AppIO b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Mario Cucumber"
-    And destinatario "Mario Gherkin"
+    And destinatario Mario Cucumber
+    And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then "Mario Gherkin" recupera il documento notificato tramite AppIO
 
@@ -62,8 +62,8 @@ Feature: recupero notifiche tramite api AppIO b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Mario Gherkin"
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Gherkin
+    And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then "Mario Cucumber" recupera la notifica tramite AppIO
 
@@ -72,8 +72,8 @@ Feature: recupero notifiche tramite api AppIO b2b
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario "Mario Gherkin"
-    And destinatario "Mario Cucumber"
+    And destinatario Mario Gherkin
+    And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then "Mario Gherkin" recupera la notifica tramite AppIO
 
