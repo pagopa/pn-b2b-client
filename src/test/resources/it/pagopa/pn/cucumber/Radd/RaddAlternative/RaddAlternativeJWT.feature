@@ -11,7 +11,7 @@ Feature: Radd Alternative jwt verification
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    Then L'operatore usa lo IUN "corretto" per recuperare gli atti di "Mario Cucumber" da issuer "issuer_1"
+    Then L'operatore usa lo IUN "corretto" per recuperare gli atti di Mario Cucumber da issuer "issuer_1"
     And la lettura si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
@@ -22,40 +22,40 @@ Feature: Radd Alternative jwt verification
 
   @raddAlt
   Scenario: [RADD_ALT-JWT-2] PF -  Recupero notifica con codice IUN esistente associato e JWT di un issuer non censito (verifica manuale errore dai log)
-    Then L'operatore usa lo IUN "errato" per recuperare gli atti di "Mario Cucumber" da issuer "issuer_non_censito"
+    Then L'operatore usa lo IUN "errato" per recuperare gli atti di Mario Cucumber da issuer "issuer_non_censito"
     And l'operazione ha prodotto un errore con status code "403"
 
   @raddAlt @authFleet
   Scenario: [RADD_ALT-JWT-3] PF -  Recupero notifica con codice IUN esistente associato e JWT di un issuer scaduto (verifica manuale errore dai log)
-    Then L'operatore usa lo IUN "errato" per recuperare gli atti di "Mario Cucumber" da issuer "issuer_scaduto"
+    Then L'operatore usa lo IUN "errato" per recuperare gli atti di Mario Cucumber da issuer "issuer_scaduto"
     And l'operazione ha prodotto un errore con status code "403"
 
   @raddAlt
   Scenario: [RADD_ALT-JWT-4] PF -  Recupero notifica con codice IUN esistente associato e JWT di un issuer intended usage errato
-    Then L'operatore usa lo IUN "errato" per recuperare gli atti di "Mario Cucumber" da issuer "issuer_dati_errati"
+    Then L'operatore usa lo IUN "errato" per recuperare gli atti di Mario Cucumber da issuer "issuer_dati_errati"
     And l'operazione ha prodotto un errore con status code "403"
 
   @raddAlt
   Scenario: [RADD_ALT-JWT-5] PF -  Recupero notifica con codice IUN esistente associato e JWT di un issuer con aud errata (verifica manuale errore dai log)
-    Then L'operatore usa lo IUN "errato" per recuperare gli atti di "Mario Cucumber" da issuer "issuer_aud_errata"
+    Then L'operatore usa lo IUN "errato" per recuperare gli atti di Mario Cucumber da issuer "issuer_aud_errata"
     And l'operazione ha prodotto un errore con status code "403"
 
   @raddAlt
   Scenario: [RADD_ALT-JWT-6] PF -  Recupero notifica con codice IUN esistente associato e JWT di un issuer con private key diverso dalla JWKS (verifica manuale errore dai log)
-    Then L'operatore usa lo IUN "errato" per recuperare gli atti di "Mario Cucumber" da issuer "issuer_private_diverso"
+    Then L'operatore usa lo IUN "errato" per recuperare gli atti di Mario Cucumber da issuer "issuer_private_diverso"
     And l'operazione ha prodotto un errore con status code "403"
 
   @raddAlt @authFleet
   Scenario: [RADD_ALT-JWT-7] PF -  Recupero notifica con codice IUN esistente associato e JWT di un issuer con kid diverso dalla JWKS (verifica manuale errore dai log)
-    Then L'operatore usa lo IUN "errato" per recuperare gli atti di "Mario Cucumber" da issuer "issuer_kid_diverso"
+    Then L'operatore usa lo IUN "errato" per recuperare gli atti di Mario Cucumber da issuer "issuer_kid_diverso"
     And l'operazione ha prodotto un errore con status code "403"
 
   @raddAlt
   Scenario: [RADD_ALT-JWT-8] PF -  Recupero notifica con codice IUN esistente associato e JWT correto ma con header malformato (verifica manuale errore dai log) - PN-10626
-    Then L'operatore usa lo IUN "errato" per recuperare gli atti di "Mario Cucumber" da issuer "issuer_header_errato"
+    Then L'operatore usa lo IUN "errato" per recuperare gli atti di Mario Cucumber da issuer "issuer_header_errato"
     And l'operazione ha prodotto un errore con status code "403"
 
   @raddAlt
   Scenario: [RADD_ALT-JWT-9] PF -  Recupero notifica con codice IUN esistente associato e JWT creato da JWKS oltre 50KB
-    Then L'operatore usa lo IUN "errato" per recuperare gli atti di "Mario Cucumber" da issuer "issuer_over_50KB"
+    Then L'operatore usa lo IUN "errato" per recuperare gli atti di Mario Cucumber da issuer "issuer_over_50KB"
     And Viene restituito un messaggio di errore "input non valido" con codice di errore 10 su radd alternative

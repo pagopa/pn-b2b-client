@@ -411,7 +411,7 @@ public class RaddFsuSteps {
         }
     }
 
-    @Then("il caricamente ha prodotto une errore http {int}")
+    @Then("il caricamento ha prodotto une errore http {int}")
     public void ilCaricamenteHaProdottoUneErroreHttp(int httpError) {
         Assertions.assertNotNull(this.documentUploadError);
         Assertions.assertEquals(this.documentUploadError.getStatusCode().value(), httpError);

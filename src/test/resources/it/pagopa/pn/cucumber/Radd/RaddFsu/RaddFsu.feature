@@ -3,17 +3,17 @@ Feature: Radd fsu
   @radd @testSuiteDiProvaTemporanea
   Scenario: [B2B_RADD_DOC-UP-1] verifica document upload senza aver passato bundleId
     Given vengono caricati i documento di identità del cittadino senza "bundleId"
-    Then il caricamente ha prodotto une errore http 400
+    Then il caricamento ha prodotto une errore http 400
 
   @radd
   Scenario: [B2B_RADD_DOC-UP-2] verifica document upload senza aver passato contentType
     Given vengono caricati i documento di identità del cittadino senza "contentType"
-    Then il caricamente ha prodotto une errore http 500
+    Then il caricamento ha prodotto une errore http 500
 
   @radd
   Scenario: [B2B_RADD_DOC-UP-3] verifica document upload senza aver passato checksum
     Given vengono caricati i documento di identità del cittadino senza "checksum"
-    Then il caricamente ha prodotto une errore http 400
+    Then il caricamento ha prodotto une errore http 400
 
   @radd
   Scenario: [B2B_RADD_ACT-1] verifica errore inquiry qrCode malformato

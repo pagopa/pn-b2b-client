@@ -13,7 +13,7 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Throttling
       | taxId                   | FLPCPT69A65Z336P         |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    And la persona fisica "Signor Casuale" chiede di verificare ad operatore radd "UPLOADER" la presenza di notifiche
+    And la persona fisica Signor Casuale chiede di verificare ad operatore radd "UPLOADER" la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative dall'operatore RADD "UPLOADER"
     Then Si recuperano gli atti su radd alternative per un numero di volte superiore al limite definito
@@ -30,7 +30,7 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Throttling
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    And la persona fisica "Signor Casuale" chiede di verificare ad operatore radd "STANDARD" la presenza di notifiche
+    And la persona fisica Signor Casuale chiede di verificare ad operatore radd "STANDARD" la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     Then Si recuperano gli atti 100 volte su radd alternative da operatore radd "STANDARD"
     And il recupero degli aar in stato irreperibile si conclude correttamente su radd alternative
@@ -63,7 +63,7 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Throttling
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    Then Viene visualizzata la presenza di notifiche per la persona fisica "Signor Casuale" 100 volte dal operatore radd "UPLOADER"
+    Then Viene visualizzata la presenza di notifiche per la persona fisica Signor Casuale 100 volte dal operatore radd "UPLOADER"
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
 
   @raddTechnicalThrottle
@@ -103,8 +103,8 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Throttling
       | digitalDomicile_address | testpagopa3@pec.pagopa.it |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    And Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
-    When L'operatore scansione il qrCode per recuperare gli atti di "Mario Cucumber"
+    And Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
+    When L'operatore scansione il qrCode per recuperare gli atti di Mario Cucumber
     Then la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono visualizzati sia gli atti e le attestazioni riferiti alla notifica 100 volte
@@ -120,7 +120,7 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Throttling
       | denomination | Galileo Galilei  |
       | taxId        | MNDLCU98T68C933T |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    Then L'operatore usa lo IUN "corretto" per recuperare gli atti di "Signor Casuale" un numero di volte superiore al limite definito
+    Then L'operatore usa lo IUN "corretto" per recuperare gli atti di Signor Casuale un numero di volte superiore al limite definito
 
   @raddTechnicalThrottle
   #actInquiry

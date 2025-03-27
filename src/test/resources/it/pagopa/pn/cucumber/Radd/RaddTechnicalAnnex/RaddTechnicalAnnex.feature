@@ -14,7 +14,7 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
 #    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
 #    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
 #    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-#    And Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
+#    And Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
 #    When L'operatore scansiona il qrCode e stampa gli atti per 2 volte senza errori
 #    Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_RADD_RETRIEVED"
 #    And vengono letti gli eventi fino all'elemento di timeline della notifica "DELIVERED"
@@ -31,7 +31,7 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    And Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
+    And Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
     When L'operatore scansiona il qrCode e stampa gli atti per il numero di volte consentito
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_RADD_RETRIEVED"
     And lato destinatario la notifica può essere correttamente recuperata da "Mario Cucumber" e verifica presenza dell'evento di timeline NOTIFICATION_RADD_RETRIEVED
@@ -46,9 +46,9 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    And Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
+    And Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
     When L'operatore scansiona il qrCode e stampa gli atti per il numero di volte consentito
-    And Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
+    And Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
     When L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     Then Viene restituito un messaggio di errore "Limite di 10 stampe superato" con codice di errore 3 su radd alternative
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_RADD_RETRIEVED"
@@ -66,7 +66,7 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    And la persona fisica "Signor Casuale" chiede di verificare ad operatore radd "UPLOADER" la presenza di notifiche
+    And la persona fisica Signor Casuale chiede di verificare ad operatore radd "UPLOADER" la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative dall'operatore RADD "UPLOADER"
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisicagiuridica su radd alternative da operatore radd "UPLOADER"
@@ -83,7 +83,7 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    And la persona fisica "Signor Casuale" chiede di verificare ad operatore radd "UPLOADER" la presenza di notifiche
+    And la persona fisica Signor Casuale chiede di verificare ad operatore radd "UPLOADER" la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     When tentativo di recuperare gli aar delle notifiche in stato irreperibile da operatore radd "UPLOADER" senza successo con file key "<fileKey>"
     And il tentativo genera un errore 400 "Bad Request" con il messaggio "Campo fileKey obbligatorio mancante"
@@ -101,7 +101,7 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    When Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
+    When Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
     Then L'operatore "UPLOADER" scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative dall'operatore RADD "UPLOADER"
@@ -117,7 +117,7 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    When Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
+    When Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
     Then L'operatore "UPLOADER" scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
     When tentativo di recuperare gli atti delle notifiche associata all'AAR da radd alternative per operatore "UPLOADER" senza successo con file key "<fileKey>"
@@ -140,7 +140,7 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    And la persona fisica "Signor Casuale" chiede di verificare ad operatore radd "<operatorType>" la presenza di notifiche
+    And la persona fisica Signor Casuale chiede di verificare ad operatore radd "<operatorType>" la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisicagiuridica su radd alternative da operatore radd "<operatorType>" con file key "<fileKey>"
     And il recupero degli aar in stato irreperibile si conclude correttamente su radd alternative
@@ -160,7 +160,7 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    And la persona fisica "Signor Casuale" chiede di verificare ad operatore radd "<operatorType>" la presenza di notifiche
+    And la persona fisica Signor Casuale chiede di verificare ad operatore radd "<operatorType>" la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative per errore
     When tentativo di recuperare gli aar delle notifiche in stato irreperibile da operatore radd "<operatorType>" senza successo
@@ -179,7 +179,7 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    When Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
+    When Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
     Then L'operatore "<operatorType>" scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative per operatore "<operatorType>" con fileKey "<fileKey>"
@@ -198,7 +198,7 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    When Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
+    When Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
     Then L'operatore "<operatorType>" scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative per errore
@@ -219,11 +219,11 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    When Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
+    When Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
     Then L'operatore "<operatorType>" scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
     And l'operatore "<operatorType>" tenta di caricare i documento di identità del cittadino su radd alternative senza successo
-    And il caricamente ha prodotto une errore http 403 su radd alternative
+    And il caricamento ha prodotto une errore http 403 su radd alternative
     Examples:
       | operatorType |
       | WITHOUT_ROLE |
@@ -240,7 +240,7 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    And la persona fisica "Signor Casuale" chiede di verificare ad operatore radd "STANDARD" la presenza di notifiche
+    And la persona fisica Signor Casuale chiede di verificare ad operatore radd "STANDARD" la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     Then tentativo di recuperare gli aar delle notifiche in stato irreperibile da operatore radd "STANDARD" con versionToken errato
     And il tentativo genera un errore 400 "Bad Request" con il messaggio "Campo versionToken inaspettato"
@@ -256,7 +256,7 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    And la persona fisica "Signor Casuale" chiede di verificare ad operatore radd "UPLOADER" la presenza di notifiche
+    And la persona fisica Signor Casuale chiede di verificare ad operatore radd "UPLOADER" la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative dall'operatore RADD "UPLOADER"
     Then tentativo di recuperare gli aar delle notifiche in stato irreperibile da operatore radd "UPLOADER" con versionToken errato
@@ -271,7 +271,7 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    When Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
+    When Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
     Then L'operatore "UPLOADER" scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative dall'operatore RADD "UPLOADER"
@@ -287,7 +287,7 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    When Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
+    When Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
     Then L'operatore "STANDARD" scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
     When tentativo di recuperare gli atti delle notifiche associata all'AAR da radd alternative per operatore "STANDARD" con versionToken errato

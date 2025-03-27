@@ -18,8 +18,8 @@ Feature: Radd Alternative
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    And Il cittadino "<CITIZEN>" come destinatario 0 mostra il QRCode "corretto"
-    When L'operatore scansione il qrCode per recuperare gli atti di "<CITIZEN>"
+    And Il cittadino <CITIZEN> come destinatario 0 mostra il QRCode "corretto"
+    When L'operatore scansione il qrCode per recuperare gli atti di <CITIZEN>
     Then la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
@@ -56,8 +56,8 @@ Feature: Radd Alternative
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    And Il cittadino "Mario Gherkin" come destinatario 0 mostra il QRCode "corretto"
-    When L'operatore scansione il qrCode per recuperare gli atti di "Mario Gherkin"
+    And Il cittadino Mario Gherkin come destinatario 0 mostra il QRCode "corretto"
+    When L'operatore scansione il qrCode per recuperare gli atti di Mario Gherkin
     Then la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
@@ -83,8 +83,8 @@ Feature: Radd Alternative
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    And Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
-    When L'operatore scansione il qrCode per recuperare gli atti di "Mario Cucumber"
+    And Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
+    When L'operatore scansione il qrCode per recuperare gli atti di Mario Cucumber
     Then la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
@@ -110,7 +110,7 @@ Feature: Radd Alternative
       | details                    | NOT_NULL  |
       | details_recIndex           | 0         |
       | details_deliveryDetailCode | RECAG001B |
-    When Il cittadino "Mario Gherkin" come destinatario 0 mostra il QRCode "corretto"
+    When Il cittadino Mario Gherkin come destinatario 0 mostra il QRCode "corretto"
     Then L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
@@ -135,7 +135,7 @@ Feature: Radd Alternative
       | details                    | NOT_NULL  |
       | details_recIndex           | 0         |
       | details_deliveryDetailCode | RECRN001B |
-    And Il cittadino "Mario Gherkin" come destinatario 0 mostra il QRCode "corretto"
+    And Il cittadino Mario Gherkin come destinatario 0 mostra il QRCode "corretto"
     When L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     Then la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
@@ -172,7 +172,7 @@ Feature: Radd Alternative
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And "Mario Cucumber" legge la notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
-    And Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
+    And Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
     When L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     Then la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
@@ -185,7 +185,7 @@ Feature: Radd Alternative
 
   @raddAlt
   Scenario: [RADD-ALT_ACT-2] PF - Scansione QR code esistente associato al CF corretto, ma relativo a una notifica con perfezionamento > 120 giorni
-    When Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "dopo 120gg"
+    When Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "dopo 120gg"
     Then L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
@@ -201,7 +201,7 @@ Feature: Radd Alternative
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    And Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "inesistente"
+    And Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "inesistente"
     When L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     Then Viene restituito un messaggio di errore "QRcode non valido" con codice di errore 10 su radd alternative
 
@@ -214,7 +214,7 @@ Feature: Radd Alternative
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    And Il cittadino "Mario Gherkin" come destinatario 0 mostra il QRCode "appartenente a terzo"
+    And Il cittadino Mario Gherkin come destinatario 0 mostra il QRCode "appartenente a terzo"
     When L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     Then Viene restituito un messaggio di errore "CF non valido" con codice di errore 10 su radd alternative
 
@@ -228,7 +228,7 @@ Feature: Radd Alternative
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    When Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
+    When Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
     And la notifica "può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
     And L'operatore scansione il qrCode per recuperare gli atti da radd alternative
@@ -243,7 +243,7 @@ Feature: Radd Alternative
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    And Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
+    And Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
     When L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
     And si inizia il processo di caricamento dei documento di identità del cittadino ma non si porta a conclusione su radd alternative
@@ -261,7 +261,7 @@ Feature: Radd Alternative
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And "Mario Cucumber" legge la notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
-    Then Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
+    Then Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
     And L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
@@ -317,7 +317,7 @@ Feature: Radd Alternative
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And Il cittadino "CucumberSpa" come destinatario 0 mostra il QRCode "corretto"
-    When L'operatore scansione il qrCode per recuperare gli atti di "CucumberSpa"
+    When L'operatore scansione il qrCode per recuperare gli atti di CucumberSpa
     And la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
@@ -344,7 +344,7 @@ Feature: Radd Alternative
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And Il cittadino "CucumberSpa" come destinatario 0 mostra il QRCode "corretto"
-    When L'operatore scansione il qrCode per recuperare gli atti di "CucumberSpa"
+    When L'operatore scansione il qrCode per recuperare gli atti di CucumberSpa
     And la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
@@ -498,8 +498,8 @@ Feature: Radd Alternative
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE" per l'utente 1
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 0
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 1
-    And  Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
-    And L'operatore scansione il qrCode per recuperare gli atti di "Mario Cucumber"
+    And  Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
+    And L'operatore scansione il qrCode per recuperare gli atti di Mario Cucumber
     And la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
@@ -508,7 +508,7 @@ Feature: Radd Alternative
     And viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
     Then  Il cittadino "CucumberSpa" come destinatario 1 mostra il QRCode "corretto"
-    And L'operatore scansione il qrCode per recuperare gli atti di "CucumberSpa"
+    And L'operatore scansione il qrCode per recuperare gli atti di CucumberSpa
     And la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
@@ -527,7 +527,7 @@ Feature: Radd Alternative
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    When L'operatore usa lo IUN "corretto" per recuperare gli atti di "Mario Cucumber"
+    When L'operatore usa lo IUN "corretto" per recuperare gli atti di Mario Cucumber
     Then la lettura si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
@@ -553,7 +553,7 @@ Feature: Radd Alternative
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    Then L'operatore usa lo IUN "corretto" per recuperare gli atti di "Mario Cucumber"
+    Then L'operatore usa lo IUN "corretto" per recuperare gli atti di Mario Cucumber
     And la lettura si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
@@ -581,7 +581,7 @@ Feature: Radd Alternative
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    Then L'operatore usa lo IUN "corretto" per recuperare gli atti di "Mario Cucumber"
+    Then L'operatore usa lo IUN "corretto" per recuperare gli atti di Mario Cucumber
     And la lettura si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
@@ -594,7 +594,7 @@ Feature: Radd Alternative
 
   @raddAlt
   Scenario: [RADD-ALT_ACT-47] PF - Restituzione errore - Recupero notifica solo con CF corretto
-    When L'operatore usa lo IUN "non esitente" per recuperare gli atti di "Mario Cucumber" con restituzione errore
+    When L'operatore usa lo IUN "non esistente" per recuperare gli atti di Mario Cucumber con restituzione errore
     Then l'operazione ha prodotto un errore con status code "400"
 
   @raddAlt
@@ -631,7 +631,7 @@ Feature: Radd Alternative
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 15                            |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si controlla con check rapidi che lo stato diventi ACCEPTED
-    When L'operatore usa lo IUN "corretto" per recuperare gli atti di "Mario Cucumber"
+    When L'operatore usa lo IUN "corretto" per recuperare gli atti di Mario Cucumber
     Then la lettura si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative senza ritentativi
@@ -750,7 +750,7 @@ Feature: Radd Alternative
 
   @raddAlt
   Scenario: [RADD-ALT_ACT-51] PG - Restituzione errore - Recupero notifica solo con CF corretto
-    When L'operatore usa lo IUN "non esitente" per recuperare gli atti di "CucumberSpa" con restituzione errore
+    When L'operatore usa lo IUN "non esistente" per recuperare gli atti di CucumberSpa con restituzione errore
     Then l'operazione ha prodotto un errore con status code "400"
 
   @raddAlt
@@ -784,7 +784,7 @@ Feature: Radd Alternative
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    And la persona fisica "Signor Casuale" chiede di verificare la presenza di notifiche
+    And la persona fisica Signor Casuale chiede di verificare la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     And Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
@@ -811,7 +811,7 @@ Feature: Radd Alternative
       | payment_multy_number    | 1                             |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    And la persona fisica "Signor Casuale" chiede di verificare la presenza di notifiche
+    And la persona fisica Signor Casuale chiede di verificare la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     And Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
@@ -837,7 +837,7 @@ Feature: Radd Alternative
       | payment_multy_number    | 2                                            |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    When la persona fisica "Signor Casuale" chiede di verificare la presenza di notifiche
+    When la persona fisica Signor Casuale chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
@@ -863,7 +863,7 @@ Feature: Radd Alternative
       | payment_multy_number    | 1                                            |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    When la persona fisica "Signor Casuale" chiede di verificare la presenza di notifiche
+    When la persona fisica Signor Casuale chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
@@ -888,7 +888,7 @@ Feature: Radd Alternative
       | payment_multy_number    | 1                                            |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    When la persona fisica "Signor Casuale" chiede di verificare la presenza di notifiche
+    When la persona fisica Signor Casuale chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
@@ -900,7 +900,7 @@ Feature: Radd Alternative
 
   @raddAlt
   Scenario: [RADD-ALT_AOR-27] PF - Restituzione errore - nessuna Notifica disponibile associata al CF
-    When la persona fisica "Signor Generato" chiede di verificare la presenza di notifiche
+    When la persona fisica Signor Generato chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile genera un errore "Non ci sono notifiche non consegnate per questo codice fiscale" con codice 99 su radd alternative
 
   @raddAlt
@@ -912,7 +912,7 @@ Feature: Radd Alternative
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    When la persona fisica "Signor Casuale" chiede di verificare la presenza di notifiche
+    When la persona fisica Signor Casuale chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile genera un errore "Non ci sono notifiche non consegnate per questo codice fiscale" con codice 99 su radd alternative
 
   @raddAlt @zip
@@ -925,7 +925,7 @@ Feature: Radd Alternative
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    And la persona fisica "Signor Casuale" chiede di verificare la presenza di notifiche
+    And la persona fisica Signor Casuale chiede di verificare la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     And Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
@@ -945,7 +945,7 @@ Feature: Radd Alternative
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    And la persona fisica "Signor Casuale" chiede di verificare la presenza di notifiche
+    And la persona fisica Signor Casuale chiede di verificare la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     And Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
@@ -964,7 +964,7 @@ Feature: Radd Alternative
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    When la persona fisica "Signor Casuale" chiede di verificare la presenza di notifiche
+    When la persona fisica Signor Casuale chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
@@ -987,7 +987,7 @@ Feature: Radd Alternative
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    And la persona giuridica "Gherkin Irreperibile" chiede di verificare la presenza di notifiche
+    And la persona giuridica Gherkin Irreperibile chiede di verificare la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     And Vengono recuperati gli aar delle notifiche in stato irreperibile della persona giuridica su radd alternative
@@ -1013,7 +1013,7 @@ Feature: Radd Alternative
       | payment_multy_number    | 1                                            |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    When la persona giuridica "Gherkin Irreperibile" chiede di verificare la presenza di notifiche
+    When la persona giuridica Gherkin Irreperibile chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
@@ -1038,7 +1038,7 @@ Feature: Radd Alternative
       | payment_multy_number    | 1                                            |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    When la persona giuridica "Gherkin Irreperibile" chiede di verificare la presenza di notifiche
+    When la persona giuridica Gherkin Irreperibile chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
@@ -1062,7 +1062,7 @@ Feature: Radd Alternative
       | payment_multy_number    | 1                                            |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    When la persona giuridica "Gherkin Irreperibile" chiede di verificare la presenza di notifiche
+    When la persona giuridica Gherkin Irreperibile chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
@@ -1087,7 +1087,7 @@ Feature: Radd Alternative
       | payment_multy_number    | 2                                            |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    When la persona giuridica "Gherkin Irreperibile" chiede di verificare la presenza di notifiche
+    When la persona giuridica Gherkin Irreperibile chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
@@ -1098,7 +1098,7 @@ Feature: Radd Alternative
 
   @raddAlt
   Scenario: [RADD-ALT_AOR-34] PG - Restituzione errore - nessuna Notifica disponibile associata al CF corretto
-    Given la persona giuridica "CucumberSpa" chiede di verificare la presenza di notifiche
+    Given la persona giuridica CucumberSpa chiede di verificare la presenza di notifiche
 
   @raddAlt
   Scenario: [RADD-ALT_AOR-35] PG - Restituzione errore - nessuna Notifica disponibile in stato Irreperibile associata al CF corretto
@@ -1108,7 +1108,7 @@ Feature: Radd Alternative
       | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario CucumberSpa
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    Given la persona giuridica "CucumberSpa" chiede di verificare la presenza di notifiche
+    Given la persona giuridica CucumberSpa chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile genera un errore "Non ci sono notifiche non consegnate per questo codice fiscale" con codice 99 su radd alternative
 
   @raddAltManuale @zip
@@ -1121,7 +1121,7 @@ Feature: Radd Alternative
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    When la persona giuridica "Gherkin Irreperibile" chiede di verificare la presenza di notifiche
+    When la persona giuridica Gherkin Irreperibile chiede di verificare la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona giuridica su radd alternative
@@ -1161,14 +1161,14 @@ Feature: Radd Alternative
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE" per l'utente 0
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE" per l'utente 1
-    When la persona fisica "Signor Casuale" chiede di verificare la presenza di notifiche
+    When la persona fisica Signor Casuale chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
     And il recupero degli aar in stato irreperibile si conclude correttamente e vengono restituiti 2 aar su radd alternative
     And viene chiusa la transazione per il recupero degli aar su radd alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
-    When la persona giuridica "Gherkin Irreperibile" chiede di verificare la presenza di notifiche
+    When la persona giuridica Gherkin Irreperibile chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
@@ -1188,7 +1188,7 @@ Feature: Radd Alternative
 #    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
 #    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
 #    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-#    When Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
+#    When Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
 #    Then L'operatore scansione il qrCode per recuperare gli atti da radd alternative
 #    And la scansione si conclude correttamente su radd alternative
 #    And vengono caricati i documento di identità del cittadino su radd alternative
@@ -1206,7 +1206,7 @@ Feature: Radd Alternative
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    When Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
+    When Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
     Then L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
@@ -1228,7 +1228,7 @@ Feature: Radd Alternative
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    When la persona fisica "Signor Casuale" chiede di verificare la presenza di notifiche
+    When la persona fisica Signor Casuale chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
@@ -1247,7 +1247,7 @@ Feature: Radd Alternative
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    When la persona fisica "Signor Casuale" chiede di verificare la presenza di notifiche
+    When la persona fisica Signor Casuale chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica 2 volte su radd alternative
@@ -1263,7 +1263,7 @@ Feature: Radd Alternative
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    When la persona fisica "Signor Casuale" chiede di verificare la presenza di notifiche
+    When la persona fisica Signor Casuale chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
@@ -1274,7 +1274,7 @@ Feature: Radd Alternative
 
   @raddAlt @ignore
   Scenario: [RADD-ALT_AOR-77] PF -  Start di una AOR transaction su notifica irreperibile perfezionata > 120gg - Ricezione errore RetryAfter
-    When la persona fisica "Mario Cucumber" chiede di verificare la presenza di notifiche
+    When la persona fisica Mario Cucumber chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
 
 # Frontespizio cases
@@ -1289,7 +1289,7 @@ Feature: Radd Alternative
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    When la persona fisica "Signor Casuale" chiede di verificare la presenza di notifiche
+    When la persona fisica Signor Casuale chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
@@ -1324,7 +1324,7 @@ Feature: Radd Alternative
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
-    When L'operatore usa lo IUN "corretto" per recuperare gli atti di "Mario Cucumber"
+    When L'operatore usa lo IUN "corretto" per recuperare gli atti di Mario Cucumber
     And la lettura si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
@@ -1378,7 +1378,7 @@ Feature: Radd Alternative
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And Il cittadino "<CITIZEN>" come destinatario 0 mostra il QRCode "corretto"
-    When L'operatore scansione il qrCode per recuperare gli atti di "<CITIZEN>"
+    When L'operatore scansione il qrCode per recuperare gli atti di <CITIZEN>
     Then la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative

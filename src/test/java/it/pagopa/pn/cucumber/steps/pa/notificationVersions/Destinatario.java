@@ -43,15 +43,6 @@ public enum Destinatario {
         this.digitalDomicileType = digitalDomicileType;
     }
 
-    public static Destinatario getByName(String name) {
-        for (Destinatario destinatario : values()) {
-            if (destinatario.denomination.trim().equalsIgnoreCase(name)) {
-                return destinatario;
-            }
-        }
-        return null;
-    }
-
     @ParameterType(MARIO_GHERKIN + "|" +
             MARIO_CUCUMBER + "|" +
             SIGNOR_CASUALE + "|" +
@@ -67,8 +58,12 @@ public enum Destinatario {
             CUCUMBER_SOCIETY + "|" +
             SIGNOR_GENERATO + "|" +
             NESSUNO)
-    public Destinatario destinatario(String name) {
-        return getByName(name);
+    public static Destinatario destinatario(String name) {
+        for (Destinatario destinatario : values()) {
+            if (destinatario.denomination.trim().equalsIgnoreCase(name)) {
+                return destinatario;
+            }
+        }
+        throw new RuntimeException("Invalid recipient name passed as parameter: " + name);
     }
-
 }

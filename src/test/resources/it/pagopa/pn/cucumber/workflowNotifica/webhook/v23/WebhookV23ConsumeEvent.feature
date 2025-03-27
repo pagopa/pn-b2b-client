@@ -369,7 +369,7 @@ Feature: avanzamento notifiche webhook b2b V23
     And viene aggiornata la apiKey utilizzata per gli stream
     And si crea il nuovo stream per il "Comune_1" con versione "V23"
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
-    And Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
+    And Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
     And L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
@@ -396,7 +396,7 @@ Feature: avanzamento notifiche webhook b2b V23
     And viene aggiornata la apiKey utilizzata per gli stream
     And si crea il nuovo stream con versione "V23" per il "Comune_2" con un gruppo disponibile "FIRST"
     And la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "ACCEPTED"
-    And Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
+    And Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
     And L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
@@ -424,7 +424,7 @@ Feature: avanzamento notifiche webhook b2b V23
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_1" con versione "V10" e filtro di timeline "NOTIFICATION_RADD_RETRIEVED"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V10"
-    And Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
+    And Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
     And L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
