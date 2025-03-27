@@ -316,7 +316,7 @@ public class AvanzamentoNotificheB2bSteps {
                     }
                 }
                 break;
-            case "PREPARE_SIMPLE_REGISTERED_LETTER", "ANALOG_SUCCESS_WORKFLOW":
+            case "ANALOG_SUCCESS_WORKFLOW", "PREPARE_SIMPLE_REGISTERED_LETTER":
                 if (detailsFromTest != null && detailsFromTest.getPhysicalAddress() != null) {
                     Assertions.assertEquals(detailsFromTest.getPhysicalAddress(), detailsFromNotification.getPhysicalAddress());
                 }
@@ -339,6 +339,7 @@ public class AvanzamentoNotificheB2bSteps {
                     Assertions.assertEquals(delegateInfoFromNotification.getDelegateType(), delegateInfoFromTest.getDelegateType());
                     Assertions.assertEquals(delegateInfoFromNotification.getDenomination(), delegateInfoFromTest.getDenomination());
                 }
+                break;
             case "COMPLETELY_UNREACHABLE":
                 if (Objects.nonNull(elementFromTest.getLegalFactsIds())) {
                     assert elementFromNotification.getLegalFactsIds() != null;
@@ -348,6 +349,9 @@ public class AvanzamentoNotificheB2bSteps {
                     Assertions.assertEquals(elementFromNotification.getLegalFactsIds().get(i).getCategory(), elementFromTest.getLegalFactsIds().get(i).getCategory().getValue());
                     Assertions.assertNotNull(elementFromNotification.getLegalFactsIds().get(i).getKey());
                 }
+                break;
+            default:
+                throw new IllegalArgumentException("Valore non valido per timelineEventCategory: " + timelineEventCategory);
         }
     }
 
@@ -1393,14 +1397,18 @@ public class AvanzamentoNotificheB2bSteps {
         TimelineElementV26 timelineElement = null;
 
         for (TimelineElementV26 element : sharedSteps.getFullSentNotificationV26().getTimeline()) {
-            if (Objects.requireNonNull(element.getCategory()).equals(categoriesV26.getTimelineElementInternalCategory())) {
-                if (deliveryDetailCode == null) {
-                    timelineElement = element;
-                    break;
-                } else if (Objects.equals(Objects.requireNonNull(element.getDetails()).getDeliveryDetailCode(), deliveryDetailCode)) {
-                    timelineElement = element;
-                    break;
-                }
+            if (!Objects.equals(element.getCategory(), categoriesV26.getTimelineElementInternalCategory())) {
+                continue;
+            }
+
+            if (deliveryDetailCode == null) {
+                timelineElement = element;
+                break;
+            }
+
+            if (element.getDetails() != null && Objects.equals(element.getDetails().getDeliveryDetailCode(), deliveryDetailCode)) {
+                timelineElement = element;
+                break;
             }
         }
 
@@ -1453,15 +1461,14 @@ public class AvanzamentoNotificheB2bSteps {
         LegalFactCategory category = LegalFactCategory.PEC_RECEIPT;
 
         for (TimelineElementV26 element : sharedSteps.getFullSentNotificationV26().getTimeline()) {
+            if (!Objects.equals(element.getCategory(), timelineElementInternalCategory)) {
+                continue;
+            }
 
-            if (element.getCategory().equals(timelineElementInternalCategory)) {
-                if (deliveryDetailCode == null) {
-                    timelineElement = element;
-                    break;
-                } else if (element.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode)) {
-                    timelineElement = element;
-                    break;
-                }
+            if (deliveryDetailCode == null ||
+                    (element.getDetails() != null && Objects.equals(element.getDetails().getDeliveryDetailCode(), deliveryDetailCode))) {
+                timelineElement = element;
+                break;
             }
         }
 
@@ -1526,15 +1533,14 @@ public class AvanzamentoNotificheB2bSteps {
         TimelineElementV26 timelineElement = null;
 
         for (TimelineElementV26 element : sharedSteps.getFullSentNotificationV26().getTimeline()) {
+            if (!Objects.equals(element.getCategory(), categoriesV26.getTimelineElementInternalCategory())) {
+                continue;
+            }
 
-            if (element.getCategory().equals(categoriesV26.getTimelineElementInternalCategory())) {
-                if (deliveryDetailCode == null) {
-                    timelineElement = element;
-                    break;
-                } else if (element.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode)) {
-                    timelineElement = element;
-                    break;
-                }
+            if (deliveryDetailCode == null ||
+                    (element.getDetails() != null && Objects.equals(element.getDetails().getDeliveryDetailCode(), deliveryDetailCode))) {
+                timelineElement = element;
+                break;
             }
         }
 
@@ -1760,9 +1766,9 @@ public class AvanzamentoNotificheB2bSteps {
                         if (price != null) {
                             log.info("notificationPriceV23: {} destinatario: {}", notificationPriceV23, destinatario);
                             switch (tipologiaCosto.toLowerCase()) {
-                                case "parziale" ->
-                                        Assertions.assertEquals(price, notificationPriceV23.getPartialPrice());
+                                case "parziale" -> Assertions.assertEquals(price, notificationPriceV23.getPartialPrice());
                                 case "totale" -> Assertions.assertEquals(price, notificationPriceV23.getTotalPrice());
+                                default -> throw new IllegalArgumentException("Valore non valido per tipologiaCosto: " + tipologiaCosto);
                             }
                         }
                         if (date != null) {
@@ -3196,7 +3202,7 @@ public class AvanzamentoNotificheB2bSteps {
                         .build());
         log.info("NOTIFICATION_TIMELINE: " + pnPollingResponseV26.getNotification().getTimeline());
         try {
-            Assertions.assertTrue(pnPollingResponseV26.getResult(), "l'elemento di timeline " + timelineEventCategory + " non viene trovato.");
+            Assertions.assertTrue(pnPollingResponseV26.getResult());
             Assertions.assertNotNull(pnPollingResponseV26.getTimelineElement());
             sharedSteps.setFullSentNotificationV26(pnPollingResponseV26.getNotification());
             TimelineElementV26 timelineElement = pnPollingResponseV26.getTimelineElement();
@@ -3287,6 +3293,7 @@ public class AvanzamentoNotificheB2bSteps {
             switch (toValidate.toLowerCase()) {
                 case "vat" -> Assertions.assertEquals(valueToValidate, notifica.getVat());
                 case "pafee" -> Assertions.assertEquals(valueToValidate, notifica.getPaFee());
+                default -> throw new IllegalArgumentException("Valore non valido per toValidate: " + toValidate);
             }
 
         } catch (AssertionFailedError assertionFailedError) {
@@ -3447,15 +3454,14 @@ public class AvanzamentoNotificheB2bSteps {
         TimelineElementV26 timelineElement = null;
 
         for (TimelineElementV26 element : sharedSteps.getFullSentNotificationV26().getTimeline()) {
+            if (!Objects.equals(element.getCategory(), categoriesV26.getTimelineElementInternalCategory())) {
+                continue;
+            }
 
-            if (element.getCategory().equals(categoriesV26.getTimelineElementInternalCategory())) {
-                if (deliveryDetailCode == null) {
-                    timelineElement = element;
-                    break;
-                } else if (element.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode)) {
-                    timelineElement = element;
-                    break;
-                }
+            if (deliveryDetailCode == null ||
+                    (element.getDetails() != null && Objects.equals(element.getDetails().getDeliveryDetailCode(), deliveryDetailCode))) {
+                timelineElement = element;
+                break;
             }
         }
 
@@ -3663,7 +3669,6 @@ public class AvanzamentoNotificheB2bSteps {
 
     public TimelineElementV26 readingEventUpToTheTimelineElementOfNotificationForCategoryUser(String timelineEventCategory, Integer destinatario) {
         PnPollingServiceTimelineRapidV26 timelineRapidV26 = (PnPollingServiceTimelineRapidV26) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_RAPID_V26);
-        //PnPollingServiceTimelineSlowV26 timelineSlowV26 = (PnPollingServiceTimelineSlowV26) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_SLOW_V26);
 
         PnPollingResponseV26 pnPollingResponseV26 = timelineRapidV26.waitForEvent(sharedSteps.getIunVersionamento(),
                 PnPollingParameter.builder()

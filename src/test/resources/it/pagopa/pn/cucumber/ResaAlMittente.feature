@@ -111,7 +111,7 @@ Feature: Resa al mittente di una notifica
 
   @returnedToSender @webhookV26  @cleanWebhook @precondition @webhook1
   Scenario: [RETURNED-TO-SENDER_7_TEST] Invio notifica AR multi-destinatario aventi stati Irreperibile, Deceduto e macro stato mostrato UNREACHABLE
-    Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V26"
+#    Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V26"
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -544,9 +544,9 @@ Feature: Resa al mittente di una notifica
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino allo stato "DELIVERING" con la versione "V23"
 
-  @returnedToSender @webhookV23 @cleanWebhook @precondition @webhook1
+  @returnedToSender @cleanWebhook @precondition @webhook1
   Scenario: [RETURNED-TO-SENDER_21-FLAG-TRUE] Invio notifica AR multi-destinatario di cui un Deceduto con VersioningModeFlag=true, atteso stato DELIVERING
-    And vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V23"
+#    And vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V23"
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -597,7 +597,7 @@ Feature: Resa al mittente di una notifica
 
   @returnedToSender @webhookV26 @cleanWebhook @webhook1
   Scenario: [RETURNED-TO-SENDER_STREAM_WITH_FILTER] Invio notifica e controllo che stream con eventType DEFAULT e versione da V26 contenga elemento ANALOG_WORKFLOW_RECIPIENT_DECEASED
-    Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V26"
+#    Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V26"
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -610,9 +610,9 @@ Feature: Resa al mittente di una notifica
     And si crea il nuovo stream per il "Comune_Multi" con versione "V26" e filtro status "DEFAULT"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "ANALOG_WORKFLOW_RECIPIENT_DECEASED" con la versione "V26"
 
-  @returnedToSender @webhookV26 @cleanWebhook @webhook1
+  @returnedToSender @cleanWebhook @webhook1
   Scenario: [RETURNED-TO-SENDER_STREAM_WITHOUT_FILTER] Invio notifica e controllo che stream con eventType vuoto e versione da V26 contenga elemento ANALOG_WORKFLOW_RECIPIENT_DECEASED
-    Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V26"
+#    Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V26"
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -627,7 +627,7 @@ Feature: Resa al mittente di una notifica
 
   @returnedToSender @webhookV25 @cleanWebhook @webhook1
   Scenario: [RETURNED-TO-SENDER_STREAM_V25_WITH_FILTER] Invio notifica e controllo che stream con eventType DEFAULT e versione differente da V26 non contenga elemento ANALOG_WORKFLOW_RECIPIENT_DECEASED
-    Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V25"
+#    Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V25"
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V25"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V25" e filtro status "DEFAULT"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V25"
@@ -645,7 +645,7 @@ Feature: Resa al mittente di una notifica
 
   @returnedToSender @webhookV25 @cleanWebhook @webhook1
   Scenario: [RETURNED-TO-SENDER_STREAM_V25_WITHOUT_FILTER] Invio notifica e controllo che stream con eventType vuoto e versione differente da V26 non contenga elemento ANALOG_WORKFLOW_RECIPIENT_DECEASED
-    Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V25"
+#    Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V25"
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V25"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V25"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V25"
@@ -770,7 +770,7 @@ Feature: Resa al mittente di una notifica
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" con la versione "V26"
     And  vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SCHEDULE_REFINEMENT_WORKFLOW" con la versione "V26"
 
-  @activationDeceaseAfter @webhookV26 @cleanWebhook @precondition @webhook1
+  @activationDeceaseAfter @cleanWebhook @precondition @webhook1
   Scenario: [RETURNED-TO-SENDER_41] Invio notifica AR multi-destinatario aventi stati Visualizzata e Deceduto e stato mostrato VIEWED con controllo costo
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -789,7 +789,7 @@ Feature: Resa al mittente di una notifica
     And  vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SCHEDULE_REFINEMENT_WORKFLOW" con la versione "V26"
 
 
-  @returnedToSender  @webhookV26 @cleanWebhook @webhook1
+  @returnedToSender @cleanWebhook @webhook1
   Scenario: [RETURNED-TO-SENDER_6] Invio notifica AR multi-destinatario aventi stati Inviata, Irreperibile, Deceduto e macro stato mostrato DELIVERED e controllo costo
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |

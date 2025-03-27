@@ -64,6 +64,7 @@ public class LegalPersonAuthSteps {
             case "AMMINISTRATORE CON GRUPPO ASSOCIATO" -> pnLegalPersonAuthClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_4);
             case "NON AMMINISTRATORE" -> pnLegalPersonAuthClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_5);
             case "DI UNA PG DIVERSA" -> pnLegalPersonAuthClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+            default -> throw new IllegalArgumentException("Utente non supportato: " + utente);
         }
     }
 
@@ -72,6 +73,7 @@ public class LegalPersonAuthSteps {
             case "AMMINISTRATORE" -> privateUserApi.setBearerToken(SettableBearerToken.BearerTokenType.PG_3);
             case "AMMINISTRATORE CON GRUPPO ASSOCIATO" -> privateUserApi.setBearerToken(SettableBearerToken.BearerTokenType.PG_4);
             case "NON AMMINISTRATORE" -> privateUserApi.setBearerToken(SettableBearerToken.BearerTokenType.PG_5);
+            default -> throw new IllegalArgumentException("Utente non supportato: " + utente);
         }
     }
 
@@ -113,6 +115,7 @@ public class LegalPersonAuthSteps {
                 bloccaChiavePubblica(kid);
                 cancellaChiavePubblica(kid);
             }
+            default -> throw new IllegalArgumentException("Status non supportato: " + status);
         }
     }
 
@@ -135,6 +138,7 @@ public class LegalPersonAuthSteps {
                 case "RUOTA" -> ruotaChiavePubblica(kid);
                 case "RIATTIVA" -> riattivaChiavePubblica(kid);
                 case "CANCELLA" -> cancellaChiavePubblica(kid);
+                default -> throw new IllegalArgumentException("Operazione non supportata: " + operation);
             }
         }
     }
@@ -154,6 +158,7 @@ public class LegalPersonAuthSteps {
             case "RUOTA" -> ruotaChiavePubblica(kid);
             case "RIATTIVA" -> riattivaChiavePubblica(kid);
             case "CANCELLA" -> cancellaChiavePubblica(kid);
+            default -> throw new IllegalArgumentException("Operazione non supportata: " + operation);
         }
     }
 
