@@ -39,7 +39,7 @@ public class B2bStepsV1 implements B2bStepsInterface {
     @Override
     public void readEventsUpToTimelineElement(String timelineEventCategory) {
         PnPollingServiceTimelineSlowV1 timelineSlow =
-                (PnPollingServiceTimelineSlowV1) b2bSteps.getSharedSteps().getPollingFactory().getPollingService(PnPollingStrategy.TIMELINE_SLOW_V26);
+                (PnPollingServiceTimelineSlowV1) b2bSteps.getSharedSteps().getPollingFactory().getPollingService(PnPollingStrategy.TIMELINE_SLOW_V1);
         PnPollingResponseV1 pnPollingResponse = timelineSlow.waitForEvent(
                 b2bSteps.getSharedSteps().getNotificationIun(),
                 PnPollingParameter.builder()

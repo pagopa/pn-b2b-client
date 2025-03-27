@@ -141,7 +141,7 @@ public class AvanzamentoNotificheB2bSteps {
     //TODO MATTEO TEST
     @Then("vengono letti gli eventi fino allo stato della notifica {string}")
     public void readingEventUpToTheStatusOfNotification(String status) {
-        readEventsUpToStatus("V26", status);
+        readEventsUpToStatus("V24", status);
 //        PnPollingPredicate pnPollingPredicate = new PnPollingPredicate();
 //        pnPollingPredicate.setNotificationStatusHistoryElementPredicateV26(
 //                statusHistory -> statusHistory.getStatus().getValue().equals(status)
@@ -1786,7 +1786,7 @@ public class AvanzamentoNotificheB2bSteps {
 
     //TODO MATTEO TEST
     private void priceVerification(String price, Integer recipientIndex) {
-        getB2bStepsInterface().checkEventPresenceForRecipient(recipientIndex, price);
+        getB2bStepsInterface().checkPriceForRecipient(recipientIndex, price);
 //        if (sharedSteps.getFullSentNotificationV26() != null) {
 //            List<NotificationPaymentItem> listNotificationPaymentItem = sharedSteps.getFullSentNotificationV26().getRecipients().get(recipientIndex).getPayments();
 //            if (listNotificationPaymentItem != null) {
