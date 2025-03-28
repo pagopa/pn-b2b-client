@@ -287,7 +287,7 @@ Feature: Radd Alternative
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    And Il cittadino "CucumberSpa" come destinatario 0 mostra il QRCode "corretto"
+    And Il cittadino CucumberSpa come destinatario 0 mostra il QRCode "corretto"
     And L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
@@ -316,7 +316,7 @@ Feature: Radd Alternative
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    And Il cittadino "CucumberSpa" come destinatario 0 mostra il QRCode "corretto"
+    And Il cittadino CucumberSpa come destinatario 0 mostra il QRCode "corretto"
     When L'operatore scansione il qrCode per recuperare gli atti di CucumberSpa
     And la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
@@ -343,7 +343,7 @@ Feature: Radd Alternative
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    And Il cittadino "CucumberSpa" come destinatario 0 mostra il QRCode "corretto"
+    And Il cittadino CucumberSpa come destinatario 0 mostra il QRCode "corretto"
     When L'operatore scansione il qrCode per recuperare gli atti di CucumberSpa
     And la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
@@ -366,7 +366,7 @@ Feature: Radd Alternative
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And "CucumberSpa" legge la notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
-    Then Il cittadino "CucumberSpa" come destinatario 0 mostra il QRCode "corretto"
+    Then Il cittadino CucumberSpa come destinatario 0 mostra il QRCode "corretto"
     And L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
@@ -396,7 +396,7 @@ Feature: Radd Alternative
 
   @raddAlt
   Scenario: [RADD-ALT_ACT-13] PG - Scansione QR code esistente associato al CF corretto, ma relativo a una notifica con perfezionamento > 120 giorni.
-    When Il cittadino "CucumberSpa" come destinatario 0 mostra il QRCode "dopo 120gg"
+    When Il cittadino CucumberSpa come destinatario 0 mostra il QRCode "dopo 120gg"
     Then L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
@@ -412,7 +412,7 @@ Feature: Radd Alternative
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    And Il cittadino "CucumberSpa" come destinatario 0 mostra il QRCode "inesistente"
+    And Il cittadino CucumberSpa come destinatario 0 mostra il QRCode "inesistente"
     When L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     Then Viene restituito un messaggio di errore "QRcode non valido" con codice di errore 10 su radd alternative
 
@@ -425,7 +425,7 @@ Feature: Radd Alternative
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    And Il cittadino "Gherkin Irreperibile" come destinatario 0 mostra il QRCode "appartenente a terzo"
+    And Il cittadino Gherkin Irreperibile come destinatario 0 mostra il QRCode "appartenente a terzo"
     When L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     Then Viene restituito un messaggio di errore "CF non valido" con codice di errore 10 su radd alternative
 
@@ -438,7 +438,7 @@ Feature: Radd Alternative
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    And Il cittadino "CucumberSpa" come destinatario 0 mostra il QRCode "corretto"
+    And Il cittadino CucumberSpa come destinatario 0 mostra il QRCode "corretto"
     When L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
     And si inizia il processo di caricamento dei documento di identità del cittadino ma non si porta a conclusione su radd alternative
@@ -456,7 +456,7 @@ Feature: Radd Alternative
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And "CucumberSpa" legge la notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
-    Then Il cittadino "CucumberSpa" come destinatario 0 mostra il QRCode "corretto"
+    Then Il cittadino CucumberSpa come destinatario 0 mostra il QRCode "corretto"
     And L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
@@ -507,7 +507,7 @@ Feature: Radd Alternative
     And l'operazione di download restituisce 6 documenti
     And viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
-    Then  Il cittadino "CucumberSpa" come destinatario 1 mostra il QRCode "corretto"
+    Then  Il cittadino CucumberSpa come destinatario 1 mostra il QRCode "corretto"
     And L'operatore scansione il qrCode per recuperare gli atti di CucumberSpa
     And la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
@@ -599,7 +599,7 @@ Feature: Radd Alternative
 
   @raddAlt
   Scenario: [RADD-ALT_ACT-49] PF - Recupero notifica con codice IUN errato associato a CF corretto
-    When L'operatore usa lo IUN "errato" per recuperare gli atti di "Mario Cucumber"
+    When L'operatore usa lo IUN "errato" per recuperare gli atti di Mario Cucumber
     Then Viene restituito un messaggio di errore "input non valido" con codice di errore 10 su radd alternative
 
   @raddAlt
@@ -611,7 +611,7 @@ Feature: Radd Alternative
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    When L'operatore usa lo IUN "corretto" per recuperare gli atti di "Mario Gherkin"
+    When L'operatore usa lo IUN "corretto" per recuperare gli atti di Mario Gherkin
     Then Viene restituito un messaggio di errore "input non valido" con codice di errore 10 su radd alternative
 
   @raddAlt @zip
@@ -649,7 +649,7 @@ Feature: Radd Alternative
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    And L'operatore usa lo IUN "corretto" per recuperare gli atti di "CucumberSpa"
+    And L'operatore usa lo IUN "corretto" per recuperare gli atti di CucumberSpa
     And la lettura si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
@@ -676,7 +676,7 @@ Feature: Radd Alternative
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    Then L'operatore usa lo IUN "corretto" per recuperare gli atti di "CucumberSpa"
+    Then L'operatore usa lo IUN "corretto" per recuperare gli atti di CucumberSpa
     And la lettura si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
@@ -702,7 +702,7 @@ Feature: Radd Alternative
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    Then L'operatore usa lo IUN "corretto" per recuperare gli atti di "CucumberSpa"
+    Then L'operatore usa lo IUN "corretto" per recuperare gli atti di CucumberSpa
     And la lettura si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
@@ -724,13 +724,13 @@ Feature: Radd Alternative
 #    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
 #    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
 #    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-#    When L'operatore usa lo IUN "corretto" per recuperare gli atti di "CucumberSpa"
+#    When L'operatore usa lo IUN "corretto" per recuperare gli atti di CucumberSpa
 #    Then la lettura si conclude correttamente su radd alternative
 #    # And vengono caricati i documento di identità del cittadino su radd alternative
 #    And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
 #    And l'operazione di download degli atti si conclude correttamente su radd alternative
 #    And viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
-#    When L'operatore usa lo IUN "corretto" per recuperare gli atti di "CucumberSpa"
+#    When L'operatore usa lo IUN "corretto" per recuperare gli atti di CucumberSpa
 #    And Viene restituito un messaggio di errore "Stampa già eseguita" con codice di errore 3 su radd alternative
 
   #da verificare se il mesaggio dovrebbe essere - notifica annullata dalla PA
@@ -745,7 +745,7 @@ Feature: Radd Alternative
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And la notifica "può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
-    When L'operatore usa lo IUN "corretto" per recuperare gli atti di "CucumberSpa"
+    When L'operatore usa lo IUN "corretto" per recuperare gli atti di CucumberSpa
     Then Viene restituito un messaggio di errore "Questa notifica è stata annullata dall’ente mittente" con codice di errore 80 su radd alternative
 
   @raddAlt
@@ -755,7 +755,7 @@ Feature: Radd Alternative
 
   @raddAlt
   Scenario: [RADD-ALT_ACT-53] PG - Recupero notifica con codice IUN errato associato a CF corretto
-    When L'operatore usa lo IUN "errato" per recuperare gli atti di "CucumberSpa"
+    When L'operatore usa lo IUN "errato" per recuperare gli atti di CucumberSpa
     Then Viene restituito un messaggio di errore "input non valido" con codice di errore 10 su radd alternative
 
   @raddAlt
@@ -767,7 +767,7 @@ Feature: Radd Alternative
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    When L'operatore usa lo IUN "corretto" per recuperare gli atti di "Gherkin Irreperibile"
+    When L'operatore usa lo IUN "corretto" per recuperare gli atti di Gherkin Irreperibile
     Then Viene restituito un messaggio di errore "input non valido" con codice di errore 10 su radd alternative
 
 # FLUSSO AOR su PF con QrCode - successfully cases
@@ -1307,7 +1307,7 @@ Feature: Radd Alternative
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    When Il cittadino "CucumberSpa" come destinatario 0 mostra il QRCode "corretto"
+    When Il cittadino CucumberSpa come destinatario 0 mostra il QRCode "corretto"
     Then L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
@@ -1377,7 +1377,7 @@ Feature: Radd Alternative
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    And Il cittadino "<CITIZEN>" come destinatario 0 mostra il QRCode "corretto"
+    And Il cittadino <CITIZEN> come destinatario 0 mostra il QRCode "corretto"
     When L'operatore scansione il qrCode per recuperare gli atti di <CITIZEN>
     Then la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative

@@ -732,7 +732,7 @@ Feature: annullamento notifiche b2b
       | denomination    | Galileo Galilei  |
       | taxId           | GLLGLL64B15G702I |
       | digitalDomicile | NULL             |
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
       | loadTimeline           | true                                                |
       | details                | NOT_NULL                                            |

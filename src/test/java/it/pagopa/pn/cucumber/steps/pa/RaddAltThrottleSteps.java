@@ -22,12 +22,12 @@ public class RaddAltThrottleSteps {
      * actInquiry
      */
     @Then("L'operatore usa lo IUN {string} per recuperare gli atti di {destinatario} un numero di volte superiore al limite definito")
-    public void lOperatoreUsoIUNPerRecuperariGliAttiPiuVolteDelLimite(String tipologiaIun, Destinatario destinatario) {
-        Assertions.assertThrows(HttpClientErrorException.class, () -> lOperatoreUsoIUNPerRecuperariGliAttiPiuVolte(tipologiaIun, destinatario, 300));
+    public void lOperatoreUsoIUNPerRecuperareGliAttiPiuVolteDelLimite(String tipologiaIun, Destinatario destinatario) {
+        Assertions.assertThrows(HttpClientErrorException.class, () -> lOperatoreUsoIUNPerRecuperareGliAttiPiuVolte(tipologiaIun, destinatario, 300));
     }
 
-    @Then("L'operatore usa lo IUN {string} per recuperare gli atti di {string} {int} volte")
-    public void lOperatoreUsoIUNPerRecuperariGliAttiPiuVolte(String tipologiaIun, Destinatario destinatario, int iteration) {
+    @Then("L'operatore usa lo IUN {string} per recuperare gli atti di {destinatario} {int} volte")
+    public void lOperatoreUsoIUNPerRecuperareGliAttiPiuVolte(String tipologiaIun, Destinatario destinatario, int iteration) {
         raddAltSteps.selectUserRaddAlternative(destinatario);
         IntStream.range(0, iteration).forEach(x -> {
             raddAltSteps.lOperatoreUsoIUNPerRecuperareGliAtti(tipologiaIun, destinatario);

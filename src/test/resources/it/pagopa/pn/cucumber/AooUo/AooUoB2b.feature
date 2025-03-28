@@ -33,7 +33,7 @@ Feature: verifica feature aoo/uo
       | denomination    | Galileo Galilei  |
       | taxId           | GLLGLL64B15G702I |
       | digitalDomicile | NULL             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
       | loadTimeline                 | true                                                                  |
       | details                      | NOT_NULL                                                              |
@@ -89,7 +89,7 @@ Feature: verifica feature aoo/uo
       | denomination    | Galileo Galilei  |
       | taxId           | GLLGLL64B15G702I |
       | digitalDomicile | NULL             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
       | loadTimeline                 | true                                                                  |
       | details                      | NOT_NULL                                                              |
@@ -169,7 +169,7 @@ Feature: verifica feature aoo/uo
       | denomination    | Galileo Galilei  |
       | taxId           | GLLGLL64B15G702I |
       | digitalDomicile | NULL             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
       | loadTimeline           | true                                               |
@@ -212,7 +212,7 @@ Feature: verifica feature aoo/uo
       | denomination    | Galileo Galilei  |
       | taxId           | GLLGLL64B15G702I |
       | digitalDomicile | NULL             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
       | loadTimeline           | true                                               |

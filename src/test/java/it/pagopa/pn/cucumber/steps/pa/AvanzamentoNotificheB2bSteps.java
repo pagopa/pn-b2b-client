@@ -1872,9 +1872,11 @@ public class AvanzamentoNotificheB2bSteps {
                         if (price != null) {
                             log.info("notificationPriceV23: {} destinatario: {}", notificationPriceV23, destinatario);
                             switch (tipologiaCosto.toLowerCase()) {
-                                case "parziale" -> Assertions.assertEquals(price, notificationPriceV23.getPartialPrice());
+                                case "parziale" ->
+                                        Assertions.assertEquals(price, notificationPriceV23.getPartialPrice());
                                 case "totale" -> Assertions.assertEquals(price, notificationPriceV23.getTotalPrice());
-                                default -> throw new IllegalArgumentException("Valore non valido per tipologiaCosto: " + tipologiaCosto);
+                                default ->
+                                        throw new IllegalArgumentException("Valore non valido per tipologiaCosto: " + tipologiaCosto);
                             }
                         }
                         if (date != null) {
@@ -3645,7 +3647,7 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
 
-    @And("viene verificato il costo di {int} e il peso di {int} nei details del'elemento di timeline letto")
+    @And("viene verificato il costo di {int} e il peso di {int} nei details dell'elemento di timeline letto")
     public void verificaCostoePesoInvioCartaceo(Integer costo, Integer peso) {
         try {
             Assertions.assertEquals(costo, timelineElement.getDetails().getAnalogCost());
