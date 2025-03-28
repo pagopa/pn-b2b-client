@@ -1,6 +1,10 @@
 package it.pagopa.pn.client.b2b.pa.config.springconfig;
 
 
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -28,19 +32,33 @@ public class RestTemplateConfiguration {
     @Bean(name = "customRestTemplate")
     @Primary
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    public RestTemplate customRestTemplate() {
-        RestTemplate restTemplate = new RestTemplate();
-        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-        requestFactory.setConnectTimeout(990_000);
-        requestFactory.setReadTimeout(990_000);
-        requestFactory.setConnectionRequestTimeout(990_000);
-        requestFactory.setBufferRequestBody(false);
-        restTemplate.setRequestFactory(requestFactory);
-
+    public RestTemplate customRestTemplate(CloseableHttpClient httpClient) {
+        RestTemplate restTemplate = new RestTemplate(new HttpComponentsClientHttpRequestFactory(httpClient));
         List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
         interceptors.add(new RequestAndTraceIdInterceptor());
-
         return restTemplate;
+    }
+
+    @Bean
+    public PoolingHttpClientConnectionManager poolingHttpClientConnectionManager() {
+        PoolingHttpClientConnectionManager pooling = new PoolingHttpClientConnectionManager();
+        pooling.setMaxTotal(100);
+        pooling.setDefaultMaxPerRoute(51);
+        return pooling;
+    }
+
+    @Bean
+    public CloseableHttpClient httpClient(PoolingHttpClientConnectionManager poolingHttpClientConnectionManager) {
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectTimeout(5000)
+                .setSocketTimeout(10000)
+                .setConnectionRequestTimeout(2000)
+                .build();
+
+        return HttpClients.custom()
+                .setConnectionManager(poolingHttpClientConnectionManager)
+                .setDefaultRequestConfig(requestConfig)
+                .build();
     }
 
     @Bean(name = "defaultRestTemplate")
