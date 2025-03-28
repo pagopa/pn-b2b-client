@@ -1,13 +1,14 @@
 package it.pagopa.pn.cucumber.steps.pa.b2bVersions;
 
 import io.cucumber.datatable.DataTable;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPriceResponse;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationPriceResponseV23;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PaymentEventsRequestPagoPa;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.*;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
-import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV26;
-import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceStatusRapidV26;
-import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineSlowV26;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV21;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceStatusRapidV21;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineSlowV21;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheB2bSteps;
 import lombok.extern.slf4j.Slf4j;
@@ -23,24 +24,24 @@ import static java.time.OffsetDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
-public class B2bStepsV24 implements B2bStepsInterface {
+public class B2bStepsV21 implements B2bStepsInterface {
 
-    private FullSentNotificationV26 fullSentNotification;
-    private TimelineElementV26 timelineElement;
-    private NotificationStatusHistoryElementV26 notificationStatusHistoryElement;
+    private FullSentNotificationV21 fullSentNotification;
+    private TimelineElementV20 timelineElement;
+    private NotificationStatusHistoryElement notificationStatusHistoryElement;
     private final SharedSteps.NotificationVersion version;
     private final AvanzamentoNotificheB2bSteps b2bSteps;
 
-    public B2bStepsV24(AvanzamentoNotificheB2bSteps b2bSteps) {
-        version = SharedSteps.NotificationVersion.V24;
+    public B2bStepsV21(AvanzamentoNotificheB2bSteps b2bSteps) {
+        version = SharedSteps.NotificationVersion.V21;
         this.b2bSteps = b2bSteps;
     }
 
     @Override
     public void readEventsUpToTimelineElement(String timelineEventCategory) {
-        PnPollingServiceTimelineSlowV26 timelineSlow =
-                (PnPollingServiceTimelineSlowV26) b2bSteps.getSharedSteps().getPollingFactory().getPollingService(PnPollingStrategy.TIMELINE_SLOW_V26);
-        PnPollingResponseV26 pnPollingResponse = timelineSlow.waitForEvent(
+        PnPollingServiceTimelineSlowV21 timelineSlow =
+                (PnPollingServiceTimelineSlowV21) b2bSteps.getSharedSteps().getPollingFactory().getPollingService(PnPollingStrategy.TIMELINE_SLOW_V21);
+        PnPollingResponseV21 pnPollingResponse = timelineSlow.waitForEvent(
                 b2bSteps.getSharedSteps().getNotificationIun(),
                 PnPollingParameter.builder()
                         .value(timelineEventCategory)
@@ -56,7 +57,6 @@ public class B2bStepsV24 implements B2bStepsInterface {
                     .as("L'elemento della timeline non dovrebbe essere nullo")
                     .isNotNull();
             timelineElement = pnPollingResponse.getTimelineElement();
-            b2bSteps.setTimelineElement(timelineElement);//TODO MATTEO, IDEALE SAREBBE RIMUOVERLO DA CAMPO DI B2B STEPS e prendere sempre quello restituito qua
             log.info("TIMELINE_ELEMENT: " + timelineElement);
         } catch (AssertionError assertionError) {
             b2bSteps.getSharedSteps().throwAssertionErrorWithIUN(assertionError);
@@ -66,14 +66,14 @@ public class B2bStepsV24 implements B2bStepsInterface {
     @Override
     public void readEventsUpToStatus(String status) {
         String iun = b2bSteps.getSharedSteps().getNotificationIun();
-        PnPollingServiceStatusRapidV26 statusRapid = (PnPollingServiceStatusRapidV26) b2bSteps.getSharedSteps().getPollingFactory().getPollingService(PnPollingStrategy.STATUS_RAPID_V26);
-        PnPollingResponseV26 pnPollingResponse = statusRapid.waitForEvent(iun,
+        PnPollingServiceStatusRapidV21 statusRapid = (PnPollingServiceStatusRapidV21) b2bSteps.getSharedSteps().getPollingFactory().getPollingService(PnPollingStrategy.STATUS_RAPID_V21);
+        PnPollingResponseV21 pnPollingResponse = statusRapid.waitForEvent(iun,
                 PnPollingParameter.builder()
                         .value(status)
                         .build());
 
         fullSentNotification = pnPollingResponse.getNotification();
-        log.info("NOTIFICATION_STATUS_HISTORY V26: " + pnPollingResponse.getNotification().getNotificationStatusHistory());
+        log.info("NOTIFICATION_STATUS_HISTORY V21: " + pnPollingResponse.getNotification().getNotificationStatusHistory());
         try {
             assertThat(pnPollingResponse.getResult())
                     .as("Il risultato del polling deve essere valorizzato")
@@ -82,7 +82,7 @@ public class B2bStepsV24 implements B2bStepsInterface {
                     .as("L'elemento dello storico degli stati non dovrebbe essere nullo")
                     .isNotNull();
             notificationStatusHistoryElement = pnPollingResponse.getNotificationStatusHistoryElement();
-            log.info("NOTIFICATION_STATUS_HISTORY_ELEMENT V26: " + notificationStatusHistoryElement);
+            log.info("NOTIFICATION_STATUS_HISTORY_ELEMENT V21: " + notificationStatusHistoryElement);
         } catch (AssertionFailedError assertionFailedError) {
             b2bSteps.getSharedSteps().throwAssertionErrorWithIUN(assertionFailedError);
         }
@@ -137,7 +137,7 @@ public class B2bStepsV24 implements B2bStepsInterface {
     @Override
     public void checkPriceForRecipient(int recipientIndex, String price) {
         String iun = b2bSteps.getSharedSteps().getNotificationIun();
-        FullSentNotificationV26 fullSentNotification = b2bSteps.getB2bClient().getSentNotification(iun);
+        FullSentNotificationV21 fullSentNotification = b2bSteps.getB2bClient().getSentNotificationV21(iun);
         List<NotificationPaymentItem> listNotificationPaymentItem = fullSentNotification.getRecipients().get(recipientIndex).getPayments();
         if (listNotificationPaymentItem != null) {
             for (NotificationPaymentItem notificationPaymentItem : listNotificationPaymentItem) {
@@ -162,25 +162,24 @@ public class B2bStepsV24 implements B2bStepsInterface {
     @Override
     public void payAvvisoPagoPa(Integer paymentIndex, Integer recipientIndex) {
         String iun = b2bSteps.getSharedSteps().getNotificationIun();
-        FullSentNotificationV26 fullSentNotification = b2bSteps.getB2bClient().getSentNotification(iun);
+        FullSentNotificationV21 fullSentNotification = b2bSteps.getB2bClient().getSentNotificationV21(iun);
         String creditorTaxId = fullSentNotification.getRecipients().get(recipientIndex).getPayments().get(paymentIndex).getPagoPa().getCreditorTaxId();
         String noticeCode = fullSentNotification.getRecipients().get(recipientIndex).getPayments().get(paymentIndex).getPagoPa().getNoticeCode();
         NotificationPriceResponseV23 notificationPrice = b2bSteps.getB2bClient().getNotificationPriceV23(creditorTaxId, noticeCode);
 
         PaymentEventsRequestPagoPa eventsRequestPagoPa = new PaymentEventsRequestPagoPa();
 
-        PaymentEventPagoPa paymentEventPagoPa = new PaymentEventPagoPa();
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PaymentEventPagoPa paymentEventPagoPa =
+                new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PaymentEventPagoPa();
         paymentEventPagoPa.setCreditorTaxId(creditorTaxId);
         paymentEventPagoPa.setNoticeCode(noticeCode);
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         paymentEventPagoPa.setPaymentDate(fmt.format(now()));
         paymentEventPagoPa.setAmount(notificationPrice.getTotalPrice());
-        List<PaymentEventPagoPa> paymentEventPagoPaList = new LinkedList<>();
+        List<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PaymentEventPagoPa> paymentEventPagoPaList = new LinkedList<>();
         paymentEventPagoPaList.add(paymentEventPagoPa);
         eventsRequestPagoPa.setEvents(paymentEventPagoPaList);
 
         b2bSteps.getB2bClient().paymentEventsRequestPagoPa(eventsRequestPagoPa);
     }
-
-
 }

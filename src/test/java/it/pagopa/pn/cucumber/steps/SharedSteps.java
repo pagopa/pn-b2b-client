@@ -185,10 +185,6 @@ public class SharedSteps {
     // Viene settato solo per l'ultima versione. Al rilascio di una nuova, sostituire con l'oggetto corrispondente
     private NewNotificationRequestV24 notificationRequest;
 
-//    @Getter
-//    @Setter
-//    private FullSentNotificationV26 fullSentNotificationV26;
-
     private final Map<NotificationVersion, NotificationStepsInterface> mapOfVersionSteps = Map.ofEntries(
             Map.entry(V1, new NotificationStepsV1(this)),
             Map.entry(V2, new NotificationStepsV2(this)),

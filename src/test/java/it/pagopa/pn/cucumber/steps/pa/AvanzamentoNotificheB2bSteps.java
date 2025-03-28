@@ -26,6 +26,7 @@ import it.pagopa.pn.cucumber.steps.pa.b2bVersions.B2bStepsV2;
 import it.pagopa.pn.cucumber.steps.pa.b2bVersions.B2bStepsV24;
 import it.pagopa.pn.cucumber.utils.DataTest;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.pdfbox.Loader;
@@ -55,8 +56,7 @@ import java.util.stream.IntStream;
 import static it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationFeePolicy.DELIVERY_MODE;
 import static it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationFeePolicy.FLAT_RATE;
 import static it.pagopa.pn.cucumber.steps.SharedSteps.NotificationVersion.*;
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.DEFAULT_PA;
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.MOST_RECENT;
+import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.*;
 import static java.time.OffsetDateTime.now;
 import static java.time.temporal.ChronoUnit.MINUTES;
 import static java.time.temporal.ChronoUnit.SECONDS;
@@ -88,6 +88,8 @@ public class AvanzamentoNotificheB2bSteps {
     private String pnEcConsAllowedFutureOffsetDuration;
     @Value("${pn.consolidatore.requestId}")
     private String requestIdConsolidator;
+
+    @Setter
     private TimelineElementV26 timelineElement;
 
     private final Map<SharedSteps.NotificationVersion, B2bStepsInterface> mapOfVersionSteps = Map.ofEntries(
@@ -246,13 +248,13 @@ public class AvanzamentoNotificheB2bSteps {
         DelegateInfo delegateInfoFromNotification = detailsFromNotification != null ? detailsFromNotification.getDelegateInfo() : null;
 
         switch (timelineEventCategory) {
-            case "SEND_COURTESY_MESSAGE":
+            case SEND_COURTESY_MESSAGE:
                 if (detailsFromTest != null) {
                     Assertions.assertEquals(detailsFromNotification.getDigitalAddress(), detailsFromTest.getDigitalAddress());
                     Assertions.assertEquals(detailsFromNotification.getRecIndex(), detailsFromTest.getRecIndex());
                 }
                 break;
-            case "REQUEST_REFUSED":
+            case REQUEST_REFUSED:
                 if (detailsFromTest != null) {
                     Assertions.assertNotNull(detailsFromNotification.getRefusalReasons());
                     Assertions.assertEquals(detailsFromNotification.getRefusalReasons().size(), detailsFromTest.getRefusalReasons().size());
@@ -261,12 +263,12 @@ public class AvanzamentoNotificheB2bSteps {
                     }
                 }
                 break;
-            case "AAR_GENERATION":
+            case AAR_GENERATION:
                 if (detailsFromTest != null) {
                     Assertions.assertNotNull(detailsFromNotification.getGeneratedAarUrl());
                 }
                 break;
-            case "SEND_DIGITAL_FEEDBACK":
+            case SEND_DIGITAL_FEEDBACK:
                 if (detailsFromTest != null) {
                     Assertions.assertNotNull(detailsFromNotification.getResponseStatus());
                     Assertions.assertEquals(detailsFromNotification.getResponseStatus().getValue(), detailsFromTest.getResponseStatus().getValue());
@@ -277,7 +279,7 @@ public class AvanzamentoNotificheB2bSteps {
                     }
                 }
                 break;
-            case "REQUEST_ACCEPTED":
+            case REQUEST_ACCEPTED:
                 Assertions.assertNotNull(elementFromNotification.getLegalFactsIds());
                 Assertions.assertEquals(elementFromNotification.getLegalFactsIds().size(), elementFromTest.getLegalFactsIds().size());
                 for (int i = 0; i < elementFromNotification.getLegalFactsIds().size(); i++) {
@@ -285,12 +287,12 @@ public class AvanzamentoNotificheB2bSteps {
                     Assertions.assertNotNull(elementFromNotification.getLegalFactsIds().get(i).getKey());
                 }
                 break;
-            case "SEND_DIGITAL_DOMICILE":
+            case SEND_DIGITAL_DOMICILE:
                 if (detailsFromTest != null) {
                     Assertions.assertEquals(detailsFromNotification.getDigitalAddress(), detailsFromTest.getDigitalAddress());
                 }
                 break;
-            case "DIGITAL_SUCCESS_WORKFLOW", "DIGITAL_FAILURE_WORKFLOW":
+            case DIGITAL_SUCCESS_WORKFLOW, DIGITAL_FAILURE_WORKFLOW:
                 Assertions.assertNotNull(elementFromNotification.getLegalFactsIds());
                 Assertions.assertEquals(elementFromNotification.getLegalFactsIds().size(), elementFromTest.getLegalFactsIds().size());
                 for (int i = 0; i < elementFromNotification.getLegalFactsIds().size(); i++) {
@@ -301,13 +303,13 @@ public class AvanzamentoNotificheB2bSteps {
                     Assertions.assertEquals(detailsFromNotification.getDigitalAddress(), detailsFromTest.getDigitalAddress());
                 }
                 break;
-            case "GET_ADDRESS":
+            case GET_ADDRESS:
                 if (detailsFromTest != null) {
                     Assertions.assertEquals(detailsFromNotification.getDigitalAddressSource(), detailsFromTest.getDigitalAddressSource());
                     Assertions.assertEquals(detailsFromNotification.getIsAvailable(), detailsFromTest.getIsAvailable());
                 }
                 break;
-            case "SEND_ANALOG_FEEDBACK":
+            case SEND_ANALOG_FEEDBACK:
                 if (detailsFromTest != null) {
                     if (detailsFromTest.getDeliveryDetailCode() != null) {
                         Assertions.assertEquals(detailsFromTest.getDeliveryDetailCode(), detailsFromNotification.getDeliveryDetailCode());
@@ -326,7 +328,7 @@ public class AvanzamentoNotificheB2bSteps {
                     }
                 }
                 break;
-            case "SEND_ANALOG_PROGRESS", "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS":
+            case SEND_ANALOG_PROGRESS, SEND_SIMPLE_REGISTERED_LETTER_PROGRESS:
                 if (detailsFromTest != null) {
                     if (Objects.nonNull(elementFromTest.getLegalFactsIds())) {
                         Assertions.assertEquals(elementFromNotification.getLegalFactsIds().size(), elementFromTest.getLegalFactsIds().size());
@@ -360,18 +362,18 @@ public class AvanzamentoNotificheB2bSteps {
                     }
                 }
                 break;
-            case "ANALOG_SUCCESS_WORKFLOW", "PREPARE_SIMPLE_REGISTERED_LETTER":
+            case ANALOG_SUCCESS_WORKFLOW, PREPARE_SIMPLE_REGISTERED_LETTER:
                 if (detailsFromTest != null && detailsFromTest.getPhysicalAddress() != null) {
                     Assertions.assertEquals(detailsFromTest.getPhysicalAddress(), detailsFromNotification.getPhysicalAddress());
                 }
                 break;
-            case "SEND_SIMPLE_REGISTERED_LETTER":
+            case SEND_SIMPLE_REGISTERED_LETTER:
                 if (detailsFromTest != null) {
                     Assertions.assertEquals(detailsFromNotification.getPhysicalAddress(), detailsFromTest.getPhysicalAddress());
                     Assertions.assertEquals(detailsFromNotification.getAnalogCost(), detailsFromTest.getAnalogCost());
                 }
                 break;
-            case "NOTIFICATION_VIEWED":
+            case NOTIFICATION_VIEWED:
                 Assertions.assertNotNull(elementFromNotification.getLegalFactsIds());
                 Assertions.assertEquals(elementFromNotification.getLegalFactsIds().size(), elementFromTest.getLegalFactsIds().size());
                 for (int i = 0; i < elementFromNotification.getLegalFactsIds().size(); i++) {
@@ -384,7 +386,7 @@ public class AvanzamentoNotificheB2bSteps {
                     Assertions.assertEquals(delegateInfoFromNotification.getDenomination(), delegateInfoFromTest.getDenomination());
                 }
                 break;
-            case "COMPLETELY_UNREACHABLE":
+            case COMPLETELY_UNREACHABLE:
                 if (Objects.nonNull(elementFromTest.getLegalFactsIds())) {
                     assert elementFromNotification.getLegalFactsIds() != null;
                     Assertions.assertEquals(elementFromNotification.getLegalFactsIds().size(), elementFromTest.getLegalFactsIds().size());
@@ -392,6 +394,11 @@ public class AvanzamentoNotificheB2bSteps {
                 for (int i = 0; i < Objects.requireNonNull(elementFromNotification.getLegalFactsIds()).size(); i++) {
                     Assertions.assertEquals(elementFromNotification.getLegalFactsIds().get(i).getCategory(), elementFromTest.getLegalFactsIds().get(i).getCategory().getValue());
                     Assertions.assertNotNull(elementFromNotification.getLegalFactsIds().get(i).getKey());
+                }
+                break;
+            case REFINEMENT:
+                if (detailsFromTest != null) {
+                    Assertions.assertEquals(detailsFromNotification.getRecIndex(), detailsFromTest.getRecIndex());
                 }
                 break;
             default:
