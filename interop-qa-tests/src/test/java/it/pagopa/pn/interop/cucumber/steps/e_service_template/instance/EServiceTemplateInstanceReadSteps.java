@@ -1,5 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template.instance;
 
+import static org.apache.commons.collections4.IterableUtils.isEmpty;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import io.cucumber.java.en.Then;
@@ -13,7 +15,6 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateIns
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import java.util.List;
 import java.util.UUID;
 import lombok.Data;
@@ -70,6 +71,12 @@ public class EServiceTemplateInstanceReadSteps {
         });
     }
 
+    @Then("l'elenco delle istanze dell'e-service template è vuoto")
+    public void checkEmptyEServiceTemplateInstances() {
+        List<EServiceTemplateInstance> response = ((ResponseEntity<EServiceTemplateInstances>) httpCallExecutor.getResponse()).getBody().getResults();
+        assertThat(response).isEmpty();
+    }
+
     private void getEserviceTemplateInstances(UUID templateId) {
         String userToken = sharedStepsContext.getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);
@@ -81,9 +88,36 @@ public class EServiceTemplateInstanceReadSteps {
             ResponseEntity::getStatusCode);
     }
 
+    // 28/03/2025 Versione precedente
+    /*private Condition<EServiceTemplateInstance> instanceInState(EServiceDescriptorState state) {
+        if (state == EServiceDescriptorState.DRAFT) {
+            return new Condition<>(
+                instance -> isEmpty(instance.getDescriptors()),
+                "non-empty descriptors for expected DRAFT e-services", state);
+        } else {
+            return new Condition<>(
+                instance -> instance.getLatestDescriptor().getState().equals(state),
+                "instances in state %s", state);
+        }
+    }*/
+
+    // Versione precedente
+    /*private Condition<EServiceTemplateInstance> instanceInState(EServiceDescriptorState state) {
+        return new Condition<>(
+            instance -> (isEmpty(instance.getDescriptors()) && state == EServiceDescriptorState.DRAFT) ||
+            instance.getLatestDescriptor().getState().equals(state),
+            "instances in state %s", state);
+    }*/
+
     private Condition<EServiceTemplateInstance> instanceInState(EServiceDescriptorState state) {
         return new Condition<>(
-            instance -> instance.getLatestDescriptor().getState().equals(state),
+            instance -> {
+                if (isEmpty(instance.getDescriptors())) {
+                    return state == EServiceDescriptorState.DRAFT;
+                } else {
+                    return instance.getLatestDescriptor().getState().equals(state);
+                }
+            },
             "instances in state %s", state);
     }
 }

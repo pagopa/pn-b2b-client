@@ -16,7 +16,6 @@ import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import java.util.UUID;
 import lombok.Data;
 import org.jeasy.random.EasyRandom;
@@ -68,7 +67,7 @@ public class EServiceTemplateInstanceUpdateSteps {
 
     @When("l'utente tenta la modifica dei campi dell'istanza dell'e-service template indicando una specifica vuota")
     public void editEServiceInstanceUnspecifiedFields() {
-        UUID eServiceId = UUID.randomUUID();
+        UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
         lastUpdateEServiceTemplateInstanceSeed = new UpdateEServiceTemplateInstanceSeed();
         editEServiceInstanceFields(eServiceId, lastUpdateEServiceTemplateInstanceSeed);
     }
@@ -103,12 +102,13 @@ public class EServiceTemplateInstanceUpdateSteps {
     public void createEServiceVersionDraftSuccessfully(EServiceDescriptorState descriptorState) {
         UUID newDescriptor = this.dataPreparationService.createNextDraftDescriptor(
             sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate());
-        this.dataPreparationService.bringDescriptorToGivenState(
+        this.dataPreparationService.bringTemplateInstanceDescriptorToGivenState(
             sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate(),
             newDescriptor,
             descriptorState,
             false
         );
+        sharedStepsContext.getEServiceTemplateStepContext().setLastEServiceDescriptorIdCreatedFromTemplate(newDescriptor);
     }
 
     private void editEServiceInstanceFields(UUID eServiceId, UpdateEServiceTemplateInstanceSeed seed) {

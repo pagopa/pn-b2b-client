@@ -16,7 +16,6 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDes
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import java.util.UUID;
 import lombok.Data;
 import org.springframework.http.ResponseEntity;
@@ -68,7 +67,7 @@ public class EServiceTemplateInstanceUpgradeSteps {
                 () -> httpCallExecutor.performCall(
                     () -> eServiceClient.getProducerEServiceDescriptorWithHttpInfo(
                         sharedStepsContext.getXCorrelationId(),
-                        lastEServiceIdUpdatedFromTemplate,
+                        sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate(),
                         lastEServiceDescriptorIdUpdatedFromTemplate
                     ),
                     ResponseEntity::getStatusCode),
@@ -102,8 +101,10 @@ public class EServiceTemplateInstanceUpgradeSteps {
                 uuid),
             ResponseEntity::getStatusCode);
 
-        ResponseEntity<CreatedResource> response = (ResponseEntity<CreatedResource>) httpCallExecutor.getResponse();
-        this.lastEServiceIdUpdatedFromTemplate = response.getBody().getId();
-        this.lastEServiceDescriptorIdUpdatedFromTemplate = response.getBody().getId();
+        if (!httpCallExecutor.getResponseStatus().isError()) {
+            ResponseEntity<CreatedResource> response = (ResponseEntity<CreatedResource>) httpCallExecutor.getResponse();
+            this.lastEServiceIdUpdatedFromTemplate = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
+            this.lastEServiceDescriptorIdUpdatedFromTemplate = response.getBody().getId();
+        }
     }
 }

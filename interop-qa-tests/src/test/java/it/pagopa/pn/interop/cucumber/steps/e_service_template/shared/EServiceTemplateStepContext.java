@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.e_service_template.shared;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.Attribute;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactDescriptor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateAttributesSeed;
@@ -48,10 +49,18 @@ public class EServiceTemplateStepContext {
     private EServiceTemplateDocumentInfo lastAddedDocument;
     private UpdateEServiceTemplateVersionSeed lastTemplateVersionUpdateSeed;
     private EServiceTemplateAttributesSeed lastTemplateVersionAttributesSeed;
+
+    // TODO si somigliano troppo, sceglierne uno
     private UUID lastEServiceIdCreatedFromTemplate;
+    private CreatedResource lastEServiceCreatedFromTemplate;
+
+    // TODO si somigliano troppo, sceglierne uno
     private CompactDescriptor lastEServiceDescriptorCreatedFromTemplate;
+    private UUID lastEServiceDescriptorIdCreatedFromTemplate;
+
     private List<Attribute> createdAttributes = new ArrayList<>();
     private DescriptorAttributesSeed lastDescriptorAttributesSeed;
+    private String lastEServiceNameCreatedFromTemplate;
 
     private final EasyRandomParameters easyRandomParameters = new EasyRandomParameters()
         .seed(123L)

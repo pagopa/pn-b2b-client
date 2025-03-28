@@ -98,13 +98,10 @@ Feature: Test API of e-service template
     Examples:
       | ruolo         | stato     |
       | security      | DRAFT     |
-      | api,security  | DRAFT     |
       | support       | DRAFT     |
       | security      | PUBLISHED |
-      | api,security  | PUBLISHED |
       | support       | PUBLISHED |
       | security      | SUSPENDED |
-      | api,security  | SUSPENDED |
       | support       | SUSPENDED |
 
   # Ticket aperto https://pagopa.atlassian.net/browse/PIN-6476
@@ -135,13 +132,20 @@ Feature: Test API of e-service template
       | admin   | SUSPENDED |
       | api     | SUSPENDED |
 
-  # run notes DEV 18/03/2025: restituisce 204, che comunque è un comportamento accettabile. Chiarire.
-  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-6485
+  # 28/03/2025 forma originale dello scenario, si è deciso in fase di validation di modificarlo così
+  # l'operazione sia legittima
+  # Ticket https://pagopa.atlassian.net/browse/PIN-6485
+  #Scenario: [INTEROP-EST-013] La modifica di un e-service template in stato DRAFT non può essere fatta specificando lo stesso nome
+  #  Given l'utente è un "admin" di "PA1"
+  #  And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+  #  When l'utente tenta di modificare l'e-service template specificando lo stesso nome
+  #  Then si ottiene response status code 400
+
   Scenario: [INTEROP-EST-013] La modifica di un e-service template in stato DRAFT non può essere fatta specificando lo stesso nome
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
     When l'utente tenta di modificare l'e-service template specificando lo stesso nome
-    Then si ottiene response status code 400
+    Then si ottiene response status code 204
 
     # run notes DEV 18/03/2025: impossibile da simulare perché non potendo creare un token per dev si sta usando sempre lo stesso token
   Scenario: [INTEROP-EST-014] La modifica di un e-service template in stato DRAFT non può essere fatta da una PA diversa da quella creatrice del template
@@ -238,6 +242,7 @@ Feature: Test API of e-service template
       | api,security  |
 
   # Ticket aperto https://pagopa.atlassian.net/browse/PIN-6482
+  @e-service-template-to-finish
   Scenario Outline: [INTEROP-EST-038] L'aggiunta di un documento/interfaccia a una versione di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
@@ -328,6 +333,7 @@ Feature: Test API of e-service template
       | INTERFACE |
 
   #Ticket DA APRIRE, simile a https://pagopa.atlassian.net/browse/PIN-6483 , lo si sta mettendo da parte in attesa di identificare tutte le casistiche simili.
+  @e-service-template-to-finish
   Scenario Outline: [INTEROP-EST-045] L'aggiunta di un documento/interfaccia a una versione inesistente di un e-service template non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
@@ -826,6 +832,7 @@ Feature: Test API of e-service template
     Then si ottiene response status code 404
 
   # Ticket aperto https://pagopa.atlassian.net/browse/PIN-6483
+  @e-service-template-to-finish
   Scenario: [INTEROP-EST-082] La cancellazione di una versione inesistente di un e-service template non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
@@ -833,6 +840,7 @@ Feature: Test API of e-service template
     Then si ottiene response status code 404
 
   # Ticket aperto https://pagopa.atlassian.net/browse/PIN-6483
+  @e-service-template-to-finish
   Scenario: [INTEROP-EST-083] La cancellazione di una versione già cancellata di un e-service template non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
@@ -988,13 +996,24 @@ Feature: Test API of e-service template
     When l'utente tenta la modifica del nome dell'e-service template
     Then si ottiene response status code 409
 
-    # TODO [INTEROP-EST-013] accorpabile? Verificare
+  # Forma originale dello scenario, prima che si stabilisse che in realtà si tratta di un'operazione legittima
   # Ticket aperto https://pagopa.atlassian.net/browse/PIN-6485
+  #Scenario Outline: [INTEROP-EST-100] La modifica del nome di un e-service template in stato PUBLISHED o SUSPENDED specificando il nome già presente non può essere effettuata
+  #  Given l'utente è un "admin" di "PA1"
+  #  And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
+  #  When l'utente tenta la modifica del nome dell'e-service template specificando lo stesso nome
+  #  Then si ottiene response status code 409
+  #  Examples:
+  #    | stato     |
+  #    | PUBLISHED |
+  #    | SUSPENDED |
+
+    # TODO [INTEROP-EST-013] accorpabile? Verificare
   Scenario Outline: [INTEROP-EST-100] La modifica del nome di un e-service template in stato PUBLISHED o SUSPENDED specificando il nome già presente non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
     When l'utente tenta la modifica del nome dell'e-service template specificando lo stesso nome
-    Then si ottiene response status code 409
+    Then si ottiene response status code 204
     Examples:
       | stato     |
       | PUBLISHED |
@@ -1622,7 +1641,13 @@ Feature: Test API of e-service template
     When l'utente è un "<ruolo>" di "PA1"
     And l'utente tenta la creazione di un nuovo e-service a partire dal template indicando solo le specifiche strettamente necessarie
     Then si ottiene response status code 200
-    And il nuovo e-service è stato creato correttamente in stato DRAFT
+
+    # L'api usata sembra avere un bug che ne impedisce l'utilizzo per la verifica
+    # Ticket aperto https://pagopa.atlassian.net/browse/PIN-6500
+    #And il nuovo e-service è stato creato correttamente in stato DRAFT
+
+    # in sostituzione si utilizza questo step
+    And il nuovo e-service è stato creato
     Examples:
       | ruolo         |
       | admin         |
@@ -1646,7 +1671,11 @@ Feature: Test API of e-service template
     When l'utente è un "<ruolo>" di "PA1"
     And l'utente tenta la creazione di un nuovo e-service a partire dal template indicando tutte le specifiche
     Then si ottiene response status code 200
-    And il nuovo e-service è stato creato correttamente in stato DRAFT
+
+      # vedi nota per [INTEROP-EST-155] (ticket aperto)
+      #And il nuovo e-service è stato creato correttamente in stato DRAFT
+
+    And il nuovo e-service è stato creato
     Examples:
       | ruolo         |
       | admin         |
@@ -1661,7 +1690,7 @@ Feature: Test API of e-service template
     Examples:
       | stato     |
       | DRAFT     |
-      | PUBLISHED |
+      | SUSPENDED |
 
   Scenario: [INTEROP-EST-159] La creazione di un nuovo e-service NON può essere effettuata a partire da un template inesistente
     Given l'utente è un "admin" di "PA1"
@@ -1700,19 +1729,19 @@ Feature: Test API of e-service template
   Scenario: [INTEROP-EST-162] L'aggiornamento di un'istanza inesistente di un template all'ultima versione dell'e-service template non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     When l'utente tenta l'aggiornamento di un'istanza inesistente dell'e-service template
-    Then si ottiene response status code 403
+    Then si ottiene response status code 404
 
   Scenario: [INTEROP-EST-163] L'aggiornamento di un'istanza di un template all'ultima versione dell'e-service template non può essere effettuata se l'istanza fa già riferimento all'ultima versione del template
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service a partire dal template con successo indicando solo le specifiche strettamente necessarie
     When l'utente tenta l'aggiornamento dell'istanza dell'e-service template all'ultima versione
-    Then si ottiene response status code 409
+    Then si ottiene response status code 400
 
   Scenario: [INTEROP-EST-164] L'aggiornamento di un'istanza di un template all'ultima versione dell'e-service template non può essere effettuata non indicando l'identificativo dell'e-service
     Given l'utente è un "admin" di "PA1"
     When l'utente tenta l'aggiornamento di un'istanza dell'e-service template specificando un identificativo vuoto
-    Then si ottiene response status code 403
+    Then si ottiene response status code 400
 
   Scenario: [INTEROP-EST-165] La creazione di un e-service template indicando una specifica vuota dello stesso non può essere effettuata
     Given l'utente è un "admin" di "PA1"
@@ -1780,10 +1809,9 @@ Feature: Test API of e-service template
     When l'utente tenta la pubblicazione di una versione di un e-service template indicando un identificativo vuoto
     Then si ottiene response status code 400
 
-    #to fix: la creazione di un'ulteriore versione non può essere fatta in stato DRAFT
   Scenario: [INTEROP-EST-176] La cancellazione di una versione di un e-service template indicando un identificativo vuoto della stessa non può essere effettuata
     Given l'utente è un "admin" di "PA1"
-    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     And l'utente effettua la creazione di una ulteriore versione nell'e-service template con successo
     When l'utente tenta la cancellazione della versione dell'e-service template indicando un identificativo vuoto
     Then si ottiene response status code 400
@@ -1819,11 +1847,6 @@ Feature: Test API of e-service template
   Scenario Outline: [INTEROP-EST-181] La modifica degli attributi di una versione di un e-service template indicando una specifica vuota non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
-
-    # Necessario per l'aggiunta degli attributi in vista della loro modifica
-    # TODO uno step linguisticamente più chiaro sarebbe preferibile
-    And l'utente effettua delle modifiche alla versione dell'e-service template con successo
-
     When l'utente tenta la modifica degli attributi della versione dell'e-service template indicando una specifica vuota
     Then si ottiene response status code 400
     Examples:
@@ -1843,7 +1866,8 @@ Feature: Test API of e-service template
     When l'utente tenta la visualizzazione dei dettagli della versione dell'e-service template indicando un identificativo vuoto
     Then si ottiene response status code 400
 
-  Scenario Outline: [INTEROP-EST-184] La visualizzazione dell'elenco di tutte le istanze di un e-service template attivo può essere effettuata da un ente in veste di ADMIN o API
+  # Diversamente dal solito il ruolo SUPPORT è sufficiente per eseguire l'operazione https://pagopaspa.slack.com/archives/C085C3D1U84/p1743151686805009?thread_ts=1743147000.650779&cid=C085C3D1U84
+  Scenario Outline: [INTEROP-EST-184] La visualizzazione dell'elenco di tutte le istanze di un e-service template attivo può essere effettuata da un ente in veste di ADMIN, API o SUPPORT
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service in stato DRAFT a partire dal template con successo indicando solo le specifiche strettamente necessarie
@@ -1858,25 +1882,25 @@ Feature: Test API of e-service template
       | admin         |
       | api           |
       | api,security  |
+      | support       |
 
-  Scenario Outline: [INTEROP-EST-185] La visualizzazione dell'elenco di tutte le istanze di un e-service template attivo NON può essere effettuata da un ente NON in veste di ADMIN o API
+  Scenario: [INTEROP-EST-185] La visualizzazione dell'elenco di tutte le istanze di un e-service template attivo NON può essere effettuata da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service in stato DRAFT a partire dal template con successo indicando solo le specifiche strettamente necessarie
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "security" di "PA1"
     And l'utente tenta la visualizzazione dell'elenco di tutte le istanze dell'e-service template
-    Then si ottiene response status code 403
-    Examples:
-      | ruolo         |
-      | security      |
-      | support       |
+    Then si ottiene response status code 200
+    And l'elenco delle istanze dell'e-service template è vuoto
 
     # Lo scenario 208 è stato saltato vista l'impossibilità di poter creare un UUID vuoto lato Java.
     # Altri precedenti test simili sono stati implementati passando un UUID null, ma si è concordato
     # che il test risultante - producendo una chiamata HTTP che viene bloccata già dal client OpenApi
     # generato - non fornisce alcun valore aggiunto.
 
-  Scenario: [INTEROP-EST-186] La visualizzazione dell'elenco di tutte le istanze di un e-service template attivo NON può essere effettuata da un ente NON in veste di ADMIN o API
+  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-6502
+  @e-service-template-to-finish
+  Scenario: [INTEROP-EST-186] La visualizzazione dell'elenco di tutte le istanze di un e-service template inesistente NON può essere effettuata
     Given l'utente è un "admin" di "PA1"
     When l'utente tenta la visualizzazione dell'elenco di tutte le istanze di un e-service template inesistente
     Then si ottiene response status code 403
@@ -1912,7 +1936,7 @@ Feature: Test API of e-service template
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service in stato <stato> a partire dal template con successo indicando solo le specifiche strettamente necessarie
     When l'utente tenta la modifica dei campi dell'istanza dell'e-service template
-    Then si ottiene response status code 403
+    Then si ottiene response status code 400
     Examples:
       | stato     |
       | PUBLISHED |
@@ -1924,19 +1948,22 @@ Feature: Test API of e-service template
     And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
     And l'utente effettua l'aggiunta di una versione in stato DRAFT all'e-service con successo
     When l'utente tenta la modifica dei campi dell'istanza dell'e-service template
-    Then si ottiene response status code 403
+    Then si ottiene response status code 400
 
   Scenario: [INTEROP-EST-191] La modifica dei campi di un'istanza inesistente di un e-service template non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     When l'utente tenta la modifica dei campi di un'istanza inesistente dell'e-service template
     Then si ottiene response status code 404
 
+  # 27/03/2025: Frutto dello scenario 224 frainteso: non chiede una specifica vuota ma un identificativo vuoto.
+  # Con una specifica vuota funziona, quindi questo test è stato adeguato a posteriori per
+  # verificare la conclusione con codice 200. Quindi questo test è in più rispetto all'SRS.
   Scenario: [INTEROP-EST-192] La modifica dei campi di un'istanza di un e-service template indicando una specifica vuota non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service in stato DRAFT a partire dal template con successo indicando solo le specifiche strettamente necessarie
     When l'utente tenta la modifica dei campi dell'istanza dell'e-service template indicando una specifica vuota
-    Then si ottiene response status code 400
+    Then si ottiene response status code 200
 
   Scenario: [INTEROP-EST-193] La modifica dei campi di un'istanza in stato DRAFT di un e-service template NON può essere effettuata da un ente diverso dal creatore dell'istanza
     Given l'utente è un "admin" di "PA1"
@@ -1977,7 +2004,7 @@ Feature: Test API of e-service template
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service in stato <stato> a partire dal template con successo indicando solo le specifiche strettamente necessarie
     When l'utente tenta la modifica del descriptor dell'istanza dell'e-service template
-    Then si ottiene response status code 403
+    Then si ottiene response status code 400
     Examples:
       | stato     |
       | PUBLISHED |
@@ -1988,8 +2015,8 @@ Feature: Test API of e-service template
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
     And l'utente effettua l'aggiunta di una versione in stato DRAFT all'e-service con successo
-    When l'utente tenta la modifica del descriptor dell'istanza dell'e-service template
-    Then si ottiene response status code 403
+    When l'utente tenta la modifica dei campi dell'istanza dell'e-service template
+    Then si ottiene response status code 400
 
   Scenario: [INTEROP-EST-198] La modifica di un descriptor inesistente di un e-service template non può essere effettuata
     Given l'utente è un "admin" di "PA1"

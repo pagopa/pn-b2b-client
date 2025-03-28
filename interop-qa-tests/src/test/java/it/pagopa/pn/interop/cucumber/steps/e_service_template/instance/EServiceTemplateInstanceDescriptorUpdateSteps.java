@@ -9,12 +9,12 @@ import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorTemplateInstanceSeed;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import java.util.UUID;
 import lombok.Data;
 import org.jeasy.random.EasyRandom;
@@ -48,25 +48,33 @@ public class EServiceTemplateInstanceDescriptorUpdateSteps {
     @When("l'utente tenta la modifica del descriptor dell'istanza dell'e-service template")
     public void editEServiceTemplateInstanceDescriptor() {
         UUID eServiceTemplateInstanceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
-        UUID eServiceTemplateInstanceDescriptorId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorCreatedFromTemplate().getId();
+        UUID eServiceTemplateInstanceDescriptorId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorIdCreatedFromTemplate();
 
-        lastUpdateEServiceDescriptorTemplateInstanceSeed = easyRandom.nextObject(
-            UpdateEServiceDescriptorTemplateInstanceSeed.class);
+        lastUpdateEServiceDescriptorTemplateInstanceSeed = buildUpdateEServiceDescriptorTemplateInstanceSeed();
+
         editEServiceTemplateInstanceDescriptor(eServiceTemplateInstanceId, eServiceTemplateInstanceDescriptorId, lastUpdateEServiceDescriptorTemplateInstanceSeed);
+    }
+
+    private UpdateEServiceDescriptorTemplateInstanceSeed buildUpdateEServiceDescriptorTemplateInstanceSeed() {
+        return new UpdateEServiceDescriptorTemplateInstanceSeed()
+            .addAudienceItem(easyRandom.nextObject(String.class))
+            .dailyCallsPerConsumer(5)
+            .dailyCallsTotal(10)
+            .agreementApprovalPolicy(AgreementApprovalPolicy.AUTOMATIC);
     }
 
     @When("l'utente tenta la modifica di un descriptor inesistente dell'istanza dell'e-service template")
     public void editNonExistentEServiceTemplateInstanceDescriptor() {
         UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
         UUID eServiceDescriptorId = UUID.randomUUID();
-        lastUpdateEServiceDescriptorTemplateInstanceSeed = easyRandom.nextObject(UpdateEServiceDescriptorTemplateInstanceSeed.class);
+        lastUpdateEServiceDescriptorTemplateInstanceSeed = buildUpdateEServiceDescriptorTemplateInstanceSeed();
         editEServiceTemplateInstanceDescriptor(eServiceId, eServiceDescriptorId, lastUpdateEServiceDescriptorTemplateInstanceSeed);
     }
 
     @When("l'utente tenta la modifica del descriptor dell'istanza dell'e-service template indicando una specifica vuota")
     public void editEServiceTemplateInstanceDescriptorWithEmptySpec() {
         UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
-        UUID eServiceDescriptorId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorCreatedFromTemplate().getId();
+        UUID eServiceDescriptorId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorIdCreatedFromTemplate();
         UpdateEServiceDescriptorTemplateInstanceSeed emptySeed = new UpdateEServiceDescriptorTemplateInstanceSeed();
         editEServiceTemplateInstanceDescriptor(eServiceId, eServiceDescriptorId, emptySeed);
     }
@@ -74,7 +82,7 @@ public class EServiceTemplateInstanceDescriptorUpdateSteps {
     @Then("il descriptor dell'istanza dell'e-service template è stato modificato correttamente")
     public void checkEServiceTemplateInstanceDescriptorEdited() {
         UUID eServiceTemplateInstanceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
-        UUID eServiceTemplateInstanceDescriptorId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorCreatedFromTemplate().getId();
+        UUID eServiceTemplateInstanceDescriptorId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorIdCreatedFromTemplate();
         try {
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(

@@ -13,6 +13,7 @@ import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.IProducerClient;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementRejectionPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
@@ -46,7 +47,9 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState
 import it.pagopa.interop.generated.openapi.clients.bff.model.RejectPurposeVersionPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormConfig;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.TemplateInstanceInterfaceRESTSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorTemplateInstanceSeed;
 import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
 import it.pagopa.interop.purpose.domain.RiskAnalysis;
 import it.pagopa.interop.purpose.domain.RiskAnalysisDataFromJson;
@@ -56,6 +59,7 @@ import it.pagopa.interop.tenant.service.ITenantsApi;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -390,6 +394,22 @@ public class DataPreparationService {
         }
     }
 
+    public void updateTemplateInstanceDraftDescriptor(UUID eServiceId, UUID descriptorId) {
+        UpdateEServiceDescriptorTemplateInstanceSeed seed = new UpdateEServiceDescriptorTemplateInstanceSeed()
+            .dailyCallsPerConsumer(10)
+            .dailyCallsTotal(100)
+            .addAudienceItem("some audience item")
+            .agreementApprovalPolicy(AgreementApprovalPolicy.AUTOMATIC);
+
+        httpCallExecutor.performCall(() -> eServiceClient.updateDraftDescriptorTemplateInstanceWithHttpInfo(sharedStepsContext.getXCorrelationId(), eServiceId, descriptorId, seed));
+        assertValidResponse();
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            log.error("Error while sleeping: {}", e.getMessage());
+        }
+    }
+
     public Map<String, Object> bringDescriptorToGivenState(UUID eServiceId, UUID descriptorId, EServiceDescriptorState descriptorState, boolean withDocument) {
         // 1 add document to descriptor
         UUID documentId = null;
@@ -437,6 +457,54 @@ public class DataPreparationService {
         return result;
     }
 
+    // 27/03/2025 WIP
+    public Map<String, Object> bringTemplateInstanceDescriptorToGivenState(UUID eServiceId, UUID descriptorId, EServiceDescriptorState descriptorState, boolean withDocument) {
+        // 1 add document to descriptor
+        UUID documentId = null;
+        Map<String, Object> result = new HashMap<>();
+        if (withDocument) documentId = addDocumentToDescriptor(eServiceId, descriptorId);
+        result.put("descriptorId", descriptorId);
+        result.put("documentId", documentId);
+
+        if (descriptorState == EServiceDescriptorState.DRAFT) return result;
+
+        // 2. Add interface to descriptor
+        interpolateInterfaceToDescriptor(eServiceId, descriptorId);
+
+        // 3. Publish Descriptor
+        publishTemplateInstanceDescriptor(eServiceId, descriptorId);
+        if (descriptorState == EServiceDescriptorState.PUBLISHED) return result;
+
+        // 4. Suspend Descriptor
+        if (descriptorState == EServiceDescriptorState.SUSPENDED) {
+            suspendDescriptor(eServiceId, descriptorId);
+            return result;
+        }
+
+        if (descriptorState == EServiceDescriptorState.DEPRECATED) {
+            // Optional. Create an agreement
+            UUID agreementId = createAndCheckAgreement(eServiceId, descriptorId);
+            submitAgreement(agreementId, AgreementState.ACTIVE);
+        }
+
+        // Create another DRAFT descriptor
+        UUID secondDescriptorId = createNextDraftDescriptor(eServiceId);
+
+        // Add interface to secondDescriptor
+        addInterfaceToDescriptor(eServiceId, secondDescriptorId);
+
+        // Publish secondDescriptor
+        publishDescriptor(eServiceId, secondDescriptorId);
+
+        // Check until the first descriptor is in desired state
+        pollingService.makePolling(
+            () -> producerClient.getProducerEServiceDescriptor(sharedStepsContext.getXCorrelationId(), eServiceId, descriptorId),
+            res -> res.getState() == descriptorState,
+            "There was an error while retrieving the producer e-service descriptor"
+        );
+        return result;
+    }
+
     public UUID addDocumentToDescriptor(UUID eServiceId, UUID descriptorId) {
         String prettyName = String.format("Documento_test_qa-%d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE));
         Resource resource = createBlobFile("documento-test-qa.pdf");
@@ -466,14 +534,44 @@ public class DataPreparationService {
 
     }
 
+    public void interpolateInterfaceToDescriptor(UUID eServiceId, UUID descriptorId) {
+        TemplateInstanceInterfaceRESTSeed seed = new TemplateInstanceInterfaceRESTSeed()
+            .contactName("Some contact name")
+            .contactEmail("some@contact-email.it")
+            .addServerUrlsItem(URI.create("http://www.some.url.it"));
+        httpCallExecutor.performCall(() -> eServiceClient.addEServiceTemplateInstanceInterfaceRestWithHttpInfo(sharedStepsContext.getXCorrelationId(), eServiceId, descriptorId, seed));
+        assertValidResponse();
+
+        pollingService.makePolling(
+            () -> producerClient.getProducerEServiceDescriptor(sharedStepsContext.getXCorrelationId(), eServiceId, descriptorId),
+            res -> res.getInterface() != null,
+            "There was an error while retrieving the producer e-service descriptor"
+        );
+    }
+
     public void publishDescriptor(UUID eServiceId, UUID descriptorId) {
-        updateDraftDescriptor(eServiceId, descriptorId, new UpdateEServiceDescriptorSeed().audience(List.of("pagopa.it")));
+        updateDraftDescriptor(eServiceId, descriptorId,
+            new UpdateEServiceDescriptorSeed().audience(List.of("pagopa.it")));
+        httpCallExecutor.performCall(
+            () -> eServiceClient.publishDescriptor(sharedStepsContext.getXCorrelationId(),
+                eServiceId, descriptorId));
+        assertValidResponse();
+        pollingService.makePolling(
+            () -> producerClient.getProducerEServiceDescriptor(
+                sharedStepsContext.getXCorrelationId(), eServiceId, descriptorId),
+            res -> res.getState() == EServiceDescriptorState.PUBLISHED,
+            "There was an error while retrieving the producer e-service descriptor"
+        );
+    }
+
+    public void publishTemplateInstanceDescriptor(UUID eServiceId, UUID descriptorId) {
+        updateTemplateInstanceDraftDescriptor(eServiceId, descriptorId);
         httpCallExecutor.performCall(() -> eServiceClient.publishDescriptor(sharedStepsContext.getXCorrelationId(), eServiceId, descriptorId));
         assertValidResponse();
         pollingService.makePolling(
-                () -> producerClient.getProducerEServiceDescriptor(sharedStepsContext.getXCorrelationId(), eServiceId, descriptorId),
-                res -> res.getState() == EServiceDescriptorState.PUBLISHED,
-                "There was an error while retrieving the producer e-service descriptor"
+            () -> producerClient.getProducerEServiceDescriptor(sharedStepsContext.getXCorrelationId(), eServiceId, descriptorId),
+            res -> res.getState() == EServiceDescriptorState.PUBLISHED,
+            "There was an error while retrieving the producer e-service descriptor"
         );
     }
 

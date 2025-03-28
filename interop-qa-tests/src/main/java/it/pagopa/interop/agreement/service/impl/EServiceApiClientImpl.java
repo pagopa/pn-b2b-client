@@ -14,9 +14,12 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateIns
 import it.pagopa.interop.generated.openapi.clients.bff.model.InstanceEServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDetails;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServices;
+import it.pagopa.interop.generated.openapi.clients.bff.model.TemplateInstanceInterfaceRESTSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorTemplateInstanceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateInstanceSeed;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -90,7 +93,10 @@ public class EServiceApiClientImpl implements IEServiceClient {
     @Override
     public ResponseEntity<EServiceTemplateInstances> getEServiceTemplateInstancesWithHttpInfo(
         String xCorrelationId, UUID templateId) {
-        return this.eservicesApi.getEServiceTemplateInstancesWithHttpInfo(xCorrelationId, templateId, 0, 50, null, null);
+        /* Di default l'api NON restituisce le istanze in stato DRAFT, invece si chiedono in
+         * questo modo tutte quante */
+        List<EServiceDescriptorState> states = Arrays.stream(EServiceDescriptorState.values()).toList();
+        return this.eservicesApi.getEServiceTemplateInstancesWithHttpInfo(xCorrelationId, templateId, 0, 50, null, states);
     }
 
     @Override
@@ -111,6 +117,12 @@ public class EServiceApiClientImpl implements IEServiceClient {
     public ResponseEntity<ProducerEServiceDescriptor> getProducerEServiceDescriptorWithHttpInfo(
         String xCorrelationId, UUID eserviceId, UUID descriptorId) {
         return this.eservicesApi.getProducerEServiceDescriptorWithHttpInfo(xCorrelationId, eserviceId, descriptorId);
+    }
+
+    @Override
+    public ResponseEntity<ProducerEServices> getProducerEServicesWithHttpInfo(
+        String xCorrelationId, String eServiceName) {
+        return this.eservicesApi.getProducerEServicesWithHttpInfo(xCorrelationId, 0, 50, eServiceName, null, null);
     }
 
     @Override
@@ -135,6 +147,13 @@ public class EServiceApiClientImpl implements IEServiceClient {
     public ResponseEntity<ProducerEServiceDetails> getProducerEServiceDetailsWithHttpInfo(
         String xCorrelationId, UUID eserviceId) {
         return this.eservicesApi.getProducerEServiceDetailsWithHttpInfo(xCorrelationId, eserviceId);
+    }
+
+    @Override
+    public ResponseEntity<CreatedResource> addEServiceTemplateInstanceInterfaceRestWithHttpInfo(
+        String xCorrelationId, UUID eServiceId, UUID descriptorId,
+        TemplateInstanceInterfaceRESTSeed templateInstanceInterfaceRESTSeed) {
+        return this.eservicesApi.addEServiceTemplateInstanceInterfaceRestWithHttpInfo(xCorrelationId, eServiceId, descriptorId, templateInstanceInterfaceRESTSeed);
     }
 
     @Override
