@@ -43,7 +43,7 @@ public class RestTemplateConfiguration {
     public PoolingHttpClientConnectionManager poolingHttpClientConnectionManager() {
         PoolingHttpClientConnectionManager pooling = new PoolingHttpClientConnectionManager();
         pooling.setMaxTotal(100);
-        pooling.setDefaultMaxPerRoute(51);
+        pooling.setDefaultMaxPerRoute(50);
         return pooling;
     }
 
