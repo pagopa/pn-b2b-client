@@ -341,7 +341,7 @@ public class SharedSteps {
     /*
     Invio massivo di notifiche irreperibili utili per i test radd
     TODO: migliorare e rendere di utilità generale
-    //TODO MATTEO -> questo metodo va assolutamente rifattorizzato, magari anche riscrivendo gli step
+    //TODO MATTEO -> questo metodo va assolutamente refattorizzato, magari anche riscrivendo gli step
      */
     @Given("vengono inviate {int} notifiche per l'utente Signor Casuale con il {string} e si aspetta fino allo stato COMPLETELY_UNREACHABLE")
     public void sendNotificationForUserSignorCasualeAndWaitUntilCompletelyUnreachable(int numberOfNotification, String pa) {
@@ -362,8 +362,7 @@ public class SharedSteps {
                             SIGNOR_CASUALE,
                             generatedFiscalCode,
                             NotificationRecipientV23.RecipientTypeEnum.PF,
-                            null
-                    ),
+                            null),
                     notificationRecipientMap);
 
 
@@ -454,8 +453,8 @@ public class SharedSteps {
         Objects.requireNonNull(Objects.requireNonNull(this.notificationRequest.getRecipients().get(0).getPayments()).get(0).getPagoPa()).setCreditorTaxId(creditorTaxId);
     }
 
-    @And("destinatario {string} con uguale codice avviso del destinario numero {int}")
-    public void destinatarioConUgualeCodiceAvvisoDelDestinarioN(String recipientName, int recipientNumber, @Transpose NotificationRecipientV23 recipient) {
+    @And("destinatario {string} con uguale codice avviso del destinatario numero {int}")
+    public void destinatarioConUgualeCodiceAvvisoDelDestinatarioN(String recipientName, int recipientNumber, @Transpose NotificationRecipientV23 recipient) {
         Assertions.assertDoesNotThrow(() -> Objects.requireNonNull(notificationRequest.getRecipients().get(recipientNumber - 1).getPayments()).get(0));
         String noticeCode = Objects.requireNonNull(Objects.requireNonNull(notificationRequest.getRecipients().get(recipientNumber - 1).getPayments()).get(0).getPagoPa()).getNoticeCode();
         if (recipientName.trim().equalsIgnoreCase(MARIO_CUCUMBER)) {
@@ -463,7 +462,7 @@ public class SharedSteps {
         } else if (recipientName.trim().equalsIgnoreCase(MARIO_GHERKIN)) {
             updateNotificationRecipient(recipient, MARIO_GHERKIN, marioGherkinTaxID, null, null);
         } else {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Invalid recipient name: " + recipientName);
         }
         Objects.requireNonNull(Objects.requireNonNull(recipient.getPayments()).get(0).getPagoPa()).setNoticeCode(noticeCode);
         this.notificationRequest.addRecipientsItem(recipient);
@@ -793,21 +792,22 @@ public class SharedSteps {
     }
 
     @Then("si verifica che la notifica non viene accettata causa {string}")
-    public void verificaNotificaNoAccept(String causa) {
-        String expectedErrorCode = switch (causa) {
+    public void verificaNotificaNoAccept(String cause) {
+        String expectedErrorCode = switch (cause) {
             case ALLEGATO -> FILE_NOTFOUND;
             case EXTENSION, FILE_PDF_INVALID_ERROR -> FILE_PDF_INVALID_ERROR;
             case SHA_256 -> FILE_SHA_ERROR;
             case Costanti.TAX_ID -> TAXID_NOT_VALID;
             case ADDRESS, NOT_VALID_ADDRESS -> NOT_VALID_ADDRESS;
             case INVALID_PARAMETER_MAX_ATTACHMENT -> INVALID_PARAMETER_MAX_ATTACHMENT;
-            default -> throw new IllegalArgumentException();
+            default -> throw new IllegalArgumentException("Invalid failure cause: " + cause);
         };
         Assertions.assertTrue(expectedErrorCode.equalsIgnoreCase(errorCode));
     }
 
     // TODO MATTEO TEST: 8 vecchi metodi sono stati mergiati in questo. Il prossimo step sarebbe capire meglio cosa fanno quei metodi di
-    //  utility richiamati nello switch e rimuoverli da B2bUtils (dove c'azzeccano poco, non sono vere utils se vengono richiamate solo qua)
+    //  utility richiamati nello switch e rimuoverli da B2bUtils (dove c'azzeccano poco, non sono vere utils se vengono richiamate solo qua).
+    //  Alcuni di questi non vengono nemmeno mai richiamati da nessun file feature
     //  Altra possibile miglioria: sostituire le stringhe delle tipologie d'errore con costanti all'interno della classe Costanti
     private void sendNotificationRefusedDueToError(String errorType, Boolean noUpload) {
         try {
@@ -898,7 +898,7 @@ public class SharedSteps {
                 this.pollingFactory.setApiKeys(IPnPaB2bClient.ApiKeyType.ROOT);
                 this.webPaClient.setBearerToken(SettableBearerToken.BearerTokenType.ROOT);
             }
-            default -> throw new IllegalArgumentException();
+            default -> throw new IllegalArgumentException("Invalid paName: " + paName);
         }
         this.b2bUtils.setClient(b2bClient, pollingFactory);
     }
@@ -998,7 +998,7 @@ public class SharedSteps {
                 iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_4);
                 iPnTosPrivacyClientImpl.setBearerToken(SettableBearerToken.BearerTokenType.USER_4);
             }
-            default -> throw new IllegalArgumentException();
+            default -> throw new IllegalArgumentException("Invalid recipient name: " + recipient);
         }
     }
 
@@ -1102,7 +1102,7 @@ public class SharedSteps {
             case COMUNE_MULTI -> this.pnExternalServiceClient.paGroupInfo(SettableApiKey.ApiKeyType.GA);
             case COMUNE_SON -> this.pnExternalServiceClient.paGroupInfo(SettableApiKey.ApiKeyType.SON);
             case COMUNE_ROOT -> this.pnExternalServiceClient.paGroupInfo(SettableApiKey.ApiKeyType.ROOT);
-            default -> throw new IllegalArgumentException();
+            default -> throw new IllegalArgumentException("Invalid paName: " + paName);
         };
         Assertions.assertNotNull(hashMapsList);
         Assertions.assertFalse(hashMapsList.isEmpty());
@@ -1145,23 +1145,6 @@ public class SharedSteps {
         return groups;
     }
 
-    private static EventId getEventId(String iun, DataTest dataFromTest) {
-        TimelineElementV23 timelineElement = dataFromTest.getTimelineElement();
-        TimelineElementDetailsV23 timelineElementDetails = timelineElement.getDetails();
-        DigitalAddress digitalAddress = timelineElementDetails == null ? null : timelineElementDetails.getDigitalAddress();
-        DigitalAddressSource digitalAddressSource = timelineElementDetails == null ? null : timelineElementDetails.getDigitalAddressSource();
-
-        EventId event = new EventId();
-        event.setIun(iun);
-        event.setRecIndex(timelineElementDetails == null ? null : timelineElementDetails.getRecIndex());
-        event.setCourtesyAddressType(digitalAddress == null ? null : digitalAddress.getType());
-        event.setSource(digitalAddressSource == null ? null : digitalAddressSource.getValue());
-        event.setIsFirstSendRetry(dataFromTest.getIsFirstSendRetry());
-        event.setSentAttemptMade(timelineElementDetails == null ? null : timelineElementDetails.getSentAttemptMade());
-        event.setProgressIndex(dataFromTest.getProgressIndex());
-        return event;
-    }
-
     public String getTimelineEventId(String timelineEventCategory, String iun, DataTest dataFromTest) {
         EventId event = getEventId(iun, dataFromTest);
         return switch (timelineEventCategory) {
@@ -1196,6 +1179,23 @@ public class SharedSteps {
                     TimelineEventId.ANALOG_WORKFLOW_RECIPIENT_DECEASED.buildEventId(event);
             default -> null;
         };
+    }
+
+    private static EventId getEventId(String iun, DataTest dataFromTest) {
+        TimelineElementV23 timelineElement = dataFromTest.getTimelineElement();
+        TimelineElementDetailsV23 timelineElementDetails = timelineElement.getDetails();
+        DigitalAddress digitalAddress = timelineElementDetails == null ? null : timelineElementDetails.getDigitalAddress();
+        DigitalAddressSource digitalAddressSource = timelineElementDetails == null ? null : timelineElementDetails.getDigitalAddressSource();
+
+        EventId event = new EventId();
+        event.setIun(iun);
+        event.setRecIndex(timelineElementDetails == null ? null : timelineElementDetails.getRecIndex());
+        event.setCourtesyAddressType(digitalAddress == null ? null : digitalAddress.getType());
+        event.setSource(digitalAddressSource == null ? null : digitalAddressSource.getValue());
+        event.setIsFirstSendRetry(dataFromTest.getIsFirstSendRetry());
+        event.setSentAttemptMade(timelineElementDetails == null ? null : timelineElementDetails.getSentAttemptMade());
+        event.setProgressIndex(dataFromTest.getProgressIndex());
+        return event;
     }
 
     /**
@@ -1291,53 +1291,16 @@ public class SharedSteps {
         }
     }
 
-    private <T, V, K> T updateNotificationRecipient(T notificationRecipient, String denomination, String taxId, V recipientType, K digitalDomicile) {
+    private NotificationRecipientV23 updateNotificationRecipient(NotificationRecipientV23 notificationRecipient,
+                                                                 String denomination,
+                                                                 String taxId,
+                                                                 NotificationRecipientV23.RecipientTypeEnum recipientType,
+                                                                 NotificationDigitalAddress digitalDomicile) {
+        notificationRecipient.setDenomination(denomination);
+        notificationRecipient.setTaxId(taxId);
+        if (recipientType != null) notificationRecipient.recipientType(recipientType);
+        if (digitalDomicile != null) notificationRecipient.digitalDomicile(digitalDomicile);
 
-        if (notificationRecipient instanceof NotificationRecipientV23) {
-            ((NotificationRecipientV23) notificationRecipient)
-                    .denomination(denomination).taxId(taxId);
-            if (recipientType != null) {
-                ((NotificationRecipientV23) notificationRecipient)
-                        .recipientType((NotificationRecipientV23.RecipientTypeEnum) recipientType);
-            }
-            if (digitalDomicile != null) {
-                ((NotificationRecipientV23) notificationRecipient)
-                        .digitalDomicile((NotificationDigitalAddress) digitalDomicile);
-            }
-        } else if (notificationRecipient instanceof it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationRecipient) {
-            ((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationRecipient) notificationRecipient)
-                    .denomination(denomination).taxId(taxId);
-            if (recipientType != null) {
-                ((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationRecipient) notificationRecipient)
-                        .recipientType((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationRecipient.RecipientTypeEnum) recipientType);
-            }
-            if (digitalDomicile != null) {
-                ((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationRecipient) notificationRecipient)
-                        .digitalDomicile((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationDigitalAddress) digitalDomicile);
-            }
-        } else if (notificationRecipient instanceof it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationRecipient) {
-            ((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationRecipient) notificationRecipient)
-                    .denomination(denomination).taxId(taxId);
-            if (recipientType != null) {
-                ((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationRecipient) notificationRecipient)
-                        .recipientType((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationRecipient.RecipientTypeEnum) recipientType);
-            }
-            if (digitalDomicile != null) {
-                ((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationRecipient) notificationRecipient)
-                        .digitalDomicile((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationDigitalAddress) digitalDomicile);
-            }
-        } else if (notificationRecipient instanceof it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21) {
-            ((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21) notificationRecipient)
-                    .denomination(denomination).taxId(taxId);
-            if (recipientType != null) {
-                ((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21) notificationRecipient)
-                        .recipientType((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21.RecipientTypeEnum) recipientType);
-            }
-            if (digitalDomicile != null) {
-                ((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21) notificationRecipient)
-                        .digitalDomicile((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationDigitalAddress) digitalDomicile);
-            }
-        }
         return notificationRecipient;
     }
 

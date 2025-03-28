@@ -193,7 +193,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 pollingFactory.setApiKeys(SettableApiKey.ApiKeyType.GA);
                 sharedSteps.setPA(paName);
             }
-            default -> throw new IllegalArgumentException();
+            default -> throw new IllegalArgumentException("Invalid paName: " + paName);
         }
     }
 

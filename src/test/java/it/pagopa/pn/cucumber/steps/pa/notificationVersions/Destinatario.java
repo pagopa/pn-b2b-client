@@ -64,6 +64,6 @@ public enum Destinatario {
                 return destinatario;
             }
         }
-        throw new RuntimeException("Invalid recipient name passed as parameter: " + name);
+        return null;
     }
 }

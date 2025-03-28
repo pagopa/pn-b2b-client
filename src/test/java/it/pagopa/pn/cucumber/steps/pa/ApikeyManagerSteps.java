@@ -104,7 +104,7 @@ public class ApikeyManagerSteps {
             case "ENABLED" -> ApiKeyStatus.ENABLED;
             case "ROTATED" -> ApiKeyStatus.ROTATED;
             case "CREATED" -> ApiKeyStatus.CREATED;
-            default -> throw new IllegalArgumentException();
+            default -> throw new IllegalArgumentException("Invalid status for ApiKey:" + state);
         };
         Assertions.assertNotNull(
                 apiKeys.getItems().stream()
@@ -118,7 +118,7 @@ public class ApikeyManagerSteps {
             case "BLOCK" -> requestApiKeyStatus.setStatus(RequestApiKeyStatus.StatusEnum.BLOCK);
             case "ENABLE" -> requestApiKeyStatus.setStatus(RequestApiKeyStatus.StatusEnum.ENABLE);
             case "ROTATE" -> requestApiKeyStatus.setStatus(RequestApiKeyStatus.StatusEnum.ROTATE);
-            default -> throw new IllegalArgumentException();
+            default -> throw new IllegalArgumentException("Invalid status for ApiKey: " + state);
         }
         return requestApiKeyStatus;
     }
@@ -215,7 +215,7 @@ public class ApikeyManagerSteps {
             case COMUNE_MULTI -> apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.GA);
             case COMUNE_SON -> apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.SON);
             case COMUNE_ROOT -> apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.ROOT);
-            default -> throw new IllegalArgumentException("Valore PA non valido: " + paName);
+            default -> throw new IllegalArgumentException("Invalid paName: " + paName);
         }
     }
 
@@ -315,7 +315,7 @@ public class ApikeyManagerSteps {
             case COMUNE_MULTI -> apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.GA);
             case COMUNE_SON -> apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.SON);
             case COMUNE_ROOT -> apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.ROOT);
-            default -> throw new IllegalArgumentException("Valore PA non valido: " + paName);
+            default -> throw new IllegalArgumentException("Invalid paName: " + paName);
         }
     }
 

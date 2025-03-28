@@ -215,7 +215,7 @@ public class AppIOB2bSteps {
         } else if (recipient.trim().equalsIgnoreCase(MARIO_GHERKIN)) {
             return MARIO_GHERKIN_TAX_ID;
         } else {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Invalid recipient name: " + recipient);
         }
     }
 

@@ -136,7 +136,7 @@ Feature: verifica validazione sincrona
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo          |
     And destinatario GherkinSpa
-    And destinatario Mario Cucumber con uguale codice avviso del destinario numero 1
+    And destinatario "Mario Cucumber" con uguale codice avviso del destinatario numero 1
       | digitalDomicile_address | FRMTTR76M06B715E@pec.pagopa.it |
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "Duplicated iuv"
