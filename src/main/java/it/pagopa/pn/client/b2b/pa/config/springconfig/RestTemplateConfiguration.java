@@ -42,17 +42,17 @@ public class RestTemplateConfiguration {
     @Bean
     public PoolingHttpClientConnectionManager poolingHttpClientConnectionManager() {
         PoolingHttpClientConnectionManager pooling = new PoolingHttpClientConnectionManager();
-        pooling.setMaxTotal(100);
-        pooling.setDefaultMaxPerRoute(50);
+        pooling.setMaxTotal(200);
+        pooling.setDefaultMaxPerRoute(25);
         return pooling;
     }
 
     @Bean
     public CloseableHttpClient httpClient(PoolingHttpClientConnectionManager poolingHttpClientConnectionManager) {
         RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectTimeout(5000)
-                .setSocketTimeout(10000)
-                .setConnectionRequestTimeout(2000)
+                .setConnectTimeout(10000)
+                .setSocketTimeout(20000)
+                .setConnectionRequestTimeout(5000)
                 .build();
 
         return HttpClients.custom()
