@@ -12,7 +12,6 @@ import it.pagopa.interop.attribute.service.IAttributeApiClient;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.IProducerClient;
 import it.pagopa.interop.authorization.service.utils.PollingService;
-import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementRejectionPayload;
@@ -89,7 +88,6 @@ public class DataPreparationService {
     private final IAttributeApiClient attributeApiClient;
     private final ITenantsApi tenantsApi;
     private final IEServiceClient eServiceClient;
-    private final IEServiceTemplateClient eServiceTemplateClient;
     private final IProducerClient producerClient;
     private final IPurposeApiClient purposeApiClient;
     private final PollingService pollingService;
@@ -115,7 +113,6 @@ public class DataPreparationService {
         this.attributeApiClient = clientTokenConfigurator.getAttributeApiClient();
         this.tenantsApi = clientTokenConfigurator.getTenantsApi();
         this.eServiceClient = clientTokenConfigurator.getEServiceClient();
-        this.eServiceTemplateClient = clientTokenConfigurator.getEServiceTemplateClient();
         this.producerClient = clientTokenConfigurator.getProducerClient();
         this.purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
         this.sharedStepsContext = sharedStepsContext;
@@ -461,7 +458,6 @@ public class DataPreparationService {
         return result;
     }
 
-    // 27/03/2025 WIP
     public Map<String, Object> bringTemplateInstanceDescriptorToGivenState(UUID eServiceId, UUID descriptorId, EServiceDescriptorState descriptorState, boolean withDocument) {
         // 1 add document to descriptor
         UUID documentId = null;
