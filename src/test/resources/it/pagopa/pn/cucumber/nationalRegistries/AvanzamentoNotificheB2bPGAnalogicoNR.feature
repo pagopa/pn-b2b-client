@@ -71,9 +71,9 @@ Feature: avanzamento b2b notifica PG analogico con chiamata a National Registry 
       | physicalCommunication |  AR_REGISTERED_LETTER |
     And destinatario
       | denomination | Test AR Fail 2 |
-      | taxId | 05722930657 |
+      | taxId | 13022491008 |
       | digitalDomicile | NULL |
       | recipientType   | PG                 |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"

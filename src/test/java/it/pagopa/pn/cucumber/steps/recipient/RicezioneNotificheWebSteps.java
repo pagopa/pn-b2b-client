@@ -7,14 +7,15 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffDocumentType;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffFullNotificationV1;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffNotificationDetailDocument;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffNotificationDetailTimeline;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffConsent;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffTosPrivacyActionBody;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.ConsentType;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV25;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV26;
 import it.pagopa.pn.client.b2b.pa.service.*;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
@@ -56,7 +57,7 @@ public class RicezioneNotificheWebSteps {
     private final IPnBFFRecipientNotificationClient bffRecipientNotificationClient;
     private final IPnTosPrivacyClient iPnTosPrivacyClient;
     private final PnB2bClientTimingConfigs timingConfigs;
-    private static final Integer waitDefault = 10000;
+    private static final Integer WAIT_DEFAULT = 10000;
 
     private HttpStatusCodeException notificationError;
     private FullReceivedNotificationV25 fullNotification;
@@ -121,6 +122,28 @@ public class RicezioneNotificheWebSteps {
         Assertions.assertNotNull(bffFullNotificationV1Recipient);
         log.info("FULL TIMELINE RECIPIENT: " + bffFullNotificationV1Recipient.getTimeline());
     }
+
+    @And("lato destinatario viene recuperato AAR lato web dal destinatario {string}")
+    public void retrieveNotificationAAROnRecipientSideForWeb(String user) {
+        Assertions.assertNotNull(bffFullNotificationV1Recipient);
+        selectUser(user);
+        String documentId = Optional.ofNullable(bffFullNotificationV1Recipient.getOtherDocuments()).orElse(List.of()).stream()
+                .filter(x -> x != null && x.getDocumentType().equals("AAR"))
+                .map(BffNotificationDetailDocument::getDocumentId)
+                .findFirst()
+                .orElse(null);
+        Assertions.assertDoesNotThrow(() ->
+                bffRecipientNotificationClient.getReceivedNotificationDocumentV1(sharedSteps.getSentNotification().getIun(), BffDocumentType.AAR, null, null, documentId));
+    }
+
+    @And("lato destinatario è possibile recuperare correttamente l'allegato {string} dal destinatario {string}")
+    public void retrieveAttachmentOnRecipientSideForWeb(String attachmentName, String user) {
+        Assertions.assertNotNull(bffFullNotificationV1Recipient);
+        selectUser(user);
+        Assertions.assertDoesNotThrow(() ->
+                bffRecipientNotificationClient.getReceivedNotificationPaymentV1WithHttpInfo(sharedSteps.getSentNotification().getIun(), attachmentName, null, 0));
+    }
+
 
     @And("lato api l'elemento di timeline della notifica {string} con deliveryDetailCode {string} non è visibile")
     public void timelineEventWithCategoryAndDeliveryDetailCodeNotPresent(String category, String deliveryDetailCode) {
@@ -227,13 +250,13 @@ public class RicezioneNotificheWebSteps {
     public void theDocumentCanBeProperlyRetrievedBy(String recipient) {
         sharedSteps.selectUser(recipient);
         NotificationAttachmentDownloadMetadataResponse downloadResponse = getRecivedNotificationDocument();
-        AtomicReference<String> Sha256 = new AtomicReference<>("");
+        AtomicReference<String> sha256 = new AtomicReference<>("");
         Assertions.assertDoesNotThrow(() -> {
             byte[] bytes = Assertions.assertDoesNotThrow(() ->
                     b2bUtils.downloadFile(downloadResponse.getUrl()));
-            Sha256.set(b2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
+            sha256.set(b2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
         });
-        Assertions.assertEquals(Sha256.get(), downloadResponse.getSha256());
+        Assertions.assertEquals(sha256.get(), downloadResponse.getSha256());
     }
 
     @Then("il documento notificato non può essere correttamente recuperato da {string}")
@@ -291,14 +314,14 @@ public class RicezioneNotificheWebSteps {
         }
 
         if (!"F24".equalsIgnoreCase(attachmentName)) {
-            AtomicReference<String> Sha256 = new AtomicReference<>("");
+            AtomicReference<String> sha256 = new AtomicReference<>("");
             NotificationAttachmentDownloadMetadataResponse finalDownloadResponse = downloadResponse;
             Assertions.assertDoesNotThrow(() -> {
                 byte[] bytes = Assertions.assertDoesNotThrow(() ->
                         b2bUtils.downloadFile(Objects.requireNonNull(finalDownloadResponse).getUrl()));
-                Sha256.set(b2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
+                sha256.set(b2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
             });
-            Assertions.assertEquals(Sha256.get(), Objects.requireNonNull(downloadResponse).getSha256());
+            Assertions.assertEquals(sha256.get(), Objects.requireNonNull(downloadResponse).getSha256());
         } else {
             NotificationAttachmentDownloadMetadataResponse finalDownloadResponse = downloadResponse;
             Assertions.assertDoesNotThrow(() ->
@@ -444,7 +467,7 @@ public class RicezioneNotificheWebSteps {
         if (data.containsKey("status")) {
             searchParam.status = NotificationStatusV26.valueOf(data.get("status"));
         }
-        searchParam.iunMatch = ((iun != null && iun.equalsIgnoreCase("ACTUAL") ? sharedSteps.getSentNotification().getIun() : iun));
+        searchParam.iunMatch = iun != null && iun.equalsIgnoreCase("ACTUAL") ? sharedSteps.getSentNotification().getIun() : iun;
         searchParam.size = Integer.parseInt(data.getOrDefault("size", "10"));
         if (searchParam.size == -1) searchParam.size = null;
         return searchParam;
@@ -460,7 +483,7 @@ public class RicezioneNotificheWebSteps {
         searchParam.endDate = dates.getValue2();
         searchParam.subjectRegExp = data.getOrDefault("subjectRegExp", null);
         String iun = data.getOrDefault("iunMatch", null);
-        searchParam.iunMatch = ((iun != null && iun.equalsIgnoreCase("ACTUAL") ? sharedSteps.getSentNotification().getIun() : iun));
+        searchParam.iunMatch = iun != null && iun.equalsIgnoreCase("ACTUAL") ? sharedSteps.getSentNotification().getIun() : iun;
         searchParam.size = Integer.parseInt(data.getOrDefault("size", "10"));
         return searchParam;
     }
@@ -647,9 +670,12 @@ public class RicezioneNotificheWebSteps {
 
     private void postRecipientLegalAddressWrongCode(String senderIdPa, String addressVerification, String verificationCode) {
         String[] code = {verificationCode};
-        Assertions.assertThrows(HttpStatusCodeException.class, () -> {
-            this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.PEC, (new AddressVerification().value(addressVerification).verificationCode(code[0])));
-        });
+        AddressVerification verification = new AddressVerification()
+                .value(addressVerification)
+                .verificationCode(code[0]);
+
+        Assertions.assertThrows(HttpStatusCodeException.class,
+                () -> this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.PEC, verification));
     }
 
     @And("viene cancellata l'email di cortesia per il comune {string}")
@@ -699,7 +725,7 @@ public class RicezioneNotificheWebSteps {
 
     @And("attendo che gli elementi di timeline SEND_ANALOG_PROGRESS vengano ricevuti tutti")
     public void attendoCheGliElementiDiTimelineSEND_ANALOG_PROGRESSVenganoRicevutiTutti() {
-        Integer waiting = timingConfigs.getWaitMillisForSendAnalogEvents() == null ? waitDefault : timingConfigs.getWaitMillisForSendAnalogEvents();
+        Integer waiting = timingConfigs.getWaitMillisForSendAnalogEvents() == null ? WAIT_DEFAULT : timingConfigs.getWaitMillisForSendAnalogEvents();
         waitState(waiting);
     }
 
@@ -988,7 +1014,7 @@ public class RicezioneNotificheWebSteps {
         Assertions.assertFalse(privacyConsentv1.isEmpty());
         privacyConsentv1.forEach(data -> {
             Assertions.assertNotNull(data.getConsentType());
-            Assertions.assertNotNull(data.getConsentType().equals(ConsentType.TOS_SERCQ));
+            Assertions.assertEquals(ConsentType.TOS_SERCQ, data.getConsentType());
             Assertions.assertEquals(data.getAccepted(), tosStatus.equalsIgnoreCase("positiva"));
         });
     }

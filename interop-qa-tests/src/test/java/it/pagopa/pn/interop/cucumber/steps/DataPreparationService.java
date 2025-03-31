@@ -96,6 +96,10 @@ public class DataPreparationService {
     private final HttpCallExecutor httpCallExecutor;
     private final RiskAnalysisDataInitializer riskAnalysisDataInitializer;
     private final SharedStepsContext sharedStepsContext;
+    public static final String ERROR_RETRIEVING_AGREEMENT = "There was an error while retrieving the agreement by ID!";
+    public static final String ERROR_RETRIEVING_PRODUCER_DESCRIPTOR = "There was an error while retrieving the producer e-service descriptor";
+    public static final String ERROR_RETRIEVING_PURPOSE = "There was an error while retrieving the purpose!";
+    public static final String DESCRIPTION_TEST = "description_test";
 
     static {
         DEFAULT_CLIENT_SEED.setName(String.format("client %d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)));
@@ -179,7 +183,7 @@ public class DataPreparationService {
                 res -> ((Purpose) httpCallExecutor.getResponse()).getCurrentVersion() != null
                         ? ((Purpose) httpCallExecutor.getResponse()).getCurrentVersion().getState().getValue().equals(PurposeVersionState.ARCHIVED.getValue())
                         : Boolean.FALSE,
-                "There was an error while retrieving the purpose!"
+                ERROR_RETRIEVING_PURPOSE
         );
     }
 
@@ -255,7 +259,7 @@ public class DataPreparationService {
         pollingService.makePolling(
             () ->  httpCallExecutor.performCall(() -> agreementClient.getAgreementById(sharedStepsContext.getXCorrelationId(), agreementId)),
             res -> res != HttpStatus.NOT_FOUND,
-            "There was an error while retrieving the agreement by ID!"
+            ERROR_RETRIEVING_AGREEMENT
         );
         return agreementId;
     }
@@ -266,7 +270,7 @@ public class DataPreparationService {
         pollingService.makePolling(
                 () -> agreementClient.getAgreementById(sharedStepsContext.getXCorrelationId(), agreementId),
                 res -> res.getState() == expectedState,
-                "There was an error while retrieving the agreement by ID!"
+                ERROR_RETRIEVING_AGREEMENT
         );
     }
 
@@ -278,7 +282,7 @@ public class DataPreparationService {
                 res -> isTrue(res.getState().equals(AgreementState.SUSPENDED)
                     && ClientType.PRODUCER.equals(suspendedBy) ? res.getSuspendedByProducer()
                     : res.getSuspendedByConsumer()),
-                "There was an error while retrieving the agreement by ID!"
+                ERROR_RETRIEVING_AGREEMENT
         );
 
     }
@@ -289,7 +293,7 @@ public class DataPreparationService {
         pollingService.makePolling(
                 () -> agreementClient.getAgreementById(sharedStepsContext.getXCorrelationId(), agreementId),
                 res -> res.getState() == AgreementState.ARCHIVED,
-                "There was an error while retrieving the agreement by ID!"
+                ERROR_RETRIEVING_AGREEMENT
         );
     }
 
@@ -299,16 +303,16 @@ public class DataPreparationService {
         pollingService.makePolling(
                 () -> agreementClient.getAgreementById(sharedStepsContext.getXCorrelationId(), agreementId),
                 res -> !res.getConsumerDocuments().isEmpty(),
-                "There was an error while retrieving the agreement by ID!"
+                ERROR_RETRIEVING_AGREEMENT
         );
     }
 
     public Attribute createAttribute(AttributeKind attributeKind, String name) {
         String actualName = name != null ? null : String.format("new_attribute_%d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE));
         switch (attributeKind) {
-            case CERTIFIED -> httpCallExecutor.performCall(() -> attributeApiClient.createCertifiedAttribute(sharedStepsContext.getXCorrelationId(), new CertifiedAttributeSeed().description("description_test").name(actualName)));
-            case VERIFIED -> httpCallExecutor.performCall(() -> attributeApiClient.createVerifiedAttribute(sharedStepsContext.getXCorrelationId(), new AttributeSeed().description("description_test").name(actualName)));
-            case DECLARED -> httpCallExecutor.performCall(() -> attributeApiClient.createDeclaredAttribute(sharedStepsContext.getXCorrelationId(), new AttributeSeed().description("description_test").name(actualName)));
+            case CERTIFIED -> httpCallExecutor.performCall(() -> attributeApiClient.createCertifiedAttribute(sharedStepsContext.getXCorrelationId(), new CertifiedAttributeSeed().description(DESCRIPTION_TEST).name(actualName)));
+            case VERIFIED -> httpCallExecutor.performCall(() -> attributeApiClient.createVerifiedAttribute(sharedStepsContext.getXCorrelationId(), new AttributeSeed().description(DESCRIPTION_TEST).name(actualName)));
+            case DECLARED -> httpCallExecutor.performCall(() -> attributeApiClient.createDeclaredAttribute(sharedStepsContext.getXCorrelationId(), new AttributeSeed().description(DESCRIPTION_TEST).name(actualName)));
             default -> throw new IllegalArgumentException("Invalid attributeKind: " + attributeKind);
         }
         assertValidResponse();
@@ -348,14 +352,14 @@ public class DataPreparationService {
     }
 
     public EServiceDescriptor createEServiceAndDraftDescriptor(EServiceSeed partialEserviceSeed, UpdateEServiceDescriptorSeed partialDescriptorSeed) {
-        EServiceSeed DEFAULT_ESERVICE_SEED = new EServiceSeed()
+        EServiceSeed defaultEserviceSeed = new EServiceSeed()
                 .name(String.format("e-service %d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)))
                 .description("Descrizione e-service")
                 .technology(EServiceTechnology.REST)
                 .mode(EServiceMode.DELIVER)
                 .isConsumerDelegable(false)
                 .isClientAccessDelegable(false);
-        EServiceSeed eServiceSeed = merge(DEFAULT_ESERVICE_SEED, partialEserviceSeed);
+        EServiceSeed eServiceSeed = merge(defaultEserviceSeed, partialEserviceSeed);
 
         httpCallExecutor.performCall(() -> eServiceClient.createEService(sharedStepsContext.getXCorrelationId(), eServiceSeed));
         assertValidResponse();
@@ -365,7 +369,7 @@ public class DataPreparationService {
         pollingService.makePolling(
                 () -> httpCallExecutor.performCall(() -> producerClient.getProducerEServiceDescriptor(sharedStepsContext.getXCorrelationId(), eserviceId, descriptorId)),
                 res -> res != HttpStatus.NOT_FOUND,
-                "There was an error while retrieving the producer e-service descriptor"
+                ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
 
         updateDraftDescriptor(eserviceId, descriptorId, partialDescriptorSeed);
@@ -452,7 +456,7 @@ public class DataPreparationService {
         pollingService.makePolling(
                 () -> producerClient.getProducerEServiceDescriptor(sharedStepsContext.getXCorrelationId(), eServiceId, descriptorId),
                 res -> res.getState() == descriptorState,
-                "There was an error while retrieving the producer e-service descriptor"
+                ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
         return result;
     }
@@ -516,7 +520,7 @@ public class DataPreparationService {
         pollingService.makePolling(
                 () -> producerClient.getProducerEServiceDescriptor(sharedStepsContext.getXCorrelationId(), eServiceId, descriptorId),
                 res -> res.getDocs().stream().anyMatch(doc -> doc.getPrettyName().equals(prettyName)),
-                "There was an error while retrieving the producer e-service descriptor"
+                ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
         return documentId;
     }
@@ -529,7 +533,7 @@ public class DataPreparationService {
         pollingService.makePolling(
                 () -> producerClient.getProducerEServiceDescriptor(sharedStepsContext.getXCorrelationId(), eServiceId, descriptorId),
                 res -> res.getInterface() != null,
-                "There was an error while retrieving the producer e-service descriptor"
+                ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
 
     }
@@ -571,7 +575,7 @@ public class DataPreparationService {
         pollingService.makePolling(
             () -> producerClient.getProducerEServiceDescriptor(sharedStepsContext.getXCorrelationId(), eServiceId, descriptorId),
             res -> res.getState() == EServiceDescriptorState.PUBLISHED,
-            "There was an error while retrieving the producer e-service descriptor"
+            ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
     }
 
@@ -581,7 +585,7 @@ public class DataPreparationService {
         pollingService.makePolling(
                 () -> producerClient.getProducerEServiceDescriptor(sharedStepsContext.getXCorrelationId(), eServiceId, descriptorId),
                 res -> res.getState() == EServiceDescriptorState.SUSPENDED,
-                "There was an error while retrieving the producer e-service descriptor"
+                ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
     }
 
@@ -592,7 +596,7 @@ public class DataPreparationService {
         pollingService.makePolling(
                 () -> httpCallExecutor.performCall(() -> producerClient.getProducerEServiceDescriptor(sharedStepsContext.getXCorrelationId(), eServiceId, descriptorId)),
                 res -> res != HttpStatus.NOT_FOUND,
-                "There was an error while retrieving the producer e-service descriptor"
+                ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
         return descriptorId;
     }
@@ -664,7 +668,7 @@ public class DataPreparationService {
                     }
                     return false;
                 },
-                "There was an error while retrieving the purpose!"
+                ERROR_RETRIEVING_PURPOSE
         );
 
         if (purposeState == PurposeVersionState.DRAFT) {
@@ -687,7 +691,7 @@ public class DataPreparationService {
                         return PurposeVersionState.WAITING_FOR_APPROVAL == Optional.ofNullable(res.getWaitingForApprovalVersion())
                                 .map(PurposeVersion::getState).orElse(null);
                     },
-                    "There was an error while retrieving the purpose!"
+                    ERROR_RETRIEVING_PURPOSE
             );
             sharedStepsContext.getPurposeCommonContext().setPurposeId(String.valueOf(purposeId));
             sharedStepsContext.getPurposeCommonContext().setWaitingForApprovalVersionId(String.valueOf(waitingForApprovalVersionId.get()));
@@ -703,7 +707,7 @@ public class DataPreparationService {
                     }
                     return false;
                 },
-                "There was an error while retrieving the purpose!"
+                ERROR_RETRIEVING_PURPOSE
         );
 
         // 4. If the state required is SUSPENDED call the endpoint to suspend the purpose version
@@ -740,7 +744,6 @@ public class DataPreparationService {
         }
         sharedStepsContext.getPurposeCommonContext().setPurposeId(String.valueOf(purposeId));
         sharedStepsContext.getPurposeCommonContext().setVersionId(String.valueOf(currentVersion.get()));
-        return;
     }
 
     public void rejectPurposeVersion(UUID purposeId, UUID versionId) {
@@ -753,7 +756,7 @@ public class DataPreparationService {
                     Optional<PurposeVersionState> versionState = res.getVersions().stream().filter(v -> v.getId().equals(versionId)).map(PurposeVersion::getState).findFirst();
                     return versionState.isPresent() && versionState.get().equals(PurposeVersionState.REJECTED);
                 },
-                "There was an error while retrieving the purpose!"
+                ERROR_RETRIEVING_PURPOSE
         );
     }
 

@@ -118,6 +118,10 @@ public class DataTableTypeUtil {
             case "DOC_BS" -> document = "classpath:/verbaleBs.pdf";
             case "DOC_BS2" -> document = "classpath:/Atto2BsRadd.pdf";
             case "DOC_30MB" -> document = "classpath:/allegato_30Mb.pdf";
+            case "ALLEGATO_1_BN" -> document = "classpath:/Allegato1_BN.pdf";
+            case "ALLEGATO_2_BN" -> document = "classpath:/Allegato2_BN.pdf";
+            case "ALLEGATO_3_COLORI" -> document = "classpath:/Allegato3_COLORI.PDF";
+            case "ALLEGATO_4_COLORI" -> document = "classpath:/Allegato4_COLORI.pdf";
             default ->  document = getDefaultValue(DOCUMENT.key);
         }
 
@@ -434,6 +438,8 @@ public class DataTableTypeUtil {
             case "PAYMENT_F24_FLAT_0" -> metadati = "classpath:/METADATA_CORRETTO_FLAT_0.json";
             case "PAYMENT_F24_FLAT_1" -> metadati = "classpath:/METADATA_CORRETTO_FLAT_1.json";
             case "PAYMENT_F24_FLAT_2" -> metadati = "classpath:/METADATA_CORRETTO_FLAT_2.json";
+            case "PAYMENT_F24_SIMPLIFIED_VALIDATION_OFF_1" -> metadati = "classpath:/f24_delivery_simplified_validation_off_1.json";
+            case "PAYMENT_F24_SIMPLIFIED_VALIDATION_OFF_2" -> metadati = "classpath:/f24_delivery_simplified_validation_off_2.json";
 
             default ->  metadati = getDefaultValue(PAYMENT_F24.key);
         }
@@ -656,7 +662,7 @@ public class DataTableTypeUtil {
         String analogCost = getValue(data, DETAILS_ANALOG_COST.key);
         String pollingTime = getValue(data, POLLING_TIME.key);
         String numCheck = getValue(data, NUM_CHECK.key);
-        String pollingType = getValue(data, POLLING_Type.key);
+        String pollingType = getValue(data, POLLING_TYPE.key);
         String loadTimeline = getValue(data, LOAD_TIMELINE.key);
 
         if (data.size() == 1 && data.get("NULL") != null) {

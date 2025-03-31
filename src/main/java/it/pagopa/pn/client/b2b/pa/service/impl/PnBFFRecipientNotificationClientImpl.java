@@ -3,6 +3,8 @@ package it.pagopa.pn.client.b2b.pa.service.impl;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.ApiClient;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.pa.recipient.NotificationSentApi;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient.NotificationReceivedApi;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffDocumentDownloadMetadataResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffDocumentType;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffFullNotificationV1;
 import it.pagopa.pn.client.b2b.pa.service.IPnBFFRecipientNotificationClient;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
@@ -12,6 +14,8 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.UUID;
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
@@ -31,6 +35,10 @@ public class PnBFFRecipientNotificationClientImpl implements IPnBFFRecipientNoti
     private final String leonardoBearerToken;
     private final String gherkinSrlBearerToken;
     private final String cucumberSpaBearerToken;
+    private final String galileoBearerToken;
+    private final String aldameriniPGBearerToken;
+    private final String mariaMontessoriPGBearerToken;
+    private final String nildeIottiPGBearerToken;
 
     public PnBFFRecipientNotificationClientImpl(RestTemplate restTemplate,
                                                 @Value("${pn.external.bearer-token-pa-1}") String bearerTokenCom1,
@@ -42,9 +50,13 @@ public class PnBFFRecipientNotificationClientImpl implements IPnBFFRecipientNoti
                                                 @Value("${pn.bearer-token.user2}") String marioGherkinBearerToken,
                                                 @Value("${pn.bearer-token.user3}") String leonardoBearerToken,
                                                 @Value("${pn.bearer-token.user5}") String dinoBearerToken,
+                                                @Value("${pn.bearer-token.user4}") String galileoBearerToken,
                                                 @Value("${pn.bearer-token.scaduto}") String userBearerTokenScaduto,
                                                 @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
                                                 @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken,
+                                                @Value("${pn.bearer-token.pg3}") String aldameriniPGBearerToken,
+                                                @Value("${pn.bearer-token.pg4}") String mariaMontessoriPGBearerToken,
+                                                @Value("${pn.bearer-token.pg5}") String nildeIottiPGBearerToken,
                                                 @Value("${pn.webapi.external.base-url}") String basePath,
                                                 @Value("${pn.bearer-token.user2}") String berearTokenRecipient,
                                                 @Value("${pn.external.bearer-token-pa-GA}") String berearTokenSender) {
@@ -58,6 +70,10 @@ public class PnBFFRecipientNotificationClientImpl implements IPnBFFRecipientNoti
         this.leonardoBearerToken = leonardoBearerToken;
         this.gherkinSrlBearerToken = gherkinSrlBearerToken;
         this.cucumberSpaBearerToken = cucumberSpaBearerToken;
+        this.galileoBearerToken = galileoBearerToken;
+        this.aldameriniPGBearerToken = aldameriniPGBearerToken;
+        this.mariaMontessoriPGBearerToken = mariaMontessoriPGBearerToken;
+        this.nildeIottiPGBearerToken = nildeIottiPGBearerToken;
         this.restTemplate = restTemplate;
         this.basePath = basePath;
         this.notificationReceivedApi = new NotificationReceivedApi(newApiClientForRecipient(restTemplate, basePath, berearTokenRecipient));
@@ -89,6 +105,16 @@ public class PnBFFRecipientNotificationClientImpl implements IPnBFFRecipientNoti
     }
 
     @Override
+    public BffDocumentDownloadMetadataResponse getReceivedNotificationDocumentV1(String iun, BffDocumentType documentType, UUID mandateId, Integer documentIdx, String documentId) {
+        return notificationReceivedApi.getReceivedNotificationDocumentV1(iun, documentType, mandateId, documentIdx, documentId);
+    }
+
+    @Override
+    public ResponseEntity<BffDocumentDownloadMetadataResponse> getReceivedNotificationPaymentV1WithHttpInfo(String iun, String attachmentName, UUID mandateId, Integer attachmentIdx) {
+        return notificationReceivedApi.getReceivedNotificationPaymentV1WithHttpInfo(iun, attachmentName, mandateId, attachmentIdx);
+    }
+
+    @Override
     public void setRecipientBearerToken(SettableBearerToken.BearerTokenType bearerToken) {
         switch (bearerToken) {
             case USER_1 -> {
@@ -100,11 +126,23 @@ public class PnBFFRecipientNotificationClientImpl implements IPnBFFRecipientNoti
             case USER_3 -> {
                 this.notificationReceivedApi.setApiClient(newApiClientForRecipient(restTemplate, basePath, leonardoBearerToken));
             }
+            case USER_4 -> {
+                this.notificationReceivedApi.setApiClient(newApiClientForRecipient(restTemplate, basePath, galileoBearerToken));
+            }
             case PG_1 -> {
                 this.notificationReceivedApi.setApiClient(newApiClientForRecipient(restTemplate, basePath, gherkinSrlBearerToken));
             }
             case PG_2 -> {
                 this.notificationReceivedApi.setApiClient(newApiClientForRecipient(restTemplate, basePath, cucumberSpaBearerToken));
+            }
+            case PG_3 -> {
+                this.notificationReceivedApi.setApiClient(newApiClientForRecipient(restTemplate, basePath, aldameriniPGBearerToken));
+            }
+            case PG_4 -> {
+                this.notificationReceivedApi.setApiClient(newApiClientForRecipient(restTemplate, basePath, mariaMontessoriPGBearerToken));
+            }
+            case PG_5 -> {
+                this.notificationReceivedApi.setApiClient(newApiClientForRecipient(restTemplate, basePath, nildeIottiPGBearerToken));
             }
             default -> throw new IllegalStateException("Unexpected value: " + bearerToken);
         }

@@ -275,7 +275,7 @@ Feature: aggiornamento stream
     And viene aggiornata la apiKey utilizzata per gli stream
     And si crea il nuovo stream per il "Comune_Multi" con versione "V23"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
-    When si aggiorna lo stream creato con versione "V10" -Cross Versioning
+    When si aggiorna lo stream creato con versione "V23" invocando la versione "V10" - Cross Versioning
     Then l'operazione ha prodotto un errore con status code "400"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
@@ -287,7 +287,7 @@ Feature: aggiornamento stream
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V10"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
-    When si aggiorna lo stream creato con versione "V23" -Cross Versioning
+    When si aggiorna lo stream creato con versione "V10" invocando la versione "V23" - Cross Versioning
     Then l'operazione ha prodotto un errore con status code "403"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata

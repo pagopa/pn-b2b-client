@@ -44,7 +44,7 @@ Feature: Interop Tracing feature
       | status    |
       | MISSING   |
       | COMPLETED |
-      | PENDING   |
+#      | PENDING   | Line commented since no pending tracings are present
       | ERROR     |
 
   # Questo test va eseguito usando un'utenza con cui non sono mai stati caricati file di tracing
@@ -94,7 +94,7 @@ Feature: Interop Tracing feature
   Scenario: [INTEROP-TRACING-11] Verifica stato endpoint di health
     When viene invocato l'endpoint di health con successo
 
-  @interopTracingCsv @ignore
+  @interopTracingCsv
   Scenario: [INTEROP-TRACING-12] Invio del file CSV tracing mancante utilizzando l'identificativo del file di tracing non inserito per una determinata data
     Given l'utenza "TENANT1" effettua le chiamate
     Given viene recuperata la lista di tracing con stato "MISSING"

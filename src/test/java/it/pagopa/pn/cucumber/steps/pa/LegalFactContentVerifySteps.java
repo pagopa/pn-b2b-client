@@ -22,6 +22,7 @@ import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.Field;
+import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -93,7 +94,7 @@ public class LegalFactContentVerifySteps {
                 .toList();
 
         if (!listOfMapCleaned.isEmpty()) {
-            listOfMapCleaned.forEach((map) -> map.forEach((legalFactField, legalFactValue) -> checkLegalFactFieldValue(source, legalFactField, legalFactValue)));
+            listOfMapCleaned.forEach(map -> map.forEach((legalFactField, legalFactValue) -> checkLegalFactFieldValue(source, legalFactField, legalFactValue)));
         }
     }
 
@@ -113,7 +114,7 @@ public class LegalFactContentVerifySteps {
                     .filter(map -> map.keySet().stream().noneMatch(key -> key.contains(IPnParserLegalFact.DESTINATARIO)))
                     .toList();
 
-            listOfMapCleaned.forEach((map) -> map.forEach((legalFactField, legalFactValue) -> checkLegalFactFieldValue(source, legalFactField, legalFactValue)));
+            listOfMapCleaned.forEach(map -> map.forEach((legalFactField, legalFactValue) -> checkLegalFactFieldValue(source, legalFactField, legalFactValue)));
             checkLegalFactDestinatario(source, PnDestinatarioAnalogico.mapToDestinatarioAnalogico(listOfMap), 0);
         } else {
             dataTable
@@ -217,14 +218,16 @@ public void checkLegalFactType(byte[] source, String legalFactType) {
     }
 
     private void assertLegalFactType(PnParserLegalFactResponse pnParserLegalFactResponse, String legalFactType) {
-        Assertions.assertEquals(IPnParserLegalFact.LegalFactTypeTitle.getTitleByType(IPnParserLegalFact.LegalFactType.valueOf(legalFactType)),
-                pnParserLegalFactResponse.getResponse().getField());
+        String actual = pnParserLegalFactResponse.getResponse().getField().replace("\ufb01", "fi");
+        String expected = IPnParserLegalFact.LegalFactTypeTitle.getTitleByType(IPnParserLegalFact.LegalFactType.valueOf(legalFactType));
+        Assertions.assertEquals(expected, actual);
     }
 
     private void assertLegalFactFieldValue(PnParserLegalFactResponse pnParserLegalFactResponse, String legalFactField, String legalFactValue) {
         Assertions.assertNotNull(pnParserLegalFactResponse.getResponse().getField());
-        Assertions.assertEquals(legalFactValue, pnParserLegalFactResponse.getResponse().getField());
-        Assertions.assertEquals(legalFactValue, pnParserLegalFactResponse.getResponse().getPnLegalFact().getAllLegalFactValues().fieldValue().get(IPnParserLegalFact.LegalFactField.valueOf(legalFactField)));
+        Assertions.assertEquals(legalFactValue, pnParserLegalFactResponse.getResponse().getField().replace("\ufb01", "fi"));
+        String actual = pnParserLegalFactResponse.getResponse().getPnLegalFact().getAllLegalFactValues().fieldValue().get(IPnParserLegalFact.LegalFactField.valueOf(legalFactField)).replace("\ufb01", "fi");
+        Assertions.assertEquals(legalFactValue, actual);
     }
 
     private void assertLegalFactDestinatario(PnParserLegalFactResponse pnParserLegalFactResponse, List<PnDestinatarioAnalogico> destinatarioAnalogicoList, int multiDestinatarioPosition) {
@@ -270,6 +273,7 @@ public void checkLegalFactType(byte[] source, String legalFactType) {
                     Assertions.assertNull(target);
                 }
             }
+            default -> throw new IllegalArgumentException("Valore di versione non riconosciuto: " + version);
         }
     }
 }

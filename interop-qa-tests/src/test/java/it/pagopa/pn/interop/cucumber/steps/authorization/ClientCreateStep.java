@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ClientCreateStep {
+    private static final Random RANDOM = new Random();
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final IAuthorizationClient authorizationClientCreate;
     private final IdentityService identityService;
@@ -55,7 +56,7 @@ public class ClientCreateStep {
 
     private ClientSeed createClientSeed() {
         ClientSeed clientSeed = new ClientSeed();
-        clientSeed.setName(String.format("client %d", new Random().nextInt(1000)));
+        clientSeed.setName(String.format("client %d", RANDOM.nextInt(1000)));
         clientSeed.setDescription("Descrizione client");
         clientSeed.setMembers(List.of());
         return clientSeed;

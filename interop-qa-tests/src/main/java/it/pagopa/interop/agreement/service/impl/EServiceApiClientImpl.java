@@ -160,4 +160,5 @@ public class EServiceApiClientImpl implements IEServiceClient {
     public void setBearerToken(String bearerToken) {
         this.eservicesApi.setApiClient(createApiClient(bearerToken));
     }
+
 }
