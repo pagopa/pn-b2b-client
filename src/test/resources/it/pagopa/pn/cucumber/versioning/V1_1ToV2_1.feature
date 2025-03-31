@@ -275,5 +275,5 @@ Feature: verifica compatibilità tra v1.1 a v2.1
 
 
   Scenario: [B2B-PA-SEND_VERSION_V1_V21_23] recupero notifica vecchia di 120 giorni con recupero stato dalla versione V1 PN-9475
-    When recupera notifica vecchia di 120 giorni da lato web PA e verifica presenza pagamento
-    Then viene effettuato recupero stato della notifica con la V1 dal comune "Comune_1"
+    When "Comune_1" recupera notifica vecchia di 120 giorni da lato web PA e verifica presenza pagamento
+    Then viene effettuato recupero stato della notifica dal comune "Comune_1" con la versione "V1"

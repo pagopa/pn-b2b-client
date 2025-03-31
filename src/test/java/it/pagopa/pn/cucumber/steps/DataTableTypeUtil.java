@@ -23,106 +23,114 @@ public class DataTableTypeUtil {
     @Autowired
     private PnPaB2bUtils utils;
 
+    /**
+     * NOTA: a differenza degli altri convertitori di recipient, che sono stati inseriti come metodi privati delle classi
+     * che implementano {@link it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationStepsInterface},
+     * questo qua viene condiviso sia da V23 che da V24. Poiché non si può registrare un TableEntryTransformer per una classe
+     * più di una volta all'interno di un progetto Cucumber, questo metodo dovrà rimanere all'interno di questa classe.
+     */
     @DataTableType
-    public synchronized NewNotificationRequestV24 convertNotificationRequestV24(Map<String, String> data) {
-        NewNotificationRequestV24 notificationRequest = (new NewNotificationRequestV24()
-                .subject(getValue(data, SUBJECT.key))
-                .cancelledIun(getValue(data, CANCELLED_IUN.key))
-                .group(getValue(data, GROUP.key))
-                .idempotenceToken(getValue(data, IDEMPOTENCE_TOKEN.key))
-                ._abstract(getValue(data, ABSTRACT.key))
-                .senderDenomination(getValue(data, SENDER_DENOMINATION.key))
-                .senderTaxId(getValue(data, SENDER_TAX_ID.key))
-                .paProtocolNumber(getValue(data, PA_PROTOCOL_NUMBER.key))
-                .taxonomyCode(getValue(data, TAXONOMY_CODE.key))
-                .amount(getValue(data, AMOUNT.key) == null ? null : Integer.parseInt(getValue(data, AMOUNT.key)))
-                .paymentExpirationDate(getValue(data, PAYMENT_EXPIRATION_DATE.key) == null ?
-                        null : getValue(data, PAYMENT_EXPIRATION_DATE.key))
-                .notificationFeePolicy((getValue(data, NOTIFICATION_FEE_POLICY.key) == null ?
-                        null : (getValue(data, NOTIFICATION_FEE_POLICY.key).equalsIgnoreCase("FLAT_RATE") ?
-                        NotificationFeePolicy.FLAT_RATE :
-                        NotificationFeePolicy.DELIVERY_MODE)))
-                .physicalCommunicationType((getValue(data, PHYSICAL_COMMUNICATION_TYPE.key) == null ?
-                        null : (getValue(data, PHYSICAL_COMMUNICATION_TYPE.key).equalsIgnoreCase("REGISTERED_LETTER_890") ?
-                        NewNotificationRequestV24.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 :
-                        NewNotificationRequestV24.PhysicalCommunicationTypeEnum.AR_REGISTERED_LETTER)))
-                .paFee(getValue(data, PA_FEE.key) == null ? null : Integer.parseInt(getValue(data, PA_FEE.key)))
-                .vat(getValue(data, VAT.key) == null ? null : Integer.parseInt(getValue(data, VAT.key)))
-                .additionalLanguages(getValue(data, ADDITIONAL_LANGUAGES.key) == null ?
-                        null : List.of(getValue(data, ADDITIONAL_LANGUAGES.key)))
-                .pagoPaIntMode((getValue(data, PAGOPAINTMODE.key).equalsIgnoreCase("SYNC") ?
-                        NewNotificationRequestV24.PagoPaIntModeEnum.SYNC :
-                        (getValue(data, PAGOPAINTMODE.key).equalsIgnoreCase("ASYNC") ?
-                                NewNotificationRequestV24.PagoPaIntModeEnum.ASYNC :
-                                getValue(data, PAGOPAINTMODE.key).equalsIgnoreCase("NONE") ?
-                                        NewNotificationRequestV24.PagoPaIntModeEnum.NONE : null))));
+    public synchronized NotificationRecipientV23 convertNotificationRecipientV23(Map<String, String> data) {
+        List<NotificationPaymentItem> listPayment;
 
-        notificationRequest = addDocumentV24(notificationRequest, data);
+        NotificationRecipientV23 notificationRecipient = (new NotificationRecipientV23()
+                .denomination(getValue(data, DENOMINATION.key))
+                .taxId(getValue(data, TAX_ID.key))
+                //.internalId(getValue(data,INTERNAL_ID.key))
+                .digitalDomicile(getValue(data, DIGITAL_DOMICILE.key) == null ? null : (new NotificationDigitalAddress()
+                        .type((getValue(data, DIGITAL_DOMICILE_TYPE.key) == null ? null : NotificationDigitalAddress.TypeEnum.PEC))
+                        .address(getValue(data, DIGITAL_DOMICILE_ADDRESS.key)))
+                )
+                .physicalAddress(getValue(data, PHYSICAL_ADDRES.key) == null ? null : new NotificationPhysicalAddress()
+                        .address(getValue(data, PHYSICAL_ADDRESS_ADDRESS.key))
+                        .addressDetails(getValue(data, PHYSICAL_ADDRESS_DETAILS.key))
+                        .municipality(getValue(data, PHYSICAL_ADDRESS_MUNICIPALITY.key))
+                        .at(getValue(data, PHYSICAL_ADDRESS_AT.key))
+                        .municipalityDetails(getValue(data, PHYSICAL_ADDRESS_MUNICIPALITYDETAILS.key))
+                        .province(getValue(data, PHYSICAL_ADDRESS_PROVINCE.key))
+                        .foreignState(getValue(data, PHYSICAL_ADDRESS_STATE.key))
+                        .zip(getValue(data, PHYSICAL_ADDRESS_ZIP.key))
+                )
+                .recipientType((getValue(data, RECIPIENT_TYPE.key) == null ? null :
+                        (getValue(data, RECIPIENT_TYPE.key).equalsIgnoreCase("PF") ?
+                                NotificationRecipientV23.RecipientTypeEnum.PF : NotificationRecipientV23.RecipientTypeEnum.PG)))
+                //GESTIONE ISTANZE DI PAGAMENTI
+        );
+        //N PAGAMENTI
+        if (getValue(data, PAYMENT.key) != null && getValue(data, PAYMENT_MULTY_NUMBER.key) != null && !getValue(data, PAYMENT_MULTY_NUMBER.key).isEmpty()) {
+            listPayment = new ArrayList<>();
+            for (int i = 0; i < Integer.parseInt(getValue(data, PAYMENT_MULTY_NUMBER.key)); i++) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException exc) {
+                    throw new RuntimeException(exc);
+                }
+                NotificationPaymentItem addPaymentsItem = new NotificationPaymentItem();
+                addPaymentsItem.pagoPa(getValue(data, PAYMENT_PAGOPA_FORM.key) == null ? null :
+                        (getValue(data, PAYMENT_PAGOPA_FORM.key).equalsIgnoreCase("NO") ?
+                                null :
+                                new PagoPaPayment()
+                                        .creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key) == null ? null : getValue(data, PAYMENT_CREDITOR_TAX_ID.key))
+                                        .noticeCode(getValue(data, PAYMENT_NOTICE_CODE.key) == null ? null : getValue(data, PAYMENT_NOTICE_CODE.key))
+                                        .applyCost(getValue(data, PAYMENT_APPLY_COST_PAGOPA.key) == null ? null :
+                                                getValue(data, PAYMENT_APPLY_COST_PAGOPA.key).equalsIgnoreCase("SI"))
+                                        .attachment(getValue(data, PAYMENT_PAGOPA_FORM.key).equalsIgnoreCase("NOALLEGATO") ?
+                                                null : utils.newAttachment(getDefaultValue(PAYMENT_PAGOPA_FORM.key)))));
 
-        try {
-            Thread.sleep(2);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return notificationRequest;
-    }
+                //LOAD METADATI F24
+                if (getValue(data, PAYMENT_F24.key) != null && !getValue(data, PAYMENT_F24.key).isEmpty()) {
+                    setMetadatiF24(data, addPaymentsItem, i);
 
-    @DataTableType
-    public synchronized NewNotificationRequestV23 convertNotificationRequestV23(Map<String, String> data) {
-        NewNotificationRequestV23 notificationRequest = (new NewNotificationRequestV23()
-                .subject(getValue(data, SUBJECT.key))
-                .cancelledIun(getValue(data, CANCELLED_IUN.key))
-                .group(getValue(data, GROUP.key))
-                .idempotenceToken(getValue(data, IDEMPOTENCE_TOKEN.key))
-                ._abstract(getValue(data, ABSTRACT.key))
-                .senderDenomination(getValue(data, SENDER_DENOMINATION.key))
-                .senderTaxId(getValue(data, SENDER_TAX_ID.key))
-                .paProtocolNumber(getValue(data, PA_PROTOCOL_NUMBER.key))
-                .taxonomyCode(getValue(data, TAXONOMY_CODE.key))
-                .amount(getValue(data, AMOUNT.key) == null ? null : Integer.parseInt(getValue(data, AMOUNT.key)))
-                .paymentExpirationDate(getValue(data, PAYMENT_EXPIRATION_DATE.key) == null ?
-                        null : getValue(data, PAYMENT_EXPIRATION_DATE.key))
-                .notificationFeePolicy((getValue(data, NOTIFICATION_FEE_POLICY.key) == null ?
-                        null : (getValue(data, NOTIFICATION_FEE_POLICY.key).equalsIgnoreCase("FLAT_RATE") ?
-                        NotificationFeePolicy.FLAT_RATE :
-                        NotificationFeePolicy.DELIVERY_MODE)))
-                .physicalCommunicationType((getValue(data, PHYSICAL_COMMUNICATION_TYPE.key) == null ?
-                        null : (getValue(data, PHYSICAL_COMMUNICATION_TYPE.key).equalsIgnoreCase("REGISTERED_LETTER_890") ?
-                        NewNotificationRequestV23.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 :
-                        NewNotificationRequestV23.PhysicalCommunicationTypeEnum.AR_REGISTERED_LETTER)))
-                .paFee(getValue(data, PA_FEE.key) == null ? null : Integer.parseInt(getValue(data, PA_FEE.key)))
-                .vat(getValue(data, VAT.key) == null ? null : Integer.parseInt(getValue(data, VAT.key)))
-                .pagoPaIntMode((getValue(data, PAGOPAINTMODE.key).equalsIgnoreCase("SYNC") ?
-                        NewNotificationRequestV23.PagoPaIntModeEnum.SYNC :
-                        (getValue(data, PAGOPAINTMODE.key).equalsIgnoreCase("ASYNC") ?
-                                NewNotificationRequestV23.PagoPaIntModeEnum.ASYNC :
-                                getValue(data, PAGOPAINTMODE.key).equalsIgnoreCase("NONE") ?
-                                        NewNotificationRequestV23.PagoPaIntModeEnum.NONE : null))));
+                } else if (getValue(data, PAYMENT_F24_X.key) != null && !getValue(data, PAYMENT_F24_X.key).isEmpty()) {
+                    setMetadatiF24(data, addPaymentsItem, i);
+                }
 
-        notificationRequest = addDocumentV23(notificationRequest, data);
-
-        try {
-            Thread.sleep(2);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return notificationRequest;
-    }
-
-    private NewNotificationRequestV23 addDocumentV23(NewNotificationRequestV23 notificationRequest, Map<String, String> data) {
-        String documentsToAdd = getValue(data, DOCUMENT.key);
-        if (documentsToAdd == null) {
-            return notificationRequest.addDocumentsItem(null);
-        }
-
-        if (documentsToAdd.contains(";")) {
-            for (String documentElem : documentsToAdd.split(";")) {
-                notificationRequest = notificationRequest.addDocumentsItem(getNotificationDocument(documentElem));
+                listPayment.add(addPaymentsItem);
             }
-        } else {
-            notificationRequest = notificationRequest.addDocumentsItem(getNotificationDocument(documentsToAdd));
+            notificationRecipient.setPayments(listPayment);
         }
-        return notificationRequest;
+        /*
+            if (getValue(data,PAYMENT.key)!= null && (listPayment==null || (listPayment!= null && listPayment.isEmpty()))){
+                listPayment = new ArrayList<NotificationPaymentItem>();
+                NotificationPaymentItem addPaymentsItem = new NotificationPaymentItem();
+                addPaymentsItem.pagoPa(
+                        new PagoPaPayment()
+                                .creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key))
+                                .noticeCode(getValue(data, PAYMENT_NOTICE_CODE.key))
+                                .applyCost(getValue(data, PAYMENT_APPLY_COST_PAGOPA.key).equalsIgnoreCase("SI") ? true : false)
+                                .attachment(utils.newAttachment(getDefaultValue(PAYMENT_PAGOPA_FORM.key))));
+
+                                 addPaymentsItem.f24(getValue(data, PAYMENT_F24_STANDARD.key) == null ? null :
+                                 (getValue(data, PAYMENT_F24_STANDARD.key).equalsIgnoreCase("SI") ?
+                                 new F24Payment()
+                                 .title(getValue(data, TITLE_PAYMENT.key))
+                                 .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
+                                 .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD.key))) : null));
+
+
+
+                listPayment.add(addPaymentsItem);
+            }
+
+         */
+
+
+        /* TEST
+        if(getValue(data,DIGITAL_DOMICILE.key) != null && !getValue(data,DIGITAL_DOMICILE.key).equalsIgnoreCase(EXCLUDE_VALUE)){
+            notificationRecipient = notificationRecipient.digitalDomicile(getValue(data,DIGITAL_DOMICILE.key) == null? null : (new NotificationDigitalAddress()
+                    .type((getValue(data,DIGITAL_DOMICILE_TYPE.key) == null?
+                            null : NotificationDigitalAddress.TypeEnum.PEC ))
+                    .address( getValue(data,DIGITAL_DOMICILE_ADDRESS.key)))
+            );
+        }
+
+         */
+        try {
+            Thread.sleep(2);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return notificationRecipient;
     }
 
     private NewNotificationRequestV24 addDocumentV24(NewNotificationRequestV24 notificationRequest, Map<String, String> data) {
@@ -130,7 +138,6 @@ public class DataTableTypeUtil {
         if (documentsToAdd == null) {
             return notificationRequest.addDocumentsItem(null);
         }
-
         if (documentsToAdd.contains(";")) {
             for (String documentElem : documentsToAdd.split(";")) {
                 notificationRequest = notificationRequest.addDocumentsItem(getNotificationDocument(documentElem));
@@ -139,8 +146,6 @@ public class DataTableTypeUtil {
             notificationRequest = notificationRequest.addDocumentsItem(getNotificationDocument(documentsToAdd));
         }
         return notificationRequest;
-
-
     }
 
     private NotificationDocument getNotificationDocument(String documentElem) {
@@ -167,7 +172,6 @@ public class DataTableTypeUtil {
             case "ALLEGATO_4_COLORI" -> document = "classpath:/Allegato4_COLORI.pdf";
             default -> document = getDefaultValue(DOCUMENT.key);
         }
-
         return utils.newDocument(document);
     }
 
@@ -239,8 +243,7 @@ public class DataTableTypeUtil {
                         (getValue(data, PAGOPAINTMODE.key) == null ? null :
                                 (getValue(data, PAGOPAINTMODE.key).equalsIgnoreCase("SYNC") ?
                                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationRequest.PagoPaIntModeEnum.SYNC :
-                                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationRequest.PagoPaIntModeEnum.NONE)))
-        );
+                                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationRequest.PagoPaIntModeEnum.NONE))));
         try {
             Thread.sleep(2);
         } catch (InterruptedException e) {
@@ -283,10 +286,7 @@ public class DataTableTypeUtil {
                                 (getValue(data, PAGOPAINTMODE.key).equalsIgnoreCase("ASYNC") ?
                                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationRequestV21.PagoPaIntModeEnum.ASYNC : null
                                 ))));
-
         //.vat(getValue(data, VAT.key) == null ?  null : Integer.parseInt(getValue(data, VAT.key)))
-
-
         try {
             Thread.sleep(2);
         } catch (InterruptedException e) {
@@ -296,115 +296,105 @@ public class DataTableTypeUtil {
     }
 
     @DataTableType
-    public synchronized NotificationRecipientV23 convertNotificationRecipient(Map<String, String> data) {
+    public synchronized NewNotificationRequestV23 convertNotificationRequestV23(Map<String, String> data) {
+        NewNotificationRequestV23 notificationRequest = (new NewNotificationRequestV23()
+                .subject(getValue(data, SUBJECT.key))
+                .cancelledIun(getValue(data, CANCELLED_IUN.key))
+                .group(getValue(data, GROUP.key))
+                .idempotenceToken(getValue(data, IDEMPOTENCE_TOKEN.key))
+                ._abstract(getValue(data, ABSTRACT.key))
+                .senderDenomination(getValue(data, SENDER_DENOMINATION.key))
+                .senderTaxId(getValue(data, SENDER_TAX_ID.key))
+                .paProtocolNumber(getValue(data, PA_PROTOCOL_NUMBER.key))
+                .taxonomyCode(getValue(data, TAXONOMY_CODE.key))
+                .amount(getValue(data, AMOUNT.key) == null ? null : Integer.parseInt(getValue(data, AMOUNT.key)))
+                .paymentExpirationDate(getValue(data, PAYMENT_EXPIRATION_DATE.key) == null ?
+                        null : getValue(data, PAYMENT_EXPIRATION_DATE.key))
+                .notificationFeePolicy((getValue(data, NOTIFICATION_FEE_POLICY.key) == null ?
+                        null : (getValue(data, NOTIFICATION_FEE_POLICY.key).equalsIgnoreCase("FLAT_RATE") ?
+                        NotificationFeePolicy.FLAT_RATE :
+                        NotificationFeePolicy.DELIVERY_MODE)))
+                .physicalCommunicationType((getValue(data, PHYSICAL_COMMUNICATION_TYPE.key) == null ?
+                        null : (getValue(data, PHYSICAL_COMMUNICATION_TYPE.key).equalsIgnoreCase("REGISTERED_LETTER_890") ?
+                        NewNotificationRequestV23.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 :
+                        NewNotificationRequestV23.PhysicalCommunicationTypeEnum.AR_REGISTERED_LETTER)))
+                .paFee(getValue(data, PA_FEE.key) == null ? null : Integer.parseInt(getValue(data, PA_FEE.key)))
+                .vat(getValue(data, VAT.key) == null ? null : Integer.parseInt(getValue(data, VAT.key)))
+                .pagoPaIntMode((getValue(data, PAGOPAINTMODE.key).equalsIgnoreCase("SYNC") ?
+                        NewNotificationRequestV23.PagoPaIntModeEnum.SYNC :
+                        (getValue(data, PAGOPAINTMODE.key).equalsIgnoreCase("ASYNC") ?
+                                NewNotificationRequestV23.PagoPaIntModeEnum.ASYNC :
+                                getValue(data, PAGOPAINTMODE.key).equalsIgnoreCase("NONE") ?
+                                        NewNotificationRequestV23.PagoPaIntModeEnum.NONE : null))));
 
-        List<NotificationPaymentItem> listPayment;
-
-        NotificationRecipientV23 notificationRecipient = (new NotificationRecipientV23()
-                .denomination(getValue(data, DENOMINATION.key))
-                .taxId(getValue(data, TAX_ID.key))
-                //.internalId(getValue(data,INTERNAL_ID.key))
-                .digitalDomicile(getValue(data, DIGITAL_DOMICILE.key) == null ? null : (new NotificationDigitalAddress()
-                        .type((getValue(data, DIGITAL_DOMICILE_TYPE.key) == null ?
-                                null : NotificationDigitalAddress.TypeEnum.PEC))
-                        .address(getValue(data, DIGITAL_DOMICILE_ADDRESS.key)))
-                )
-                .physicalAddress(getValue(data, PHYSICAL_ADDRES.key) == null ? null : new NotificationPhysicalAddress()
-                        .address(getValue(data, PHYSICAL_ADDRESS_ADDRESS.key))
-                        .addressDetails(getValue(data, PHYSICAL_ADDRESS_DETAILS.key))
-                        .municipality(getValue(data, PHYSICAL_ADDRESS_MUNICIPALITY.key))
-                        .at(getValue(data, PHYSICAL_ADDRESS_AT.key))
-                        .municipalityDetails(getValue(data, PHYSICAL_ADDRESS_MUNICIPALITYDETAILS.key))
-                        .province(getValue(data, PHYSICAL_ADDRESS_PROVINCE.key))
-                        .foreignState(getValue(data, PHYSICAL_ADDRESS_STATE.key))
-                        .zip(getValue(data, PHYSICAL_ADDRESS_ZIP.key))
-                )
-                .recipientType((getValue(data, RECIPIENT_TYPE.key) == null ? null :
-                        (getValue(data, RECIPIENT_TYPE.key).equalsIgnoreCase("PF") ?
-                                NotificationRecipientV23.RecipientTypeEnum.PF :
-                                NotificationRecipientV23.RecipientTypeEnum.PG)))
-
-                //GESTIONE ISTANZE DI PAGAMENTI
-
-        );
-
-        //N PAGAMENTI
-        if (getValue(data, PAYMENT.key) != null && getValue(data, PAYMENT_MULTY_NUMBER.key) != null && !getValue(data, PAYMENT_MULTY_NUMBER.key).isEmpty()) {
-            listPayment = new ArrayList<>();
-            for (int i = 0; i < Integer.parseInt(getValue(data, PAYMENT_MULTY_NUMBER.key)); i++) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException exc) {
-                    throw new RuntimeException(exc);
-                }
-                NotificationPaymentItem addPaymentsItem = new NotificationPaymentItem();
-                addPaymentsItem.pagoPa(getValue(data, PAYMENT_PAGOPA_FORM.key) == null ? null :
-                        (getValue(data, PAYMENT_PAGOPA_FORM.key).equalsIgnoreCase("NO") ?
-                                null :
-                                new PagoPaPayment()
-                                        .creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key) == null ? null : getValue(data, PAYMENT_CREDITOR_TAX_ID.key))
-                                        .noticeCode(getValue(data, PAYMENT_NOTICE_CODE.key) == null ? null : getValue(data, PAYMENT_NOTICE_CODE.key))
-                                        .applyCost(getValue(data, PAYMENT_APPLY_COST_PAGOPA.key) == null ? null :
-                                                getValue(data, PAYMENT_APPLY_COST_PAGOPA.key).equalsIgnoreCase("SI"))
-                                        .attachment(getValue(data, PAYMENT_PAGOPA_FORM.key).equalsIgnoreCase("NOALLEGATO") ? null : utils.newAttachment(getDefaultValue(PAYMENT_PAGOPA_FORM.key)))));
-
-                //LOAD METADATI F24
-                if (getValue(data, PAYMENT_F24.key) != null && !getValue(data, PAYMENT_F24.key).isEmpty()) {
-                    setMetadatiF24(data, addPaymentsItem, i);
-
-                } else if (getValue(data, PAYMENT_F24_X.key) != null && !getValue(data, PAYMENT_F24_X.key).isEmpty()) {
-                    setMetadatiF24(data, addPaymentsItem, i);
-                }
-
-                listPayment.add(addPaymentsItem);
-            }
-            notificationRecipient.setPayments(listPayment);
-        }
-        /*
-            if (getValue(data,PAYMENT.key)!= null && (listPayment==null || (listPayment!= null && listPayment.isEmpty()))){
-                listPayment = new ArrayList<NotificationPaymentItem>();
-                NotificationPaymentItem addPaymentsItem = new NotificationPaymentItem();
-                addPaymentsItem.pagoPa(
-                        new PagoPaPayment()
-                                .creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key))
-                                .noticeCode(getValue(data, PAYMENT_NOTICE_CODE.key))
-                                .applyCost(getValue(data, PAYMENT_APPLY_COST_PAGOPA.key).equalsIgnoreCase("SI") ? true : false)
-                                .attachment(utils.newAttachment(getDefaultValue(PAYMENT_PAGOPA_FORM.key))));
-
-                                 addPaymentsItem.f24(getValue(data, PAYMENT_F24_STANDARD.key) == null ? null :
-                                 (getValue(data, PAYMENT_F24_STANDARD.key).equalsIgnoreCase("SI") ?
-                                 new F24Payment()
-                                 .title(getValue(data, TITLE_PAYMENT.key))
-                                 .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                 .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD.key))) : null));
-
-
-
-                listPayment.add(addPaymentsItem);
-            }
-
-         */
-
-
-        /* TEST
-        if(getValue(data,DIGITAL_DOMICILE.key) != null && !getValue(data,DIGITAL_DOMICILE.key).equalsIgnoreCase(EXCLUDE_VALUE)){
-            notificationRecipient = notificationRecipient.digitalDomicile(getValue(data,DIGITAL_DOMICILE.key) == null? null : (new NotificationDigitalAddress()
-                    .type((getValue(data,DIGITAL_DOMICILE_TYPE.key) == null?
-                            null : NotificationDigitalAddress.TypeEnum.PEC ))
-                    .address( getValue(data,DIGITAL_DOMICILE_ADDRESS.key)))
-            );
-        }
-
-         */
+        notificationRequest = addDocumentV23(notificationRequest, data);
         try {
             Thread.sleep(2);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return notificationRecipient;
+        return notificationRequest;
     }
 
-    private void setMetadatiF24(Map<String, String> data, NotificationPaymentItem addPaymentsItem, int i) {
+    private NewNotificationRequestV23 addDocumentV23(NewNotificationRequestV23 notificationRequest, Map<String, String> data) {
+        String documentsToAdd = getValue(data, DOCUMENT.key);
+        if (documentsToAdd == null) {
+            return notificationRequest.addDocumentsItem(null);
+        }
+        if (documentsToAdd.contains(";")) {
+            for (String documentElem : documentsToAdd.split(";")) {
+                notificationRequest = notificationRequest.addDocumentsItem(getNotificationDocument(documentElem));
+            }
+        } else {
+            notificationRequest = notificationRequest.addDocumentsItem(getNotificationDocument(documentsToAdd));
+        }
+        return notificationRequest;
+    }
+
+    @DataTableType
+    public synchronized NewNotificationRequestV24 convertNotificationRequestV24(Map<String, String> data) {
+        NewNotificationRequestV24 notificationRequest = (new NewNotificationRequestV24()
+                .subject(getValue(data, SUBJECT.key))
+                .cancelledIun(getValue(data, CANCELLED_IUN.key))
+                .group(getValue(data, GROUP.key))
+                .idempotenceToken(getValue(data, IDEMPOTENCE_TOKEN.key))
+                ._abstract(getValue(data, ABSTRACT.key))
+                .senderDenomination(getValue(data, SENDER_DENOMINATION.key))
+                .senderTaxId(getValue(data, SENDER_TAX_ID.key))
+                .paProtocolNumber(getValue(data, PA_PROTOCOL_NUMBER.key))
+                .taxonomyCode(getValue(data, TAXONOMY_CODE.key))
+                .amount(getValue(data, AMOUNT.key) == null ? null : Integer.parseInt(getValue(data, AMOUNT.key)))
+                .paymentExpirationDate(getValue(data, PAYMENT_EXPIRATION_DATE.key) == null ?
+                        null : getValue(data, PAYMENT_EXPIRATION_DATE.key))
+                .notificationFeePolicy((getValue(data, NOTIFICATION_FEE_POLICY.key) == null ?
+                        null : (getValue(data, NOTIFICATION_FEE_POLICY.key).equalsIgnoreCase("FLAT_RATE") ?
+                        NotificationFeePolicy.FLAT_RATE :
+                        NotificationFeePolicy.DELIVERY_MODE)))
+                .physicalCommunicationType((getValue(data, PHYSICAL_COMMUNICATION_TYPE.key) == null ?
+                        null : (getValue(data, PHYSICAL_COMMUNICATION_TYPE.key).equalsIgnoreCase("REGISTERED_LETTER_890") ?
+                        NewNotificationRequestV24.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 :
+                        NewNotificationRequestV24.PhysicalCommunicationTypeEnum.AR_REGISTERED_LETTER)))
+                .paFee(getValue(data, PA_FEE.key) == null ? null : Integer.parseInt(getValue(data, PA_FEE.key)))
+                .vat(getValue(data, VAT.key) == null ? null : Integer.parseInt(getValue(data, VAT.key)))
+                .additionalLanguages(getValue(data, ADDITIONAL_LANGUAGES.key) == null ?
+                        null : List.of(getValue(data, ADDITIONAL_LANGUAGES.key)))
+                .pagoPaIntMode((getValue(data, PAGOPAINTMODE.key).equalsIgnoreCase("SYNC") ?
+                        NewNotificationRequestV24.PagoPaIntModeEnum.SYNC :
+                        (getValue(data, PAGOPAINTMODE.key).equalsIgnoreCase("ASYNC") ?
+                                NewNotificationRequestV24.PagoPaIntModeEnum.ASYNC :
+                                getValue(data, PAGOPAINTMODE.key).equalsIgnoreCase("NONE") ?
+                                        NewNotificationRequestV24.PagoPaIntModeEnum.NONE : null))));
+
+        notificationRequest = addDocumentV24(notificationRequest, data);
+        try {
+            Thread.sleep(2);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return notificationRequest;
+    }
+
+    public void setMetadatiF24(Map<String, String> data, NotificationPaymentItem addPaymentsItem, int i) {
 
         if (!Objects.equals(getValue(data, PAYMENT_F24.key), null)) {
             addPaymentsItem.f24(
@@ -486,214 +476,15 @@ public class DataTableTypeUtil {
             case "PAYMENT_F24_FLAT_0" -> metadati = "classpath:/METADATA_CORRETTO_FLAT_0.json";
             case "PAYMENT_F24_FLAT_1" -> metadati = "classpath:/METADATA_CORRETTO_FLAT_1.json";
             case "PAYMENT_F24_FLAT_2" -> metadati = "classpath:/METADATA_CORRETTO_FLAT_2.json";
-            case "PAYMENT_F24_SIMPLIFIED_VALIDATION_OFF_1" -> metadati = "classpath:/f24_delivery_simplified_validation_off_1.json";
-            case "PAYMENT_F24_SIMPLIFIED_VALIDATION_OFF_2" -> metadati = "classpath:/f24_delivery_simplified_validation_off_2.json";
+            case "PAYMENT_F24_SIMPLIFIED_VALIDATION_OFF_1" ->
+                    metadati = "classpath:/f24_delivery_simplified_validation_off_1.json";
+            case "PAYMENT_F24_SIMPLIFIED_VALIDATION_OFF_2" ->
+                    metadati = "classpath:/f24_delivery_simplified_validation_off_2.json";
 
             default -> metadati = getDefaultValue(PAYMENT_F24.key);
         }
 
         return utils.newMetadataAttachment(metadati);
-    }
-
-
-    @DataTableType
-    public synchronized it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationRecipient convertNotificationRecipientV1(Map<String, String> data) {
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationRecipient notificationRecipient = (new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationRecipient()
-                .denomination(getValue(data, DENOMINATION.key))
-                .taxId(getValue(data, TAX_ID.key))
-                //.internalId(getValue(data,INTERNAL_ID.key))
-                .digitalDomicile(getValue(data, DIGITAL_DOMICILE.key) == null ? null : (new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationDigitalAddress()
-                        .type((getValue(data, DIGITAL_DOMICILE_TYPE.key) == null ?
-                                null : it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationDigitalAddress.TypeEnum.PEC))
-                        .address(getValue(data, DIGITAL_DOMICILE_ADDRESS.key)))
-                )
-                .physicalAddress(getValue(data, PHYSICAL_ADDRES.key) == null ? null : new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationPhysicalAddress()
-                        .address(getValue(data, PHYSICAL_ADDRESS_ADDRESS.key))
-                        .addressDetails(getValue(data, PHYSICAL_ADDRESS_DETAILS.key))
-                        .municipality(getValue(data, PHYSICAL_ADDRESS_MUNICIPALITY.key))
-                        .at(getValue(data, PHYSICAL_ADDRESS_AT.key))
-                        .municipalityDetails(getValue(data, PHYSICAL_ADDRESS_MUNICIPALITYDETAILS.key))
-                        .province(getValue(data, PHYSICAL_ADDRESS_PROVINCE.key))
-                        .foreignState(getValue(data, PHYSICAL_ADDRESS_STATE.key))
-                        .zip(getValue(data, PHYSICAL_ADDRESS_ZIP.key))
-                )
-                .recipientType((getValue(data, RECIPIENT_TYPE.key) == null ? null :
-                        (getValue(data, RECIPIENT_TYPE.key).equalsIgnoreCase("PF") ?
-                                it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationRecipient.RecipientTypeEnum.PF :
-                                it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationRecipient.RecipientTypeEnum.PG)))
-                .payment(getValue(data, PAYMENT.key) == null ? null : new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationPaymentInfo()
-                                .creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key))
-                                .noticeCode(getValue(data, PAYMENT_NOTICE_CODE.key))
-                                .noticeCodeAlternative(getValue(data, PAYMENT_NOTICE_CODE_OPTIONAL.key).equalsIgnoreCase("SI") ? getDefaultValue(PAYMENT_NOTICE_CODE_OPTIONAL.key) : null)
-
-                                .pagoPaForm(getValue(data, PAYMENT_PAGOPA_FORM.key) == null ?
-                                        null : utils.newAttachmentV1(getDefaultValue(PAYMENT_PAGOPA_FORM.key)))
-                        //                  .f24flatRate(getValue(data, PAYMENT_F24_FLAT.key) == null ? null :
-                        //                  (getValue(data, PAYMENT_F24_FLAT.key).equalsIgnoreCase("SI")?
-                        //                                  utils.newAttachment(getDefaultValue(PAYMENT_F24_FLAT.key)):null))
-                        //
-                        //                    .f24standard(getValue(data, PAYMENT_F24_STANDARD.key) == null ? null :
-                        //                           (getValue(data, PAYMENT_F24_STANDARD.key).equalsIgnoreCase("SI")?
-                        //                                  utils.newAttachment(getDefaultValue(PAYMENT_F24_STANDARD.key)):null))
-                )
-        );
-        /* TEST
-        if(getValue(data,DIGITAL_DOMICILE.key) != null && !getValue(data,DIGITAL_DOMICILE.key).equalsIgnoreCase(EXCLUDE_VALUE)){
-            notificationRecipient = notificationRecipient.digitalDomicile(getValue(data,DIGITAL_DOMICILE.key) == null? null : (new NotificationDigitalAddress()
-                    .type((getValue(data,DIGITAL_DOMICILE_TYPE.key) == null?
-                            null : NotificationDigitalAddress.TypeEnum.PEC ))
-                    .address( getValue(data,DIGITAL_DOMICILE_ADDRESS.key)))
-            );
-        }
-
-         */
-        try {
-            Thread.sleep(2);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return notificationRecipient;
-    }
-
-    @DataTableType
-    public synchronized it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationRecipient convertNotificationRecipientV2(Map<String, String> data) {
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationRecipient notificationRecipientV2 = (new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationRecipient()
-                .denomination(getValue(data, DENOMINATION.key))
-                .taxId(getValue(data, TAX_ID.key))
-                //.internalId(getValue(data,INTERNAL_ID.key))
-                .digitalDomicile(getValue(data, DIGITAL_DOMICILE.key) == null ? null : (new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationDigitalAddress()
-                        .type((getValue(data, DIGITAL_DOMICILE_TYPE.key) == null ?
-                                null : it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationDigitalAddress.TypeEnum.PEC))
-                        .address(getValue(data, DIGITAL_DOMICILE_ADDRESS.key)))
-                )
-                .physicalAddress(getValue(data, PHYSICAL_ADDRES.key) == null ? null : new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationPhysicalAddress()
-                        .address(getValue(data, PHYSICAL_ADDRESS_ADDRESS.key))
-                        .addressDetails(getValue(data, PHYSICAL_ADDRESS_DETAILS.key))
-                        .municipality(getValue(data, PHYSICAL_ADDRESS_MUNICIPALITY.key))
-                        .at(getValue(data, PHYSICAL_ADDRESS_AT.key))
-                        .municipalityDetails(getValue(data, PHYSICAL_ADDRESS_MUNICIPALITYDETAILS.key))
-                        .province(getValue(data, PHYSICAL_ADDRESS_PROVINCE.key))
-                        .foreignState(getValue(data, PHYSICAL_ADDRESS_STATE.key))
-                        .zip(getValue(data, PHYSICAL_ADDRESS_ZIP.key))
-                )
-                .recipientType((getValue(data, RECIPIENT_TYPE.key) == null ? null :
-                        (getValue(data, RECIPIENT_TYPE.key).equalsIgnoreCase("PF") ?
-                                it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationRecipient.RecipientTypeEnum.PF :
-                                it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationRecipient.RecipientTypeEnum.PG)))
-                .payment(getValue(data, PAYMENT.key) == null ? null : new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationPaymentInfo()
-                                .creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key))
-                                .noticeCode(getValue(data, PAYMENT_NOTICE_CODE.key))
-                                .noticeCodeAlternative(getValue(data, PAYMENT_NOTICE_CODE_OPTIONAL.key).equalsIgnoreCase("SI") ? getDefaultValue(PAYMENT_NOTICE_CODE_OPTIONAL.key) : null)
-
-                                .pagoPaForm(getValue(data, PAYMENT_PAGOPA_FORM.key) == null ?
-                                        null : utils.newAttachmentV20(getDefaultValue(PAYMENT_PAGOPA_FORM.key)))
-                        //                  .f24flatRate(getValue(data, PAYMENT_F24_FLAT.key) == null ? null :
-                        //                  (getValue(data, PAYMENT_F24_FLAT.key).equalsIgnoreCase("SI")?
-                        //                                  utils.newAttachment(getDefaultValue(PAYMENT_F24_FLAT.key)):null))
-                        //
-                        //                    .f24standard(getValue(data, PAYMENT_F24_STANDARD.key) == null ? null :
-                        //                           (getValue(data, PAYMENT_F24_STANDARD.key).equalsIgnoreCase("SI")?
-                        //                                  utils.newAttachment(getDefaultValue(PAYMENT_F24_STANDARD.key)):null))
-                )
-        );
-        /* TEST
-        if(getValue(data,DIGITAL_DOMICILE.key) != null && !getValue(data,DIGITAL_DOMICILE.key).equalsIgnoreCase(EXCLUDE_VALUE)){
-            notificationRecipient = notificationRecipient.digitalDomicile(getValue(data,DIGITAL_DOMICILE.key) == null? null : (new NotificationDigitalAddress()
-                    .type((getValue(data,DIGITAL_DOMICILE_TYPE.key) == null?
-                            null : NotificationDigitalAddress.TypeEnum.PEC ))
-                    .address( getValue(data,DIGITAL_DOMICILE_ADDRESS.key)))
-            );
-        }
-
-         */
-        try {
-            Thread.sleep(2);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return notificationRecipientV2;
-    }
-
-    @DataTableType
-    public synchronized it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21 convertNotificationRecipientV21(Map<String, String> data) {
-
-        List<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPaymentItem> listPayment;
-
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21 notificationRecipient = (new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21()
-                .denomination(getValue(data, DENOMINATION.key))
-                .taxId(getValue(data, TAX_ID.key))
-                //.internalId(getValue(data,INTERNAL_ID.key))
-                .digitalDomicile(getValue(data, DIGITAL_DOMICILE.key) == null ? null : (new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationDigitalAddress()
-                        .type((getValue(data, DIGITAL_DOMICILE_TYPE.key) == null ?
-                                null : it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationDigitalAddress.TypeEnum.PEC))
-                        .address(getValue(data, DIGITAL_DOMICILE_ADDRESS.key)))
-                )
-                .physicalAddress(getValue(data, PHYSICAL_ADDRES.key) == null ? null : new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPhysicalAddress()
-                        .address(getValue(data, PHYSICAL_ADDRESS_ADDRESS.key))
-                        .addressDetails(getValue(data, PHYSICAL_ADDRESS_DETAILS.key))
-                        .municipality(getValue(data, PHYSICAL_ADDRESS_MUNICIPALITY.key))
-                        .at(getValue(data, PHYSICAL_ADDRESS_AT.key))
-                        .municipalityDetails(getValue(data, PHYSICAL_ADDRESS_MUNICIPALITYDETAILS.key))
-                        .province(getValue(data, PHYSICAL_ADDRESS_PROVINCE.key))
-                        .foreignState(getValue(data, PHYSICAL_ADDRESS_STATE.key))
-                        .zip(getValue(data, PHYSICAL_ADDRESS_ZIP.key))
-                )
-                .recipientType((getValue(data, RECIPIENT_TYPE.key) == null ? null :
-                        (getValue(data, RECIPIENT_TYPE.key).equalsIgnoreCase("PF") ?
-                                it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21.RecipientTypeEnum.PF :
-                                it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21.RecipientTypeEnum.PG)))
-
-                //GESTIONE ISTANZE DI PAGAMENTI
-
-        );
-
-        //N PAGAMENTI
-        if (getValue(data, PAYMENT.key) != null && getValue(data, PAYMENT_MULTY_NUMBER.key) != null && !getValue(data, PAYMENT_MULTY_NUMBER.key).isEmpty()) {
-            listPayment = new ArrayList<>();
-            for (int i = 0; i < Integer.parseInt(getValue(data, PAYMENT_MULTY_NUMBER.key)); i++) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException exc) {
-                    throw new RuntimeException(exc);
-                }
-                it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPaymentItem addPaymentsItem = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPaymentItem();
-                addPaymentsItem.pagoPa(getValue(data, PAYMENT_PAGOPA_FORM.key) == null ? null :
-                        (getValue(data, PAYMENT_PAGOPA_FORM.key).equalsIgnoreCase("NO") ?
-                                null :
-                                new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.PagoPaPayment()
-                                        .creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key))
-                                        .noticeCode(getValue(data, PAYMENT_NOTICE_CODE.key))
-                                        .applyCost(getValue(data, PAYMENT_APPLY_COST_PAGOPA.key).equalsIgnoreCase("SI"))
-                                        .attachment(getValue(data, PAYMENT_PAGOPA_FORM.key).equalsIgnoreCase("NOALLEGATO") ? null : utils.newAttachmentV21(getDefaultValue(PAYMENT_PAGOPA_FORM.key)))));
-
-                //LOAD METADATI F24
-                if (getValue(data, PAYMENT_F24.key) != null && getValue(data, PAYMENT_F24.key).equalsIgnoreCase("PAYMENT_F24_FLAT")) {
-                    addPaymentsItem.f24(
-                            new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.F24Payment()
-                                    .title(getValue(data, TITLE_PAYMENT.key) + "_" + i)
-                                    .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI"))
-                                    .metadataAttachment(utils.newMetadataAttachmentV21("classpath:/METADATA_CORRETTO_FLAT.json")));
-
-                } else if (getValue(data, PAYMENT_F24.key) != null && getValue(data, PAYMENT_F24.key).equalsIgnoreCase("PAYMENT_F24_STANDARD_0")) {
-                    addPaymentsItem.f24(
-                            new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.F24Payment()
-                                    .title(getValue(data, TITLE_PAYMENT.key) + "_" + i)
-                                    .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI"))
-                                    .metadataAttachment(utils.newMetadataAttachmentV21("classpath:/METADATA_CORRETTO_0.json")));
-
-                }
-
-                listPayment.add(addPaymentsItem);
-            }
-            notificationRecipient.setPayments(listPayment);
-        }
-
-        try {
-            Thread.sleep(2);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return notificationRecipient;
     }
 
     @DataTableType
@@ -753,7 +544,7 @@ public class DataTableTypeUtil {
     }
 
     @DataTableType
-    public synchronized CalculateRequestParameter convertShipmentCalculateRequetElement(Map<String, String> data) {
+    public synchronized CalculateRequestParameter convertShipmentCalculateRequestElement(Map<String, String> data) {
         CalculateRequestParameter requestParameter = new CalculateRequestParameter();
         requestParameter.setGeokey(getValue(data, "geokey"));
         requestParameter.setProduct(ofNullable(getValue(data, "product")).map(ShipmentCalculateRequest.ProductEnum::fromValue).orElse(null));

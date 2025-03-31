@@ -11,15 +11,17 @@ public interface NotificationStepsInterface {
         throw new RuntimeException("Metodo " + methodName + "non previsto per la versione " + getVersionString());
     }
 
-    Object getSentNotificationAnyVersion();
-
     String getVersionString();
-
-    String getNotificationSentIun();
 
     void prepareNotificationRequest(Map<String, String> data);
 
+    void prepareNotificationRequestSimileAllaPrecedente(boolean isCreditorTaxIdUguale, boolean isCodiceAvvisoUguale, boolean isPaProtocolNumberUguale, String idempotenceToken);
+
+    void resetNotificationRequest();
+
     void addRecipientToNotification(Destinatario destinatario, Map<String, String> data);
+
+    void addRecipientToNotificationSpecialCondition(Destinatario destinatario, Map<String, String> data, String condition, Integer otherRecipientIndex);
 
     void setSenderTaxId(String senderTaxId);
 
@@ -27,11 +29,7 @@ public interface NotificationStepsInterface {
 
     void setNotificationRequestGroup(String group);
 
-    Object retrieveNotificationRequest();
-
-    Object retrieveNotificationResponse();
-
-    void sendNotification(int wait, String status, String pollingStrategy);
+    String sendNotification(int wait, String status, String pollingStrategy);
 
     Object uploadNotification() throws IOException;
 
@@ -43,7 +41,21 @@ public interface NotificationStepsInterface {
 
     void uploadNotificationAllegatiUgualiPagamento() throws IOException;
 
-    void addIuvGdpToDestinatario(String denominazione, String iuvGdp, Integer posizione);
+    void addIuvGdpToDestinatario(String denominazione, String iuvGdp, Integer paymentIndex);
 
-    List<String> getDatiPagamento(Integer destinatario, Integer pagamento);
+    List<String> getDatiPagamento(String iun, Integer destinatario, Integer pagamento);
+
+    void waitForTimelineElement(String iun, String timelineElementCategory, Integer attempts);
+
+    String getNotificationRequestId();
+
+    void getNotificationRequestStatus(String requestId);
+
+    void checkTaxonomyCode();
+
+    int getRecipientsSize();
+
+    String getRecipientNoticeCode(int recipientIndex, int paymentIndex);
+
+    String getRecipientCreditorTaxId(int recipientIndex, int paymentIndex);
 }

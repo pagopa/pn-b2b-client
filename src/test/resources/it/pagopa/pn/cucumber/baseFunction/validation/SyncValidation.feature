@@ -36,10 +36,10 @@ Feature: verifica validazione sincrona
       | payment_creditorTaxId | 77777777777 |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And si verifica la corretta acquisizione della notifica
-    And viene generata una nuova notifica con uguale codice fiscale del creditore e diverso codice avviso
+    And viene generata una nuova notifica con uguale codice fiscale del creditore e codice avviso differente
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
-    And viene generata una nuova notifica con uguale codice fiscale del creditore e uguale codice avviso
+    And viene generata una nuova notifica con uguale codice fiscale del creditore e codice avviso uguale
     And la notifica viene inviata dal "Comune_1"
     And l'operazione ha prodotto un errore con status code "409"
 
@@ -111,7 +111,9 @@ Feature: verifica validazione sincrona
       | senderDenomination | Comune di milano            |
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b senza preload allegato dal "Comune_Multi" e si attende che lo stato diventi REFUSED
-    Then viene generata una nuova notifica valida con uguale codice fiscale del creditore e uguale codice avviso
+    #TODO MATTEO TEST
+#    Then viene generata una nuova notifica valida con uguale codice fiscale del creditore e uguale codice avviso
+    Then viene generata una nuova notifica con uguale codice fiscale del creditore e codice avviso uguale
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
@@ -136,7 +138,7 @@ Feature: verifica validazione sincrona
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo          |
     And destinatario GherkinSpa
-    And destinatario "Mario Cucumber" con uguale codice avviso del destinatario numero 1
+    And destinatario Mario Cucumber con codice avviso uguale a quello del destinatario numero 1
       | digitalDomicile_address | FRMTTR76M06B715E@pec.pagopa.it |
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "Duplicated iuv"

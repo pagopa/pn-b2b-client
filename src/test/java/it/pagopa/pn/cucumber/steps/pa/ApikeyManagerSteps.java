@@ -221,12 +221,12 @@ public class ApikeyManagerSteps {
 
     @Given("viene settato il gruppo della notifica con quello dell'apikey")
     public void vieneSettatoIlGruppoDellaNotificaConQuelloDellApikey() {
-        this.sharedSteps.getNotificationRequest().setGroup(requestNewApiKey.getGroups().get(0));
+        this.sharedSteps.setGroup(requestNewApiKey.getGroups().get(0));
     }
 
     @Given("viene settato il taxId della notifica con quello dell'apikey")
     public void vieneSettatoIlTaxIdDellaNotificaConQuelloDellApikey() {
-        this.sharedSteps.getNotificationRequest().setSenderTaxId(this.responseNewApiKeyTaxId);
+        this.sharedSteps.setSenderTaxId(this.responseNewApiKeyTaxId);
     }
 
     @When("viene modificato lo stato dell'apiKey in {string} per il {string}")
@@ -241,7 +241,7 @@ public class ApikeyManagerSteps {
     public void vieneSettatoIlPrimoGruppoValidoPerIlComune(String paName) {
         setBearerToken(paName);
         firstGroupUsed = this.sharedSteps.getGroupIdByPa(paName, GroupPosition.FIRST);
-        this.sharedSteps.getNotificationRequest().setGroup(firstGroupUsed);
+        this.sharedSteps.setGroup(firstGroupUsed);
     }
 
     @Given("viene settato un gruppo differente da quello utilizzato nell'apikey per il comune {string}")
@@ -250,7 +250,7 @@ public class ApikeyManagerSteps {
         String group = this.sharedSteps.getGroupIdByPa(paName, GroupPosition.LAST);
         Assertions.assertNotNull(firstGroupUsed);
         Assertions.assertNotEquals(firstGroupUsed, group);
-        this.sharedSteps.getNotificationRequest().setGroup(group);
+        this.sharedSteps.setGroup(group);
     }
 
     @Given("Viene creata una nuova apiKey per il comune {string} con gruppo differente (del invio notifica)(dallo stream)")

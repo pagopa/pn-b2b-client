@@ -20,7 +20,7 @@ Feature: test di integrazione della pubblica amministrazione
       | payment_creditorTaxId | 77777777777 |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And si verifica la corretta acquisizione della notifica
-    And viene generata una nuova notifica con uguale codice fiscale del creditore e diverso codice avviso
+    And viene generata una nuova notifica con uguale codice fiscale del creditore e codice avviso differente
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
 
