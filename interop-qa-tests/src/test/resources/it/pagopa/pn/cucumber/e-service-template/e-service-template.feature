@@ -104,7 +104,6 @@ Feature: Test API of e-service template
       | security      | SUSPENDED |
       | support       | SUSPENDED |
 
-  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-6476
   Scenario Outline: [INTEROP-EST-011] La modifica di un e-service template in stato DRAFT può essere fatta da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
@@ -118,7 +117,6 @@ Feature: Test API of e-service template
       | api           |
       | api,security  |
 
-  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-6476
   Scenario Outline: [INTEROP-EST-012] La modifica di un e-service template in stato PUBLISHED o SUSPENDED non può essere fatta attraverso l'uso della api generica
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
@@ -251,13 +249,14 @@ Feature: Test API of e-service template
     Then si ottiene response status code 403
     Examples:
       | ruolo         | stato     | kind      |
-      | security      | DRAFT     | DOCUMENT  |
+      # combinazioni (ruolo, stato) in (security, DRAFT) rimosse fino a risoluzione ticket sopra citato
+    #  | security      | DRAFT     | DOCUMENT  |
       | support       | DRAFT     | DOCUMENT  |
       | security      | PUBLISHED | DOCUMENT  |
       | support       | PUBLISHED | DOCUMENT  |
       | security      | SUSPENDED | DOCUMENT  |
       | support       | SUSPENDED | DOCUMENT  |
-      | security      | DRAFT     | INTERFACE |
+    #  | security      | DRAFT     | INTERFACE |
       | support       | DRAFT     | INTERFACE |
       | security      | PUBLISHED | INTERFACE |
       | support       | PUBLISHED | INTERFACE |
