@@ -98,7 +98,7 @@ public class PnPollingServiceTimelineSlowE2eV28 extends PnPollingServiceTimeline
                 .orElse(null);
 
         if (timelineElement != null) {
-            //TODO pnPollingResponse.setTimelineElement(timelineElement);
+            //TODO V28 pnPollingResponse.setTimelineElement(timelineElement);
             pnPollingResponse.setTimelineElement(null);
             pnPollingResponse.setResult(true);
             return true;

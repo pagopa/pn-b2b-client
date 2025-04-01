@@ -569,7 +569,7 @@ public class WebhookStepsV28 implements WebhookStepsInterface {
         log.info("EVENTSTREAM REPLACED: {}", eventStream);
     }
 
- /* TODO    @Override
+ /* TODO V28  @Override
     public void verificaPresenzaSercQ(boolean isPresent) {
         String channel = isPresent ? "SERCQ" : "PEC";
         Assertions.assertTrue(progressResponseElementList.stream()
@@ -580,7 +580,7 @@ public class WebhookStepsV28 implements WebhookStepsInterface {
                 ));
     }*/
 
-  /* TODO   @Override
+  /* TODO V28  @Override
     public void checkLegalFactCategory(String timelineCategory, String legalFactCategory) {
         // TODO ripristinare
         String iun = webhookSteps.getSharedSteps().getSentNotification().getIun();
