@@ -62,7 +62,6 @@ public class InvioNotificheB2bSteps {
     private Integer retentionTimePreLoad;
     @Value("${pn.retention.time.load}")
     private Integer retentionTimeLoad;
-
     @Value("${pn.blacklist.tax-ids}")
     private String blackListTaxIdsProperties;
 
@@ -141,7 +140,6 @@ public class InvioNotificheB2bSteps {
 
     private <T> void notificationCanBeRetrievedWithIUN(AtomicReference<T> notificationByIun, Function<String, T> getNotificationByIunFunction) {
         try {
-            //TODO MATTEO TEST
             String iun = sharedSteps.getNotificationIun();
             if (iun != null) {
                 assertThatCode(() -> notificationByIun.set(getNotificationByIunFunction.apply(iun)))
@@ -231,7 +229,6 @@ public class InvioNotificheB2bSteps {
             assertThat(notifica120.getRecipients().get(0).getPayments().get(0).getPagoPa().getAttachment())
                     .as("L'attachment del pagamento deve essere nullo")
                     .isNull();
-            //TODO MATTEO TEST//sharedSteps.setFullSentNotificationV26(notifica120);
             sharedSteps.setNotificationIun(notifica120.getIun());
         } catch (AssertionError assertionError) {
             String message = assertionError.getMessage() + "{notifica : " + (notifica120 == null ? "NULL" : notifica120) + " }";
@@ -275,7 +272,6 @@ public class InvioNotificheB2bSteps {
             log.info("notifica trovata: {}", notifica);
             notifica.setPaFee(100);
             notifica.setVat(22);
-//            //TODO MATTEO TEST//sharedSteps.setFullSentNotificationV26(notifica);
             sharedSteps.setNotificationIun(notifica.getIun());
         } catch (AssertionError assertionError) {
             String message = assertionError.getMessage() +
@@ -517,7 +513,7 @@ public class InvioNotificheB2bSteps {
     public void vieneLettaLaNotificaDal(String IUN, String paName) {
         sharedSteps.setPA(paName);
         FullSentNotificationV26 notificationByIun = b2bUtils.getNotificationByIun(IUN);
-        //TODO MATTEO TEST//sharedSteps.setFullSentNotificationV26(notificationByIun);
+        Assertions.assertNotNull(notificationByIun);
     }
 
     @When("si tenta il recupero della notifica dal sistema tramite codice IUN {string}")
@@ -705,7 +701,7 @@ public class InvioNotificheB2bSteps {
     }
 
 
-    //TODO MATTEO TEST
+    //TODO MATTEO SPOSTARE IN SHARE STEPS
     @And("vengono prodotte le evidenze: metadati e requestID")
     public void evidenceProduced() {
         getInvioNotificheStepsInterface().evidenceProduce();
@@ -716,7 +712,6 @@ public class InvioNotificheB2bSteps {
 //        log.info("REQUEST-ID: " + '\n' + this.sharedSteps.getNotificationRequestId());
     }
 
-    //TODO MATTEO TEST
     @Then("si verifica la corretta acquisizione della richiesta di invio notifica")
     public void correctAcquisitionRequest() {
         getInvioNotificheStepsInterface().verifyCorrectAcquisition();
@@ -785,40 +780,21 @@ public class InvioNotificheB2bSteps {
     }
 
 
-    //TODO MATTEO TEST
     @Then("viene verificato lo stato di accettazione con idempotenceToken e paProtocolNumber")
     public void vieneVerificatoLoStatoDiAccettazioneConIdempotenceTokenEPaProtocolNumber() {
         getInvioNotificheStepsInterface().verifyStatus(false, true, true);
-//        NewNotificationResponse newNotificationResponse = this.sharedSteps.getNewNotificationResponse();
-//        verifyStatus(null, newNotificationResponse.getPaProtocolNumber(), newNotificationResponse.getIdempotenceToken());
 
     }
 
-    //TODO MATTEO TEST
     @Then("viene verificato lo stato di accettazione con requestID")
     public void vieneVerificatoLoStatoDiAccettazioneConRequestID() {
         getInvioNotificheStepsInterface().verifyStatus(true, false, false);
-//        NewNotificationResponse newNotificationResponse = this.sharedSteps.getNewNotificationResponse();
-//        verifyStatus(newNotificationResponse.getNotificationRequestId(), null, null);
     }
 
-    //TODO MATTEO TEST
     @Then("viene verificato lo stato di accettazione con paProtocolNumber")
     public void vieneVerificatoLoStatoDiAccettazioneConPaProtocolNumber() {
         getInvioNotificheStepsInterface().verifyStatus(false, true, false);
-//        NewNotificationResponse newNotificationResponse = this.sharedSteps.getNewNotificationResponse();
-//        verifyStatus(null, newNotificationResponse.getPaProtocolNumber(), null);
     }
-
-//    private void verifyStatus(String notificationRequestId, String paProtocolNumber, String idempotenceToken) {
-//        NewNotificationRequestStatusResponseV23 newNotificationRequestStatusResponse = Assertions.assertDoesNotThrow(() ->
-//                this.b2bClient.getNotificationRequestStatusAllParam(notificationRequestId, paProtocolNumber, idempotenceToken));
-//        assertThat(newNotificationRequestStatusResponse.getNotificationRequestStatus())
-//                .as("Lo stato della richiesta di notifica non dovrebbe essere nullo")
-//                .isNotNull();
-//        log.debug(newNotificationRequestStatusResponse.getNotificationRequestStatus());
-//    }
-
 
     @And("la notifica non può essere annullata dal sistema tramite codice IUN")
     public void notificationCaNotBeCanceledWithIUN() {
@@ -871,75 +847,15 @@ public class InvioNotificheB2bSteps {
         verifyCheckoutCart(paymentRequest, null);
     }
 
-    //TODO MATTEO TEST
     @Then("verifica stato pagamento di una notifica creditorTaxID {string} noticeCode {string} con errore {string}")
     public void verificaStatoPagamentoNotifica(String creditorTaxID, String noticeCode, String errorCode) {
         getInvioNotificheStepsInterface().verificaStatoPagamentoNotifica(null, errorCode, creditorTaxID, noticeCode);
-//        List<PaymentInfoRequest> paymentInfoRequestList = new ArrayList<>();
-//
-//        PaymentInfoRequest paymentInfoRequest = new PaymentInfoRequest()
-//                .creditorTaxId(creditorTaxID)
-//                .noticeCode(noticeCode);
-//
-//        paymentInfoRequestList.add(paymentInfoRequest);
-//
-//        log.info("Messaggio json da allegare: " + paymentInfoRequest);
-//
-//        try {
-//            Assertions.assertDoesNotThrow(() -> {
-//                paymentInfoResponse = pnPaymentInfoClientImpl.getPaymentInfoV21(paymentInfoRequestList);
-//                log.info("Informazioni sullo stato del Pagamento: " + paymentInfoResponse.toString());
-//            });
-//            assertThat(paymentInfoResponse)
-//                    .as("La risposta del pagamento non dovrebbe essere nulla")
-//                    .isNotNull();
-//
-//            assertThat(paymentInfoResponse.get(0).getErrorCode())
-//                    .as("Il codice errore nella risposta dovrebbe essere uguale a '%s'", errorCode)
-//                    .isEqualToIgnoringCase(errorCode);
-//
-//
-//        } catch (AssertionError assertionError) {
-//            String message = assertionError.getMessage() +
-//                    "{Informazioni sullo stato del Pagamento: " + (paymentInfoResponse == null ? "NULL" : paymentInfoResponse) + " }";
-//            throw new AssertionError(message, assertionError);
-//        }
     }
 
     //TODO MATTEO TEST
     @Then("verifica stato pagamento di una notifica con status {string}")
     public void verificaStatoPagamentoNotifica(String status) {
         getInvioNotificheStepsInterface().verificaStatoPagamentoNotifica(status, null, null, null);
-//        List<PaymentInfoRequest> paymentInfoRequestList = new ArrayList<>();
-//
-//        PaymentInfoRequest paymentInfoRequest = new PaymentInfoRequest()
-//                .creditorTaxId(sharedSteps.getNotificationRequest().getRecipients().get(0).getPayments().get(0).getPagoPa().getCreditorTaxId())
-//                .noticeCode(sharedSteps.getNotificationRequest().getRecipients().get(0).getPayments().get(0).getPagoPa().getNoticeCode());
-//
-//        paymentInfoRequestList.add(paymentInfoRequest);
-//
-//        log.info("Messaggio json da allegare: " + paymentInfoRequest);
-//
-//        try {
-//            assertThatCode(() -> paymentInfoResponse = pnPaymentInfoClientImpl.getPaymentInfoV21(paymentInfoRequestList))
-//                    .as("La chiamata al servizio di pagamento non dovrebbe generare eccezioni")
-//                    .doesNotThrowAnyException();
-//
-//            assertThat(paymentInfoResponse)
-//                    .as("La risposta del pagamento non dovrebbe essere nulla")
-//                    .isNotNull();
-//
-//            log.info("Informazioni sullo stato del Pagamento: {}", paymentInfoResponse);
-//
-//            assertThat(paymentInfoResponse.get(0).getStatus().getValue())
-//                    .as("Lo stato nella risposta dovrebbe essere uguale a " + status, status)
-//                    .isEqualToIgnoringCase(status);
-//
-//        } catch (AssertionError assertionError) {
-//            String message = assertionError.getMessage() +
-//                    "{Informazioni sullo stato del Pagamento: " + (paymentInfoResponse == null ? "NULL" : paymentInfoResponse.toString()) + " }";
-//            throw new AssertionError(message, assertionError);
-//        }
     }
 
     @And("l'avviso pagopa viene pagato correttamente su checkout con errore {string}")
@@ -978,7 +894,7 @@ public class InvioNotificheB2bSteps {
 
         try {
             assertThatCode(() -> notificationByIun.set(b2bUtils.getNotificationByIunV1(iun)))
-                    .as("La chiamata per ottenere la notifica per l'IUN non dovrebbe generare eccezioni")
+                    .as("La chiamata per ottenere la notifica tramite IUN non dovrebbe generare eccezioni")
                     .doesNotThrowAnyException();
 
             assertThat(notificationByIun.get())
@@ -1002,11 +918,9 @@ public class InvioNotificheB2bSteps {
     public void notificationCanBeRetrievePaymentV2() {
         AtomicReference<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.FullSentNotificationV20> notificationByIun = new AtomicReference<>();
         String iun = sharedSteps.getNotificationIun();
-
         try {
-
             assertThatCode(() -> notificationByIun.set(b2bUtils.getNotificationByIunV2(iun)))
-                    .as("La chiamata per ottenere la notifica per l'IUN non dovrebbe generare eccezioni")
+                    .as("La chiamata per ottenere la notifica tramite IUN non dovrebbe generare eccezioni")
                     .doesNotThrowAnyException();
 
             assertThat(notificationByIun.get().getRecipients().get(0).getPayment().getNoticeCode())

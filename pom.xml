@@ -962,7 +962,6 @@
                         </configuration>
                     </execution>
 
-                    <!--MATTEO TODO new v27-->
                     <execution>
                         <id>generate-external-client-b2b-webhook-v27</id>
                         <goals>

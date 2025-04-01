@@ -51,7 +51,6 @@ public class NotificationStepsV24 implements NotificationStepsInterface {
     @Override
     public void prepareNotificationRequest(Map<String, String> data) {
         notificationRequest = sharedSteps.getDataTableTypeUtil().convertNotificationRequestV24(data);
-//        sharedSteps.setNotificationRequest(notificationRequest);//TODO MATTEO: SOLO IN QUESTA VERSIONE 24, CHE E' L'ULTIMA VERSIONE
         sharedSteps.setVersionUsed(version);
     }
 
@@ -374,7 +373,7 @@ public class NotificationStepsV24 implements NotificationStepsInterface {
                 throw new PnB2bException(e.getMessage());
             }
         }
-//        sharedSteps.setNewNotificationResponse(response);//TODO MATTEO: SOLO IN QUESTA VERSIONE 24, CHE E' L'ULTIMA VERSIONE
+        notificationResponse = response;
         return response;
     }
 

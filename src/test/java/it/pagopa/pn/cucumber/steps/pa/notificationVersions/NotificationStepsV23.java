@@ -352,6 +352,7 @@ public class NotificationStepsV23 implements NotificationStepsInterface {
                 throw new PnB2bException(e.getMessage());
             }
         }
+        notificationResponse = response;
         return response;
     }
 

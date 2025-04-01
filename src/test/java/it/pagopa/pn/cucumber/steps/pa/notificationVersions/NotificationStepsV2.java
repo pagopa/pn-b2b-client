@@ -207,6 +207,7 @@ public class NotificationStepsV2 implements NotificationStepsInterface {
         log.info(NEW_NOTIFICATION_REQUEST, notificationRequest);
         NewNotificationResponse response = sharedSteps.getB2bUtils().getClient().sendNewNotificationV2(notificationRequest);
         log.info(NEW_NOTIFICATION_REQUEST_RESPONSE, response);
+        notificationResponse = response;
         return response;
     }
 

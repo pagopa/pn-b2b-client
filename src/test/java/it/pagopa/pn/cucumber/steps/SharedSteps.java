@@ -130,39 +130,6 @@ public class SharedSteps {
     @Value("${pn.external.bearer-token-pg2.id}")
     private String idOrganizationCucumberSpa;
 
-//    @Value("${pn.interop.base-url}")
-//    private String interopBaseUrl;
-//
-//    @Value("${pn.interop.token-oauth2.path}")
-//    private String tokenOauth2Path;
-//
-//    @Value("${pn.interop.token-oauth2.client-assertion}")
-//    private String clientAssertion;
-//
-//    @Value("${pn.external.utilized.pec:testpagopa3@pec.pagopa.it}")
-//    private String digitalAddress;
-//
-//    @Value("${pn.external.api-key-taxID}")
-//    private String senderTaxId;
-//
-//    @Value("${pn.external.api-key-2-taxID}")
-//    private String senderTaxIdTwo;
-//
-//    @Value("${pn.external.api-key-GA-taxID}")
-//    private String senderTaxIdGa;
-//
-//    @Value("${pn.external.api-key-SON-taxID}")
-//    private String senderTaxIdSON;
-//
-//    @Value("${pn.external.api-key-ROOT-taxID}")
-//    private String senderTaxIdROOT;
-//
-//    @Value("${pn.bearer-token.user1.taxID}")
-//    private String marioCucumberTaxID;
-//
-//    @Value("${pn.bearer-token.user2.taxID}")
-//    private String marioGherkinTaxID;
-
     @Getter
     private final DataTableTypeUtil dataTableTypeUtil;
 
@@ -182,13 +149,6 @@ public class SharedSteps {
     private final PnB2bClientTimingConfigs timingConfigs;
 
     private final ObjectMapper objMapper;
-
-    //Ora anche questi due campi versionati non sono più necessari
-//    //Viene settato solo per l'ultima versione. Al rilascio di una nuova, sostituire con l'oggetto corrispondente
-//    private NewNotificationResponse newNotificationResponse;
-
-//     Viene settato solo per l'ultima versione. Al rilascio di una nuova, sostituire con l'oggetto corrispondente
-//    private NewNotificationRequestV24 notificationRequest;
 
     /**
      * Anziché avere N istanze di FullSentNotification da impostare ogni volta, ora setteremo solo lo IUN della notifica creata.
@@ -410,187 +370,30 @@ public class SharedSteps {
         }
         Assertions.assertTrue(completed);
         Assertions.assertEquals(numberOfNotification, notificationsCounter.get());
-
-//        List<NewNotificationRequestV24> notificationRequests = new LinkedList<>();
-//        for (int i = 0; i < numberOfNotification; i++) {
-//            NewNotificationRequestV24 newNotificationRequest = dataTableTypeUtil.convertNotificationRequestV24(new HashMap<>())
-//                    .subject("notifica analogica con cucumber")
-//                    .senderDenomination("Comune di palermo")
-//                    .physicalCommunicationType(NewNotificationRequestV24.PhysicalCommunicationTypeEnum.AR_REGISTERED_LETTER);
-//
-//            NotificationRecipientV23 notificationRecipientV23 = dataTableTypeUtil.convertNotificationRecipient(notificationRecipientMap);
-//            addRecipientToNotification(newNotificationRequest,
-//                    updateNotificationRecipient(notificationRecipientV23,
-//                            SIGNOR_CASUALE,
-//                            generatedFiscalCode,
-//                            NotificationRecipientV23.RecipientTypeEnum.PF,
-//                            null),
-//                    notificationRecipientMap);
-//
-//
-//            this.notificationRequest = newNotificationRequest;
-//            setPaAndSenderTaxId(paName);
-//            notificationRequests.add(newNotificationRequest);
-//        }
-//
-//        ConcurrentLinkedQueue<FullSentNotificationV26> sentNotifications = new ConcurrentLinkedQueue<>();
-//        for (NewNotificationRequestV24 notification : notificationRequests) {
-//            Thread t = new Thread(() -> {
-//                //INVIO NOTIFICA ED ATTESA ACCEPTED
-//                NewNotificationResponse internalNotificationResponse = Assertions.assertDoesNotThrow(() ->
-//                        b2bUtils.uploadNotificationV24(notification));
-//                threadWait(getWait());
-//                FullSentNotificationV26 fsn = b2bUtils.waitForRequestAcceptationV26(internalNotificationResponse);
-//                Assertions.assertNotNull(fsn);
-//
-//                //ATTESA ELEMENTO DI TIMELINE
-//                TimelineElementV26 timelineElement = null;
-//                for (int i = 0; i < 33; i++) {
-//                    threadWait(getWorkFlowWait());
-//                    fsn = b2bClient.getSentNotification(fsn.getIun());
-//                    log.info("NOTIFICATION_TIMELINE: " + fsn.getTimeline());
-//                    timelineElement = fsn.getTimeline().stream().filter(
-//                            elem -> Objects.requireNonNull(elem.getCategory().getValue())
-//                                    .equals(TimelineElementCategoryV23.COMPLETELY_UNREACHABLE.getValue())).findAny().orElse(null);
-//                    if (timelineElement != null) {
-//                        break;
-//                    }
-//                }
-//                Assertions.assertNotNull(timelineElement);
-//                sentNotifications.add(fsn);
-//            });
-//
-//            threadList.add(t);
-//            t.start();
-//        }
-//        int attempts = 0;
-//        boolean completed = false;
-//
-//        while (attempts < 50) {
-//            threadWait(getWorkFlowWait());
-//            int counter = 0;
-//            for (Thread thread : threadList) {
-//                if (!thread.isAlive()) counter++;
-//            }
-//            if (counter == threadList.size()) {
-//                completed = true;
-//                break;
-//            } else {
-//                attempts++;
-//            }
-//        }
-//
-//        Assertions.assertTrue(completed);
-//        Assertions.assertEquals(sentNotifications.size(), numberOfNotification);
-//        log.debug("NOTIFICATION LIST: {}", sentNotifications);
-//        log.debug("IUN: ");
-//        for (FullSentNotificationV26 fullSentNotification : sentNotifications) {
-//            log.info(fullSentNotification.getIun());
-//        }
-//        log.debug("End IUN list");
-//        //la prima notifica viene inserita
-//        FullSentNotificationV26 fullSentNotification = sentNotifications.poll();
-//        this.notificationIun = fullSentNotification.getIun();
-//        log.debug("notificationResponseComplete: {}", getNotificationIun());
     }
 
-
-//    @And("viene generata una nuova notifica con uguale codice fiscale del creditore e diverso codice avviso")
-//    public void vienePredispostaEInviataUnaNuovaNotificaConUgualeCodiceFiscaleDelCreditoreEDiversoCodiceAvviso() {
-//        String creditorTaxId = Objects.requireNonNull(Objects.requireNonNull(notificationRequest.getRecipients().get(0).getPayments()).get(0).getPagoPa()).getCreditorTaxId();
-//        generateNewNotification();
-//        Objects.requireNonNull(Objects.requireNonNull(this.notificationRequest.getRecipients().get(0).getPayments()).get(0).getPagoPa()).setCreditorTaxId(creditorTaxId);
-//    }
-
-    //TODO MATTEO TEST
     @And("viene generata una nuova notifica con uguale codice fiscale del creditore e codice avviso {isUguale}")
     public void vienePredispostaEInviataUnaNuovaNotificaConUgualeCodiceFiscaleDelCreditoreAndCodiceAvvisoVariabile(boolean isCodiceAvvisoUguale) {
         getNotificationStepInterface().prepareNotificationRequestSimileAllaPrecedente(
                 true, isCodiceAvvisoUguale, false, null);
-
-//        String creditorTaxId = Objects.requireNonNull(Objects.requireNonNull(notificationRequest.getRecipients().get(0).getPayments()).get(0).getPagoPa()).getCreditorTaxId();
-//        String noticeCode = Objects.requireNonNull(Objects.requireNonNull(notificationRequest.getRecipients().get(0).getPayments()).get(0).getPagoPa()).getNoticeCode();
-//        generateNewNotification();
-//        Objects.requireNonNull(Objects.requireNonNull(this.notificationRequest.getRecipients().get(0).getPayments()).get(0).getPagoPa()).setCreditorTaxId(creditorTaxId);
-//        Objects.requireNonNull(Objects.requireNonNull(this.notificationRequest.getRecipients().get(0).getPayments()).get(0).getPagoPa()).setNoticeCode(noticeCode);
     }
 
-//    @Then("viene generata una nuova notifica valida con uguale codice fiscale del creditore e uguale codice avviso")
-//    public void vieneGenerataUnaNuovaNotificaConUgualeCodiceFiscaleDelCreditoreEUgualeCodiceAvvisoConTaxIdCorretto() {
-//        String creditorTaxId = Objects.requireNonNull(Objects.requireNonNull(notificationRequest.getRecipients().get(0).getPayments()).get(0).getPagoPa()).getCreditorTaxId();
-//        String noticeCode = Objects.requireNonNull(Objects.requireNonNull(notificationRequest.getRecipients().get(0).getPayments()).get(0).getPagoPa()).getNoticeCode();
-//
-//        NotificationRecipientV23 notificationRecipientV23 = dataTableTypeUtil.convertNotificationRecipient(new HashMap<>());
-//        this.notificationRequest = (dataTableTypeUtil.convertNotificationRequestV24(new HashMap<>())
-//                .addRecipientsItem(updateNotificationRecipient(notificationRecipientV23, null, marioCucumberTaxID, null, null)));
-//
-//        Objects.requireNonNull(Objects.requireNonNull(this.notificationRequest.getRecipients().get(0).getPayments()).get(0).getPagoPa()).setCreditorTaxId(creditorTaxId);
-//        Objects.requireNonNull(Objects.requireNonNull(this.notificationRequest.getRecipients().get(0).getPayments()).get(0).getPagoPa()).setNoticeCode(noticeCode);
-//    }
-
-    //    private void generateNewNotification() {
-//        assert this.notificationRequest.getRecipients().get(0).getPayments() != null;
-//        NotificationRecipientV23 notificationRecipientV23 = dataTableTypeUtil.convertNotificationRecipient(new HashMap<>());
-//        this.notificationRequest = (dataTableTypeUtil.convertNotificationRequestV24(new HashMap<>())
-//                .subject(notificationRequest.getSubject())
-//                .senderDenomination(notificationRequest.getSenderDenomination())
-//                .addRecipientsItem(updateNotificationRecipient(notificationRecipientV23,
-//                        notificationRequest.getRecipients().get(0).getDenomination(),
-//                        notificationRequest.getRecipients().get(0).getTaxId(),
-//                        notificationRequest.getRecipients().get(0).getRecipientType(),
-//                        null)));
-//    }
-
-    //TODO MATTEO TEST
     @And("viene generata una nuova notifica con uguale paProtocolNumber e idempotenceToken {string}")
     public void vienePredispostaEInviataUnaNuovaNotificaConUgualePaProtocolNumberEIdempotenceToken(String idempotenceToken) {
         getNotificationStepInterface().prepareNotificationRequestSimileAllaPrecedente(
                 false, false, true, idempotenceToken);
-//        String paProtocolNumber = notificationRequest.getPaProtocolNumber();
-//        generateNewNotification();
-//        this.notificationRequest.setIdempotenceToken(idempotenceToken);
-//        this.notificationRequest.setPaProtocolNumber(paProtocolNumber);
     }
 
-    //TODO MATTEO TEST
     @And("viene generata una nuova notifica con uguale paProtocolNumber")
     public void vieneGenerataUnaNuovaNotificaConUgualePaProtocolNumber() {
         getNotificationStepInterface().prepareNotificationRequestSimileAllaPrecedente(
                 false, false, true, null);
-//        String paProtocolNumber = notificationRequest.getPaProtocolNumber();
-//        generateNewNotification();
-//        this.notificationRequest.setPaProtocolNumber(paProtocolNumber);
     }
 
     @And("destinatario {destinatario} con codice avviso uguale a quello del destinatario numero {int}")
     public void destinatarioConUgualeCodiceAvvisoDelDestinatarioN(Destinatario destinatario, int recipientIndex, Map<String, String> data) {
         getNotificationStepInterface().addRecipientToNotificationSpecialCondition(destinatario, data, "SAME_IUV_AS_RECIPIENT_INDEX", recipientIndex);
-        //TODO MATTEO TEST//
-//        Assertions.assertDoesNotThrow(() -> Objects.requireNonNull(notificationRequest.getRecipients().get(recipientIndex - 1).getPayments()).get(0));
-//        String noticeCode = Objects.requireNonNull(Objects.requireNonNull(notificationRequest.getRecipients().get(recipientIndex - 1).getPayments()).get(0).getPagoPa()).getNoticeCode();
-//        if (recipientName.trim().equalsIgnoreCase(MARIO_CUCUMBER)) {
-//            updateNotificationRecipient(recipient, MARIO_CUCUMBER, marioCucumberTaxID, null, null);
-//        } else if (recipientName.trim().equalsIgnoreCase(MARIO_GHERKIN)) {
-//            updateNotificationRecipient(recipient, MARIO_GHERKIN, marioGherkinTaxID, null, null);
-//        } else {
-//            throw new IllegalArgumentException("Invalid recipient name: " + recipientName);
-//        }
-//        Objects.requireNonNull(Objects.requireNonNull(recipient.getPayments()).get(0).getPagoPa()).setNoticeCode(noticeCode);
-//        this.notificationRequest.addRecipientsItem(recipient);
     }
-
-//    private NotificationRecipientV23 updateNotificationRecipient(NotificationRecipientV23 notificationRecipient,
-//                                                                 String denomination,
-//                                                                 String taxId,
-//                                                                 NotificationRecipientV23.RecipientTypeEnum recipientType,
-//                                                                 NotificationDigitalAddress digitalDomicile) {
-//        notificationRecipient.setDenomination(denomination);
-//        notificationRecipient.setTaxId(taxId);
-//        if (recipientType != null) notificationRecipient.recipientType(recipientType);
-//        if (digitalDomicile != null) notificationRecipient.digitalDomicile(digitalDomicile);
-//
-//        return notificationRecipient;
-//    }
 
     @And("aggiungo {int} numero allegati")
     public void aggiungoNumeroAllegati(int numAllegati) {
@@ -704,17 +507,6 @@ public class SharedSteps {
         String requestId = Base64Utils.encodeToString(getNotificationIun().getBytes());
         NotificationVersion notificationVersion = getNotificationVersion(version);
         getNotificationStepInterface(notificationVersion).getNotificationRequestStatus(requestId);
-//        setPaAndSenderTaxId(paName);
-//        String requestId = Base64Utils.encodeToString(getNotificationIun().getBytes());
-//        try {
-//            Assertions.assertDoesNotThrow(() -> b2bClient.getNotificationRequestStatusV1(requestId));
-//        } catch (AssertionFailedError assertionFailedError) {
-//            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model_v1.NewNotificationResponse notificationResponse =
-//                    (it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model_v1.NewNotificationResponse) mapOfVersionSteps.get(V1).retrieveNotificationResponse();
-//            String message = assertionFailedError.getMessage() +
-//                    "{RequestID: " + (notificationResponse == null ? "NULL" : notificationResponse.getNotificationRequestId()) + " }";
-//            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-//        }
     }
 
     @Then("l'operazione di annullamento ha prodotto un errore con status code {string}")
@@ -728,7 +520,7 @@ public class SharedSteps {
         getNotificationStepInterface().sendNotification(1000, NOTIFICATION_STATUS_NOT_REFUSED, VALIDATION_STATUS);
     }
 
-    //TODO: per test normalizzatore
+    //Per test normalizzatore
     //NOTA: il metodo riceve un parametro da scenario Outline, per quello sembra non venga richiamato (AddressValidation.feature)
     @When("la notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi HTTP_ERROR")
     public void sendNotificationHttpError(String paName) {
@@ -738,7 +530,7 @@ public class SharedSteps {
         Assertions.assertEquals(400, this.notificationError.getStatusCode().value());
     }
 
-    //TODO MATTEO: è identico al metodo sotto...perchè? Cancellare?
+    //TODO MATTEO: è identico al metodo sotto...perché? Procedere con la cancellazione?
     @When("la notifica viene inviata tramite api b2b senza preload allegato dal {string}")
     public void laNotificaVieneInviataTramiteApiB2bSenzaPreloadAllegato(String pa) {
         setPaAndSenderTaxId(pa);
@@ -828,13 +620,12 @@ public class SharedSteps {
         getNotificationStepInterface().addIuvGdpToDestinatario(denominazione, getIuvGPD(posizioneDebitoria), posizioneDebitoria);
     }
 
-    //TODO MATTEO TEST
     @And("al destinatario viene associato lo iuv creato mediante partita debitoria per {string} per la posizione debitoria {int} del pagamento {int}")
     public void destinatarioAddIuvGPDperUtente(String denominazione, Integer posizioneDebitoria, Integer paymentIndex) {
         getNotificationStepInterface().addIuvGdpToDestinatario(denominazione, getIuvGPD(posizioneDebitoria), paymentIndex);
     }
 
-    //TODO MATTEO TEST: Spostato da InvioNotificheB2bSteps e reso universale per ogni versione
+    //TODO MATTEO: Spostato da InvioNotificheB2bSteps e reso universale per ogni versione
     @And("viene controllato la presenza del taxonomyCode")
     public void checkTaxonomyCode() {
         getNotificationStepInterface().checkTaxonomyCode();
@@ -908,7 +699,7 @@ public class SharedSteps {
         Assertions.assertTrue(expectedErrorCode.equalsIgnoreCase(errorCode));
     }
 
-    // TODO MATTEO TEST: 8 vecchi metodi sono stati mergiati in questo. Il prossimo step sarebbe capire meglio cosa fanno quei metodi di
+    // TODO MATTEO TEST: 8 vecchi metodi sono stati unificati in questo. Il prossimo step sarebbe capire meglio cosa fanno quei metodi di
     //  utility richiamati nello switch e rimuoverli da B2bUtils (dove c'azzeccano poco, non sono vere utils se vengono richiamate solo qua).
     //  Alcuni di questi non vengono nemmeno mai richiamati da nessun file feature
     //  Altra possibile miglioria: sostituire le stringhe delle tipologie d'errore con costanti all'interno della classe Costanti
@@ -1125,7 +916,7 @@ public class SharedSteps {
 
     private String decorateErrorMsg(String originalMessage) {
         return originalMessage +
-                "{VERSION: " + versionUsed + "," +
+                "{VERSION: " + versionUsed + ", " +
                 "IUN: " + Optional.ofNullable(getNotificationIun()).orElse("not found") + " }";
     }
 
