@@ -1,6 +1,12 @@
 package it.pagopa.pn.client.b2b.pa.config.springconfig;
 
 
+import org.apache.http.client.HttpRequestRetryHandler;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.conn.ConnectionPoolTimeoutException;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -28,19 +34,54 @@ public class RestTemplateConfiguration {
     @Bean(name = "customRestTemplate")
     @Primary
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    public RestTemplate customRestTemplate() {
-        RestTemplate restTemplate = new RestTemplate();
-        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-        requestFactory.setConnectTimeout(990_000);
-        requestFactory.setReadTimeout(990_000);
-        requestFactory.setConnectionRequestTimeout(990_000);
-        requestFactory.setBufferRequestBody(false);
-        restTemplate.setRequestFactory(requestFactory);
-
+    public RestTemplate customRestTemplate(CloseableHttpClient httpClient) {
+        RestTemplate restTemplate = new RestTemplate(new HttpComponentsClientHttpRequestFactory(httpClient));
         List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
         interceptors.add(new RequestAndTraceIdInterceptor());
-
         return restTemplate;
+    }
+
+    @Bean
+    public PoolingHttpClientConnectionManager poolingHttpClientConnectionManager() {
+        PoolingHttpClientConnectionManager pooling = new PoolingHttpClientConnectionManager();
+        pooling.setMaxTotal(500);
+        pooling.setDefaultMaxPerRoute(50);
+        return pooling;
+    }
+
+    @Bean
+    public HttpRequestRetryHandler httpRequestRetryHandler() {
+        return (exception, executionCount, context) -> {
+            if (executionCount > 10) {
+                return false;
+            }
+            if (exception instanceof ConnectionPoolTimeoutException) {
+                long backoffTime = (long) Math.pow(2, executionCount) * 1000;
+                try {
+                    Thread.sleep(backoffTime);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+                return true;
+            }
+            return false;
+        };
+    }
+
+
+    @Bean
+    public CloseableHttpClient httpClient(PoolingHttpClientConnectionManager poolingHttpClientConnectionManager, HttpRequestRetryHandler httpRequestRetryHandler) {
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectionRequestTimeout(60000)
+                .setConnectTimeout(10000)
+                .setSocketTimeout(20000)
+                .build();
+
+        return HttpClients.custom()
+                .setConnectionManager(poolingHttpClientConnectionManager)
+                .setDefaultRequestConfig(requestConfig)
+                .setRetryHandler(httpRequestRetryHandler)
+                .build();
     }
 
     @Bean(name = "defaultRestTemplate")
