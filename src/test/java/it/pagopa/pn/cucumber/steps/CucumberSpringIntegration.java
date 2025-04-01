@@ -10,42 +10,9 @@ import it.pagopa.pn.client.b2b.pa.parsing.parser.impl.PnParser;
 import it.pagopa.pn.client.b2b.pa.parsing.service.impl.PnParserService;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.polling.impl.*;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v28.*;
 import it.pagopa.pn.client.b2b.pa.service.IBffMandateServiceApi;
 import it.pagopa.pn.client.b2b.pa.service.IMandateReverseServiceClient;
-import it.pagopa.pn.client.b2b.pa.service.impl.B2BDeliveryPushServiceClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.B2bMandateServiceClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.BffMandateServiceClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.IPnInteropProbingClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.IPnLegalPersonAuthClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.IPnLegalPersonVirtualKeyServiceClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.IPnTosPrivacyClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.MandateReverseServiceClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PaperCalculatorClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnApiKeyManagerExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnAppIOB2bExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnBFFRecipientNotificationClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnDowntimeLogsExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalChannelsServiceClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalRegistryPrivateUserApiImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnGPDClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnIoUserAttributerExternaClient;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnPrivateDeliveryPushExternalClient;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddAlternativeClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddFsuClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnSafeStoragePrivateClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnServiceDeskClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnWebMandateExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnWebPaClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnWebRecipientExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnWebhookB2bExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.TemplateEngineClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.EmdIntegrationApiImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
@@ -157,6 +124,19 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnPollingServiceValidationStatusAcceptedExtraRapidV27.class,
         PnPollingServiceStatusExtraRapidV27.class,
         PnPollingServiceTimelineExtraRapidV27.class,
+
+        PnPollingServiceTimelineRapidV28.class,
+        PnPollingServiceStatusRapidV28.class,
+        PnPollingServiceTimelineSlowV28.class,
+        PnPollingServiceTimelineSlowE2eV28.class,
+        PnPollingServiceStatusSlowV28.class,
+        PnPollingServiceValidationStatusV28.class,
+        PnPollingServiceValidationStatusNoAcceptedV28.class,
+        PnPollingServiceValidationStatusAcceptedShortV28.class,
+        PnPollingServiceWebhookV28.class,
+        PnPollingServiceValidationStatusAcceptedExtraRapidV28.class,
+        PnPollingServiceStatusExtraRapidV28.class,
+        PnPollingServiceTimelineExtraRapidV28.class,
 
         MailSenderConfig.class,
         PnParserService.class,

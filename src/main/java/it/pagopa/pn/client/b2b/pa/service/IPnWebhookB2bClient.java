@@ -14,6 +14,10 @@ import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebh
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v27.StreamCreationRequestV27;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v27.StreamMetadataResponseV27;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v27.StreamRequestV27;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v28.ProgressResponseElementV28;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v28.StreamCreationRequestV28;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v28.StreamMetadataResponseV28;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v28.StreamRequestV28;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.ProgressResponseElementV23;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamCreationRequestV23;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamMetadataResponseV23;
@@ -124,6 +128,23 @@ public interface IPnWebhookB2bClient extends SettableApiKey {
     List<ProgressResponseElementV27> consumeEventStreamV27(UUID streamId, String lastEventId) throws RestClientException;
 
     ResponseEntity<List<ProgressResponseElementV27>> consumeEventStreamHttpV27(UUID streamId, String lastEventId) throws RestClientException;
+
+    //V28
+    StreamMetadataResponseV28 createEventStreamV28(StreamCreationRequestV28 streamCreationRequestV28) throws RestClientException;
+
+    StreamMetadataResponseV28 disableEventStreamV28(UUID streamId) throws RestClientException;
+
+    List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v28.StreamListElement> listEventStreamsV28() throws RestClientException;
+
+    void deleteEventStreamV28(UUID streamId) throws RestClientException;
+
+    StreamMetadataResponseV28 retrieveEventStreamV28(UUID streamId) throws RestClientException;
+
+    StreamMetadataResponseV28 updateEventStreamV28(UUID streamId, StreamRequestV28 streamRequestV28) throws RestClientException;
+
+    List<ProgressResponseElementV28> consumeEventStreamV28(UUID streamId, String lastEventId) throws RestClientException;
+
+    ResponseEntity<List<ProgressResponseElementV28>> consumeEventStreamHttpV28(UUID streamId, String lastEventId) throws RestClientException;
 
 
 }

@@ -42,13 +42,11 @@ import java.lang.reflect.Field;
 import java.time.OffsetDateTime;
 import java.util.*;
 
-import static it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps.StreamVersion.V27;
-
 @Slf4j
 public class AvanzamentoNotificheWebhookB2bSteps {
 
     public enum StreamVersion {
-        V10(10), V23(23), V24(24), V25(25), V26(26), V27(27);
+        V10(10), V23(23), V24(24), V25(25), V26(26), V27(27), V28(28);
 
         @Getter
         /** Scopo di questo campo è quello di poter comparare le versioni con < o >
@@ -86,6 +84,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     private final WebhookStepsV25 webhookStepsV25 = new WebhookStepsV25(this);
     private final WebhookStepsV26 webhookStepsV26 = new WebhookStepsV26(this);
     private final WebhookStepsV27 webhookStepsV27 = new WebhookStepsV27(this);
+    private final WebhookStepsV28 webhookStepsV28 = new WebhookStepsV28(this);
     private static final Map<String, SettableApiKey.ApiKeyType> paForStream =
             Map.of(
                     "Comune_1", SettableApiKey.ApiKeyType.MVP_1,
@@ -168,13 +167,16 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             case V27 -> {
                 return webhookStepsV27;
             }
+             case V28 -> {
+                return webhookStepsV28;
+            }
             default -> throw new IllegalArgumentException("Version not supported!: " + streamVersion);
         }
     }
 
     private StreamVersion getStreamVersion(String version) {
         if (version.trim().equalsIgnoreCase("più recente")) {
-            return V27;//TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente
+            return StreamVersion.V28;//TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente
         }
         return StreamVersion.valueOf(version.trim().toUpperCase());
     }

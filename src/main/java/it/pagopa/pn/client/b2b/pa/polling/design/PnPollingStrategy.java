@@ -87,4 +87,18 @@ public class PnPollingStrategy {
     public static final String VALIDATION_STATUS_ACCEPTATION_EXTRA_RAPID_V27 = "VALIDATION_STATUS_ACCEPTATION_EXTRA_RAPID_V27";
     public static final String VALIDATION_STATUS_NO_ACCEPTATION_V27 = "VALIDATION_STATUS_NO_ACCEPTATION_V27";
     public static final String WEBHOOK_V27 = "WEBHOOK_V27";
+
+    //V28
+    public static final String TIMELINE_RAPID_V28 = "TIMELINE_RAPID_V28";
+    public static final String STATUS_RAPID_V28 = "STATUS_RAPID_V28";
+    public static final String TIMELINE_SLOW_V28 = "TIMELINE_SLOW_V28";
+    public static final String TIMELINE_SLOW_E2E_V28 = "TIMELINE_SLOW_E2E_V28";
+    public static final String TIMELINE_EXTRA_RAPID_V28 = "TIMELINE_EXTRA_RAPID_V28";
+    public static final String STATUS_SLOW_V28 = "STATUS_SLOW_V28";
+    public static final String STATUS_EXTRA_RAPID_V28 = "STATUS_EXTRA_RAPID_V28";
+    public static final String VALIDATION_STATUS_V28 = "VALIDATION_STATUS_V28";
+    public static final String VALIDATION_STATUS_ACCEPTATION_SHORT_V28 = "VALIDATION_STATUS_ACCEPTATION_SHORT_V28";
+    public static final String VALIDATION_STATUS_ACCEPTATION_EXTRA_RAPID_V28 = "VALIDATION_STATUS_ACCEPTATION_EXTRA_RAPID_V28";
+    public static final String VALIDATION_STATUS_NO_ACCEPTATION_V28 = "VALIDATION_STATUS_NO_ACCEPTATION_V28";
+    public static final String WEBHOOK_V28 = "WEBHOOK_V28";
 }
