@@ -264,7 +264,7 @@ public class SharedSteps {
      */
     public FullSentNotificationV26 getSentNotificationLastVersion() {
         if (notificationIun != null) {
-            return b2bClient.getSentNotification(notificationIun);
+            return b2bClient.getSentNotificationV26(notificationIun);
         }
         throw new RuntimeException("Lo IUN non è valorizzato, qualcosa è andato storto nei passaggi precedenti");
     }
@@ -366,7 +366,7 @@ public class SharedSteps {
                 TimelineElementV26 timelineElement = null;
                 for (int i = 0; i < 33; i++) {
                     threadWait(getWorkFlowWait());
-                    fsn = b2bClient.getSentNotification(fsn.getIun());
+                    fsn = b2bClient.getSentNotificationV26(fsn.getIun());
                     log.info("NOTIFICATION_TIMELINE: " + fsn.getTimeline());
                     timelineElement = fsn.getTimeline().stream().filter(
                             elem -> Objects.requireNonNull(elem.getCategory().getValue())

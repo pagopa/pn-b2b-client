@@ -61,22 +61,21 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     private HttpStatusCodeException notificationError;
     private Integer requestNumber;
 
-    private final Map<StreamVersion, WebhookStepsInterface> mapOfWebhookVersionSteps = Map.ofEntries(
-            Map.entry(StreamVersion.V10, new WebhookStepsV10(this)),
-            Map.entry(StreamVersion.V23, new WebhookStepsV23(this)),
-            Map.entry(StreamVersion.V24, new WebhookStepsV24(this)),
-            Map.entry(StreamVersion.V25, new WebhookStepsV25(this)),
-            Map.entry(StreamVersion.V26, new WebhookStepsV26(this)),
-            Map.entry(StreamVersion.V27, new WebhookStepsV27(this)),
-            Map.entry(StreamVersion.V28, new WebhookStepsV28(this))
+    private final Map<StreamVersion, WebhookStepsInterface> mapOfWebhookVersionSteps = Map.of(
+            StreamVersion.V10, new WebhookStepsV10(this),
+            StreamVersion.V23, new WebhookStepsV23(this),
+            StreamVersion.V24, new WebhookStepsV24(this),
+            StreamVersion.V25, new WebhookStepsV25(this),
+            StreamVersion.V26, new WebhookStepsV26(this),
+            StreamVersion.V27, new WebhookStepsV27(this),
+            StreamVersion.V28, new WebhookStepsV28(this)
     );
 
-
-    private static final Map<String, SettableApiKey.ApiKeyType> paForStream =
-            Map.of(
-                    COMUNE_1, SettableApiKey.ApiKeyType.MVP_1,
-                    COMUNE_2, SettableApiKey.ApiKeyType.MVP_2,
-                    COMUNE_MULTI, SettableApiKey.ApiKeyType.GA);
+    private static final Map<String, SettableApiKey.ApiKeyType> paForStream = Map.of(
+            COMUNE_1, SettableApiKey.ApiKeyType.MVP_1,
+            COMUNE_2, SettableApiKey.ApiKeyType.MVP_2,
+            COMUNE_MULTI, SettableApiKey.ApiKeyType.GA
+    );
 
     @Autowired
     public AvanzamentoNotificheWebhookB2bSteps(
@@ -888,7 +887,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 //    public void evidenceProducedIunRequestIdAndState() {
 //        log.info("METADATI: " + '\n' + sharedSteps.getNewNotificationResponse());
 //        log.info("REQUEST-ID: " + '\n' + sharedSteps.getNewNotificationResponse().getNotificationRequestId());
-//        log.info("IUN: " + '\n' + sharedSteps.getSentNotification().getIun());
+//        log.info("IUN: " + '\n' + sharedSteps.getNotificationIun());
 //        for (ProgressResponseElement element : progressResponseElements) {
 //            log.info("EVENT: " + '\n' + element.getTimelineEventCategory() + " " + element.getTimestamp());
 //        }

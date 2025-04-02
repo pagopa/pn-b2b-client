@@ -16,7 +16,7 @@ import it.pagopa.pn.client.b2b.pa.service.impl.B2bMandateServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebMandateExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.*;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.FullReceivedNotificationV25;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.FullReceivedNotificationV26;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationAttachmentDownloadMetadataResponse;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationSearchResponse;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
@@ -543,7 +543,7 @@ public class RicezioneNotificheWebDelegheSteps {
 
     private it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementV26 getTimelineElementV23WebRecipient(it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV26 timelineElementCategoryV23) {
         FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
-        FullReceivedNotificationV25 result = webRecipientClient.getReceivedNotification(fullSentNotification.getIun(), null);
+        FullReceivedNotificationV26 result = webRecipientClient.getReceivedNotification(fullSentNotification.getIun(), null);
         log.info("NOTIFICATION_TIMELINE: " + fullSentNotification.getTimeline());
         return result
                 .getTimeline()

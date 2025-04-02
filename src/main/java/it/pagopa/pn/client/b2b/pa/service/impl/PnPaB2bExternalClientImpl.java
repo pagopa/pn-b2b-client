@@ -157,41 +157,41 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     public boolean setApiKeys(ApiKeyType apiKey) {
         boolean beenSet = false;
         switch (apiKey) {
-            case MVP_1:
+            case MVP_1 -> {
                 if (this.apiKeySetted != ApiKeyType.MVP_1) {
                     setApiKey(apiKeyMvp1);
                     this.apiKeySetted = ApiKeyType.MVP_1;
                 }
                 beenSet = true;
-                break;
-            case MVP_2:
+            }
+            case MVP_2 -> {
                 if (this.apiKeySetted != ApiKeyType.MVP_2) {
                     setApiKey(apiKeyMvp2);
                     this.apiKeySetted = ApiKeyType.MVP_2;
                 }
                 beenSet = true;
-                break;
-            case GA:
+            }
+            case GA -> {
                 if (this.apiKeySetted != ApiKeyType.GA) {
                     setApiKey(apiKeyGa);
                     this.apiKeySetted = ApiKeyType.GA;
                 }
                 beenSet = true;
-                break;
-            case SON:
+            }
+            case SON -> {
                 if (this.apiKeySetted != ApiKeyType.SON) {
                     setApiKey(apiKeySon);
                     this.apiKeySetted = ApiKeyType.SON;
                 }
                 beenSet = true;
-                break;
-            case ROOT:
+            }
+            case ROOT -> {
                 if (this.apiKeySetted != ApiKeyType.ROOT) {
                     setApiKey(apiKeyRoot);
                     this.apiKeySetted = ApiKeyType.ROOT;
                 }
                 beenSet = true;
-                break;
+            }
         }
         return beenSet;
     }
@@ -293,52 +293,11 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         return newNotificationApi.presignedUploadRequest(preLoadRequest);
     }
 
+    //V10
+    @Override
     public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationResponse sendNewNotificationV1(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequest newNotificationRequest) {
         refreshAndSetTokenInteropClient();
         return newNotificationApiV1.sendNewNotification(newNotificationRequest);
-    }
-
-    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationResponse sendNewNotificationV2(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationRequest newNotificationRequest) {
-        refreshAndSetTokenInteropClient();
-        return newNotificationApiV2.sendNewNotification(newNotificationRequest);
-    }
-
-    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationResponse sendNewNotificationV21(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationRequestV21 newNotificationRequest) {
-        refreshAndSetTokenInteropClient();
-        return newNotificationApiV21.sendNewNotificationV21(newNotificationRequest);
-    }
-
-    @Override
-    public NewNotificationResponse sendNewNotificationV23(NewNotificationRequestV23 newNotificationRequest) {
-        refreshAndSetTokenInteropClient();
-        return newNotificationApi.sendNewNotificationV23(newNotificationRequest);
-    }
-
-    public NewNotificationResponse sendNewNotificationV24(NewNotificationRequestV24 newNotificationRequest) {
-        refreshAndSetTokenInteropClient();
-        return newNotificationApi.sendNewNotificationV24(newNotificationRequest);
-    }
-
-    @Override
-    public FullSentNotificationV26 getSentNotification(String iun) {
-        refreshAndSetTokenInteropClient();
-        return senderReadB2BApi.retrieveSentNotificationV26(iun);
-    }
-
-    @Override
-    public FullSentNotificationV25 getSentNotificationV25(String iun) {
-        refreshAndSetTokenInteropClient();
-        return deepCopy(senderReadB2BApiV25.retrieveSentNotificationV25(iun), FullSentNotificationV25.class);
-    }
-
-    @Override
-    public FullSentNotificationV24 getSentNotificationV24(String iun) {
-        return senderReadB2BApi.retrieveSentNotificationV24(iun);
-    }
-
-    @Override
-    public FullSentNotificationV23 getSentNotificationV23(String iun) {
-        return senderReadB2BApi.retrieveSentNotificationV23(iun);
     }
 
     @Override
@@ -348,9 +307,35 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     }
 
     @Override
+    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequestStatusResponse getNotificationRequestStatusV1(String notificationRequestId) {
+        refreshAndSetTokenInteropClient();
+        return senderReadB2BApiV1.retrieveNotificationRequestStatus(notificationRequestId, null, null);
+    }
+
+    //V20
+    @Override
+    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationResponse sendNewNotificationV2(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationRequest newNotificationRequest) {
+        refreshAndSetTokenInteropClient();
+        return newNotificationApiV2.sendNewNotification(newNotificationRequest);
+    }
+
+    @Override
     public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.FullSentNotificationV20 getSentNotificationV2(String iun) {
         refreshAndSetTokenInteropClient();
         return senderReadB2BApiV2.retrieveSentNotificationV20(iun);
+    }
+
+    @Override
+    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationRequestStatusResponse getNotificationRequestStatusV2(String notificationRequestId) {
+        refreshAndSetTokenInteropClient();
+        return senderReadB2BApiV2.retrieveNotificationRequestStatus(notificationRequestId, null, null);
+    }
+
+    //V21
+    @Override
+    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationResponse sendNewNotificationV21(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationRequestV21 newNotificationRequest) {
+        refreshAndSetTokenInteropClient();
+        return newNotificationApiV21.sendNewNotificationV21(newNotificationRequest);
     }
 
     @Override
@@ -360,9 +345,21 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     }
 
     @Override
-    public NewNotificationRequestStatusResponseV24 getNotificationRequestStatusV24(String notificationRequestId) {
+    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationRequestStatusResponseV21 getNotificationRequestStatusV21(String notificationRequestId) {
         refreshAndSetTokenInteropClient();
-        return senderReadB2BApi.retrieveNotificationRequestStatusV24(notificationRequestId, null, null);
+        return senderReadB2BApiV21.retrieveNotificationRequestStatusV21(notificationRequestId, null, null);
+    }
+
+    //V23
+    @Override
+    public FullSentNotificationV23 getSentNotificationV23(String iun) {
+        return senderReadB2BApi.retrieveSentNotificationV23(iun);
+    }
+
+    @Override
+    public NewNotificationResponse sendNewNotificationV23(NewNotificationRequestV23 newNotificationRequest) {
+        refreshAndSetTokenInteropClient();
+        return newNotificationApi.sendNewNotificationV23(newNotificationRequest);
     }
 
     @Override
@@ -371,22 +368,55 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         return senderReadB2BApi.retrieveNotificationRequestStatusV23(notificationRequestId, null, null);
     }
 
-    @Override
-    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequestStatusResponse getNotificationRequestStatusV1(String notificationRequestId) {
+    //V24
+    public NewNotificationResponse sendNewNotificationV24(NewNotificationRequestV24 newNotificationRequest) {
         refreshAndSetTokenInteropClient();
-        return senderReadB2BApiV1.retrieveNotificationRequestStatus(notificationRequestId, null, null);
+        return newNotificationApi.sendNewNotificationV24(newNotificationRequest);
     }
 
     @Override
-    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationRequestStatusResponse getNotificationRequestStatusV2(String notificationRequestId) {
-        refreshAndSetTokenInteropClient();
-        return senderReadB2BApiV2.retrieveNotificationRequestStatus(notificationRequestId, null, null);
+    public FullSentNotificationV24 getSentNotificationV24(String iun) {
+        return senderReadB2BApi.retrieveSentNotificationV24(iun);
     }
 
     @Override
-    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationRequestStatusResponseV21 getNotificationRequestStatusV21(String notificationRequestId) {
+    public NewNotificationRequestStatusResponseV24 getNotificationRequestStatusV24(String notificationRequestId) {
         refreshAndSetTokenInteropClient();
-        return senderReadB2BApiV21.retrieveNotificationRequestStatusV21(notificationRequestId, null, null);
+        return senderReadB2BApi.retrieveNotificationRequestStatusV24(notificationRequestId, null, null);
+    }
+
+    //V25
+    @Override
+    public NewNotificationResponse sendNewNotificationV25(NewNotificationRequestV25 newNotificationRequest) {
+        refreshAndSetTokenInteropClient();
+        return newNotificationApi.sendNewNotificationV25(newNotificationRequest);
+    }
+
+    @Override
+    public FullSentNotificationV25 getSentNotificationV25(String iun) {
+        refreshAndSetTokenInteropClient();
+        return deepCopy(senderReadB2BApiV25.retrieveSentNotificationV25(iun), FullSentNotificationV25.class);
+    }
+
+    @Override
+    public NewNotificationRequestStatusResponseV25 getNotificationRequestStatusV25(String notificationRequestId) {
+        refreshAndSetTokenInteropClient();
+        return senderReadB2BApi.retrieveNotificationRequestStatusV25(notificationRequestId, null, null);
+    }
+
+
+    //V26
+    @Override
+    public FullSentNotificationV26 getSentNotificationV26(String iun) {
+        refreshAndSetTokenInteropClient();
+        return senderReadB2BApi.retrieveSentNotificationV26(iun);
+    }
+
+    //V27
+    @Override
+    public FullSentNotificationV27 getSentNotificationV27(String iun) {
+        refreshAndSetTokenInteropClient();
+        return senderReadB2BApi.retrieveSentNotificationV27(iun);
     }
 
     @Override

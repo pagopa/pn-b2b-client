@@ -186,7 +186,7 @@ public class InvioNotificheB2bSteps {
         List<NotificationSearchRow> searchedNotifications = searchNotificationWebFromADate(OffsetDateTime.now().minusDays(120));
         FullSentNotificationV26 notifica120 = null;
         for (NotificationSearchRow notifica : searchedNotifications) {
-            FullSentNotificationV26 result = b2bClient.getSentNotification(notifica.getIun());
+            FullSentNotificationV26 result = b2bClient.getSentNotificationV26(notifica.getIun());
             if (result.getRecipients().get(0).getPayments() != null
                     && result.getRecipients().get(0).getPayments().get(0).getPagoPa() != null
                     && result.getRecipients().get(0).getPayments().get(0).getPagoPa().getNoticeCode() != null) {
@@ -229,7 +229,7 @@ public class InvioNotificheB2bSteps {
 
         for (NotificationSearchRow notifiche : searchedNotifications) {
 
-            notifica = b2bClient.getSentNotification(notifiche.getIun());
+            notifica = b2bClient.getSentNotificationV26(notifiche.getIun());
 
             if (!notifica.getRecipients().get(0).getPayments().isEmpty()
                     && notifica.getRecipients().get(0).getPayments() != null
@@ -673,7 +673,7 @@ public class InvioNotificheB2bSteps {
             } else if (version.equalsIgnoreCase("V2")) {
                 b2bUtils.verifyNotificationV2(b2bClient.getSentNotificationV2(iun));
             } else if (version.equalsIgnoreCase("V26")) {
-                b2bUtils.verifyNotification(b2bClient.getSentNotification(iun));
+                b2bUtils.verifyNotification(b2bClient.getSentNotificationV26(iun));
             }
         } catch (AssertionFailedError assertionFailedError) {
             log.info("Errore di acquisizione notifica");

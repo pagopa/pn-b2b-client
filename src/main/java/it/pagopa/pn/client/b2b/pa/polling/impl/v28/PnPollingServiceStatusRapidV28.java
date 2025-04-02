@@ -1,6 +1,6 @@
 package it.pagopa.pn.client.b2b.pa.polling.impl.v28;
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV26;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV27;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryElementV26;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingTemplate;
@@ -25,7 +25,7 @@ public class PnPollingServiceStatusRapidV28 extends PnPollingTemplate<PnPollingR
 
     protected final TimingForPolling timingForPolling;
     private final IPnPaB2bClient pnPaB2bClient;
-    private FullSentNotificationV26 fullSentNotification;
+    private FullSentNotificationV27 fullSentNotification;
 
 
     public PnPollingServiceStatusRapidV28(TimingForPolling timingForPolling, IPnPaB2bClient pnPaB2bClient) {
@@ -37,9 +37,9 @@ public class PnPollingServiceStatusRapidV28 extends PnPollingTemplate<PnPollingR
     protected Callable<PnPollingResponseV28> getPollingResponse(String iun, PnPollingParameter pnPollingParameter) {
         return () -> {
             PnPollingResponseV28 pnPollingResponse = new PnPollingResponseV28();
-            FullSentNotificationV26 fullSentNotification;
+            FullSentNotificationV27 fullSentNotification;
             try {
-                fullSentNotification = pnPaB2bClient.getSentNotification(iun);
+                fullSentNotification = pnPaB2bClient.getSentNotificationV27(iun);
             } catch (Exception exception) {
                 log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", iun, pnPaB2bClient.getApiKeySetted().name(), exception.getMessage());
                 throw new PnPollingException(exception.getMessage());

@@ -1012,7 +1012,7 @@ public class PnPaB2bUtils {
      * Metodi per le notifiche V24
      */
     public FullSentNotificationV26 getNotificationByIun(String iun) {
-        return client.getSentNotification(iun);
+        return client.getSentNotificationV26(iun);
     }
 
     public NewNotificationResponse uploadNotificationV24(NewNotificationRequestV24 request) throws IOException {

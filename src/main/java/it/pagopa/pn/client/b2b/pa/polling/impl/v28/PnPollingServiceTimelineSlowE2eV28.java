@@ -1,6 +1,6 @@
 package it.pagopa.pn.client.b2b.pa.polling.impl.v28;
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV26;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV27;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
@@ -24,7 +24,7 @@ import java.util.function.Predicate;
 public class PnPollingServiceTimelineSlowE2eV28 extends PnPollingServiceTimelineRapidV28 {
 
     private final IPnPaB2bClient pnPaB2bClient;
-    private FullSentNotificationV26 fullSentNotification;
+    private FullSentNotificationV27 fullSentNotification;
 
     public PnPollingServiceTimelineSlowE2eV28(TimingForPolling timingForPolling, IPnPaB2bClient pnPaB2bClient) {
         super(timingForPolling, pnPaB2bClient);
@@ -36,9 +36,9 @@ public class PnPollingServiceTimelineSlowE2eV28 extends PnPollingServiceTimeline
     public Callable<PnPollingResponseV28> getPollingResponse(String iun, PnPollingParameter pnPollingParameter) {
         return () -> {
             PnPollingResponseV28 pnPollingResponse = new PnPollingResponseV28();
-            FullSentNotificationV26 fullSentNotification;
+            FullSentNotificationV27 fullSentNotification;
             try {
-                fullSentNotification = pnPaB2bClient.getSentNotification(iun);
+                fullSentNotification = pnPaB2bClient.getSentNotificationV27(iun);
             } catch (Exception exception) {
                 log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", iun, pnPaB2bClient.getApiKeySetted().name(), exception.getMessage());
                 throw new PnPollingException(exception.getMessage());
@@ -98,8 +98,7 @@ public class PnPollingServiceTimelineSlowE2eV28 extends PnPollingServiceTimeline
                 .orElse(null);
 
         if (timelineElement != null) {
-            //TODO V28 pnPollingResponse.setTimelineElement(timelineElement);
-            pnPollingResponse.setTimelineElement(null);
+//            pnPollingResponse.setTimelineElement(timelineElement);//TODO V28
             pnPollingResponse.setResult(true);
             return true;
         }

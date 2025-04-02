@@ -438,13 +438,13 @@ public class WebhookStepsV26 implements WebhookStepsInterface {
 
     @Override
     public void getTimelineElementVersionB2B(String iun) {
-        webhookSteps.getB2bClient().getSentNotification(iun);
+        webhookSteps.getB2bClient().getSentNotificationV26(iun);
     }
 
     @Override
     public void compareTimestampWebhook(String timelineElementCategory, String webhookElementCategory, boolean mustBeEqual) {
         String iun = webhookSteps.getSharedSteps().getNotificationIun();
-        FullSentNotificationV26 fullSentNotification = webhookSteps.getB2bClient().getSentNotification(iun);
+        FullSentNotificationV26 fullSentNotification = webhookSteps.getB2bClient().getSentNotificationV26(iun);
         Assertions.assertNotNull(progressResponseElementList);
         OffsetDateTime eventTimestamp = progressResponseElementList.stream().filter(
                 elem -> elem.getElement().getCategory().getValue().equals(webhookElementCategory)).findAny().get().getElement().getTimestamp();
@@ -563,7 +563,7 @@ public class WebhookStepsV26 implements WebhookStepsInterface {
     @Override
     public void checkLegalFactCategory(String timelineCategory, String legalFactCategory) {
         String iun = webhookSteps.getSharedSteps().getNotificationIun();
-        FullSentNotificationV26 fullSentNotification = webhookSteps.getB2bClient().getSentNotification(iun);
+        FullSentNotificationV26 fullSentNotification = webhookSteps.getB2bClient().getSentNotificationV26(iun);
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 timelineElementWithTargetCategory =
                 fullSentNotification.getTimeline().stream().filter(
                         x -> x.getCategory().getValue().equals(timelineCategory)).findFirst().orElse(null);

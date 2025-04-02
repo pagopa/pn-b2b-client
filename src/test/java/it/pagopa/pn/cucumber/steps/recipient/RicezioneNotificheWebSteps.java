@@ -63,7 +63,7 @@ public class RicezioneNotificheWebSteps {
     private static final Integer WAIT_DEFAULT = 10000;
 
     private HttpStatusCodeException notificationError;
-    private FullReceivedNotificationV25 fullNotification;
+    private FullReceivedNotificationV26 fullNotification;
     private BffFullNotificationV1 bffFullNotificationV1Recipient;
     private it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffFullNotificationV1 bffFullNotificationV1Sender;
 

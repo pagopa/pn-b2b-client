@@ -137,7 +137,7 @@ public class B2bStepsV24 implements B2bStepsInterface {
     @Override
     public void checkPriceForRecipient(int recipientIndex, String price) {
         String iun = b2bSteps.getSharedSteps().getNotificationIun();
-        FullSentNotificationV26 fullSentNotification = b2bSteps.getB2bClient().getSentNotification(iun);
+        FullSentNotificationV26 fullSentNotification = b2bSteps.getB2bClient().getSentNotificationV26(iun);
         List<NotificationPaymentItem> listNotificationPaymentItem = fullSentNotification.getRecipients().get(recipientIndex).getPayments();
         if (listNotificationPaymentItem != null) {
             for (NotificationPaymentItem notificationPaymentItem : listNotificationPaymentItem) {
@@ -162,7 +162,7 @@ public class B2bStepsV24 implements B2bStepsInterface {
     @Override
     public void payAvvisoPagoPa(Integer paymentIndex, Integer recipientIndex) {
         String iun = b2bSteps.getSharedSteps().getNotificationIun();
-        FullSentNotificationV26 fullSentNotification = b2bSteps.getB2bClient().getSentNotification(iun);
+        FullSentNotificationV26 fullSentNotification = b2bSteps.getB2bClient().getSentNotificationV26(iun);
         String creditorTaxId = fullSentNotification.getRecipients().get(recipientIndex).getPayments().get(paymentIndex).getPagoPa().getCreditorTaxId();
         String noticeCode = fullSentNotification.getRecipients().get(recipientIndex).getPayments().get(paymentIndex).getPagoPa().getNoticeCode();
         NotificationPriceResponseV23 notificationPrice = b2bSteps.getB2bClient().getNotificationPriceV23(creditorTaxId, noticeCode);

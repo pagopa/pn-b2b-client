@@ -1536,7 +1536,7 @@ public class AvanzamentoNotificheB2bSteps {
                 return legalFactDownloadMetadataResponse.getUrl();
             }
 //            if (appIO) {
-//                 Assertions.assertDoesNotThrow(() -> this.appIOB2bClient.getLegalFact(sharedSteps.getSentNotification().getIun(), categorySearch.toString(), finalKeySearch,
+//                 Assertions.assertDoesNotThrow(() -> this.appIOB2bClient.getLegalFact(sharedSteps.getNotificationIun(), categorySearch.toString(), finalKeySearch,
 //                  sharedSteps.getSentNotification().getRecipients().get(0).getTaxId()));
 //            }
             if (webRecipient) {
@@ -1665,7 +1665,7 @@ public class AvanzamentoNotificheB2bSteps {
                 Assertions.assertDoesNotThrow(() -> this.b2bClient.getDownloadLegalFact(sharedSteps.getNotificationIun(), finalKeySearch));
             }
 //            if (appIO) {
-//                 Assertions.assertDoesNotThrow(() -> this.appIOB2bClient.getLegalFact(sharedSteps.getSentNotification().getIun(), categorySearch.toString(), finalKeySearch,
+//                 Assertions.assertDoesNotThrow(() -> this.appIOB2bClient.getLegalFact(sharedSteps.getNotificationIun(), categorySearch.toString(), finalKeySearch,
 //                        sharedSteps.getSentNotification().getRecipients().get(0).getTaxId()));
 //            }
             if (webRecipient) {
@@ -2951,7 +2951,7 @@ public class AvanzamentoNotificheB2bSteps {
                 Thread.sleep(remainingTime + 30 * 1000);
             }
             // get the updated notification
-            FullSentNotificationV26 fullSentNotification = b2bClient.getSentNotification(iun);
+            FullSentNotificationV26 fullSentNotification = b2bClient.getSentNotificationV26(iun);
             //TODO MATTEO TEST//sharedSteps.setFullSentNotificationV26(fullSentNotification);
             sharedSteps.setNotificationIun(fullSentNotification.getIun());//TODO MATTEO probabilmente inutile, è la stessa notifica di prima
         }
@@ -2973,7 +2973,7 @@ public class AvanzamentoNotificheB2bSteps {
                 Thread.sleep(remainingTime + 30 * 1000);
             }
             // get the updated notification
-            //TODO MATTEO TEST//sharedSteps.setFullSentNotificationV26(b2bClient.getSentNotification(iun));
+            //TODO MATTEO TEST//sharedSteps.setFullSentNotificationV26(b2bClient.getSentNotificationV26(iun));
         }
     }
 

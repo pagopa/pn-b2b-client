@@ -440,7 +440,7 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
 
     @Override
     public void getTimelineElementVersionB2B(String iun) {
-        webhookSteps.getB2bClient().getSentNotification(iun);
+        webhookSteps.getB2bClient().getSentNotificationV26(iun);
     }
 
     @Override
@@ -564,7 +564,7 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
     @Override
     public void checkLegalFactCategory(String timelineCategory, String legalFactCategory) {
         String iun = webhookSteps.getSharedSteps().getNotificationIun();
-        FullSentNotificationV26 fullSentNotification = webhookSteps.getB2bClient().getSentNotification(iun);
+        FullSentNotificationV26 fullSentNotification = webhookSteps.getB2bClient().getSentNotificationV26(iun);
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 timelineElementWithTargetCategory =
                 fullSentNotification.getTimeline().stream().filter(
                         x -> x.getCategory().getValue().equals(timelineCategory)).findFirst().orElse(null);
