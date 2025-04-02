@@ -14,7 +14,7 @@ Feature: Aggiunta lingua aggiuntiva notifiche
       | physicalAddress_address | Via@ok_890 |
       | payment_pagoPaForm      | SI         |
       | apply_cost_pagopa       | SI         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
 
   @additionalLanguage
   Scenario Outline: [BILINGUISMO-2-OK] Viene create una notifica utilizzando una sola lingua ammissibile (DE, SL, FR)
@@ -31,7 +31,7 @@ Feature: Aggiunta lingua aggiuntiva notifiche
       | physicalAddress_address | Via@ok_890 |
       | payment_pagoPaForm      | SI         |
       | apply_cost_pagopa       | SI         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Examples:
       | LANGUAGE |
       | DE       |

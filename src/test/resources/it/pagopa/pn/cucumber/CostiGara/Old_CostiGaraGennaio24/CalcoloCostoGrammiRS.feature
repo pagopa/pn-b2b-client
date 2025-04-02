@@ -17,7 +17,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche RS
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -31,7 +31,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche RS
       | 60126 | 294   | ANCONA       | AN       | notifica analogica RECAPITISTA |
       | 80022 | 344   | ARZANO       | NA       | notifica analogica RECAPITISTA |
       | 84124 | 294   | SALERNO      | SA       | notifica analogica RECAPITISTA |
-      | 80129 | 274     | NAPOLI       | NA       | notifica analogica RECAPITISTA |
+      | 80129 | 274   | NAPOLI       | NA       | notifica analogica RECAPITISTA |
 
   @costoAnalogicoGennaio24
   Scenario: [CALCOLO-COSTO_OLD_RS-20GR_2] Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso <= 20gr
@@ -46,7 +46,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche RS
       | physicalAddress_zip     | ZONE_1       |
       | physicalAddress_address | Via@ok_RIS   |
       | payment_pagoPaForm      | NOALLEGATO   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "737" della notifica
 
@@ -63,7 +63,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche RS
       | physicalAddress_zip     | ZONE_2       |
       | physicalAddress_address | Via@ok_RIS   |
       | payment_pagoPaForm      | NOALLEGATO   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "852" della notifica
 
@@ -80,7 +80,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche RS
       | physicalAddress_zip     | ZONE_3       |
       | physicalAddress_address | Via@ok_RIS   |
       | payment_pagoPaForm      | NOALLEGATO   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "909" della notifica
 

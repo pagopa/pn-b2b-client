@@ -26,7 +26,7 @@ Feature: Sperimentazione Radd wave 1
       | payment_f24                  | PAYMENT_F24_STANDARD |
       | title_payment                | F24_STANDARD_GHERKIN |
       | apply_cost_f24               | SI                   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     Then si verifica il contenuto degli attacchment da inviare nella pec del destinatario 0 con 4 allegati
     And si verifica il contenuto della pec abbia 1 attachment di tipo "AAR"
@@ -49,7 +49,7 @@ Feature: Sperimentazione Radd wave 1
       | payment_f24                  | PAYMENT_F24_STANDARD |
       | title_payment                | F24_STANDARD_GHERKIN |
       | apply_cost_f24               | SI                   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     Then download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è "AAR RADD"
@@ -72,7 +72,7 @@ Feature: Sperimentazione Radd wave 1
       | payment_f24                  | PAYMENT_F24_STANDARD |
       | title_payment                | F24_STANDARD_GHERKIN |
       | apply_cost_f24               | SI                   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato che il peso della busta cartacea sia di 35
     Then download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è "AAR RADD"
@@ -94,14 +94,14 @@ Feature: Sperimentazione Radd wave 1
       | payment_f24                  | PAYMENT_F24_STANDARD |
       | title_payment                | F24_STANDARD_GHERKIN |
       | apply_cost_f24               | SI                   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato che il peso della busta cartacea sia di 10
     Then download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è "AAR RADD"
 
 
   @raddWave
-Scenario: [RADD_WAVE_4] - Invio notifica digitale (1° tentativo OK) a destinatario con CAP in fase di sperimentazione ma non coperto dai servizi RADD
+  Scenario: [RADD_WAVE_4] - Invio notifica digitale (1° tentativo OK) a destinatario con CAP in fase di sperimentazione ma non coperto dai servizi RADD
     Given viene generata una nuova notifica
       | subject            | notifica digitale |
       | senderDenomination | Comune di palermo |
@@ -115,7 +115,7 @@ Scenario: [RADD_WAVE_4] - Invio notifica digitale (1° tentativo OK) a destinata
       | payment_f24                  | PAYMENT_F24_STANDARD |
       | title_payment                | F24_STANDARD_GHERKIN |
       | apply_cost_f24               | SI                   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     Then si verifica il contenuto degli attacchment da inviare nella pec del destinatario 0 con 4 allegati
     And si verifica il contenuto della pec abbia 1 attachment di tipo "AAR"
@@ -138,7 +138,7 @@ Scenario: [RADD_WAVE_4] - Invio notifica digitale (1° tentativo OK) a destinata
       | payment_f24                  | PAYMENT_F24_STANDARD |
       | title_payment                | F24_STANDARD_GHERKIN |
       | apply_cost_f24               | SI                   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     Then download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è "AAR RADD"
 
@@ -158,7 +158,7 @@ Scenario: [RADD_WAVE_4] - Invio notifica digitale (1° tentativo OK) a destinata
       | physicalAddress_zip          | 70129                |
       | payment_f24                  | PAYMENT_F24_FLAT     |
       | title_payment                | F24_STANDARD_GHERKIN |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato che il peso della busta cartacea sia di 10
     Then download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è "AAR RADD"
@@ -180,7 +180,7 @@ Scenario: [RADD_WAVE_4] - Invio notifica digitale (1° tentativo OK) a destinata
       | payment_f24                  | PAYMENT_F24_STANDARD |
       | title_payment                | F24_STANDARD_GHERKIN |
       | apply_cost_f24               | SI                   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato che il peso della busta cartacea sia di 10
     Then download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è "AAR RADD"
@@ -202,7 +202,7 @@ Scenario: [RADD_WAVE_4] - Invio notifica digitale (1° tentativo OK) a destinata
       | payment_f24                  | PAYMENT_F24_STANDARD |
       | title_payment                | F24_STANDARD_GHERKIN |
       | apply_cost_f24               | SI                   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato che il peso della busta cartacea sia di 35
     Then download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è "AAR"
@@ -222,7 +222,7 @@ Scenario: [RADD_WAVE_4] - Invio notifica digitale (1° tentativo OK) a destinata
       | payment_f24                  | PAYMENT_F24_STANDARD |
       | title_payment                | F24_STANDARD_GHERKIN |
       | apply_cost_f24               | SI                   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     Then si verifica il contenuto degli attacchment da inviare nella pec del destinatario 0 con 4 allegati
     And si verifica il contenuto della pec abbia 1 attachment di tipo "AAR"
@@ -244,7 +244,7 @@ Scenario: [RADD_WAVE_4] - Invio notifica digitale (1° tentativo OK) a destinata
       | payment_f24                  | PAYMENT_F24_STANDARD |
       | title_payment                | F24_STANDARD_GHERKIN |
       | apply_cost_f24               | SI                   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     Then download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è "AAR"
 
@@ -265,7 +265,7 @@ Scenario: [RADD_WAVE_4] - Invio notifica digitale (1° tentativo OK) a destinata
       | payment_f24                  | PAYMENT_F24_STANDARD |
       | title_payment                | F24_STANDARD_GHERKIN |
       | apply_cost_f24               | SI                   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato che il peso della busta cartacea sia di 10
     Then download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è "AAR"
@@ -289,7 +289,7 @@ Scenario: [RADD_WAVE_4] - Invio notifica digitale (1° tentativo OK) a destinata
       | payment_f24                  | PAYMENT_F24_STANDARD |
       | title_payment                | F24_STANDARD_GHERKIN |
       | apply_cost_f24               | SI                   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato che il peso della busta cartacea sia di 35
     Then download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è "AAR"
@@ -313,7 +313,7 @@ Scenario: [RADD_WAVE_4] - Invio notifica digitale (1° tentativo OK) a destinata
       | payment_f24                  | PAYMENT_F24_STANDARD      |
       | title_payment                | F24_STANDARD_GHERKIN      |
       | apply_cost_f24               | SI                        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_0"
     And viene verificato che il peso della busta cartacea sia di 35
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_1"
@@ -339,7 +339,7 @@ Scenario: [RADD_WAVE_4] - Invio notifica digitale (1° tentativo OK) a destinata
       | payment_f24                  | PAYMENT_F24_STANDARD      |
       | title_payment                | F24_STANDARD_GHERKIN      |
       | apply_cost_f24               | SI                        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_0"
     And viene verificato che il peso della busta cartacea sia di 35
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_1"
@@ -366,7 +366,7 @@ Scenario: [RADD_WAVE_4] - Invio notifica digitale (1° tentativo OK) a destinata
       | payment_f24                  | PAYMENT_F24_STANDARD  |
       | title_payment                | F24_STANDARD_GHERKIN  |
       | apply_cost_f24               | SI                    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_0"
     And viene verificato che il peso della busta cartacea sia di 35
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_1"
@@ -390,7 +390,7 @@ Scenario: [RADD_WAVE_4] - Invio notifica digitale (1° tentativo OK) a destinata
       | payment_f24                  | PAYMENT_F24_STANDARD   |
       | title_payment                | F24_STANDARD_GHERKIN   |
       | apply_cost_f24               | SI                     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_0"
     And viene verificato che il peso della busta cartacea sia di 35
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_1"

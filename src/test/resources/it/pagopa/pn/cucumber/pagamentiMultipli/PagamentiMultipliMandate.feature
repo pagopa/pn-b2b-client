@@ -17,7 +17,7 @@ Feature: verifica feature pagamenti multipli con deleghe
       | apply_cost_pagopa    | SI                        |
       | apply_cost_f24       | SI                        |
       | payment_multy_number | 1                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'allegato "PAGOPA" può essere correttamente recuperato da "CucumberSpa" con delega
     And "GherkinSrl" tenta il recupero dell'allegato "PAGOPA"
     And il download non ha prodotto errori
@@ -42,7 +42,7 @@ Feature: verifica feature pagamenti multipli con deleghe
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'allegato "PAGOPA" può essere correttamente recuperato da "CucumberSpa" con delega
     And "GherkinSrl" tenta il recupero dell'allegato "PAGOPA"
     And il download non ha prodotto errori

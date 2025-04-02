@@ -8,7 +8,7 @@ Feature: Download legalFact analogico
     And destinatario Cucumber Analogic e:
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@fail_RS  |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW"
     Then la PA richiede il download dell'attestazione opponibile "DIGITAL_DELIVERY_FAILURE"
 
@@ -20,7 +20,7 @@ Feature: Download legalFact analogico
     And destinatario Cucumber Analogic e:
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok_RS    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW"
     Then la PA richiede il download dell'attestazione opponibile "DIGITAL_DELIVERY_FAILURE"
 
@@ -33,7 +33,7 @@ Feature: Download legalFact analogico
     And destinatario Cucumber Analogic e:
       | digitalDomicile         | NULL        |
       | physicalAddress_address | Via@fail_AR |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN002B"
     Then la PA richiede il download dell'attestazione opponibile "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN002B"
 
@@ -45,14 +45,14 @@ Feature: Download legalFact analogico
     And destinatario Cucumber Analogic e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG001B"
     Then la PA richiede il download dell'attestazione opponibile "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG001B"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | CON020 |
-      | details_sentAttemptMade | 0 |
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
+      | details_deliveryDetailCode | CON020   |
+      | details_sentAttemptMade    | 0        |
     And abbia anche un valore per il campo "details_attachments[0]_url" compatibile con l'espressione regolare ".+PN_PRINTED.+\.pdf"
 
   @dev
@@ -63,7 +63,7 @@ Feature: Download legalFact analogico
     And destinatario Cucumber Analogic e:
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@fail_RIS |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW"
     Then la PA richiede il download dell'attestazione opponibile "DIGITAL_DELIVERY_FAILURE"
 
@@ -75,7 +75,7 @@ Feature: Download legalFact analogico
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_RIR |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRI003B"
     Then la PA richiede il download dell'attestazione opponibile "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRI003B"
 
@@ -87,7 +87,7 @@ Feature: Download legalFact analogico
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL         |
       | physicalAddress_address | Via@fail_RIR |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRI004B"
     Then la PA richiede il download dell'attestazione opponibile "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRI004B"
 
@@ -99,7 +99,7 @@ Feature: Download legalFact analogico
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL         |
       | physicalAddress_address | Via@fail_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG003B"
     Then la PA richiede il download dell'attestazione opponibile "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG003B"
 
@@ -111,7 +111,7 @@ Feature: Download legalFact analogico
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                  |
       | physicalAddress_address | Via@FAIL-Discovery_AR |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN002E"
     Then la PA richiede il download dell'attestazione opponibile "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN002E"
 
@@ -123,22 +123,22 @@ Feature: Download legalFact analogico
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                   |
       | physicalAddress_address | Via@FAIL-Discovery_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG003E"
     Then la PA richiede il download dell'attestazione opponibile "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG003E"
-    
+
   @dev
   Scenario: [B2B_PA_ANALOGICO_LEGALFACT_11_TEST] Invio notifica ed attesa elemento di timeline COMPLETELY_UNREACHABLE_fail_AR negativo
     Given viene generata una nuova notifica
-      | subject | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo |
-      | physicalCommunication |  AR_REGISTERED_LETTER |
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
-      | denomination | Test AR Fail 2 |
-      | taxId | DVNLRD52D15M059P |
-      | digitalDomicile | NULL |
-      | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR|
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | denomination            | Test AR Fail 2                               |
+      | taxId                   | DVNLRD52D15M059P                             |
+      | digitalDomicile         | NULL                                         |
+      | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     Then la PA richiede il download dell'attestazione opponibile "COMPLETELY_UNREACHABLE"
 
@@ -148,9 +148,9 @@ Feature: Download legalFact analogico
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
     And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL                   |
+      | digitalDomicile         | NULL               |
       | physicalAddress_address | via@OK-Giacenza_AR |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN003B"
     Then la PA richiede il download dell'attestazione opponibile "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN003B"
 
@@ -163,7 +163,7 @@ Feature: Download legalFact analogico
     And destinatario Cucumber Analogic e:
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@fail_RS  |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW"
     Then l'ente "Comune_1" richiede l'attestazione opponibile "DIGITAL_DELIVERY_FAILURE"
     And l'operazione ha prodotto un errore con status code "404"
@@ -177,7 +177,7 @@ Feature: Download legalFact analogico
     And destinatario Cucumber Analogic e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG001B"
     Then l'ente "Comune_1" richiede l'attestazione opponibile "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG001B"
     And l'operazione ha prodotto un errore con status code "404"
@@ -185,15 +185,15 @@ Feature: Download legalFact analogico
 
   Scenario: [B2B_PA_ANALOGICO_LEGALFACT_15] Invio notifica e richiesta atto opponibile COMPLETELY_UNREACHABLE con ente diverso dalla notifica - PN-8702
     Given viene generata una nuova notifica
-      | subject | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo |
-      | physicalCommunication |  AR_REGISTERED_LETTER |
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
-      | denomination | Test AR Fail 2 |
-      | taxId | DVNLRD52D15M059P |
-      | digitalDomicile | NULL |
-      | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR|
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | denomination            | Test AR Fail 2                               |
+      | taxId                   | DVNLRD52D15M059P                             |
+      | digitalDomicile         | NULL                                         |
+      | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     Then l'ente "Comune_1" richiede l'attestazione opponibile "COMPLETELY_UNREACHABLE"
     And l'operazione ha prodotto un errore con status code "404"

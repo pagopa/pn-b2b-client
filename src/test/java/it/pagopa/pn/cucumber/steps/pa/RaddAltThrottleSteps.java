@@ -1,6 +1,7 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
 import io.cucumber.java.en.Then;
+import it.pagopa.pn.cucumber.steps.pa.notificationVersions.Destinatario;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.HttpClientErrorException;
@@ -20,20 +21,18 @@ public class RaddAltThrottleSteps {
     /**
      * actInquiry
      */
-    @Then("L'operatore usa lo IUN {string} per recuperare gli atti di {string} un numero di volte superiore al limite definito")
-    public void lOperatoreUsoIUNPerRecuperariGliAttiPiuVolteDelLimite(String tipologiaIun, String cf) {
-        Assertions.assertThrows(HttpClientErrorException.class,
-                () -> lOperatoreUsoIUNPerRecuperariGliAttiPiuVolte(tipologiaIun, cf, 300));
+    @Then("L'operatore usa lo IUN {string} per recuperare gli atti di {destinatario} un numero di volte superiore al limite definito")
+    public void lOperatoreUsoIUNPerRecuperareGliAttiPiuVolteDelLimite(String tipologiaIun, Destinatario destinatario) {
+        Assertions.assertThrows(HttpClientErrorException.class, () -> lOperatoreUsoIUNPerRecuperareGliAttiPiuVolte(tipologiaIun, destinatario, 300));
     }
 
-    @Then("L'operatore usa lo IUN {string} per recuperare gli atti di {string} {int} volte")
-    public void lOperatoreUsoIUNPerRecuperariGliAttiPiuVolte(String tipologiaIun, String cf, int iteration) {
-        raddAltSteps.selectUserRaddAlternative(cf);
-        IntStream.range(0, iteration)
-                .forEach(x -> {
-                    raddAltSteps.lOperatoreUsoIUNPerRecuperariGliAtti(tipologiaIun, cf);
-                    waitBetweenCalls();
-                });
+    @Then("L'operatore usa lo IUN {string} per recuperare gli atti di {destinatario} {int} volte")
+    public void lOperatoreUsoIUNPerRecuperareGliAttiPiuVolte(String tipologiaIun, Destinatario destinatario, int iteration) {
+        raddAltSteps.selectUserRaddAlternative(destinatario);
+        IntStream.range(0, iteration).forEach(x -> {
+            raddAltSteps.lOperatoreUsoIUNPerRecuperareGliAtti(tipologiaIun, destinatario);
+            waitBetweenCalls();
+        });
     }
 
     /**
@@ -41,17 +40,15 @@ public class RaddAltThrottleSteps {
      */
     @Then("Vengono visualizzati sia gli atti e le attestazioni riferiti alla notifica un numero di volte superiore al limite definito")
     public void vengonoVisualizzatiGliAttiPiuVolteDelLimite() {
-        Assertions.assertThrows(HttpClientErrorException.class,
-                () -> vengonoVisualizzatiGliAttiPiuVolte(300));
+        Assertions.assertThrows(HttpClientErrorException.class, () -> vengonoVisualizzatiGliAttiPiuVolte(300));
     }
 
     @Then("Vengono visualizzati sia gli atti e le attestazioni riferiti alla notifica {int} volte")
     public void vengonoVisualizzatiGliAttiPiuVolte(int iteration) {
-        IntStream.range(0, iteration)
-                .forEach(x -> {
-                    raddAltSteps.startTransactionActRaddAlternative(generateRandomNumber(),false);
-                    waitBetweenCalls();
-                });
+        IntStream.range(0, iteration).forEach(x -> {
+            raddAltSteps.startTransactionActRaddAlternative(generateRandomNumber(), false);
+            waitBetweenCalls();
+        });
     }
 
     /**
@@ -59,17 +56,15 @@ public class RaddAltThrottleSteps {
      */
     @Then("Viene visualizzata la presenza di notifiche un numero di volte superiore al limite definito")
     public void vieneVisualizzataLaPresenzaDiNotifichePiuVolteDelLimite() {
-        Assertions.assertThrows(HttpClientErrorException.class,
-                () -> vieneVisualizzataLaPresenzaDiNotifichePiuVolte("Signor casuale", 300, "UPLOADER"));
+        Assertions.assertThrows(HttpClientErrorException.class, () -> vieneVisualizzataLaPresenzaDiNotifichePiuVolte(Destinatario.DESTINATARIO_SIGNOR_CASUALE, 300, "UPLOADER"));
     }
 
-    @Then("Viene visualizzata la presenza di notifiche per la persona fisica {string} {int} volte dal operatore radd {string}")
-    public void vieneVisualizzataLaPresenzaDiNotifichePiuVolte(String citizen, int iteration, String raddOperatorType) {
-        IntStream.range(0, iteration)
-                .forEach(x -> {
-                    raddAltSteps.laPersonaFisicaChiedeDiVerificareAdOperatoreRaddLaPresenzaDiNotifiche(citizen, raddOperatorType);
-                    waitBetweenCalls();
-                });
+    @Then("Viene visualizzata la presenza di notifiche per la persona fisica {destinatario} {int} volte dal operatore radd {string}")
+    public void vieneVisualizzataLaPresenzaDiNotifichePiuVolte(Destinatario destinatario, int iteration, String raddOperatorType) {
+        IntStream.range(0, iteration).forEach(x -> {
+            raddAltSteps.laPersonaFisicaChiedeDiVerificareAdOperatoreRaddLaPresenzaDiNotifiche(destinatario, raddOperatorType);
+            waitBetweenCalls();
+        });
     }
 
     /**
@@ -77,17 +72,15 @@ public class RaddAltThrottleSteps {
      */
     @Then("Si recuperano gli atti su radd alternative per un numero di volte superiore al limite definito")
     public void vengonoRecuperatiGliAttiPiuVolteDelLimite() {
-        Assertions.assertThrows(HttpClientErrorException.class,
-                () -> vengonoRecuperatiGliAttiPiuVolte(300, "UPLOADER"));
+        Assertions.assertThrows(HttpClientErrorException.class, () -> vengonoRecuperatiGliAttiPiuVolte(300, "UPLOADER"));
     }
 
     @Then("Si recuperano gli atti {int} volte su radd alternative da operatore radd {string}")
     public void vengonoRecuperatiGliAttiPiuVolte(int iteration, String raddOperatorType) {
-        IntStream.range(0, iteration)
-                .forEach(x -> {
-                    raddAltSteps.vengonoRecuperatiGliAttiDelleNotificheInStatoIrreperibileDaOperatoreRaddType(raddOperatorType);
-                    waitBetweenCalls();
-                });
+        IntStream.range(0, iteration).forEach(x -> {
+            raddAltSteps.vengonoRecuperatiGliAttiDelleNotificheInStatoIrreperibileDaOperatoreRaddType(raddOperatorType);
+            waitBetweenCalls();
+        });
     }
 
     private void waitBetweenCalls() {

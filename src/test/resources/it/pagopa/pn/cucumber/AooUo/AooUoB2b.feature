@@ -6,7 +6,7 @@ Feature: verifica feature aoo/uo
       | subject            | invio notifica multi cucumber |
       | senderDenomination | Comune di Sappada             |
     And destinatario Mario Cucumber
-    When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi "ACCEPTED"
     Then si tenta il recupero dal sistema tramite codice IUN dalla PA "Comune_Root"
     And l'operazione ha generato un errore con status code "404"
 
@@ -16,7 +16,7 @@ Feature: verifica feature aoo/uo
       | subject            | invio notifica multi cucumber |
       | senderDenomination | Comune di milano              |
     And destinatario Mario Cucumber
-    When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi "ACCEPTED"
     Then si tenta il recupero dal sistema tramite codice IUN dalla PA "Comune_Son"
     And l'operazione ha generato un errore con status code "404"
 
@@ -33,22 +33,22 @@ Feature: verifica feature aoo/uo
       | denomination    | Galileo Galilei  |
       | taxId           | GLLGLL64B15G702I |
       | digitalDomicile | NULL             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
-      | loadTimeline                 | true                                                             |
-      | details                      | NOT_NULL                                                         |
-      | details_responseStatus       | KO                                                               |
-      | details_sendingReceipts      | [{"id": null, "system": null}]                                   |
+      | loadTimeline                 | true                                                                  |
+      | details                      | NOT_NULL                                                              |
+      | details_responseStatus       | KO                                                                    |
+      | details_sendingReceipts      | [{"id": null, "system": null}]                                        |
       | details_digitalAddress       | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
-      | details_recIndex             | 0                                                                |
-      | details_digitalAddressSource | PLATFORM                                                         |
-      | details_sentAttemptMade      | 0                                                                |
+      | details_recIndex             | 0                                                                     |
+      | details_digitalAddressSource | PLATFORM                                                              |
+      | details_sentAttemptMade      | 0                                                                     |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
-      | details                      | NOT_NULL                                                         |
+      | details                      | NOT_NULL                                                              |
       | details_digitalAddress       | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
-      | details_recIndex             | 0                                                                |
-      | details_digitalAddressSource | PLATFORM                                                         |
-      | details_sentAttemptMade      | 0                                                                |
+      | details_recIndex             | 0                                                                     |
+      | details_digitalAddressSource | PLATFORM                                                              |
+      | details_sentAttemptMade      | 0                                                                     |
 
   @AOO_UO @addressBook2
   Scenario: [B2B-AOO-UO_4] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo
@@ -62,22 +62,22 @@ Feature: verifica feature aoo/uo
       | recipientType   | PG                 |
       | taxId           | 20517490320        |
       | digitalDomicile | NULL               |
-    When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
-      | loadTimeline                 | true                                                             |
-      | details                      | NOT_NULL                                                         |
-      | details_responseStatus       | KO                                                               |
-      | details_sendingReceipts      | [{"id": null, "system": null}]                                   |
+      | loadTimeline                 | true                                                                  |
+      | details                      | NOT_NULL                                                              |
+      | details_responseStatus       | KO                                                                    |
+      | details_sendingReceipts      | [{"id": null, "system": null}]                                        |
       | details_digitalAddress       | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
-      | details_recIndex             | 0                                                                |
-      | details_digitalAddressSource | PLATFORM                                                         |
-      | details_sentAttemptMade      | 0                                                                |
+      | details_recIndex             | 0                                                                     |
+      | details_digitalAddressSource | PLATFORM                                                              |
+      | details_sentAttemptMade      | 0                                                                     |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
-      | details                      | NOT_NULL                                                         |
+      | details                      | NOT_NULL                                                              |
       | details_digitalAddress       | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
-      | details_recIndex             | 0                                                                |
-      | details_digitalAddressSource | PLATFORM                                                         |
-      | details_sentAttemptMade      | 0                                                                |
+      | details_recIndex             | 0                                                                     |
+      | details_digitalAddressSource | PLATFORM                                                              |
+      | details_sentAttemptMade      | 0                                                                     |
 
   @AOO_UO @addressBook1 @ignoreHotfixTemp #temp
   Scenario: [B2B-AOO-UO_5] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo
@@ -89,22 +89,22 @@ Feature: verifica feature aoo/uo
       | denomination    | Galileo Galilei  |
       | taxId           | GLLGLL64B15G702I |
       | digitalDomicile | NULL             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
-      | loadTimeline                 | true                                                             |
-      | details                      | NOT_NULL                                                         |
-      | details_responseStatus       | KO                                                               |
-      | details_sendingReceipts      | [{"id": null, "system": null}]                                   |
+      | loadTimeline                 | true                                                                  |
+      | details                      | NOT_NULL                                                              |
+      | details_responseStatus       | KO                                                                    |
+      | details_sendingReceipts      | [{"id": null, "system": null}]                                        |
       | details_digitalAddress       | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
-      | details_recIndex             | 0                                                                |
-      | details_digitalAddressSource | PLATFORM                                                         |
-      | details_sentAttemptMade      | 0                                                                |
+      | details_recIndex             | 0                                                                     |
+      | details_digitalAddressSource | PLATFORM                                                              |
+      | details_sentAttemptMade      | 0                                                                     |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
-      | details                      | NOT_NULL                                                         |
+      | details                      | NOT_NULL                                                              |
       | details_digitalAddress       | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
-      | details_recIndex             | 0                                                                |
-      | details_digitalAddressSource | PLATFORM                                                         |
-      | details_sentAttemptMade      | 0                                                                |
+      | details_recIndex             | 0                                                                     |
+      | details_digitalAddressSource | PLATFORM                                                              |
+      | details_sentAttemptMade      | 0                                                                     |
 
   @AOO_UO @addressBook2
   Scenario: [B2B-AOO-UO_6] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo
@@ -117,22 +117,22 @@ Feature: verifica feature aoo/uo
       | recipientType   | PG                 |
       | taxId           | 20517490320        |
       | digitalDomicile | NULL               |
-    When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
-      | loadTimeline                 | true                                                             |
-      | details                      | NOT_NULL                                                         |
-      | details_responseStatus       | KO                                                               |
-      | details_sendingReceipts      | [{"id": null, "system": null}]                                   |
+      | loadTimeline                 | true                                                                  |
+      | details                      | NOT_NULL                                                              |
+      | details_responseStatus       | KO                                                                    |
+      | details_sendingReceipts      | [{"id": null, "system": null}]                                        |
       | details_digitalAddress       | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
-      | details_recIndex             | 0                                                                |
-      | details_digitalAddressSource | PLATFORM                                                         |
-      | details_sentAttemptMade      | 0                                                                |
+      | details_recIndex             | 0                                                                     |
+      | details_digitalAddressSource | PLATFORM                                                              |
+      | details_sentAttemptMade      | 0                                                                     |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
-      | details                      | NOT_NULL                                                         |
+      | details                      | NOT_NULL                                                              |
       | details_digitalAddress       | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
-      | details_recIndex             | 0                                                                |
-      | details_digitalAddressSource | PLATFORM                                                         |
-      | details_sentAttemptMade      | 0                                                                |
+      | details_recIndex             | 0                                                                     |
+      | details_digitalAddressSource | PLATFORM                                                              |
+      | details_sentAttemptMade      | 0                                                                     |
 
 
   @AOO_UO @addressBook2
@@ -148,7 +148,7 @@ Feature: verifica feature aoo/uo
       | recipientType   | PG                 |
       | taxId           | 20517490320        |
       | digitalDomicile | NULL               |
-    When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
       | loadTimeline           | true                                               |
@@ -169,7 +169,7 @@ Feature: verifica feature aoo/uo
       | denomination    | Galileo Galilei  |
       | taxId           | GLLGLL64B15G702I |
       | digitalDomicile | NULL             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
       | loadTimeline           | true                                               |
@@ -190,7 +190,7 @@ Feature: verifica feature aoo/uo
       | recipientType   | PG                 |
       | taxId           | 20517490320        |
       | digitalDomicile | NULL               |
-    When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
       | loadTimeline           | true                                               |
@@ -212,7 +212,7 @@ Feature: verifica feature aoo/uo
       | denomination    | Galileo Galilei  |
       | taxId           | GLLGLL64B15G702I |
       | digitalDomicile | NULL             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
       | loadTimeline           | true                                               |

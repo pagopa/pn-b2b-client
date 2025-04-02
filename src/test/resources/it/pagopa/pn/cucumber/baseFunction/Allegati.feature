@@ -16,7 +16,7 @@ Feature: Allegati notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
     And destinatario Cucumber Society
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"
 
@@ -26,7 +26,7 @@ Feature: Allegati notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
     And destinatario Cucumber Society
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And viene effettuato un controllo sulla durata della retention di "PAGOPA"
 
@@ -36,7 +36,7 @@ Feature: Allegati notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
     And destinatario Mario Cucumber
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"
 
@@ -46,7 +46,7 @@ Feature: Allegati notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
     And destinatario Mario Cucumber
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And viene effettuato un controllo sulla durata della retention di "PAGOPA"
 
@@ -55,8 +55,8 @@ Feature: Allegati notifica
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Gherkin spa
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario GherkinSpa
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"
 
@@ -65,8 +65,8 @@ Feature: Allegati notifica
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Gherkin spa
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario GherkinSpa
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And viene effettuato un controllo sulla durata della retention di "PAGOPA"
 
@@ -85,7 +85,7 @@ Feature: Allegati notifica
       | payment_f24             | NULL          |
       | apply_cost_pagopa       | SI            |
       | payment_multy_number    | 1             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     Then viene verificato che l'elemento di timeline "REFINEMENT" esista
       | loadTimeline     | true     |
@@ -119,7 +119,7 @@ Feature: Allegati notifica
       | payment_f24             | NULL      |
       | apply_cost_pagopa       | SI        |
       | payment_multy_number    | 1         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     Then viene verificato che l'elemento di timeline "REFINEMENT" esista
       | loadTimeline     | true     |
@@ -153,7 +153,7 @@ Feature: Allegati notifica
       | payment_f24             | NULL          |
       | apply_cost_pagopa       | SI            |
       | payment_multy_number    | 1             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
       | NULL | NULL |
     And la notifica può essere correttamente recuperata da "Mario Cucumber"
@@ -171,7 +171,7 @@ Feature: Allegati notifica
   Scenario: [ALLEGATI-PEC_HOTFIX_1] si verifica che la notifica analogica non contenga nel url degli allegati docTag - PN-11281
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo            |
+      | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                 |
@@ -182,7 +182,7 @@ Feature: Allegati notifica
       | apply_cost_pagopa       | SI                   |
       | apply_cost_f24          | SI                   |
       | payment_multy_number    | 1                    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     Then si verifica il contenuto degli attacchment da inviare nella pec del destinatario 0 da "data vault"
     And si verifica che negli url non contenga il docTag nel "analogico"
@@ -193,7 +193,7 @@ Feature: Allegati notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
     And destinatario Mario Cucumber
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     Then download attestazione opponibile AAR e controllo del contenuto del file per verificare se il content-type è "application/pdf"

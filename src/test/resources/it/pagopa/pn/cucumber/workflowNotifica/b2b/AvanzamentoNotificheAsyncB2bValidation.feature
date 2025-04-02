@@ -15,7 +15,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | payment_f24           | NULL        |
       | apply_cost_pagopa     | SI          |
       | payment_multy_number  | 1           |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
 
 
   @Async @refused
@@ -49,7 +49,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | payment_f24           | NULL        |
       | apply_cost_pagopa     | SI          |
       | payment_multy_number  | 1           |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
 
 
   @Async @refused
@@ -70,7 +70,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | payment_f24             | NULL                  |
       | apply_cost_pagopa       | NO                    |
       | payment_multy_number    | 1                     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
     Then vengono cancellate le posizioni debitorie
 
 
@@ -91,7 +91,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | apply_cost_pagopa       | SI           |
       | payment_multy_number    | 1            |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
 
 
   @bugNoto
@@ -111,7 +111,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | apply_cost_pagopa       | SI           |
       | payment_multy_number    | 1            |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
 
   @Async
   Scenario: [B2B_ASYNC_22_PF] Notifica analogica mono PF ASYNC senza pagamenti-Verifica stato REFUSED - PN-10875
@@ -125,7 +125,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | digitalDomicile         | NULL                  |
       | physicalAddress_address | Via@FAIL-Discovery_AR |
       | payment                 | NULL                  |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
 
 
   @Async
@@ -138,7 +138,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | paFee              | 10                          |
     And destinatario Mario Gherkin e:
       | payment | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
 
 
   @version @Async
@@ -159,7 +159,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | apply_cost_pagopa       | SI                    |
       | payment_multy_number    | 1                     |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And la notifica non può essere recuperata dal sistema tramite codice IUN con OpenApi V10 generando un errore
     And l'operazione ha prodotto un errore con status code "400"
@@ -183,7 +183,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | apply_cost_pagopa       | SI                    |
       | payment_multy_number    | 1                     |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And la notifica non può essere recuperata dal sistema tramite codice IUN con OpenApi V20 generando un errore
     And l'operazione ha prodotto un errore con status code "400"
@@ -210,7 +210,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | payment_f24           | NULL        |
       | apply_cost_pagopa     | SI          |
       | payment_multy_number  | 1           |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
 
   @Async @refused
   Scenario: [B2B_ASYNC_6_MULTI] Notifica mono PF/PG-Verifica scarto notifica se applyCostFlag a false
@@ -238,7 +238,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | payment_f24             | NULL                  |
       | apply_cost_pagopa       | NO                    |
       | payment_multy_number    | 2                     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
     Then vengono cancellate le posizioni debitorie
 
 

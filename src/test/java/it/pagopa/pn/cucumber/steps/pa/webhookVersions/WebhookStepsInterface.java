@@ -67,8 +67,6 @@ public interface WebhookStepsInterface {
 
     void setValueForWaitForAccepted(boolean waitForAccepted);
 
-    String getSentNotificationIun();
-
     void verifyIncrementalEventId();
 
     <T> AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<T> getTimelineEventForStream(String timelineEventCategory, TimingForPolling.TimingResult timingForElement);
@@ -94,4 +92,8 @@ public interface WebhookStepsInterface {
     void checkLegalFactId();
 
     void checkCorrectDisabling(UUID streamId);
+
+    void verificaPresenzaSercQ(boolean isPresent);
+
+    void checkLegalFactCategory(String timelineCategory, String legalFactCategory);
 }

@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 
@@ -40,7 +41,7 @@ public class PnPollingServiceValidationStatusV20 extends PnPollingTemplate<PnPol
             pnPollingResponse.setStatusResponse(statusResponseV20);
             this.requestStatusResponseV20 = statusResponseV20;
 
-            if (pnPollingResponse.getStatusResponse().getIun() != null){
+            if (pnPollingResponse.getStatusResponse().getIun() != null) {
                 FullSentNotificationV20 fullSentNotificationV20;
                 try {
                     fullSentNotificationV20 = b2bClient.getSentNotificationV2(pnPollingResponse.getStatusResponse().getIun());
@@ -58,17 +59,17 @@ public class PnPollingServiceValidationStatusV20 extends PnPollingTemplate<PnPol
     @Override
     protected Predicate<PnPollingResponseV20> checkCondition(String id, PnPollingParameter pnPollingParameter) {
         return pnPollingResponse -> {
-            if(pnPollingResponse.getStatusResponse() == null) {
+            if (pnPollingResponse.getStatusResponse() == null) {
                 pnPollingResponse.setResult(false);
                 return false;
             }
 
-            if(!pnPollingResponse.getStatusResponse().getNotificationRequestStatus().equalsIgnoreCase(pnPollingParameter.getValue().trim())) {
+            if (!pnPollingResponse.getStatusResponse().getNotificationRequestStatus().equalsIgnoreCase(pnPollingParameter.getValue().trim())) {
                 pnPollingResponse.setResult(false);
                 return false;
             }
 
-            if (pnPollingResponse.getNotification() == null){
+            if (pnPollingResponse.getNotification() == null) {
                 pnPollingResponse.setResult(false);
                 return false;
             }
@@ -112,5 +113,7 @@ public class PnPollingServiceValidationStatusV20 extends PnPollingTemplate<PnPol
     }
 
     @Override
-    public ApiKeyType getApiKeySetted() {return this.b2bClient.getApiKeySetted(); }
+    public ApiKeyType getApiKeySetted() {
+        return this.b2bClient.getApiKeySetted();
+    }
 }

@@ -18,7 +18,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -57,7 +57,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -92,7 +92,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -129,7 +129,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -163,7 +163,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -198,7 +198,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -234,7 +234,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -269,7 +269,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -305,7 +305,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -340,7 +340,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -373,7 +373,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -408,7 +408,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -441,7 +441,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -473,7 +473,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -495,7 +495,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1249" della notifica
 
@@ -513,7 +513,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1265" della notifica
 
@@ -531,7 +531,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1368" della notifica
 
@@ -549,7 +549,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1398" della notifica
 
@@ -567,7 +567,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1792" della notifica
 
@@ -585,7 +585,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1886" della notifica
 
@@ -603,7 +603,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "2078" della notifica
 
@@ -621,7 +621,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "2140" della notifica
 
@@ -639,7 +639,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "2860" della notifica
 
@@ -657,7 +657,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "3281" della notifica
 
@@ -675,7 +675,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "4450" della notifica
 
@@ -693,7 +693,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "5100" della notifica
 
@@ -711,7 +711,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "919" della notifica
 
@@ -729,7 +729,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1130" della notifica
 
@@ -747,7 +747,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1146" della notifica
 
@@ -765,7 +765,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1241" della notifica
 
@@ -783,7 +783,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1270" della notifica
 
@@ -801,7 +801,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1461" della notifica
 
@@ -819,7 +819,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1555" della notifica
 
@@ -837,7 +837,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1693" della notifica
 
@@ -855,7 +855,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1755" della notifica
 
@@ -873,7 +873,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "2202" della notifica
 
@@ -891,7 +891,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "2624" della notifica
 
@@ -909,7 +909,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "3417" della notifica
 
@@ -927,7 +927,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "4067" della notifica
 
@@ -945,7 +945,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_3     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1089" della notifica
 
@@ -963,7 +963,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_3     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1339" della notifica
 
@@ -981,7 +981,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_3     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1356" della notifica
 
@@ -999,7 +999,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_3     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1502" della notifica
 
@@ -1017,7 +1017,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_3     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1532" della notifica
 
@@ -1035,7 +1035,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_3     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1918" della notifica
 
@@ -1053,7 +1053,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_3     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "2013" della notifica
 
@@ -1071,7 +1071,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_3     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "2533" della notifica
 
@@ -1089,7 +1089,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_3     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "2595" della notifica
 
@@ -1107,7 +1107,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_3     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "3642" della notifica
 
@@ -1125,7 +1125,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_3     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "4063" della notifica
 
@@ -1143,7 +1143,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_3     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "5370" della notifica
 
@@ -1161,7 +1161,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_3     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "6020" della notifica
 
@@ -1180,7 +1180,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1270" della notifica
 
@@ -1198,7 +1198,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1792" della notifica
 
@@ -1217,6 +1217,6 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_zip     | ZONE_3     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "2013" della notifica

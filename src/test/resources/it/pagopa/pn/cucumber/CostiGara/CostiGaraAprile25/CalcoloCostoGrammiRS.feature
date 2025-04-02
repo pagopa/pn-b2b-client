@@ -17,7 +17,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche RS
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -51,7 +51,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche RS
       | physicalAddress_zip     | ZONE_1       |
       | physicalAddress_address | Via@ok_RIS   |
       | payment_pagoPaForm      | NOALLEGATO   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "729" della notifica
 
@@ -68,7 +68,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche RS
       | physicalAddress_zip     | ZONE_2       |
       | physicalAddress_address | Via@ok_RIS   |
       | payment_pagoPaForm      | NOALLEGATO   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "842" della notifica
 
@@ -85,6 +85,6 @@ Feature: calcolo costo notifica in base hai grammi con notifiche RS
       | physicalAddress_zip     | ZONE_3       |
       | physicalAddress_address | Via@ok_RIS   |
       | payment_pagoPaForm      | NOALLEGATO   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "898" della notifica

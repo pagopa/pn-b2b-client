@@ -17,22 +17,16 @@ import it.pagopa.pn.cucumber.steps.SharedSteps;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
-import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.lang.reflect.Field;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import java.io.IOException;
-
-
-
-
 
 
 @Slf4j
@@ -147,7 +141,7 @@ public class LegalFactContentVerifySteps {
             document = Loader.loadPDF(source);
             int numberOfPages = document.getNumberOfPages();
 
-            Assertions.assertTrue(numberOfPages <= numPage, "Il PDF contiene più di "+numPage+" pagine!");
+            Assertions.assertTrue(numberOfPages <= numPage, "Il PDF contiene più di " + numPage + " pagine!");
 
         } catch (IOException e) {
             Assertions.fail("Errore durante la lettura del PDF: " + e.getMessage());
@@ -162,7 +156,7 @@ public class LegalFactContentVerifySteps {
         }
     }
 
-public void checkLegalFactType(byte[] source, String legalFactType) {
+    public void checkLegalFactType(byte[] source, String legalFactType) {
         PnParserParameter pnParserParameter = PnParserParameter.builder()
                 .legalFactType(IPnParserLegalFact.LegalFactType.valueOf(legalFactType))
                 .legalFactField(IPnParserLegalFact.LegalFactField.valueOf(IPnParserLegalFact.LegalFactField.TITLE.name()))
@@ -245,14 +239,14 @@ public void checkLegalFactType(byte[] source, String legalFactType) {
                 Assertions.assertTrue(pnLegalFactNotificaPresaInCaricoMultiDestinatario.getDestinatariAnalogici().containsAll(destinatarioAnalogicoList));
             }
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
     @Then("l'utente {string} recupera i legalFacts richiamando l'api versione {int} e tra questi {string} il legalFact con categoria {string}")
     public void downloadLegalFactWithIdUsingApiVersion(String user, Integer version, String presente, String legalFactCategory) {
         sharedSteps.selectUser(user);
-        String iun = this.sharedSteps.getSentNotification().getIun();
+        String iun = this.sharedSteps.getNotificationIun();
         boolean isPresent = presente.toUpperCase().equals("COMPARE");
         Assertions.assertNotNull(this.legalFactType);
         Assertions.assertNotNull(this.legalFactUrl);

@@ -17,12 +17,16 @@ Feature: verifica validazione asincrona
       | physicalAddress_municipality | <municipality> |
       | physicalAddress_zip          | <zip_code>     |
       | physicalAddress_province     | <province>     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
     Examples:
       | municipality | zip_code | province |
+      #provincia errata
       | Palermo      | 20019    | MI       |
+      #municipality errata
       | Milano       | 90121    | PA       |
+      #cap errato
       | Milano       | 90121    | MI       |
+      #cap + provincia errata
       | Milano       | 90121    | RM       |
 
 

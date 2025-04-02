@@ -12,13 +12,13 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
-      | payment_pagoPaForm           | SI           |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | payment_pagoPaForm           | SI             |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE |
-      | 60010 | 402     | COLLEPONI    | AN       |
+      | 60010 | 402   | COLLEPONI    | AN       |
 
 
   @dev @costoAnalogico2023
@@ -33,8 +33,8 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
-      | payment_pagoPaForm           | SI           |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | payment_pagoPaForm           | SI             |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "<COSTO>" della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "<COSTO>" della notifica
@@ -55,8 +55,8 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
       | physicalAddress_province     | Paris        |
       | digitalDomicile_address      | test@fail.it |
       | physicalAddress_address      | Via@ok_RIS   |
-      | payment_pagoPaForm           | SI         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | payment_pagoPaForm           | SI           |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "737" della notifica
 
@@ -74,8 +74,8 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
       | physicalAddress_zip          | ZONE_1       |
       | physicalAddress_province     | Paris        |
       | physicalAddress_address      | Via@ok_RIS   |
-      | payment_pagoPaForm           | SI         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | payment_pagoPaForm           | SI           |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "0" della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "0" della notifica
@@ -93,8 +93,8 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
-      | payment_pagoPaForm           | SI           |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | payment_pagoPaForm           | SI             |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -122,7 +122,7 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "<COSTO>" della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "<COSTO>" della notifica
@@ -151,8 +151,8 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
       | physicalAddress_zip          | ZONA_2         |
       | physicalAddress_province     | Santa Catarina |
       | physicalAddress_address      | Via@ok_RIS     |
-      | payment_pagoPaForm           | SI           |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | payment_pagoPaForm           | SI             |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "852" della notifica
 
@@ -169,7 +169,7 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
       | physicalAddress_zip          | ZONA_2         |
       | physicalAddress_province     | Santa Catarina |
       | physicalAddress_address      | Via@ok_RIS     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "0" della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "0" della notifica
@@ -187,8 +187,8 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
       | physicalAddress_zip          | ZONA_3       |
       | physicalAddress_province     | Tasmania     |
       | physicalAddress_address      | Via@ok_RIS   |
-      | payment_pagoPaForm           | SI         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | payment_pagoPaForm           | SI           |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "909" della notifica
 
@@ -205,7 +205,7 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
       | physicalAddress_zip          | ZONA_3       |
       | physicalAddress_province     | Tasmania     |
       | physicalAddress_address      | Via@ok_RIS   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "0" della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "0" della notifica
