@@ -58,8 +58,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static it.pagopa.pn.cucumber.steps.SharedSteps.NotificationVersion.*;
 import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.*;
+import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion.V24;
 import static it.pagopa.pn.cucumber.utils.FiscalCodeGenerator.generateCF;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.TAX_ID;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
@@ -151,9 +151,8 @@ public class SharedSteps {
     private final ObjectMapper objMapper;
 
     /**
-     * Anziché avere N istanze di FullSentNotification da impostare ogni volta, ora setteremo solo lo IUN della notifica creata.
-     * Dove prima si richiamava sharedSteps.getFullSentNotificationX, adesso si recupererà direttamente la versione chiamando il metodo
-     * del B2bClient relativo alla versione che ci interessa, passandogli questo IUN
+     * Campo chiave della classe, rappresentante lo IUN della notifica creata,
+     * da cui poi recuperare la FullSentNotification (di qualsivoglia versione) tramite chiamata al B2B
      */
     @Getter
     @Setter
@@ -171,29 +170,7 @@ public class SharedSteps {
      * Mappa contenente le varie istanze di NotificationStepsInterface.
      */
     @Getter
-    private final Map<NotificationVersion, NotificationStepsInterface> mapOfVersionSteps = Map.ofEntries(
-            Map.entry(V1, new NotificationStepsV1(this)),
-            Map.entry(V2, new NotificationStepsV2(this)),
-            Map.entry(V21, new NotificationStepsV21(this)),
-            Map.entry(V23, new NotificationStepsV23(this)),
-            Map.entry(V24, new NotificationStepsV24(this))
-    );
-
-    public enum NotificationVersion {
-        V1(1), V2(2), V21(21), V23(23), V24(24);
-
-        /**
-         * Scopo di questo campo è quello di poter comparare le versioni con < o >
-         * In questo modo si possono aggiungere controlli nel codice per verificare
-         * se una specifica Notification Version è antecedente o successivo a un'altra versione
-         */
-        @Getter
-        private final int value;
-
-        NotificationVersion(int value) {
-            this.value = value;
-        }
-    }
+    private final Map<NotificationVersion, NotificationStepsInterface> mapOfVersionSteps = NotificationVersion.getMapOfNotificationSteps(this);
 
     @Before("@useB2B")
     public void beforeMethod() {
@@ -254,7 +231,7 @@ public class SharedSteps {
      */
     public FullSentNotificationV26 getSentNotificationLastVersion() {
         if (notificationIun != null) {
-            return b2bClient.getSentNotification(notificationIun);
+            return b2bClient.getSentNotificationV26(notificationIun);
         }
         throw new RuntimeException("Lo IUN non è valorizzato, qualcosa è andato storto nei passaggi precedenti");
     }
@@ -625,10 +602,41 @@ public class SharedSteps {
         getNotificationStepInterface().addIuvGdpToDestinatario(denominazione, getIuvGPD(posizioneDebitoria), paymentIndex);
     }
 
-    //TODO MATTEO: Spostato da InvioNotificheB2bSteps e reso universale per ogni versione
+    //Spostato da InvioNotificheB2bSteps
     @And("viene controllato la presenza del taxonomyCode")
     public void checkTaxonomyCode() {
         getNotificationStepInterface().checkTaxonomyCode();
+    }
+
+    //Spostato da InvioNotificheB2bSteps
+    @And("vengono prodotte le evidenze: metadati e requestID")
+    public void produceEvidence() {
+        getNotificationStepInterface().produceEvidence();
+    }
+
+    //Spostato da InvioNotificheB2bSteps
+    @Then("si verifica la corretta acquisizione della richiesta di invio notifica")
+    public void correctAcquisitionRequest() {
+        getNotificationStepInterface().verifyCorrectAcquisition();
+    }
+
+    //Spostato da InvioNotificheB2bSteps
+    @Then("viene verificato lo stato di accettazione con idempotenceToken e paProtocolNumber")
+    public void vieneVerificatoLoStatoDiAccettazioneConIdempotenceTokenEPaProtocolNumber() {
+        getNotificationStepInterface().verifyStatus(false, true, true);
+
+    }
+
+    //Spostato da InvioNotificheB2bSteps
+    @Then("viene verificato lo stato di accettazione con requestID")
+    public void vieneVerificatoLoStatoDiAccettazioneConRequestID() {
+        getNotificationStepInterface().verifyStatus(true, false, false);
+    }
+
+    //Spostato da InvioNotificheB2bSteps
+    @Then("viene verificato lo stato di accettazione con paProtocolNumber")
+    public void vieneVerificatoLoStatoDiAccettazioneConPaProtocolNumber() {
+        getNotificationStepInterface().verifyStatus(false, true, false);
     }
 
     @And("viene rimossa se presente la pec di piattaforma di {string}")

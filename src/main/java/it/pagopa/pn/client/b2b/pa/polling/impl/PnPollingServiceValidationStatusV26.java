@@ -44,7 +44,7 @@ public class PnPollingServiceValidationStatusV26 extends PnPollingTemplate<PnPol
             if (pnPollingResponse.getStatusResponse().getIun() != null) {
                 FullSentNotificationV26 fullSentNotification;
                 try {
-                    fullSentNotification = b2bClient.getSentNotification(pnPollingResponse.getStatusResponse().getIun());
+                    fullSentNotification = b2bClient.getSentNotificationV26(pnPollingResponse.getStatusResponse().getIun());
                 } catch (Exception exception) {
                     log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", pnPollingResponse.getStatusResponse().getIun(), b2bClient.getApiKeySetted().name(), exception.getMessage());
                     throw new PnPollingException(exception.getMessage());

@@ -148,7 +148,7 @@ public class DataTableTypeUtil {
         return notificationRequest;
     }
 
-    private NotificationDocument getNotificationDocument(String documentElem) {
+    public NotificationDocument getNotificationDocument(String documentElem) {
         String document;
 
         switch (documentElem.toUpperCase().trim()) {

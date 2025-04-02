@@ -20,7 +20,8 @@ import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationProcessCostResponse;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.ResponsePaperNotificationFailedDto;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
-import it.pagopa.pn.cucumber.steps.pa.b2bVersions.*;
+import it.pagopa.pn.cucumber.steps.pa.b2bVersions.B2bStepsInterface;
+import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion;
 import it.pagopa.pn.cucumber.utils.DataTest;
 import lombok.Getter;
 import lombok.Setter;
@@ -52,7 +53,6 @@ import java.util.stream.IntStream;
 
 import static it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationFeePolicy.DELIVERY_MODE;
 import static it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationFeePolicy.FLAT_RATE;
-import static it.pagopa.pn.cucumber.steps.SharedSteps.NotificationVersion.*;
 import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.*;
 import static java.time.OffsetDateTime.now;
 import static java.time.temporal.ChronoUnit.MINUTES;
@@ -89,15 +89,9 @@ public class AvanzamentoNotificheB2bSteps {
     @Setter
     private TimelineElementV26 timelineElement;
 
-    private final Map<SharedSteps.NotificationVersion, B2bStepsInterface> mapOfVersionSteps = Map.ofEntries(
-            Map.entry(V1, new B2bStepsV1(this)),
-            Map.entry(V2, new B2bStepsV2(this)),
-            Map.entry(V21, new B2bStepsV21(this)),
-            Map.entry(V23, new B2bStepsV23(this)),
-            Map.entry(V24, new B2bStepsV24(this))
-    );
+    private final Map<NotificationVersion, B2bStepsInterface> mapOfVersionSteps = NotificationVersion.getMapOfB2bSteps(this);
 
-    private final SharedSteps.NotificationVersion versionUsed;
+    private final NotificationVersion versionUsed;
 
     @Autowired
     public AvanzamentoNotificheB2bSteps(SharedSteps sharedSteps,
@@ -117,11 +111,11 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
     private B2bStepsInterface getB2bStepsInterface() {
-        SharedSteps.NotificationVersion notificationVersion = versionUsed == null ? sharedSteps.getNotificationVersion(MOST_RECENT) : versionUsed;
+        NotificationVersion notificationVersion = versionUsed == null ? sharedSteps.getNotificationVersion(MOST_RECENT) : versionUsed;
         return getB2bStepsInterface(notificationVersion);
     }
 
-    private B2bStepsInterface getB2bStepsInterface(SharedSteps.NotificationVersion notificationVersion) {
+    private B2bStepsInterface getB2bStepsInterface(NotificationVersion notificationVersion) {
         return mapOfVersionSteps.get(notificationVersion);
     }
 
@@ -143,7 +137,7 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
     private void readEventsUpToStatus(String version, String status) {
-        SharedSteps.NotificationVersion notificationVersion = sharedSteps.getNotificationVersion(version);
+        NotificationVersion notificationVersion = sharedSteps.getNotificationVersion(version);
         B2bStepsInterface b2bStepsInterface = getB2bStepsInterface(notificationVersion);
         b2bStepsInterface.readEventsUpToStatus(status);
     }
@@ -508,7 +502,7 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
     private void readEventsUpToTimelineElement(String version, String timelineEventCategory) {
-        SharedSteps.NotificationVersion notificationVersion = sharedSteps.getNotificationVersion(version);
+        NotificationVersion notificationVersion = sharedSteps.getNotificationVersion(version);
         B2bStepsInterface b2bStepsInterface = getB2bStepsInterface(notificationVersion);
         b2bStepsInterface.readEventsUpToTimelineElement(timelineEventCategory);
     }
@@ -1091,7 +1085,6 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("vengono letti gli eventi e verifico che l'utente {int} non abbia associato un evento {string} V1")
     public void vengonoLettiGliEventiVerificoCheUtenteNonAbbiaAssociatoEventoV1(Integer destinatario, String timelineEventCategory) {
-        //TODO MATTEO TEST
         String iun = sharedSteps.getNotificationIun();
 
         PnPollingPredicate pnPollingPredicate = new PnPollingPredicate();
@@ -1700,14 +1693,14 @@ public class AvanzamentoNotificheB2bSteps {
 
     @And("l'avviso pagopa viene pagato correttamente dall'utente {int} V1")
     public void laNotificaVienePagataMultiV1(Integer recipientIndex) {
-        SharedSteps.NotificationVersion notificationVersion = sharedSteps.getNotificationVersion("V1");
+        NotificationVersion notificationVersion = sharedSteps.getNotificationVersion("V1");
         B2bStepsInterface b2bStepsInterface = getB2bStepsInterface(notificationVersion);
         b2bStepsInterface.payAvvisoPagoPa(0, recipientIndex);
     }
 
     @And("l'avviso pagopa viene pagato correttamente dall'utente {int} V2")
     public void laNotificaVienePagataMultiV2(Integer recipientIndex) {
-        SharedSteps.NotificationVersion notificationVersion = sharedSteps.getNotificationVersion("V2");
+        NotificationVersion notificationVersion = sharedSteps.getNotificationVersion("V2");
         B2bStepsInterface b2bStepsInterface = getB2bStepsInterface(notificationVersion);
         b2bStepsInterface.payAvvisoPagoPa(0, recipientIndex);
     }
@@ -2414,7 +2407,7 @@ public class AvanzamentoNotificheB2bSteps {
                 Thread.sleep(remainingTime + 30 * 1000);
             }
             // get the updated notification
-            FullSentNotificationV26 fullSentNotification = b2bClient.getSentNotification(iun);
+            FullSentNotificationV26 fullSentNotification = b2bClient.getSentNotificationV26(iun);
             Assertions.assertNotNull(fullSentNotification);
         }
     }
@@ -2435,7 +2428,7 @@ public class AvanzamentoNotificheB2bSteps {
                 Thread.sleep(remainingTime + 30 * 1000);
             }
             // get the updated notification
-            b2bClient.getSentNotification(iun);
+            b2bClient.getSentNotificationV26(iun);
         }
     }
 

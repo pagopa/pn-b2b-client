@@ -1,80 +1,32 @@
 package it.pagopa.pn.cucumber.steps.pa.invioNotificheVersions;
 
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.payment.PaymentInfoRequest;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NewNotificationRequestStatusResponseV23;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NewNotificationRequestV24;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NewNotificationResponse;
-import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.InvioNotificheB2bSteps;
 import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationStepsV24;
+import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Assertions;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @Slf4j
 @Data
 public class InvioNotificheStepsV24 implements InvioNotificheStepsInterface {
 
     private InvioNotificheB2bSteps invioNotificheB2bSteps;
-    private final SharedSteps.NotificationVersion version;
+    private final NotificationVersion version;
 
     public InvioNotificheStepsV24(InvioNotificheB2bSteps invioNotificheB2bSteps) {
-        version = SharedSteps.NotificationVersion.V24;
+        version = NotificationVersion.V24;
         this.invioNotificheB2bSteps = invioNotificheB2bSteps;
     }
 
     private NotificationStepsV24 getNotificationStep() {
-        return (NotificationStepsV24) invioNotificheB2bSteps.getSharedSteps().getMapOfVersionSteps().get(SharedSteps.NotificationVersion.V24);
-    }
-
-    @Override
-    public void evidenceProduce() {
-        NewNotificationResponse newNotificationResponse = getNotificationStep().getNotificationResponse();
-        assertThat(newNotificationResponse)
-                .as("La risposta della nuova notifica non dovrebbe essere nulla")
-                .isNotNull();
-        log.info("METADATI: " + '\n' + newNotificationResponse);
-        log.info("REQUEST-ID: " + '\n' + newNotificationResponse.getNotificationRequestId());
-    }
-
-    @Override
-    public void verifyCorrectAcquisition() {
-        NewNotificationResponse newNotificationResponse = getNotificationStep().getNotificationResponse();
-        assertSoftly(softly -> {
-            softly.assertThat(newNotificationResponse)
-                    .as("La risposta della nuova notifica non dovrebbe essere nulla")
-                    .isNotNull();
-
-            softly.assertThat(newNotificationResponse)
-                    .as("L'ID della richiesta di notifica non dovrebbe essere nullo")
-                    .isNotNull();
-
-            softly.assertThat(invioNotificheB2bSteps.getB2bClient().getNotificationRequestStatusV24(newNotificationResponse.getNotificationRequestId()))
-                    .as("Lo stato della richiesta di notifica non dovrebbe essere nullo.",
-                            newNotificationResponse.getNotificationRequestId())
-                    .isNotNull();
-        });
-    }
-
-    @Override
-    public void verifyStatus(boolean withNotificationRequestId, boolean withPaProtocolNumber, boolean withIdempotenceToken) {
-        NewNotificationResponse newNotificationResponse = getNotificationStep().getNotificationResponse();
-        String notificationRequestId = withNotificationRequestId ? newNotificationResponse.getNotificationRequestId() : null;
-        String paProtocolNumber = withPaProtocolNumber ? newNotificationResponse.getPaProtocolNumber() : null;
-        String idempotenceToken = withIdempotenceToken ? newNotificationResponse.getIdempotenceToken() : null;
-
-        NewNotificationRequestStatusResponseV23 newNotificationRequestStatusResponse = Assertions.assertDoesNotThrow(() ->
-                invioNotificheB2bSteps.getB2bClient().getNotificationRequestStatusAllParam(notificationRequestId, paProtocolNumber, idempotenceToken));
-        assertThat(newNotificationRequestStatusResponse.getNotificationRequestStatus())
-                .as("Lo stato della richiesta di notifica non dovrebbe essere nullo")
-                .isNotNull();
-        log.debug(newNotificationRequestStatusResponse.getNotificationRequestStatus());
+        return (NotificationStepsV24) invioNotificheB2bSteps.getSharedSteps().getMapOfVersionSteps().get(NotificationVersion.V24);
     }
 
     @Override

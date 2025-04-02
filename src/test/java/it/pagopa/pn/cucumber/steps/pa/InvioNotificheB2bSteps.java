@@ -24,6 +24,7 @@ import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.Notificatio
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.invioNotificheVersions.InvioNotificheStepsInterface;
 import it.pagopa.pn.cucumber.steps.pa.invioNotificheVersions.InvioNotificheStepsV24;
+import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion;
 import it.pagopa.pn.cucumber.utils.DataTest;
 import lombok.Getter;
 import lombok.Setter;
@@ -47,9 +48,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
-import static it.pagopa.pn.cucumber.steps.SharedSteps.NotificationVersion.V24;
 import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.COMUNE_1;
 import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.MOST_RECENT;
+import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion.V24;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -91,11 +92,11 @@ public class InvioNotificheB2bSteps {
 
     private List<String> blackListTaxIds;
 
-    private final Map<SharedSteps.NotificationVersion, InvioNotificheStepsInterface> mapOfVersionSteps = Map.ofEntries(
+    private final Map<NotificationVersion, InvioNotificheStepsInterface> mapOfVersionSteps = Map.ofEntries(
             Map.entry(V24, new InvioNotificheStepsV24(this))
     );
 
-    private final SharedSteps.NotificationVersion versionUsed;
+    private final NotificationVersion versionUsed;
 
     @Autowired
     public InvioNotificheB2bSteps(PnExternalServiceClientImpl safeStorageClient, SharedSteps sharedSteps, PnExternalChannelsServiceClientImpl pnExternalChannelsServiceClientImpl, JavaMailSender emailSender) {
@@ -112,11 +113,11 @@ public class InvioNotificheB2bSteps {
     }
 
     private InvioNotificheStepsInterface getInvioNotificheStepsInterface() {
-        SharedSteps.NotificationVersion notificationVersion = versionUsed == null ? sharedSteps.getNotificationVersion(MOST_RECENT) : versionUsed;
+        NotificationVersion notificationVersion = versionUsed == null ? sharedSteps.getNotificationVersion(MOST_RECENT) : versionUsed;
         return getInvioNotificheStepsInterface(notificationVersion);
     }
 
-    private InvioNotificheStepsInterface getInvioNotificheStepsInterface(SharedSteps.NotificationVersion notificationVersion) {
+    private InvioNotificheStepsInterface getInvioNotificheStepsInterface(NotificationVersion notificationVersion) {
         return mapOfVersionSteps.get(notificationVersion);
     }
 
@@ -207,7 +208,7 @@ public class InvioNotificheB2bSteps {
         List<NotificationSearchRow> searchedNotifications = searchNotificationWebFromADate(OffsetDateTime.now().minusDays(120));
         FullSentNotificationV26 notifica120 = null;
         for (NotificationSearchRow notifica : searchedNotifications) {
-            FullSentNotificationV26 result = b2bClient.getSentNotification(notifica.getIun());
+            FullSentNotificationV26 result = b2bClient.getSentNotificationV26(notifica.getIun());
             if (result.getRecipients().get(0).getPayments() != null
                     && result.getRecipients().get(0).getPayments().get(0).getPagoPa() != null
                     && result.getRecipients().get(0).getPayments().get(0).getPagoPa().getNoticeCode() != null) {
@@ -249,7 +250,7 @@ public class InvioNotificheB2bSteps {
 
         for (NotificationSearchRow notifiche : searchedNotifications) {
 
-            notifica = b2bClient.getSentNotification(notifiche.getIun());
+            notifica = b2bClient.getSentNotificationV26(notifiche.getIun());
 
             if (!notifica.getRecipients().get(0).getPayments().isEmpty()
                     && notifica.getRecipients().get(0).getPayments() != null
@@ -686,7 +687,7 @@ public class InvioNotificheB2bSteps {
             } else if (version.equalsIgnoreCase("V2")) {
                 b2bUtils.verifyNotificationV2(b2bClient.getSentNotificationV2(iun));
             } else if (version.equalsIgnoreCase("V26")) {
-                b2bUtils.verifyNotification(b2bClient.getSentNotification(iun));
+                b2bUtils.verifyNotification(b2bClient.getSentNotificationV26(iun));
             }
         } catch (AssertionFailedError assertionFailedError) {
             log.info("Errore di acquisizione notifica");
@@ -698,37 +699,6 @@ public class InvioNotificheB2bSteps {
         assertThatCode(() -> b2bUtils.verifyNotificationAndSha256AllegatiPagamento(sharedSteps.getSentNotificationLastVersion(), attachment))
                 .as("Verifica fallita per la notifica e l'hash SHA-256 dell'allegato di pagamento . Assicurati che non vengano sollevate eccezioni.", attachment)
                 .doesNotThrowAnyException();
-    }
-
-
-    //TODO MATTEO SPOSTARE IN SHARE STEPS
-    @And("vengono prodotte le evidenze: metadati e requestID")
-    public void evidenceProduced() {
-        getInvioNotificheStepsInterface().evidenceProduce();
-//        assertThat(this.sharedSteps.getNewNotificationResponse())
-//                .as("La risposta della nuova notifica non dovrebbe essere nulla")
-//                .isNotNull();
-//        log.info("METADATI: " + '\n' + this.sharedSteps.getNewNotificationResponse());
-//        log.info("REQUEST-ID: " + '\n' + this.sharedSteps.getNotificationRequestId());
-    }
-
-    @Then("si verifica la corretta acquisizione della richiesta di invio notifica")
-    public void correctAcquisitionRequest() {
-        getInvioNotificheStepsInterface().verifyCorrectAcquisition();
-//        assertSoftly(softly -> {
-//            softly.assertThat(this.sharedSteps.getNewNotificationResponse())
-//                    .as("La risposta della nuova notifica non dovrebbe essere nulla")
-//                    .isNotNull();
-//
-//            softly.assertThat(this.sharedSteps.getNotificationRequestId())
-//                    .as("L'ID della richiesta di notifica non dovrebbe essere nullo")
-//                    .isNotNull();
-//
-//            softly.assertThat(b2bClient.getNotificationRequestStatusV24(this.sharedSteps.getNotificationRequestId()))
-//                    .as("Lo stato della richiesta di notifica non dovrebbe essere nullo.",
-//                            this.sharedSteps.getNotificationRequestId())
-//                    .isNotNull();
-//        });
     }
 
 
@@ -777,23 +747,6 @@ public class InvioNotificheB2bSteps {
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
-    }
-
-
-    @Then("viene verificato lo stato di accettazione con idempotenceToken e paProtocolNumber")
-    public void vieneVerificatoLoStatoDiAccettazioneConIdempotenceTokenEPaProtocolNumber() {
-        getInvioNotificheStepsInterface().verifyStatus(false, true, true);
-
-    }
-
-    @Then("viene verificato lo stato di accettazione con requestID")
-    public void vieneVerificatoLoStatoDiAccettazioneConRequestID() {
-        getInvioNotificheStepsInterface().verifyStatus(true, false, false);
-    }
-
-    @Then("viene verificato lo stato di accettazione con paProtocolNumber")
-    public void vieneVerificatoLoStatoDiAccettazioneConPaProtocolNumber() {
-        getInvioNotificheStepsInterface().verifyStatus(false, true, false);
     }
 
     @And("la notifica non può essere annullata dal sistema tramite codice IUN")

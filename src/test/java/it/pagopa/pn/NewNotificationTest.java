@@ -53,7 +53,7 @@ import static org.awaitility.Awaitility.await;
         PnRaddAlternativeClientImpl.class,
         TimingForPolling.class,
         PnB2bClientTimingConfigs.class,
-        PnPollingFactory.class
+        PnPollingFactory.class,
 })
 
 

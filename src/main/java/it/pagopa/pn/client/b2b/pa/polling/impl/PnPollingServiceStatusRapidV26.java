@@ -1,7 +1,6 @@
 package it.pagopa.pn.client.b2b.pa.polling.impl;
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV26;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryElement;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryElementV26;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingTemplate;
@@ -40,7 +39,7 @@ public class PnPollingServiceStatusRapidV26 extends PnPollingTemplate<PnPollingR
             PnPollingResponseV26 pnPollingResponse = new PnPollingResponseV26();
             FullSentNotificationV26 fullSentNotification;
             try {
-                fullSentNotification = pnPaB2bClient.getSentNotification(iun);
+                fullSentNotification = pnPaB2bClient.getSentNotificationV26(iun);
             } catch (Exception exception) {
                 log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", iun, pnPaB2bClient.getApiKeySetted().name(), exception.getMessage());
                 throw new PnPollingException(exception.getMessage());

@@ -1,6 +1,7 @@
 package it.pagopa.pn.cucumber.steps.pa.notificationVersions;
 
 import io.cucumber.java.DataTableType;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NewNotificationRequestStatusResponseV23;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.RequestStatus;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.*;
 import it.pagopa.pn.client.b2b.pa.polling.IPnPollingService;
@@ -28,6 +29,7 @@ import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Destinatario.D
 import static it.pagopa.pn.cucumber.utils.NotificationValue.TAX_ID;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @Data
 @Slf4j
@@ -35,11 +37,11 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
 
     private NewNotificationRequest notificationRequest;
     private NewNotificationResponse notificationResponse;
-    private final SharedSteps.NotificationVersion version;
+    private final NotificationVersion version;
     private final SharedSteps sharedSteps;
 
     public NotificationStepsV1(SharedSteps sharedSteps) {
-        version = SharedSteps.NotificationVersion.V1;
+        version = NotificationVersion.V1;
         this.sharedSteps = sharedSteps;
     }
 
@@ -478,5 +480,46 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
     @Override
     public String getRecipientCreditorTaxId(int recipientIndex, int paymentIndex) {
         return notificationRequest.getRecipients().get(recipientIndex).getPayment().getCreditorTaxId();
+    }
+
+    @Override
+    public void produceEvidence() {
+        assertThat(notificationResponse)
+                .as("La risposta della nuova notifica non dovrebbe essere nulla")
+                .isNotNull();
+        log.info("METADATI: " + '\n' + notificationResponse);
+        log.info("REQUEST-ID: " + '\n' + notificationResponse.getNotificationRequestId());
+    }
+
+    @Override
+    public void verifyCorrectAcquisition() {
+        assertSoftly(softly -> {
+            softly.assertThat(notificationResponse)
+                    .as("La risposta della nuova notifica non dovrebbe essere nulla")
+                    .isNotNull();
+
+            softly.assertThat(notificationResponse)
+                    .as("L'ID della richiesta di notifica non dovrebbe essere nullo")
+                    .isNotNull();
+
+            softly.assertThat(sharedSteps.getB2bClient().getNotificationRequestStatusV1(notificationResponse.getNotificationRequestId()))
+                    .as("Lo stato della richiesta di notifica non dovrebbe essere nullo.",
+                            notificationResponse.getNotificationRequestId())
+                    .isNotNull();
+        });
+    }
+
+    @Override
+    public void verifyStatus(boolean withNotificationRequestId, boolean withPaProtocolNumber, boolean withIdempotenceToken) {
+        String notificationRequestId = withNotificationRequestId ? notificationResponse.getNotificationRequestId() : null;
+        String paProtocolNumber = withPaProtocolNumber ? notificationResponse.getPaProtocolNumber() : null;
+        String idempotenceToken = withIdempotenceToken ? notificationResponse.getIdempotenceToken() : null;
+
+        NewNotificationRequestStatusResponseV23 newNotificationRequestStatusResponse = Assertions.assertDoesNotThrow(() ->
+                sharedSteps.getB2bClient().getNotificationRequestStatusAllParam(notificationRequestId, paProtocolNumber, idempotenceToken));
+        assertThat(newNotificationRequestStatusResponse.getNotificationRequestStatus())
+                .as("Lo stato della richiesta di notifica non dovrebbe essere nullo")
+                .isNotNull();
+        log.debug(newNotificationRequestStatusResponse.getNotificationRequestStatus());
     }
 }

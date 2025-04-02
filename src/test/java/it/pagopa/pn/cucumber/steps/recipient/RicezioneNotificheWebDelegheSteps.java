@@ -406,7 +406,7 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @Then("l'allegato {string} può essere correttamente recuperato da {string} con delega")
     public void attachmentCanBeCorrectlyRetrievedFromWithMandate(String attachmentName, String recipient) {
-        //TODO Modificare attachmentIdx al momento e 0...............
+        //TODO Modificare attachmentIdx al momento è 0...............
         sharedSteps.selectUser(recipient);
         NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
                 sharedSteps.getNotificationIun(),
@@ -593,11 +593,11 @@ public class RicezioneNotificheWebDelegheSteps {
 
     //TODO: insert recipientID da selfcare (si possono recuperare dai token)
     private String getRecipientId(String recipientId) {
-        return switch (recipientId.toLowerCase().trim()) {
-            case "mario cucumber" -> "123";
-            case "mario gherkin" -> "345";
-            case "gherkinsrl" -> "789";
-            case "cucumberspa" -> "1011";
+        return switch (recipientId.trim()) {
+            case MARIO_CUCUMBER -> "123";
+            case MARIO_GHERKIN -> "345";
+            case GHERKIN_SRL -> "789";
+            case CUCUMBER_SPA -> "1011";
             default -> throw new IllegalStateException("Unexpected value: " + recipientId);
         };
     }

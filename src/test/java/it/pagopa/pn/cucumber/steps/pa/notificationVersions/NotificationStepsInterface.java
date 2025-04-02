@@ -58,4 +58,10 @@ public interface NotificationStepsInterface {
     String getRecipientNoticeCode(int recipientIndex, int paymentIndex);
 
     String getRecipientCreditorTaxId(int recipientIndex, int paymentIndex);
+
+    void produceEvidence();
+
+    void verifyCorrectAcquisition();
+
+    void verifyStatus(boolean withNotificationRequestId, boolean withPaProtocolNumber, boolean withIdempotenceToken);
 }
