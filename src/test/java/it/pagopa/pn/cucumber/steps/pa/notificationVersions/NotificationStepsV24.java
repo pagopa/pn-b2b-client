@@ -35,11 +35,11 @@ public class NotificationStepsV24 implements NotificationStepsInterface {
     private NewNotificationResponse notificationResponse;
     private FullSentNotificationV26 fullSentNotification;
     private OffsetDateTime notificationCreationDate;
-    private final SharedSteps.NotificationVersion version;
+    private final NotificationVersion version;
     private final SharedSteps sharedSteps;
 
     public NotificationStepsV24(SharedSteps sharedSteps) {
-        version = SharedSteps.NotificationVersion.V24;
+        version = NotificationVersion.V24;
         this.sharedSteps = sharedSteps;
     }
 

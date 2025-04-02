@@ -9,8 +9,8 @@ import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV20;
 import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceStatusRapidV20;
 import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineSlowV20;
-import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheB2bSteps;
+import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
@@ -28,11 +28,11 @@ public class B2bStepsV2 implements B2bStepsInterface {
     private FullSentNotificationV20 fullSentNotification;
     private TimelineElementV20 timelineElement;
     private NotificationStatusHistoryElement notificationStatusHistoryElement;
-    private final SharedSteps.NotificationVersion version;
+    private final NotificationVersion version;
     private final AvanzamentoNotificheB2bSteps b2bSteps;
 
     public B2bStepsV2(AvanzamentoNotificheB2bSteps b2bSteps) {
-        version = SharedSteps.NotificationVersion.V2;
+        version = NotificationVersion.V2;
         this.b2bSteps = b2bSteps;
     }
 

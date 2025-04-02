@@ -55,8 +55,8 @@ import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 
-import static it.pagopa.pn.cucumber.steps.SharedSteps.NotificationVersion.*;
 import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.*;
+import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion.*;
 import static it.pagopa.pn.cucumber.utils.FiscalCodeGenerator.generateCF;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
 import static java.util.Objects.nonNull;
@@ -204,22 +204,6 @@ public class SharedSteps {
      * del B2bClient relativo alla versione che ci interessa, passandogli questo IUN (che è universale) */
     private String notificationIun;
 
-    public enum NotificationVersion {
-        V1(1), V2(2), V21(21), V23(23), V24(24);
-
-        /**
-         * Scopo di questo campo è quello di poter comparare le versioni con < o >
-         * In questo modo si possono aggiungere controlli nel codice per verificare
-         * se un dato Notification Version è antecedente o successivo a un'altra versione
-         */
-        @Getter
-        private final int value;
-
-        NotificationVersion(int value) {
-            this.value = value;
-        }
-    }
-
     @Before("@useB2B")
     public void beforeMethod() {
         if (!(webRecipientClient instanceof B2BRecipientExternalClientImpl)) {
@@ -287,7 +271,7 @@ public class SharedSteps {
 
     private NotificationVersion getNotificationVersion(String version) {
         if (version.trim().equalsIgnoreCase(MOST_RECENT)) {
-            return NotificationVersion.V24;//TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente
+            return V24;//TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente
         }
         return NotificationVersion.valueOf(version.trim().toUpperCase());
     }

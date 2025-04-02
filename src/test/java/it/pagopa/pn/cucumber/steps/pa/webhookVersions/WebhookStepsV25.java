@@ -30,11 +30,11 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
     private List<StreamMetadataResponseV25> eventStreamList;
     private StreamRequestV25 streamRequest;
     private final AvanzamentoNotificheWebhookB2bSteps webhookSteps;
-    private final AvanzamentoNotificheWebhookB2bSteps.StreamVersion streamVersion;
+    private final StreamVersion streamVersion;
 
     public WebhookStepsV25(AvanzamentoNotificheWebhookB2bSteps webhookSteps) {
         this.webhookSteps = webhookSteps;
-        streamVersion = AvanzamentoNotificheWebhookB2bSteps.StreamVersion.V25;
+        streamVersion = StreamVersion.V25;
         progressResponseElementList = new LinkedList<>();
     }
 
