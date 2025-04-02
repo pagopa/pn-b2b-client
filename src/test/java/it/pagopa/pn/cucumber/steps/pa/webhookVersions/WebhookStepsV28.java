@@ -384,7 +384,6 @@ public class WebhookStepsV28 implements WebhookStepsInterface {
         } catch (AssertionFailedError assertionFailedError) {
             String message = String.format("%s {IUN: %s -WEBHOOK %s }",
                     assertionFailedError.getMessage(), webhookSteps.getSharedSteps().getNotificationIun(), eventStreamList.get(0).getStreamId());
-
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
     }
@@ -515,7 +514,7 @@ public class WebhookStepsV28 implements WebhookStepsInterface {
 
         String elementId = timelineElementWebHook.getCategory().toString();
         FullSentNotificationV26 fullSentNotification = webhookSteps.getSharedSteps().getSentNotificationLastVersion();
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 timelineElement = fullSentNotification.getTimeline().
+         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 timelineElement = fullSentNotification.getTimeline().
                 stream()
                 .filter(data -> data.getCategory() != null)
                 .filter(data -> data.getCategory().getValue().equalsIgnoreCase(elementId))
