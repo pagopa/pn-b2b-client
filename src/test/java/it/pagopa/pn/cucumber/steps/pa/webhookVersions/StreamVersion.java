@@ -1,6 +1,9 @@
 package it.pagopa.pn.cucumber.steps.pa.webhookVersions;
 
+import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps;
 import lombok.Getter;
+
+import java.util.Map;
 
 public enum StreamVersion {
 
@@ -16,5 +19,16 @@ public enum StreamVersion {
 
     StreamVersion(int value) {
         this.value = value;
+    }
+
+    public static Map<StreamVersion, WebhookStepsInterface> getMapOfWebhookSteps(AvanzamentoNotificheWebhookB2bSteps webhookB2bSteps) {
+        return Map.of(
+                V10, new WebhookStepsV10(webhookB2bSteps),
+                V23, new WebhookStepsV23(webhookB2bSteps),
+                V24, new WebhookStepsV24(webhookB2bSteps),
+                V25, new WebhookStepsV25(webhookB2bSteps),
+                V26, new WebhookStepsV26(webhookB2bSteps),
+                V27, new WebhookStepsV27(webhookB2bSteps)
+        );
     }
 }

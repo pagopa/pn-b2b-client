@@ -30,7 +30,10 @@ import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalAndUnverifiedDigitalAddress;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.UserAddresses;
-import it.pagopa.pn.cucumber.steps.pa.notificationVersions.*;
+import it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti;
+import it.pagopa.pn.cucumber.steps.pa.notificationVersions.Destinatario;
+import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationStepsInterface;
+import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion;
 import it.pagopa.pn.cucumber.utils.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -56,7 +59,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 
 import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.*;
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion.*;
+import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion.V1;
 import static it.pagopa.pn.cucumber.utils.FiscalCodeGenerator.generateCF;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
 import static java.util.Objects.nonNull;
@@ -185,13 +188,7 @@ public class SharedSteps {
     // Viene settato solo per l'ultima versione. Al rilascio di una nuova, sostituire con l'oggetto corrispondente
     private NewNotificationRequestV24 notificationRequest;
 
-    private final Map<NotificationVersion, NotificationStepsInterface> mapOfVersionSteps = Map.ofEntries(
-            Map.entry(V1, new NotificationStepsV1(this)),
-            Map.entry(V2, new NotificationStepsV2(this)),
-            Map.entry(V21, new NotificationStepsV21(this)),
-            Map.entry(V23, new NotificationStepsV23(this)),
-            Map.entry(V24, new NotificationStepsV24(this))
-    );
+    private final Map<NotificationVersion, NotificationStepsInterface> mapOfVersionSteps = NotificationVersion.getMapOfNotificationSteps(this);
 
     @Getter
     @Setter
@@ -199,9 +196,10 @@ public class SharedSteps {
 
     @Getter
     @Setter
-    /** Anzichè avere 10.000 istanze di FullSentNotification da impostare ogni volta, ora setteremo solo lo IUN della notifica creata.
-     * Dove prima si richiama sharedSteps.getFullSentNotificationX, adesso si recupererà direttamente la versione chiamando il metodo
-     * del B2bClient relativo alla versione che ci interessa, passandogli questo IUN (che è universale) */
+    /**
+     * Rappresenta la versione con cui è stata generata una notifica. Viene impostata al momento di preparazione della request.
+     * Va da sè che gli step successivi (aggiunta di destinatari, invio, etc) dovranno anch'essi utilizzare tale versione, salvo diversamente specificato.
+     */
     private String notificationIun;
 
     @Before("@useB2B")
@@ -259,7 +257,7 @@ public class SharedSteps {
 
     /**
      * Restituisce lo FullSentNotification aggiornata all'ultima versione (quella maggiormente utilizzata a codice)
-     * TODO: se e quando verrà introdotta una nuova versione, rifattorizzare il tipo di oggetto ritornato e cambiare
+     * TODO: se e quando verrà introdotta una nuova versione, ri-fattorizzare il tipo di oggetto ritornato e cambiare
      * i punti di codice che richiamano questo metodo
      */
     public FullSentNotificationV26 getSentNotificationLastVersion() {
@@ -271,7 +269,7 @@ public class SharedSteps {
 
     private NotificationVersion getNotificationVersion(String version) {
         if (version.trim().equalsIgnoreCase(MOST_RECENT)) {
-            return V24;//TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente
+            return NotificationVersion.V24;//TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente
         }
         return NotificationVersion.valueOf(version.trim().toUpperCase());
     }

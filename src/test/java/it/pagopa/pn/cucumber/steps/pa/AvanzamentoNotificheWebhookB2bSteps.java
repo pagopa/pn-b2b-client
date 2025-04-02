@@ -61,14 +61,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     private HttpStatusCodeException notificationError;
     private Integer requestNumber;
 
-    private final Map<StreamVersion, WebhookStepsInterface> mapOfWebhookVersionSteps = Map.ofEntries(
-            Map.entry(StreamVersion.V10, new WebhookStepsV10(this)),
-            Map.entry(StreamVersion.V23, new WebhookStepsV23(this)),
-            Map.entry(StreamVersion.V24, new WebhookStepsV24(this)),
-            Map.entry(StreamVersion.V25, new WebhookStepsV25(this)),
-            Map.entry(StreamVersion.V26, new WebhookStepsV26(this)),
-            Map.entry(StreamVersion.V27, new WebhookStepsV27(this))
-    );
+    private final Map<StreamVersion, WebhookStepsInterface> mapOfWebhookVersionSteps = StreamVersion.getMapOfWebhookSteps(this);
 
     private static final Map<String, SettableApiKey.ApiKeyType> paForStream =
             Map.of(
