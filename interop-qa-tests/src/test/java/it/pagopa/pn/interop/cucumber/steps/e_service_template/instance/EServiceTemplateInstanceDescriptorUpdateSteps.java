@@ -12,10 +12,12 @@ import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorTemplateInstanceSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateInstanceDescriptorQuotas;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import java.util.UUID;
+import java.util.function.Predicate;
 import lombok.Data;
 import org.jeasy.random.EasyRandom;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +34,7 @@ public class EServiceTemplateInstanceDescriptorUpdateSteps {
     private final IEServiceClient eServiceClient;
 
     private UpdateEServiceDescriptorTemplateInstanceSeed lastUpdateEServiceDescriptorTemplateInstanceSeed;
+    private UpdateEServiceTemplateInstanceDescriptorQuotas lastUpdateEServiceDescriptorTemplateInstanceQuotas;
 
     public EServiceTemplateInstanceDescriptorUpdateSteps(ClientTokenConfigurator clientTokenConfigurator,
         SharedStepsContext sharedStepsContext
@@ -45,7 +48,7 @@ public class EServiceTemplateInstanceDescriptorUpdateSteps {
         this.eServiceClient = clientTokenConfigurator.getEServiceClient();
     }
     
-    @When("l'utente tenta la modifica del descriptor dell'istanza dell'e-service template")
+    @When("l'utente tenta la modifica del descriptor in stato DRAFT dell'istanza dell'e-service template")
     public void editEServiceTemplateInstanceDescriptor() {
         UUID eServiceTemplateInstanceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
         UUID eServiceTemplateInstanceDescriptorId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorIdCreatedFromTemplate();
@@ -63,7 +66,7 @@ public class EServiceTemplateInstanceDescriptorUpdateSteps {
             .agreementApprovalPolicy(AgreementApprovalPolicy.AUTOMATIC);
     }
 
-    @When("l'utente tenta la modifica di un descriptor inesistente dell'istanza dell'e-service template")
+    @When("l'utente tenta la modifica di un descriptor in stato DRAFT inesistente dell'istanza dell'e-service template")
     public void editNonExistentEServiceTemplateInstanceDescriptor() {
         UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
         UUID eServiceDescriptorId = UUID.randomUUID();
@@ -71,7 +74,7 @@ public class EServiceTemplateInstanceDescriptorUpdateSteps {
         editEServiceTemplateInstanceDescriptor(eServiceId, eServiceDescriptorId, lastUpdateEServiceDescriptorTemplateInstanceSeed);
     }
 
-    @When("l'utente tenta la modifica del descriptor dell'istanza dell'e-service template indicando una specifica vuota")
+    @When("l'utente tenta la modifica del descriptor in stato DRAFT dell'istanza dell'e-service template indicando una specifica vuota")
     public void editEServiceTemplateInstanceDescriptorWithEmptySpec() {
         UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
         UUID eServiceDescriptorId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorIdCreatedFromTemplate();
@@ -79,10 +82,71 @@ public class EServiceTemplateInstanceDescriptorUpdateSteps {
         editEServiceTemplateInstanceDescriptor(eServiceId, eServiceDescriptorId, emptySeed);
     }
 
-    @Then("il descriptor dell'istanza dell'e-service template è stato modificato correttamente")
-    public void checkEServiceTemplateInstanceDescriptorEdited() {
+    @Then("il descriptor dell'istanza in stato DRAFT dell'e-service template è stato modificato correttamente")
+    public void checkEServiceTemplateInstanceDescriptorInDraftEdited() {
+        UUID instanceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
+        UUID descriptorId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorIdCreatedFromTemplate();
+        Predicate<ProducerEServiceDescriptor> descriptorChecker = res -> this.areConsistent(res, lastUpdateEServiceDescriptorTemplateInstanceSeed);
+        checkEServiceTemplateInstanceDescriptor(instanceId, descriptorId, descriptorChecker);
+    }
+
+    @When("l'utente tenta la modifica del descriptor dell'istanza dell'e-service template")
+    public void editEServiceTemplateInstanceDescriptorQuotas() {
         UUID eServiceTemplateInstanceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
         UUID eServiceTemplateInstanceDescriptorId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorIdCreatedFromTemplate();
+        lastUpdateEServiceDescriptorTemplateInstanceQuotas = buildUpdateEServiceDescriptorTemplateInstanceQuotas();
+        editEServiceTemplateInstanceDescriptor(eServiceTemplateInstanceId, eServiceTemplateInstanceDescriptorId, lastUpdateEServiceDescriptorTemplateInstanceQuotas);
+    }
+
+    private UpdateEServiceTemplateInstanceDescriptorQuotas buildUpdateEServiceDescriptorTemplateInstanceQuotas() {
+        return new UpdateEServiceTemplateInstanceDescriptorQuotas()
+            .dailyCallsPerConsumer(10)
+            .dailyCallsTotal(20);
+    }
+
+    @When("l'utente tenta la modifica di un descriptor inesistente dell'istanza dell'e-service template")
+    public void editNonExistentEServiceTemplateInstanceDescriptorQuotas() {
+        UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
+        UUID eServiceDescriptorId = UUID.randomUUID();
+        lastUpdateEServiceDescriptorTemplateInstanceQuotas = buildUpdateEServiceDescriptorTemplateInstanceQuotas();
+        editEServiceTemplateInstanceDescriptor(eServiceId, eServiceDescriptorId, lastUpdateEServiceDescriptorTemplateInstanceQuotas);
+    }
+
+    @When("l'utente tenta la modifica del descriptor dell'istanza dell'e-service template indicando un 'dailyCallsPerConsumer' maggiore di 'dailyCallsTotal'")
+    public void editEServiceTemplateInstanceDescriptorQuotasWithInvalidSpec() {
+        UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
+        UUID eServiceDescriptorId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorIdCreatedFromTemplate();
+        lastUpdateEServiceDescriptorTemplateInstanceQuotas = buildUpdateEServiceDescriptorTemplateInstanceQuotas()
+            .dailyCallsPerConsumer(30)
+            .dailyCallsTotal(20);
+        editEServiceTemplateInstanceDescriptor(eServiceId, eServiceDescriptorId, lastUpdateEServiceDescriptorTemplateInstanceQuotas);
+    }
+
+    @When("l'utente tenta la modifica del descriptor dell'istanza dell'e-service template indicando una specifica vuota")
+    public void editEServiceTemplateInstanceDescriptorWithEmptyQuotasSpec() {
+        UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
+        UUID eServiceDescriptorId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorIdCreatedFromTemplate();
+        UpdateEServiceTemplateInstanceDescriptorQuotas emptyQuotas = new UpdateEServiceTemplateInstanceDescriptorQuotas();
+        editEServiceTemplateInstanceDescriptor(eServiceId, eServiceDescriptorId, emptyQuotas);
+    }
+
+    @Then("il descriptor dell'istanza dell'e-service template è stato modificato correttamente")
+    public void checkEServiceTemplateInstanceDescriptorEdited() {
+        UUID instanceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
+        UUID descriptorId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorIdCreatedFromTemplate();
+        Predicate<ProducerEServiceDescriptor> descriptorChecker = res -> this.areConsistent(res, lastUpdateEServiceDescriptorTemplateInstanceQuotas);
+        checkEServiceTemplateInstanceDescriptor(instanceId, descriptorId, descriptorChecker);
+    }
+
+    private boolean areConsistent(ProducerEServiceDescriptor res,
+        UpdateEServiceTemplateInstanceDescriptorQuotas instanceQuotas) {
+        return instanceQuotas.getDailyCallsPerConsumer().equals(res.getDailyCallsPerConsumer()) &&
+            instanceQuotas.getDailyCallsTotal().equals(res.getDailyCallsTotal());
+    }
+
+    private void checkEServiceTemplateInstanceDescriptor(UUID eServiceTemplateInstanceId,
+        UUID eServiceTemplateInstanceDescriptorId,
+        Predicate<ProducerEServiceDescriptor> descriptorChecker) {
         try {
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(
@@ -93,7 +157,7 @@ public class EServiceTemplateInstanceDescriptorUpdateSteps {
                     ResponseEntity::getStatusCode),
                 res -> {
                     if(res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody())) {
-                        return this.areConsistent(res.getBody(), lastUpdateEServiceDescriptorTemplateInstanceSeed);
+                        return descriptorChecker.test(res.getBody());
                     }
                     return false;
                 },
@@ -103,7 +167,7 @@ public class EServiceTemplateInstanceDescriptorUpdateSteps {
             fail("Il descriptor dell'istanza dell'e-service template non è stato modificato correttamente");
         }
     }
-    
+
     private void editEServiceTemplateInstanceDescriptor(
         UUID eServiceId,
         UUID eServiceDescriptorId,
@@ -113,6 +177,22 @@ public class EServiceTemplateInstanceDescriptorUpdateSteps {
         clientTokenConfigurator.setBearerToken(userToken);
         httpCallExecutor.performCall(
             () -> eServiceClient.updateDraftDescriptorTemplateInstanceWithHttpInfo(
+                sharedStepsContext.getXCorrelationId(),
+                eServiceId,
+                eServiceDescriptorId,
+                seed),
+            ResponseEntity::getStatusCode);
+    }
+
+    private void editEServiceTemplateInstanceDescriptor(
+        UUID eServiceId,
+        UUID eServiceDescriptorId,
+        UpdateEServiceTemplateInstanceDescriptorQuotas seed
+    ) {
+        String userToken = sharedStepsContext.getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+        httpCallExecutor.performCall(
+            () -> eServiceClient.updateTemplateInstanceDescriptorWithHttpInfo(
                 sharedStepsContext.getXCorrelationId(),
                 eServiceId,
                 eServiceDescriptorId,

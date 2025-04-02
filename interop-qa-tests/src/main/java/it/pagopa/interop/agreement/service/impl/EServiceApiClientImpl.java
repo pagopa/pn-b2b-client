@@ -18,6 +18,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServices;
 import it.pagopa.interop.generated.openapi.clients.bff.model.TemplateInstanceInterfaceRESTSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorTemplateInstanceSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateInstanceDescriptorQuotas;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateInstanceSeed;
 import java.util.Arrays;
 import java.util.List;
@@ -141,6 +142,17 @@ public class EServiceApiClientImpl implements IEServiceClient {
         UpdateEServiceDescriptorTemplateInstanceSeed updateEServiceDescriptorTemplateInstanceSeed
     ) {
         return this.eservicesApi.updateDraftDescriptorTemplateInstanceWithHttpInfo(xCorrelationId, eServiceId, descriptorId, updateEServiceDescriptorTemplateInstanceSeed);
+    }
+
+
+    @Override
+    public ResponseEntity<CreatedResource> updateTemplateInstanceDescriptorWithHttpInfo(
+        String xCorrelationId,
+        UUID eServiceId,
+        UUID descriptorId,
+        UpdateEServiceTemplateInstanceDescriptorQuotas descriptorQuotas
+    ) {
+        return this.eservicesApi.updateTemplateInstanceDescriptorWithHttpInfo(xCorrelationId, eServiceId, descriptorId, descriptorQuotas);
     }
 
     @Override

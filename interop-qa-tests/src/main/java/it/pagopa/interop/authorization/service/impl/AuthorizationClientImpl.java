@@ -93,7 +93,7 @@ public class AuthorizationClientImpl implements IAuthorizationClient {
 
     @Override
     public PublicKeys getClientKeys(String xCorrelationId, UUID clientId, List<UUID> userIds) {
-        return clientsApi.getClientKeys(xCorrelationId, clientId, userIds);
+        return clientsApi.getClientKeys(xCorrelationId, clientId, 0, 50, userIds);
     }
 
     @Override

@@ -491,10 +491,10 @@ public class DataPreparationService {
         UUID secondDescriptorId = createNextDraftDescriptor(eServiceId);
 
         // Add interface to secondDescriptor
-        addInterfaceToDescriptor(eServiceId, secondDescriptorId);
+        interpolateInterfaceToDescriptor(eServiceId, secondDescriptorId);
 
         // Publish secondDescriptor
-        publishDescriptor(eServiceId, secondDescriptorId);
+        publishTemplateInstanceDescriptor(eServiceId, secondDescriptorId);
 
         // Check until the first descriptor is in desired state
         pollingService.makePolling(

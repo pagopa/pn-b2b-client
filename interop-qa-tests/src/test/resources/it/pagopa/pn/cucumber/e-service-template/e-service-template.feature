@@ -2162,9 +2162,9 @@ Feature: Test API of e-service template
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service in stato DRAFT a partire dal template con successo indicando solo le specifiche strettamente necessarie
     When l'utente è un "<ruolo>" di "PA1"
-    And l'utente tenta la modifica del descriptor dell'istanza dell'e-service template
+    And l'utente tenta la modifica del descriptor in stato DRAFT dell'istanza dell'e-service template
     Then si ottiene response status code 200
-    And il descriptor dell'istanza dell'e-service template è stato modificato correttamente
+    And il descriptor dell'istanza in stato DRAFT dell'e-service template è stato modificato correttamente
     Examples:
       | ruolo         |
       | admin         |
@@ -2172,12 +2172,12 @@ Feature: Test API of e-service template
       | api,security  |
 
   @e-service-template-instance-descriptor-update
-  Scenario Outline: [INTEROP-EST-195] La modifica del descriptor di un'istanza di un e-service template NON può essere effettuata da un ente NON in veste di ADMIN o API
+  Scenario Outline: [INTEROP-EST-195] La modifica del descriptor in stato DRAFT di un'istanza di un e-service template NON può essere effettuata da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service in stato DRAFT a partire dal template con successo indicando solo le specifiche strettamente necessarie
     When l'utente è un "<ruolo>" di "PA1"
-    And l'utente tenta la modifica del descriptor dell'istanza dell'e-service template
+    And l'utente tenta la modifica del descriptor in stato DRAFT dell'istanza dell'e-service template
     Then si ottiene response status code 403
     Examples:
       | ruolo |
@@ -2185,11 +2185,11 @@ Feature: Test API of e-service template
       | support       |
 
   @e-service-template-instance-descriptor-update
-  Scenario Outline: [INTEROP-EST-196] La modifica del descriptor di un'istanza in stato PUBLISHED o SUSPENDED di un e-service template NON può essere effettuata
+  Scenario Outline: [INTEROP-EST-196] La modifica del descriptor in stato DRAFT di un'istanza in stato PUBLISHED o SUSPENDED di un e-service template NON può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service in stato <stato> a partire dal template con successo indicando solo le specifiche strettamente necessarie
-    When l'utente tenta la modifica del descriptor dell'istanza dell'e-service template
+    When l'utente tenta la modifica del descriptor in stato DRAFT dell'istanza dell'e-service template
     Then si ottiene response status code 400
     Examples:
       | stato     |
@@ -2206,19 +2206,19 @@ Feature: Test API of e-service template
     Then si ottiene response status code 400
 
   @e-service-template-instance-descriptor-update
-  Scenario: [INTEROP-EST-198] La modifica di un descriptor inesistente di un e-service template non può essere effettuata
+  Scenario: [INTEROP-EST-198] La modifica di un descriptor in stato DRAFT inesistente di un e-service template non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
-    When l'utente tenta la modifica di un descriptor inesistente dell'istanza dell'e-service template
+    When l'utente tenta la modifica di un descriptor in stato DRAFT inesistente dell'istanza dell'e-service template
     Then si ottiene response status code 404
 
   @e-service-template-instance-descriptor-update
-  Scenario: [INTEROP-EST-199] La modifica del descriptor di un'istanza di un e-service template indicando una specifica vuota non può essere effettuata
+  Scenario: [INTEROP-EST-199] La modifica del descriptor in stato DRAFT di un'istanza di un e-service template indicando una specifica vuota non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service in stato DRAFT a partire dal template con successo indicando solo le specifiche strettamente necessarie
-    When l'utente tenta la modifica del descriptor dell'istanza dell'e-service template indicando una specifica vuota
+    When l'utente tenta la modifica del descriptor in stato DRAFT dell'istanza dell'e-service template indicando una specifica vuota
     Then si ottiene response status code 400
 
   @e-service-template-instance-descriptor-update
@@ -2227,5 +2227,99 @@ Feature: Test API of e-service template
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service in stato DRAFT a partire dal template con successo indicando solo le specifiche strettamente necessarie
     When l'utente è un "admin" di "PA2"
+    And l'utente tenta la modifica del descriptor in stato DRAFT dell'istanza dell'e-service template
+    Then si ottiene response status code 403
+
+  @e-service-template-instance-descriptor-update
+  Scenario Outline: [INTEROP-EST-201] La modifica del descriptor di un'istanza di un e-service template può essere effettuata da un ente in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato <stato> a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la modifica del descriptor dell'istanza dell'e-service template
+    Then si ottiene response status code 200
+    And il descriptor dell'istanza dell'e-service template è stato modificato correttamente
+    Examples:
+      | ruolo         | stato       |
+      | admin         | PUBLISHED   |
+    #  | api           | PUBLISHED   |
+    #  | api,security  | PUBLISHED   |
+    #  | admin         | SUSPENDED   |
+    #  | api           | SUSPENDED   |
+    #  | api,security  | SUSPENDED   |
+    #  | admin         | DEPRECATED  |
+    #  | api           | DEPRECATED  |
+    #  | api,security  | DEPRECATED  |
+
+  @e-service-template-instance-descriptor-update
+  Scenario Outline: [INTEROP-EST-202] La modifica del descriptor di un'istanza di un e-service template NON può essere effettuata da un ente NON in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato <stato> a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    When l'utente è un "<ruolo>" di "PA1"
     And l'utente tenta la modifica del descriptor dell'istanza dell'e-service template
     Then si ottiene response status code 403
+    Examples:
+      | ruolo     | stato       |
+      | security  | PUBLISHED   |
+      | support   | PUBLISHED   |
+      | security  | SUSPENDED   |
+      | support   | SUSPENDED   |
+      | security  | DEPRECATED  |
+      | support   | DEPRECATED  |
+
+  @e-service-template-instance-descriptor-update
+  Scenario: [INTEROP-EST-203] La modifica del descriptor di un'istanza in stato DRAFT di un e-service template utilizzando l'api specifica per gli altri stati NON può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato DRAFT a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    When l'utente tenta la modifica del descriptor dell'istanza dell'e-service template
+    Then si ottiene response status code 400
+
+  @e-service-template-instance-descriptor-update
+  Scenario Outline: [INTEROP-EST-204] La modifica del descriptor di un'istanza di un e-service template indicando una specifica vuota non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato <stato> a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    When l'utente tenta la modifica del descriptor dell'istanza dell'e-service template indicando una specifica vuota
+    Then si ottiene response status code 400
+    Examples:
+      | stato       |
+      | PUBLISHED   |
+      | SUSPENDED   |
+      | DEPRECATED  |
+
+  @e-service-template-instance-descriptor-update
+  Scenario Outline: [INTEROP-EST-205] La modifica del descriptor di un'istanza di un e-service template NON può essere effettuata da un ente diverso dal creatore dell'istanza
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato <stato> a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    When l'utente è un "admin" di "PA2"
+    And l'utente tenta la modifica del descriptor dell'istanza dell'e-service template
+    Then si ottiene response status code 403
+    Examples:
+      | stato       |
+      | PUBLISHED   |
+      | SUSPENDED   |
+      | DEPRECATED  |
+
+  @e-service-template-instance-descriptor-update
+  Scenario: [INTEROP-EST-206] La modifica di un descriptor inesistente di un e-service template non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    When l'utente tenta la modifica di un descriptor inesistente dell'istanza dell'e-service template
+    Then si ottiene response status code 404
+
+  @e-service-template-instance-descriptor-update
+  Scenario Outline: [INTEROP-EST-207] La modifica del descriptor di un'istanza di un e-service template NON può essere effettuata specificando il parametro 'dailyCallsPerConsumer' maggiore del parametro 'dailyCallsTotal'
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato <stato> a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    When l'utente tenta la modifica del descriptor dell'istanza dell'e-service template indicando un 'dailyCallsPerConsumer' maggiore di 'dailyCallsTotal'
+    Then si ottiene response status code 400
+    Examples:
+      | stato       |
+      | PUBLISHED   |
+      | SUSPENDED   |
+      | DEPRECATED  |
