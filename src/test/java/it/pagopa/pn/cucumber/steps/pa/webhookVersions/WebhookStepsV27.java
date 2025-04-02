@@ -36,7 +36,6 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
     //TODO: per futuro refactor//private final WebhookClientV27 webhookClient;
     private boolean waitForAccepted;
 
-
     public WebhookStepsV27(AvanzamentoNotificheWebhookB2bSteps webhookSteps) {
         this.webhookSteps = webhookSteps;
         streamVersion = StreamVersion.V27;

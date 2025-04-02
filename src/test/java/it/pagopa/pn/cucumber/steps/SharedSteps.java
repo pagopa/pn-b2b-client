@@ -151,14 +151,6 @@ public class SharedSteps {
     private final ObjectMapper objMapper;
 
     /**
-     * Campo chiave della classe, rappresentante lo IUN della notifica creata,
-     * da cui poi recuperare la FullSentNotification (di qualsivoglia versione) tramite chiamata al B2B
-     */
-    @Getter
-    @Setter
-    private String notificationIun;
-
-    /**
      * Rappresenta la versione con cui è stata generata una notifica. Viene impostata al momento di preparazione della request.
      * Va da sè che gli step successivi (aggiunta di destinatari, invio, etc) dovranno anch'essi utilizzare tale versione, salvo diversamente specificato.
      */
@@ -171,6 +163,14 @@ public class SharedSteps {
      */
     @Getter
     private final Map<NotificationVersion, NotificationStepsInterface> mapOfVersionSteps = NotificationVersion.getMapOfNotificationSteps(this);
+
+    /**
+     * Lo IUN della notifica che viene creata (dell'ultima, nei rari casi di più notifiche) viene salvato in questa variabile.
+     * Tramite esso è poi possibile recuperare le FullSentNotification (di qualsivoglia versione) richiamando il B2B
+     */
+    @Getter
+    @Setter
+    private String notificationIun;
 
     @Before("@useB2B")
     public void beforeMethod() {
@@ -227,7 +227,8 @@ public class SharedSteps {
 
     /**
      * Restituisce lo FullSentNotification aggiornata all'ultima versione (quella maggiormente utilizzata a codice)
-     * TODO: se e quando verrà introdotta una nuova versione, ri-fattorizzare il tipo di oggetto ritornato e cambiare i punti di codice che richiamano questo metodo
+     * TODO: se e quando verrà introdotta una nuova versione, ri-fattorizzare il tipo di oggetto ritornato e cambiare
+     * i punti di codice che richiamano questo metodo
      */
     public FullSentNotificationV26 getSentNotificationLastVersion() {
         if (notificationIun != null) {

@@ -62,8 +62,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     private Integer requestNumber;
 
     //TODO: per futuro refactor//@Getter private final WebhookClientFactory webhookClientFactory;
-
-    private final Map<StreamVersion, WebhookStepsInterface> mapOfWebhookVersionSteps;
+    private final Map<StreamVersion, WebhookStepsInterface> mapOfWebhookVersionSteps = StreamVersion.getMapOfWebhookSteps(this);
 
     private static final Map<String, SettableApiKey.ApiKeyType> paForStream = Map.of(
             COMUNE_1, SettableApiKey.ApiKeyType.MVP_1,
@@ -83,15 +82,6 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         this.sharedSteps = sharedSteps;
         this.timingForPolling = timingForPolling;
         this.pollingFactory = pollingFactory;
-
-        mapOfWebhookVersionSteps = Map.of(
-                StreamVersion.V10, new WebhookStepsV10(this),
-                StreamVersion.V23, new WebhookStepsV23(this),
-                StreamVersion.V24, new WebhookStepsV24(this),
-                StreamVersion.V25, new WebhookStepsV25(this),
-                StreamVersion.V26, new WebhookStepsV26(this),
-                StreamVersion.V27, new WebhookStepsV27(this)
-        );
     }
 
     public IPnPaB2bClient getB2bClient() {
