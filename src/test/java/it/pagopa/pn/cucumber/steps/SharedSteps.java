@@ -190,16 +190,20 @@ public class SharedSteps {
 
     private final Map<NotificationVersion, NotificationStepsInterface> mapOfVersionSteps = NotificationVersion.getMapOfNotificationSteps(this);
 
-    @Getter
-    @Setter
-    private NotificationVersion versionUsed;
-
-    @Getter
-    @Setter
     /**
      * Rappresenta la versione con cui è stata generata una notifica. Viene impostata al momento di preparazione della request.
      * Va da sè che gli step successivi (aggiunta di destinatari, invio, etc) dovranno anch'essi utilizzare tale versione, salvo diversamente specificato.
      */
+    @Getter
+    @Setter
+    private NotificationVersion versionUsed;
+
+    /**
+     * Lo IUN della notifica che viene creata (dell'ultima, nei rari casi di più notifiche) viene salvato in questa variabile.
+     * Tramite esso è poi possibile recuperare le FullSentNotification (di qualsivoglia versione) richiamando il B2B
+     */
+    @Getter
+    @Setter
     private String notificationIun;
 
     @Before("@useB2B")
