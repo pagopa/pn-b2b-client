@@ -14,7 +14,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTempl
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
+import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext.EServiceTemplateInfo;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext.EServiceTemplateInfoMapper;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
 import java.util.UUID;
@@ -56,7 +56,9 @@ public class EServiceTemplateVersionReadSteps {
 
     @When("l'utente tenta la visualizzazione dei dettagli della versione dell'e-service template")
     public void getEServiceTemplateVersionDetails() {
-        getEServiceTemplateVersionDetails(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId());
+        EServiceTemplateInfo lastTemplateManaged = sharedStepsContext.getEServiceTemplateStepContext()
+            .getLastTemplateManaged();
+        getEServiceTemplateVersionDetails(lastTemplateManaged.id(), lastTemplateManaged.lastVersionId());
     }
 
     @When("l'utente tenta la visualizzazione dei dettagli della versione dell'e-service template indicando un identificativo vuoto")
