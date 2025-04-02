@@ -1,7 +1,7 @@
 package it.pagopa.pn.client.b2b.pa.service;
 
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.FullReceivedNotificationV26;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.FullReceivedNotificationV25;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationAttachmentDownloadMetadataResponse;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationSearchResponse;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationStatusV26;
@@ -16,7 +16,7 @@ import java.util.UUID;
 
 public interface IPnWebRecipientClient extends SettableBearerToken {
 
-    FullReceivedNotificationV26 getReceivedNotification(String iun, String mandateId) throws RestClientException;
+    FullReceivedNotificationV25 getReceivedNotification(String iun, String mandateId) throws RestClientException;
 
     it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model_v1.NotificationAttachmentDownloadMetadataResponse getReceivedNotificationAttachment(String iun, String attachmentName, UUID mandateId) throws RestClientException;
 
