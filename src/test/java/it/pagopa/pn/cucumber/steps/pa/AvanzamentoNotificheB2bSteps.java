@@ -21,9 +21,6 @@ import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.ResponsePaperNotificationFailedDto;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.b2bVersions.B2bStepsInterface;
-import it.pagopa.pn.cucumber.steps.pa.b2bVersions.B2bStepsV1;
-import it.pagopa.pn.cucumber.steps.pa.b2bVersions.B2bStepsV2;
-import it.pagopa.pn.cucumber.steps.pa.b2bVersions.B2bStepsV24;
 import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion;
 import it.pagopa.pn.cucumber.utils.DataTest;
 import lombok.Getter;
@@ -57,7 +54,7 @@ import java.util.stream.IntStream;
 import static it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationFeePolicy.DELIVERY_MODE;
 import static it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationFeePolicy.FLAT_RATE;
 import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.*;
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion.*;
+import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion.V24;
 import static java.time.OffsetDateTime.now;
 import static java.time.temporal.ChronoUnit.MINUTES;
 import static java.time.temporal.ChronoUnit.SECONDS;
@@ -93,11 +90,7 @@ public class AvanzamentoNotificheB2bSteps {
     @Setter
     private TimelineElementV26 timelineElement;
 
-    private final Map<NotificationVersion, B2bStepsInterface> mapOfVersionSteps = Map.ofEntries(
-            Map.entry(V1, new B2bStepsV1(this)),
-            Map.entry(V2, new B2bStepsV2(this)),
-            Map.entry(V24, new B2bStepsV24(this))
-    );
+    private final Map<NotificationVersion, B2bStepsInterface> mapOfVersionSteps = NotificationVersion.getMapOfB2bSteps(this);
 
     private final NotificationVersion versionUsed;
 

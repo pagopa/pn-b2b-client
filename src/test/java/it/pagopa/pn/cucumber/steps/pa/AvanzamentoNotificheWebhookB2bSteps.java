@@ -61,15 +61,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     private HttpStatusCodeException notificationError;
     private Integer requestNumber;
 
-    private final Map<StreamVersion, WebhookStepsInterface> mapOfWebhookVersionSteps = Map.of(
-            StreamVersion.V10, new WebhookStepsV10(this),
-            StreamVersion.V23, new WebhookStepsV23(this),
-            StreamVersion.V24, new WebhookStepsV24(this),
-            StreamVersion.V25, new WebhookStepsV25(this),
-            StreamVersion.V26, new WebhookStepsV26(this),
-            StreamVersion.V27, new WebhookStepsV27(this),
-            StreamVersion.V28, new WebhookStepsV28(this)
-    );
+    private final Map<StreamVersion, WebhookStepsInterface> mapOfWebhookVersionSteps = StreamVersion.getMapOfWebhookSteps(this);
 
     private static final Map<String, SettableApiKey.ApiKeyType> paForStream = Map.of(
             COMUNE_1, SettableApiKey.ApiKeyType.MVP_1,
@@ -141,7 +133,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
     private StreamVersion getStreamVersion(String version) {
         if (version.trim().equalsIgnoreCase(MOST_RECENT)) {
-            return StreamVersion.V28;//TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente
+            return StreamVersion.V27;//TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente
         }
         return StreamVersion.valueOf(version.trim().toUpperCase());
     }
