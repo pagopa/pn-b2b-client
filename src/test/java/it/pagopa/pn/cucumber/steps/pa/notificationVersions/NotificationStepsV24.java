@@ -44,18 +44,8 @@ public class NotificationStepsV24 implements NotificationStepsInterface {
     }
 
     @Override
-    public Object getSentNotificationAnyVersion() {
-        return fullSentNotification;
-    }
-
-    @Override
     public String getVersionString() {
         return version.toString();
-    }
-
-    @Override
-    public String getNotificationSentIun() {
-        return fullSentNotification != null ? fullSentNotification.getIun() : null;
     }
 
     @Override
@@ -113,11 +103,6 @@ public class NotificationStepsV24 implements NotificationStepsInterface {
     @Override
     public void setNotificationRequestGroup(String group) {
         notificationRequest.setGroup(group);
-    }
-
-    @Override
-    public Object retrieveNotificationRequest() {
-        return notificationRequest;
     }
 
     @Override

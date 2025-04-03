@@ -11,11 +11,7 @@ public interface NotificationStepsInterface {
         throw new RuntimeException("Metodo " + methodName + "non previsto per la versione " + getVersionString());
     }
 
-    Object getSentNotificationAnyVersion();
-
     String getVersionString();
-
-    String getNotificationSentIun();
 
     void prepareNotificationRequest(Map<String, String> data);
 
@@ -26,8 +22,6 @@ public interface NotificationStepsInterface {
     String getNotificationRequestGroup();
 
     void setNotificationRequestGroup(String group);
-
-    Object retrieveNotificationRequest();
 
     Object retrieveNotificationResponse();
 
