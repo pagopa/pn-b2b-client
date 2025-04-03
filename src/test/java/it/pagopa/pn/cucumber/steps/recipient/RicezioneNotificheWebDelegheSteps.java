@@ -36,7 +36,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.*;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 import static org.awaitility.Awaitility.await;
 
 
@@ -215,7 +215,7 @@ public class RicezioneNotificheWebDelegheSteps {
                 .delegate(getUserDtoByuser(delegate))
                 .verificationCode(verificationCode)
                 .datefrom(sdf.format(new Date()))
-                .visibilityIds(Arrays.asList(organizationIdDto))
+                .visibilityIds(List.of(organizationIdDto))
                 .status(MandateDto.StatusEnum.PENDING)
                 .dateto(sdf.format(DateUtils.addDays(new Date(), 1)))
         );

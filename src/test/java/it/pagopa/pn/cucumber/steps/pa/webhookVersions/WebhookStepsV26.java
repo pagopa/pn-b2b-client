@@ -6,7 +6,7 @@ import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV26;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingWebhook;
-import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceWebhookV26;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v26.PnPollingServiceWebhookV26;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.*;
 import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps;

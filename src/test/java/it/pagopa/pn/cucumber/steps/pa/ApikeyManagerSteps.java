@@ -15,7 +15,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 import java.util.List;
 
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.*;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 
 
 public class ApikeyManagerSteps {

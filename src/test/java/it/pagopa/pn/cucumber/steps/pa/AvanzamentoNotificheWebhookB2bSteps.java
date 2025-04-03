@@ -39,7 +39,7 @@ import java.lang.reflect.Field;
 import java.time.OffsetDateTime;
 import java.util.*;
 
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.*;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 
 @Slf4j
 public class AvanzamentoNotificheWebhookB2bSteps {
@@ -438,7 +438,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         updateApiKeyForStream();
         StreamVersion streamVersion = getStreamVersion(version);
         WebhookStepsInterface webhookStepsInterface = getWebhookStep(streamVersion);
-        //TODO MATTEO: qua lo stream risulta inesistente perchè è stato cancellato in precedenza in un altro step
+        //TODO: qua lo stream risulta inesistente perchè è stato cancellato in precedenza in un altro step
         // Per una maggiore consistenza sarebbe meglio -> UUID notExistingStreamId = UUID.randomUUID();
         UUID notExistingStreamId = webhookStepsInterface.getStreamId();
         try {
@@ -456,7 +456,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         try {
             StreamVersion streamVersion = getStreamVersion(version);
             WebhookStepsInterface webhookStepsInterface = getWebhookStep(streamVersion);
-            //TODO MATTEO: qua lo stream risulta inesistente perché è stato cancellato in precedenza in un altro step
+            //TODO: qua lo stream risulta inesistente perché è stato cancellato in precedenza in un altro step
             // Per una maggiore consistenza sarebbe meglio -> UUID notExistingStreamId = UUID.randomUUID();
             UUID notExistingStreamId = webhookStepsInterface.getStreamId();
             Object streamRequest = webhookStepsInterface.getStreamRequest();

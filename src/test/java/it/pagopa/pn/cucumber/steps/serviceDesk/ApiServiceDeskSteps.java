@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.*;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 import static org.awaitility.Awaitility.await;
 
 

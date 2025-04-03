@@ -9,7 +9,14 @@ import it.pagopa.pn.client.b2b.pa.parsing.config.PnLegalFactTokens;
 import it.pagopa.pn.client.b2b.pa.parsing.parser.impl.PnParser;
 import it.pagopa.pn.client.b2b.pa.parsing.service.impl.PnParserService;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
-import it.pagopa.pn.client.b2b.pa.polling.impl.*;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v1.*;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v20.*;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v21.*;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v23.*;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v24.PnPollingServiceWebhookV24;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v25.*;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v26.*;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v27.*;
 import it.pagopa.pn.client.b2b.pa.service.IBffMandateServiceApi;
 import it.pagopa.pn.client.b2b.pa.service.IMandateReverseServiceClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
@@ -149,7 +156,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         TemplateEngineClientImpl.class,
         TemplateConfiguration.class,
         TemplateEngineContextFactory.class,
-        EmdIntegrationApiImpl.class,
+        EmdIntegrationApiImpl.class
 })
 @EnableScheduling
 @EnableConfigurationProperties

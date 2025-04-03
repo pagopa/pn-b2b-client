@@ -7,8 +7,8 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV20;
-import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceStatusRapidV20;
-import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineSlowV20;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v20.PnPollingServiceStatusRapidV20;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v20.PnPollingServiceTimelineSlowV20;
 import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheB2bSteps;
 import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion;
 import lombok.extern.slf4j.Slf4j;

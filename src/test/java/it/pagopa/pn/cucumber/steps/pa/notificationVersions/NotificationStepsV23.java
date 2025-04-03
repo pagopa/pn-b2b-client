@@ -1,5 +1,6 @@
 package it.pagopa.pn.cucumber.steps.pa.notificationVersions;
 
+import io.cucumber.java.DataTableType;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.IPnPollingService;
@@ -7,6 +8,8 @@ import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV23;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
+import it.pagopa.pn.cucumber.steps.utilitySteps.Costanti;
+import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
 import it.pagopa.pn.cucumber.utils.FiscalCodeGenerator;
 import it.pagopa.pn.cucumber.utils.NotificationValue;
 import lombok.Data;
@@ -22,9 +25,9 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static it.pagopa.pn.client.b2b.pa.PnPaB2bUtils.*;
 import static it.pagopa.pn.cucumber.steps.SharedSteps.threadWait;
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.*;
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Destinatario.DESTINATARIO_NESSUNO;
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Destinatario.DESTINATARIO_SIGNOR_CASUALE;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario.DESTINATARIO_NESSUNO;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario.DESTINATARIO_SIGNOR_CASUALE;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -50,13 +53,13 @@ public class NotificationStepsV23 implements NotificationStepsInterface {
 
     @Override
     public void prepareNotificationRequest(Map<String, String> data) {
-        notificationRequest = sharedSteps.getDataTableTypeUtil().convertNotificationRequestV23(data);
+        notificationRequest = convertNotificationRequest(data);
         sharedSteps.setVersionUsed(version);
     }
 
     @Override
     public void prepareNotificationRequestSimileAllaPrecedente(boolean isCreditorTaxIdUguale, boolean isCodiceAvvisoUguale, boolean isPaProtocolNumberUguale, String idempotenceToken) {
-        NewNotificationRequestV23 newNotificationRequest = sharedSteps.getDataTableTypeUtil().convertNotificationRequestV23(new HashMap<>());
+        NewNotificationRequestV23 newNotificationRequest = convertNotificationRequest(new HashMap<>());
         NotificationRecipientV23 newRecipient = sharedSteps.getDataTableTypeUtil().convertNotificationRecipientV23(new HashMap<>());
 
         NotificationRecipientV23 oldRecipient = notificationRequest.getRecipients().get(0);
@@ -243,7 +246,63 @@ public class NotificationStepsV23 implements NotificationStepsInterface {
 
     @Override
     public void performPriceVerification(String price, String date, Integer destinatario) {
-        //TODO MATTEO IMPLEMENTARE
+        //TODO MATTEO IMPLEMENTARE?
+    }
+
+    @DataTableType
+    public synchronized NewNotificationRequestV23 convertNotificationRequest(Map<String, String> data) {
+        NewNotificationRequestV23 notificationRequest = (new NewNotificationRequestV23()
+                .subject(getValue(data, SUBJECT.key))
+                .cancelledIun(getValue(data, CANCELLED_IUN.key))
+                .group(getValue(data, GROUP.key))
+                .idempotenceToken(getValue(data, IDEMPOTENCE_TOKEN.key))
+                ._abstract(getValue(data, ABSTRACT.key))
+                .senderDenomination(getValue(data, SENDER_DENOMINATION.key))
+                .senderTaxId(getValue(data, SENDER_TAX_ID.key))
+                .paProtocolNumber(getValue(data, PA_PROTOCOL_NUMBER.key))
+                .taxonomyCode(getValue(data, TAXONOMY_CODE.key))
+                .amount(getValue(data, AMOUNT.key) == null ? null : Integer.parseInt(getValue(data, AMOUNT.key)))
+                .paymentExpirationDate(getValue(data, PAYMENT_EXPIRATION_DATE.key) == null ?
+                        null : getValue(data, PAYMENT_EXPIRATION_DATE.key))
+                .notificationFeePolicy((getValue(data, NOTIFICATION_FEE_POLICY.key) == null ?
+                        null : (getValue(data, NOTIFICATION_FEE_POLICY.key).equalsIgnoreCase("FLAT_RATE") ?
+                        NotificationFeePolicy.FLAT_RATE :
+                        NotificationFeePolicy.DELIVERY_MODE)))
+                .physicalCommunicationType((getValue(data, PHYSICAL_COMMUNICATION_TYPE.key) == null ?
+                        null : (getValue(data, PHYSICAL_COMMUNICATION_TYPE.key).equalsIgnoreCase("REGISTERED_LETTER_890") ?
+                        NewNotificationRequestV23.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 :
+                        NewNotificationRequestV23.PhysicalCommunicationTypeEnum.AR_REGISTERED_LETTER)))
+                .paFee(getValue(data, PA_FEE.key) == null ? null : Integer.parseInt(getValue(data, PA_FEE.key)))
+                .vat(getValue(data, VAT.key) == null ? null : Integer.parseInt(getValue(data, VAT.key)))
+                .pagoPaIntMode((getValue(data, PAGOPAINTMODE.key).equalsIgnoreCase("SYNC") ?
+                        NewNotificationRequestV23.PagoPaIntModeEnum.SYNC :
+                        (getValue(data, PAGOPAINTMODE.key).equalsIgnoreCase("ASYNC") ?
+                                NewNotificationRequestV23.PagoPaIntModeEnum.ASYNC :
+                                getValue(data, PAGOPAINTMODE.key).equalsIgnoreCase("NONE") ?
+                                        NewNotificationRequestV23.PagoPaIntModeEnum.NONE : null))));
+
+        notificationRequest = addDocument(notificationRequest, data);
+        try {
+            Thread.sleep(2);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return notificationRequest;
+    }
+
+    private NewNotificationRequestV23 addDocument(NewNotificationRequestV23 notificationRequest, Map<String, String> data) {
+        String documentsToAdd = getValue(data, DOCUMENT.key);
+        if (documentsToAdd == null) {
+            return notificationRequest.addDocumentsItem(null);
+        }
+        if (documentsToAdd.contains(";")) {
+            for (String documentElem : documentsToAdd.split(";")) {
+                notificationRequest = notificationRequest.addDocumentsItem(sharedSteps.getDataTableTypeUtil().getNotificationDocument(documentElem));
+            }
+        } else {
+            notificationRequest = notificationRequest.addDocumentsItem(sharedSteps.getDataTableTypeUtil().getNotificationDocument(documentsToAdd));
+        }
+        return notificationRequest;
     }
 
     private FullSentNotificationV23 waitForRequestAccepted(NewNotificationResponse response, String pollingStrategy) {

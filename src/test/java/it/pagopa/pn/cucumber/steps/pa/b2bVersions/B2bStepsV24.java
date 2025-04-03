@@ -6,8 +6,8 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV26;
-import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceStatusRapidV26;
-import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineSlowV26;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v26.PnPollingServiceStatusRapidV26;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v26.PnPollingServiceTimelineSlowV26;
 import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheB2bSteps;
 import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion;
 import lombok.extern.slf4j.Slf4j;
@@ -56,7 +56,7 @@ public class B2bStepsV24 implements B2bStepsInterface {
                     .as("L'elemento della timeline non dovrebbe essere nullo")
                     .isNotNull();
             timelineElement = pnPollingResponse.getTimelineElement();
-            b2bSteps.setTimelineElement(timelineElement);//TODO MATTEO, IDEALE SAREBBE RIMUOVERLO DA CAMPO DI B2B STEPS e prendere sempre quello restituito qua
+            b2bSteps.setTimelineElement(timelineElement);//TODO MATTEO: L'IDEALE SAREBBE RIMUOVERLO DA CAMPO DI B2B STEPS e prendere sempre quello restituito qua
             log.info("TIMELINE_ELEMENT: " + timelineElement);
         } catch (AssertionError assertionError) {
             b2bSteps.getSharedSteps().throwAssertionErrorWithIUN(assertionError);

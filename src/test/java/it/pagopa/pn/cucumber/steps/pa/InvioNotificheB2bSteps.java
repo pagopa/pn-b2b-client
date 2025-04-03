@@ -48,9 +48,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.COMUNE_1;
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.MOST_RECENT;
 import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion.V24;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_1;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MOST_RECENT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -201,7 +201,7 @@ public class InvioNotificheB2bSteps {
         }
     }
 
-    //TODO MATTEO TEST: ho aggiunto il parametro PA, senza e il setting della pa in sharedSteps, senza andava in errore
+    //TODO MATTEO TEST: ho aggiunto il parametro PA e il successivo setting della pa in sharedSteps, senza andava in errore
     @And("{string} recupera notifica vecchia di 120 giorni da lato web PA e verifica presenza pagamento")
     public void retrieveNotification120DaysOldByIunWebPaSide(String paName) {
         sharedSteps.setPA(paName);
@@ -805,7 +805,6 @@ public class InvioNotificheB2bSteps {
         getInvioNotificheStepsInterface().verificaStatoPagamentoNotifica(null, errorCode, creditorTaxID, noticeCode);
     }
 
-    //TODO MATTEO TEST
     @Then("verifica stato pagamento di una notifica con status {string}")
     public void verificaStatoPagamentoNotifica(String status) {
         getInvioNotificheStepsInterface().verificaStatoPagamentoNotifica(status, null, null, null);
@@ -1088,13 +1087,13 @@ public class InvioNotificheB2bSteps {
                 sharedSteps.getMapAllegatiNotificaSha256().put(documentPagamento.getPagoPa().getAttachment().getRef().getKey(), documentPagamento.getPagoPa().getAttachment().getDigests().getSha256());
             }
 
-            Assertions.assertTrue(!sharedSteps.getMapAllegatiNotificaSha256().isEmpty());
+            Assertions.assertFalse(sharedSteps.getMapAllegatiNotificaSha256().isEmpty());
 
             boolean checkAllegati = true;
             for (ReceivedMessage documentPec : documentiPec) {
                 for (String documentPecKey : documentPec.getDigitalNotificationRequest().getAttachmentUrls()) {
                     if (documentPecKey.contains(tipoAttachment)) {
-                        PnExternalServiceClientImpl.SafeStorageResponse safeStorageResponse = safeStorageClient.safeStorageInfo(documentPecKey.substring(14, documentPecKey.length()));
+                        PnExternalServiceClientImpl.SafeStorageResponse safeStorageResponse = safeStorageClient.safeStorageInfo(documentPecKey.substring(14));
                         assertSoftly(softly -> {
 
                             softly.assertThat(safeStorageResponse)
@@ -1127,12 +1126,12 @@ public class InvioNotificheB2bSteps {
 
     @And("si verifica il contenuto della pec abbia {int} attachment di tipo {string}")
     public void presenzaAttachment(Integer numeroDocumenti, String tipologia) {
-        Integer contoDocumento = 0;
+        int contoDocumento = 0;
         for (String attachmentUrl : documentiPec.get(0).getDigitalNotificationRequest().getAttachmentUrls()) {
             contoDocumento += attachmentUrl.contains(tipologia) ? 1 : 0;
         }
         try {
-            Assertions.assertTrue(numeroDocumenti == contoDocumento);
+            Assertions.assertSame(numeroDocumenti, contoDocumento);
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() + "Verifica Allegati pec in errore ";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
@@ -1217,7 +1216,7 @@ public class InvioNotificheB2bSteps {
     @Given("si invia una email alla pec mittente e si attendono {int} minuti")
     public void siInviaUnaEmailAllaPecMittenteESiAttendonoMinuti(int wait) {
         Assertions.assertDoesNotThrow(this::sendEmail);
-        long waiting = ((wait * 60) * 1000);
+        long waiting = ((wait * 60L) * 1000);
         Assertions.assertDoesNotThrow(() -> Thread.sleep(waiting));
     }
 
@@ -1237,6 +1236,7 @@ public class InvioNotificheB2bSteps {
 
             log.info("response checkout: {}", responseCheckout);
         } catch (AssertionError error) {
+            //TODO: qua catturiamo l'errore solo per rilanciarlo. Dobbiamo loggare qualcosa?
             throw error;
         }
 
@@ -1276,6 +1276,7 @@ public class InvioNotificheB2bSteps {
         for (String attachmentUrl : getAttachemtListForTypeOfNotification(type)) {
             if (attachmentUrl.contains("docTag")) {
                 contieneDocTag = true;
+                break;
             }
         }
 
@@ -1333,9 +1334,8 @@ public class InvioNotificheB2bSteps {
 
             String finalKeySearch = keySearch;
             try {
-                Assertions.assertDoesNotThrow(() -> {
-                    legalFactDownloadMetadataResponse.set(this.b2bClient.getDownloadLegalFact(sharedSteps.getNotificationIun(), finalKeySearch));
-                });
+                Assertions.assertDoesNotThrow(() -> legalFactDownloadMetadataResponse.set(
+                        this.b2bClient.getDownloadLegalFact(sharedSteps.getNotificationIun(), finalKeySearch)));
             } catch (AssertionFailedError assertionFailedError) {
                 sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
             }
@@ -1360,17 +1360,6 @@ public class InvioNotificheB2bSteps {
             operationProducedAnErrorWithMessage(errorCode, errorMessage);
         });
     }
-
-    //TODO MATTEO fatto diventare metodo di SharedSteps
-//    private void resetNotificationRequest() {
-//        sharedSteps.getNotificationRequest().setRecipients(new ArrayList<>());
-//        NotificationAttachmentBodyRef ref = new NotificationAttachmentBodyRef()
-//                .key("classpath:/sample.pdf");
-//        NotificationDocument document = new NotificationDocument()
-//                .contentType("application/pdf")
-//                .ref(ref);
-//        sharedSteps.getNotificationRequest().setDocuments(List.of(document));
-//    }
 
     @And("riprendo tutti i taxId presenti nella blacklist")
     public void riprendoTuttiITaxIdPresentiNellaBlacklist() {

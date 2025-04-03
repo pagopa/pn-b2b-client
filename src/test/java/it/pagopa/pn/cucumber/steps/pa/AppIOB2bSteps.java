@@ -21,7 +21,7 @@ import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.*;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 
 
 @Slf4j
@@ -105,7 +105,7 @@ public class AppIOB2bSteps {
             if ((downloadResponse != null && downloadResponse.getRetryAfter() != null && downloadResponse.getRetryAfter() > 0)) {
                 try {
                     System.out.println("SECONDO TENTATIVO");
-                    Thread.sleep(downloadResponse.getRetryAfter() * 3);
+                    Thread.sleep(downloadResponse.getRetryAfter() * 3L);
                     downloadResponse = iPnAppIOB2bClient.getReceivedNotificationAttachment(fullSentNotification.getIun(), typeDocument, selectTaxIdUser(recipient), Integer.parseInt(documents.get(0).getDocIdx()));
 
                 } catch (InterruptedException exc) {
@@ -153,7 +153,7 @@ public class AppIOB2bSteps {
             if ((downloadResponse != null && downloadResponse.getRetryAfter() != null && downloadResponse.getRetryAfter() > 0)) {
                 try {
                     System.out.println("SECONDO TENTATIVO");
-                    Thread.sleep(downloadResponse.getRetryAfter() * 3);
+                    Thread.sleep(downloadResponse.getRetryAfter() * 3L);
                     downloadResponse = iPnAppIOB2bClient.getReceivedNotificationAttachmentByUrl(url, selectTaxIdUser(recipient));
 
                 } catch (InterruptedException exc) {

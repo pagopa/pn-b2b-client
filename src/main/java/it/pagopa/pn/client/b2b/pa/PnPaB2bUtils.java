@@ -5,10 +5,8 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
-import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV25;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV26;
-import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceValidationStatusV25;
-import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceValidationStatusV26;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v26.PnPollingServiceValidationStatusV26;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnRaddAlternativeClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnRaddFsuClient;
@@ -1328,16 +1326,16 @@ public class PnPaB2bUtils {
         log.info(NEW_NOTIFICATION_REQUEST, request);
     }
 
-    public String waitForRequestRefusedV25(NewNotificationResponse response) {
+    public String waitForRequestRefused(NewNotificationResponse response) {
         log.info("Request status for " + response.getNotificationRequestId());
         long startTime = System.currentTimeMillis();
-        PnPollingServiceValidationStatusV25 validationStatusV25 = (PnPollingServiceValidationStatusV25) pollingFactory.getPollingService(PnPollingStrategy.VALIDATION_STATUS_V25);
-        PnPollingResponseV25 pollingResponseV25 = validationStatusV25.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(REFUSED).build());
+        PnPollingServiceValidationStatusV26 validationStatus = (PnPollingServiceValidationStatusV26) pollingFactory.getPollingService(PnPollingStrategy.VALIDATION_STATUS_V26);
+        PnPollingResponseV26 pollingResponse = validationStatus.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(REFUSED).build());
         long endTime = System.currentTimeMillis();
         log.info("Execution time {}ms", (endTime - startTime));
         StringBuilder error = new StringBuilder();
-        if (pollingResponseV25.getStatusResponse() != null && pollingResponseV25.getStatusResponse().getErrors() != null && !pollingResponseV25.getStatusResponse().getErrors().isEmpty()) {
-            for (ProblemError err : pollingResponseV25.getStatusResponse().getErrors()) {
+        if (pollingResponse.getStatusResponse() != null && pollingResponse.getStatusResponse().getErrors() != null && !pollingResponse.getStatusResponse().getErrors().isEmpty()) {
+            for (ProblemError err : pollingResponse.getStatusResponse().getErrors()) {
                 error.append(" ").append(err.getDetail());
             }
         }

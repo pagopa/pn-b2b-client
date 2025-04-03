@@ -9,6 +9,8 @@ import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV1;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
+import it.pagopa.pn.cucumber.steps.utilitySteps.Costanti;
+import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
 import it.pagopa.pn.cucumber.utils.FiscalCodeGenerator;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -23,9 +25,9 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static it.pagopa.pn.client.b2b.pa.PnPaB2bUtils.*;
 import static it.pagopa.pn.cucumber.steps.SharedSteps.threadWait;
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.*;
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Destinatario.DESTINATARIO_NESSUNO;
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Destinatario.DESTINATARIO_SIGNOR_CASUALE;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario.DESTINATARIO_NESSUNO;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario.DESTINATARIO_SIGNOR_CASUALE;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.TAX_ID;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -52,13 +54,13 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
 
     @Override
     public void prepareNotificationRequest(Map<String, String> data) {
-        notificationRequest = sharedSteps.getDataTableTypeUtil().convertNotificationRequestV1(data);
+        notificationRequest = convertNotificationRequest(data);
         sharedSteps.setVersionUsed(version);
     }
 
     @Override
     public void prepareNotificationRequestSimileAllaPrecedente(boolean isCreditorTaxIdUguale, boolean isCodiceAvvisoUguale, boolean isPaProtocolNumberUguale, String idempotenceToken) {
-        NewNotificationRequest newNotificationRequest = sharedSteps.getDataTableTypeUtil().convertNotificationRequestV1(new HashMap<>());
+        NewNotificationRequest newNotificationRequest = convertNotificationRequest(new HashMap<>());
         NotificationRecipient newRecipient = convertNotificationRecipient(new HashMap<>());
 
         NotificationRecipient oldRecipient = notificationRequest.getRecipients().get(0);
@@ -253,6 +255,43 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
     @Override
     public void uploadNotificationAllegatiUgualiPagamento() {
         throwUnsupportedMethodException("uploadNotificationAllegatiUgualiPagamento");
+    }
+
+    @DataTableType
+    public synchronized NewNotificationRequest convertNotificationRequest(Map<String, String> data) {
+        NewNotificationRequest notificationRequestV1 = (new NewNotificationRequest()
+                .subject(getValue(data, SUBJECT.key))
+                .cancelledIun(getValue(data, CANCELLED_IUN.key))
+                .group(getValue(data, GROUP.key))
+                .idempotenceToken(getValue(data, IDEMPOTENCE_TOKEN.key))
+                ._abstract(getValue(data, ABSTRACT.key))
+                .senderDenomination(getValue(data, SENDER_DENOMINATION.key))
+                .senderTaxId(getValue(data, SENDER_TAX_ID.key))
+                .paProtocolNumber(getValue(data, PA_PROTOCOL_NUMBER.key))
+                .taxonomyCode(getValue(data, TAXONOMY_CODE.key))
+                .amount(getValue(data, AMOUNT.key) == null ? null : Integer.parseInt(getValue(data, AMOUNT.key)))
+                .paymentExpirationDate(getValue(data, PAYMENT_EXPIRATION_DATE.key) == null ? null : getValue(data, PAYMENT_EXPIRATION_DATE.key))
+                .notificationFeePolicy(
+                        (getValue(data, NOTIFICATION_FEE_POLICY.key) == null ? null :
+                                (getValue(data, NOTIFICATION_FEE_POLICY.key).equalsIgnoreCase("FLAT_RATE") ?
+                                        NotificationFeePolicy.FLAT_RATE : NotificationFeePolicy.DELIVERY_MODE)))
+                .physicalCommunicationType(
+                        (getValue(data, PHYSICAL_COMMUNICATION_TYPE.key) == null ? null :
+                                (getValue(data, PHYSICAL_COMMUNICATION_TYPE.key).equalsIgnoreCase("REGISTERED_LETTER_890") ?
+                                        NewNotificationRequest.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 :
+                                        NewNotificationRequest.PhysicalCommunicationTypeEnum.AR_REGISTERED_LETTER)))
+                .addDocumentsItem(getValue(data, DOCUMENT.key) == null ? null : sharedSteps.getB2bUtils().newDocumentV1(getDefaultValue(DOCUMENT.key)))
+                .pagoPaIntMode(
+                        (getValue(data, PAGOPAINTMODE.key) == null ? null :
+                                (getValue(data, PAGOPAINTMODE.key).equalsIgnoreCase("SYNC") ?
+                                        NewNotificationRequest.PagoPaIntModeEnum.SYNC : NewNotificationRequest.PagoPaIntModeEnum.NONE)))
+        );
+        try {
+            Thread.sleep(2);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return notificationRequestV1;
     }
 
     @DataTableType

@@ -29,7 +29,11 @@ import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalAndUnverifiedDigitalAddress;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.UserAddresses;
-import it.pagopa.pn.cucumber.steps.pa.notificationVersions.*;
+import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationStepsInterface;
+import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationStepsV24;
+import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion;
+import it.pagopa.pn.cucumber.steps.utilitySteps.Costanti;
+import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
 import it.pagopa.pn.cucumber.utils.DataTest;
 import it.pagopa.pn.cucumber.utils.EventId;
 import it.pagopa.pn.cucumber.utils.GroupPosition;
@@ -58,8 +62,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.*;
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion.V24;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 import static it.pagopa.pn.cucumber.utils.FiscalCodeGenerator.generateCF;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.TAX_ID;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
@@ -404,7 +407,9 @@ public class SharedSteps {
         if (paName != null) {
             setPaAndSenderTaxId(paName);
         }
-        //TODO MATTEO: un tempo lo stato era sempre ACCEPTED, ora che è parametrico forse la pollingStrategy andrebbe desunta con qualche metodo che si basa sullo stato
+        //TODO: un tempo lo stato era sempre ACCEPTED, ora che è parametrico, qualora vengano aggiunti nuovi status oltre ad
+        // ACCEPTED, REFUSED, NOT_REFUSED (che usano tutti la pollingStrategy VALIDATION_STATUS) si dovrebbe valutare
+        // la creazione di un metodo privato che prenda uno status in input e restituisca la pollingStrategy corrispondente
         notificationStepsInterface.sendNotification(getWorkFlowWait(), status, VALIDATION_STATUS);
     }
 
@@ -423,7 +428,7 @@ public class SharedSteps {
     @When("verifica che la notifica inviata tramite api b2b dal {string} non diventi ACCEPTED")
     public void laNotificaVieneInviataNoAccept(String paName) {
         setPaAndSenderTaxId(paName);
-        //TODO MATTEO: prima richiamava waitForRequestNoAcceptation in b2bUtils. Ma è corretto che prenda "ACCEPTED" anche se non viene accettata ?
+        //TODO: prima richiamava waitForRequestNoAcceptation in b2bUtils. Ma è corretto che prenda "ACCEPTED" anche se non viene accettata ?
         getNotificationStepInterface().sendNotification(getWorkFlowWait(), NOTIFICATION_STATUS_ACCEPTED, VALIDATION_STATUS_NO_ACCEPTATION);
     }
 
@@ -508,7 +513,7 @@ public class SharedSteps {
         Assertions.assertEquals(400, this.notificationError.getStatusCode().value());
     }
 
-    //TODO MATTEO: è identico al metodo sotto...perché? Procedere con la cancellazione?
+    //TODO: è identico al metodo sotto...perché? Editare i feature che richiamano lo step e procedere con la cancellazione?
     @When("la notifica viene inviata tramite api b2b senza preload allegato dal {string}")
     public void laNotificaVieneInviataTramiteApiB2bSenzaPreloadAllegato(String pa) {
         setPaAndSenderTaxId(pa);
@@ -716,7 +721,7 @@ public class SharedSteps {
         AtomicReference<NewNotificationResponse> newResponse = new AtomicReference<>();
         //TODO MATTEO IMPORTANTE: al momento è progettato per funzionare solo con la V24.
         // Questi metodi sono l'ultimo scoglio da superare per avere un codice in grado di runnare con qualsiasi versione
-        NewNotificationRequestV24 notificationRequest = ((NotificationStepsV24) mapOfVersionSteps.get(V24)).getNotificationRequest();
+        NewNotificationRequestV24 notificationRequest = ((NotificationStepsV24) mapOfVersionSteps.get(NotificationVersion.V24)).getNotificationRequest();
         try {
             Assertions.assertDoesNotThrow(() -> {
                 notificationCreationDate = OffsetDateTime.now();
@@ -738,7 +743,7 @@ public class SharedSteps {
                     case "OVER_15_ALLEGATO" ->
                             newResponse.set(b2bUtils.uploadNotificationOver15Allegato(notificationRequest));
                 }
-                errorCode = b2bUtils.waitForRequestRefusedV25(newResponse.get());
+                errorCode = b2bUtils.waitForRequestRefused(newResponse.get());
             });
             threadWait(getWorkFlowWait());
             Assertions.assertNotNull(errorCode);

@@ -14,7 +14,7 @@ import it.pagopa.pn.client.b2b.pa.service.utils.RaddOperator;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableAuthTokenRadd;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model.*;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
-import it.pagopa.pn.cucumber.steps.pa.notificationVersions.Destinatario;
+import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
 import it.pagopa.pn.cucumber.utils.Compress;
 import it.pagopa.pn.cucumber.utils.FiscalCodeGenerator;
 import lombok.extern.slf4j.Slf4j;
@@ -39,10 +39,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.IntStream;
 
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.CUCUMBER_SPA_TAX_ID;
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.MARIO_CUCUMBER_TAX_ID;
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Destinatario.DESTINATARIO_SIGNOR_CASUALE;
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Destinatario.DESTINATARIO_SIGNOR_GENERATO;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.CUCUMBER_SPA_TAX_ID;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MARIO_CUCUMBER_TAX_ID;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario.DESTINATARIO_SIGNOR_CASUALE;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario.DESTINATARIO_SIGNOR_GENERATO;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.generateRandomNumber;
 
 @Slf4j
