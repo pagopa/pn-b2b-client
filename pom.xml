@@ -25,26 +25,26 @@
         <spring.boot-version>2.5.2</spring.boot-version>
         <cucumber.version>7.8.1</cucumber.version>
         <open.api.version>develop</open.api.version>
-        <open.api.version.delivery>v2.13.0-RC.2</open.api.version.delivery>
-        <open.api.version.delivery.push>v2.14.0-RC.3</open.api.version.delivery.push>
+        <open.api.version.delivery>v2.15.1</open.api.version.delivery>
+        <open.api.version.delivery.push>v2.15.1</open.api.version.delivery.push>
         <open.api.version.delivery_v1>v2.0.2</open.api.version.delivery_v1>
         <open.api.version.delivery.push_v1>v2.0.3</open.api.version.delivery.push_v1>
-        <open.api.version.delivery_v2>v2.1.0-RC.5</open.api.version.delivery_v2>
-        <open.api.version.delivery.push_v2>v2.1.0-RC.5</open.api.version.delivery.push_v2> <!--TODO: a cosa serve ?-->
+        <open.api.version.delivery_v2>v2.1.0</open.api.version.delivery_v2>
+        <open.api.version.delivery.push_v2>v2.1.0</open.api.version.delivery.push_v2> <!--TODO: a cosa serve ?-->
         <open.api.version.delivery_v21>v2.3.0</open.api.version.delivery_v21>
         <open.api.version.delivery.push_v21>v2.3.2</open.api.version.delivery.push_v21>
-        <open.api.version.delivery.push_v23>36069ddec82d35af4a574df944d47db7e24c2c37</open.api.version.delivery.push_v23>
+        <open.api.version.delivery.push_v23>v2.5.0</open.api.version.delivery.push_v23>
         <open.api.version.delivery_v23>v2.10.0</open.api.version.delivery_v23>
         <open.api.version.user.attributes>v2.8.0</open.api.version.user.attributes>
         <open.api.version.mandate>v2.5.0</open.api.version.mandate>
         <open.api.version.apikey.manager>v2.2.0</open.api.version.apikey.manager>
         <open.api.version.downtime.logs>develop</open.api.version.downtime.logs>
         <open.api.version.radd.fsu>v2.1.5</open.api.version.radd.fsu>
-        <open.api.version.radd.alt>v2.7.0-RC.2</open.api.version.radd.alt>
+        <open.api.version.radd.alt>v2.7.0</open.api.version.radd.alt>
         <open.api.version.external.channels>develop</open.api.version.external.channels>
         <open.api.version.external.registries>v2.4.1</open.api.version.external.registries>
         <open.api.version.paper.channel>develop</open.api.version.paper.channel>
-        <open.api.version.external.bff>v1.8.0-RC.1</open.api.version.external.bff>
+        <open.api.version.external.bff>v1.8.0</open.api.version.external.bff>
     </properties>
 
     <dependencies>
