@@ -143,7 +143,7 @@ public class DataTableTypeUtil {
 
     }
 
-    private NotificationDocument getNotificationDocument(String documentElem) {
+    public NotificationDocument getNotificationDocument(String documentElem) {
         String document;
 
         switch (documentElem.toUpperCase().trim()) {
@@ -404,7 +404,7 @@ public class DataTableTypeUtil {
         return notificationRecipient;
     }
 
-    private void setMetadatiF24(Map<String, String> data, NotificationPaymentItem addPaymentsItem, int i) {
+    public void setMetadatiF24(Map<String, String> data, NotificationPaymentItem addPaymentsItem, int i) {
 
         if (!Objects.equals(getValue(data, PAYMENT_F24.key), null)) {
             addPaymentsItem.f24(
