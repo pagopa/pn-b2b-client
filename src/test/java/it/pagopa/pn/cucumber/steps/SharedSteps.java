@@ -209,6 +209,7 @@ public class SharedSteps {
         this.iPnTosPrivacyClientImpl = iPnTosPrivacyClientImpl;
         this.objMapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
         this.secureRandom = new SecureRandom();
+        versionUsed = getNotificationVersion(MOST_RECENT);
     }
 
     @BeforeAll

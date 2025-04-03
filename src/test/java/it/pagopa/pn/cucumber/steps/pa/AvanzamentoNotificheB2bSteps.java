@@ -134,7 +134,7 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("vengono letti gli eventi fino allo stato della notifica {string}")
     public void readingEventUpToTheStatusOfNotification(String status) {
-        readEventsUpToStatus(versionUsed.toString(), status);
+        readEventsUpToStatus(sharedSteps.getVersionUsed().toString(), status);
     }
 
     @Then("vengono letti gli eventi fino allo stato della notifica {string} V1")
@@ -150,7 +150,7 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("vengono letti gli eventi fino allo stato della notifica {string} per il destinatario {int} e presente l'evento {string}")
     public void readingEventUpToTheStatusOfNotification(String status, int recIndex, String evento) {
-        readEventsUpToStatus(versionUsed.toString(), status);
+        readEventsUpToStatus(sharedSteps.getVersionUsed().toString(), status);
         getB2bStepsInterface().checkEventPresenceForRecipient(recIndex, evento);
     }
 
@@ -471,24 +471,24 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica annullata {string}")
     public void readingEventUpToTheTimelineElementOfNotificationDelete(String timelineEventCategory) {
-        readEventsUpToTimelineElement(versionUsed.toString(), timelineEventCategory);
+        readEventsUpToTimelineElement(sharedSteps.getVersionUsed().toString(), timelineEventCategory);
     }
 
 
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string}")
     public void readingEventUpToTheTimelineElementOfNotification(String timelineEventCategory) {
-        readEventsUpToTimelineElement(versionUsed.toString(), timelineEventCategory);
+        readEventsUpToTimelineElement(sharedSteps.getVersionUsed().toString(), timelineEventCategory);
     }
 
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} abbia notificationCost uguale a {string}")
     public void TimelineElementOfNotification(String timelineEventCategory, String cost) {
-        readEventsUpToTimelineElement(versionUsed.toString(), timelineEventCategory);
+        readEventsUpToTimelineElement(sharedSteps.getVersionUsed().toString(), timelineEventCategory);
         getB2bStepsInterface().checkNotificationCost(cost);
     }
 
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} con indirizzo normalizzato:")
     public void vengonoLettiGliEventiFinoAllElementoDiTimelineDellaNotificaConIndirizzoNormalizzato(String timelineEventCategory, DataTable table) {
-        readEventsUpToTimelineElement(versionUsed.toString(), timelineEventCategory);
+        readEventsUpToTimelineElement(sharedSteps.getVersionUsed().toString(), timelineEventCategory);
         getB2bStepsInterface().checkNormalizedAddress(table);
     }
 
