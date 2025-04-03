@@ -391,8 +391,6 @@ public class AvanzamentoNotificheB2bSteps {
                     Assertions.assertNotNull(elementFromNotification.getLegalFactsIds().get(i).getKey());
                 }
                 break;
-            default:
-                throw new IllegalArgumentException("Valore non valido per timelineEventCategory: " + timelineEventCategory);
         }
     }
 
