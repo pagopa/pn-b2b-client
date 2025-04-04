@@ -274,12 +274,12 @@ public class DataTableTypeUtil {
         }
 
         DataTest dataTest = new DataTest();
-        TimelineElementV23 timelineElement = new TimelineElementV23()
-                .legalFactsIds(getListValue(LegalFactsId.class, data, LEGAL_FACT_IDS.key))
-                .details(getValue(data, DETAILS.key) == null ? null : new TimelineElementDetailsV23()
+        TimelineElementV26 timelineElement = new TimelineElementV26()
+                .legalFactsIds(getListValue(LegalFactsIdV20.class, data, LEGAL_FACT_IDS.key))
+                .details(getValue(data, DETAILS.key) == null ? null : new TimelineElementDetailsV26()
                         .recIndex(recIndex != null ? Integer.parseInt(recIndex) : null)
                         .digitalAddress(getObjValue(DigitalAddress.class, data, DETAILS_DIGITAL_ADDRESS.key))
-                        .refusalReasons(getListValue(NotificationRefusedErrorV23.class, data, DETAILS_REFUSAL_REASONS.key))
+                        .refusalReasons(getListValue(NotificationRefusedErrorV25.class, data, DETAILS_REFUSAL_REASONS.key))
                         .generatedAarUrl(getValue(data, DETAILS_GENERATED_AAR_URL.key))
                         .responseStatus(responseStatus != null ? ResponseStatus.valueOf(responseStatus) : null)
                         .digitalAddressSource(digitalAddressSource != null ? DigitalAddressSource.valueOf(digitalAddressSource) : null)

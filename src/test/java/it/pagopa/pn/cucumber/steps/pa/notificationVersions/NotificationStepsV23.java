@@ -107,7 +107,7 @@ public class NotificationStepsV23 implements NotificationStepsInterface {
         if (destinatario != null && destinatario.equals(DESTINATARIO_NESSUNO)) return;
         NotificationRecipientV23 notificationRecipient = sharedSteps.getDataTableTypeUtil().convertNotificationRecipientV23(data);
         if (notificationRequest.getNotificationFeePolicy() == NotificationFeePolicy.DELIVERY_MODE
-                && NotificationValue.getValue(data, PAYMENT.key) != null) {
+                && NotificationValue.getValue(data, NotificationValue.PAYMENT.key) != null) {
             String pagopaFormValue = getValue(data, PAYMENT_PAGOPA_FORM.key);
             if (pagopaFormValue != null && !pagopaFormValue.equalsIgnoreCase("NO")) {
                 for (NotificationPaymentItem payments : Objects.requireNonNull(notificationRecipient.getPayments())) {
@@ -354,7 +354,7 @@ public class NotificationStepsV23 implements NotificationStepsInterface {
             case VALIDATION_STATUS_NO_ACCEPTATION -> PnPollingStrategy.VALIDATION_STATUS_NO_ACCEPTATION_V23;
             case WEBHOOK -> PnPollingStrategy.WEBHOOK_V23;
             default ->
-                    throw new RuntimeException("PnPollingStrategy non riconosciuta per la versione V23: " + pollingStrategy);
+                    throw new RuntimeException("PnPollingStrategy non riconosciuta per la versione " + version + ": " + pollingStrategy);
         };
     }
 

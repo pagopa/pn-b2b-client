@@ -97,6 +97,7 @@ public class Costanti {
     public static final String SEND_DIGITAL_FEEDBACK = "SEND_DIGITAL_FEEDBACK";
     public static final String SEND_SIMPLE_REGISTERED_LETTER = "SEND_SIMPLE_REGISTERED_LETTER";
     public static final String SEND_SIMPLE_REGISTERED_LETTER_PROGRESS = "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS";
+    public static final String PAYMENT = "PAYMENT";
     // PollingStrategy (generiche)
     public static final String TIMELINE_RAPID = "TIMELINE_RAPID";
     public static final String TIMELINE_SLOW = "TIMELINE_SLOW";

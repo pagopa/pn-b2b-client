@@ -108,7 +108,7 @@ public class NotificationStepsV24 implements NotificationStepsInterface {
         if (destinatario != null && destinatario.equals(DESTINATARIO_NESSUNO)) return;
         NotificationRecipientV23 notificationRecipient = sharedSteps.getDataTableTypeUtil().convertNotificationRecipientV23(data);
         if (notificationRequest.getNotificationFeePolicy() == NotificationFeePolicy.DELIVERY_MODE
-                && NotificationValue.getValue(data, PAYMENT.key) != null) {
+                && NotificationValue.getValue(data, NotificationValue.PAYMENT.key) != null) {
             String pagopaFormValue = getValue(data, PAYMENT_PAGOPA_FORM.key);
             if (pagopaFormValue != null && !pagopaFormValue.equalsIgnoreCase("NO")) {
                 for (NotificationPaymentItem payments : Objects.requireNonNull(notificationRecipient.getPayments())) {
@@ -329,7 +329,7 @@ public class NotificationStepsV24 implements NotificationStepsInterface {
     }
 
     private FullSentNotificationV26 waitForRequestAccepted(NewNotificationResponse response, String pollingStrategy) {
-        IPnPollingService pollingService = sharedSteps.getB2bUtils().getPollingFactory().getPollingService(getPollingStrategy(pollingStrategy));
+        IPnPollingService pollingService = sharedSteps.getB2bUtils().getPollingFactory().getPollingService(getPollingStrategy(pollingStrategy, version));
         PnPollingResponseV26 pollingResponse = (PnPollingResponseV26) pollingService.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(ACCEPTED).build());
         return pollingResponse.getNotification() == null ? null : pollingResponse.getNotification();
     }
@@ -338,7 +338,7 @@ public class NotificationStepsV24 implements NotificationStepsInterface {
         log.info("Request status for " + response.getNotificationRequestId());
         long startTime = System.currentTimeMillis();
 
-        IPnPollingService pollingService = sharedSteps.getB2bUtils().getPollingFactory().getPollingService(getPollingStrategy(pollingStrategy));
+        IPnPollingService pollingService = sharedSteps.getB2bUtils().getPollingFactory().getPollingService(getPollingStrategy(pollingStrategy, version));
         PnPollingResponseV26 pollingResponse = (PnPollingResponseV26) pollingService.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(REFUSED).build());
 
         long endTime = System.currentTimeMillis();
@@ -357,12 +357,12 @@ public class NotificationStepsV24 implements NotificationStepsInterface {
     }
 
     private boolean waitForRequestNotRefused(NewNotificationResponse response, String pollingStrategy) {
-        IPnPollingService pollingService = sharedSteps.getB2bUtils().getPollingFactory().getPollingService(getPollingStrategy(pollingStrategy));
+        IPnPollingService pollingService = sharedSteps.getB2bUtils().getPollingFactory().getPollingService(getPollingStrategy(pollingStrategy, version));
         PnPollingResponseV26 pollingResponse = (PnPollingResponseV26) pollingService.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(REFUSED).build());
         return pollingResponse.getResult();
     }
 
-    private String getPollingStrategy(String pollingStrategy) {
+    public static String getPollingStrategy(String pollingStrategy, NotificationVersion version) {
         return switch (pollingStrategy) {
             case TIMELINE_RAPID -> PnPollingStrategy.TIMELINE_RAPID_V26;
             case TIMELINE_SLOW -> PnPollingStrategy.TIMELINE_SLOW_V26;
@@ -377,7 +377,7 @@ public class NotificationStepsV24 implements NotificationStepsInterface {
             case VALIDATION_STATUS_NO_ACCEPTATION -> PnPollingStrategy.VALIDATION_STATUS_NO_ACCEPTATION_V26;
             case WEBHOOK -> PnPollingStrategy.WEBHOOK_V26;
             default ->
-                    throw new RuntimeException("PnPollingStrategy non riconosciuta per la versione V24: " + pollingStrategy);
+                    throw new RuntimeException("PnPollingStrategy non riconosciuta per la versione " + version + ": " + pollingStrategy);
         };
     }
 

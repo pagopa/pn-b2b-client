@@ -220,31 +220,31 @@ Feature: Radd Alternative Anagrafica Sportelli
   @raddAnagrafica
   Scenario Outline: [RADD_ANAGRAFICA_CRUD_3] inserimento sportello RADD con formato campi errato
     When viene generato uno sportello Radd con restituzione errore con dati:
-      | address_radd_row             | <via>                |
-      | address_radd_cap             | <cap>                |
-      | address_radd_province        | <provincia>          |
-      | address_radd_city            | <citta>              |
-      | address_radd_country         | <stato>              |
-      | radd_description             | <descrizione>        |
-      | radd_phoneNumber             | <telefono>           |
-      | radd_geoLocation_latitudine  | <latitudine>         |
-      | radd_geoLocation_longitudine | <longitudine>        |
-      | radd_openingTime             | <apperturaSportello> |
-      | radd_start_validity          | <startValidity>      |
-      | radd_end_validity            | <endValidity>        |
-      | radd_capacity                | <capacity>           |
-      | radd_externalCode            | <externalCode>       |
+      | address_radd_row             | <via>               |
+      | address_radd_cap             | <cap>               |
+      | address_radd_province        | <provincia>         |
+      | address_radd_city            | <citta>             |
+      | address_radd_country         | <stato>             |
+      | radd_description             | <descrizione>       |
+      | radd_phoneNumber             | <telefono>          |
+      | radd_geoLocation_latitudine  | <latitudine>        |
+      | radd_geoLocation_longitudine | <longitudine>       |
+      | radd_openingTime             | <aperturaSportello> |
+      | radd_start_validity          | <startValidity>     |
+      | radd_end_validity            | <endValidity>       |
+      | radd_capacity                | <capacity>          |
+      | radd_externalCode            | <externalCode>      |
     Then l'operazione ha prodotto un errore con status code "400"
     Examples:
-      | via       | cap   | provincia | citta  | stato  | descrizione | telefono          | latitudine       | longitudine       | apperturaSportello | startValidity     | endValidity       | capacity         | externalCode |
-      | via posto | 20161 | MI        | MILANO | ITALIA | NULL        | ĄŁĽŚŠŞŤŹŽŻASFą˛łľ | 45.0000          | 45.0000           | NULL               | NULL              | NULL              | NULL             | NULL         |
-      | via posto | 20161 | MI        | MILANO | ITALIA | NULL        | ERROR             | 45.0000          | 45.0000           | NULL               | NULL              | NULL              | NULL             | NULL         |
-      | via posto | 20161 | MI        | MILANO | ITALIA | NULL        | NULL              | ĄŁĽŚŠŞAFŤŹŽŻą˛łľ | 45.0000           | NULL               | NULL              | NULL              | NULL             | NULL         |
-      | via posto | 20161 | MI        | MILANO | ITALIA | NULL        | NULL              | 45.0000          | ĄŁĽŚŠŞŤASFŹŽŻą˛łľ | NULL               | NULL              | NULL              | NULL             | NULL         |
-      | via posto | 20161 | MI        | MILANO | ITALIA | NULL        | NULL              | 45.0000          | 45.0000           | ĄŁĽŚŠŞSAFŤŹŽŻą˛łľ  | NULL              | NULL              | NULL             | NULL         |
-      | via posto | 20161 | MI        | MILANO | ITALIA | NULL        | NULL              | 45.0000          | 45.0000           | NULL               | ĄŁĽŚŠŞŤŹASFŽŻą˛łľ | NULL              | NULL             | NULL         |
-      | via posto | 20161 | MI        | MILANO | ITALIA | NULL        | NULL              | 45.0000          | 45.0000           | NULL               | NULL              | ĄŁĽŚŠGAfŞŤŹŽŻą˛łľ | NULL             | NULL         |
-      | via posto | 20161 | MI        | MILANO | ITALIA | NULL        | NULL              | 45.0000          | 45.0000           | NULL               | NULL              | NULL              | ĄŁĽŚAFŠŞŤŹŽŻą˛łľ | NULL         |
+      | via       | cap   | provincia | citta  | stato  | descrizione | telefono          | latitudine       | longitudine       | aperturaSportello | startValidity     | endValidity       | capacity         | externalCode |
+      | via posto | 20161 | MI        | MILANO | ITALIA | NULL        | ĄŁĽŚŠŞŤŹŽŻASFą˛łľ | 45.0000          | 45.0000           | NULL              | NULL              | NULL              | NULL             | NULL         |
+      | via posto | 20161 | MI        | MILANO | ITALIA | NULL        | ERROR             | 45.0000          | 45.0000           | NULL              | NULL              | NULL              | NULL             | NULL         |
+      | via posto | 20161 | MI        | MILANO | ITALIA | NULL        | NULL              | ĄŁĽŚŠŞAFŤŹŽŻą˛łľ | 45.0000           | NULL              | NULL              | NULL              | NULL             | NULL         |
+      | via posto | 20161 | MI        | MILANO | ITALIA | NULL        | NULL              | 45.0000          | ĄŁĽŚŠŞŤASFŹŽŻą˛łľ | NULL              | NULL              | NULL              | NULL             | NULL         |
+      | via posto | 20161 | MI        | MILANO | ITALIA | NULL        | NULL              | 45.0000          | 45.0000           | ĄŁĽŚŠŞSAFŤŹŽŻą˛łľ | NULL              | NULL              | NULL             | NULL         |
+      | via posto | 20161 | MI        | MILANO | ITALIA | NULL        | NULL              | 45.0000          | 45.0000           | NULL              | ĄŁĽŚŠŞŤŹASFŽŻą˛łľ | NULL              | NULL             | NULL         |
+      | via posto | 20161 | MI        | MILANO | ITALIA | NULL        | NULL              | 45.0000          | 45.0000           | NULL              | NULL              | ĄŁĽŚŠGAfŞŤŹŽŻą˛łľ | NULL             | NULL         |
+      | via posto | 20161 | MI        | MILANO | ITALIA | NULL        | NULL              | 45.0000          | 45.0000           | NULL              | NULL              | NULL              | ĄŁĽŚAFŠŞŤŹŽŻą˛łľ | NULL         |
 
   @raddAnagrafica
   Scenario: [RADD_ANAGRAFICA_CRUD_4] inserimento sportello RADD con endValidity minore della startValidity

@@ -109,7 +109,7 @@ public class NotificationStepsV21 implements NotificationStepsInterface {
         if (destinatario != null && destinatario.equals(DESTINATARIO_NESSUNO)) return;
         NotificationRecipientV21 notificationRecipient = convertNotificationRecipient(data);
         if (notificationRequest.getNotificationFeePolicy() == NotificationFeePolicy.DELIVERY_MODE
-                && NotificationValue.getValue(data, PAYMENT.key) != null) {
+                && NotificationValue.getValue(data, NotificationValue.PAYMENT.key) != null) {
             String pagopaFormValue = getValue(data, PAYMENT_PAGOPA_FORM.key);
             if (pagopaFormValue != null && !pagopaFormValue.equalsIgnoreCase("NO")) {
                 for (NotificationPaymentItem payments : Objects.requireNonNull(notificationRecipient.getPayments())) {
@@ -319,7 +319,7 @@ public class NotificationStepsV21 implements NotificationStepsInterface {
                 //GESTIONE ISTANZE DI PAGAMENTI
         );
         //N PAGAMENTI
-        if (getValue(data, PAYMENT.key) != null && getValue(data, PAYMENT_MULTY_NUMBER.key) != null && !getValue(data, PAYMENT_MULTY_NUMBER.key).isEmpty()) {
+        if (getValue(data, NotificationValue.PAYMENT.key) != null && getValue(data, PAYMENT_MULTY_NUMBER.key) != null && !getValue(data, PAYMENT_MULTY_NUMBER.key).isEmpty()) {
             listPayment = new ArrayList<>();
             for (int i = 0; i < Integer.parseInt(getValue(data, PAYMENT_MULTY_NUMBER.key)); i++) {
                 try {
@@ -409,7 +409,7 @@ public class NotificationStepsV21 implements NotificationStepsInterface {
             case STATUS_SLOW -> PnPollingStrategy.STATUS_SLOW_V21;
             case VALIDATION_STATUS -> PnPollingStrategy.VALIDATION_STATUS_V21;
             default ->
-                    throw new RuntimeException("PnPollingStrategy non riconosciuta per la versione V21: " + pollingStrategy);
+                    throw new RuntimeException("PnPollingStrategy non riconosciuta per la versione " + version + ": " + pollingStrategy);
         };
     }
 

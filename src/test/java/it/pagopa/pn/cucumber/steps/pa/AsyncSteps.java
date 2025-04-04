@@ -255,20 +255,19 @@ public class AsyncSteps {
         }
     }
 
-    @Then("viene effettuato il controllo del cambiamento del amount nella timeline {string} del (utente)(pagamento) {int}")
+    @Then("viene effettuato il controllo del cambiamento dell'amount nella timeline {string} del (utente)(pagamento) {int}")
     public void vieneEffettuatoIlControlloDelCambiamentoDelAmount(String timelineEventCategory, Integer user) {
         TimelineElementV26 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, null);
         int analogCost = Objects.requireNonNull(Objects.requireNonNull(timelineElement.getDetails()).getAnalogCost());
         amountNotifica.set(user, amountNotifica.get(user) + analogCost);
     }
 
-    @Then("viene effettuato il controllo del cambiamento del amount nella timeline {string} del (utente)(pagamento) {int} (al tentativo):")
+    @Then("viene effettuato il controllo del cambiamento dell'amount nella timeline {string} del (utente)(pagamento) {int} (al tentativo):")
     public void vieneEffettuatoIlControlloDelCambiamentoDelAmountAlTentativo(String timelineEventCategory, Integer user, @Transpose DataTest dataFromTest) {
         TimelineElementV26 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         int analogCost = Objects.requireNonNull(Objects.requireNonNull(timelineElement.getDetails()).getAnalogCost());
         amountNotifica.set(user, amountNotifica.get(user) + analogCost);
     }
-
 
     @Then("si controlla che l'aggiornamento del costo del (utente)(pagamento) {int} sia corretto")
     public void vieneEffettuatoIlControlloDelCambiamentoDelAmount(Integer user) {
@@ -276,7 +275,6 @@ public class AsyncSteps {
         log.info("Costo totale attualmente presente sulla posizione debitoria: {}", amountGPD);
         Assertions.assertEquals(amountGPD, amountNotifica.get(user));
     }
-
 
     // Dopo accettato amount_gpd + 100 (costo base) + pafee
     // Ogni elemento di timeline analogico ha un analog cost per ogni elemento va verificato che aumenti di + analog_cost.

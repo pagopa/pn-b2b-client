@@ -18,14 +18,15 @@ import org.opentest4j.AssertionFailedError;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.IntStream;
 
 import static java.time.OffsetDateTime.now;
+import static java.util.Objects.nonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 public class B2bStepsV1 implements B2bStepsInterface {
-
-    private FullSentNotification fullSentNotification;
     private TimelineElement timelineElement;
     private NotificationStatusHistoryElement notificationStatusHistoryElement;
     private final NotificationVersion version;
@@ -37,6 +38,15 @@ public class B2bStepsV1 implements B2bStepsInterface {
     }
 
     @Override
+    public Object getFullSentNotification() {
+        return b2bSteps.getB2bClient().getSentNotificationV1(b2bSteps.getSharedSteps().getNotificationIun());
+    }
+
+    private FullSentNotification getFullSentNotificationVersioned() {
+        return (FullSentNotification) getFullSentNotification();
+    }
+
+    @Override
     public void readEventsUpToTimelineElement(String timelineEventCategory) {
         PnPollingServiceTimelineSlowV1 timelineSlow =
                 (PnPollingServiceTimelineSlowV1) b2bSteps.getSharedSteps().getPollingFactory().getPollingService(PnPollingStrategy.TIMELINE_SLOW_V1);
@@ -45,8 +55,6 @@ public class B2bStepsV1 implements B2bStepsInterface {
                 PnPollingParameter.builder()
                         .value(timelineEventCategory)
                         .build());
-
-        fullSentNotification = pnPollingResponse.getNotification();
         log.info("NOTIFICATION_TIMELINE: " + pnPollingResponse.getNotification().getTimeline());
         try {
             assertThat(pnPollingResponse.getResult())
@@ -70,8 +78,6 @@ public class B2bStepsV1 implements B2bStepsInterface {
                 PnPollingParameter.builder()
                         .value(status)
                         .build());
-
-        fullSentNotification = pnPollingResponse.getNotification();
         log.info("NOTIFICATION_STATUS_HISTORY V1: " + pnPollingResponse.getNotification().getNotificationStatusHistory());
         try {
             assertThat(pnPollingResponse.getResult())
@@ -170,5 +176,64 @@ public class B2bStepsV1 implements B2bStepsInterface {
         eventsRequestPagoPa.setEvents(paymentEventPagoPaList);
 
         b2bSteps.getB2bClient().paymentEventsRequestPagoPaV1(eventsRequestPagoPa);
+    }
+
+    @Override
+    public void checkForNoDuplicatedTimelineElements(String timelineEventCategory) {
+        int counter = (int) getFullSentNotificationVersioned().getTimeline().stream().filter(te ->
+                te.getCategory().getValue().equals(timelineEventCategory)).count();
+        try {
+            assertThat(counter <= 1)
+                    .as("L'elemento di timeline " + timelineEventCategory + " dovrebbe essere presente massimo una volta, invece risulta ve ne siano " + counter)
+                    .isTrue();
+        } catch (AssertionFailedError assertionFailedError) {
+            b2bSteps.getSharedSteps().throwAssertionErrorWithIUN(assertionFailedError);
+        }
+    }
+
+    @Override
+    public void checkIfLastAttemptIndexMatch(int index) {
+        try {
+            List<TimelineElement> actualTimelineElements = getFullSentNotificationVersioned().getTimeline().stream()
+                    .filter(elem -> nonNull(elem.getDetails()))
+                    //TODO: ignorare Sonar che dice che questo nonNull è inutile in quanto sempre true, non è vero
+                    .filter(elem -> nonNull(elem.getDetails().getSentAttemptMade()))
+                    .filter(elem -> elem.getDetails().getSentAttemptMade() <= index)
+                    .toList();
+            List<Integer> actualAttemptsMade = actualTimelineElements.stream()
+                    .map(TimelineElement::getDetails)
+                    .filter(Objects::nonNull)
+                    .map(TimelineElementDetails::getSentAttemptMade)
+                    .distinct()
+                    .toList();
+            List<Integer> expectedAttemptsMade = IntStream.range(0, index + 1)
+                    .boxed()
+                    .toList();
+            assertThat(actualAttemptsMade)
+                    .as("Non è stato trovato alcun elemento di timeline corrispondente a un tentativo di indice minore o uguale a '%d'.".formatted(index))
+                    .isNotEmpty()
+                    .as("I tentativi effettuati non corrispondono a quelli attesi.")
+                    .hasSameElementsAs(expectedAttemptsMade);
+        } catch (AssertionError assertionFailedError) {
+            b2bSteps.getSharedSteps().throwAssertionErrorWithIUN(assertionFailedError);
+        }
+    }
+
+    @Override
+    public void verifyPriceAndWeightInvioCartaceo(Integer price, Integer weight) {
+        try {
+            if (price != null) {
+                assertThat(timelineElement.getDetails().getAnalogCost())
+                        .as("Il costo differisce da quanto previsto (expected: + " + price + "actual:" + timelineElement.getDetails().getAnalogCost())
+                        .isEqualTo(price);
+            }
+            if (weight != null) {
+                assertThat(timelineElement.getDetails().getEnvelopeWeight())
+                        .as("Il peso differisce da quanto previsto (expected: + " + weight + "actual:" + timelineElement.getDetails().getEnvelopeWeight())
+                        .isEqualTo(price);
+            }
+        } catch (AssertionFailedError assertionFailedError) {
+            b2bSteps.getSharedSteps().throwAssertionErrorWithIUN(assertionFailedError);
+        }
     }
 }

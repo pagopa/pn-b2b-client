@@ -12,6 +12,7 @@ import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.utilitySteps.Costanti;
 import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
 import it.pagopa.pn.cucumber.utils.FiscalCodeGenerator;
+import it.pagopa.pn.cucumber.utils.NotificationValue;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -317,7 +318,7 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
                 .recipientType((getValue(data, RECIPIENT_TYPE.key) == null ? null :
                         (getValue(data, RECIPIENT_TYPE.key).equalsIgnoreCase("PF") ?
                                 NotificationRecipient.RecipientTypeEnum.PF : NotificationRecipient.RecipientTypeEnum.PG)))
-                .payment(getValue(data, PAYMENT.key) == null ? null : new NotificationPaymentInfo()
+                .payment(getValue(data, NotificationValue.PAYMENT.key) == null ? null : new NotificationPaymentInfo()
                                 .creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key))
                                 .noticeCode(getValue(data, PAYMENT_NOTICE_CODE.key))
                                 .noticeCodeAlternative(getValue(data, PAYMENT_NOTICE_CODE_OPTIONAL.key).equalsIgnoreCase("SI") ?
@@ -393,7 +394,7 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
             case STATUS_SLOW -> PnPollingStrategy.STATUS_SLOW_V1;
             case VALIDATION_STATUS -> PnPollingStrategy.VALIDATION_STATUS_V1;
             default ->
-                    throw new RuntimeException("PnPollingStrategy non riconosciuta per la versione V1: " + pollingStrategy);
+                    throw new RuntimeException("PnPollingStrategy non riconosciuta per la versione " + version + ": " + pollingStrategy);
         };
     }
 

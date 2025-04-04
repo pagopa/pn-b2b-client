@@ -66,7 +66,6 @@ import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 import static it.pagopa.pn.cucumber.utils.FiscalCodeGenerator.generateCF;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.TAX_ID;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
-import static java.util.Objects.nonNull;
 import static org.awaitility.Awaitility.await;
 
 
@@ -1100,8 +1099,8 @@ public class SharedSteps {
     }
 
     private static EventId getEventId(String iun, DataTest dataFromTest) {
-        TimelineElementV23 timelineElement = dataFromTest.getTimelineElement();
-        TimelineElementDetailsV23 timelineElementDetails = timelineElement.getDetails();
+        TimelineElementV26 timelineElement = dataFromTest.getTimelineElement();
+        TimelineElementDetailsV26 timelineElementDetails = timelineElement.getDetails();
         DigitalAddress digitalAddress = timelineElementDetails == null ? null : timelineElementDetails.getDigitalAddress();
         DigitalAddressSource digitalAddressSource = timelineElementDetails == null ? null : timelineElementDetails.getDigitalAddressSource();
 
@@ -1132,11 +1131,10 @@ public class SharedSteps {
             String timelineEventId = getTimelineEventId(timelineEventCategory, iun, dataFromTest);
             if (timelineEventCategory.equals(TimelineElementCategoryV26.SEND_ANALOG_PROGRESS.getValue())
                     || timelineEventCategory.equals(TimelineElementCategoryV26.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS.getValue())) {
-                TimelineElementV23 timelineElementFromTest = dataFromTest.getTimelineElement();
-                TimelineElementDetailsV23 timelineElementDetails = timelineElementFromTest.getDetails();
-                return timelineElementList.stream()
-                        .filter(
-                                elem -> Objects.requireNonNull(elem.getElementId()).startsWith(timelineEventId)
+                TimelineElementV26 timelineElementFromTest = dataFromTest.getTimelineElement();
+                TimelineElementDetailsV26 timelineElementDetails = timelineElementFromTest.getDetails();
+                return timelineElementList.stream().filter(elem ->
+                                Objects.requireNonNull(elem.getElementId()).startsWith(timelineEventId)
                                         && Objects.equals(Objects.requireNonNull(elem.getDetails()).getDeliveryDetailCode(), Objects.requireNonNull(timelineElementDetails).getDeliveryDetailCode()))
                         .toList();
             }
@@ -1145,44 +1143,19 @@ public class SharedSteps {
         return timelineElementList.stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).getValue().equals(timelineEventCategory)).toList();
     }
 
-    /**
-     * Get all timeline elements having attempt index less or equal to the given one
-     *
-     * @param attemptIndex the index of the attempt (starting from 0)
-     * @return a list of timeline elements that match the given event category and data from test
-     */
-    public List<TimelineElementV26> getTimelineElementsToAttempt(int attemptIndex) {
-        FullSentNotificationV26 fullSentNotification = getSentNotificationLastVersion();
-        List<TimelineElementV26> timelineElementList = fullSentNotification.getTimeline();
-        return timelineElementList.stream()
-                .filter(elem -> nonNull(elem.getDetails()))
-                //TODO: ignorare Sonar che dice che questo nonNull è inutile in quanto sempre true, non è vero
-                .filter(elem -> nonNull(elem.getDetails().getSentAttemptMade()))
-                .filter(elem -> elem.getDetails().getSentAttemptMade() <= attemptIndex)
-                .toList();
-    }
-
     public TimelineElementV26 getTimelineElementByEventId(String timelineEventCategory, DataTest dataFromTest) {
         return getTimelineElementsByEventId(timelineEventCategory, dataFromTest).stream()
                 .findAny()
                 .orElse(null);
     }
 
-    public String getNotificationRequestId() {
-        return getNotificationStepInterface().getNotificationRequestId();
-    }
-
     private String getIun(String timelineEventCategory) {
-        String iun;
         if (timelineEventCategory.equals(REQUEST_REFUSED)) {
             String requestId = getNotificationRequestId();
             byte[] decodedBytes = Base64.getDecoder().decode(requestId);
-            iun = new String(decodedBytes);
-        } else {
-            // proceed with default flux
-            iun = getNotificationIun();
+            return new String(decodedBytes);
         }
-        return iun;
+        return getNotificationIun();
     }
 
     public Integer getSchedulingDelta() {
@@ -1198,6 +1171,10 @@ public class SharedSteps {
 
     private String getIuvGPD(int posizione) {
         return this.iuvGPD.get(posizione);
+    }
+
+    public String getNotificationRequestId() {
+        return getNotificationStepInterface().getNotificationRequestId();
     }
 
     public List<String> getDatiPagamentoVersionamento(Integer destinatario, Integer pagamento) {
