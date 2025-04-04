@@ -4,8 +4,9 @@ import io.cucumber.java.DataTableType;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.IPnPollingService;
+import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
-import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV27;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV28;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.utils.FiscalCodeGenerator;
 import it.pagopa.pn.cucumber.utils.NotificationValue;
@@ -396,9 +397,8 @@ public class NotificationStepsV25 implements NotificationStepsInterface {
 
     private FullSentNotificationV27 waitForRequestAccepted(NewNotificationResponse response, String pollingStrategy) {
         IPnPollingService pollingService = sharedSteps.getB2bUtils().getPollingFactory().getPollingService(getPollingStrategy(pollingStrategy));
-        PnPollingResponseV27 pollingResponse = (PnPollingResponseV27) pollingService.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(ACCEPTED).build());
-//        return pollingResponse.getNotification() == null ? null : pollingResponse.getNotification();//TODO V28
-        return null;
+        PnPollingResponseV28 pollingResponse = (PnPollingResponseV28) pollingService.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(ACCEPTED).build());
+        return pollingResponse.getNotification() == null ? null : pollingResponse.getNotification();
     }
 
     private String waitForRequestRefused(NewNotificationResponse response, String pollingStrategy) {
@@ -406,7 +406,7 @@ public class NotificationStepsV25 implements NotificationStepsInterface {
         long startTime = System.currentTimeMillis();
 
         IPnPollingService pollingService = sharedSteps.getB2bUtils().getPollingFactory().getPollingService(getPollingStrategy(pollingStrategy));
-        PnPollingResponseV27 pollingResponse = (PnPollingResponseV27) pollingService.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(REFUSED).build());
+        PnPollingResponseV28 pollingResponse = (PnPollingResponseV28) pollingService.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(REFUSED).build());
 
         long endTime = System.currentTimeMillis();
         log.info("Execution time {}ms", (endTime - startTime));
@@ -425,29 +425,28 @@ public class NotificationStepsV25 implements NotificationStepsInterface {
 
     private boolean waitForRequestNotRefused(NewNotificationResponse response, String pollingStrategy) {
         IPnPollingService pollingService = sharedSteps.getB2bUtils().getPollingFactory().getPollingService(getPollingStrategy(pollingStrategy));
-        PnPollingResponseV27 pollingResponse = (PnPollingResponseV27) pollingService.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(REFUSED).build());
+        PnPollingResponseV28 pollingResponse = (PnPollingResponseV28) pollingService.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(REFUSED).build());
         return pollingResponse.getResult();
     }
 
     private String getPollingStrategy(String pollingStrategy) {
-        //TODO V28
-        return null;
-//        return switch (pollingStrategy) {
-//            case TIMELINE_RAPID -> PnPollingStrategy.TIMELINE_RAPID_V28;
-//            case TIMELINE_SLOW -> PnPollingStrategy.TIMELINE_SLOW_V28;
-//            case STATUS_RAPID -> PnPollingStrategy.STATUS_RAPID_V28;
-//            case STATUS_SLOW -> PnPollingStrategy.STATUS_SLOW_V28;
-//            case TIMELINE_SLOW_E2E -> PnPollingStrategy.TIMELINE_SLOW_E2E_V28;
-//            case TIMELINE_EXTRA_RAPID -> PnPollingStrategy.TIMELINE_EXTRA_RAPID_V28;
-//            case STATUS_EXTRA_RAPID -> PnPollingStrategy.STATUS_EXTRA_RAPID_V28;
-//            case VALIDATION_STATUS -> PnPollingStrategy.VALIDATION_STATUS_V28;
-//            case VALIDATION_STATUS_ACCEPTATION_SHORT -> PnPollingStrategy.VALIDATION_STATUS_ACCEPTATION_SHORT_V28;
-//            case VALIDATION_STATUS_EXTRA_RAPID -> PnPollingStrategy.VALIDATION_STATUS_ACCEPTATION_EXTRA_RAPID_V28;
-//            case VALIDATION_STATUS_NO_ACCEPTATION -> PnPollingStrategy.VALIDATION_STATUS_NO_ACCEPTATION_V28;
-//            case WEBHOOK -> PnPollingStrategy.WEBHOOK_V28;
-//            default ->
-//                    throw new RuntimeException("PnPollingStrategy non riconosciuta per la versione V28: " + pollingStrategy);
-//        };
+
+       return switch (pollingStrategy) {
+            case TIMELINE_RAPID -> PnPollingStrategy.TIMELINE_RAPID_V28;
+            case TIMELINE_SLOW -> PnPollingStrategy.TIMELINE_SLOW_V28;
+            case STATUS_RAPID -> PnPollingStrategy.STATUS_RAPID_V28;
+            case STATUS_SLOW -> PnPollingStrategy.STATUS_SLOW_V28;
+            case TIMELINE_SLOW_E2E -> PnPollingStrategy.TIMELINE_SLOW_E2E_V28;
+            case TIMELINE_EXTRA_RAPID -> PnPollingStrategy.TIMELINE_EXTRA_RAPID_V28;
+            case STATUS_EXTRA_RAPID -> PnPollingStrategy.STATUS_EXTRA_RAPID_V28;
+            case VALIDATION_STATUS -> PnPollingStrategy.VALIDATION_STATUS_V28;
+            case VALIDATION_STATUS_ACCEPTATION_SHORT -> PnPollingStrategy.VALIDATION_STATUS_ACCEPTATION_SHORT_V28;
+            case VALIDATION_STATUS_EXTRA_RAPID -> PnPollingStrategy.VALIDATION_STATUS_ACCEPTATION_EXTRA_RAPID_V28;
+            case VALIDATION_STATUS_NO_ACCEPTATION -> PnPollingStrategy.VALIDATION_STATUS_NO_ACCEPTATION_V28;
+            case WEBHOOK -> PnPollingStrategy.WEBHOOK_V28;
+            default ->
+                    throw new RuntimeException("PnPollingStrategy non riconosciuta per la versione V28: " + pollingStrategy);
+        };
     }
 
     private NotificationDocument preloadDocument(NotificationDocument document) throws IOException {

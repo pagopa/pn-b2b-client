@@ -28,7 +28,7 @@
         <!--<open.api.version.delivery>v2.15.1</open.api.version.delivery>-->
         <!--<open.api.version.delivery.push>v2.15.1</open.api.version.delivery.push>-->
 
-        <open.api.version.delivery>refs/heads/feature/PN-14229</open.api.version.delivery>
+        <open.api.version.delivery>refs/heads/feature/PN-14230</open.api.version.delivery>
         <open.api.version.delivery.push>7c808542dfbfc2e1838c95e3da3861ae0299549b</open.api.version.delivery.push>
 
         <open.api.version.delivery_v1>v2.0.2</open.api.version.delivery_v1>

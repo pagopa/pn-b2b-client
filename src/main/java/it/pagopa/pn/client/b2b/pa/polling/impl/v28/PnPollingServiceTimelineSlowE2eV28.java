@@ -1,7 +1,7 @@
 package it.pagopa.pn.client.b2b.pa.polling.impl.v28;
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV27;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV27;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV28;
@@ -87,18 +87,18 @@ public class PnPollingServiceTimelineSlowE2eV28 extends PnPollingServiceTimeline
     }
 
     private boolean isPresentCategory(PnPollingResponseV28 pnPollingResponse, PnPollingParameter pnPollingParameter) {
-        TimelineElementV26 timelineElement = pnPollingResponse
+        TimelineElementV27 timelineElement = pnPollingResponse
                 .getNotification()
                 .getTimeline()
                 .stream()
                 .filter(pnPollingParameter.getPnPollingPredicate() == null ?
                         te -> te.getCategory() != null && Objects.requireNonNull(te.getCategory().getValue()).equals(pnPollingParameter.getValue())
-                        : pnPollingParameter.getPnPollingPredicate().getTimelineElementPredicateV26())
+                        : pnPollingParameter.getPnPollingPredicate().getTimelineElementPredicateV27())
                 .findAny()
                 .orElse(null);
 
         if (timelineElement != null) {
-//            pnPollingResponse.setTimelineElement(timelineElement);//TODO V28
+            pnPollingResponse.setTimelineElement(timelineElement);
             pnPollingResponse.setResult(true);
             return true;
         }
