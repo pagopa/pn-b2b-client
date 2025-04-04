@@ -357,7 +357,7 @@ Feature: address validation feature
       | physicalAddress_municipalityDetails | <municipalityDetails> |
       | physicalAddress_province            | <province>            |
       | physicalAddress_State               | <foreignState>        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi <notificationValidationStatus>
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "<notificationValidationStatus>"
     Examples:
       | denomination           | at                                            | address                                               | addressDetails | zip    | municipality                  | municipalityDetails | province | foreignState             | notificationValidationStatus |
       | TEST_NORMALIZZATORE_01 | NULL                                          | REVERE                                                | NULL           | 46036  | NULL                          | NULL                | MN       | NULL                     | HTTP_ERROR                   |
