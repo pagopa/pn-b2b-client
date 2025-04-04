@@ -34,4 +34,25 @@ public interface B2bStepsInterface {
     void verifyPriceAndWeightInvioCartaceo(Integer price, Integer weight);
 
     void waitForEvent(String pollingStrategy, String timelineEventCategory, WaitForEventPredicateFilters filters);
+
+
+    //Lettura della timeline e vari check
+
+    void readingEventUpToTheTimelineElementOfNotificationWithDeliveryDetailCode(boolean success);
+
+    void readingEventUpToTheTimelineElementOfNotificationWithDeliveryDetailCode(int delay);
+
+    void readingEventUpToTheTimelineElementOfNotificationWithDeliveryDetailCodeWithoutSuccess();
+
+    void readingEventUpToTheTimelineElementOfNotificationWithVerifySchedulingDate(int delay, String tipoIncremento);
+
+    void readingEventUpToTheTimelineElementOfNotificationWithDeliveryDetailCodeVerifyTypeDoc(String documentType, boolean withAttempt);
+
+    void readingEventUpToTheTimelineElementOfNotificationWithDeliveryDetailCodeDeliveryFailureCause(String failureCause);
+
+    void vieneVerificatoCampoSendRequestIdEventoTimeline();
+
+    void vieneVerificatoCampoServiceLevelEventoTimeline(String value);
+
+
 }
