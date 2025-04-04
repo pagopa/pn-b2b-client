@@ -158,7 +158,7 @@ public class RicezioneNotificheWebSteps {
         Assertions.assertNotNull(getTimelineElementV26(category, deliveryDetailCode));
     }
 
-    private TimelineElementV26 getTimelineElementV26(String category, String deliveryDetailCode) {
+    private TimelineElementV27 getTimelineElementV26(String category, String deliveryDetailCode) {
         fullNotification.getTimeline().forEach(x -> log.info(x.toString()));
         return fullNotification.getTimeline().stream()
                 .filter(x -> x.getCategory().toString().equals(category) &&
@@ -287,8 +287,8 @@ public class RicezioneNotificheWebSteps {
         String iun = sharedSteps.getNotificationIun();
 
         try {
-            OffsetDateTime scheduleDate = Objects.requireNonNull(webRecipientClient.getReceivedNotification(iun, null).getTimeline().stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(TimelineElementCategoryV26.SCHEDULE_REFINEMENT)).findAny().get().getDetails()).getSchedulingDate();
-            OffsetDateTime refinementDate = webRecipientClient.getReceivedNotification(iun, null).getTimeline().stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(TimelineElementCategoryV26.REFINEMENT)).findAny().get().getTimestamp();
+            OffsetDateTime scheduleDate = Objects.requireNonNull(webRecipientClient.getReceivedNotification(iun, null).getTimeline().stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(TimelineElementCategoryV27.SCHEDULE_REFINEMENT)).findAny().get().getDetails()).getSchedulingDate();
+            OffsetDateTime refinementDate = webRecipientClient.getReceivedNotification(iun, null).getTimeline().stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(TimelineElementCategoryV27.REFINEMENT)).findAny().get().getTimestamp();
             log.info("scheduleDate : {}", scheduleDate);
             log.info("refinementDate : {}", refinementDate);
 

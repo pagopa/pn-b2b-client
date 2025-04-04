@@ -514,7 +514,7 @@ public class WebhookStepsV28 implements WebhookStepsInterface {
 
         String elementId = timelineElementWebHook.getCategory().toString();
         FullSentNotificationV26 fullSentNotification = webhookSteps.getSharedSteps().getSentNotificationLastVersion();
-         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 timelineElement = fullSentNotification.getTimeline().
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 timelineElement = fullSentNotification.getTimeline().
                 stream()
                 .filter(data -> data.getCategory() != null)
                 .filter(data -> data.getCategory().getValue().equalsIgnoreCase(elementId))
@@ -564,7 +564,7 @@ public class WebhookStepsV28 implements WebhookStepsInterface {
     public void checkLegalFactCategory(String timelineCategory, String legalFactCategory) {
         String iun = webhookSteps.getSharedSteps().getNotificationIun();
         FullSentNotificationV27 fullSentNotification = webhookSteps.getB2bClient().getSentNotificationV27(iun);
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 timelineElementWithTargetCategory =
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV27 timelineElementWithTargetCategory =
                 fullSentNotification.getTimeline().stream().filter(
                         x -> x.getCategory().getValue().equals(timelineCategory)).findFirst().orElse(null);
         Assertions.assertNotNull(timelineElementWithTargetCategory);

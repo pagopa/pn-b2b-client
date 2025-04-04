@@ -288,13 +288,14 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
     @Override
     public void deleteEventStreamV25(UUID streamId) throws RestClientException {
         refreshAndSetTokenInteropClient();
-        this.streamsApiV25.removeEventStreamV25(streamId);
+//        this.streamsApiV25.removeEventStreamV25(streamId);//TODO V28
     }
 
     @Override
     public StreamMetadataResponseV25 retrieveEventStreamV25(UUID streamId) throws RestClientException {
         refreshAndSetTokenInteropClient();
-        return this.streamsApiV25.retrieveEventStreamV25(streamId);
+        return null;
+//        return this.streamsApiV25.retrieveEventStreamV25(streamId);//TODO V28
     }
 
     @Override
