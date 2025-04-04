@@ -264,7 +264,6 @@ Feature: Test API of e-service template
     Then si ottiene response status code 403
     Examples:
       | ruolo         | stato     | kind      |
-      # combinazioni (ruolo, stato) in (security, DRAFT) rimosse fino a risoluzione ticket sopra citato
       | security      | DRAFT     | DOCUMENT  |
       | support       | DRAFT     | DOCUMENT  |
       | security      | PUBLISHED | DOCUMENT  |
@@ -341,7 +340,6 @@ Feature: Test API of e-service template
       | DOCUMENT  |
       | INTERFACE |
 
-  #TODO scenario non presente fra i test richiesti, avvisare Stefano Netti
   @e-service-template-version-document-create
   Scenario Outline: [INTEROP-EST-044] L'aggiunta di un documento/interfaccia a una versione di un e-service template inesistente non può essere effettuata
     Given l'utente è un "admin" di "PA1"
@@ -353,7 +351,6 @@ Feature: Test API of e-service template
       | INTERFACE |
 
   # Parte del ticket https://pagopa.atlassian.net/browse/PIN-6483
-  @e-service-template-to-finish
   @e-service-template-version-document-create
   Scenario Outline: [INTEROP-EST-045] L'aggiunta di un documento/interfaccia a una versione inesistente di un e-service template non può essere effettuata
     Given l'utente è un "admin" di "PA1"
@@ -1440,7 +1437,7 @@ Feature: Test API of e-service template
       | api,security  |
 
   @e-service-template-version-attributes-update
-  Scenario Outline: [INTEROP-EST-129-PUB] La modifica degli attributi di una versione di un e-service template in stato PUBLISHED può essere effettuata da un ente in veste di ADMIN o API
+  Scenario Outline: [INTEROP-EST-129-PUB] La modifica degli attributi di una versione di un e-service template in stato PUBLISHED NON può essere effettuata da un ente NON in veste di ADMIN o API
     Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
     And l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
@@ -1457,7 +1454,7 @@ Feature: Test API of e-service template
       | support       |
 
   @e-service-template-version-attributes-update
-  Scenario Outline: [INTEROP-EST-129-SUS] La modifica degli attributi di una versione di un e-service template in stato SUSPENDED può essere effettuata da un ente in veste di ADMIN o API
+  Scenario Outline: [INTEROP-EST-129-SUS] La modifica degli attributi di una versione di un e-service template in stato SUSPENDED NON può essere effettuata da un ente NON in veste di ADMIN o API
     Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
     And l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
@@ -1485,7 +1482,7 @@ Feature: Test API of e-service template
     Then si ottiene response status code 400
 
   @e-service-template-version-attributes-update
-  Scenario: [INTEROP-EST-131-PUB] La modifica degli attributi di una versione di un e-service template in stato PUBLISHED o SUSPENDED non può coinvolgere l'aggiunta di nuovi gruppi di attributi, ma solo la modifica di quelli già presenti
+  Scenario: [INTEROP-EST-131-PUB] La modifica degli attributi di una versione di un e-service template in stato PUBLISHED non può coinvolgere l'aggiunta di nuovi gruppi di attributi, ma solo la modifica di quelli già presenti
     Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
     And l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
@@ -1497,7 +1494,7 @@ Feature: Test API of e-service template
     Then si ottiene response status code 400
 
   @e-service-template-version-attributes-update
-  Scenario: [INTEROP-EST-131-SUS] La modifica degli attributi di una versione di un e-service template in stato PUBLISHED o SUSPENDED non può coinvolgere l'aggiunta di nuovi gruppi di attributi, ma solo la modifica di quelli già presenti
+  Scenario: [INTEROP-EST-131-SUS] La modifica degli attributi di una versione di un e-service template in stato SUSPENDED non può coinvolgere l'aggiunta di nuovi gruppi di attributi, ma solo la modifica di quelli già presenti
     Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
     And l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
@@ -1722,7 +1719,7 @@ Feature: Test API of e-service template
     Then si ottiene response status code 404
 
   @e-service-template-version-read
-  Scenario: [INTEROP-EST-151] La visualizzazione dei dettagli della versione di un e-service template da parte di un ente diverso dal creatore NON può essere effettuata se lo stato della versione è DRAFT
+  Scenario: [INTEROP-EST-151] La visualizzazione dei dettagli della versione in stato DRAFT di un e-service template da parte di un ente diverso dal creatore NON può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
     When l'utente è un "admin" di "PA2"
@@ -2197,15 +2194,6 @@ Feature: Test API of e-service template
       | SUSPENDED |
 
   @e-service-template-instance-descriptor-update
-  Scenario: [INTEROP-EST-197] La modifica del descriptor di un'istanza di un e-service template avente una versione in stato DRAFT e una in stato PUBLISHED NON può essere effettuata
-    Given l'utente è un "admin" di "PA1"
-    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
-    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
-    And l'utente effettua l'aggiunta di una versione in stato DRAFT all'e-service con successo
-    When l'utente tenta la modifica dei campi dell'istanza dell'e-service template
-    Then si ottiene response status code 400
-
-  @e-service-template-instance-descriptor-update
   Scenario: [INTEROP-EST-198] La modifica di un descriptor in stato DRAFT inesistente di un e-service template non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
@@ -2242,14 +2230,14 @@ Feature: Test API of e-service template
     Examples:
       | ruolo         | stato       |
       | admin         | PUBLISHED   |
-    #  | api           | PUBLISHED   |
-    #  | api,security  | PUBLISHED   |
-    #  | admin         | SUSPENDED   |
-    #  | api           | SUSPENDED   |
-    #  | api,security  | SUSPENDED   |
-    #  | admin         | DEPRECATED  |
-    #  | api           | DEPRECATED  |
-    #  | api,security  | DEPRECATED  |
+      | api           | PUBLISHED   |
+      | api,security  | PUBLISHED   |
+      | admin         | SUSPENDED   |
+      | api           | SUSPENDED   |
+      | api,security  | SUSPENDED   |
+      | admin         | DEPRECATED  |
+      | api           | DEPRECATED  |
+      | api,security  | DEPRECATED  |
 
   @e-service-template-instance-descriptor-update
   Scenario Outline: [INTEROP-EST-202] La modifica del descriptor di un'istanza di un e-service template NON può essere effettuata da un ente NON in veste di ADMIN o API
