@@ -16,7 +16,6 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDet
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
 import java.util.List;
 import java.util.UUID;
@@ -68,8 +67,8 @@ public class EServiceTemplateRiskAnalysisUpdateSteps {
     public void editUnspecifiedRiskAnalysisFromEServiceTemplate() {
 
         // TODO modo inefficiente di reperire la risk analysis inserita: andrebbe memorizzato
-        // l'id subito dopo la creazione, e quindi collocato in contesto di classe come per
-        // gli altri id
+        //  l'id subito dopo la creazione, e quindi collocato in contesto di classe come per
+        //  gli altri id
         List<EServiceRiskAnalysis> riskAnalysis = eServiceTemplateClient.getEServiceTemplate(
             sharedStepsContext.getXCorrelationId(),
             sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id()).getRiskAnalysis();
@@ -127,9 +126,6 @@ public class EServiceTemplateRiskAnalysisUpdateSteps {
                 "La risk analysis non è stata modificata correttamente nell'e-service template"
             );
         } catch (PollingPredicateException e) {
-
-            // TODO altrove non si è stati così precisi nei messaggi di errore, adeguare
-
             List<EServiceRiskAnalysis> riskAnalysis = requireNonNull(
                 requireNonNull(
                     ((ResponseEntity<EServiceTemplateDetails>) httpCallExecutor.getResponse()),

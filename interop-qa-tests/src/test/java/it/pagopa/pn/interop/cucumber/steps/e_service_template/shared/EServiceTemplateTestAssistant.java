@@ -6,8 +6,6 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.assertj.core.api.Assertions.fail;
 
 import com.google.common.io.Files;
-import it.pagopa.interop.agreement.service.IEServiceClient;
-import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
@@ -49,12 +47,9 @@ import org.springframework.http.ResponseEntity;
 @Data
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class EServiceTemplateTestAssistant {
-    // TODO 13/03/2025: almeno alcuni di questi attributi resteranno inutilizzati, rimuoverli
     private final DataPreparationService dataPreparationService;
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
-    private final IdentityService identityService;
-    private final IEServiceClient eServiceClient;
     private final IEServiceTemplateClient eServiceTemplateClient;
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
@@ -70,8 +65,6 @@ public class EServiceTemplateTestAssistant {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.dataPreparationService = dataPreparationService;
         this.sharedStepsContext = sharedStepsContext;
-        this.identityService = sharedStepsContext.getIdentityService();
-        this.eServiceClient = clientTokenConfigurator.getEServiceClient();
         this.eServiceTemplateClient = clientTokenConfigurator.getEServiceTemplateClient();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
@@ -89,7 +82,6 @@ public class EServiceTemplateTestAssistant {
         return String.format("%d-%d", sharedStepsContext.getTestSeed(), randomInt);
     }
 
-    // TODO generalizzabile in "mutateVersionState"
     public void mutateLastVersionState(EServiceTemplateVersionState desiredState) {
         Runnable publisher = () -> {
             this.addDocumentToEServiceTemplateVersionSuccessfully(EServiceTemplateDocumentKind.INTERFACE, 0); // perché ogni template deve avere almeno un'interfaccia
@@ -270,7 +262,6 @@ public class EServiceTemplateTestAssistant {
         }
     }
 
-    // TODO verificare in quanti posti è usato, se in 1 solo espandere inline
     public String buildPrettyName(EServiceTemplateDocumentKind kind) {
         return "e-service-template-%s-%s".formatted(kind.toString(),
             this.nextTestResourceNameSuffix());

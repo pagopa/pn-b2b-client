@@ -11,7 +11,6 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVer
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext.EServiceTemplateInfo;
 import java.util.List;
 import lombok.Data;
@@ -48,11 +47,6 @@ public class EServiceTemplateCatalogSteps {
 
     @Then("sono stati aggiunti esattamente {int} e-service templates in catalogo in stato {eServiceTemplateVersionState}")
     public void checkEServiceTemplatesCatalogContainsElementsInState(int expectedCount, EServiceTemplateVersionState expectedState) {
-        /* TODO la precondizione di questo metodo sarebbe che lo status code sia positivo, che il body non sia null e che il catalogo non sia vuoto.
-         * Migliorare questo e altri step così che venga sempre fatto un check preventivo, eventualmente aiutandosi
-         * con un framework con le Precondition come Google Guava. Spunti: https://www.sw-engineering-candies.com/blog-1/comparison-of-ways-to-check-preconditions-in-java
-         */
-
         List<CatalogEServiceTemplate> templatesInCatalog = this.getFromCatalogBy(sharedStepsContext.getEServiceTemplateStepContext().getTemplatesManaged());
         Condition<CatalogEServiceTemplate> ofExpectedState = new Condition<>(
             template -> template.getPublishedVersion().getState() == expectedState,

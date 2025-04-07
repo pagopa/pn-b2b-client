@@ -11,7 +11,6 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTempl
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import java.util.Objects;
 import java.util.UUID;
 import lombok.Data;
@@ -45,7 +44,6 @@ public class EServiceTemplateDeleteSteps {
         this.pollingService = sharedStepsContext.getPollingService();
     }
 
-    // TODO gli step sono pieni di pattern ricorrenti, questo step ne è un'esempio. Potrebbero essere astratti e portati in classi di utility esterne.
     @Then("la cancellazione dell'e-service template è stata effettuata correttamente")
     public void checkEServiceTemplateDeleted() {
         UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();

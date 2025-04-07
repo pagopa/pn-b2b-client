@@ -112,8 +112,7 @@ public class EServiceTemplateDescriptionUpdateSteps {
                 lastTemplateDescriptionUpdateSeed),
             ResponseEntity::getStatusCode);
     }
-    
-    // TODO candidato a eventuale superclasse di tutti gli step e-service template
+
     private EServiceTemplateStepContext getTemplateContext() {
         return sharedStepsContext.getEServiceTemplateStepContext();
     }

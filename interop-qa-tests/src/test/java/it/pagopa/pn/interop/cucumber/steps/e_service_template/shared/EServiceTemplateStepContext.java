@@ -27,7 +27,7 @@ public class EServiceTemplateStepContext {
     @Mapper(componentModel = "spring")
     public interface EServiceTemplateInfoMapper {
         /* TODO 07/03/2025 overhead, se questo mapper continua a servire solo a questo bisognerebbe
-         * semplicemente mutare EServiceTemplateInfo in un pojo e ricorrere ai metodi set per modificarlo   */
+         *  semplicemente mutare EServiceTemplateInfo in un pojo e ricorrere ai metodi set per modificarlo   */
         @Mapping(source = "newVersionId", target = "lastVersionId")
         EServiceTemplateInfo withVersionId(EServiceTemplateInfo templateInfo, UUID newVersionId);
     }
