@@ -88,8 +88,6 @@ public class AvanzamentoNotificheB2bSteps {
 
     private final Map<NotificationVersion, B2bStepsInterface> mapOfVersionSteps = NotificationVersion.getMapOfB2bSteps(this);
 
-    private NotificationVersion versionUsed;
-
     @Autowired
     public AvanzamentoNotificheB2bSteps(SharedSteps sharedSteps,
                                         TimingForPolling timingForPolling,
@@ -101,11 +99,11 @@ public class AvanzamentoNotificheB2bSteps {
         this.externalClient = sharedSteps.getPnExternalServiceClient();
         this.b2bClient = sharedSteps.getB2bClient();
         this.pnPollingFactory = sharedSteps.getPollingFactory();
-        versionUsed = sharedSteps.getVersionUsed();
     }
 
     private B2bStepsInterface getB2bStepsInterface() {
-        NotificationVersion notificationVersion = versionUsed == null ? sharedSteps.getNotificationVersion(MOST_RECENT) : versionUsed;
+        NotificationVersion notificationVersion = sharedSteps.getVersionUsed() == null ?
+                sharedSteps.getNotificationVersion(MOST_RECENT) : sharedSteps.getVersionUsed();
         return getB2bStepsInterface(notificationVersion);
     }
 
@@ -122,7 +120,7 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("vengono letti gli eventi fino allo stato della notifica {string}")
     public void readingEventUpToTheStatusOfNotification(String status) {
-        readEventsUpToStatus(versionUsed, status, true);
+        readEventsUpToStatus(sharedSteps.getVersionUsed(), status, true);
     }
 
     @Then("vengono letti gli eventi fino allo stato della notifica {string} V1")
@@ -132,7 +130,7 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("vengono letti gli eventi fino allo stato della notifica {string} per il destinatario {int} e presente l'evento {string}")
     public void readingEventUpToTheStatusOfNotification(String status, int recIndex, String evento) {
-        readEventsUpToStatus(versionUsed, status, true);
+        readEventsUpToStatus(sharedSteps.getVersionUsed(), status, true);
         getB2bStepsInterface().checkEventPresenceForRecipient(recIndex, evento);
     }
 
@@ -2845,7 +2843,8 @@ public class AvanzamentoNotificheB2bSteps {
                 Thread.sleep(remainingTime + 30 * 1000);
             }
             // get the updated notification
-            b2bClient.getSentNotificationV26(iun);
+            FullSentNotificationV26 fullSentNotification = b2bClient.getSentNotificationV26(iun);
+            Assertions.assertNotNull(fullSentNotification);
         }
     }
 
