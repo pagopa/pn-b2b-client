@@ -1,5 +1,7 @@
 @e-service-template
 Feature: Test API of e-service template
+
+  @e-service-template-create
   Scenario Outline: [INTEROP-EST-001] La creazione di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
     Given l'utente è un "<ruolo>" di "PA1"
 
