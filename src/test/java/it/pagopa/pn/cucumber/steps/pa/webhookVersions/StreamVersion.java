@@ -7,7 +7,7 @@ import java.util.Map;
 
 public enum StreamVersion {
 
-    V10(10), V23(23), V24(24), V25(25), V26(26), V27(27), V28(28);
+    V10(10), V23(23), V24(24), V25(25), V26(26), V27(27);
 
     /**
      * Scopo di questo campo è quello di poter comparare le versioni con < o >

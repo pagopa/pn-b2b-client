@@ -33,13 +33,11 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
     private StreamRequestV27 streamRequest;
     private final AvanzamentoNotificheWebhookB2bSteps webhookSteps;
     private final StreamVersion streamVersion;
-    //TODO: per futuro refactor//private final WebhookClientV27 webhookClient;
     private boolean waitForAccepted;
 
     public WebhookStepsV27(AvanzamentoNotificheWebhookB2bSteps webhookSteps) {
         this.webhookSteps = webhookSteps;
         streamVersion = StreamVersion.V27;
-        //TODO: per futuro refactor//webhookClient = (WebhookClientV27) webhookSteps.getWebhookClientFactory().getWebhookClientByVersion(streamVersion.getValue());
         progressResponseElementList = new LinkedList<>();
     }
 
@@ -74,13 +72,11 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
     @Override
     public Object retrieveStreamEvent(UUID streamId) {
         return webhookSteps.getWebhookB2bClient().retrieveEventStreamV27(streamId);
-        //TODO: per futuro refactor//return webhookClient.retrieveEventStream(streamId);
     }
 
     @Override
     public void deleteStream(UUID streamId) {
         webhookSteps.getWebhookB2bClient().deleteEventStreamV27(streamId);
-        //TODO: per futuro refactor//webhookClient.deleteEventStream(streamId);
     }
 
     @Override
@@ -107,7 +103,6 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
     @Override
     public void deleteStreamsBeforeTest(String pa) {
         List<StreamListElement> streamListElementsV27 = webhookSteps.getWebhookB2bClient().listEventStreamsV27();
-        //TODO: per futuro refactor//List<StreamListElement> streamListElementsV27 = webhookClient.listEventStreams();
         for (StreamListElement elem : streamListElementsV27) {
             deleteStream(elem.getStreamId(), pa);
         }
@@ -116,7 +111,6 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
     private boolean deleteStream(UUID streamId, String pa) {
         try {
             webhookSteps.getWebhookB2bClient().deleteEventStreamV27(streamId);
-            //TODO: per futuro refactor//webhookClient.deleteEventStream(streamId);
             return true;
         } catch (HttpStatusCodeException e) {
             return handleException(e, pa, streamId);
@@ -126,7 +120,6 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
     private boolean handleException(HttpStatusCodeException e, String pa, UUID streamID) {
         try {
             webhookSteps.getWebhookB2bClient().retrieveEventStreamV27(streamID);
-            //TODO: per futuro refactor//webhookClient.retrieveEventStream(streamID);
             webhookSteps.setNotificationError(e);
             webhookSteps.getSharedSteps().setNotificationError(e);
             log.error("ERROR IN DELETE STREAM id {} streamVersion V27 pa {}", streamID, pa);
@@ -143,13 +136,11 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
         streamRequest.setTitle("Update Stream V27");
         streamRequest.setEventType(StreamRequestV27.EventTypeEnum.TIMELINE);
         webhookSteps.getWebhookB2bClient().updateEventStreamV27(idStream, streamRequest);
-        //TODO: per futuro refactor//webhookClient.updateEventStream(idStream, streamRequest);
     }
 
     @Override
     public void updateStreamWithExistingRequest(UUID idStream) {
         webhookSteps.getWebhookB2bClient().updateEventStreamV27(idStream, streamRequest);
-        //TODO: per futuro refactor//webhookClient.updateEventStream(idStream, streamRequest);
     }
 
     @Override
@@ -163,7 +154,6 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
         streamRequest.setWaitForAccepted(waitForAccepted);
         for (StreamMetadataResponseV27 eventStreamV27 : eventStreamList) {
             StreamMetadataResponseV27 result = webhookSteps.getWebhookB2bClient().updateEventStreamV27(eventStreamV27.getStreamId(), streamRequest);
-            //TODO: per futuro refactor//StreamMetadataResponseV27 result = webhookClient.updateEventStream(eventStreamV27.getStreamId(), streamRequest);
             Assertions.assertNotNull(result);
             Assertions.assertTrue(streamRequest.getTitle().equalsIgnoreCase(result.getTitle()));
             log.info("EVENTSTREAM update : {}", result);
@@ -205,7 +195,6 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
     @Override
     public void checkCorrectCancellation() {
         List<StreamListElement> streamListElementsV27 = webhookSteps.getWebhookB2bClient().listEventStreamsV27();
-        //TODO: per futuro refactor//List<StreamListElement> streamListElementsV27 = webhookClient.listEventStreams();
         for (StreamMetadataResponseV27 eventStream : eventStreamList) {
             StreamListElement streamListElementV27 = streamListElementsV27.stream().filter(
                     elem -> elem.getStreamId() == eventStream.getStreamId()).findAny().orElse(null);
@@ -217,7 +206,6 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
     public void getStreamById(UUID streamId) {
         StreamMetadataResponseV27 eventStreamV27 = Assertions.assertDoesNotThrow(() ->
                 webhookSteps.getWebhookB2bClient().retrieveEventStreamV27(streamId));
-        //TODO: per futuro refactor//webhookClient.retrieveEventStream(streamId));
         Assertions.assertNotNull(eventStreamV27);
         Assertions.assertNotNull(eventStreamV27.getStreamId());
         Assertions.assertEquals(waitForAccepted, eventStreamV27.getWaitForAccepted());
@@ -227,7 +215,6 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
     @Override
     public void consumeEventStream(UUID streamId) {
         progressResponseElementList = webhookSteps.getWebhookB2bClient().consumeEventStreamV27(streamId, null);
-        //TODO: per futuro refactor//progressResponseElementList = webhookClient.consumeEventStream(streamId, null);
         log.info("progressResponseElementsV27 size: " + progressResponseElementList.size());
         log.info("progressResponseElementsV27: " + progressResponseElementList);
     }
@@ -236,7 +223,6 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
     public void consumeEventStreamAndCheckNumEvents(int numEvents) {
         UUID streamId = eventStreamList.get(0).getStreamId();
         progressResponseElementList = webhookSteps.getWebhookB2bClient().consumeEventStreamV27(streamId, null);
-        //TODO: per futuro refactor//progressResponseElementList = webhookClient.consumeEventStream(streamId, null);
         log.info("progressResponseElementsV27: " + progressResponseElementList);
         Assertions.assertEquals(progressResponseElementList.size(), numEvents);
         System.out.println("ELEMENTI NEL WEBHOOK: " + progressResponseElementList.size());
@@ -246,7 +232,6 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
     public void verifyNoEventsInStream() {
         UUID streamId = getStreamId();
         Assertions.assertTrue(webhookSteps.getWebhookB2bClient().consumeEventStreamV27(streamId, null).isEmpty());
-        //TODO: per futuro refactor//Assertions.assertTrue(webhookClient.consumeEventStream(streamId, null).isEmpty());
     }
 
     @Override
@@ -264,7 +249,6 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
             }
             request.setWaitForAccepted(waitForAccepted);
             StreamMetadataResponseV27 eventStream = webhookSteps.getWebhookB2bClient().createEventStreamV27(request);
-            //TODO: per futuro refactor//StreamMetadataResponseV27 eventStream = webhookClient.createEventStream(request);
             if (streamIdToReplace != null) {
                 eventStreamList = new LinkedList<>();
             }
@@ -276,7 +260,6 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
     @Override
     public void disableStream(UUID streamId) {
         webhookSteps.getWebhookB2bClient().disableEventStreamV27(streamId);
-        //TODO: per futuro refactor//webhookClient.disableEventStream(streamId);
     }
 
     @Override
@@ -284,7 +267,6 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
         eventStreamList.forEach(s -> {
             UUID streamId = s.getStreamId();
             StreamMetadataResponseV27 response = webhookSteps.getWebhookB2bClient().disableEventStreamV27(streamId);
-            //TODO: per futuro refactor//StreamMetadataResponseV27 response = webhookClient.disableEventStream(streamId);
             Assertions.assertNotNull(response);
         });
     }
@@ -483,7 +465,6 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
         for (StreamMetadataResponseV27 stream : eventStreamList) {
             UUID streamId = stream.getStreamId();
             List<ProgressResponseElementV27> progressResponseElements = webhookSteps.getWebhookB2bClient().consumeEventStreamV27(streamId, null);
-            //TODO: per futuro refactor//List<ProgressResponseElementV27> progressResponseElements = webhookClient.consumeEventStream(streamId, null);
             System.out.println("progressResponseElements V27 size: " + progressResponseElements.size());
             webhookSteps.sleepTest(50L);
         }
@@ -562,7 +543,6 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
     @Override
     public void checkCorrectDisabling(UUID streamId) {
         StreamMetadataResponseV27 eventStream = webhookSteps.getWebhookB2bClient().retrieveEventStreamV27(streamId);
-        //TODO: per futuro refactor//StreamMetadataResponseV27 eventStream = webhookClient.retrieveEventStream(streamId);
         Assertions.assertNotNull(eventStream);
         Assertions.assertNotNull(eventStream.getStreamId());
         Assertions.assertNotNull(eventStream.getDisabledDate());

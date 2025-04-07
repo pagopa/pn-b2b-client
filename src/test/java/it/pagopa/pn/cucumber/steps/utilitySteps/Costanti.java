@@ -131,6 +131,7 @@ public class Costanti {
     public static final String NOTIFICATION_STATUS_ACCEPTED = "ACCEPTED";
     public static final String NOTIFICATION_STATUS_REFUSED = "REFUSED";
     public static final String NOTIFICATION_STATUS_NOT_REFUSED = "NOT_REFUSED";
+    public static final String NOTIFICATION_STATUS_VIEWED = "VIEWED";
     // Error causes
     public static final String ALLEGATO = "ALLEGATO";
     public static final String EXTENSION = "EXTENSION";
@@ -149,6 +150,8 @@ public class Costanti {
     public static final String PG = "PG";
     // Tipologie indirizzo
     public static final String PEC = "PEC";
+    // Regex
+    public static final String PHYSICAL_ADDRESS_REGEX = "^[A-Z0-9_.\\-:;@' \\[\\] ]*$";
     // Versioni
     public static final String MOST_RECENT = "più recente";
 

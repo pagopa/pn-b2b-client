@@ -8,8 +8,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class DataTest {
-    //TODO MATTEO: test...
-    //TODO, al rilascio di un nuova versione di TimelineElement, aggiornare il campo sottostante alla versione più recente
+    //TODO: al rilascio di un nuova versione di TimelineElement, aggiornare il campo sottostante alla versione più recente
     private TimelineElementV26 timelineElement;
     private boolean isFirstSendRetry;
     private Integer progressIndex;

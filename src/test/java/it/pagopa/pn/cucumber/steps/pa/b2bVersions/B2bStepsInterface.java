@@ -1,6 +1,9 @@
 package it.pagopa.pn.cucumber.steps.pa.b2bVersions;
 
 import io.cucumber.datatable.DataTable;
+import it.pagopa.pn.cucumber.steps.utilitySteps.PollingType;
+import it.pagopa.pn.cucumber.steps.utilitySteps.TimelineElementCheck;
+import it.pagopa.pn.cucumber.steps.utilitySteps.TimelineElementCheckFilters;
 import it.pagopa.pn.cucumber.steps.utilitySteps.WaitForEventPredicateFilters;
 
 public interface B2bStepsInterface {
@@ -15,7 +18,7 @@ public interface B2bStepsInterface {
 
     void readEventsUpToTimelineElement(String timelineEventCategory);
 
-    void readEventsUpToStatus(String status);
+    void readEventsUpToStatus(String status, boolean exists);
 
     void checkNotificationCost(String cost);
 
@@ -33,26 +36,24 @@ public interface B2bStepsInterface {
 
     void verifyPriceAndWeightInvioCartaceo(Integer price, Integer weight);
 
-    void waitForEvent(String pollingStrategy, String timelineEventCategory, WaitForEventPredicateFilters filters);
+    void waitForEventOrStatus(String pollingStrategy, PollingType pollingType, String timelineEventCategory, WaitForEventPredicateFilters filters);
 
 
-    //Lettura della timeline e vari check
+    /**
+     * La lettura avviene dentro a waitForEventOrStatus, qua si limita a fare le assertions
+     *
+     * @param exists        se true, il codice assume che l'elemento di timeline atteso sia stato trovato, e viceversa
+     * @param furtherChecks se != null, il codice procede con ulteriori assert, tramite uno switch a seconda del TimelineElementCheck
+     * @param filterParams  oggetto contenente tutti i campi necessari per effettuare i controlli aggiuntivi (può essere null, se il
+     *                      TimelineElementCheck passato come parametro non necessita di parametri specifici).
+     */
+    void checkIfTimelineElementExists(boolean exists, TimelineElementCheck furtherChecks, TimelineElementCheckFilters filterParams);
 
-    void readingEventUpToTheTimelineElementOfNotificationWithDeliveryDetailCode(boolean success);
+    void checkIfStatusExists(boolean exists);
 
-    void readingEventUpToTheTimelineElementOfNotificationWithDeliveryDetailCode(int delay);
+    void performFurtherChecks(TimelineElementCheck furtherChecks, TimelineElementCheckFilters filterParams);
 
-    void readingEventUpToTheTimelineElementOfNotificationWithDeliveryDetailCodeWithoutSuccess();
-
-    void readingEventUpToTheTimelineElementOfNotificationWithVerifySchedulingDate(int delay, String tipoIncremento);
-
-    void readingEventUpToTheTimelineElementOfNotificationWithDeliveryDetailCodeVerifyTypeDoc(String documentType, boolean withAttempt);
-
-    void readingEventUpToTheTimelineElementOfNotificationWithDeliveryDetailCodeDeliveryFailureCause(String failureCause);
-
-    void vieneVerificatoCampoSendRequestIdEventoTimeline();
-
-    void vieneVerificatoCampoServiceLevelEventoTimeline(String value);
-
+    //Lo step che lo implementa non è utilizzato, valuterei eliminazione (anche perchè si può inglobare in un altro dei metodi già esistenti)
+    void verificaAssenzaPagamentiF24();
 
 }

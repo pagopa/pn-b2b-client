@@ -14,10 +14,13 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
       | digitalDomicile_address | testpagopa3@pec.pagopa.it |
       | recipientType           | PG                        |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+    # Nota: Modificato l'ordine degli step: prima leggeva per utente 1 e 0, e poi controllava la presenza del DigitalAddress per 0 e 1
+    # Poiché la lettura dell'elemento di timeline sovrascrive il valore di timelineElement, lo step era destinato a fallire
+    # TODO MATTEO: controllare l'eventuale presenza di altre casistiche come questa
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
+    Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry per l utente 1
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 0
     Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry per l utente 0
-    Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry per l utente 1
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
       | loadTimeline                 | true                                             |
       | details                      | NOT_NULL                                         |

@@ -383,7 +383,7 @@ public class NotificationStepsV2 implements NotificationStepsInterface {
         return pollingResponse.getResult();
     }
 
-    private String getPollingStrategy(String pollingStrategy) {
+    public static String getPollingStrategy(String pollingStrategy) {
         return switch (pollingStrategy) {
             case TIMELINE_RAPID -> PnPollingStrategy.TIMELINE_RAPID_V20;
             case STATUS_RAPID -> PnPollingStrategy.STATUS_RAPID_V20;
@@ -392,7 +392,7 @@ public class NotificationStepsV2 implements NotificationStepsInterface {
             case VALIDATION_STATUS -> PnPollingStrategy.VALIDATION_STATUS_V20;
             case WEBHOOK -> PnPollingStrategy.WEBHOOK_V20;
             default ->
-                    throw new RuntimeException("PnPollingStrategy non riconosciuta per la versione " + version + ": " + pollingStrategy);
+                    throw new RuntimeException("PnPollingStrategy non riconosciuta per la versione 2: " + pollingStrategy);
         };
     }
 

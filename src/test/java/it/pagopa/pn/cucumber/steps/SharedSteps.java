@@ -297,9 +297,8 @@ public class SharedSteps {
 
     /**
      * Invio massivo di notifiche irreperibili utili per i test radd
-     * TODO MATTEO -> questo metodo va assolutamente re-fattorizzato, magari anche riscrivendo gli step
+     * TODO -> test refattorizzato per poter essere eseguito con qualsiasi versione, ma comunque ampiamente migliorabile, magari anche riscrivendo gli step
      */
-    //TODO MATTEO TEST REFACTOR
     @Given("vengono inviate {int} notifiche per l'utente {destinatario} con il {string} e si aspetta fino allo stato COMPLETELY_UNREACHABLE")
     public void sendManyNotificationsForUserAndWaitUntilCompletelyUnreachable(int numberOfNotification, Destinatario destinatario, String paName) {
 
@@ -592,10 +591,25 @@ public class SharedSteps {
         try {
             getNotificationStepInterface().uploadNotification();
         } catch (HttpStatusCodeException | IOException e) {
-            if (e instanceof HttpStatusCodeException) {
-                this.notificationError = (HttpStatusCodeException) e;
+            if (e instanceof HttpStatusCodeException httpError) {
+                this.notificationError = httpError;
             }
         }
+    }
+
+    // Spostato da AvanzamentoNotificheB2bSteps, ha più senso qua
+    //Annullamento Notifica
+    @And("la notifica può essere annullata dal sistema tramite codice IUN")
+    public void notificationCanBeCanceledWithIUN() {
+        Assertions.assertNotNull(notificationIun);
+        Assertions.assertDoesNotThrow(() -> {
+            RequestStatus resp = Assertions.assertDoesNotThrow(() -> b2bClient.notificationCancellation(notificationIun));
+
+            Assertions.assertNotNull(resp);
+            Assertions.assertNotNull(resp.getDetails());
+            Assertions.assertTrue(resp.getDetails().size() > 0);
+            Assertions.assertTrue("NOTIFICATION_CANCELLATION_ACCEPTED".equalsIgnoreCase(resp.getDetails().get(0).getCode()));
+        });
     }
 
     @And("al destinatario viene associato lo iuv creato mediante partita debitoria per {string} alla posizione {int}")
@@ -630,7 +644,6 @@ public class SharedSteps {
     @Then("viene verificato lo stato di accettazione con idempotenceToken e paProtocolNumber")
     public void vieneVerificatoLoStatoDiAccettazioneConIdempotenceTokenEPaProtocolNumber() {
         getNotificationStepInterface().verifyStatus(false, true, true);
-
     }
 
     //Spostato da InvioNotificheB2bSteps

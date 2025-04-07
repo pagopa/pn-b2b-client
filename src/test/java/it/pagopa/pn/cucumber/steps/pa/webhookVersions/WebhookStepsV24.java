@@ -31,12 +31,10 @@ public class WebhookStepsV24 implements WebhookStepsInterface {
     private StreamRequestV24 streamRequest;
     private final AvanzamentoNotificheWebhookB2bSteps webhookSteps;
     private final StreamVersion streamVersion;
-    //TODO: per futuro refactor//private final WebhookClientV24 webhookClient;
 
     public WebhookStepsV24(AvanzamentoNotificheWebhookB2bSteps webhookSteps) {
         this.webhookSteps = webhookSteps;
         streamVersion = StreamVersion.V24;
-        //TODO: per futuro refactor//webhookClient = (WebhookClientV24) webhookSteps.getWebhookClientFactory().getWebhookClientByVersion(streamVersion.getValue());
         progressResponseElementList = new LinkedList<>();
     }
 
