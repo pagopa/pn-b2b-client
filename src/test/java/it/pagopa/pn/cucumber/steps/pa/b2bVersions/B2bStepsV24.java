@@ -67,7 +67,9 @@ public class B2bStepsV24 implements B2bStepsInterface {
 
     @Override
     public void readEventsUpToStatus(String status, boolean exists) {
-        WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder().build();
+        WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder()
+                .statusHistory(status)
+                .build();
         waitForEventOrStatus(STATUS_RAPID, STATUS, status, filters);
         checkIfStatusExists(exists);
     }
@@ -627,8 +629,11 @@ public class B2bStepsV24 implements B2bStepsInterface {
         return notificationPaymentItem != null;
     }
 
-    public PnPollingPredicate getPnPollingPredicateForTimeline(String timelineEventCategory, WaitForEventPredicateFilters filters) {
+    private PnPollingPredicate getPnPollingPredicateForTimeline(String timelineEventCategory, WaitForEventPredicateFilters filters) {
         PnPollingPredicate pnPollingPredicate = new PnPollingPredicate();
+        if (filters.getStatusHistory() != null) {
+            pnPollingPredicate.setNotificationStatusHistoryElementPredicateV26(statusHistory -> statusHistory.getStatus().getValue().equals(filters.getStatusHistory()));
+        }
         pnPollingPredicate.setTimelineElementPredicateV26(timelineElement ->
                 timelineElement.getCategory() != null
                         && (timelineEventCategory == null || Objects.requireNonNull(timelineElement.getCategory().getValue()).equals(timelineEventCategory))

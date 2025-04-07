@@ -88,7 +88,7 @@ public class AvanzamentoNotificheB2bSteps {
 
     private final Map<NotificationVersion, B2bStepsInterface> mapOfVersionSteps = NotificationVersion.getMapOfB2bSteps(this);
 
-    private final NotificationVersion versionUsed;
+    private NotificationVersion versionUsed;
 
     @Autowired
     public AvanzamentoNotificheB2bSteps(SharedSteps sharedSteps,

@@ -19,4 +19,5 @@ public class WaitForEventPredicateFilters {
     private String legalFactIdCategory;
     private boolean isAttachmentEmpty;
     private List<String> failureCauses;
+    private String statusHistory;
 }

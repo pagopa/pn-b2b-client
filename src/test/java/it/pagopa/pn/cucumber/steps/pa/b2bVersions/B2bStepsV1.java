@@ -9,7 +9,7 @@ import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingPredicate;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV1;
 import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheB2bSteps;
-import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationStepsV2;
+import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationStepsV1;
 import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion;
 import it.pagopa.pn.cucumber.steps.utilitySteps.PollingType;
 import it.pagopa.pn.cucumber.steps.utilitySteps.TimelineElementCheck;
@@ -69,7 +69,9 @@ public class B2bStepsV1 implements B2bStepsInterface {
 
     @Override
     public void readEventsUpToStatus(String status, boolean exists) {
-        WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder().build();
+        WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder()
+                .statusHistory(status)
+                .build();
         waitForEventOrStatus(STATUS_RAPID, STATUS, status, filters);
         checkIfStatusExists(exists);
     }
@@ -261,7 +263,7 @@ public class B2bStepsV1 implements B2bStepsInterface {
 
     @Override
     public void waitForEventOrStatus(String pollingStrategy, PollingType pollingType, String timelineEventCategory, WaitForEventPredicateFilters filters) {
-        String strategy = NotificationStepsV2.getPollingStrategy(pollingStrategy);
+        String strategy = NotificationStepsV1.getPollingStrategy(pollingStrategy);
         IPnPollingService<?> pollingService = b2bSteps.getSharedSteps().getB2bUtils().getPollingFactory().getPollingService(strategy);
         PnPollingPredicate pollingPredicate = getPnPollingPredicateForTimeline(timelineEventCategory, filters);
         pollingResponse = (PnPollingResponseV1) pollingService.waitForEvent(
@@ -613,9 +615,12 @@ public class B2bStepsV1 implements B2bStepsInterface {
                 && notificationPaymentInfo.getNoticeCode().equals(timelineElement.getDetails().getNoticeCode());
     }
 
-    public PnPollingPredicate getPnPollingPredicateForTimeline(String timelineEventCategory, WaitForEventPredicateFilters filters) {
+    private PnPollingPredicate getPnPollingPredicateForTimeline(String timelineEventCategory, WaitForEventPredicateFilters filters) {
         PnPollingPredicate pnPollingPredicate = new PnPollingPredicate();
-        pnPollingPredicate.setTimelineElementPredicateV20(timelineElement ->
+        if (filters.getStatusHistory() != null) {
+            pnPollingPredicate.setNotificationStatusHistoryElementPredicateV1(statusHistory -> statusHistory.getStatus().getValue().equals(filters.getStatusHistory()));
+        }
+        pnPollingPredicate.setTimelineElementPredicateV1(timelineElement ->
                 timelineElement.getCategory() != null
                         && (timelineEventCategory == null || Objects.requireNonNull(timelineElement.getCategory().getValue()).equals(timelineEventCategory))
                         && (filters.getRecipientIndex() == null || Objects.requireNonNull(Objects.requireNonNull(timelineElement.getDetails()).getRecIndex()).equals(filters.getRecipientIndex()))

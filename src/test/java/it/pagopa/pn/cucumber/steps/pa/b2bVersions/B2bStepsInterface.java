@@ -38,7 +38,7 @@ public interface B2bStepsInterface {
 
     void waitForEventOrStatus(String pollingStrategy, PollingType pollingType, String timelineEventCategory, WaitForEventPredicateFilters filters);
 
-
+    
     /**
      * La lettura avviene dentro a waitForEventOrStatus, qua si limita a fare le assertions
      *
