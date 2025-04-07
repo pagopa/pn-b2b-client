@@ -271,7 +271,7 @@ public class SharedSteps {
         throw new RuntimeException("Lo IUN non è valorizzato, qualcosa è andato storto nei passaggi precedenti");
     }
 
-    private NotificationVersion getNotificationVersion(String version) {
+    public NotificationVersion getNotificationVersion(String version) {
         if (version.trim().equalsIgnoreCase(MOST_RECENT)) {
             return NotificationVersion.V24;//TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente
         }
@@ -708,7 +708,6 @@ public class SharedSteps {
         sendNotificationRefusedDueToError("NOT_FOUND_ALLEGATO", false);
     }
 
-    //TODO MATTEO TEST
     @And("al destinatario viene associato lo iuv creato mediante partita debitoria per {string} alla posizione {int}")
     public void destinatarioAddIuvGPD(String denominazione, Integer posizione) {
         getNotificationStepInterface().addIuvGdpToDestinatario(denominazione, getIuvGPD(posizione), posizione);
@@ -1259,7 +1258,6 @@ public class SharedSteps {
         return this.iuvGPD.get(posizione);
     }
 
-    //TODO MATTEO TEST
     public List<String> getDatiPagamentoVersionamento(Integer destinatario, Integer pagamento) {
         return getNotificationStepInterface().getDatiPagamento(destinatario, pagamento);
     }
