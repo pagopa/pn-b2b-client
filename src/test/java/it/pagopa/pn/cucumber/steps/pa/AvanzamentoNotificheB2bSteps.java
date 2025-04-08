@@ -15,7 +15,6 @@ import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnPrivateDeliveryPushExternalClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationHistoryResponse;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationProcessCostResponse;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.ResponsePaperNotificationFailedDto;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
@@ -58,10 +57,8 @@ import static it.pagopa.pn.cucumber.steps.utilitySteps.TimelineElementCheck.*;
 import static java.time.OffsetDateTime.now;
 import static java.time.temporal.ChronoUnit.MINUTES;
 import static java.time.temporal.ChronoUnit.SECONDS;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
-import static org.awaitility.Awaitility.await;
 
 @Slf4j
 public class AvanzamentoNotificheB2bSteps {
@@ -73,9 +70,12 @@ public class AvanzamentoNotificheB2bSteps {
     @Getter
     private final SharedSteps sharedSteps;
     private final PnExternalServiceClientImpl externalClient;
+    @Getter
     private final IPnPrivateDeliveryPushExternalClient pnPrivateDeliveryPushExternalClient;
     private HttpStatusCodeException notificationError;
+    @Getter
     private final PnPollingFactory pnPollingFactory;
+    @Getter
     private final TimingForPolling timingForPolling;
     //    private final PnTimelineAndLegalFactV26 pnTimelineAndLegalFactV26;    //TODO MATTEO spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
     //    private final LegalFactContentVerifySteps legalFactContentVerifySteps;     //TODO MATTEO spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
@@ -134,9 +134,12 @@ public class AvanzamentoNotificheB2bSteps {
         getB2bStepsInterface().checkEventPresenceForRecipient(recIndex, evento);
     }
 
-    @Then("si verifica che la notifica abbia lo stato VIEWED")
-    public void checksNotificationViewedStatus() {
-        checksIfNotificationHasStatus(true, NOTIFICATION_STATUS_VIEWED);
+    //2 soli step richiamavano questo metodo, non serve più, useranno quello di sotto (universale), che
+    // era inutilizzato, mentre ora ha un'utilità generica (qualsiasi stato), sia che l'abbia o meno
+
+//    @Then("si verifica che la notifica {has} lo stato VIEWED")
+//    public void checksNotificationViewedStatus(boolean has) {
+//        checksIfNotificationHasStatus(has, NOTIFICATION_STATUS_VIEWED);
 //        String status = NotificationStatus.VIEWED.getValue();
 //        PnPollingServiceStatusRapidV26 statusRapidV25 = (PnPollingServiceStatusRapidV26) pnPollingFactory.getPollingService(PnPollingStrategy.STATUS_RAPID_V26);
 //        PnPollingResponseV26 pnPollingResponseV26 = statusRapidV25.waitForEvent(sharedSteps.getNotificationIun(),
@@ -150,15 +153,15 @@ public class AvanzamentoNotificheB2bSteps {
 //        } catch (AssertionFailedError assertionFailedError) {
 //            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
 //        }
-    }
+//    }
 
     /**
-     * Poiché il metodo non era usato da alcuno scenario, è stato aggiunto il
+     * Poiché il metodo non era usato da alcuno scenario, sono stati parametrizzati i due
+     * metodi che richiamavano questo controllo unicamente per lo stato VIEWED ed è stato aggiunto il
      *
      * @param has (abbia|non abbia), usato nella classe di utility ParameterTypes,
      *            in modo da poterlo usare sia per il caso positivo che il caso negativo.
      */
-    //AL MOMENTO NON ESISTE UNO SCENARIO CHE INTEGRA QUESTO STEP
     @Then("si verifica che la notifica {has} lo stato {string}")
     public void checksIfNotificationHasStatus(boolean has, String status) {
 
@@ -184,210 +187,210 @@ public class AvanzamentoNotificheB2bSteps {
         b2bStepsInterface.readEventsUpToStatus(status, exists);
     }
 
-    private void checkTimelineElementEquality(String timelineEventCategory, TimelineElementV26 elementFromNotification, DataTest dataFromTest) {
-        TimelineElementV26 elementFromTest = dataFromTest.getTimelineElement();
-        TimelineElementDetailsV26 detailsFromNotification = elementFromNotification.getDetails();
-        TimelineElementDetailsV26 detailsFromTest = elementFromTest.getDetails();
-        DelegateInfo delegateInfoFromTest = detailsFromTest != null ? detailsFromTest.getDelegateInfo() : null;
-        DelegateInfo delegateInfoFromNotification = detailsFromNotification != null ? detailsFromNotification.getDelegateInfo() : null;
+//    private void checkTimelineElementEquality(String timelineEventCategory, TimelineElementV26 elementFromNotification, DataTest dataFromTest) {
+//        TimelineElementV26 elementFromTest = dataFromTest.getTimelineElement();
+//        TimelineElementDetailsV26 detailsFromNotification = elementFromNotification.getDetails();
+//        TimelineElementDetailsV26 detailsFromTest = elementFromTest.getDetails();
+//        DelegateInfo delegateInfoFromTest = detailsFromTest != null ? detailsFromTest.getDelegateInfo() : null;
+//        DelegateInfo delegateInfoFromNotification = detailsFromNotification != null ? detailsFromNotification.getDelegateInfo() : null;
+//
+//        switch (timelineEventCategory) {
+//            case SEND_COURTESY_MESSAGE -> {
+//                if (detailsFromTest != null) {
+//                    Assertions.assertEquals(detailsFromNotification.getDigitalAddress(), detailsFromTest.getDigitalAddress());
+//                    Assertions.assertEquals(detailsFromNotification.getRecIndex(), detailsFromTest.getRecIndex());
+//                }
+//            }
+//            case REQUEST_REFUSED -> {
+//                if (detailsFromTest != null) {
+//                    Assertions.assertNotNull(detailsFromNotification.getRefusalReasons());
+//                    Assertions.assertEquals(detailsFromNotification.getRefusalReasons().size(), detailsFromTest.getRefusalReasons().size());
+//                    for (int i = 0; i < detailsFromNotification.getRefusalReasons().size(); i++) {
+//                        Assertions.assertEquals(detailsFromNotification.getRefusalReasons().get(i).getErrorCode(), detailsFromTest.getRefusalReasons().get(i).getErrorCode());
+//                    }
+//                }
+//            }
+//            case AAR_GENERATION -> {
+//                if (detailsFromTest != null) {
+//                    Assertions.assertNotNull(detailsFromNotification.getGeneratedAarUrl());
+//                }
+//            }
+//            case SEND_DIGITAL_FEEDBACK -> {
+//                if (detailsFromTest != null) {
+//                    Assertions.assertNotNull(detailsFromNotification.getResponseStatus());
+//                    Assertions.assertEquals(detailsFromNotification.getResponseStatus().getValue(), detailsFromTest.getResponseStatus().getValue());
+//                    Assertions.assertEquals(detailsFromNotification.getDigitalAddress(), detailsFromTest.getDigitalAddress());
+//                    Assertions.assertEquals(detailsFromNotification.getSendingReceipts().size(), detailsFromTest.getSendingReceipts().size());
+//                    for (int i = 0; i < detailsFromNotification.getSendingReceipts().size(); i++) {
+//                        Assertions.assertEquals(detailsFromNotification.getSendingReceipts().get(i), detailsFromTest.getSendingReceipts().get(i));
+//                    }
+//                }
+//            }
+//            case REQUEST_ACCEPTED -> {
+//                Assertions.assertNotNull(elementFromNotification.getLegalFactsIds());
+//                Assertions.assertEquals(elementFromNotification.getLegalFactsIds().size(), elementFromTest.getLegalFactsIds().size());
+//                for (int i = 0; i < elementFromNotification.getLegalFactsIds().size(); i++) {
+//                    Assertions.assertEquals(elementFromNotification.getLegalFactsIds().get(i).getCategory(), elementFromTest.getLegalFactsIds().get(i).getCategory());
+//                    Assertions.assertNotNull(elementFromNotification.getLegalFactsIds().get(i).getKey());
+//                }
+//            }
+//            case SEND_DIGITAL_DOMICILE -> {
+//                if (detailsFromTest != null) {
+//                    Assertions.assertEquals(detailsFromNotification.getDigitalAddress(), detailsFromTest.getDigitalAddress());
+//                }
+//            }
+//            case DIGITAL_SUCCESS_WORKFLOW, DIGITAL_FAILURE_WORKFLOW -> {
+//                Assertions.assertNotNull(elementFromNotification.getLegalFactsIds());
+//                Assertions.assertEquals(elementFromNotification.getLegalFactsIds().size(), elementFromTest.getLegalFactsIds().size());
+//                for (int i = 0; i < elementFromNotification.getLegalFactsIds().size(); i++) {
+//                    Assertions.assertEquals(elementFromNotification.getLegalFactsIds().get(i).getCategory(), elementFromTest.getLegalFactsIds().get(i).getCategory());
+//                    Assertions.assertNotNull(elementFromNotification.getLegalFactsIds().get(i).getKey());
+//                }
+//                if (detailsFromTest != null) {
+//                    Assertions.assertEquals(detailsFromNotification.getDigitalAddress(), detailsFromTest.getDigitalAddress());
+//                }
+//            }
+//            case GET_ADDRESS -> {
+//                if (detailsFromTest != null) {
+//                    Assertions.assertEquals(detailsFromNotification.getDigitalAddressSource(), detailsFromTest.getDigitalAddressSource());
+//                    Assertions.assertEquals(detailsFromNotification.getIsAvailable(), detailsFromTest.getIsAvailable());
+//                }
+//            }
+//            case SEND_ANALOG_FEEDBACK -> {
+//                if (detailsFromTest != null) {
+//                    if (detailsFromTest.getDeliveryDetailCode() != null) {
+//                        Assertions.assertEquals(detailsFromTest.getDeliveryDetailCode(), detailsFromNotification.getDeliveryDetailCode());
+//                    }
+//                    //TODO: ignorare i commenti di Sonar che dice che questa condizione è sempre true (in quanto il campo è annotato con @NotNull)
+//                    // A causa di questo suggerimento errato, in precedenza era stato rimosso l'if, causando il fail di alcuni test
+//                    if (detailsFromTest.getPhysicalAddress() != null) {
+//                        Assertions.assertEquals(detailsFromTest.getPhysicalAddress(), detailsFromNotification.getPhysicalAddress());
+//                    }
+//                    //TODO: ignorare i commenti di Sonar che dice che questa condizione è sempre true (in quanto il campo è annotato con @NotNull)
+//                    // A causa di questo suggerimento errato, in precedenza era stato rimosso l'if, causando il fail di alcuni test
+//                    if (detailsFromTest.getResponseStatus() != null && detailsFromTest.getResponseStatus().getValue() != null) {
+//                        Assertions.assertEquals(detailsFromTest.getResponseStatus().getValue(), detailsFromNotification.getResponseStatus().getValue());
+//                    }
+//                    if (detailsFromTest.getDeliveryFailureCause() != null) {
+//                        List<String> failureCauses = Arrays.asList(detailsFromTest.getDeliveryFailureCause().split(" "));
+//                        Assertions.assertTrue(failureCauses.contains(elementFromNotification.getDetails().getDeliveryFailureCause()), "DeliveryFailureCause not match. IUN: " + sharedSteps.getNotificationIun());
+//                    }
+//                }
+//            }
+//            case SEND_ANALOG_PROGRESS, SEND_SIMPLE_REGISTERED_LETTER_PROGRESS -> {
+//                if (detailsFromTest != null) {
+//                    if (Objects.nonNull(elementFromTest.getLegalFactsIds())) {
+//                        Assertions.assertEquals(elementFromNotification.getLegalFactsIds().size(), elementFromTest.getLegalFactsIds().size());
+//                        for (int i = 0; i < elementFromNotification.getLegalFactsIds().size(); i++) {
+//                            Assertions.assertEquals(elementFromNotification.getLegalFactsIds().get(i).getCategory(), elementFromTest.getLegalFactsIds().get(i).getCategory());
+//                            Assertions.assertNotNull(elementFromNotification.getLegalFactsIds().get(i).getKey());
+//                        }
+//                    }
+//                    if (Objects.nonNull(detailsFromTest.getDeliveryDetailCode())) {
+//                        Assertions.assertEquals(detailsFromNotification.getDeliveryDetailCode(), detailsFromTest.getDeliveryDetailCode());
+//                    }
+//                    if (Objects.nonNull(detailsFromTest.getAttachments())) {
+//                        Assertions.assertNotNull(detailsFromNotification.getAttachments());
+//                        Assertions.assertEquals(detailsFromNotification.getAttachments().size(), detailsFromTest.getAttachments().size());
+//
+//                        for (int i = 0; i < detailsFromNotification.getAttachments().size(); i++) {
+//                            List<String> documentTypes = Arrays.asList(detailsFromTest.getAttachments().get(i).getDocumentType().split(" "));
+//                            Assertions.assertTrue(
+//                                    documentTypes.contains(detailsFromNotification.getAttachments().get(i).getDocumentType()),
+//                                    "DocumentType not match. Actual document types: %s, Expected document types: %s. IUN: %s".formatted(
+//                                            detailsFromNotification.getAttachments().stream().map(AttachmentDetails::getDocumentType).toList(),
+//                                            detailsFromTest.getAttachments().stream().map(AttachmentDetails::getDocumentType).toList(),
+//                                            sharedSteps.getNotificationIun()
+//                                    ));
+//                        }
+//                    }
+//
+//                    if (Objects.nonNull(detailsFromTest.getDeliveryFailureCause())) {
+//                        List<String> failureCauses = Arrays.asList(detailsFromTest.getDeliveryFailureCause().split(" "));
+//                        Assertions.assertEquals(Boolean.TRUE, failureCauses.contains(elementFromNotification.getDetails().getDeliveryFailureCause()));
+//                    }
+//                }
+//            }
+//            case ANALOG_SUCCESS_WORKFLOW, PREPARE_SIMPLE_REGISTERED_LETTER -> {
+//                //TODO: ignorare i commenti di Sonar che dice che questa condizione è sempre true (in quanto il campo è annotato con @NotNull)
+//                // A causa di questo suggerimento errato, in precedenza era stato rimosso l'if, causando il fail di alcuni test
+//                if (detailsFromTest != null && detailsFromTest.getPhysicalAddress() != null) {
+//                    Assertions.assertEquals(detailsFromTest.getPhysicalAddress(), detailsFromNotification.getPhysicalAddress());
+//                }
+//            }
+//            case SEND_SIMPLE_REGISTERED_LETTER -> {
+//                if (detailsFromTest != null) {
+//                    Assertions.assertEquals(detailsFromNotification.getPhysicalAddress(), detailsFromTest.getPhysicalAddress());
+//                    Assertions.assertEquals(detailsFromNotification.getAnalogCost(), detailsFromTest.getAnalogCost());
+//                }
+//            }
+//            case NOTIFICATION_VIEWED -> {
+//                Assertions.assertNotNull(elementFromNotification.getLegalFactsIds());
+//                Assertions.assertEquals(elementFromNotification.getLegalFactsIds().size(), elementFromTest.getLegalFactsIds().size());
+//                for (int i = 0; i < elementFromNotification.getLegalFactsIds().size(); i++) {
+//                    Assertions.assertEquals(elementFromNotification.getLegalFactsIds().get(i).getCategory(), elementFromTest.getLegalFactsIds().get(i).getCategory());
+//                    Assertions.assertNotNull(elementFromNotification.getLegalFactsIds().get(i).getKey());
+//                }
+//                if (delegateInfoFromTest != null) {
+//                    Assertions.assertEquals(delegateInfoFromNotification.getTaxId(), delegateInfoFromTest.getTaxId());
+//                    Assertions.assertEquals(delegateInfoFromNotification.getDelegateType(), delegateInfoFromTest.getDelegateType());
+//                    Assertions.assertEquals(delegateInfoFromNotification.getDenomination(), delegateInfoFromTest.getDenomination());
+//                }
+//            }
+//            case COMPLETELY_UNREACHABLE -> {
+//                if (Objects.nonNull(elementFromTest.getLegalFactsIds())) {
+//                    assert elementFromNotification.getLegalFactsIds() != null;
+//                    Assertions.assertEquals(elementFromNotification.getLegalFactsIds().size(), elementFromTest.getLegalFactsIds().size());
+//                }
+//                for (int i = 0; i < Objects.requireNonNull(elementFromNotification.getLegalFactsIds()).size(); i++) {
+//                    Assertions.assertEquals(elementFromNotification.getLegalFactsIds().get(i).getCategory(), elementFromTest.getLegalFactsIds().get(i).getCategory());
+//                    Assertions.assertNotNull(elementFromNotification.getLegalFactsIds().get(i).getKey());
+//                }
+//            }
+//            case REFINEMENT -> {
+//                if (detailsFromTest != null) {
+//                    Assertions.assertEquals(detailsFromNotification.getRecIndex(), detailsFromTest.getRecIndex());
+//                }
+//            }
+//            default ->
+//                    throw new IllegalArgumentException("Valore non valido per timelineEventCategory: " + timelineEventCategory);
+//        }
+//    }
 
-        switch (timelineEventCategory) {
-            case SEND_COURTESY_MESSAGE -> {
-                if (detailsFromTest != null) {
-                    Assertions.assertEquals(detailsFromNotification.getDigitalAddress(), detailsFromTest.getDigitalAddress());
-                    Assertions.assertEquals(detailsFromNotification.getRecIndex(), detailsFromTest.getRecIndex());
-                }
-            }
-            case REQUEST_REFUSED -> {
-                if (detailsFromTest != null) {
-                    Assertions.assertNotNull(detailsFromNotification.getRefusalReasons());
-                    Assertions.assertEquals(detailsFromNotification.getRefusalReasons().size(), detailsFromTest.getRefusalReasons().size());
-                    for (int i = 0; i < detailsFromNotification.getRefusalReasons().size(); i++) {
-                        Assertions.assertEquals(detailsFromNotification.getRefusalReasons().get(i).getErrorCode(), detailsFromTest.getRefusalReasons().get(i).getErrorCode());
-                    }
-                }
-            }
-            case AAR_GENERATION -> {
-                if (detailsFromTest != null) {
-                    Assertions.assertNotNull(detailsFromNotification.getGeneratedAarUrl());
-                }
-            }
-            case SEND_DIGITAL_FEEDBACK -> {
-                if (detailsFromTest != null) {
-                    Assertions.assertNotNull(detailsFromNotification.getResponseStatus());
-                    Assertions.assertEquals(detailsFromNotification.getResponseStatus().getValue(), detailsFromTest.getResponseStatus().getValue());
-                    Assertions.assertEquals(detailsFromNotification.getDigitalAddress(), detailsFromTest.getDigitalAddress());
-                    Assertions.assertEquals(detailsFromNotification.getSendingReceipts().size(), detailsFromTest.getSendingReceipts().size());
-                    for (int i = 0; i < detailsFromNotification.getSendingReceipts().size(); i++) {
-                        Assertions.assertEquals(detailsFromNotification.getSendingReceipts().get(i), detailsFromTest.getSendingReceipts().get(i));
-                    }
-                }
-            }
-            case REQUEST_ACCEPTED -> {
-                Assertions.assertNotNull(elementFromNotification.getLegalFactsIds());
-                Assertions.assertEquals(elementFromNotification.getLegalFactsIds().size(), elementFromTest.getLegalFactsIds().size());
-                for (int i = 0; i < elementFromNotification.getLegalFactsIds().size(); i++) {
-                    Assertions.assertEquals(elementFromNotification.getLegalFactsIds().get(i).getCategory(), elementFromTest.getLegalFactsIds().get(i).getCategory());
-                    Assertions.assertNotNull(elementFromNotification.getLegalFactsIds().get(i).getKey());
-                }
-            }
-            case SEND_DIGITAL_DOMICILE -> {
-                if (detailsFromTest != null) {
-                    Assertions.assertEquals(detailsFromNotification.getDigitalAddress(), detailsFromTest.getDigitalAddress());
-                }
-            }
-            case DIGITAL_SUCCESS_WORKFLOW, DIGITAL_FAILURE_WORKFLOW -> {
-                Assertions.assertNotNull(elementFromNotification.getLegalFactsIds());
-                Assertions.assertEquals(elementFromNotification.getLegalFactsIds().size(), elementFromTest.getLegalFactsIds().size());
-                for (int i = 0; i < elementFromNotification.getLegalFactsIds().size(); i++) {
-                    Assertions.assertEquals(elementFromNotification.getLegalFactsIds().get(i).getCategory(), elementFromTest.getLegalFactsIds().get(i).getCategory());
-                    Assertions.assertNotNull(elementFromNotification.getLegalFactsIds().get(i).getKey());
-                }
-                if (detailsFromTest != null) {
-                    Assertions.assertEquals(detailsFromNotification.getDigitalAddress(), detailsFromTest.getDigitalAddress());
-                }
-            }
-            case GET_ADDRESS -> {
-                if (detailsFromTest != null) {
-                    Assertions.assertEquals(detailsFromNotification.getDigitalAddressSource(), detailsFromTest.getDigitalAddressSource());
-                    Assertions.assertEquals(detailsFromNotification.getIsAvailable(), detailsFromTest.getIsAvailable());
-                }
-            }
-            case SEND_ANALOG_FEEDBACK -> {
-                if (detailsFromTest != null) {
-                    if (detailsFromTest.getDeliveryDetailCode() != null) {
-                        Assertions.assertEquals(detailsFromTest.getDeliveryDetailCode(), detailsFromNotification.getDeliveryDetailCode());
-                    }
-                    //TODO: ignorare i commenti di Sonar che dice che questa condizione è sempre true (in quanto il campo è annotato con @NotNull)
-                    // A causa di questo suggerimento errato, in precedenza era stato rimosso l'if, causando il fail di alcuni test
-                    if (detailsFromTest.getPhysicalAddress() != null) {
-                        Assertions.assertEquals(detailsFromTest.getPhysicalAddress(), detailsFromNotification.getPhysicalAddress());
-                    }
-                    //TODO: ignorare i commenti di Sonar che dice che questa condizione è sempre true (in quanto il campo è annotato con @NotNull)
-                    // A causa di questo suggerimento errato, in precedenza era stato rimosso l'if, causando il fail di alcuni test
-                    if (detailsFromTest.getResponseStatus() != null && detailsFromTest.getResponseStatus().getValue() != null) {
-                        Assertions.assertEquals(detailsFromTest.getResponseStatus().getValue(), detailsFromNotification.getResponseStatus().getValue());
-                    }
-                    if (detailsFromTest.getDeliveryFailureCause() != null) {
-                        List<String> failureCauses = Arrays.asList(detailsFromTest.getDeliveryFailureCause().split(" "));
-                        Assertions.assertTrue(failureCauses.contains(elementFromNotification.getDetails().getDeliveryFailureCause()), "DeliveryFailureCause not match. IUN: " + sharedSteps.getNotificationIun());
-                    }
-                }
-            }
-            case SEND_ANALOG_PROGRESS, SEND_SIMPLE_REGISTERED_LETTER_PROGRESS -> {
-                if (detailsFromTest != null) {
-                    if (Objects.nonNull(elementFromTest.getLegalFactsIds())) {
-                        Assertions.assertEquals(elementFromNotification.getLegalFactsIds().size(), elementFromTest.getLegalFactsIds().size());
-                        for (int i = 0; i < elementFromNotification.getLegalFactsIds().size(); i++) {
-                            Assertions.assertEquals(elementFromNotification.getLegalFactsIds().get(i).getCategory(), elementFromTest.getLegalFactsIds().get(i).getCategory());
-                            Assertions.assertNotNull(elementFromNotification.getLegalFactsIds().get(i).getKey());
-                        }
-                    }
-                    if (Objects.nonNull(detailsFromTest.getDeliveryDetailCode())) {
-                        Assertions.assertEquals(detailsFromNotification.getDeliveryDetailCode(), detailsFromTest.getDeliveryDetailCode());
-                    }
-                    if (Objects.nonNull(detailsFromTest.getAttachments())) {
-                        Assertions.assertNotNull(detailsFromNotification.getAttachments());
-                        Assertions.assertEquals(detailsFromNotification.getAttachments().size(), detailsFromTest.getAttachments().size());
-
-                        for (int i = 0; i < detailsFromNotification.getAttachments().size(); i++) {
-                            List<String> documentTypes = Arrays.asList(detailsFromTest.getAttachments().get(i).getDocumentType().split(" "));
-                            Assertions.assertTrue(
-                                    documentTypes.contains(detailsFromNotification.getAttachments().get(i).getDocumentType()),
-                                    "DocumentType not match. Actual document types: %s, Expected document types: %s. IUN: %s".formatted(
-                                            detailsFromNotification.getAttachments().stream().map(AttachmentDetails::getDocumentType).toList(),
-                                            detailsFromTest.getAttachments().stream().map(AttachmentDetails::getDocumentType).toList(),
-                                            sharedSteps.getNotificationIun()
-                                    ));
-                        }
-                    }
-
-                    if (Objects.nonNull(detailsFromTest.getDeliveryFailureCause())) {
-                        List<String> failureCauses = Arrays.asList(detailsFromTest.getDeliveryFailureCause().split(" "));
-                        Assertions.assertEquals(Boolean.TRUE, failureCauses.contains(elementFromNotification.getDetails().getDeliveryFailureCause()));
-                    }
-                }
-            }
-            case ANALOG_SUCCESS_WORKFLOW, PREPARE_SIMPLE_REGISTERED_LETTER -> {
-                //TODO: ignorare i commenti di Sonar che dice che questa condizione è sempre true (in quanto il campo è annotato con @NotNull)
-                // A causa di questo suggerimento errato, in precedenza era stato rimosso l'if, causando il fail di alcuni test
-                if (detailsFromTest != null && detailsFromTest.getPhysicalAddress() != null) {
-                    Assertions.assertEquals(detailsFromTest.getPhysicalAddress(), detailsFromNotification.getPhysicalAddress());
-                }
-            }
-            case SEND_SIMPLE_REGISTERED_LETTER -> {
-                if (detailsFromTest != null) {
-                    Assertions.assertEquals(detailsFromNotification.getPhysicalAddress(), detailsFromTest.getPhysicalAddress());
-                    Assertions.assertEquals(detailsFromNotification.getAnalogCost(), detailsFromTest.getAnalogCost());
-                }
-            }
-            case NOTIFICATION_VIEWED -> {
-                Assertions.assertNotNull(elementFromNotification.getLegalFactsIds());
-                Assertions.assertEquals(elementFromNotification.getLegalFactsIds().size(), elementFromTest.getLegalFactsIds().size());
-                for (int i = 0; i < elementFromNotification.getLegalFactsIds().size(); i++) {
-                    Assertions.assertEquals(elementFromNotification.getLegalFactsIds().get(i).getCategory(), elementFromTest.getLegalFactsIds().get(i).getCategory());
-                    Assertions.assertNotNull(elementFromNotification.getLegalFactsIds().get(i).getKey());
-                }
-                if (delegateInfoFromTest != null) {
-                    Assertions.assertEquals(delegateInfoFromNotification.getTaxId(), delegateInfoFromTest.getTaxId());
-                    Assertions.assertEquals(delegateInfoFromNotification.getDelegateType(), delegateInfoFromTest.getDelegateType());
-                    Assertions.assertEquals(delegateInfoFromNotification.getDenomination(), delegateInfoFromTest.getDenomination());
-                }
-            }
-            case COMPLETELY_UNREACHABLE -> {
-                if (Objects.nonNull(elementFromTest.getLegalFactsIds())) {
-                    assert elementFromNotification.getLegalFactsIds() != null;
-                    Assertions.assertEquals(elementFromNotification.getLegalFactsIds().size(), elementFromTest.getLegalFactsIds().size());
-                }
-                for (int i = 0; i < Objects.requireNonNull(elementFromNotification.getLegalFactsIds()).size(); i++) {
-                    Assertions.assertEquals(elementFromNotification.getLegalFactsIds().get(i).getCategory(), elementFromTest.getLegalFactsIds().get(i).getCategory());
-                    Assertions.assertNotNull(elementFromNotification.getLegalFactsIds().get(i).getKey());
-                }
-            }
-            case REFINEMENT -> {
-                if (detailsFromTest != null) {
-                    Assertions.assertEquals(detailsFromNotification.getRecIndex(), detailsFromTest.getRecIndex());
-                }
-            }
-            default ->
-                    throw new IllegalArgumentException("Valore non valido per timelineEventCategory: " + timelineEventCategory);
-        }
-    }
-
-    private void loadTimelineByDeliveryPush(String timelineEventCategory, DataTest dataFromTest, boolean existCheck) {
-        // calc how much time wait
-        Integer pollingTime = dataFromTest != null ? dataFromTest.getPollingTime() : null;
-        Integer numCheck = dataFromTest != null ? dataFromTest.getNumCheck() : null;
-        String pollingType = dataFromTest != null ? dataFromTest.getPollingType() : null;
-
-        TimingForPolling.TimingResult timingForElement = timingForPolling.getTimingForElement(timelineEventCategory);
-        if ("extraRapid".equals(pollingType)) {
-            timingForElement = timingForPolling.getTimingForElement(timelineEventCategory, false, true);
-        }
-
-        int defaultPollingTime = timingForElement.waiting();
-        int defaultNumCheck = timingForElement.numCheck();
-        int waitingTime = (pollingTime != null ? pollingTime : defaultPollingTime) * (numCheck != null ? numCheck : defaultNumCheck);
-
-        await()
-                .atMost(waitingTime, MILLISECONDS)
-                .with()
-                .pollInterval(pollingTime != null ? pollingTime : defaultPollingTime, MILLISECONDS)
-                .pollDelay(0, MILLISECONDS)
-                .ignoreExceptions()
-                .untilAsserted(() -> {
-                    TimelineElementV26 timelineElement = getTimelineByDeliveryPush(timelineEventCategory, dataFromTest);
-                    List<TimelineElementV26> timelineElementList = sharedSteps.getSentNotificationLastVersion().getTimeline();
-
-                    log.info("NOTIFICATION_TIMELINE: " + timelineElementList);
-                    Assertions.assertNotNull(timelineElementList);
-                    Assertions.assertNotEquals(0, timelineElementList.size());
-                    if (existCheck) {
-                        Assertions.assertNotNull(timelineElement);
-                    } else {
-                        Assertions.assertNull(timelineElement);
-                    }
-                });
+//    private void loadTimelineByDeliveryPush(String timelineEventCategory, DataTest dataFromTest, boolean existCheck) {
+//        // calc how much time wait
+//        Integer pollingTime = dataFromTest != null ? dataFromTest.getPollingTime() : null;
+//        Integer numCheck = dataFromTest != null ? dataFromTest.getNumCheck() : null;
+//        String pollingType = dataFromTest != null ? dataFromTest.getPollingType() : null;
+//
+//        TimingForPolling.TimingResult timingForElement = timingForPolling.getTimingForElement(timelineEventCategory);
+//        if ("extraRapid".equals(pollingType)) {
+//            timingForElement = timingForPolling.getTimingForElement(timelineEventCategory, false, true);
+//        }
+//
+//        int defaultPollingTime = timingForElement.waiting();
+//        int defaultNumCheck = timingForElement.numCheck();
+//        int waitingTime = (pollingTime != null ? pollingTime : defaultPollingTime) * (numCheck != null ? numCheck : defaultNumCheck);
+//
+//        await()
+//                .atMost(waitingTime, MILLISECONDS)
+//                .with()
+//                .pollInterval(pollingTime != null ? pollingTime : defaultPollingTime, MILLISECONDS)
+//                .pollDelay(0, MILLISECONDS)
+//                .ignoreExceptions()
+//                .untilAsserted(() -> {
+//                    TimelineElementV26 timelineElement = getTimelineByDeliveryPush(timelineEventCategory, dataFromTest);
+//                    List<TimelineElementV26> timelineElementList = sharedSteps.getSentNotificationLastVersion().getTimeline();
+//
+//                    log.info("NOTIFICATION_TIMELINE: " + timelineElementList);
+//                    Assertions.assertNotNull(timelineElementList);
+//                    Assertions.assertNotEquals(0, timelineElementList.size());
+//                    if (existCheck) {
+//                        Assertions.assertNotNull(timelineElement);
+//                    } else {
+//                        Assertions.assertNull(timelineElement);
+//                    }
+//                });
 
 //        PnPollingServiceTimelineSlowE2eV23 timelineSlowV23 = (PnPollingServiceTimelineSlowE2eV23) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_SLOW_V23);
 //
@@ -417,20 +420,20 @@ public class AvanzamentoNotificheB2bSteps {
 //        } else {
 //            Assertions.assertNull(timelineElement);
 //        }
-    }
+//    }
 
-    private TimelineElementV26 getTimelineByDeliveryPush(String timelineEventCategory, DataTest dataFromTest) {
-        String requestId = sharedSteps.getNotificationRequestId();
-        byte[] decodedBytes = Base64.getDecoder().decode(requestId);
-        String iun = new String(decodedBytes);
-        // get timeline from delivery-push
-        NotificationHistoryResponse notificationHistory = this.pnPrivateDeliveryPushExternalClient.getNotificationHistory(iun, sharedSteps.getRecipientsSize(), sharedSteps.getNotificationCreationDate());
-        List<TimelineElementV26> timelineElementList = notificationHistory.getTimeline().stream().map(x -> sharedSteps.deepCopy(x, TimelineElementV26.class)).toList();
-        FullSentNotificationV26 fullSentNotification = new FullSentNotificationV26();
-        fullSentNotification.setTimeline(timelineElementList);
-        sharedSteps.setNotificationIun(fullSentNotification.getIun()); //TODO MATTEO caso curioso...perché imposta una FullSentNotification vuota?
-        return getTimelineElementByIdOrCategory(timelineEventCategory, dataFromTest, iun, timelineElementList);
-    }
+//    private TimelineElementV26 getTimelineByDeliveryPush(String timelineEventCategory, DataTest dataFromTest) {
+//        String requestId = sharedSteps.getNotificationRequestId();
+//        byte[] decodedBytes = Base64.getDecoder().decode(requestId);
+//        String iun = new String(decodedBytes);
+//        // get timeline from delivery-push
+//        NotificationHistoryResponse notificationHistory = this.pnPrivateDeliveryPushExternalClient.getNotificationHistory(iun, sharedSteps.getRecipientsSize(), sharedSteps.getNotificationCreationDate());
+//        List<TimelineElementV26> timelineElementList = notificationHistory.getTimeline().stream().map(x -> sharedSteps.deepCopy(x, TimelineElementV26.class)).toList();
+//        FullSentNotificationV26 fullSentNotification = new FullSentNotificationV26();
+//        fullSentNotification.setTimeline(timelineElementList);
+//        sharedSteps.setNotificationIun(fullSentNotification.getIun()); //TODO MATTEO caso curioso...perché imposta una FullSentNotification vuota?
+//        return getTimelineElementByIdOrCategory(timelineEventCategory, dataFromTest, iun, timelineElementList);
+//    }
 
     private TimelineElementV26 getAndStoreTimelineByB2b(String timelineEventCategory, DataTest dataFromTest) {
         // proceed with default flux
@@ -453,26 +456,26 @@ public class AvanzamentoNotificheB2bSteps {
         return timelineElement;
     }
 
-    private void loadTimeline(String timelineEventCategory, boolean existCheck, @Transpose DataTest dataFromTest) {
-        TimelineElementV26 timelineElement;
-        if (!timelineEventCategory.equals(TimelineElementCategoryV26.REQUEST_REFUSED.getValue())) {
-            timelineElement = getAndStoreTimelineByB2b(timelineEventCategory, dataFromTest);
-            List<TimelineElementV26> timelineElementList = sharedSteps.getSentNotificationLastVersion().getTimeline();
-
-            log.info("NOTIFICATION_TIMELINE: " + timelineElementList);
-            String iun = sharedSteps.getNotificationIun();
-            Assertions.assertNotNull(timelineElementList, "timelineElementList is null. IUN: " + iun);
-            Assertions.assertNotEquals(0, timelineElementList.size(), "timelineElementList is empty. IUN: " + iun);
-            if (existCheck) {
-                Assertions.assertNotNull(timelineElement, "timelineElement is null. IUN: " + iun);
-            } else {
-                Assertions.assertNull(timelineElement, "timelineElement is not null. IUN: " + iun);
-            }
-        } else {
-            //GESTIONE LOAD TIMELINE E RECUPERO NOTIFICA CON CLIENT DI DELIVERY PUSH
-            loadTimelineByDeliveryPush(timelineEventCategory, dataFromTest, existCheck);
-        }
-    }
+//    private void loadTimeline(String timelineEventCategory, boolean existCheck, @Transpose DataTest dataFromTest) {
+//        TimelineElementV26 timelineElement;
+//        if (!timelineEventCategory.equals(TimelineElementCategoryV26.REQUEST_REFUSED.getValue())) {
+//            timelineElement = getAndStoreTimelineByB2b(timelineEventCategory, dataFromTest);
+//            List<TimelineElementV26> timelineElementList = sharedSteps.getSentNotificationLastVersion().getTimeline();
+//
+//            log.info("NOTIFICATION_TIMELINE: " + timelineElementList);
+//            String iun = sharedSteps.getNotificationIun();
+//            Assertions.assertNotNull(timelineElementList, "timelineElementList is null. IUN: " + iun);
+//            Assertions.assertNotEquals(0, timelineElementList.size(), "timelineElementList is empty. IUN: " + iun);
+//            if (existCheck) {
+//                Assertions.assertNotNull(timelineElement, "timelineElement is null. IUN: " + iun);
+//            } else {
+//                Assertions.assertNull(timelineElement, "timelineElement is not null. IUN: " + iun);
+//            }
+//        } else {
+//            //GESTIONE LOAD TIMELINE E RECUPERO NOTIFICA CON CLIENT DI DELIVERY PUSH
+//            loadTimelineByDeliveryPush(timelineEventCategory, dataFromTest, existCheck);
+//        }
+//    }
 
     @And("viene verificato che il numero di elementi di timeline {string} sia di {long}")
     public void getTimelineElementListSize(String timelineEventCategory, Long size, @Transpose DataTest dataFromTest) {
@@ -687,7 +690,7 @@ public class AvanzamentoNotificheB2bSteps {
     public void readingEventsOfTimelineElementOfNotificationV1(String timelineEventCategory) {
 
         WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder().build();
-        B2bStepsInterface b2bStepsInterface = getB2bStepsInterface();
+        B2bStepsInterface b2bStepsInterface = getB2bStepsInterface(NotificationVersion.V1);
         b2bStepsInterface.waitForEventOrStatus(TIMELINE_SLOW, TIMELINE, timelineEventCategory, filters);
         b2bStepsInterface.checkIfTimelineElementExists(false, null, null);
 
@@ -1255,7 +1258,8 @@ public class AvanzamentoNotificheB2bSteps {
     @Then("viene verificato che nell'elemento di timeline della notifica {string} sia presente il campo Digital Address da National Registry per l utente {int}")
     public void vieneVerificatoCheNellElementoDiTimelineDellaNotificaSiaPresenteIlCampoDigitalAddressDaNationalRegistryPerLUtente(String timelineEventCategory, Integer recipientIndex) {
         readingEventUpToTheTimelineElementOfNotificationPerUtente(timelineEventCategory, recipientIndex);
-        getB2bStepsInterface().performFurtherChecks(CHECK_DIGITAL_ADDRESS, null);
+        TimelineElementCheckFilters checkFilters = TimelineElementCheckFilters.builder().build();
+        getB2bStepsInterface().performFurtherChecks(CHECK_DIGITAL_ADDRESS, checkFilters);
 
 //        Assertions.assertNotNull(timelineElement);//questo viene verificato quando chiama readingEventUpToTheTimelineElementOfNotificationPerUtente (che a sua volta richiama checkIfTimelineElementExists)
 //        Assertions.assertNotNull(timelineElement.getDetails());
@@ -1301,7 +1305,7 @@ public class AvanzamentoNotificheB2bSteps {
         WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder()
                 .recipientIndex(recipientIndex)
                 .build();
-        B2bStepsInterface b2bStepsInterface = mapOfVersionSteps.get(NotificationVersion.V1);
+        B2bStepsInterface b2bStepsInterface = getB2bStepsInterface(NotificationVersion.V1);
         b2bStepsInterface.waitForEventOrStatus(TIMELINE_RAPID, TIMELINE, timelineEventCategory, filters);
         b2bStepsInterface.checkIfTimelineElementExists(false, null, null);
 
@@ -1969,14 +1973,14 @@ public class AvanzamentoNotificheB2bSteps {
 
     @And("l'avviso pagopa viene pagato correttamente dall'utente {int} V1")
     public void laNotificaVienePagataMultiV1(Integer recipientIndex) {
-        NotificationVersion notificationVersion = sharedSteps.getNotificationVersion("V1");
+        NotificationVersion notificationVersion = NotificationVersion.V1;
         B2bStepsInterface b2bStepsInterface = getB2bStepsInterface(notificationVersion);
         b2bStepsInterface.payAvvisoPagoPa(0, recipientIndex);
     }
 
     @And("l'avviso pagopa viene pagato correttamente dall'utente {int} V2")
     public void laNotificaVienePagataMultiV2(Integer recipientIndex) {
-        NotificationVersion notificationVersion = sharedSteps.getNotificationVersion("V2");
+        NotificationVersion notificationVersion = NotificationVersion.V2;
         B2bStepsInterface b2bStepsInterface = getB2bStepsInterface(notificationVersion);
         b2bStepsInterface.payAvvisoPagoPa(0, recipientIndex);
     }
@@ -2271,7 +2275,7 @@ public class AvanzamentoNotificheB2bSteps {
     public void siAttendeIlCorrettoPagamentoDellaNotificaV1() {
 
         WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder().build();
-        B2bStepsInterface b2bStepsInterface = mapOfVersionSteps.get(NotificationVersion.V1);
+        B2bStepsInterface b2bStepsInterface = getB2bStepsInterface(NotificationVersion.V1);
         b2bStepsInterface.waitForEventOrStatus(TIMELINE_RAPID, TIMELINE, PAYMENT, filters);
         b2bStepsInterface.checkIfTimelineElementExists(true, null, null);
 
@@ -2295,7 +2299,7 @@ public class AvanzamentoNotificheB2bSteps {
     public void siAttendeIlCorrettoPagamentoDellaNotificaV2() {
 
         WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder().build();
-        B2bStepsInterface b2bStepsInterface = mapOfVersionSteps.get(NotificationVersion.V2);
+        B2bStepsInterface b2bStepsInterface = getB2bStepsInterface(NotificationVersion.V2);
         b2bStepsInterface.waitForEventOrStatus(TIMELINE_RAPID, TIMELINE, PAYMENT, filters);
         b2bStepsInterface.checkIfTimelineElementExists(true, null, null);
 
@@ -2563,7 +2567,8 @@ public class AvanzamentoNotificheB2bSteps {
                 .build();
         B2bStepsInterface b2bStepsInterface = getB2bStepsInterface();
         b2bStepsInterface.waitForEventOrStatus(TIMELINE_RAPID, TIMELINE, timelineEventCategory, filters);
-        b2bStepsInterface.checkIfTimelineElementExists(true, CHECK_DIGITAL_ADDRESS, null);
+        TimelineElementCheckFilters checkFilters = TimelineElementCheckFilters.builder().build();
+        b2bStepsInterface.checkIfTimelineElementExists(true, CHECK_DIGITAL_ADDRESS, checkFilters);
 
 //        PnPollingServiceTimelineRapidV26 timelineRapidV25 = (PnPollingServiceTimelineRapidV26) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_RAPID_V26);
 //        PnPollingResponseV26 pnPollingResponseV26 = timelineRapidV25.waitForEvent(sharedSteps.getNotificationIun(),
@@ -2583,51 +2588,57 @@ public class AvanzamentoNotificheB2bSteps {
 //        }
     }
 
-    //TODO MATTEO REWORK
-    @Then("viene verificato che l'elemento di timeline {string} esista")
-    public void vieneVerificatoElementoTimeline(String timelineEventCategory, @Transpose DataTest dataFromTest) {
-        boolean mustLoadTimeline = dataFromTest != null && dataFromTest.getLoadTimeline();
-        if (mustLoadTimeline) {
-            loadTimeline(timelineEventCategory, true, dataFromTest);
-        }
-        try {
-            List<TimelineElementV26> timelineElements = sharedSteps.getTimelineElementsByEventId(timelineEventCategory, dataFromTest);
-            assertThat(timelineElements)
-                    .withFailMessage("Not found a time element '%s'. IUN: %s".formatted(timelineEventCategory, sharedSteps.getNotificationIun()))
-                    .isNotEmpty();
-
-            if (dataFromTest != null && dataFromTest.getTimelineElement() != null) {
-                boolean atLeastOneSuccessful = false;
-                AssertionFailedError assertionFailedError = null;
-                for (TimelineElementV26 te : timelineElements) {
-                    try {
-                        log.info("TIMELINE_ELEMENT: " + te);
-                        checkTimelineElementEquality(timelineEventCategory, te, dataFromTest);
-
-                        // se si arriva a questo punto, allora l'ultimo check ha avuto successo e non è necessario continuare
-                        atLeastOneSuccessful = true;
-                        break;
-                    } catch (AssertionFailedError e) {
-                        // se si arriva a questo punto allora l'ultimo check ha fallito e ci si prepara al prossimo
-                        assertionFailedError = e;
-                    }
-                }
-
-                // se nessun confronto ha avuto successo allora di certo sarà stata lanciata un'eccezione
-                if (!atLeastOneSuccessful) {
-                    // si rilancia l'ultima eccezione catturata
-                    throw assertionFailedError;
-                }
-            }
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
-        }
-    }
-
     @Then("viene verificato che l'ultimo tentativo effettuato abbia indice {int}")
     public void vieneVerificatoCheUltimoTentativoEffettuatoAbbiaIndice(Integer index) {
-        getB2bStepsInterface().checkIfLastAttemptIndexMatch(index);
+        getB2bStepsInterface().checkIfLastAttemptMatchesIndex(index);
     }
+
+    //TODO MATTEO: IMPORTANTISSIMO, sostituisce vieneVerificatoElementoTimeline
+    @Then("viene verificato che l'elemento di timeline {string} esista")
+    public void checkIfTimelineElementExists(String timelineEventCategory, Map<String, String> data) {
+        B2bStepsInterface b2bStepsInterface = getB2bStepsInterface();
+        b2bStepsInterface.checkIfTimelineElementFromDataExists(true, timelineEventCategory, data);
+    }
+
+//    public void vieneVerificatoElementoTimeline(String timelineEventCategory, @Transpose DataTest dataFromTest) {
+//        boolean mustLoadTimeline = dataFromTest != null && dataFromTest.isLoadTimeline();
+//        if (mustLoadTimeline) {
+//            loadTimeline(timelineEventCategory, true, dataFromTest);
+//        }
+//        try {
+//            List<TimelineElementV26> timelineElements = sharedSteps.getTimelineElementsByEventId(timelineEventCategory, dataFromTest);
+//            assertThat(timelineElements)
+//                    .withFailMessage("Not found a time element '%s'. IUN: %s".formatted(timelineEventCategory, sharedSteps.getNotificationIun()))
+//                    .isNotEmpty();
+//
+//            if (dataFromTest != null && dataFromTest.getTimelineElement() != null) {
+//                boolean atLeastOneSuccessful = false;
+//                AssertionFailedError assertionFailedError = null;
+//                for (TimelineElementV26 te : timelineElements) {
+//                    try {
+////                        this.lastTimelineElement = timelineElement;
+//                        log.info("TIMELINE_ELEMENT: " + te);
+//                        checkTimelineElementEquality(timelineEventCategory, te, dataFromTest);
+//
+//                        // se si arriva a questo punto, allora l'ultimo check ha avuto successo e non è necessario continuare
+//                        atLeastOneSuccessful = true;
+//                        break;
+//                    } catch (AssertionFailedError e) {
+//                        // se si arriva a questo punto allora l'ultimo check ha fallito e ci si prepara al prossimo
+//                        assertionFailedError = e;
+//                    }
+//                }
+//
+//                // se nessun confronto ha avuto successo allora di certo sarà stata lanciata un'eccezione
+//                if (!atLeastOneSuccessful) {
+//                    // si rilancia l'ultima eccezione catturata
+//                    throw assertionFailedError;
+//                }
+//            }
+//        } catch (AssertionFailedError assertionFailedError) {
+//            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+//        }
+//    }
 
     /**
      * Checks that a certain timeline element has a field with a text value compatible with the specified regular expression.
@@ -2643,27 +2654,36 @@ public class AvanzamentoNotificheB2bSteps {
     @And("viene verificato che l'elemento di timeline {string} con evento {string} abbia un valore per il campo {string} compatibile con l'espressione regolare {string}")
     public void vieneVerificatoCheElementoTimelineAbbiaUnValoreDiCampoCompatibileConRegex(String timelineEventCategory, String eventId, String fieldPath, String regex) {
 
-        DataTest dataTest = new DataTest();
-        TimelineElementV26 testTimelineElement = new TimelineElementV26();
-        TimelineElementDetailsV26 timelineElementDetails = new TimelineElementDetailsV26();
+        B2bStepsInterface b2bStepsInterface = getB2bStepsInterface();
+        b2bStepsInterface.searchCustomTimelineElementInTimeline(eventId, timelineEventCategory);
+        TimelineElementCheckFilters checkFilters = TimelineElementCheckFilters.builder()
+                .fieldPath(fieldPath)
+                .fieldRegex(regex)
+                .build();
+        b2bStepsInterface.performFurtherChecks(CHECK_FIELD_MATCHES_REGEX, checkFilters);
 
-        timelineElementDetails.deliveryDetailCode(eventId);
-        testTimelineElement.details(timelineElementDetails);
-        dataTest.setTimelineElement(testTimelineElement);
 
-        TimelineElementV26 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataTest);
-        try {
-            Assertions.assertNotNull(timelineElement, "Not found the time element (%s,%s)".formatted(timelineEventCategory, eventId));
-
-            String fieldValue = getProperty(fieldPath, timelineElement);
-            Assertions.assertNotNull(fieldValue, "Field %s has NULL value in timeline element".formatted(fieldPath));
-
-            Assertions.assertTrue(fieldValue.matches(regex), "Field %s with value %s does not match regex %s".formatted(fieldPath, fieldValue, regex));
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            sharedSteps.throwAssertionErrorWithIUN(new AssertionFailedError("Error accessing field %s".formatted(fieldPath)));
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
-        }
+//        DataTest dataTest = new DataTest();
+//        TimelineElementV26 testTimelineElement = new TimelineElementV26();
+//        TimelineElementDetailsV26 timelineElementDetails = new TimelineElementDetailsV26();
+//
+//        timelineElementDetails.deliveryDetailCode(eventId);
+//        testTimelineElement.details(timelineElementDetails);
+//        dataTest.setTimelineElement(testTimelineElement);
+//
+//        TimelineElementV26 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataTest);
+//        try {
+//            Assertions.assertNotNull(timelineElement, "Not found the time element (%s,%s)".formatted(timelineEventCategory, eventId));
+//
+//            String fieldValue = getProperty(fieldPath, timelineElement);
+//            Assertions.assertNotNull(fieldValue, "Field %s has NULL value in timeline element".formatted(fieldPath));
+//
+//            Assertions.assertTrue(fieldValue.matches(regex), "Field %s with value %s does not match regex %s".formatted(fieldPath, fieldValue, regex));
+//        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+//            sharedSteps.throwAssertionErrorWithIUN(new AssertionFailedError("Error accessing field %s".formatted(fieldPath)));
+//        } catch (AssertionFailedError assertionFailedError) {
+//            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+//        }
     }
 
     /**
@@ -2731,30 +2751,36 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
     @And("viene verificato che l'elemento di timeline {string} non esista")
-    public void vieneVerificatoCheElementoTimelineNonEsista(String timelineEventCategory, @Transpose DataTest dataFromTest) {
+    public void vieneVerificatoCheElementoTimelineNonEsista(String timelineEventCategory, Map<String, String> dataMap) {
 
-        loadTimeline(timelineEventCategory, false, dataFromTest);
-        TimelineElementV26 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
-        try {
-            log.info("TIMELINE_ELEMENT: " + timelineElement);
-            Assertions.assertNull(timelineElement);
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
-        }
+        getB2bStepsInterface().verifyTimelineElementDoesNotExists(true, timelineEventCategory, dataMap);
+
+        //TODO MATTEO TEST
+//        loadTimeline(timelineEventCategory, false, dataTest);
+//        TimelineElementV26 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataMap);
+//        try {
+//            log.info("TIMELINE_ELEMENT: " + timelineElement);
+//            Assertions.assertNull(timelineElement);
+//        } catch (AssertionFailedError assertionFailedError) {
+//            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+//        }
     }
 
     /* TODO 12/02/2025 Accorpare con vieneVerificatoCheElementoTimelineNonEsista(String timelineEventCategory, @Transpose DataTest dataFromTest)
-     * parametrizzando il load della timeline.
-     */
+        parametrizzando il load della timeline. */
     @And("viene verificato che l'elemento di timeline {string} non esista nella timeline caricata")
-    public void vieneVerificatoCheElementoTimelineNonEsistaNotLoadTimeline(String timelineEventCategory, @Transpose DataTest dataFromTest) {
-        TimelineElementV26 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
-        try {
-            log.info("TIMELINE_ELEMENT: " + timelineElement);
-            Assertions.assertNull(timelineElement);
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
-        }
+    public void vieneVerificatoCheElementoTimelineNonEsistaNotLoadTimeline(String timelineEventCategory, Map<String, String> dataMap) {
+
+        getB2bStepsInterface().verifyTimelineElementDoesNotExists(false, timelineEventCategory, dataMap);
+
+        //TODO MATTEO TEST
+//        TimelineElementV26 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataMap);
+//        try {
+//            log.info("TIMELINE_ELEMENT: " + timelineElement);
+//            Assertions.assertNull(timelineElement);
+//        } catch (AssertionFailedError assertionFailedError) {
+//            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+//        }
     }
 
     @And("viene schedulato il perfezionamento per decorrenza termini per il caso {string}")
@@ -3630,7 +3656,7 @@ public class AvanzamentoNotificheB2bSteps {
     public void readingNotEventUpToTheTimelineElementOfNotificationV23(String timelineEventCategory) {
 
         WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder().build();
-        B2bStepsInterface b2bStepsInterface = mapOfVersionSteps.get(NotificationVersion.V23);
+        B2bStepsInterface b2bStepsInterface = getB2bStepsInterface(NotificationVersion.V23);
         b2bStepsInterface.waitForEventOrStatus(TIMELINE_RAPID, TIMELINE, timelineEventCategory, filters);
         b2bStepsInterface.checkIfTimelineElementExists(false, null, null);
 
@@ -3685,7 +3711,6 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertNotNull(firstElementToCheck.getDetails().getCompletionWorkflowDate(), "CompletionWorkflowDate for first element to check not found iun: " + iun);
             return firstElementToCheck.getDetails().getCompletionWorkflowDate();
         } else return firstElementToCheck.getEventTimestamp();
-
     }
 
     private TimelineElementV26 getElementToCheck(String secondElement) {

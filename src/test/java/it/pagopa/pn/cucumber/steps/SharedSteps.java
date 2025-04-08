@@ -1122,7 +1122,7 @@ public class SharedSteps {
         event.setRecIndex(timelineElementDetails == null ? null : timelineElementDetails.getRecIndex());
         event.setCourtesyAddressType(digitalAddress == null ? null : digitalAddress.getType());
         event.setSource(digitalAddressSource == null ? null : digitalAddressSource.getValue());
-        event.setIsFirstSendRetry(dataFromTest.getIsFirstSendRetry());
+        event.setIsFirstSendRetry(dataFromTest.isFirstSendRetry());
         event.setSentAttemptMade(timelineElementDetails == null ? null : timelineElementDetails.getSentAttemptMade());
         event.setProgressIndex(dataFromTest.getProgressIndex());
         return event;
@@ -1162,7 +1162,7 @@ public class SharedSteps {
                 .orElse(null);
     }
 
-    private String getIun(String timelineEventCategory) {
+    public String getIun(String timelineEventCategory) {
         if (timelineEventCategory.equals(REQUEST_REFUSED)) {
             String requestId = getNotificationRequestId();
             byte[] decodedBytes = Base64.getDecoder().decode(requestId);

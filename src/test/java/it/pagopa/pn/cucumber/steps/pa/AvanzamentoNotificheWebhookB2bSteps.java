@@ -40,6 +40,7 @@ import java.time.OffsetDateTime;
 import java.util.*;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static org.assertj.core.api.Assumptions.assumeThat;
 
 @Slf4j
 public class AvanzamentoNotificheWebhookB2bSteps {
@@ -148,7 +149,11 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     private void logError(AssertionFailedError assertionFailedError, String iun, UUID streamId) {
         String errorLog = String.format("{IUN: %s -WEBHOOK %s }", iun, streamId);
         String message = assertionFailedError.getMessage() + errorLog;
-        throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        sharedSteps.throwAssertionErrorWithIUN(new AssertionFailedError(
+                message,
+                assertionFailedError.getExpected(),
+                assertionFailedError.getActual(),
+                assertionFailedError.getCause()));
     }
 
     private void setPaWebhook(String paName) {
@@ -312,10 +317,9 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     @Given("(allo)(agli) stream versione {string} si setta il campo waitForAccepted introdotto con la versione {int} a {string}")
     public void setWaitForAccepted(String version, int introducingVersion, String waitForAccepted) {
         StreamVersion streamVersion = getStreamVersion(version);
-        if (streamVersion.getValue() < introducingVersion) {
-            throw new IllegalArgumentException(
-                    "Questo step deve comparire solo nei file feature dalla versione " + introducingVersion + "in poi");
-        }
+        assumeThat(streamVersion.getValue())
+                .as("Test skipped: questo step deve comparire solo nei file feature dalla versione  " + introducingVersion + " in poi")
+                .isGreaterThanOrEqualTo(introducingVersion);
         WebhookStepsInterface webhookStepsInterface = getWebhookStep(streamVersion);
         webhookStepsInterface.setValueForWaitForAccepted(Boolean.parseBoolean(waitForAccepted));
     }
@@ -370,20 +374,18 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     public void disableAllStreamsUpdateApiKey(String pa, String version) {
         updateApiKeyForStream();
         StreamVersion streamVersion = getStreamVersion(version);
-        if (streamVersion.getValue() < 23) {
-            throw new IllegalArgumentException(
-                    "Gli stream si possono disabilitare solo dalla versione 23 in poi");
-        }
+        assumeThat(streamVersion.getValue())
+                .as("Test Skipped: disabilitazione stream prevista solo dalla versione 23 in poi")
+                .isGreaterThanOrEqualTo(23);
         disableStreams(streamVersion);
     }
 
     @And("si disabilita(no) (lo)(gli) stream {string} creat(o)(i) per il comune {string}")
     public void disableAllStreams(String version, String pa) {
         StreamVersion streamVersion = getStreamVersion(version);
-        if (streamVersion.getValue() < 23) {
-            throw new IllegalArgumentException(
-                    "Gli stream si possono disabilitare solo dalla versione 23 in poi");
-        }
+        assumeThat(streamVersion.getValue())
+                .as("Test Skipped: disabilitazione stream prevista solo dalla versione 23 in poi")
+                .isGreaterThanOrEqualTo(23);
         disableStreams(streamVersion);
     }
 
@@ -392,10 +394,9 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         updateApiKeyForStream();
         UUID notExistingStreamId = UUID.randomUUID();
         StreamVersion streamVersion = getStreamVersion(version);
-        if (streamVersion.getValue() < 23) {
-            throw new IllegalArgumentException(
-                    "Gli stream si possono disabilitare solo dalla versione 23 in poi");
-        }
+        assumeThat(streamVersion.getValue())
+                .as("Test Skipped: disabilitazione stream prevista solo dalla versione 23 in poi")
+                .isGreaterThanOrEqualTo(23);
         WebhookStepsInterface webhookStepsInterface = getWebhookStep(streamVersion);
         try {
             webhookStepsInterface.disableStream(notExistingStreamId);
@@ -592,9 +593,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             Assertions.assertNotNull(progressResponseElement);
             log.info("EventProgress: " + progressResponseElement);
         } catch (AssertionFailedError assertionFailedError) {
-            String errorLog = String.format("{IUN: %s -WEBHOOK %s }", sharedSteps.getNotificationIun(), webhookStepsInterface.getStreamId());
-            String message = assertionFailedError.getMessage() + errorLog;
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+            logError(assertionFailedError, sharedSteps.getNotificationIun(), webhookStepsInterface.getStreamId());
         }
     }
 
