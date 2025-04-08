@@ -137,7 +137,7 @@ public class AvanzamentoNotificheB2bSteps {
     //TODO MATTEO TEST
     @Then("vengono letti gli eventi fino allo stato della notifica {string}")
     public void readingEventUpToTheStatusOfNotification(String status) {
-        readEventsUpToStatus("V24", status);
+        readEventsUpToStatus(MOST_RECENT, status);
 //        PnPollingPredicate pnPollingPredicate = new PnPollingPredicate();
 //        pnPollingPredicate.setNotificationStatusHistoryElementPredicateV26(
 //                statusHistory -> statusHistory.getStatus().getValue().equals(status)
@@ -203,7 +203,7 @@ public class AvanzamentoNotificheB2bSteps {
     //TODO MATTEO TEST
     @Then("vengono letti gli eventi fino allo stato della notifica {string} per il destinatario {int} e presente l'evento {string}")
     public void readingEventUpToTheStatusOfNotification(String status, int recIndex, String evento) {
-        readEventsUpToStatus("V24", status);
+        readEventsUpToStatus(MOST_RECENT, status);
         getB2bStepsInterface().checkEventPresenceForRecipient(recIndex, evento);
 //        PnPollingServiceStatusRapidV26 statusRapidV26 = (PnPollingServiceStatusRapidV26) pnPollingFactory.getPollingService(PnPollingStrategy.STATUS_RAPID_V26);
 //
@@ -555,7 +555,7 @@ public class AvanzamentoNotificheB2bSteps {
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica annullata {string}")
     public void readingEventUpToTheTimelineElementOfNotificationDelete(String timelineEventCategory) {
         //TODO MATTEO TEST
-        readEventsUpToTimelineElement("V24", timelineEventCategory);
+        readEventsUpToTimelineElement(MOST_RECENT, timelineEventCategory);
 //        readingEventUpToTheTimelineElementOfNotificationForCategory(timelineEventCategory);
     }
 
@@ -563,14 +563,14 @@ public class AvanzamentoNotificheB2bSteps {
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string}")
     public void readingEventUpToTheTimelineElementOfNotification(String timelineEventCategory) {
         //TODO MATTEO TEST
-        readEventsUpToTimelineElement("V24", timelineEventCategory);
+        readEventsUpToTimelineElement(MOST_RECENT, timelineEventCategory);
 //        readingEventUpToTheTimelineElementOfNotificationForCategory(timelineEventCategory);
     }
 
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} abbia notificationCost uguale a {string}")
     public void TimelineElementOfNotification(String timelineEventCategory, String cost) {
         //TODO MATTEO TEST
-        readEventsUpToTimelineElement("V24", timelineEventCategory);
+        readEventsUpToTimelineElement(MOST_RECENT, timelineEventCategory);
         getB2bStepsInterface().checkNotificationCost(cost);
 //        TimelineElementV26 event = readingEventUpToTheTimelineElementOfNotificationForCategory(timelineEventCategory);
 //        Long notificationCost = event.getDetails().getNotificationCost();
@@ -585,7 +585,7 @@ public class AvanzamentoNotificheB2bSteps {
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} con indirizzo normalizzato:")
     public void vengonoLettiGliEventiFinoAllElementoDiTimelineDellaNotificaConIndirizzoNormalizzato(String timelineEventCategory, DataTable table) {
         //TODO MATTEO TEST
-        readEventsUpToTimelineElement("V24", timelineEventCategory);
+        readEventsUpToTimelineElement(MOST_RECENT, timelineEventCategory);
         getB2bStepsInterface().checkNormalizedAddress(table);
 //        TimelineElementV26 timelineElement = readingEventUpToTheTimelineElementOfNotificationForCategory(timelineEventCategory);
 //
