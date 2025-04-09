@@ -623,7 +623,7 @@ public class SharedSteps {
     @When("la notifica viene inviata tramite api b2b dal {string} e si annulla prima che lo stato diventi REFUSED")
     public void laNotificaVieneInviataRefusedAndCancelled(String paName) {
         setPaAndSenderTaxId(paName);
-        getNotificationStepInterface().sendNotification(1000, NOTIFICATION_STATUS_NOT_REFUSED, VALIDATION_STATUS);
+        getNotificationStepInterface().sendNotification(1000, NOTIFICATION_STATUS_CANCELLED, VALIDATION_STATUS);
     }
 
     //TODO: per test normalizzatore
@@ -1015,7 +1015,7 @@ public class SharedSteps {
 
     private String decorateErrorMsg(String originalMessage) {
         return originalMessage +
-                " {IUN: " + Optional.ofNullable(getNotificationIun())
+                " {VERSION: " + versionUsed.name() + ", IUN: " + Optional.ofNullable(getNotificationIun())
                 .orElse("not found") + " }";
     }
 

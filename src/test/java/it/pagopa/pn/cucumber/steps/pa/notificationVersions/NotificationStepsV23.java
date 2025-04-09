@@ -130,7 +130,7 @@ public class NotificationStepsV23 implements NotificationStepsInterface {
                     sharedSteps.setErrorCode(errorCode);
                     threadWait(wait);
                     Assertions.assertFalse(errorCode.isEmpty());
-                } else if (status.equalsIgnoreCase(NOTIFICATION_STATUS_NOT_REFUSED)) {
+                } else if (status.equalsIgnoreCase(NOTIFICATION_STATUS_CANCELLED)) {
                     RequestStatus response = sharedSteps.getB2bUtils().getClient().notificationCancellation(
                             new String(Base64Utils.decodeFromString(notificationResponse.getNotificationRequestId())));
                     Assertions.assertNotNull(response);

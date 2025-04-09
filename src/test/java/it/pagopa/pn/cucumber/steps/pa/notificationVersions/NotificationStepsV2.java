@@ -118,7 +118,7 @@ public class NotificationStepsV2 implements NotificationStepsInterface {
                     sharedSteps.setErrorCode(errorCode);
                     threadWait(wait);
                     Assertions.assertFalse(errorCode.isEmpty());
-                } else if (status.equalsIgnoreCase(NOTIFICATION_STATUS_NOT_REFUSED)) {
+                } else if (status.equalsIgnoreCase(NOTIFICATION_STATUS_CANCELLED)) {
                     it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.RequestStatus response = sharedSteps.getB2bUtils().getClient().notificationCancellation(
                             new String(Base64Utils.decodeFromString(notificationResponse.getNotificationRequestId())));
                     Assertions.assertNotNull(response);
