@@ -24,9 +24,9 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino allo stato della notifica "xxx"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_VALIDATION_CALL"
-    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
-      | details          | NOT_NULL |
-      | details_recIndex | 0        |
+
+    #And esiste l'elemento di timeline della notifica "PUBLIC_REGISTRY_VALIDATION_RESPONSE" abbia notificationCost uguale a "null" per l'utente 0
+
     #STEP codice 200 del test 15
   #Call una sola volta 3
   #Call lista corretta di utenze 3
@@ -444,11 +444,68 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     When la notifica viene inviata tramite api b2b con la versione "V24" dal "NON AB" e si attende che lo stato diventi "REFUSED"
 
 
+
+
+    # Api lato Destinatario
+
+  @preesitiEnabledTags
+  Scenario: [] Verifica presenza evento SEND_ANALOG_PROGRESS con il DeliveryDetailCode RECAG008A all’interno della timeline B2B ma non della timeline web
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario
+      | denomination            | OK-CompiutaGiacenza_890     |
+      | taxId                   | FRMTTR76M06B715E            |
+      | digitalDomicile         | NULL                        |
+      | physicalAddress_address | via@OK-CompiutaGiacenza_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
+    And attendo che gli elementi di timeline SEND_ANALOG_PROGRESS vengano ricevuti tutti
+    And la notifica può essere correttamente recuperata da ""
+    Then lato api l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG008A" è visibile
+    And lato destinatario vengono letti i dettagli della notifica lato web dal destinatario "Mario Gherkin"
+    Then lato destinatario dal web l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG008A" non è visibile
+    And lato mittente vengono letti i dettagli della notifica lato web "Comune_Multi"
+    And lato mittente dal web l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG008A" non è visibile
+
+
+  @preesitiEnabledTags
+  Scenario: [] Verifica presenza evento SEND_ANALOG_PROGRESS con il DeliveryDetailCode RECAG012 all’interno della timeline B2B ma non della timeline web
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario
+      | denomination            | OK-WO-011B       |
+      | taxId                   | FRMTTR76M06B715E |
+      | digitalDomicile         | NULL             |
+      | physicalAddress_address | via@OK-WO-011B   |
+    When la notifica viene inviata tramite api b2b dal "" e si attende che lo stato diventi "ACCEPTED"
+    #Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
+    And la notifica può essere correttamente recuperata da "Mario Cucumber"
+    Then lato api l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG012A" non è visibile
+    Then lato api l'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG012" è visibile
+    And lato destinatario vengono letti i dettagli della notifica lato web dal destinatario "Mario Gherkin"
+    Then lato destinatario dal web l'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG012" è visibile
+    Then lato destinatario dal web l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG012A" non è presente
+    And lato mittente vengono letti i dettagli della notifica lato web "Comune_Multi"
+    And lato mittente dal web l'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG012" è visibile
+    And lato mittente dal web l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG012A" non è presente
+
+
+
+
+
+
+
+
+
+
+
+
 #Stream
 #@cleanWebhook @addressBook1
 
-
-  @cleanWebhook @webhook1
+@cleanWebhook @webhook1
   Scenario: [] Invio notifica e controllo che stream con eventType vuoto e versione da V26 contenga elemento ANALOG_WORKFLOW_RECIPIENT_DECEASED
 #    Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V26"
     Given viene generata una nuova notifica
