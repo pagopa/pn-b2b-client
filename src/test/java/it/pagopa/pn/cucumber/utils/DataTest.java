@@ -5,8 +5,7 @@ import it.pagopa.pn.cucumber.utils.datatest.AbstractDataTest;
 import lombok.Data;
 
 /**
- * TODO: Al momento la tengo perchè è usata anche in altri punti fuori da AvanzamentoNotificheB2BSteps
- * ma poi diventerà superflua
+ * TODO: Al momento la tengo perchè è usata anche in altri punti fuori da AvanzamentoNotificheB2BSteps ma poi diventerà superflua
  */
 @Data
 public class DataTest extends AbstractDataTest {

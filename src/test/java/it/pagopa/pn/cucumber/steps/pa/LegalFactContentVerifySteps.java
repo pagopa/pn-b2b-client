@@ -333,7 +333,7 @@ public class LegalFactContentVerifySteps {
             String legalFactUrl = downloadLegalFact(legalFactCategory, false, false, true, null);
             setLegalFactUrl(legalFactUrl);
         } catch (AssertionFailedError assertionFailedError) {
-            Assertions.assertEquals(assertionFailedError.getCause().getMessage().substring(0, 3), statusCode);
+            Assertions.assertEquals(statusCode, assertionFailedError.getCause().getMessage().substring(0, 3));
         }
     }
 

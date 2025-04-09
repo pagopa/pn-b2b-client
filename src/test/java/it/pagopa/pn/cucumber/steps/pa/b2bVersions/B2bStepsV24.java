@@ -160,7 +160,7 @@ public class B2bStepsV24 implements B2bStepsInterface {
     @Override
     public void checkPriceForRecipient(int recipientIndex, String price) {
         String iun = b2bSteps.getSharedSteps().getNotificationIun();
-        FullSentNotificationV26 fullSentNotification = b2bSteps.getB2bClient().getSentNotificationV26(iun);
+        FullSentNotificationV26 fullSentNotification = getFullSentNotificationVersioned();
         List<NotificationPaymentItem> listNotificationPaymentItem = fullSentNotification.getRecipients().get(recipientIndex).getPayments();
         if (listNotificationPaymentItem != null) {
             for (NotificationPaymentItem notificationPaymentItem : listNotificationPaymentItem) {
@@ -184,8 +184,7 @@ public class B2bStepsV24 implements B2bStepsInterface {
 
     @Override
     public void payAvvisoPagoPa(Integer paymentIndex, Integer recipientIndex) {
-        String iun = b2bSteps.getSharedSteps().getNotificationIun();
-        FullSentNotificationV26 fullSentNotification = b2bSteps.getB2bClient().getSentNotificationV26(iun);
+        FullSentNotificationV26 fullSentNotification = getFullSentNotificationVersioned();
         String creditorTaxId = fullSentNotification.getRecipients().get(recipientIndex).getPayments().get(paymentIndex).getPagoPa().getCreditorTaxId();
         String noticeCode = fullSentNotification.getRecipients().get(recipientIndex).getPayments().get(paymentIndex).getPagoPa().getNoticeCode();
         NotificationPriceResponseV23 notificationPrice = b2bSteps.getB2bClient().getNotificationPriceV23(creditorTaxId, noticeCode);
@@ -372,7 +371,7 @@ public class B2bStepsV24 implements B2bStepsInterface {
         if (!timelineEventCategory.equals(REQUEST_REFUSED)) {
             timelineElement = getAndStoreTimelineByB2b(timelineEventCategory, dataTest);
             String iun = b2bSteps.getSharedSteps().getNotificationIun();
-            List<TimelineElementV26> timelineElementList = b2bSteps.getB2bClient().getSentNotificationV26(iun).getTimeline();
+            List<TimelineElementV26> timelineElementList = getFullSentNotificationVersioned().getTimeline();
             log.info("NOTIFICATION_TIMELINE: " + timelineElementList);
             Assertions.assertNotNull(timelineElementList, "timelineElementList is null. IUN: " + iun);
             Assertions.assertNotEquals(0, timelineElementList.size(), "timelineElementList is empty. IUN: " + iun);
@@ -410,9 +409,8 @@ public class B2bStepsV24 implements B2bStepsInterface {
                 .pollDelay(0, MILLISECONDS)
                 .ignoreExceptions()
                 .untilAsserted(() -> {
-                    String iun = b2bSteps.getSharedSteps().getNotificationIun();
                     TimelineElementV26 timelineElement = getTimelineByDeliveryPush(timelineEventCategory, dataTest);
-                    List<TimelineElementV26> timelineElementList = b2bSteps.getB2bClient().getSentNotificationV26(iun).getTimeline();
+                    List<TimelineElementV26> timelineElementList = getFullSentNotificationVersioned().getTimeline();
                     log.info("NOTIFICATION_TIMELINE: " + timelineElementList);
                     Assertions.assertNotNull(timelineElementList);
                     Assertions.assertNotEquals(0, timelineElementList.size());
@@ -467,7 +465,7 @@ public class B2bStepsV24 implements B2bStepsInterface {
      */
     private List<TimelineElementV26> getTimelineElementsByEventId(String timelineEventCategory, DataTestV24 dataFromTest) {
         String iun = b2bSteps.getSharedSteps().getIun(timelineEventCategory);
-        FullSentNotificationV26 fullSentNotification = b2bSteps.getB2bClient().getSentNotificationV26(iun);
+        FullSentNotificationV26 fullSentNotification = getFullSentNotificationVersioned();
         List<TimelineElementV26> timelineElementList = fullSentNotification.getTimeline();
 
         if (dataFromTest != null && dataFromTest.getTimelineElement() != null) {
@@ -697,8 +695,7 @@ public class B2bStepsV24 implements B2bStepsInterface {
                         timelineElement, Objects.requireNonNull(timelineElement).getDetails(), Objects.requireNonNull(timelineElement.getDetails()).getSchedulingDate());
                 long delayMillis = 0;
                 OffsetDateTime digitalDeliveryCreationRequestDate = null;
-                String iun = b2bSteps.getSharedSteps().getNotificationIun();
-                FullSentNotificationV26 fullSentNotification = b2bSteps.getB2bClient().getSentNotificationV26(iun);
+                FullSentNotificationV26 fullSentNotification = getFullSentNotificationVersioned();
                 for (TimelineElementV26 element : fullSentNotification.getTimeline()) {
                     if (Objects.requireNonNull(element.getCategory()).getValue().equals("DIGITAL_DELIVERY_CREATION_REQUEST")
                             && Objects.requireNonNull(element.getDetails()).getRecIndex().equals(filterParams.getRecipientIndex())

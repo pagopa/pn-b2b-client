@@ -46,6 +46,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.awaitility.Awaitility.await;
 
 @Slf4j
@@ -373,14 +375,27 @@ public class RicezioneNotificheWebSteps {
 
     @Then("(il download)(il recupero) ha prodotto un errore con status code {string}")
     public void operationProducedErrorWithStatusCode(String statusCode) {
-        Assertions.assertTrue((this.notificationError != null) &&
-                (this.notificationError.getStatusCode().toString().substring(0, 3).equals(statusCode)));
+        try {
+            assertSoftly(softly -> {
+                assertThat(notificationError)
+                        .as("L'operazione non ha prodotto l'errore atteso")
+                        .isNotNull();
+                assertThat(notificationError.getStatusCode().toString().substring(0, 3))
+                        .as("Il codice di errore non coincide con quanto atteso")
+                        .isEqualTo(statusCode);
+            });
+        } catch (AssertionFailedError e) {
+            sharedSteps.throwAssertionErrorWithIUN(e);
+        }
     }
 
     @Then("(il download)(il recupero) non ha prodotto errori")
     public void operationProducedErrorWithStatusCode() {
         try {
-            Assertions.assertNull(this.notificationError);
+            assertThat(notificationError)
+                    .as("L'operazione non dovrebbe aver prodotto errori")
+                    .isNull();
+            //TODO: se abbiamo appurato che è null la consume è del tutto inutile
             Assertions.assertNull(sharedSteps.consumeNotificationError());
         } catch (AssertionFailedError e) {
             sharedSteps.throwAssertionErrorWithIUN(e);
