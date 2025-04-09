@@ -54,7 +54,7 @@ public class EServiceTemplateRiskAnalysisUpdateSteps {
         List<EServiceRiskAnalysis> riskAnalysis = eServiceTemplateClient.getEServiceTemplate(
             sharedStepsContext.getXCorrelationId(),
             eServiceTemplateId).getRiskAnalysis();
-        if(isEmpty(riskAnalysis)) { // TODO aggiungere controlli simili anche nei passi di cancellazione risk analysis
+        if(isEmpty(riskAnalysis)) {
             throw new IllegalStateException("Nessuna risk analysis presente nell'e-service template");
         }
 

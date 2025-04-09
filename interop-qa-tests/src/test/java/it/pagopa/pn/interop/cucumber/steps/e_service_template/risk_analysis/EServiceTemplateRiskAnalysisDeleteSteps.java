@@ -10,11 +10,12 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysis;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
+import java.util.List;
 import java.util.UUID;
 import lombok.Data;
 
@@ -50,9 +51,14 @@ public class EServiceTemplateRiskAnalysisDeleteSteps {
     public void deleteRiskAnalysisFromEServiceTemplate() {
         UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
 
-        UUID riskAnalysisId = eServiceTemplateClient.getEServiceTemplate(
+        UUID riskAnalysisId;
+        List<EServiceRiskAnalysis> riskAnalysis = eServiceTemplateClient.getEServiceTemplate(
             sharedStepsContext.getXCorrelationId(),
-            eServiceTemplateId).getRiskAnalysis().get(0).getId();
+            eServiceTemplateId).getRiskAnalysis();
+        if(isEmpty(riskAnalysis)) {
+            throw new IllegalStateException("Nessuna risk analysis presente nell'e-service template");
+        }
+        riskAnalysisId = riskAnalysis.get(0).getId();
         deleteRiskAnalysisFromEServiceTemplate(eServiceTemplateId, riskAnalysisId);
     }
 
