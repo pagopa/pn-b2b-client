@@ -115,7 +115,6 @@ public class InvioNotificheB2bSteps {
 
     private <T> void notificationCanBeRetrievedWithIUN(AtomicReference<T> notificationByIun, Function<String, T> getNotificationByIunFunction) {
         try {
-            //TODO MATTEO TEST
             String iun = sharedSteps.getNotificationIun();
             if (iun != null) {
                 assertThatCode(() -> notificationByIun.set(getNotificationByIunFunction.apply(iun)))
@@ -208,7 +207,6 @@ public class InvioNotificheB2bSteps {
             assertThat(notifica120.getRecipients().get(0).getPayments().get(0).getPagoPa().getAttachment())
                     .as("L'attachment del pagamento deve essere nullo")
                     .isNull();
-            //TODO MATTEO TEST//sharedSteps.setFullSentNotificationV26(notifica120);
             sharedSteps.setNotificationIun(notifica120.getIun());
         } catch (AssertionError assertionError) {
             String message = assertionError.getMessage() + "{notifica : " + (notifica120 == null ? "NULL" : notifica120) + " }";
@@ -252,7 +250,6 @@ public class InvioNotificheB2bSteps {
             log.info("notifica trovata: {}", notifica);
             notifica.setPaFee(100);
             notifica.setVat(22);
-//            //TODO MATTEO TEST//sharedSteps.setFullSentNotificationV26(notifica);
             sharedSteps.setNotificationIun(notifica.getIun());
         } catch (AssertionError assertionError) {
             String message = assertionError.getMessage() +
@@ -343,7 +340,6 @@ public class InvioNotificheB2bSteps {
         try {
             FullSentNotificationV26 notificationResponseComplete = b2bUtils.getNotificationByIun(sharedSteps.getNotificationIun());
             notificationByIun.set(notificationResponseComplete);
-            //TODO MATTEO TEST//sharedSteps.setFullSentNotificationV26(notificationResponseComplete);
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
         }
