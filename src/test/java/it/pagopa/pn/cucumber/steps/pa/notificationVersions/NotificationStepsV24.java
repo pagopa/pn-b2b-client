@@ -49,6 +49,11 @@ public class NotificationStepsV24 implements NotificationStepsInterface {
     }
 
     @Override
+    public String getNotificationRequestId() {
+        return notificationResponse != null ? notificationResponse.getNotificationRequestId() : null;
+    }
+
+    @Override
     public void prepareNotificationRequest(Map<String, String> data) {
         notificationRequest = sharedSteps.getDataTableTypeUtil().convertNotificationRequestV24(data);
         sharedSteps.setNotificationRequest(notificationRequest);//TODO MATTEO: SOLO IN QUESTA VERSIONE 24, CHE E' L'ULTIMA VERSIONE

@@ -47,6 +47,11 @@ public class NotificationStepsV2 implements NotificationStepsInterface {
     }
 
     @Override
+    public String getNotificationRequestId() {
+        return notificationResponse != null ? notificationResponse.getNotificationRequestId() : null;
+    }
+
+    @Override
     public void prepareNotificationRequest(Map<String, String> data) {
         notificationRequest = sharedSteps.getDataTableTypeUtil().convertNotificationRequestV2(data);
         sharedSteps.setVersionUsed(version);
