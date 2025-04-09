@@ -92,8 +92,9 @@ public class EServiceTemplateInstanceUpdateSteps {
              *   con i restanti campi di lastUpdateEServiceTemplateInstanceSeed. Rimandato causa
              *   incertezza sulla API da utilizzare. */
         } catch (PollingPredicateException e) {
-            /* TODO questo tipo di gestione potrebbe essere di fatto inutile, lasciare che l'eccezione si
-             *  propaghi potrebbe portare sostanzialmente allo stesso risultato. Indagare. */
+            /* DEV. NOTE: non si è lasciato che l’eccezione si propagasse perché l’errore così generato
+             * avrebbe suggerito che fosse sopraggiunto un errore imprevisto, quando in realtà
+             * rientra tra i possibili flussi esecutivi del test. */
             fail(e.getMessage());
         }
     }

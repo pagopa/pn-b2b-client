@@ -1787,13 +1787,7 @@ Feature: Test API of e-service template
     When l'utente è un "<ruolo>" di "PA1"
     And l'utente tenta la creazione di un nuovo e-service a partire dal template indicando solo le specifiche strettamente necessarie
     Then si ottiene response status code 200
-
-    # L'api usata sembra avere un bug che ne impedisce l'utilizzo per la verifica
-    # Ticket aperto https://pagopa.atlassian.net/browse/PIN-6500
-    #And il nuovo e-service è stato creato correttamente in stato DRAFT
-
-    # in sostituzione si utilizza questo step
-    And il nuovo e-service è stato creato
+    And il nuovo e-service è stato creato correttamente in stato DRAFT
     Examples:
       | ruolo         |
       | admin         |
@@ -1819,11 +1813,7 @@ Feature: Test API of e-service template
     When l'utente è un "<ruolo>" di "PA1"
     And l'utente tenta la creazione di un nuovo e-service a partire dal template indicando tutte le specifiche
     Then si ottiene response status code 200
-
-      # vedi nota per [INTEROP-EST-155] (ticket aperto)
-      #And il nuovo e-service è stato creato correttamente in stato DRAFT
-
-    And il nuovo e-service è stato creato
+    And il nuovo e-service è stato creato correttamente in stato DRAFT
     Examples:
       | ruolo         |
       | admin         |

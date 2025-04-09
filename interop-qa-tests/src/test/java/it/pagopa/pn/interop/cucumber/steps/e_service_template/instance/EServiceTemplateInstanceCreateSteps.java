@@ -9,7 +9,6 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.service.IEServiceClient;
-import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactDescriptor;
@@ -162,9 +161,6 @@ public class EServiceTemplateInstanceCreateSteps {
                 }
                 if(eServiceCreatedFromTemplate.get().getDescriptors().size() == 1) {
                     this.sharedStepsContext.getEServiceTemplateStepContext().setLastEServiceDescriptorCreatedFromTemplate(eServiceCreatedFromTemplate.get().getDescriptors().get(0));
-                }
-
-                if(eServiceCreatedFromTemplate.get().getDescriptors().size() == 1) {
                     softly.assertThat(
                             eServiceCreatedFromTemplate)
                         .get()
@@ -178,7 +174,6 @@ public class EServiceTemplateInstanceCreateSteps {
                             EServiceDescriptorState.DRAFT,
                             expectedState)
                         .isEqualTo(EServiceDescriptorState.DRAFT);
-
                 }
 
                 String instanceDefaultName = eServiceSourceTemplate.getEserviceTemplate().getName();
@@ -206,7 +201,7 @@ public class EServiceTemplateInstanceCreateSteps {
                     in InstanceEServiceSeed.
                  */
             });
-        } catch (PollingPredicateException e) {
+        } catch (IllegalArgumentException e) {
             fail("Il nuovo e-service non è stato creato correttamente");
         }
     }
@@ -216,6 +211,10 @@ public class EServiceTemplateInstanceCreateSteps {
         return instanceDefaultName + suffix;
     }
 
+    /* DEV. NOTE: step usato temporaneamente in sostituzione di
+    * "il nuovo e-service è stato creato correttamente in stato DRAFT" a causa di un bug che
+    * ne impediva l'utilizzo (ticket https://pagopa.atlassian.net/browse/PIN-6500), ora risolto. */
+    @Deprecated
     @Then("il nuovo e-service è stato creato")
     public void checkEServiceCreated() {
         pollingService.makePolling(
