@@ -585,7 +585,7 @@ public class NotificationStepsV21 implements NotificationStepsInterface {
                 break;
             }
         }
-        Assertions.assertNotNull(timelineElement);
+        assertThat(timelineElement).as("Il timeline element restituito non dev'essere null").isNotNull();
     }
 
     @Override

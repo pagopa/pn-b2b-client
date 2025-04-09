@@ -66,7 +66,7 @@ import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 import static it.pagopa.pn.cucumber.utils.FiscalCodeGenerator.generateCF;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.TAX_ID;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
-import static java.util.Objects.nonNull;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assumptions.assumeThat;
 import static org.awaitility.Awaitility.await;
 
@@ -407,26 +407,14 @@ public class SharedSteps {
         if (status.equalsIgnoreCase("HTTP_ERROR")) {
             sendNotificationHttpError(paName);
         } else {
-            NotificationVersion notificationVersion = versionUsed == null ? getNotificationVersion(MOST_RECENT) : versionUsed;
-            String versionString = notificationVersion.name();
-            sendNotificationWithVersion(versionString, paName, status);
+            if (paName != null) {
+                setPaAndSenderTaxId(paName);
+            }
+            /*TODO: un tempo lo stato era sempre ACCEPTED, ora che è parametrico, qualora vengano aggiunti nuovi status oltre ad
+               ACCEPTED, REFUSED, CANCELLED (che usano tutti la pollingStrategy VALIDATION_STATUS) si dovrebbe valutare
+               la creazione di un metodo privato che prenda uno status in input e restituisca la pollingStrategy corrispondente*/
+            getNotificationStepInterface().sendNotification(getWorkFlowWait(), status, VALIDATION_STATUS);
         }
-    }
-
-    @When("la notifica viene inviata tramite api b2b con la versione {string} dal {string} e si attende che lo stato diventi {string}")
-    public void sendNotificationWithVersion(String version, String paName, String status) {
-        if (!version.equalsIgnoreCase(versionUsed.name())) {
-            throw new RuntimeException("Impossibile inviare con la " + version + " una notifica creata con la " + versionUsed.name());
-        }
-        NotificationVersion notificationVersion = getNotificationVersion(version);
-        NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface(notificationVersion);
-        if (paName != null) {
-            setPaAndSenderTaxId(paName);
-        }
-        //TODO: un tempo lo stato era sempre ACCEPTED, ora che è parametrico, qualora vengano aggiunti nuovi status oltre ad
-        // ACCEPTED, REFUSED, NOT_REFUSED (che usano tutti la pollingStrategy VALIDATION_STATUS) si dovrebbe valutare
-        // la creazione di un metodo privato che prenda uno status in input e restituisca la pollingStrategy corrispondente
-        notificationStepsInterface.sendNotification(getWorkFlowWait(), status, VALIDATION_STATUS);
     }
 
     @When("la notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi ACCEPTED per controllo GPD")
@@ -455,10 +443,13 @@ public class SharedSteps {
         String iun = getNotificationIun();
         Assertions.assertDoesNotThrow(() -> {
             RequestStatus resp = Assertions.assertDoesNotThrow(() -> b2bClient.notificationCancellation(iun));
-            Assertions.assertNotNull(resp);
-            Assertions.assertNotNull(resp.getDetails());
-            Assertions.assertFalse(resp.getDetails().isEmpty());
-            Assertions.assertTrue("NOTIFICATION_CANCELLATION_ACCEPTED".equalsIgnoreCase(resp.getDetails().get(0).getCode()));
+            
+            assertThat(resp).as("La response non dev'essere null").isNotNull();
+            assertThat(resp.getDetails()).as("I details della response non devono essere null").isNotNull();
+            assertThat(resp.getDetails()).as("I details della response non devono essere vuoti").isNotEmpty();
+            assertThat("NOTIFICATION_CANCELLATION_ACCEPTED")
+                    .as("Il codice della response non coincide con quanto atteso")
+                    .isEqualToIgnoringCase(resp.getDetails().get(0).getCode());
         });
     }
 

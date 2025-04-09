@@ -464,7 +464,7 @@ public class B2bStepsV24 implements B2bStepsInterface {
      * @return a list of timeline elements that match the given event category and data from test
      */
     private List<TimelineElementV26> getTimelineElementsByEventId(String timelineEventCategory, DataTestV24 dataFromTest) {
-        String iun = b2bSteps.getSharedSteps().getIun(timelineEventCategory);
+        String iun = b2bSteps.getSharedSteps().getNotificationIun();
         FullSentNotificationV26 fullSentNotification = getFullSentNotificationVersioned();
         List<TimelineElementV26> timelineElementList = fullSentNotification.getTimeline();
 

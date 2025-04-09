@@ -408,7 +408,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                          |
     And destinatario Mario Cucumber
-    When la notifica viene inviata tramite api b2b con la versione "V1" dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica lo scarto dell' acquisizione della notifica
 
   @Async @refused

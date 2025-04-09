@@ -1,6 +1,5 @@
 package it.pagopa.pn.cucumber.steps.utilitySteps;
 
-import io.cucumber.java.ParameterType;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -170,10 +169,5 @@ public class Costanti {
             case COMUNE_ROOT -> COMUNE_ROOT_TAX_ID;
             default -> throw new IllegalArgumentException();
         };
-    }
-
-    @ParameterType("uguale|differente")
-    public static boolean isUguale(String condition) {
-        return condition.equalsIgnoreCase("uguale");
     }
 }
