@@ -51,8 +51,6 @@ public interface NotificationStepsInterface {
 
     void waitForTimelineElement(String iun, String timelineElementCategory, Integer attempts);
 
-    String getNotificationRequestId();
-
     void getNotificationRequestStatus(String requestId);
 
     void checkTaxonomyCode();

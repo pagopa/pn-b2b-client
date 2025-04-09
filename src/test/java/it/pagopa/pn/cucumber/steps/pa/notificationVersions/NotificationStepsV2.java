@@ -480,11 +480,6 @@ public class NotificationStepsV2 implements NotificationStepsInterface {
     }
 
     @Override
-    public String getNotificationRequestId() {
-        return notificationResponse.getNotificationRequestId();
-    }
-
-    @Override
     public void getNotificationRequestStatus(String requestId) {
         try {
             Assertions.assertDoesNotThrow(() -> sharedSteps.getB2bClient().getNotificationRequestStatusV2(requestId));
