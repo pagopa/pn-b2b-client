@@ -15,6 +15,8 @@ public interface NotificationStepsInterface {
 
     String getVersionString();
 
+    String getNotificationRequestId();
+
     void prepareNotificationRequest(Map<String, String> data);
 
     void prepareNotificationRequestSimileAllaPrecedente(boolean isCreditorTaxIdUguale, boolean isCodiceAvvisoUguale, boolean isPaProtocolNumberUguale, String idempotenceToken);

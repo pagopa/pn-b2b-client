@@ -130,7 +130,7 @@ public class Costanti {
     // Notification Status
     public static final String NOTIFICATION_STATUS_ACCEPTED = "ACCEPTED";
     public static final String NOTIFICATION_STATUS_REFUSED = "REFUSED";
-    public static final String NOTIFICATION_STATUS_NOT_REFUSED = "NOT_REFUSED";
+    public static final String NOTIFICATION_STATUS_CANCELLED = "CANCELLED";
     public static final String NOTIFICATION_STATUS_VIEWED = "VIEWED";
     // Error causes
     public static final String ALLEGATO = "ALLEGATO";
