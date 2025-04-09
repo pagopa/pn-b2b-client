@@ -448,8 +448,8 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 
     # Api lato Destinatario
 
-  @preesitiEnabledTags
-  Scenario: [] Verifica presenza evento SEND_ANALOG_PROGRESS con il DeliveryDetailCode RECAG008A all’interno della timeline B2B ma non della timeline web
+  @ricercaIndirizzoVas
+  Scenario: []
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
@@ -531,8 +531,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 
 
   @cleanWebhook @webhook1
-  Scenario: [] Invio notifica e controllo che stream con eventType vuoto e versione da V26 contenga elemento ANALOG_WORKFLOW_RECIPIENT_DECEASED
-#    Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V26"
+  Scenario: []
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -550,9 +549,9 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | physicalAddress_State               | ITALIA        |
       | physicalAddress_zip                 | 40069         |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione ""
-    And si crea il nuovo stream per il "Comune_Multi" con versione ""
-    Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "" con la versione ""
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V28"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V28"
+    Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "" con la versione "v28"
 
 
 #Sperimentazione: 27-28

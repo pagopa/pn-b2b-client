@@ -2818,7 +2818,7 @@ public class AvanzamentoNotificheB2bSteps {
                 Thread.sleep(remainingTime + 30 * 1000);
             }
             // get the updated notification
-            FullSentNotificationV26 fullSentNotification = b2bClient.getSentNotification(iun);
+            FullSentNotificationV26 fullSentNotification = b2bClient.getSentNotificationV26(iun);
         }
     }
 
