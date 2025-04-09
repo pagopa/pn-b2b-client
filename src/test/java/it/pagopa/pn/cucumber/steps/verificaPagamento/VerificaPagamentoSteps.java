@@ -183,21 +183,19 @@ public class VerificaPagamentoSteps {
     }
 
     public void increaseSuffixCount(String noticeCodeSuffix) {
-        List<List<String>> righe = FileUtils.readCsvSafe(NOTICE_CODE_COUNT_CSV_PATH, ",", false);
-
-        for (int i = 1; i < righe.size(); i++) {
-            List<String> riga = righe.get(i);
-
-            if (!riga.isEmpty() && riga.get(0).equals(noticeCodeSuffix)) {
-                while (riga.size() < 2) {
-                    riga.add("0");
+        FileUtils.modifyCsvSafe(NOTICE_CODE_COUNT_CSV_PATH, ",", righe -> {
+            for (List<String> riga : righe) {
+                if (!riga.isEmpty() && riga.get(0).equals(noticeCodeSuffix)) {
+                    while (riga.size() < 2) {
+                        riga.add("0");
+                    }
+                    long count = Long.parseLong(riga.get(1));
+                    riga.set(1, String.valueOf(count + 1));
+                    return righe;
                 }
-                riga.set(1, String.valueOf(Long.parseLong(riga.get(1)) + 1));
-                FileUtils.writeCsvSafe(NOTICE_CODE_COUNT_CSV_PATH, righe);
-                return;
             }
-        }
 
-        throw new IllegalArgumentException("Suffisso \"" + noticeCodeSuffix + "\" non trovato");
+            throw new IllegalArgumentException("Suffisso \"" + noticeCodeSuffix + "\" non trovato");
+        });
     }
 }

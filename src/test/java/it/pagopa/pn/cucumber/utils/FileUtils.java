@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 public class FileUtils {
 
@@ -24,9 +25,9 @@ public class FileUtils {
      */
     public static List<List<String>> readCsv(String pathRelativo, String separatore, boolean saltaIntestazione) {
         List<List<String>> righe = new ArrayList<>();
+        File file = new File("src/test/resources/" + pathRelativo);
 
-        try (InputStream inputStream = FileUtils.class.getClassLoader().getResourceAsStream(pathRelativo);
-             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
 
             String line;
             boolean primaRiga = true;
@@ -44,6 +45,7 @@ public class FileUtils {
                 }
                 righe.add(riga);
             }
+
         } catch (Exception e) {
             System.err.println("Errore durante la lettura del file CSV: " + e.getMessage());
             e.printStackTrace();
@@ -116,6 +118,24 @@ public class FileUtils {
     public static void writeCsvSafe(String pathRelativo, List<List<String>> righe) {
         synchronized (getFileLock(pathRelativo)) {
            writeCsv(pathRelativo, righe);
+        }
+    }
+
+    /**
+     * Legge un file CSV, applica una trasformazione alle righe e salva il risultato in modo thread-safe.
+     * Questo metodo esegue la lettura, modifica e scrittura del file CSV all'interno di un blocco sincronizzato
+     * per garantire che le modifiche siano atomiche e consistenti anche in presenza di accessi concorrenti.
+     *
+     * @param pathRelativo       Il percorso relativo del file CSV rispetto a src/test/resources (es. "dati/miofile.csv")
+     * @param separatore         Il separatore dei campi nel CSV (es. "," o ";")
+     * @param modifica           Una funzione che riceve la lista di righe lette dal file e restituisce la lista modificata da salvare
+     */
+    public static void modifyCsvSafe(String pathRelativo, String separatore,
+                                     Function<List<List<String>>, List<List<String>>> modifica) {
+        synchronized (getFileLock(pathRelativo)) {
+            List<List<String>> righe = readCsv(pathRelativo, separatore, false);
+            List<List<String>> righeModificate = modifica.apply(righe);
+            writeCsv(pathRelativo, righeModificate);
         }
     }
 }
