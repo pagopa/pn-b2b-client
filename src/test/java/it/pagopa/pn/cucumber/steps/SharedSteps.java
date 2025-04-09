@@ -30,10 +30,7 @@ import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalAndUnverifiedDigitalAddress;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.UserAddresses;
-import it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti;
-import it.pagopa.pn.cucumber.steps.pa.notificationVersions.Destinatario;
-import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationStepsInterface;
-import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion;
+import it.pagopa.pn.cucumber.steps.pa.notificationVersions.*;
 import it.pagopa.pn.cucumber.utils.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -794,25 +791,30 @@ public class SharedSteps {
         try {
             Assertions.assertDoesNotThrow(() -> {
                 notificationCreationDate = OffsetDateTime.now();
+                NewNotificationResponse notificationResponse = null;
                 switch (errorType.toUpperCase()) {
                     case "NOT_FOUND_ALLEGATO" ->
-                            newNotificationResponse = b2bUtils.uploadNotificationNotFindAllegato(notificationRequest, noUpload);
+                            notificationResponse = b2bUtils.uploadNotificationNotFindAllegato(notificationRequest, noUpload);
                     case "NOT_FOUND_ALLEGATO_JSON" ->
-                            newNotificationResponse = b2bUtils.uploadNotificationNotFindAllegatoJson(notificationRequest, true);
+                            notificationResponse = b2bUtils.uploadNotificationNotFindAllegatoJson(notificationRequest, true);
                     case "NOT_EQUAL_SHA" ->
-                            newNotificationResponse = b2bUtils.uploadNotificationNotEqualSha(notificationRequest);
+                            notificationResponse = b2bUtils.uploadNotificationNotEqualSha(notificationRequest);
                     case "NOT_EQUAL_SHA_JSON" ->
-                            newNotificationResponse = b2bUtils.uploadNotificationNotEqualShaJson(notificationRequest);
+                            notificationResponse = b2bUtils.uploadNotificationNotEqualShaJson(notificationRequest);
                     case "WRONG_EXTENSION" ->
-                            newNotificationResponse = b2bUtils.uploadNotificationWrongExtension(notificationRequest);
+                            notificationResponse = b2bUtils.uploadNotificationWrongExtension(notificationRequest);
                     case "OVERSIZE_ALLEGATO" ->
-                            newNotificationResponse = b2bUtils.uploadNotificationOverSizeAllegato(notificationRequest);
+                            notificationResponse = b2bUtils.uploadNotificationOverSizeAllegato(notificationRequest);
                     case "NOTIFICATION_INJECTION_ALLEGATO" ->
-                            newNotificationResponse = b2bUtils.uploadNotificationInjectionAllegato(notificationRequest);
+                            notificationResponse = b2bUtils.uploadNotificationInjectionAllegato(notificationRequest);
                     case "OVER_15_ALLEGATO" ->
-                            newNotificationResponse = b2bUtils.uploadNotificationOver15Allegato(notificationRequest);
+                            notificationResponse = b2bUtils.uploadNotificationOver15Allegato(notificationRequest);
                 }
-                errorCode = b2bUtils.waitForRequestRefusedV25(newNotificationResponse);
+                errorCode = b2bUtils.waitForRequestRefusedV25(notificationResponse);
+
+                NotificationStepsV24 notificationSteps = (NotificationStepsV24) mapOfVersionSteps.get(NotificationVersion.V24);
+                notificationSteps.setNotificationResponse(notificationResponse);
+                this.newNotificationResponse = notificationResponse;
             });
             threadWait(getWorkFlowWait());
             Assertions.assertNotNull(errorCode);
