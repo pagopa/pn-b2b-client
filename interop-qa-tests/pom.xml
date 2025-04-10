@@ -176,7 +176,9 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/develop/packages/api-clients/open-api/bffApi.yml</inputSpec>
+                            <!-- 10/04/2025 La specifica OpenApi ha dei cambiamenti che momentaneamente non è necessario si riflettano nella code base, motivo per cui si fa riferimento a un altro commit -->
+                            <!-- ><inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/develop/packages/api-clients/open-api/bffApi.yml</inputSpec> -->
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/b673372c82ef4dde37a8a2e067d4d775574a4f24/packages/api-clients/open-api/bffApi.yml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
