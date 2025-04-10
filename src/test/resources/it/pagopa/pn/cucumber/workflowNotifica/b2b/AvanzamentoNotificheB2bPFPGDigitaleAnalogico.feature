@@ -16,7 +16,7 @@ Feature: avanzamento b2b notifica analogico difgitale
       | physicalAddress_address | Via@ok_RS    |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_DELIVERY_CREATION_REQUEST"
-    And verifica generazione Atto opponibile senza la messa a disposizione in "DIGITAL_DELIVERY_CREATION_REQUEST"
+    And verifica generazione Atto opponibile senza la messa a disposizione in DIGITAL_DELIVERY_CREATION_REQUEST
     #In ambiente di produzione l'incremento è di 15"d" (15 giorni Failure e 7 giorni per Success) al momento 3"m" (3 minuti Failure e 1 minuto per Success)
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT" e verifica data schedulingDate per il destinatario 0 rispetto all'evento in timeline "DIGITAL_DELIVERY_CREATION_REQUEST"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
@@ -40,7 +40,7 @@ Feature: avanzamento b2b notifica analogico difgitale
       | digitalDomicile_address | test@fail.it |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_DELIVERY_CREATION_REQUEST"
-    And verifica generazione Atto opponibile senza la messa a disposizione in "DIGITAL_DELIVERY_CREATION_REQUEST"
+    And verifica generazione Atto opponibile senza la messa a disposizione in DIGITAL_DELIVERY_CREATION_REQUEST
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT" e verifica data schedulingDate per il destinatario 0 rispetto all'evento in timeline "DIGITAL_DELIVERY_CREATION_REQUEST"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
@@ -55,7 +55,7 @@ Feature: avanzamento b2b notifica analogico difgitale
     And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_DELIVERY_CREATION_REQUEST" per l'utente 0
-    And verifica generazione Atto opponibile senza la messa a disposizione in "DIGITAL_DELIVERY_CREATION_REQUEST"
+    And verifica generazione Atto opponibile senza la messa a disposizione in DIGITAL_DELIVERY_CREATION_REQUEST
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED" per il destinatario 0 e presente l'evento "DIGITAL_DELIVERY_CREATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED" per il destinatario 0 e presente l'evento "SCHEDULE_REFINEMENT_WORKFLOW"
@@ -73,7 +73,7 @@ Feature: avanzamento b2b notifica analogico difgitale
     And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_DELIVERY_CREATION_REQUEST" per l'utente 0
-    And verifica generazione Atto opponibile senza la messa a disposizione in "DIGITAL_DELIVERY_CREATION_REQUEST"
+    And verifica generazione Atto opponibile senza la messa a disposizione in DIGITAL_DELIVERY_CREATION_REQUEST
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED" per il destinatario 0 e presente l'evento "DIGITAL_DELIVERY_CREATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED" per il destinatario 0 e presente l'evento "SCHEDULE_REFINEMENT_WORKFLOW"

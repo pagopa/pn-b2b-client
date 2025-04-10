@@ -426,7 +426,7 @@ public class LegalFactContentVerifySteps {
             }
         }
 
-        System.out.println("ELEMENT: " + timelineElement);
+        log.info("TIMELINE ELEMENT : {}", timelineElement);
         Assertions.assertNotNull(timelineElement);
 
         Assertions.assertNotNull(timelineElement.getLegalFactsIds());
@@ -472,7 +472,7 @@ public class LegalFactContentVerifySteps {
         }
 
         try {
-            System.out.println("ELEMENT: " + timelineElement);
+            log.info("TIMELINE ELEMENT : {}", timelineElement);
             Assertions.assertNotNull(timelineElement);
 
             Assertions.assertNotNull(timelineElement.getLegalFactsIds());
@@ -533,7 +533,7 @@ public class LegalFactContentVerifySteps {
         }
 
         try {
-            System.out.println("ELEMENT: " + timelineElement);
+            log.info("TIMELINE ELEMENT : {}", timelineElement);
             Assertions.assertNotNull(timelineElement.getLegalFactsIds());
             Assertions.assertFalse(CollectionUtils.isEmpty(timelineElement.getLegalFactsIds()));
             Assertions.assertEquals(categoriesV26.getLegalFactCategory().getValue(), timelineElement.getLegalFactsIds().get(0).getCategory());
@@ -585,7 +585,7 @@ public class LegalFactContentVerifySteps {
         }
 
         try {
-            System.out.println("ELEMENT: " + timelineElement);
+            log.info("TIMELINE ELEMENT : {}", timelineElement);
             Assertions.assertNotNull(timelineElement);
 
             Assertions.assertNotNull(timelineElement.getLegalFactsIds());

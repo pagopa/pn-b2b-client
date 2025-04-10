@@ -327,7 +327,7 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
             } catch (InterruptedException exc) {
                 throw new RuntimeException(exc);
             }
-            FullSentNotificationV26 fullSentNotification = webhookSteps.getSharedSteps().getSentNotificationLastVersion();
+            FullSentNotificationV26 fullSentNotification = webhookSteps.getB2bClient().getSentNotificationV26(webhookSteps.getSharedSteps().getNotificationIun());
             it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 timelineElement = fullSentNotification.getTimeline().stream().filter(elem -> elem.getCategory().getValue().equals(timelineElementInternalCategory.getValue()))
                     .findAny()
                     .orElse(null);
@@ -349,7 +349,7 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
             } catch (InterruptedException exc) {
                 throw new RuntimeException(exc);
             }
-            FullSentNotificationV26 fullSentNotification = webhookSteps.getSharedSteps().getSentNotificationLastVersion();
+            FullSentNotificationV26 fullSentNotification = webhookSteps.getB2bClient().getSentNotificationV26(webhookSteps.getSharedSteps().getNotificationIun());
             NotificationStatusHistoryElementV26 notificationStatusHistoryElement = fullSentNotification.getNotificationStatusHistory().stream().filter(
                     elem -> elem.getStatus().getValue().equals(notificationInternalStatus.getValue())).findAny().orElse(null);
             if (notificationStatusHistoryElement != null) {
@@ -366,7 +366,7 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
             Assertions.assertNotNull(progressResponseElement);
             TimelineElementCategoryV26 timelineElementInternalCategory = TimelineElementCategoryV26.valueOf(((TimelineElementCategoryV26) timelineForStream.getTimelineElementCategory()).name());
 
-            FullSentNotificationV26 fullSentNotification = webhookSteps.getSharedSteps().getSentNotificationLastVersion();
+            FullSentNotificationV26 fullSentNotification = webhookSteps.getB2bClient().getSentNotificationV26(webhookSteps.getSharedSteps().getNotificationIun());
             it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 elementToCheck = fullSentNotification.getTimeline().stream()
                     .filter(elem -> elem.getCategory() != null)
                     .filter(elem -> elem.getCategory().getValue().equals(timelineElementInternalCategory.getValue()))
@@ -445,7 +445,7 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
 
     @Override
     public void compareTimestampWebhook(String timelineElementCategory, String webhookElementCategory, boolean mustBeEqual) {
-        FullSentNotificationV26 fullSentNotification = webhookSteps.getSharedSteps().getSentNotificationLastVersion();
+        FullSentNotificationV26 fullSentNotification = webhookSteps.getB2bClient().getSentNotificationV26(webhookSteps.getSharedSteps().getNotificationIun());
         Assertions.assertNotNull(progressResponseElementList);
         OffsetDateTime eventTimestamp = progressResponseElementList.stream().filter(
                 elem -> elem.getElement().getCategory().getValue().equals(webhookElementCategory)).findAny().get().getElement().getTimestamp();
@@ -513,7 +513,7 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
 
         String elementId = timelineElementWebHook.getCategory().toString();
 
-        FullSentNotificationV26 fullSentNotification = webhookSteps.getSharedSteps().getSentNotificationLastVersion();
+        FullSentNotificationV26 fullSentNotification = webhookSteps.getB2bClient().getSentNotificationV26(webhookSteps.getSharedSteps().getNotificationIun());
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 timelineElement = fullSentNotification.getTimeline().
                 stream()
                 .filter(data -> data.getCategory() != null)

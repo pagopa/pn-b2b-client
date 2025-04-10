@@ -15,9 +15,9 @@ import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheB2bSteps;
 import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationStepsV1;
 import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion;
 import it.pagopa.pn.cucumber.steps.utilitySteps.PollingType;
-import it.pagopa.pn.cucumber.steps.utilitySteps.TimelineElementCheck;
-import it.pagopa.pn.cucumber.steps.utilitySteps.TimelineElementCheckFilters;
 import it.pagopa.pn.cucumber.steps.utilitySteps.WaitForEventPredicateFilters;
+import it.pagopa.pn.cucumber.steps.utilitySteps.checkTimelineElement.TimelineElementCheck;
+import it.pagopa.pn.cucumber.steps.utilitySteps.checkTimelineElement.TimelineElementCheckFilters;
 import it.pagopa.pn.cucumber.utils.datatest.DataTestV1;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanUtils;
@@ -62,6 +62,36 @@ public class B2bStepsV1 implements B2bStepsInterface {
 
     private FullSentNotification getFullSentNotificationVersioned() {
         return (FullSentNotification) getFullSentNotification();
+    }
+
+    @Override
+    public void checkFullSentNotificationWithVersion(boolean isPresent, String timelineEventCategory, Integer introducingVersion) {
+        FullSentNotification fullSentNotification = getFullSentNotificationVersioned();
+        TimelineElement timelineElement = fullSentNotification.getTimeline().stream().filter(
+                te -> te.getCategory().getValue().equals(timelineEventCategory)).findAny().orElse(null);
+        if (isPresent) {
+            assertSoftly(softly -> {
+                if (introducingVersion != null) {
+                    assertThat(version.getValue())
+                            .as("L'elemento di timeline {} è stato introdotto con una versione pari o superiore a questa", timelineEventCategory)
+                            .isGreaterThanOrEqualTo(introducingVersion);
+                }
+                assertThat(timelineElement)
+                        .as("Il controllo sulla fullSentNotification V{} dovrebbe restituire almeno un elemento", version.getValue())
+                        .isNotNull();
+            });
+        } else {
+            assertSoftly(softly -> {
+                if (introducingVersion != null) {
+                    assertThat(version.getValue())
+                            .as("L'elemento di timeline {} è stato introdotto con una versione più recente di questa", timelineEventCategory)
+                            .isLessThan(introducingVersion);
+                }
+                assertThat(timelineElement)
+                        .as("Il controllo sulla fullSentNotification V{} non dovrebbe restituire elementi", version.getValue())
+                        .isNull();
+            });
+        }
     }
 
     @Override
@@ -142,17 +172,6 @@ public class B2bStepsV1 implements B2bStepsInterface {
             assertThat(event)
                     .as("I relatedTimelineElements del notificationStatusHistoryElement non contengono l'evento " + evento + " per il recipient " + recipientIndex)
                     .isNotNull();
-
-//            List<String> timelineElements = notificationStatusHistoryElement.getRelatedTimelineElements();
-//            boolean esiste = false;
-//            for (String tmpTimeline : timelineElements) {
-//                if (tmpTimeline.contains(evento) && tmpTimeline.contains("RECINDEX_" + recipientIndex)) {
-//                    esiste = true;
-//                    break;
-//                }
-//            }
-//            Assertions.assertTrue(esiste);
-
         } catch (AssertionFailedError assertionFailedError) {
             b2bSteps.getSharedSteps().throwAssertionErrorWithIUN(assertionFailedError);
         }
@@ -183,6 +202,7 @@ public class B2bStepsV1 implements B2bStepsInterface {
 
     @Override
     public void payAvvisoPagoPa(Integer paymentIndex, Integer recipientIndex) {
+        //poiché fino alla V20 le notifiche sono ancora monopagamento, il metodo procede al pagamento del solo e unico avviso
         FullSentNotification fullSentNotification = getFullSentNotificationVersioned();
         String creditorTaxId = fullSentNotification.getRecipients().get(recipientIndex).getPayment().getCreditorTaxId();
         String noticeCode = fullSentNotification.getRecipients().get(recipientIndex).getPayment().getNoticeCode();
@@ -251,13 +271,13 @@ public class B2bStepsV1 implements B2bStepsInterface {
         try {
             if (price != null) {
                 assertThat(timelineElement.getDetails().getAnalogCost())
-                        .as("Il costo differisce da quanto previsto (expected: + " + price + "actual:" + timelineElement.getDetails().getAnalogCost())
+                        .as("Il costo differisce da quanto previsto")
                         .isEqualTo(price);
             }
             if (weight != null) {
                 assertThat(timelineElement.getDetails().getEnvelopeWeight())
-                        .as("Il peso differisce da quanto previsto (expected: + " + weight + "actual:" + timelineElement.getDetails().getEnvelopeWeight())
-                        .isEqualTo(price);
+                        .as("Il peso differisce da quanto previsto")
+                        .isEqualTo(weight);
             }
         } catch (AssertionFailedError assertionFailedError) {
             b2bSteps.getSharedSteps().throwAssertionErrorWithIUN(assertionFailedError);
@@ -479,7 +499,7 @@ public class B2bStepsV1 implements B2bStepsInterface {
                             .as("L'elemento di timeline dovrebbe essere null")
                             .isNull();
                 });
-                log.info("NOTIFICATION_TIMELINE: " + pollingResponse.getNotification().getTimeline());
+                log.info("NOTIFICATION_TIMELINE: {}", pollingResponse.getNotification().getTimeline());
             }
         } catch (AssertionFailedError assertionFailedError) {
             b2bSteps.getSharedSteps().throwAssertionErrorWithIUN(assertionFailedError);

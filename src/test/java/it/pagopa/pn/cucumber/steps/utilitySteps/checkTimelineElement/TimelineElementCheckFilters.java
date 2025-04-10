@@ -1,4 +1,4 @@
-package it.pagopa.pn.cucumber.steps.utilitySteps;
+package it.pagopa.pn.cucumber.steps.utilitySteps.checkTimelineElement;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import lombok.Getter;
  * Classe contenitore per tutti i parametri da passare al metodo performFurtherChecks
  * delle classi che implementano l'interfaccia {@link it.pagopa.pn.cucumber.steps.pa.b2bVersions.B2bStepsInterface}.
  * Se si necessita di creare una nuova tipologia di check con parametri, sarà sufficiente
- * aggiungere un nuovo valore all'Enum {@link it.pagopa.pn.cucumber.steps.utilitySteps.TimelineElementCheck}
+ * aggiungere un nuovo valore all'Enum {@link TimelineElementCheck}
  * e inserire qui eventuali parametri necessari per il check
  */
 @Builder

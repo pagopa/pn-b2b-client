@@ -613,7 +613,7 @@ public class RicezioneNotificheWebDelegheSteps {
         TimelineElementV26 timelineElement = getTimelineElementV23();
 
         String userTaxId = getTaxIdByUser(user);
-        System.out.println("TIMELINE ELEMENT: " + timelineElement);
+        log.info("TIMELINE ELEMENT : {}", timelineElement);
         Assertions.assertNotNull(timelineElement);
         Assertions.assertNotNull(timelineElement.getDetails());
         Assertions.assertNotNull(timelineElement.getDetails().getDelegateInfo());
@@ -624,7 +624,7 @@ public class RicezioneNotificheWebDelegheSteps {
     public void siVerificaCheLElementoDiTimelineDellaLetturaNonRiportiIDatiDi() {
         TimelineElementV26 timelineElement = getTimelineElementV23();
 
-        System.out.println("TIMELINE ELEMENT: " + timelineElement);
+        log.info("TIMELINE ELEMENT : {}", timelineElement);
         Assertions.assertNotNull(timelineElement);
         Assertions.assertNotNull(timelineElement.getDetails());
         Assertions.assertNull(timelineElement.getDetails().getDelegateInfo());

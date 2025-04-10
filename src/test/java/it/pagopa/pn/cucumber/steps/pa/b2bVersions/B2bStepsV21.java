@@ -1,6 +1,7 @@
 package it.pagopa.pn.cucumber.steps.pa.b2bVersions;
 
 import io.cucumber.datatable.DataTable;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationPriceResponseV23;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.*;
 import it.pagopa.pn.client.b2b.pa.polling.IPnPollingService;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
@@ -14,9 +15,9 @@ import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheB2bSteps;
 import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationStepsV21;
 import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion;
 import it.pagopa.pn.cucumber.steps.utilitySteps.PollingType;
-import it.pagopa.pn.cucumber.steps.utilitySteps.TimelineElementCheck;
-import it.pagopa.pn.cucumber.steps.utilitySteps.TimelineElementCheckFilters;
 import it.pagopa.pn.cucumber.steps.utilitySteps.WaitForEventPredicateFilters;
+import it.pagopa.pn.cucumber.steps.utilitySteps.checkTimelineElement.TimelineElementCheck;
+import it.pagopa.pn.cucumber.steps.utilitySteps.checkTimelineElement.TimelineElementCheckFilters;
 import it.pagopa.pn.cucumber.utils.datatest.DataTestV21;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanUtils;
@@ -60,6 +61,36 @@ public class B2bStepsV21 implements B2bStepsInterface {
 
     private FullSentNotificationV21 getFullSentNotificationVersioned() {
         return (FullSentNotificationV21) getFullSentNotification();
+    }
+
+    @Override
+    public void checkFullSentNotificationWithVersion(boolean isPresent, String timelineEventCategory, Integer introducingVersion) {
+        FullSentNotificationV21 fullSentNotification = getFullSentNotificationVersioned();
+        TimelineElementV20 timelineElement = fullSentNotification.getTimeline().stream().filter(
+                te -> te.getCategory().getValue().equals(timelineEventCategory)).findAny().orElse(null);
+        if (isPresent) {
+            assertSoftly(softly -> {
+                if (introducingVersion != null) {
+                    assertThat(version.getValue())
+                            .as("L'elemento di timeline {} è stato introdotto con una versione pari o superiore a questa", timelineEventCategory)
+                            .isGreaterThanOrEqualTo(introducingVersion);
+                }
+                assertThat(timelineElement)
+                        .as("Il controllo sulla fullSentNotification V{} dovrebbe restituire almeno un elemento", version.getValue())
+                        .isNotNull();
+            });
+        } else {
+            assertSoftly(softly -> {
+                if (introducingVersion != null) {
+                    assertThat(version.getValue())
+                            .as("L'elemento di timeline {} è stato introdotto con una versione più recente di questa", timelineEventCategory)
+                            .isLessThan(introducingVersion);
+                }
+                assertThat(timelineElement)
+                        .as("Il controllo sulla fullSentNotification V{} non dovrebbe restituire elementi", version.getValue())
+                        .isNull();
+            });
+        }
     }
 
     @Override
@@ -140,17 +171,6 @@ public class B2bStepsV21 implements B2bStepsInterface {
             assertThat(event)
                     .as("I relatedTimelineElements del notificationStatusHistoryElement non contengono l'evento " + evento + " per il recipient " + recipientIndex)
                     .isNotNull();
-
-//            List<String> timelineElements = notificationStatusHistoryElement.getRelatedTimelineElements();
-//            boolean esiste = false;
-//            for (String tmpTimeline : timelineElements) {
-//                if (tmpTimeline.contains(evento) && tmpTimeline.contains("RECINDEX_" + recipientIndex)) {
-//                    esiste = true;
-//                    break;
-//                }
-//            }
-//            Assertions.assertTrue(esiste);
-
         } catch (AssertionFailedError assertionFailedError) {
             b2bSteps.getSharedSteps().throwAssertionErrorWithIUN(assertionFailedError);
         }
@@ -182,28 +202,31 @@ public class B2bStepsV21 implements B2bStepsInterface {
     }
 
     @Override
-    public void payAvvisoPagoPa(Integer paymentIndex, Integer recipientIndex) {
-        String iun = b2bSteps.getSharedSteps().getNotificationIun();
+    public void payAvvisoPagoPa(Integer recipientIndex, Integer paymentIndex) {
         FullSentNotificationV21 fullSentNotification = getFullSentNotificationVersioned();
-        String creditorTaxId = fullSentNotification.getRecipients().get(recipientIndex).getPayments().get(paymentIndex).getPagoPa().getCreditorTaxId();
-        String noticeCode = fullSentNotification.getRecipients().get(recipientIndex).getPayments().get(paymentIndex).getPagoPa().getNoticeCode();
-        NotificationPriceResponse notificationPrice = b2bSteps.getB2bClient().getNotificationPrice(creditorTaxId, noticeCode);
+        if (paymentIndex == null) {
+            for (int i = 0; i < fullSentNotification.getRecipients().get(recipientIndex).getPayments().size(); i++) {
+                payAvvisoPagoPa(recipientIndex, i);
+            }
+        } else {
+            String creditorTaxId = fullSentNotification.getRecipients().get(recipientIndex).getPayments().get(paymentIndex).getPagoPa().getCreditorTaxId();
+            String noticeCode = fullSentNotification.getRecipients().get(recipientIndex).getPayments().get(paymentIndex).getPagoPa().getNoticeCode();
+            NotificationPriceResponseV23 notificationPrice = b2bSteps.getB2bClient().getNotificationPriceV23(creditorTaxId, noticeCode);
 
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PaymentEventsRequestPagoPa eventsRequestPagoPa =
-                new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PaymentEventsRequestPagoPa();
+            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PaymentEventsRequestPagoPa eventsRequestPagoPa = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PaymentEventsRequestPagoPa();
 
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PaymentEventPagoPa paymentEventPagoPa =
-                new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PaymentEventPagoPa();
-        paymentEventPagoPa.setCreditorTaxId(creditorTaxId);
-        paymentEventPagoPa.setNoticeCode(noticeCode);
-        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        paymentEventPagoPa.setPaymentDate(fmt.format(now()));
-        paymentEventPagoPa.setAmount(notificationPrice.getAmount());
-        List<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PaymentEventPagoPa> paymentEventPagoPaList = new LinkedList<>();
-        paymentEventPagoPaList.add(paymentEventPagoPa);
-        eventsRequestPagoPa.setEvents(paymentEventPagoPaList);
+            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PaymentEventPagoPa paymentEventPagoPa = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PaymentEventPagoPa();
+            paymentEventPagoPa.setCreditorTaxId(creditorTaxId);
+            paymentEventPagoPa.setNoticeCode(noticeCode);
+            DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            paymentEventPagoPa.setPaymentDate(fmt.format(now()));
+            paymentEventPagoPa.setAmount(notificationPrice.getTotalPrice());
+            List<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PaymentEventPagoPa> paymentEventPagoPaList = new LinkedList<>();
+            paymentEventPagoPaList.add(paymentEventPagoPa);
+            eventsRequestPagoPa.setEvents(paymentEventPagoPaList);
 
-        b2bSteps.getB2bClient().paymentEventsRequestPagoPa(eventsRequestPagoPa);
+            b2bSteps.getB2bClient().paymentEventsRequestPagoPa(eventsRequestPagoPa);
+        }
     }
 
     @Override
@@ -254,13 +277,13 @@ public class B2bStepsV21 implements B2bStepsInterface {
         try {
             if (price != null) {
                 assertThat(timelineElement.getDetails().getAnalogCost())
-                        .as("Il costo differisce da quanto previsto (expected: + " + price + "actual:" + timelineElement.getDetails().getAnalogCost())
+                        .as("Il costo differisce da quanto previsto")
                         .isEqualTo(price);
             }
             if (weight != null) {
                 assertThat(timelineElement.getDetails().getEnvelopeWeight())
-                        .as("Il peso differisce da quanto previsto (expected: + " + weight + "actual:" + timelineElement.getDetails().getEnvelopeWeight())
-                        .isEqualTo(price);
+                        .as("Il peso differisce da quanto previsto")
+                        .isEqualTo(weight);
             }
         } catch (AssertionFailedError assertionFailedError) {
             b2bSteps.getSharedSteps().throwAssertionErrorWithIUN(assertionFailedError);
@@ -328,7 +351,7 @@ public class B2bStepsV21 implements B2bStepsInterface {
                             .as("L'elemento di timeline dovrebbe essere null")
                             .isNull();
                 });
-                log.info("NOTIFICATION_TIMELINE: " + pollingResponse.getNotification().getTimeline());
+                log.info("NOTIFICATION_TIMELINE: {}", pollingResponse.getNotification().getTimeline());
             }
         } catch (AssertionFailedError assertionFailedError) {
             b2bSteps.getSharedSteps().throwAssertionErrorWithIUN(assertionFailedError);

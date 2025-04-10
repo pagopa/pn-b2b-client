@@ -97,6 +97,8 @@ public class Costanti {
     public static final String SEND_SIMPLE_REGISTERED_LETTER = "SEND_SIMPLE_REGISTERED_LETTER";
     public static final String SEND_SIMPLE_REGISTERED_LETTER_PROGRESS = "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS";
     public static final String PAYMENT = "PAYMENT";
+    public static final String COMPLETELY_UNREACHABLE_CREATION_REQUEST = "COMPLETELY_UNREACHABLE_CREATION_REQUEST";
+    public static final String PREPARE_ANALOG_DOMICILE_FAILURE = "PREPARE_ANALOG_DOMICILE_FAILURE";
     // PollingStrategy (generiche)
     public static final String TIMELINE_RAPID = "TIMELINE_RAPID";
     public static final String TIMELINE_SLOW = "TIMELINE_SLOW";

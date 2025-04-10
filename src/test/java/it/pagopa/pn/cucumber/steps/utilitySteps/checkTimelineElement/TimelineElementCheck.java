@@ -1,10 +1,10 @@
-package it.pagopa.pn.cucumber.steps.utilitySteps;
+package it.pagopa.pn.cucumber.steps.utilitySteps.checkTimelineElement;
 
 /**
  * Enum di tutte le tipologie di check che si possono effettuare su un elemento di timeline nelle classi
  * che implementano l'interfaccia {@link it.pagopa.pn.cucumber.steps.pa.b2bVersions.B2bStepsInterface}.
  * Se si necessita di creare una nuova tipologia di check con parametri, sarà sufficiente aggiungere
- * i parametri necessari all'interno di {@link it.pagopa.pn.cucumber.steps.utilitySteps.TimelineElementCheckFilters}
+ * i parametri necessari all'interno di {@link TimelineElementCheckFilters}
  * e inserire qui la nuova tipologia di check
  */
 public enum TimelineElementCheck {
@@ -27,5 +27,5 @@ public enum TimelineElementCheck {
     CHECK_NOTIFICATION_COST_FOR_USER,
     CHECK_NUMBER_OF_PAGES_AAR,
     CHECK_FIELD_MATCHES_REGEX,
-    CHECK_ATTESTAZIONI_OPPONIBILI;
+    CHECK_ATTESTAZIONI_OPPONIBILI,
 }

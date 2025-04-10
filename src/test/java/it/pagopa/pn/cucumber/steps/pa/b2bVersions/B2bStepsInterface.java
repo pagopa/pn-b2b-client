@@ -2,9 +2,9 @@ package it.pagopa.pn.cucumber.steps.pa.b2bVersions;
 
 import io.cucumber.datatable.DataTable;
 import it.pagopa.pn.cucumber.steps.utilitySteps.PollingType;
-import it.pagopa.pn.cucumber.steps.utilitySteps.TimelineElementCheck;
-import it.pagopa.pn.cucumber.steps.utilitySteps.TimelineElementCheckFilters;
 import it.pagopa.pn.cucumber.steps.utilitySteps.WaitForEventPredicateFilters;
+import it.pagopa.pn.cucumber.steps.utilitySteps.checkTimelineElement.TimelineElementCheck;
+import it.pagopa.pn.cucumber.steps.utilitySteps.checkTimelineElement.TimelineElementCheckFilters;
 
 import java.util.Map;
 
@@ -18,6 +18,8 @@ public interface B2bStepsInterface {
      */
     Object getFullSentNotification();
 
+    void checkFullSentNotificationWithVersion(boolean isPresent, String timelineEventCategory, Integer introducingVersion);
+
     void readEventsUpToTimelineElement(String timelineEventCategory);
 
     void readEventsUpToStatus(String status, boolean exists);
@@ -30,7 +32,13 @@ public interface B2bStepsInterface {
 
     void checkPriceForRecipient(int recipientIndex, String price);
 
-    void payAvvisoPagoPa(Integer paymentIndex, Integer recipientIndex);
+    /**
+     * Paga gli avvisi di pagamento relativi a un certo destinatario
+     *
+     * @param recipientIndex il destinatario che deve eseguire i pagamenti
+     * @param paymentIndex   se passato null, il metodo procede con il pagamento di tutti gli avvisi relativi al recipient
+     */
+    void payAvvisoPagoPa(Integer recipientIndex, Integer paymentIndex);
 
     void checkForNoDuplicatedTimelineElements(String timelineElementCategory);
 
