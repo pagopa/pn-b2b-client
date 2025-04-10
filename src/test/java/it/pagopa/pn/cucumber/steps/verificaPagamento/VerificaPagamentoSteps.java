@@ -81,6 +81,7 @@ public class VerificaPagamentoSteps {
         } catch (AssertionFailedError e) {
             Throwable cause = e.getCause();
             if (cause instanceof HttpClientErrorException.Conflict) {
+                increaseSuffixCount(this.noticeCodeSuffix);
                 log.error("Conflict 409: Notifica con noticeCode \"{}\" e creditorTaxId \"{}\" già presente", this.noticeCode, this.creditorTaxId);
             }
             throw e;
