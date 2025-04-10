@@ -2,8 +2,6 @@ package it.pagopa.pn.client.b2b.pa.polling.design;
 
 
 public class PnPollingStrategy {
-    private PnPollingStrategy() {
-    }
 
 //    public static final String INTEROP_TRACING = "INTEROP_TRACING";
 

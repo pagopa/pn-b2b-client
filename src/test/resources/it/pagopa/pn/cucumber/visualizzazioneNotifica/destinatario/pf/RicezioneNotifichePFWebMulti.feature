@@ -7,7 +7,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B multi destinatari
       | senderDenomination | comune di milano            |
     And destinatario Mario Gherkin
     And destinatario Mario Cucumber
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente recuperata da "Mario Gherkin"
     And la notifica può essere correttamente recuperata da "Mario Cucumber"
 
@@ -18,7 +18,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B multi destinatari
       | senderDenomination | comune di milano            |
     And destinatario Mario Gherkin
     And destinatario Mario Cucumber
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then il documento notificato può essere correttamente recuperato da "Mario Gherkin"
     And il documento notificato può essere correttamente recuperato da "Mario Cucumber"
 
@@ -32,7 +32,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B multi destinatari
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm | SI               |
       | payment_f24        | PAYMENT_F24_FLAT |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'allegato "PAGOPA" può essere correttamente recuperato da "Mario Gherkin"
     And l'allegato "PAGOPA" può essere correttamente recuperato da "Mario Cucumber"
 
@@ -48,7 +48,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B multi destinatari
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm | SI               |
       | payment_f24        | PAYMENT_F24_FLAT |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'allegato "F24" può essere correttamente recuperato da "Mario Gherkin"
     And l'allegato "F24" può essere correttamente recuperato da "Mario Cucumber"
 
@@ -64,7 +64,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B multi destinatari
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm | SI                   |
       | payment_f24        | PAYMENT_F24_STANDARD |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'allegato "F24" può essere correttamente recuperato da "Mario Gherkin"
     And l'allegato "F24" può essere correttamente recuperato da "Mario Cucumber"
 
@@ -80,7 +80,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B multi destinatari
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm | SI   |
       | payment_f24        | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And "Mario Gherkin" tenta il recupero dell'allegato "F24"
     Then il download ha prodotto un errore con status code "404"
     And "Mario Cucumber" tenta il recupero dell'allegato "F24"
@@ -98,7 +98,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B multi destinatari
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm | SI   |
       | payment_f24        | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And "Mario Gherkin" tenta il recupero dell'allegato "F24"
     Then il download ha prodotto un errore con status code "404"
     And "Mario Cucumber" tenta il recupero dell'allegato "F24"
@@ -116,7 +116,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B multi destinatari
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm | SI                   |
       | payment_f24        | PAYMENT_F24_STANDARD |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And "Mario Gherkin" tenta il recupero dell'allegato "F24"
     Then il download ha prodotto un errore con status code "404"
     And l'allegato "F24" può essere correttamente recuperato da "Mario Cucumber"
@@ -133,7 +133,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B multi destinatari
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm | SI               |
       | payment_f24        | PAYMENT_F24_FLAT |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And "Mario Gherkin" tenta il recupero dell'allegato "F24"
     Then il download ha prodotto un errore con status code "404"
     And l'allegato "F24" può essere correttamente recuperato da "Mario Cucumber"
@@ -150,7 +150,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B multi destinatari
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm | SI               |
       | payment_f24        | PAYMENT_F24_FLAT |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And l'allegato "PAGOPA" può essere correttamente recuperato da "Mario Cucumber"
     Then "Mario Gherkin" tenta il recupero dell'allegato "PAGOPA"
     And il download ha prodotto un errore con status code "404"
@@ -161,7 +161,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B multi destinatari
       | senderDenomination | comune di milano            |
     And destinatario Mario Gherkin
     And destinatario Mario Cucumber
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente recuperata con una ricerca da "Mario Gherkin"
       |  |  |
     And la notifica può essere correttamente recuperata con una ricerca da "Mario Cucumber"
@@ -173,7 +173,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B multi destinatari
       | senderDenomination | comune di milano            |
     And destinatario Mario Gherkin
     And destinatario Mario Cucumber
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente recuperata con una ricerca da "Mario Gherkin"
       | subjectRegExp | cucumber |
     And la notifica può essere correttamente recuperata con una ricerca da "Mario Cucumber"
@@ -185,7 +185,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B multi destinatari
       | senderDenomination | comune di milano            |
     And destinatario Mario Gherkin
     And destinatario Mario Cucumber
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente recuperata con una ricerca da "Mario Gherkin"
       | startDate     | 01/01/2023 |
       | subjectRegExp | cucumber   |
@@ -199,7 +199,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B multi destinatari
       | senderDenomination | comune di milano            |
     And destinatario Mario Gherkin
     And destinatario Mario Cucumber
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente recuperata con una ricerca da "Mario Gherkin"
       | startDate     | 01/01/2023 |
       | endDate       | 01/10/2030 |
@@ -217,7 +217,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B multi destinatari
       | senderDenomination | comune di milano            |
     And destinatario Mario Gherkin
     And destinatario Mario Cucumber
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica non viene recuperata con una ricerca da "Mario Gherkin"
       | startDate     | 01/01/2030 |
       | endDate       | 01/10/2033 |
