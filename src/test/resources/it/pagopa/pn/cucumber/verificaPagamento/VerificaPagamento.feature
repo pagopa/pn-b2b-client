@@ -1,7 +1,7 @@
 Feature: Verifica pagamento PagoPA
 
   @verificaPagamento
-  Scenario: [PAYMENT-VERIFY_1] Check API verifica pagamento - PAYMENT_EXPIRED 30299
+  Scenario: [PAYMENT-VERIFY_1] Check API verifica pagamento - CODICE AVVISO SCADUTO 30299
     Given viene generata una nuova notifica di pagamento
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -20,7 +20,7 @@ Feature: Verifica pagamento PagoPA
       | detailV2 | PAA_PAGAMENTO_SCADUTO |
 
   @verificaPagamento
-  Scenario: [PAYMENT-VERIFY_2] Check API verifica pagamento - GENERIC_ERROR 30244
+  Scenario: [PAYMENT-VERIFY_2] Check API verifica pagamento - CODICE AVVISO UNKNOW 30244
     Given viene generata una nuova notifica di pagamento
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -40,7 +40,7 @@ Feature: Verifica pagamento PagoPA
 
 
   @verificaPagamento
-  Scenario: [PAYMENT-VERIFY_3] Check API verifica pagamento - GENERIC_ERROR 21111672374967
+  Scenario: [PAYMENT-VERIFY_3] Check API verifica pagamento - CODICE AVVISO NON VALIDO 21111672374967
     Given viene generata una nuova notifica di pagamento
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -59,7 +59,7 @@ Feature: Verifica pagamento PagoPA
       | detailV2 | Checkout not found |
 
   @verificaPagamento
-  Scenario: [PAYMENT-VERIFY_4] Check API verifica pagamento - GENERIC_ERROR 30201
+  Scenario: [PAYMENT-VERIFY_4] Check API verifica pagamento - TAXID NON VALIDO CODICE AVVISO VALIDO 30201
     Given viene generata una nuova notifica di pagamento
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
