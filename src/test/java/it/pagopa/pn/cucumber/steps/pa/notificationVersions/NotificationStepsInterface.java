@@ -15,6 +15,8 @@ public interface NotificationStepsInterface {
 
     String getVersionString();
 
+    String getNotificationRequestId();
+
     void prepareNotificationRequest(Map<String, String> data);
 
     void addRecipientToNotification(Destinatario destinatario, Map<String, String> data);

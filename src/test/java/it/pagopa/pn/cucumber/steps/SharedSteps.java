@@ -60,6 +60,7 @@ import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVe
 import static it.pagopa.pn.cucumber.utils.FiscalCodeGenerator.generateCF;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
 import static java.util.Objects.nonNull;
+import static org.assertj.core.api.Assumptions.assumeThat;
 import static org.awaitility.Awaitility.await;
 
 
@@ -196,12 +197,27 @@ public class SharedSteps {
     private NotificationVersion versionUsed;
 
     /**
-     * Lo IUN della notifica che viene creata (dell'ultima, nei rari casi di più notifiche) viene salvato in questa variabile.
-     * Tramite esso è poi possibile recuperare le FullSentNotification (di qualsivoglia versione) richiamando il B2B
+     * Lo IUN della notifica che viene creata (dell'ultima, nei rari casi di più notifiche create simultaneamente) e
+     * viene salvato in questa variabile.
+     * Tramite esso è poi possibile recuperare le FullSentNotification (di qualsivoglia versione) richiamando il B2B.
+     * Il getter controlla se lo IUN è valorizzato (notifica inviata successo). In caso contrario (NOTIFICATION_REFUSED)
+     * andiamo a recuperarlo decodificando in Base64 il requestId della notificationResponse.
+     * Se anche la notificationResponse è null, o si sta invocando qualche step al momento sbagliato, o qualcosa è andato storto.
      */
-    @Getter
     @Setter
     private String notificationIun;
+
+    public String getNotificationIun() {
+        if (notificationIun == null) {
+            String requestId = getNotificationStepInterface().getNotificationRequestId();
+            if (requestId == null) {
+                throw new RuntimeException("Lo IUN non è valorizzato e nemmeno la NotificationResponse, qualcosa è andato storto nei passaggi precedenti");
+            }
+            byte[] decodedBytes = Base64.getDecoder().decode(requestId);
+            notificationIun = new String(decodedBytes);
+        }
+        return notificationIun;
+    }
 
     @Before("@useB2B")
     public void beforeMethod() {
@@ -237,6 +253,7 @@ public class SharedSteps {
         this.iPnTosPrivacyClientImpl = iPnTosPrivacyClientImpl;
         this.objMapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
         this.secureRandom = new SecureRandom();
+        versionUsed = getNotificationVersion(MOST_RECENT);
     }
 
     @BeforeAll
@@ -262,10 +279,10 @@ public class SharedSteps {
      * i punti di codice che richiamano questo metodo
      */
     public FullSentNotificationV26 getSentNotificationLastVersion() {
-        if (notificationIun != null) {
-            return b2bClient.getSentNotificationV26(notificationIun);
+        if (getNotificationIun() == null) {
+            throw new RuntimeException("Lo IUN non è valorizzato e nemmeno la NotificationResponse, qualcosa è andato storto nei passaggi precedenti");
         }
-        throw new RuntimeException("Lo IUN non è valorizzato, qualcosa è andato storto nei passaggi precedenti");
+        return b2bClient.getSentNotification(notificationIun);
     }
 
     public NotificationVersion getNotificationVersion(String version) {
@@ -607,7 +624,7 @@ public class SharedSteps {
     @When("la notifica viene inviata tramite api b2b dal {string} e si annulla prima che lo stato diventi REFUSED")
     public void laNotificaVieneInviataRefusedAndCancelled(String paName) {
         setPaAndSenderTaxId(paName);
-        getNotificationStepInterface().sendNotification(1000, NOTIFICATION_STATUS_NOT_REFUSED, VALIDATION_STATUS);
+        getNotificationStepInterface().sendNotification(1000, NOTIFICATION_STATUS_CANCELLED, VALIDATION_STATUS);
     }
 
     //TODO: per test normalizzatore
@@ -788,6 +805,9 @@ public class SharedSteps {
     //  Alcuni di questi non vengono nemmeno mai richiamati da nessun file feature
     //  Altra possibile miglioria: sostituire le stringhe delle tipologie d'errore con costanti all'interno della classe Costanti
     private void sendNotificationRefusedDueToError(String errorType, Boolean noUpload) {
+        assumeThat(versionUsed)
+                .as("Test skipped: I metodi sottostanti sono pensati per funzionare per la V24. Con qualsiasi altra versione fallirebbero")
+                .isEqualTo(NotificationVersion.V24);
         try {
             Assertions.assertDoesNotThrow(() -> {
                 notificationCreationDate = OffsetDateTime.now();
@@ -996,7 +1016,7 @@ public class SharedSteps {
 
     private String decorateErrorMsg(String originalMessage) {
         return originalMessage +
-                " {IUN: " + Optional.ofNullable(getNotificationIun())
+                " {VERSION: " + versionUsed.name() + ", IUN: " + Optional.ofNullable(getNotificationIun())
                 .orElse("not found") + " }";
     }
 
@@ -1191,7 +1211,7 @@ public class SharedSteps {
     public List<TimelineElementV26> getTimelineElementsByEventId(String timelineEventCategory, DataTest dataFromTest) {
         FullSentNotificationV26 fullSentNotification = getSentNotificationLastVersion();
         List<TimelineElementV26> timelineElementList = fullSentNotification.getTimeline();
-        String iun = getIun(timelineEventCategory);
+        String iun = getNotificationIun();//TODO MATTEO TEST
         if (dataFromTest != null && dataFromTest.getTimelineElement() != null) {
             // get timeline event id
             String timelineEventId = getTimelineEventId(timelineEventCategory, iun, dataFromTest);
@@ -1232,18 +1252,18 @@ public class SharedSteps {
                 .orElse(null);
     }
 
-    private String getIun(String timelineEventCategory) {
-        String iun;
-        if (timelineEventCategory.equals(TimelineElementCategoryV26.REQUEST_REFUSED.getValue())) {
-            String requestId = newNotificationResponse.getNotificationRequestId();
-            byte[] decodedBytes = Base64.getDecoder().decode(requestId);
-            iun = new String(decodedBytes);
-        } else {
-            // proceed with default flux
-            iun = getNotificationIun();
-        }
-        return iun;
-    }
+//    private String getIun(String timelineEventCategory) {
+//        String iun;
+//        if (timelineEventCategory.equals(REQUEST_REFUSED)) {
+//            String requestId = newNotificationResponse.getNotificationRequestId();
+//            byte[] decodedBytes = Base64.getDecoder().decode(requestId);
+//            iun = new String(decodedBytes);
+//        } else {
+//            // proceed with default flux
+//            iun = getNotificationIun();
+//        }
+//        return iun;
+//    }
 
     public Integer getSchedulingDelta() {
         if (timingConfigs.getSchedulingDeltaMillis() == null) {
