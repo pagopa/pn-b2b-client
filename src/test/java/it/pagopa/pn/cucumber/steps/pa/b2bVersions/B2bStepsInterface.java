@@ -4,6 +4,8 @@ import io.cucumber.datatable.DataTable;
 
 public interface B2bStepsInterface {
 
+    void checkFullSentNotificationWithVersion(boolean isPresent, String timelineEventCategory);
+
     void readEventsUpToTimelineElement(String timelineEventCategory);
 
     void readEventsUpToStatus(String status);

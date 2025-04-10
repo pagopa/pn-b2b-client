@@ -1,5 +1,6 @@
 package it.pagopa.pn.cucumber.steps.pa.notificationVersions;
 
+import io.cucumber.java.ParameterType;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -165,5 +166,10 @@ public class Costanti {
             case COMUNE_ROOT -> COMUNE_ROOT_TAX_ID;
             default -> throw new IllegalArgumentException();
         };
+    }
+
+    @ParameterType("è presente|non è presente")
+    public static boolean isPresent(String condition) {
+        return condition.equalsIgnoreCase("è presente");
     }
 }

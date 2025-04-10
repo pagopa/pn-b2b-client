@@ -21,6 +21,7 @@ import java.util.List;
 
 import static java.time.OffsetDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @Slf4j
 public class B2bStepsV24 implements B2bStepsInterface {
@@ -34,6 +35,29 @@ public class B2bStepsV24 implements B2bStepsInterface {
     public B2bStepsV24(AvanzamentoNotificheB2bSteps b2bSteps) {
         version = NotificationVersion.V24;
         this.b2bSteps = b2bSteps;
+    }
+
+    @Override
+    public void checkFullSentNotificationWithVersion(boolean isPresent, String timelineEventCategory) {
+        //FullSentNotificationV26 fullSentNotification = getFullSentNotificationVersioned();//todo v28
+        FullSentNotificationV26 fullSentNotification = b2bSteps.getB2bClient().getSentNotificationV26(b2bSteps.getSharedSteps().getNotificationIun());
+        TimelineElementV26 timelineElement = fullSentNotification.getTimeline().stream().filter(
+                te -> te.getCategory().getValue().equals(timelineEventCategory)).findAny().orElse(null);
+        if (isPresent) {
+            assertSoftly(softly -> {
+
+                assertThat(timelineElement)
+                        .as("Il controllo sulla fullSentNotification dovrebbe restituire almeno un elemento")
+                        .isNotNull();
+            });
+        } else {
+            assertSoftly(softly -> {
+
+                assertThat(timelineElement)
+                        .as("Il controllo sulla fullSentNotification non dovrebbe restituire elementi")
+                        .isNull();
+            });
+        }
     }
 
     @Override

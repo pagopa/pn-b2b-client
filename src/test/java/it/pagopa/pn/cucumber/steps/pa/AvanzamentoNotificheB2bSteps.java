@@ -3779,4 +3779,10 @@ public class AvanzamentoNotificheB2bSteps {
 
         Assertions.assertNotNull(element, "the element to check is not found iun: " + fullSentNotification.getIun());
     }
+
+    @Then("recuperando la fullSentNotification con la versione B2b {string} {isPresent} l'elemento di timeline {string}")
+    public void checkPresenceOfTimelineElement(String version, boolean isPresent, String timelineEventCategory) {
+        NotificationVersion notificationVersion = NotificationVersion.valueOf(version);
+        getB2bStepsInterface(notificationVersion).checkFullSentNotificationWithVersion(isPresent, timelineEventCategory);
+    }
 }

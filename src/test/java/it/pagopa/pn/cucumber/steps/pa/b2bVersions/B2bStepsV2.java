@@ -37,6 +37,11 @@ public class B2bStepsV2 implements B2bStepsInterface {
     }
 
     @Override
+    public void checkFullSentNotificationWithVersion(boolean isPresent, String timelineEventCategory) {
+        //todo v28
+    }
+
+    @Override
     public void readEventsUpToTimelineElement(String timelineEventCategory) {
         PnPollingServiceTimelineSlowV20 timelineSlow =
                 (PnPollingServiceTimelineSlowV20) b2bSteps.getSharedSteps().getPollingFactory().getPollingService(PnPollingStrategy.TIMELINE_SLOW_V20);
