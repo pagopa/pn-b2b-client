@@ -68,7 +68,7 @@ public interface B2bStepsInterface {
 
     void searchCustomTimelineElementInTimeline(String eventId, String timelineEventCategory);
 
-    //Lo step che lo implementa non è utilizzato, valuterei eliminazione (anche perchè si può inglobare in un altro dei metodi già esistenti)
+    //Lo step che lo implementa non è utilizzato, valuterei eliminazione (anche perché si può inglobare in un altro dei metodi già esistenti)
     void verificaAssenzaPagamentiF24();
 
 }

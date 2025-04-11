@@ -75,8 +75,6 @@ public class AvanzamentoNotificheB2bSteps {
     private final PnPollingFactory pnPollingFactory;
     @Getter
     private final TimingForPolling timingForPolling;
-    //    private final PnTimelineAndLegalFactV26 pnTimelineAndLegalFactV26;    //TODO MATTEO spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
-    //    private final LegalFactContentVerifySteps legalFactContentVerifySteps;     //TODO MATTEO spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
     @Value("${pn.external.costo_base_notifica}")
     private Integer costoBaseNotifica;
     @Value("${pn.external.allowed.future.offset.duration}")
