@@ -10,15 +10,15 @@ Feature: avanzamento notifiche b2b con workflow cartaceo RS/RIR
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
     And destinatario Mario Gherkin e:
-      | digitalDomicile_address | test@fail.it |
+      | digitalDomicile_address | test@fail.it      |
       | physicalAddress_address | <physicalAddress> |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     Examples:
       | physicalAddress |
       | Via@ok_RS       |
       | Via@ok-Retry_RS |
-      | Via@ok_RIS |
+      | Via@ok_RIS      |
 
   @dev
   #[B2B_TIMELINE_12], [B2B_TIMELINE_13], [B2B_TIMELINE_RS_6]
@@ -28,10 +28,10 @@ Feature: avanzamento notifiche b2b con workflow cartaceo RS/RIR
       | senderDenomination | Comune di milano            |
     And destinatario Mario Cucumber e:
       | digitalDomicile_address | test@fail.it |
-    When la notifica viene inviata tramite api b2b dal <comune> e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal <comune> e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica <timelineEvent>
     Examples:
-      | comune | timelineEvent |
+      | comune         | timelineEvent                      |
       | "Comune_Multi" | "PREPARE_SIMPLE_REGISTERED_LETTER" |
       | "Comune_1"     | "SEND_SIMPLE_REGISTERED_LETTER"    |
 
@@ -42,7 +42,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo RS/RIR
     And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok_RS    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" con deliveryDetailCode "RECRS001C"
   #"sequence": "@sequence.5s-CON080.5s-RECRS001C"
 
@@ -59,7 +59,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo RS/RIR
       | physicalAddress_province     | Paris        |
       | digitalDomicile_address      | test@fail.it |
       | physicalAddress_address      | Via@ok_RIS   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" con deliveryDetailCode "RECRSI003C"
     #"sequence": "@sequence.5s-CON080.5s-RECRSI001.5s-RECRSI002.5s-RECRSI003C"
@@ -75,7 +75,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo RS/RIR
     And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@fail_RIS |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" con deliveryDetailCode "RECRSI004B" e verifica tipo DOC "Plico"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" con deliveryDetailCode "RECRSI004C"
 

@@ -32,7 +32,7 @@ Feature: avanzamento notifiche webhook b2b V23
 #    And destinatario
 #      | denomination | Galileo galileo  |
 #      | taxId        | GLLGLL64B15G702I |
-#    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+#    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
 
 
 #COMUNE 1
@@ -52,7 +52,7 @@ Feature: avanzamento notifiche webhook b2b V23
     And viene aggiornata la apiKey utilizzata per gli stream
     And si crea il nuovo stream con versione "V23" per il "Comune_1" con un gruppo disponibile "NO_GROUPS"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     #TEST LETTURA ACCEPTED
     Then vengono letti gli eventi dello stream del "Comune_1" fino allo stato "ACCEPTED" con la versione "V23"
     #TEST LETTURA REQUEST_ACCEPTED
@@ -95,7 +95,7 @@ Feature: avanzamento notifiche webhook b2b V23
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V23"
     And si crea il nuovo stream per il "Comune_1" con versione "V23"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     #TEST LETTURA ACCEPTED
     Then vengono letti gli eventi dello stream del "Comune_1" fino allo stato "ACCEPTED" con la versione "V23"
     #TEST LETTURA REQUEST_ACCEPTED
@@ -132,7 +132,7 @@ Feature: avanzamento notifiche webhook b2b V23
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
     And si crea il nuovo stream con versione "V23" per il "Comune_1" con un gruppo disponibile "FIRST"
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi dello stream del "Comune_1" fino allo stato "ACCEPTED" con la versione "V23"
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "REQUEST_ACCEPTED" con la versione "V23"
     And viene modificato lo stato dell'apiKey in "BLOCK"
@@ -150,7 +150,7 @@ Feature: avanzamento notifiche webhook b2b V23
     And viene aggiornata la apiKey utilizzata per gli stream
     And si crea il nuovo stream con versione "V23" per il "Comune_1" con un gruppo disponibile "FIRST"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "REQUEST_ACCEPTED" con la versione "V23" e apiKey aggiornata con position 0
     And viene modificato lo stato dell'apiKey in "BLOCK"
@@ -174,7 +174,7 @@ Feature: avanzamento notifiche webhook b2b V23
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
     And si crea il nuovo stream con versione "V23" per il "Comune_2" con un gruppo disponibile "FIRST"
-    And la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "ACCEPTED"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
     When Viene creata una nuova apiKey per il comune "Comune_2" senza gruppo
@@ -208,7 +208,7 @@ Feature: avanzamento notifiche webhook b2b V23
     And si crea il nuovo stream per il "Comune_2" con versione "V23"
     And si disabilita lo stream "V23" creato per il comune "Comune_2"
     And l'operazione non ha prodotto errori
-    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica che non siano presenti eventi nello stream con versione "V23" del "Comune_2"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
@@ -235,7 +235,7 @@ Feature: avanzamento notifiche webhook b2b V23
     And viene aggiornata la apiKey utilizzata per gli stream
     And si crea il nuovo stream per il "Comune_2" con versione "V23"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
-    And la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "REQUEST_ACCEPTED" con la versione "V23"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
@@ -249,7 +249,7 @@ Feature: avanzamento notifiche webhook b2b V23
       | payment | NULL |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_2" con versione "V10"
-    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "REQUEST_ACCEPTED" con la versione "V10"
     And viene verificato che il campo legalFactIds sia valorizzato nel EventStream con la versione "V10"
 
@@ -263,8 +263,8 @@ Feature: avanzamento notifiche webhook b2b V23
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
-      | denomination            | Giovanna D'Arco  |
-      | taxId                   | DRCGNN12A46A326K |
+      | denomination            | Mario Gherkin    |
+      | taxId                   | CLMCST42R12D969Z |
       | digitalDomicile         | NULL             |
       | physicalAddress_address | Via@ok_AR        |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V23"
@@ -272,7 +272,7 @@ Feature: avanzamento notifiche webhook b2b V23
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
     And si crea il nuovo stream per il "Comune_Multi" con versione "V23"
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "PREPARE_ANALOG_DOMICILE" con la versione "V23" e apiKey aggiornata con position 0
     And verifica corrispondenza tra i detail del webhook e quelli della timeline con la versione "V23"
@@ -291,8 +291,8 @@ Feature: avanzamento notifiche webhook b2b V23
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
-      | denomination            | Giovanna D'Arco  |
-      | taxId                   | DRCGNN12A46A326K |
+      | denomination            | Mario Gherkin    |
+      | taxId                   | CLMCST42R12D969Z |
       | digitalDomicile         | NULL             |
       | physicalAddress_address | Via@ok_AR        |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V23"
@@ -300,7 +300,7 @@ Feature: avanzamento notifiche webhook b2b V23
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
     And si crea il nuovo stream con versione "V23" per il "Comune_Multi" con un gruppo disponibile "FIRST"
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "PREPARE_ANALOG_DOMICILE" con la versione "V23" e apiKey aggiornata con position 0
     And verifica deanonimizzazione degli eventi di timeline versione "V23" con delega "NO" analogico
@@ -331,7 +331,7 @@ Feature: avanzamento notifiche webhook b2b V23
     And viene aggiornata la apiKey utilizzata per gli stream
     And si crea il nuovo stream con versione "V23" per il "Comune_Multi" con un gruppo disponibile "FIRST"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "REQUEST_ACCEPTED" con la versione "V23" e apiKey aggiornata con position 1
     And viene modificato lo stato dell'apiKey in "BLOCK"
@@ -346,7 +346,7 @@ Feature: avanzamento notifiche webhook b2b V23
     And destinatario Mario Gherkin
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -368,8 +368,8 @@ Feature: avanzamento notifiche webhook b2b V23
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
     And si crea il nuovo stream per il "Comune_1" con versione "V23"
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    And Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+    And Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
     And L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
@@ -395,8 +395,8 @@ Feature: avanzamento notifiche webhook b2b V23
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
     And si crea il nuovo stream con versione "V23" per il "Comune_2" con un gruppo disponibile "FIRST"
-    And la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
-    And Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
+    And la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "ACCEPTED"
+    And Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
     And L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
@@ -424,7 +424,7 @@ Feature: avanzamento notifiche webhook b2b V23
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_1" con versione "V10" e filtro di timeline "NOTIFICATION_RADD_RETRIEVED"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V10"
-    And Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
+    And Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
     And L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative

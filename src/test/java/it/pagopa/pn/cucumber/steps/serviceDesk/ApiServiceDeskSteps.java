@@ -6,6 +6,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV26;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationAttachmentBodyRef;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationAttachmentDigests;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationDocument;
@@ -41,6 +42,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.*;
 import static org.awaitility.Awaitility.await;
 
 
@@ -121,8 +123,8 @@ public class ApiServiceDeskSteps {
 
     @And("viene chiamato service desk e si controlla la presenza dell'elemento {string} nella response")
     public void invocazioneServizioPerVerificaElementoTimelineNEllaResponse(String elemento) {
-        if (sharedSteps.getSentNotification() != null) {
-            timelineResponse = ipServiceDeskClient.getTimelineOfIUN(sharedSteps.getSentNotification().getIun());
+        if (sharedSteps.getNotificationIun() != null) {
+            timelineResponse = ipServiceDeskClient.getTimelineOfIUN(sharedSteps.getNotificationIun());
 
             Assertions.assertNotNull(timelineResponse);
             Assertions.assertNotNull(timelineResponse.getTimeline());
@@ -209,26 +211,15 @@ public class ApiServiceDeskSteps {
         }
 
         switch (ticketid) {
-            case "ticketid_vuoto":
-                createOperationRequest.setTicketId(ticketIdVuoto);
-                break;
-
-            case "ticketid_errato":
-                createOperationRequest.setTicketId(TICKET_ID_ERRATO);
-                break;
-            default:
-                createOperationRequest.setTicketId(ticketid);
+            case "ticketid_vuoto" -> createOperationRequest.setTicketId(ticketIdVuoto);
+            case "ticketid_errato" -> createOperationRequest.setTicketId(TICKET_ID_ERRATO);
+            default -> createOperationRequest.setTicketId(ticketid);
         }
 
         switch (ticketOperationid) {
-            case "ticketoperationid_vuoto":
-                createOperationRequest.setTicketOperationId(ticketOperationIdVuoto);
-                break;
-            case "ticketoperationid_errato":
-                createOperationRequest.setTicketOperationId(TICKET_OPERATION_ID_ERRATO);
-                break;
-            default:
-                createOperationRequest.setTicketOperationId(ticketOperationid);
+            case "ticketoperationid_vuoto" -> createOperationRequest.setTicketOperationId(ticketOperationIdVuoto);
+            case "ticketoperationid_errato" -> createOperationRequest.setTicketOperationId(TICKET_OPERATION_ID_ERRATO);
+            default -> createOperationRequest.setTicketOperationId(ticketOperationid);
         }
         createOperationRequest.setAddress(analogAddress);
     }
@@ -781,7 +772,7 @@ public class ApiServiceDeskSteps {
     public void comeOperatoreDevoAccedereAiDettagliDiUnaNotificaDiCuiConoscoLIdentificativoIUN() {
         try {
             profileRequest = new ProfileRequest();
-            notificationDetailResponse = ipServiceDeskClient.getNotificationFromIUN(sharedSteps.getIunVersionamento());
+            notificationDetailResponse = ipServiceDeskClient.getNotificationFromIUN(sharedSteps.getNotificationIun());
 
         } catch (HttpStatusCodeException exception) {
             this.notificationError = exception;
@@ -803,7 +794,7 @@ public class ApiServiceDeskSteps {
     @And("verifica IsMultiRecipients nel dettaglio notifica")
     public void recuperoVerifyIsMultiRecipientsDettaglioNotifica() {
         try {
-            notificationDetailResponse = ipServiceDeskClient.getNotificationFromIUN(sharedSteps.getSentNotification().getIun());
+            notificationDetailResponse = ipServiceDeskClient.getNotificationFromIUN(sharedSteps.getNotificationIun());
             Assertions.assertNotNull(notificationDetailResponse);
             Assertions.assertNotEquals(Boolean.TRUE, notificationDetailResponse.getIsMultiRecipients());
         } catch (HttpStatusCodeException exception) {
@@ -883,9 +874,10 @@ public class ApiServiceDeskSteps {
     @Given("come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN {string} e taxId {string}  recipientType  {string}")
     public void comeOperatoreDevoEffettuareUnCheckSullaDisponibilitaValiditaEDimensioneDegliAllegatiConIUNRecipientType(String iun, String taxId, String recipientType) {
         try {
+            FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
             documentsRequest = new DocumentsRequest();
-            if (sharedSteps.getSentNotification() != null) {
-                setRecipientType(sharedSteps.getSentNotification().getRecipients().get(0).getRecipientType().getValue());
+            if (fullSentNotification != null) {
+                setRecipientType(fullSentNotification.getRecipients().get(0).getRecipientType().getValue());
             } else {
                 setRecipientType(recipientType);
             }
@@ -895,7 +887,7 @@ public class ApiServiceDeskSteps {
             } else if ("VUOTO".equalsIgnoreCase(taxId)) {
                 documentsRequest.setTaxId("");
             } else if ("NO_SET".equalsIgnoreCase(taxId)) {
-                documentsRequest.setTaxId(sharedSteps.getSentNotification().getRecipients().get(0).getTaxId());
+                documentsRequest.setTaxId(fullSentNotification.getRecipients().get(0).getTaxId());
             } else {
                 documentsRequest.setTaxId(setTaxID(taxId));
             }
@@ -1016,7 +1008,7 @@ public class ApiServiceDeskSteps {
 
     @And("invocazione servizio per recupero timeline notifica con iun")
     public void invocazioneServizioPerRecuperoTimelineNotificaConIun() {
-        invocazioneServizioPerRecuperoDettaglioNotificaConIunSteps(sharedSteps.getIunVersionamento(), false);
+        invocazioneServizioPerRecuperoDettaglioNotificaConIunSteps(sharedSteps.getNotificationIun(), false);
     }
 
     @Given("come operatore devo accedere alle informazioni relative alle richieste di API Key avanzate da un Ente mittente di notifiche sulla Piattaforma {string}")
@@ -1037,34 +1029,35 @@ public class ApiServiceDeskSteps {
         }
 
         switch (cf) {
-            case "CF_vuoto":
+            case "CF_vuoto" -> {
                 if (isNotificationRequest) {
                     notificationRequest.setTaxId(cfVuoto);
                 } else {
                     searchNotificationRequest.setTaxId(cfVuoto);
                 }
-                break;
-            case "CF_errato":
+            }
+            case "CF_errato" -> {
                 if (isNotificationRequest) {
                     notificationRequest.setTaxId(CF_ERRATO);
                 } else {
                     searchNotificationRequest.setTaxId(CF_ERRATO);
                 }
-                break;
-            case "CF_errato2":
+            }
+            case "CF_errato2" -> {
                 if (isNotificationRequest) {
                     notificationRequest.setTaxId(CF_ERRATO_2);
                 } else {
                     searchNotificationRequest.setTaxId(CF_ERRATO_2);
                 }
-                break;
-            default:
+            }
+            default -> {
                 if (isNotificationRequest) {
                     notificationRequest.setTaxId(cf);
                 } else {
                     searchNotificationRequest.setTaxId(cf);
                 }
                 log.info("Inserito CF:" + cf);
+            }
         }
     }
 
@@ -1380,11 +1373,11 @@ public class ApiServiceDeskSteps {
     public String setTaxID(String taxId) {
         String result;
         result = switch (taxId) {
-            case "Mario Gherkin" -> sharedSteps.getMarioGherkinTaxID();
-            case "Mario Cucumber" -> sharedSteps.getMarioCucumberTaxID();
-            case "CucumberSpa" -> sharedSteps.getCucumberSpataxId();
-            case "GherkinSrl" -> sharedSteps.getGherkinSrltaxId();
-            case "Galileo Galilei" -> sharedSteps.getGalileoGalileiTaxID();
+            case MARIO_GHERKIN -> MARIO_GHERKIN_TAX_ID;
+            case MARIO_CUCUMBER -> MARIO_CUCUMBER_TAX_ID;
+            case CUCUMBER_SPA -> CUCUMBER_SPA_TAX_ID;
+            case GHERKIN_SRL -> GHERKIN_SRL_TAX_ID;
+            case GALILEO_GALILEI -> GALILEO_GALILEI_TAX_ID;
             default -> null;
         };
         return result;
@@ -1392,7 +1385,7 @@ public class ApiServiceDeskSteps {
 
     public void setRecipientType(String recipientType) {
         switch (recipientType) {
-            case "PF":
+            case PF -> {
                 if (searchNotificationsRequest != null) {
                     searchNotificationsRequest.setRecipientType(RecipientType.PF);
                 }
@@ -1402,8 +1395,8 @@ public class ApiServiceDeskSteps {
                 if (documentsRequest != null) {
                     documentsRequest.setRecipientType(RecipientType.PF);
                 }
-                break;
-            case "PG":
+            }
+            case PG -> {
                 if (searchNotificationsRequest != null) {
                     searchNotificationsRequest.setRecipientType(RecipientType.PG);
                 }
@@ -1413,8 +1406,8 @@ public class ApiServiceDeskSteps {
                 if (documentsRequest != null) {
                     documentsRequest.setRecipientType(RecipientType.PG);
                 }
-                break;
-            default:
+            }
+            default -> {
                 if (searchNotificationsRequest != null) {
                     searchNotificationsRequest.setRecipientType(null);
                 }
@@ -1424,6 +1417,7 @@ public class ApiServiceDeskSteps {
                 if (documentsRequest != null) {
                     documentsRequest.setRecipientType(null);
                 }
+            }
         }
     }
 
@@ -1434,8 +1428,8 @@ public class ApiServiceDeskSteps {
         } else if ("NO_SET".equalsIgnoreCase(iun)) {
             if (searchNotificationsResponse != null && searchNotificationsResponse.getResults() != null && !searchNotificationsResponse.getResults().isEmpty()) {
                 iunSearch = searchNotificationsResponse.getResults().get(0).getIun();
-            } else if (sharedSteps.getSentNotification() != null) {
-                iunSearch = sharedSteps.getSentNotification().getIun();
+            } else if (sharedSteps.getNotificationIun() != null) {
+                iunSearch = sharedSteps.getNotificationIun();
             }
         } else {
             iunSearch = iun;
@@ -1513,39 +1507,21 @@ public class ApiServiceDeskSteps {
     }
 
     private String createIUN(String iun) {
-        return  switch (iun.toUpperCase()) {
-            case "VUOTO" -> {
-                yield "";
-            }
-            case "INESISTENTE" -> {
-                yield IUN_ERRATO;
-            }
-            case "ASSOCIATO A PAGAMENTO PAGOPA" -> {
-                yield iunWithPagoPAPayment;
-            }
-            case "ASSOCIATO A PAGAMENTO F24" -> {
-                yield iunWithF24Payment;
-            }
-            case "NOTIFICA SENZA PAGAMENTI" -> {
-                yield iunWithoutPayment;
-            }
-            default -> {
-                yield iun;
-            }
+        return switch (iun.toUpperCase()) {
+            case "VUOTO" -> "";
+            case "INESISTENTE" -> IUN_ERRATO;
+            case "ASSOCIATO A PAGAMENTO PAGOPA" -> iunWithPagoPAPayment;
+            case "ASSOCIATO A PAGAMENTO F24" -> iunWithF24Payment;
+            case "NOTIFICA SENZA PAGAMENTI" -> iunWithoutPayment;
+            default -> iun;
         };
     }
 
     private String createTaxId(String user) {
         return switch (user.toUpperCase()) {
-            case "VUOTO" -> {
-                yield "";
-            }
-            case "ERRATO" -> {
-                yield CF_ERRATO;
-            }
-            default -> {
-                yield setTaxID(user);
-            }
+            case "VUOTO" -> "";
+            case "ERRATO" -> CF_ERRATO;
+            default -> setTaxID(user);
         };
     }
 
@@ -1572,11 +1548,11 @@ public class ApiServiceDeskSteps {
         }
     }
 
-    private boolean checkAddressAndChannelType(String addressType, String addressCategory,  Address data) {
+    private boolean checkAddressAndChannelType(String addressType, String addressCategory, Address data) {
         if (addressType.equals("cortesia")) {
-            return data.getCourtesyValue() != null && data.getCourtesyChannelType().equals(CourtesyChannelType.fromValue(addressCategory.toUpperCase()));
+            return data.getCourtesyChannelType().equals(CourtesyChannelType.fromValue(addressCategory.toUpperCase()));
         } else if (addressType.equals("legale")) {
-            return data.getLegalValue() != null && data.getLegalChannelType().equals(LegalChannelType.fromValue(addressCategory.toUpperCase()));
+            return data.getLegalChannelType().equals(LegalChannelType.fromValue(addressCategory.toUpperCase()));
         } else throw new IllegalArgumentException("addressType not valid");
     }
 
