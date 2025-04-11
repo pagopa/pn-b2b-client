@@ -1,5 +1,6 @@
 package it.pagopa.pn.cucumber.steps.verificaPagamento;
 
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -42,7 +43,7 @@ public class VerificaPagamentoSteps {
 
 
     @And("destinatario pagatore {destinatario} e:")
-    public void generaDestinatarioNotifica(Destinatario destinatario, io.cucumber.datatable.DataTable dataTable) {
+    public void generaDestinatarioNotifica(Destinatario destinatario, DataTable dataTable) {
         Map<String, String> data = new HashMap<>(dataTable.asMap());
 
         String noticeCodeSuffix = getValue(data, PAYMENT_NOTICE_CODE.key);
