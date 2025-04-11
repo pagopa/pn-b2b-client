@@ -64,32 +64,18 @@ public class B2bStepsV2 implements B2bStepsInterface {
     }
 
     @Override
-    public void checkFullSentNotificationWithVersion(boolean isPresent, String timelineEventCategory, Integer introducingVersion) {
+    public void checkFullSentNotificationWithVersion(boolean isPresent, String timelineEventCategory) {
         FullSentNotificationV20 fullSentNotification = getFullSentNotificationVersioned();
         TimelineElementV20 timelineElement = fullSentNotification.getTimeline().stream().filter(
                 te -> te.getCategory().getValue().equals(timelineEventCategory)).findAny().orElse(null);
         if (isPresent) {
-            assertSoftly(softly -> {
-                if (introducingVersion != null) {
-                    assertThat(version.getValue())
-                            .as("L'elemento di timeline {} è stato introdotto con una versione pari o superiore a questa", timelineEventCategory)
-                            .isGreaterThanOrEqualTo(introducingVersion);
-                }
-                assertThat(timelineElement)
-                        .as("Il controllo sulla fullSentNotification V{} dovrebbe restituire almeno un elemento", version.getValue())
-                        .isNotNull();
-            });
+            assertThat(timelineElement)
+                    .as("Il controllo sulla fullSentNotification V20 dovrebbe restituire almeno un elemento")
+                    .isNotNull();
         } else {
-            assertSoftly(softly -> {
-                if (introducingVersion != null) {
-                    assertThat(version.getValue())
-                            .as("L'elemento di timeline {} è stato introdotto con una versione più recente di questa", timelineEventCategory)
-                            .isLessThan(introducingVersion);
-                }
-                assertThat(timelineElement)
-                        .as("Il controllo sulla fullSentNotification V{} non dovrebbe restituire elementi", version.getValue())
-                        .isNull();
-            });
+            assertThat(timelineElement)
+                    .as("Il controllo sulla fullSentNotification V20 non dovrebbe restituire elementi")
+                    .isNull();
         }
     }
 

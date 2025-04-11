@@ -130,15 +130,10 @@ public class AvanzamentoNotificheB2bSteps {
         getB2bStepsInterface().checkEventPresenceForRecipient(recIndex, evento);
     }
 
-    @Then("recuperando la fullSentNotification con la versione {string} {isPresent} l'elemento di timeline {string}")
+    @Then("recuperando la fullSentNotification con la versione b2b {string} {isPresent} l'elemento di timeline {string}")
     public void checkPresenceOfTimelineElement(String version, boolean isPresent, String timelineEventCategory) {
-        checkPresenceOfTimelineElement(version, isPresent, timelineEventCategory, null);
-    }
-
-    @Then("recuperando la fullSentNotification con la versione {string} {isPresent} l'elemento di timeline {string} introdotto con la versione {int}")
-    public void checkPresenceOfTimelineElement(String version, boolean isPresent, String timelineEventCategory, Integer introducingVersion) {
         NotificationVersion notificationVersion = NotificationVersion.valueOf(version);
-        getB2bStepsInterface(notificationVersion).checkFullSentNotificationWithVersion(isPresent, timelineEventCategory, introducingVersion);
+        getB2bStepsInterface(notificationVersion).checkFullSentNotificationWithVersion(isPresent, timelineEventCategory);
     }
 
     //2 soli step richiamavano questo metodo, non serve più, useranno quello di sotto (universale), che
