@@ -37,6 +37,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.HttpStatusCodeException;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.time.Duration;
 import java.time.Instant;
@@ -3779,4 +3780,86 @@ public class AvanzamentoNotificheB2bSteps {
 
         Assertions.assertNotNull(element, "the element to check is not found iun: " + fullSentNotification.getIun());
     }
+
+    @And("viene verificato che nel dettaglio di timeline sia presente:")
+    public void verificaTimelineDetails(io.cucumber.datatable.DataTable dataTable) throws Exception {
+        Map<String, String> data = dataTable.asMap();
+        Object currentStatus = this.timelineElement;
+
+        for (Map.Entry<String, String> entry : data.entrySet()) {
+            String fieldPath = entry.getKey();
+            String expectedValue = entry.getValue();
+
+            Object actualFieldValue = resolveNestedFieldValue(currentStatus, fieldPath);
+            String actualValue = actualFieldValue != null ? actualFieldValue.toString() : null;
+
+            log.info("Verifica campo '{}': atteso='{}', ricevuto='{}'", fieldPath, expectedValue, actualValue);
+
+            assertEqualExpectedValue(fieldPath, expectedValue, actualValue);
+        }
+    }
+
+    private Object resolveNestedFieldValue(Object rootObject, String fieldPath) throws Exception {
+        String[] fields = fieldPath.split("\\.");
+        Object currentObject = rootObject;
+
+        for (int i = 0; i < fields.length; i++) {
+            String fieldName = fields[i];
+
+            Field field = getFieldFromHierarchy(currentObject.getClass(), fieldName);
+            field.setAccessible(true);
+
+            currentObject = field.get(currentObject);
+
+            if (currentObject == null && i < fields.length - 1) {
+                throw new NullPointerException("Campo intermedio '" + fieldName + "' è null nel path '" + fieldPath + "'");
+            }
+        }
+
+        return currentObject;
+    }
+
+    private Field getFieldFromHierarchy(Class<?> cls, String fieldName) throws NoSuchFieldException {
+        while (cls != null) {
+            try {
+                return cls.getDeclaredField(fieldName);
+            } catch (NoSuchFieldException e) {
+                cls = cls.getSuperclass();
+            }
+        }
+        throw new NoSuchFieldException("Campo '" + fieldName + "' non trovato nella gerarchia di classi.");
+    }
+
+    private void verifyRegexMatch(String fieldPath, String regex, String actualValue) {
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(actualValue != null ? actualValue : "");
+
+        if (!matcher.matches()) {
+            throw new AssertionError(String.format(
+                    "Campo \"%s\": valore \"%s\" non rispetta il pattern regex \"%s\"",
+                    fieldPath, actualValue, regex
+            ));
+        }
+
+        log.info("Campo '{}' verificato con regex: '{}'", fieldPath, regex);
+    }
+
+    private void assertEqualExpectedValue(String fieldPath, String expectedValue, String actualValue) {
+        String regexToken = "__REGEX__";
+
+        if (expectedValue.startsWith(regexToken)) {
+            String regex = expectedValue.replace(regexToken, "");
+            verifyRegexMatch(fieldPath, regex, actualValue);
+        } else {
+            Assertions.assertEquals(
+                    expectedValue,
+                    actualValue,
+                    String.format(
+                            "Campo \"%s\" ricevuto (%s) diverso da quello atteso (%s)",
+                            fieldPath, actualValue, expectedValue
+                    )
+            );
+        }
+    }
+
 }
