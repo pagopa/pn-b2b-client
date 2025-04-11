@@ -1,6 +1,5 @@
 package it.pagopa.pn.cucumber.steps.pa.webhookVersions;
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV26;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV27;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryElementV26;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
@@ -329,8 +328,8 @@ public class WebhookStepsV28 implements WebhookStepsInterface {
                 throw new RuntimeException(exc);
             }
 
-            FullSentNotificationV26 fullSentNotification = webhookSteps.getSharedSteps().getSentNotificationLastVersion();
-            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 timelineElement = fullSentNotification.getTimeline().stream().filter(elem -> elem.getCategory().getValue().equals(timelineElementInternalCategory.getValue()))
+            FullSentNotificationV27 fullSentNotification = webhookSteps.getSharedSteps().getSentNotificationLastVersion();
+            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV27 timelineElement = fullSentNotification.getTimeline().stream().filter(elem -> elem.getCategory().getValue().equals(timelineElementInternalCategory.getValue()))
                     .findAny()
                     .orElse(null);
             if (timelineElement != null) {
@@ -351,7 +350,7 @@ public class WebhookStepsV28 implements WebhookStepsInterface {
             } catch (InterruptedException exc) {
                 throw new RuntimeException(exc);
             }
-            FullSentNotificationV26 fullSentNotification = webhookSteps.getSharedSteps().getSentNotificationLastVersion();
+            FullSentNotificationV27 fullSentNotification = webhookSteps.getSharedSteps().getSentNotificationLastVersion();
             NotificationStatusHistoryElementV26 notificationStatusHistoryElement = fullSentNotification.getNotificationStatusHistory().stream().filter(
                     elem -> elem.getStatus().getValue().equals(notificationInternalStatus.getValue())).findAny().orElse(null);
             if (notificationStatusHistoryElement != null) {
@@ -366,9 +365,9 @@ public class WebhookStepsV28 implements WebhookStepsInterface {
     public <T> void verifyAssertionsTimeline(AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream, T progressResponseElement) {
         try {
             Assertions.assertNotNull(progressResponseElement);
-            TimelineElementCategoryV26 timelineElementInternalCategory = TimelineElementCategoryV26.valueOf(((TimelineElementCategoryV26) timelineForStream.getTimelineElementCategory()).name());
-            FullSentNotificationV26 fullSentNotification = webhookSteps.getSharedSteps().getSentNotificationLastVersion();
-            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 elementToCheck = fullSentNotification.getTimeline().stream()
+            TimelineElementCategoryV27 timelineElementInternalCategory = TimelineElementCategoryV27.valueOf(((TimelineElementCategoryV27) timelineForStream.getTimelineElementCategory()).name());
+            FullSentNotificationV27 fullSentNotification = webhookSteps.getSharedSteps().getSentNotificationLastVersion();
+            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV27 elementToCheck = fullSentNotification.getTimeline().stream()
                     .filter(elem -> elem.getCategory() != null)
                     .filter(elem -> elem.getCategory().getValue().equals(timelineElementInternalCategory.getValue()))
                     .findAny()
@@ -446,7 +445,7 @@ public class WebhookStepsV28 implements WebhookStepsInterface {
 
     @Override
     public void compareTimestampWebhook(String timelineElementCategory, String webhookElementCategory, boolean mustBeEqual) {
-        FullSentNotificationV26 fullSentNotification = webhookSteps.getSharedSteps().getSentNotificationLastVersion();
+        FullSentNotificationV27 fullSentNotification = webhookSteps.getSharedSteps().getSentNotificationLastVersion();
         Assertions.assertNotNull(progressResponseElementList);
         OffsetDateTime eventTimestamp = progressResponseElementList.stream().filter(
                 elem -> elem.getElement().getCategory().getValue().equals(webhookElementCategory)).findAny().get().getElement().getTimestamp();
@@ -513,8 +512,8 @@ public class WebhookStepsV28 implements WebhookStepsInterface {
         Assertions.assertNotNull(timelineElementWebHook.getCategory());
 
         String elementId = timelineElementWebHook.getCategory().toString();
-        FullSentNotificationV26 fullSentNotification = webhookSteps.getSharedSteps().getSentNotificationLastVersion();
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 timelineElement = fullSentNotification.getTimeline().
+        FullSentNotificationV27 fullSentNotification = webhookSteps.getSharedSteps().getSentNotificationLastVersion();
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV27 timelineElement = fullSentNotification.getTimeline().
                 stream()
                 .filter(data -> data.getCategory() != null)
                 .filter(data -> data.getCategory().getValue().equalsIgnoreCase(elementId))
@@ -522,7 +521,7 @@ public class WebhookStepsV28 implements WebhookStepsInterface {
                 .orElse(null);
         Assertions.assertNotNull(timelineElement);
 
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementDetailsV26 timelineElementDetails = timelineElement.getDetails();
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementDetailsV27 timelineElementDetails = timelineElement.getDetails();
         Assertions.assertNotNull(timelineElementDetails);
         resultList.add(timelineElementDetails);
 

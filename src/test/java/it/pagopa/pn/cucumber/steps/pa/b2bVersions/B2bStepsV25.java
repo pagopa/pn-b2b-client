@@ -61,7 +61,7 @@ public class B2bStepsV25 implements B2bStepsInterface {
                     .as("L'elemento della timeline non dovrebbe essere nullo")
                     .isNotNull();
             timelineElement = pnPollingResponse.getTimelineElement();
-           // b2bSteps.setTimelineElement(timelineElement);//TODO v28 MATTEO, IDEALE SAREBBE RIMUOVERLO DA CAMPO DI B2B STEPS e prendere sempre quello restituito qua
+            b2bSteps.setTimelineElement(timelineElement);//TODO v28 MATTEO, IDEALE SAREBBE RIMUOVERLO DA CAMPO DI B2B STEPS e prendere sempre quello restituito qua
             log.info("TIMELINE_ELEMENT: " + timelineElement);
         } catch (AssertionError assertionError) {
             b2bSteps.getSharedSteps().throwAssertionErrorWithIUN(assertionError);

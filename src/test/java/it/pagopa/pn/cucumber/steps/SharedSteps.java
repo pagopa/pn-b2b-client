@@ -58,7 +58,8 @@ import java.util.concurrent.TimeUnit;
 import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.*;
 import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion.V1;
 import static it.pagopa.pn.cucumber.utils.FiscalCodeGenerator.generateCF;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
+import static it.pagopa.pn.cucumber.utils.NotificationValue.PAYMENT_PAGOPA_FORM;
+import static it.pagopa.pn.cucumber.utils.NotificationValue.getValue;
 import static java.util.Objects.nonNull;
 import static org.assertj.core.api.Assumptions.assumeThat;
 import static org.awaitility.Awaitility.await;
@@ -278,16 +279,16 @@ public class SharedSteps {
      * TODO: se e quando verrà introdotta una nuova versione, ri-fattorizzare il tipo di oggetto ritornato e cambiare
      * i punti di codice che richiamano questo metodo
      */
-    public FullSentNotificationV26 getSentNotificationLastVersion() {
+    public FullSentNotificationV27 getSentNotificationLastVersion() {
         if (getNotificationIun() == null) {
             throw new RuntimeException("Lo IUN non è valorizzato e nemmeno la NotificationResponse, qualcosa è andato storto nei passaggi precedenti");
         }
-        return b2bClient.getSentNotification(notificationIun);
+        return b2bClient.getSentNotificationV27(notificationIun);
     }
 
     public NotificationVersion getNotificationVersion(String version) {
         if (version.trim().equalsIgnoreCase(MOST_RECENT)) {
-            return NotificationVersion.V24;//TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente
+            return NotificationVersion.V25;//TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente
         }
         return NotificationVersion.valueOf(version.trim().toUpperCase());
     }
@@ -367,7 +368,7 @@ public class SharedSteps {
             notificationRequests.add(newNotificationRequest);
         }
         List<Thread> threadList = new LinkedList<>();
-        ConcurrentLinkedQueue<FullSentNotificationV26> sentNotifications = new ConcurrentLinkedQueue<>();
+        ConcurrentLinkedQueue<FullSentNotificationV27> sentNotifications = new ConcurrentLinkedQueue<>();
 
         for (NewNotificationRequestV24 notification : notificationRequests) {
             Thread t = new Thread(() -> {
@@ -375,14 +376,14 @@ public class SharedSteps {
                 NewNotificationResponse internalNotificationResponse = Assertions.assertDoesNotThrow(() ->
                         b2bUtils.uploadNotificationV24(notification));
                 threadWait(getWait());
-                FullSentNotificationV26 fsn = b2bUtils.waitForRequestAcceptationV26(internalNotificationResponse);
+                FullSentNotificationV27 fsn = b2bUtils.waitForRequestAcceptation(internalNotificationResponse);
                 Assertions.assertNotNull(fsn);
 
                 //ATTESA ELEMENTO DI TIMELINE
-                TimelineElementV26 timelineElement = null;
+                TimelineElementV27 timelineElement = null;
                 for (int i = 0; i < 33; i++) {
                     threadWait(getWorkFlowWait());
-                    fsn = b2bClient.getSentNotificationV26(fsn.getIun());
+                    fsn = b2bClient.getSentNotificationV27(fsn.getIun());
                     log.info("NOTIFICATION_TIMELINE: " + fsn.getTimeline());
                     timelineElement = fsn.getTimeline().stream().filter(
                             elem -> Objects.requireNonNull(elem.getCategory().getValue())
@@ -419,19 +420,19 @@ public class SharedSteps {
         Assertions.assertEquals(sentNotifications.size(), numberOfNotification);
         log.debug("NOTIFICATION LIST: {}", sentNotifications);
         log.debug("IUN: ");
-        for (FullSentNotificationV26 fullSentNotification : sentNotifications) {
+        for (FullSentNotificationV27 fullSentNotification : sentNotifications) {
             log.info(fullSentNotification.getIun());
         }
         log.debug("End IUN list");
         //la prima notifica viene inserita
-        FullSentNotificationV26 fullSentNotification = sentNotifications.poll();
+        FullSentNotificationV27 fullSentNotification = sentNotifications.poll();
         this.notificationIun = fullSentNotification.getIun();
         log.debug("notificationResponseComplete: {}", getNotificationIun());
     }
 
     private void addRecipientToNotification(NewNotificationRequestV24 notificationRequest, NotificationRecipientV23 notificationRecipient, Map<String, String> recipientData) {
         if (notificationRequest.getNotificationFeePolicy() == NotificationFeePolicy.DELIVERY_MODE
-                && NotificationValue.getValue(recipientData, PAYMENT.key) != null) {
+                && NotificationValue.getValue(recipientData, NotificationValue.PAYMENT.key) != null) {
             String pagopaFormValue = getValue(recipientData, PAYMENT_PAGOPA_FORM.key);
             if (pagopaFormValue != null && !pagopaFormValue.equalsIgnoreCase("NO")) {
                 for (NotificationPaymentItem payments : Objects.requireNonNull(notificationRecipient.getPayments())) {
@@ -1208,14 +1209,14 @@ public class SharedSteps {
      * @param dataFromTest          the data filters
      * @return a list of timeline elements that match the given event category and data from test
      */
-    public List<TimelineElementV26> getTimelineElementsByEventId(String timelineEventCategory, DataTest dataFromTest) {
-        FullSentNotificationV26 fullSentNotification = getSentNotificationLastVersion();
-        List<TimelineElementV26> timelineElementList = fullSentNotification.getTimeline();
+    public List<TimelineElementV27> getTimelineElementsByEventId(String timelineEventCategory, DataTest dataFromTest) {
+        FullSentNotificationV27 fullSentNotification = getSentNotificationLastVersion();
+       List<TimelineElementV27> timelineElementList = fullSentNotification.getTimeline();
         String iun = getNotificationIun();//TODO MATTEO TEST
         if (dataFromTest != null && dataFromTest.getTimelineElement() != null) {
             // get timeline event id
             String timelineEventId = getTimelineEventId(timelineEventCategory, iun, dataFromTest);
-            if (timelineEventCategory.equals(TimelineElementCategoryV26.SEND_ANALOG_PROGRESS.getValue()) || timelineEventCategory.equals(TimelineElementCategoryV26.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS.getValue())) {
+            if (timelineEventCategory.equals(SEND_ANALOG_PROGRESS) || timelineEventCategory.equals(SEND_SIMPLE_REGISTERED_LETTER_PROGRESS)) {
                 TimelineElementV23 timelineElementFromTest = dataFromTest.getTimelineElement();
                 TimelineElementDetailsV23 timelineElementDetails = timelineElementFromTest.getDetails();
                 return timelineElementList.stream()
@@ -1235,9 +1236,9 @@ public class SharedSteps {
      * @param attemptIndex the index of the attempt (starting from 0)
      * @return a list of timeline elements that match the given event category and data from test
      */
-    public List<TimelineElementV26> getTimelineElementsToAttempt(int attemptIndex) {
-        FullSentNotificationV26 fullSentNotification = getSentNotificationLastVersion();
-        List<TimelineElementV26> timelineElementList = fullSentNotification.getTimeline();
+    public List<TimelineElementV27> getTimelineElementsToAttempt(int attemptIndex) {
+        FullSentNotificationV27 fullSentNotification = getSentNotificationLastVersion();
+        List<TimelineElementV27> timelineElementList = fullSentNotification.getTimeline();
         return timelineElementList.stream()
                 .filter(elem -> nonNull(elem.getDetails()))
                 //TODO: ignorare Sonar che dice che questo nonNull è inutile in quanto sempre true, non è vero
@@ -1246,7 +1247,7 @@ public class SharedSteps {
                 .toList();
     }
 
-    public TimelineElementV26 getTimelineElementByEventId(String timelineEventCategory, DataTest dataFromTest) {
+    public TimelineElementV27 getTimelineElementByEventId(String timelineEventCategory, DataTest dataFromTest) {
         return getTimelineElementsByEventId(timelineEventCategory, dataFromTest).stream()
                 .findAny()
                 .orElse(null);

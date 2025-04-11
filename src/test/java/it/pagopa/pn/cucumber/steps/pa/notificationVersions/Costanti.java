@@ -95,8 +95,12 @@ public class Costanti {
     public static final String SEND_COURTESY_MESSAGE = "SEND_COURTESY_MESSAGE";
     public static final String SEND_DIGITAL_DOMICILE = "SEND_DIGITAL_DOMICILE";
     public static final String SEND_DIGITAL_FEEDBACK = "SEND_DIGITAL_FEEDBACK";
+    public static final String SEND_DIGITAL_PROGRESS = "SEND_DIGITAL_PROGRESS";
     public static final String SEND_SIMPLE_REGISTERED_LETTER = "SEND_SIMPLE_REGISTERED_LETTER";
     public static final String SEND_SIMPLE_REGISTERED_LETTER_PROGRESS = "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS";
+    public static final String PAYMENT = "PAYMENT";
+    public static final String COMPLETELY_UNREACHABLE_CREATION_REQUEST = "COMPLETELY_UNREACHABLE_CREATION_REQUEST";
+    public static final String PREPARE_ANALOG_DOMICILE_FAILURE = "PREPARE_ANALOG_DOMICILE_FAILURE";
     // PollingStrategy (generiche)
     public static final String TIMELINE_RAPID = "TIMELINE_RAPID";
     public static final String TIMELINE_SLOW = "TIMELINE_SLOW";
@@ -130,6 +134,7 @@ public class Costanti {
     public static final String NOTIFICATION_STATUS_ACCEPTED = "ACCEPTED";
     public static final String NOTIFICATION_STATUS_REFUSED = "REFUSED";
     public static final String NOTIFICATION_STATUS_CANCELLED = "CANCELLED";
+
     // Error causes
     public static final String ALLEGATO = "ALLEGATO";
     public static final String EXTENSION = "EXTENSION";

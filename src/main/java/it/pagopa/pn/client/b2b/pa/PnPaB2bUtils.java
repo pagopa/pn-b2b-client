@@ -6,9 +6,9 @@ import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV25;
-import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV26;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV28;
 import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceValidationStatusV25;
-import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceValidationStatusV26;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v28.PnPollingServiceValidationStatusV28;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnRaddAlternativeClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnRaddFsuClient;
@@ -151,10 +151,10 @@ public class PnPaB2bUtils {
         }
     }
 
-    public FullSentNotificationV26 waitForRequestAcceptationV26(NewNotificationResponse response) {
-        PnPollingServiceValidationStatusV26 validationStatusV26 = (PnPollingServiceValidationStatusV26) pollingFactory.getPollingService(PnPollingStrategy.VALIDATION_STATUS_V26);
-        PnPollingResponseV26 pollingResponseV26 = validationStatusV26.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(ACCEPTED).build());
-        return pollingResponseV26.getNotification() == null ? null : pollingResponseV26.getNotification();
+    public FullSentNotificationV27 waitForRequestAcceptation(NewNotificationResponse response) {
+        PnPollingServiceValidationStatusV28 validationStatus = (PnPollingServiceValidationStatusV28) pollingFactory.getPollingService(PnPollingStrategy.VALIDATION_STATUS_V28);
+        PnPollingResponseV28 pollingResponse = validationStatus.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(ACCEPTED).build());
+        return pollingResponse.getNotification() == null ? null : pollingResponse.getNotification();
     }
 
 //    public FullSentNotificationV26 waitForRequestNoAcceptation(NewNotificationResponse response) {
@@ -257,7 +257,7 @@ public class PnPaB2bUtils {
 //        return pollingResponseV21.getNotification() == null ? null : pollingResponseV21.getNotification();
 //    }
 
-    private void verifySha256NotificationV23(FullSentNotificationV26 fsn) {
+    private void verifySha256Notification(FullSentNotificationV27 fsn) {
         for (NotificationDocument doc : fsn.getDocuments()) {
             int docIdx = Integer.parseInt(Objects.requireNonNull(doc.getDocIdx()));
             checkSha256Notification(getSentNotificationDocument(fsn.getIun(), docIdx), docIdx);
@@ -1011,8 +1011,8 @@ public class PnPaB2bUtils {
     /**
      * Metodi per le notifiche V24
      */
-    public FullSentNotificationV26 getNotificationByIun(String iun) {
-        return client.getSentNotificationV26(iun);
+    public FullSentNotificationV27 getNotificationByIun(String iun) {
+        return client.getSentNotificationV27(iun);
     }
 
     public NewNotificationResponse uploadNotificationV24(NewNotificationRequestV24 request) throws IOException {
@@ -1035,8 +1035,8 @@ public class PnPaB2bUtils {
         return getAndCheckSendNewNotification(request);
     }
 
-    public void verifyNotification(FullSentNotificationV26 fsn) throws IllegalStateException {
-        verifySha256NotificationV23(fsn);
+    public void verifyNotification(FullSentNotificationV27 fsn) throws IllegalStateException {
+        verifySha256Notification(fsn);
         getSentNotificationAttachment(fsn);
         verifyLegalFactFormat(fsn.getIun(), Objects.requireNonNull(fsn.getTimeline().get(0).getLegalFactsIds()));
         checkNotificationStatus(fsn.getNotificationStatus());
@@ -1048,10 +1048,10 @@ public class PnPaB2bUtils {
         }
     }
 
-    public void verifyNotificationAndSha256AllegatiPagamento(FullSentNotificationV26 fsn, String attachment) throws IllegalStateException {
-        verifySha256NotificationV23(fsn);
+    public void verifyNotificationAndSha256AllegatiPagamento(FullSentNotificationV27 fsn, String attachment) throws IllegalStateException {
+        verifySha256Notification(fsn);
         for (int i = 0; i < fsn.getRecipients().size(); i++) {
-            NotificationRecipientV23 recipient = fsn.getRecipients().get(i);
+            NotificationRecipientV24 recipient = fsn.getRecipients().get(i);
             if (fsn.getRecipients().get(i).getPayments() != null &&
                     Objects.requireNonNull(recipient.getPayments()).get(0).getPagoPa() != null) {
                 NotificationAttachmentDownloadMetadataResponse resp;
@@ -1155,7 +1155,7 @@ public class PnPaB2bUtils {
         }
     }
 
-    private void getSentNotificationAttachment(FullSentNotificationV26 fsn) {
+    private void getSentNotificationAttachment(FullSentNotificationV27 fsn) {
         fsn.getRecipients().stream()
                 .filter(recipient -> recipient.getPayments() != null && !recipient.getPayments().isEmpty())
                 .forEach(recipient -> {
@@ -1164,7 +1164,7 @@ public class PnPaB2bUtils {
                 });
     }
 
-    private void extractAttachment(FullSentNotificationV26 fsn, NotificationRecipientV23 recipient) {
+    private void extractAttachment(FullSentNotificationV27 fsn, NotificationRecipientV24 recipient) {
         if (Objects.requireNonNull(recipient.getPayments()).get(0).getF24() != null) {
             NotificationAttachmentDownloadMetadataResponse resp = client.getSentNotificationAttachment(fsn.getIun(), fsn.getRecipients().indexOf(recipient), F_24, 0);
             if (resp != null && resp.getRetryAfter() != null && resp.getRetryAfter() > 0) {
@@ -1179,7 +1179,7 @@ public class PnPaB2bUtils {
         }
     }
 
-    private void extractAndCheckAttachment(FullSentNotificationV26 fsn, NotificationRecipientV23 recipient) {
+    private void extractAndCheckAttachment(FullSentNotificationV27 fsn, NotificationRecipientV24 recipient) {
         if (Objects.requireNonNull(recipient.getPayments()).get(0).getPagoPa() != null) {
             NotificationAttachmentDownloadMetadataResponse resp = client.getSentNotificationAttachment(fsn.getIun(), fsn.getRecipients().indexOf(recipient), PAGOPA, 0);
             checkAttachment(resp);
