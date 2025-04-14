@@ -1,6 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template.instance;
 
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.assertj.core.api.Assertions.fail;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -27,7 +26,6 @@ import java.util.Optional;
 import java.util.UUID;
 import lombok.Data;
 import org.jeasy.random.EasyRandom;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 /** Cucumber steps involving quotas of E-service templates */
@@ -129,8 +127,6 @@ public class EServiceTemplateInstanceCreateSteps {
                     if(res.getStatusCode().is2xxSuccessful() && !res.getBody().getResults().isEmpty()) {
                         int index = res.getBody().getResults().size() - 1;
                         String name = res.getBody().getResults().get(index).getName();
-                        //String instanceLabel = res.getBody().getResults().get(index).getInstanceLabel();
-                        //sharedStepsContext.getEServiceTemplateStepContext().setLastEServiceNameCreatedFromTemplate(getInstanceName(name, instanceLabel));
                         sharedStepsContext.getEServiceTemplateStepContext().setLastEServiceNameCreatedFromTemplate(name);
                         return expectedState == EServiceDescriptorState.DRAFT || res.getBody().getResults().stream().anyMatch(
                             instance -> instance.getLatestDescriptor().getState() == expectedState);
@@ -177,14 +173,11 @@ public class EServiceTemplateInstanceCreateSteps {
                 }
 
                 String instanceDefaultName = eServiceSourceTemplate.getEserviceTemplate().getName();
-                String instanceLabel = isNull(lastEServiceCreatedFromTemplateSeed)
-                    ? null
-                    : lastEServiceCreatedFromTemplateSeed.getInstanceLabel();
                 softly.assertThat(eServiceCreatedFromTemplate)
                     .get()
                     .extracting(EServiceTemplateInstance::getName)
                     .as("Check correttezza del nome dell'istanza creata")
-                    .isEqualTo(getInstanceName(instanceDefaultName, instanceLabel));
+                    .isEqualTo(instanceDefaultName);
 
                 /* TODO 10/03/2025: in checkEServiceCreatedFromLatestTemplateVersion (parte del test
                  *   dell'API di upgrade del servizio) è stata usata l'API
@@ -204,11 +197,6 @@ public class EServiceTemplateInstanceCreateSteps {
         } catch (IllegalArgumentException e) {
             fail("Il nuovo e-service non è stato creato correttamente");
         }
-    }
-
-    private static String getInstanceName(String instanceDefaultName, String instanceLabel) {
-        String suffix = nonNull(instanceLabel) ? " " + instanceLabel : "";
-        return instanceDefaultName + suffix;
     }
 
     /* DEV. NOTE: step usato temporaneamente in sostituzione di
@@ -233,20 +221,7 @@ public class EServiceTemplateInstanceCreateSteps {
         String userToken = sharedStepsContext.getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);
         createEServiceInstance(id, seed);
-
-        /* 409 solitamente indica la presenza di un altro e-service con nome uguale. Qualora ci
-        * fosse bisogno di definire una logica più precisa oltre al check del ResponseStatus
-        * segue un esempio di body restituito:
-        * {"type":"about:blank","title":"Duplicated service name","status":409,"detail":"An EService with name eservice-template-2121364233-883207603 already exists","correlationId":"b58e2950-263d-489d-893c-da92cf01c6fa","errors":[{"code":"007","detail":"An EService with name eservice-template-2121364233-883207603 already exists"}]} */
-        if(httpCallExecutor.getResponseStatus().equals(HttpStatus.CONFLICT)) {
-            InstanceEServiceSeed newSeed = isNull(seed) ? new InstanceEServiceSeed() : seed;
-            newSeed.setInstanceLabel(easyRandom.nextObject(String.class));
-            createEServiceInstance(id, newSeed);
-            this.lastEServiceCreatedFromTemplateSeed = newSeed;
-        } else {
-            this.lastEServiceCreatedFromTemplateSeed = seed;
-        }
-
+        this.lastEServiceCreatedFromTemplateSeed = seed;
 
         if(!httpCallExecutor.getResponseStatus().isError()) {
             this.sharedStepsContext.getEServiceTemplateStepContext().setLastEServiceIdCreatedFromTemplate(((ResponseEntity<CreatedResource>) httpCallExecutor.getResponse()).getBody().getId());

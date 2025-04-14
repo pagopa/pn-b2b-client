@@ -85,11 +85,9 @@ public class EServiceTemplateInstanceUpdateSteps {
                 res ->
                     res.getStatusCode().is2xxSuccessful() &&
                         nonNull(res.getBody()) &&
-                        res.getBody().getResults().stream().anyMatch(instance -> instance.getId().equals(sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate())) &&
-                        res.getBody().getResults().stream().anyMatch(instance -> instance.getInstanceLabel().equals(lastUpdateEServiceTemplateInstanceSeed.getInstanceLabel())),
-                "L'istanza non è presente nell'elenco delle istanze dell'e-service template oppure non è stata modificata correttamente: non è stato trovato un'istanza con l'id " +
-                    sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate() +
-                    " o l'istanza non ha l'etichetta " + lastUpdateEServiceTemplateInstanceSeed.getInstanceLabel()
+                        res.getBody().getResults().stream().anyMatch(instance -> instance.getId().equals(sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate())),
+                "L'istanza non è presente nell'elenco delle istanze dell'e-service template: non è stato trovato un'istanza con l'id " +
+                    sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate()
             );
 
             pollingService.makePolling(
@@ -102,7 +100,7 @@ public class EServiceTemplateInstanceUpdateSteps {
                     res.getStatusCode().is2xxSuccessful() &&
                         nonNull(res.getBody()) &&
                         this.areConsistent(res.getBody(), lastUpdateEServiceTemplateInstanceSeed),
-                "L'istanza non è stata modificata correttamente: uno dei campi dell'istanza - a eccezione di 'instanceLabel' - non è stato modificato correttamente."
+                "L'istanza non è stata modificata correttamente: uno dei campi dell'istanza non è stato modificato correttamente."
             );
         } catch (IllegalArgumentException e) {
             /* DEV. NOTE: non si è lasciato che l’eccezione si propagasse perché l’errore così generato
