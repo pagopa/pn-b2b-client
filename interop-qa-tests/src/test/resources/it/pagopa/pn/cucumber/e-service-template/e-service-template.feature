@@ -1745,14 +1745,14 @@ Feature: Test API of e-service template
       | api,security  |
 
   # ATTENZIONE 27/03/2025: l'api restituisce tutti i creatori di e-service templates attivi MAI creati: si
-  # effettua la verifica controllando che l'ente creatore sia presente nell'elenco, fermo restando
-  # che potrebbe essere presente in virtù di un'aggiunta fatta in precedenza. L'unico modo affinché
-  # questo test sia affidabile al 100% sarebbe partire da un'ambiente vergine, senza operazioni
-  # precedenti.
-  # 31/03/2025: in ambiente di QA può dar problemi (500 Unexpected Error) a causa della
-  # limitata memoria allocata per il database. Conversazione Slack:
-  # https://pagopaspa.slack.com/archives/C085C3D1U84/p1743409979711389
-  @e-service-template-creators-read
+    # effettua la verifica controllando che l'ente creatore sia presente nell'elenco, fermo restando
+    # che potrebbe essere presente in virtù di un'aggiunta fatta in precedenza. L'unico modo affinché
+    # questo test sia affidabile al 100% sarebbe partire da un'ambiente vergine, senza operazioni
+    # precedenti.
+  # NOTA: qualora attraverso i test fossero stati creati un numero esorbitante di template in
+    # ambiente DEV o QA, questa API potrebbe incorrere in errore. E' stato stabilito che non
+    # dovrebbe succedere in ambiente di prod. Conv. Slack: https://pagopaspa.slack.com/archives/C085C3D1U84/p1743409979711389
+  @e-service-template-creators-read @isolated
   Scenario Outline: [INTEROP-EST-153] La visualizzazione dell'elenco dei creatori di e-service templates attivi può essere effettuata da un altro ente se questo è in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
@@ -2070,7 +2070,7 @@ Feature: Test API of e-service template
     When l'utente tenta la visualizzazione dell'elenco di tutte le istanze di un e-service template inesistente
     Then si ottiene response status code 404
 
-  @e-service-template-instance-update
+  @e-service-template-instance-update @e-service-template-instance-update-concurrent-tag
   Scenario Outline: [INTEROP-EST-187] La modifica dei campi di un'istanza in stato DRAFT di un e-service template può essere effettuata da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
@@ -2110,7 +2110,7 @@ Feature: Test API of e-service template
       | PUBLISHED |
       | SUSPENDED |
 
-  @e-service-template-instance-update
+  @e-service-template-instance-update @e-service-template-instance-update-concurrent-tag
   Scenario: [INTEROP-EST-190] La modifica dei campi di un'istanza di un e-service template avente una versione in stato DRAFT e una in stato PUBLISHED NON può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
