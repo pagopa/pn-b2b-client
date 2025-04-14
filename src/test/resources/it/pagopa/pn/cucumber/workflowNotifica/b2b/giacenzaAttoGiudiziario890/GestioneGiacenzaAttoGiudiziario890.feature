@@ -753,4 +753,39 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
+  @perfezionamentoAR @workflowAnalogico
+  #il valore di 10gg per poter replicare i test nei vari ambienti è stato impostato a 6 minuti
+  Scenario Outline: [B2B_PERFEZIONAMENTO_AR_1] Verifica che il deliveryDetailCode del feedback sia PNRN012 con timestamp pari a RECRN010+10gg quando lo scarto tra RECRN010 e il secondo evento è superiore a 10 giorni
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario
+      | denomination            | userTest         |
+      | taxId                   | CLMCST42R12D969Z |
+      | digitalDomicile         | NULL             |
+      | physicalAddress_address | <sequenceName>   |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN010"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "<expectedDeliveryDetailCode>"
+    And lo scarto temporale tra "RECRN010" e "<expectedDeliveryDetailCode>" è superiore a 6 minuti
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "PNRN012"
+    And lo scarto temporale tra "RECRN010" e "PNRN012" è pari a 6 minuti
+    Examples:
+      | sequenceName                      | expectedDeliveryDetailCode |
+      | Via@OK-Giacenza_AR_Slow           | RECRN003A                  |
+      | Via@FAIL-Giacenza_AR_Slow         | RECRN004A                  |
+      | Via@FAIL-CompiutaGiacenza_AR_Slow | RECRN005A                  |
+
+
+  Scenario Outline: Al fine di poter testare lo scenario di sopra in tempi rapidissimi (a scopo di debugging), si possono usare le seguenti notifiche create con run precedenti
+    Given imposto lo iun di SharedSteps a "<iun>" e la pa a "Comune_Multi"
+    And lo scarto temporale tra "RECRN010" e "<expectedDeliveryDetailCode>" è superiore a 6 minuti
+    And lo scarto temporale tra "RECRN010" e "PNRN012" è pari a 6 minuti
+    Examples:
+      | iun                       | expectedDeliveryDetailCode |
+      # AMBIENTE DEV
+      | KRAV-HALK-QXGZ-202504-J-1 | RECRN003A                  |
+      | UXMX-MQRE-HKHY-202504-K-1 | RECRN004A                  |
+      | KQHQ-MJTX-NTEP-202504-U-1 | RECRN005A                  |
+
 
