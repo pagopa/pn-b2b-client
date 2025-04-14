@@ -14,7 +14,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | payment_f24           | NULL        |
       | apply_cost_pagopa     | SI          |
       | payment_multy_number  | 1           |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
 
   @Async
   Scenario: [B2B_ASYNC_2_PF] Notifica mono PF-Senza verifica amount GPD per notifica ASYNC e campo feePolicy a FLAT_RATE
@@ -30,7 +30,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | payment_f24           | NULL        |
       | apply_cost_pagopa     | NO          |
       | payment_multy_number  | 1           |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
 
   @Async @ignore
   Scenario: [B2B_ASYNC_4_PF] Notifica mono PF-Rifiuto caso notifiche che riportano l’indicazione di modalità asincrona di integrazione al cui interno risultano avvisi con pagamento già effettuato
@@ -48,7 +48,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | apply_cost_pagopa     | SI          |
       | payment_multy_number  | 1           |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And viene aggiunto il costo della notifica totale
     And lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
     And si controlla che l'aggiornamento del costo del utente 0 sia corretto
@@ -68,7 +68,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | apply_cost_pagopa     | SI          |
       | payment_multy_number  | 1           |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
     Then viene cancellata la posizione debitoria di "Mario Gherkin"
 
   @Async @refused
@@ -91,7 +91,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | apply_cost_pagopa            | SI          |
       | payment_multy_number         | 1           |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
     And  lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
     And  viene effettuato il controllo del amount di GPD = "100"
     Then viene cancellata la posizione debitoria di "Mario Gherkin"
@@ -113,7 +113,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | apply_cost_pagopa       | SI           |
       | payment_multy_number    | 1            |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And viene aggiunto il costo della notifica totale
     And lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
     And si controlla che l'aggiornamento del costo del utente 0 sia corretto
@@ -143,7 +143,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | payment_multy_number    | 2            |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 1
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     And viene cancellata la posizione debitoria del pagamento 0
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE" e successivamente annullata
@@ -171,7 +171,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | payment_multy_number    | 2            |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 1
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     And l'avviso pagopa 1 viene pagato correttamente dall'utente 0
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE" e successivamente annullata
@@ -389,7 +389,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | payment_multy_number    | 1            |
     And viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS"
     #And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     Then viene verificato il costo finale della notifica amount_gpd + costo_base + pafee + analog_cost per ogni elemento di timeline
@@ -401,15 +401,15 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
 
   @version @Async @ignore
   Scenario: [B2B_ASYNC_1_VERSIONAMENTO] Creazione notifica ASYNC con V1 - Errore
-    Given viene generata una nuova notifica V1
+    Given viene generata una nuova notifica con la versione "V1"
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                          |
-    And destinatario Mario Cucumber V1
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED "V1"
-    Then si verifica lo scarto dell' acquisizione della notifica V1
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b con la versione "V1" dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+    Then si verifica lo scarto dell' acquisizione della notifica
 
   @Async @refused
   Scenario: [B2B_ASYNC_2_MULTI] Notifica multi PF/PG-Verifica amount GPD in fase "REQUEST_REFUSED" costo aggiornato a 0
@@ -443,7 +443,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | payment_multy_number         | 1           |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" per la posizione debitoria 0 del pagamento 0
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Gherkin Analogic" per la posizione debitoria 1 del pagamento 0
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
     And  lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
     And  viene effettuato il controllo del amount di GPD = "100"
     And  lettura amount posizione debitoria per la notifica corrente di "Gherkin Analogic"

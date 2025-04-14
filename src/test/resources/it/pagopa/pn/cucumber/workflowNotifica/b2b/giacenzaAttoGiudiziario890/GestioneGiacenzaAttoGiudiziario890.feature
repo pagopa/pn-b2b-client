@@ -10,7 +10,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | taxId                   | CLMCST42R12D969Z          |
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | via@OK-Giacenza-lte10_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON080"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG010"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG011A"
@@ -64,49 +64,49 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | taxId                   | CLMCST42R12D969Z         |
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | via@OK-Giacenza-gt10_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | CON080 |
-      | details_sentAttemptMade | 0 |
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
+      | details_deliveryDetailCode | CON080   |
+      | details_sentAttemptMade    | 0        |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | CON020 |
-      | details_sentAttemptMade | 0 |
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
+      | details_deliveryDetailCode | CON020   |
+      | details_sentAttemptMade    | 0        |
     And abbia anche un valore per il campo "details_attachments[0]_url" compatibile con l'espressione regolare ".+PN_PRINTED.+\.pdf"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
       | details_deliveryDetailCode | RECAG010 |
-      | details_sentAttemptMade | 0 |
+      | details_sentAttemptMade    | 0        |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
       | details_deliveryDetailCode | RECAG011A |
-      | details_sentAttemptMade | 0 |
+      | details_sentAttemptMade    | 0         |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | RECAG012 |
-      | details_sentAttemptMade | 0 |
+      | details                    | NOT_NULL                                                                                                                                                                                                      |
+      | details_recIndex           | 0                                                                                                                                                                                                             |
+      | details_deliveryDetailCode | RECAG012                                                                                                                                                                                                      |
+      | details_sentAttemptMade    | 0                                                                                                                                                                                                             |
       | details_physicalAddress    | {"at": "Presso", "address": "VIA@OK-GIACENZA-GT10_890", "addressDetails": "SCALA B", "zip": "87100", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "province": "CS", "foreignState": "ITALIA"} |
-      | details_responseStatus | OK |
+      | details_responseStatus     | OK                                                                                                                                                                                                            |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | RECAG011B |
-      | details_sentAttemptMade | 0 |
-      | details_attachments | [{"documentType": "23L"}] |
+      | details                    | NOT_NULL                  |
+      | details_recIndex           | 0                         |
+      | details_deliveryDetailCode | RECAG011B                 |
+      | details_sentAttemptMade    | 0                         |
+      | details_attachments        | [{"documentType": "23L"}] |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
       | details_deliveryDetailCode | RECAG005C |
-      | details_sentAttemptMade | 0 |
+      | details_sentAttemptMade    | 0         |
     And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      | | |
+      |  |  |
     #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.60s-RECAG012.5s-RECAG011B[DOC:ARCAD;DOC:23L].60s-RECAG005A.5s-RECAG005C"
 
 
@@ -120,48 +120,48 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | taxId                   | CLMCST42R12D969Z             |
       | digitalDomicile         | NULL                         |
       | physicalAddress_address | via@OK-Giacenza-gt10-23L_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     #[vecchio]  And si verifica che il timestamp dell'elemento di timeline della notifica SEND_ANALOG_FEEDBACK con deliveryDetailCode RECAG012 sia uguale al timestamp di REFINEMENT
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | CON080 |
-      | details_sentAttemptMade | 0 |
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
+      | details_deliveryDetailCode | CON080   |
+      | details_sentAttemptMade    | 0        |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | CON020 |
-      | details_sentAttemptMade | 0 |
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
+      | details_deliveryDetailCode | CON020   |
+      | details_sentAttemptMade    | 0        |
     And abbia anche un valore per il campo "details_attachments[0]_url" compatibile con l'espressione regolare ".+PN_PRINTED.+\.pdf"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
       | details_deliveryDetailCode | RECAG010 |
-      | details_sentAttemptMade | 0 |
+      | details_sentAttemptMade    | 0        |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
       | details_deliveryDetailCode | RECAG011A |
-      | details_sentAttemptMade | 0 |
+      | details_sentAttemptMade    | 0         |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | RECAG012 |
-      | details_sentAttemptMade | 0 |
+      | details                    | NOT_NULL                                                                                                                                                                                                          |
+      | details_recIndex           | 0                                                                                                                                                                                                                 |
+      | details_deliveryDetailCode | RECAG012                                                                                                                                                                                                          |
+      | details_sentAttemptMade    | 0                                                                                                                                                                                                                 |
       | details_physicalAddress    | {"at": "Presso", "address": "VIA@OK-GIACENZA-GT10-23L_890", "addressDetails": "SCALA B", "zip": "87100", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "province": "CS", "foreignState": "ITALIA"} |
-      | details_responseStatus | OK |
+      | details_responseStatus     | OK                                                                                                                                                                                                                |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | RECAG005B |
-      | details_sentAttemptMade | 0 |
-      | details_attachments | [{"documentType": "23L"}] |
+      | details                    | NOT_NULL                  |
+      | details_recIndex           | 0                         |
+      | details_deliveryDetailCode | RECAG005B                 |
+      | details_sentAttemptMade    | 0                         |
+      | details_attachments        | [{"documentType": "23L"}] |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
       | details_deliveryDetailCode | RECAG005C |
-      | details_sentAttemptMade | 0 |
+      | details_sentAttemptMade    | 0         |
     #[si tenta di non valorizzare il secondo parametro] And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
 
   #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.60s-RECAG012.5s-RECAG011B[DOC:ARCAD].5s-RECAG005A.5s-RECAG005B[DOC:23L].5s-RECAG005C"
@@ -176,50 +176,50 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | taxId                   | CLMCST42R12D969Z                  |
       | digitalDomicile         | NULL                              |
       | physicalAddress_address | via@OK-GiacenzaDelegato-lte10_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     #[vecchio]  And si verifica che il timestamp dell'elemento di timeline della notifica SEND_ANALOG_FEEDBACK con deliveryDetailCode RECAG012 sia uguale al timestamp di REFINEMENT
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | CON080 |
-      | details_sentAttemptMade | 0 |
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
+      | details_deliveryDetailCode | CON080   |
+      | details_sentAttemptMade    | 0        |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | CON020 |
-      | details_sentAttemptMade | 0 |
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
+      | details_deliveryDetailCode | CON020   |
+      | details_sentAttemptMade    | 0        |
     And abbia anche un valore per il campo "details_attachments[0]_url" compatibile con l'espressione regolare ".+PN_PRINTED.+\.pdf"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
       | details_deliveryDetailCode | RECAG010 |
-      | details_sentAttemptMade | 0 |
+      | details_sentAttemptMade    | 0        |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
       | details_deliveryDetailCode | RECAG011A |
-      | details_sentAttemptMade | 0 |
+      | details_sentAttemptMade    | 0         |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | RECAG012 |
-      | details_sentAttemptMade | 0 |
+      | details                    | NOT_NULL                                                                                                                                                                                                               |
+      | details_recIndex           | 0                                                                                                                                                                                                                      |
+      | details_deliveryDetailCode | RECAG012                                                                                                                                                                                                               |
+      | details_sentAttemptMade    | 0                                                                                                                                                                                                                      |
       | details_physicalAddress    | {"at": "Presso", "address": "VIA@OK-GIACENZADELEGATO-LTE10_890", "addressDetails": "SCALA B", "zip": "87100", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "province": "CS", "foreignState": "ITALIA"} |
-      | details_responseStatus | OK |
+      | details_responseStatus     | OK                                                                                                                                                                                                                     |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | RECAG006B |
-      | details_sentAttemptMade | 0 |
-      | details_attachments | [{"documentType": "23L"}] |
+      | details                    | NOT_NULL                  |
+      | details_recIndex           | 0                         |
+      | details_deliveryDetailCode | RECAG006B                 |
+      | details_sentAttemptMade    | 0                         |
+      | details_attachments        | [{"documentType": "23L"}] |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
       | details_deliveryDetailCode | RECAG006C |
-      | details_sentAttemptMade | 0 |
+      | details_sentAttemptMade    | 0         |
     And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      | | |
+      |  |  |
 
   #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.30s-RECAG012.5s-RECAG006A.5s-RECAG006B[DOC:ARCAD;DOC:23L].5s-RECAG006C"
 
@@ -234,50 +234,50 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | taxId                   | CLMCST42R12D969Z                 |
       | digitalDomicile         | NULL                             |
       | physicalAddress_address | via@OK-GiacenzaDelegato-gt10_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     #[vecchio] And si verifica che il timestamp dell'elemento di timeline della notifica SEND_ANALOG_FEEDBACK con deliveryDetailCode RECAG012 sia uguale al timestamp di REFINEMENT
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | CON080 |
-      | details_sentAttemptMade | 0 |
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
+      | details_deliveryDetailCode | CON080   |
+      | details_sentAttemptMade    | 0        |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | CON020 |
-      | details_sentAttemptMade | 0 |
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
+      | details_deliveryDetailCode | CON020   |
+      | details_sentAttemptMade    | 0        |
     And abbia anche un valore per il campo "details_attachments[0]_url" compatibile con l'espressione regolare ".+PN_PRINTED.+\.pdf"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
       | details_deliveryDetailCode | RECAG010 |
-      | details_sentAttemptMade | 0 |
+      | details_sentAttemptMade    | 0        |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
       | details_deliveryDetailCode | RECAG011A |
-      | details_sentAttemptMade | 0 |
+      | details_sentAttemptMade    | 0         |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | RECAG012 |
-      | details_sentAttemptMade | 0 |
+      | details                    | NOT_NULL                                                                                                                                                                                                              |
+      | details_recIndex           | 0                                                                                                                                                                                                                     |
+      | details_deliveryDetailCode | RECAG012                                                                                                                                                                                                              |
+      | details_sentAttemptMade    | 0                                                                                                                                                                                                                     |
       | details_physicalAddress    | {"at": "Presso", "address": "VIA@OK-GIACENZADELEGATO-GT10_890", "addressDetails": "SCALA B", "zip": "87100", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "province": "CS", "foreignState": "ITALIA"} |
-      | details_responseStatus | OK |
+      | details_responseStatus     | OK                                                                                                                                                                                                                    |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | RECAG011B |
-      | details_sentAttemptMade | 0 |
-      | details_attachments | [{"documentType": "23L"}] |
+      | details                    | NOT_NULL                  |
+      | details_recIndex           | 0                         |
+      | details_deliveryDetailCode | RECAG011B                 |
+      | details_sentAttemptMade    | 0                         |
+      | details_attachments        | [{"documentType": "23L"}] |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
       | details_deliveryDetailCode | RECAG006C |
-      | details_sentAttemptMade | 0 |
+      | details_sentAttemptMade    | 0         |
     And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      | | |
+      |  |  |
     #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.60s-RECAG012.5s-RECAG011B[DOC:ARCAD;DOC:23L].60s-RECAG006A.5s-RECAG006C"
 
 
@@ -291,50 +291,50 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | taxId                   | CLMCST42R12D969Z                     |
       | digitalDomicile         | NULL                                 |
       | physicalAddress_address | via@OK-GiacenzaDelegato-gt10-23L_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     # [vecchio] And si verifica che il timestamp dell'elemento di timeline della notifica SEND_ANALOG_FEEDBACK con deliveryDetailCode RECAG012 sia uguale al timestamp di REFINEMENT
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | CON080 |
-      | details_sentAttemptMade | 0 |
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
+      | details_deliveryDetailCode | CON080   |
+      | details_sentAttemptMade    | 0        |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | CON020 |
-      | details_sentAttemptMade | 0 |
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
+      | details_deliveryDetailCode | CON020   |
+      | details_sentAttemptMade    | 0        |
     And abbia anche un valore per il campo "details_attachments[0]_url" compatibile con l'espressione regolare ".+PN_PRINTED.+\.pdf"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
       | details_deliveryDetailCode | RECAG010 |
-      | details_sentAttemptMade | 0 |
+      | details_sentAttemptMade    | 0        |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
       | details_deliveryDetailCode | RECAG011A |
-      | details_sentAttemptMade | 0 |
+      | details_sentAttemptMade    | 0         |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | RECAG012 |
-      | details_sentAttemptMade | 0 |
+      | details                    | NOT_NULL                                                                                                                                                                                                                  |
+      | details_recIndex           | 0                                                                                                                                                                                                                         |
+      | details_deliveryDetailCode | RECAG012                                                                                                                                                                                                                  |
+      | details_sentAttemptMade    | 0                                                                                                                                                                                                                         |
       | details_physicalAddress    | {"at": "Presso", "address": "VIA@OK-GIACENZADELEGATO-GT10-23L_890", "addressDetails": "SCALA B", "zip": "87100", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "province": "CS", "foreignState": "ITALIA"} |
-      | details_responseStatus | OK |
+      | details_responseStatus     | OK                                                                                                                                                                                                                        |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | RECAG006B |
-      | details_sentAttemptMade | 0 |
-      | details_attachments | [{"documentType": "23L"}] |
+      | details                    | NOT_NULL                  |
+      | details_recIndex           | 0                         |
+      | details_deliveryDetailCode | RECAG006B                 |
+      | details_sentAttemptMade    | 0                         |
+      | details_attachments        | [{"documentType": "23L"}] |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
       | details_deliveryDetailCode | RECAG006C |
-      | details_sentAttemptMade | 0 |
+      | details_sentAttemptMade    | 0         |
     And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      | | |
+      |  |  |
   #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.60s-RECAG012.5s-RECAG011B[DOC:ARCAD].5s-RECAG006A.5s-RECAG006B[DOC:23L].5s-RECAG006C"
 
 
@@ -348,7 +348,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | taxId                   | CLMCST42R12D969Z            |
       | digitalDomicile         | NULL                        |
       | physicalAddress_address | via@FAIL-Giacenza-lte10_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON080"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG010"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG011A"
@@ -369,56 +369,56 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | taxId                   | CLMCST42R12D969Z           |
       | digitalDomicile         | NULL                       |
       | physicalAddress_address | via@FAIL-Giacenza-gt10_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | CON080 |
-      | details_sentAttemptMade | 0 |
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
+      | details_deliveryDetailCode | CON080   |
+      | details_sentAttemptMade    | 0        |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | CON020 |
-      | details_sentAttemptMade | 0 |
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
+      | details_deliveryDetailCode | CON020   |
+      | details_sentAttemptMade    | 0        |
     And abbia anche un valore per il campo "details_attachments[0]_url" compatibile con l'espressione regolare ".+PN_PRINTED.+\.pdf"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
       | details_deliveryDetailCode | RECAG010 |
-      | details_sentAttemptMade | 0 |
+      | details_sentAttemptMade    | 0        |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
       | details_deliveryDetailCode | RECAG011A |
-      | details_sentAttemptMade | 0 |
+      | details_sentAttemptMade    | 0         |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | RECAG012 |
-      | details_sentAttemptMade | 0 |
+      | details                    | NOT_NULL                                                                                                                                                                                                        |
+      | details_recIndex           | 0                                                                                                                                                                                                               |
+      | details_deliveryDetailCode | RECAG012                                                                                                                                                                                                        |
+      | details_sentAttemptMade    | 0                                                                                                                                                                                                               |
       | details_physicalAddress    | {"at": "Presso", "address": "VIA@FAIL-GIACENZA-GT10_890", "addressDetails": "SCALA B", "zip": "87100", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "province": "CS", "foreignState": "ITALIA"} |
-      | details_responseStatus | OK |
+      | details_responseStatus     | OK                                                                                                                                                                                                              |
     # TODO come fa lo status a essere OK e non KO se la sequenza è di tipo fail?
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | RECAG011B |
-      | details_sentAttemptMade | 0 |
-      | details_attachments | [{"documentType": "23L"}] |
+      | details                    | NOT_NULL                  |
+      | details_recIndex           | 0                         |
+      | details_deliveryDetailCode | RECAG011B                 |
+      | details_sentAttemptMade    | 0                         |
+      | details_attachments        | [{"documentType": "23L"}] |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | RECAG007B |
-      | details_sentAttemptMade | 0 |
-      | details_attachments | [{"documentType": "Plico"}] |
+      | details                    | NOT_NULL                    |
+      | details_recIndex           | 0                           |
+      | details_deliveryDetailCode | RECAG007B                   |
+      | details_sentAttemptMade    | 0                           |
+      | details_attachments        | [{"documentType": "Plico"}] |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
       | details_deliveryDetailCode | RECAG007C |
-      | details_sentAttemptMade | 0 |
+      | details_sentAttemptMade    | 0         |
     And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      | | |
+      |  |  |
     #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.60s-RECAG012.5s-RECAG011B[DOC:ARCAD;DOC:23L].60s-RECAG007A.5s-RECAG007B[DOC:Plico].5s-RECAG007C"
 
   @giacenza890Simplified
@@ -431,7 +431,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | taxId                   | CLMCST42R12D969Z               |
       | digitalDomicile         | NULL                           |
       | physicalAddress_address | via@FAIL-Giacenza-gt10-23L_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON080"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG010"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG011A"
@@ -454,68 +454,68 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | taxId                   | CLMCST42R12D969Z            |
       | digitalDomicile         | NULL                        |
       | physicalAddress_address | via@OK-CompiutaGiacenza_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     #[vecchio]And si verifica che il timestamp dell'elemento di timeline della notifica SEND_ANALOG_FEEDBACK con deliveryDetailCode RECAG012 sia uguale al timestamp di REFINEMENT
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | CON080 |
-      | details_sentAttemptMade | 0 |
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
+      | details_deliveryDetailCode | CON080   |
+      | details_sentAttemptMade    | 0        |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | CON020 |
-      | details_sentAttemptMade | 0 |
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
+      | details_deliveryDetailCode | CON020   |
+      | details_sentAttemptMade    | 0        |
     And abbia anche un valore per il campo "details_attachments[0]_url" compatibile con l'espressione regolare ".+PN_PRINTED.+\.pdf"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
       | details_deliveryDetailCode | RECAG010 |
-      | details_sentAttemptMade | 0 |
+      | details_sentAttemptMade    | 0        |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
       | details_deliveryDetailCode | RECAG011A |
-      | details_sentAttemptMade | 0 |
+      | details_sentAttemptMade    | 0         |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | RECAG012 |
-      | details_sentAttemptMade | 0 |
+      | details                    | NOT_NULL                                                                                                                                                                                                         |
+      | details_recIndex           | 0                                                                                                                                                                                                                |
+      | details_deliveryDetailCode | RECAG012                                                                                                                                                                                                         |
+      | details_sentAttemptMade    | 0                                                                                                                                                                                                                |
       | details_physicalAddress    | {"at": "Presso", "address": "VIA@OK-COMPIUTAGIACENZA_890", "addressDetails": "SCALA B", "zip": "87100", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "province": "CS", "foreignState": "ITALIA"} |
-      | details_responseStatus | OK |
+      | details_responseStatus     | OK                                                                                                                                                                                                               |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | RECAG011B |
-      | details_sentAttemptMade | 0 |
-      | details_attachments | [{"documentType": "23L"}] |
+      | details                    | NOT_NULL                  |
+      | details_recIndex           | 0                         |
+      | details_deliveryDetailCode | RECAG011B                 |
+      | details_sentAttemptMade    | 0                         |
+      | details_attachments        | [{"documentType": "23L"}] |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | RECAG008B |
-      | details_sentAttemptMade | 0 |
-      | details_attachments | [{"documentType": "Plico"}] |
+      | details                    | NOT_NULL                    |
+      | details_recIndex           | 0                           |
+      | details_deliveryDetailCode | RECAG008B                   |
+      | details_sentAttemptMade    | 0                           |
+      | details_attachments        | [{"documentType": "Plico"}] |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
       | details_deliveryDetailCode | RECAG008C |
-      | details_sentAttemptMade | 0 |
+      | details_sentAttemptMade    | 0         |
     And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      | | |
+      |  |  |
     #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.60s-RECAG012.5s-RECAG011B[DOC:ARCAD;DOC:23L].60s-RECAG008A.5s-RECAG008B[DOC:Plico].5s-RECAG008C"
 
 
   @giacenza890Simplified
   Scenario: [B2B_GIACENZA_890_WI1.1_11] Attesa elemento di timeline REFINEMENT con physicalAddress OK-WO-011B (TEST TECNICO)
     Given viene generata una nuova notifica
-      | subject | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo |
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL           |
       | physicalAddress_address | via@OK-WO-011B |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG011B" e verifica tipo DOC "23L"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG012"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
@@ -525,115 +525,115 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
   @giacenza890Simplified
   Scenario: [B2B_GIACENZA_890_WI1.1_12]  Invio notifica con percorso analogico (OK-GiacenzaDelegato-lte10_890_redrive)  per verificare evento fuori sequenza che produce un redrive automatico di paper channel
     Given viene generata una nuova notifica
-      | subject | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo |
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
     And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL           |
+      | digitalDomicile         | NULL                                   |
       | physicalAddress_address | @OK-GiacenzaDelegato-lte10_890_redrive |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | CON080 |
-      | details_sentAttemptMade | 0 |
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
+      | details_deliveryDetailCode | CON080   |
+      | details_sentAttemptMade    | 0        |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | CON020 |
-      | details_sentAttemptMade | 0 |
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
+      | details_deliveryDetailCode | CON020   |
+      | details_sentAttemptMade    | 0        |
     And abbia anche un valore per il campo "details_attachments[0]_url" compatibile con l'espressione regolare ".+PN_PRINTED.+\.pdf"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
       | details_deliveryDetailCode | RECAG010 |
-      | details_sentAttemptMade | 0 |
+      | details_sentAttemptMade    | 0        |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
       | details_deliveryDetailCode | RECAG011A |
-      | details_sentAttemptMade | 0 |
+      | details_sentAttemptMade    | 0         |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | RECAG006B |
-      | details_sentAttemptMade | 0 |
-      | details_attachments | [{"documentType": "23L"}] |
+      | details                    | NOT_NULL                  |
+      | details_recIndex           | 0                         |
+      | details_deliveryDetailCode | RECAG006B                 |
+      | details_sentAttemptMade    | 0                         |
+      | details_attachments        | [{"documentType": "23L"}] |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
       | details_deliveryDetailCode | RECAG006C |
-      | details_sentAttemptMade | 0 |
+      | details_sentAttemptMade    | 0         |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | RECAG012 |
-      | details_sentAttemptMade | 0 |
+      | details                    | NOT_NULL                                                                                                                                                                                                                    |
+      | details_recIndex           | 0                                                                                                                                                                                                                           |
+      | details_deliveryDetailCode | RECAG012                                                                                                                                                                                                                    |
+      | details_sentAttemptMade    | 0                                                                                                                                                                                                                           |
       | details_physicalAddress    | {"at": "Presso", "address": "@OK-GIACENZADELEGATO-LTE10_890_REDRIVE", "addressDetails": "SCALA B", "zip": "87100", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "province": "CS", "foreignState": "ITALIA"} |
-      | details_responseStatus | OK |
+      | details_responseStatus     | OK                                                                                                                                                                                                                          |
     And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      | | |
+      |  |  |
     #"sequenceName": "OK-GiacenzaDelegato-lte10_890_redrive", "sequence": "@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.30s-RECAG006A.5s-RECAG006B[DOC:ARCAD;DOC:23L].60s-RECAG006C.60s-RECAG012"
     #Risultato atteso: l’evento fuori ordine viene inserito nella tabella degli errori e recuperato automaticamente da paper channel all’arrivo dell’evento RECAG012
 
   @giacenza890Simplified
   Scenario: [B2B_GIACENZA_890_WI1.1_13]  Invio notifica con percorso analogico (FAIL-Giacenza-gt10_890_no_recag012)  per verificare che paper channel calcoli la data di perfezionamento e invii il PNAG012 come feedback poichè oltre i 10 giorni
     Given viene generata una nuova notifica
-      | subject | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo |
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
     And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL           |
+      | digitalDomicile         | NULL                                |
       | physicalAddress_address | @FAIL-Giacenza-gt10_890_no_recag012 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | CON080 |
-      | details_sentAttemptMade | 0 |
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
+      | details_deliveryDetailCode | CON080   |
+      | details_sentAttemptMade    | 0        |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | CON020 |
-      | details_sentAttemptMade | 0 |
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
+      | details_deliveryDetailCode | CON020   |
+      | details_sentAttemptMade    | 0        |
     And abbia anche un valore per il campo "details_attachments[0]_url" compatibile con l'espressione regolare ".+PN_PRINTED.+\.pdf"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
       | details_deliveryDetailCode | RECAG010 |
-      | details_sentAttemptMade | 0 |
+      | details_sentAttemptMade    | 0        |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
       | details_deliveryDetailCode | RECAG011A |
-      | details_sentAttemptMade | 0 |
+      | details_sentAttemptMade    | 0         |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | RECAG011B |
-      | details_sentAttemptMade | 0 |
-      | details_attachments | [{"documentType": "23L"}] |
+      | details                    | NOT_NULL                  |
+      | details_recIndex           | 0                         |
+      | details_deliveryDetailCode | RECAG011B                 |
+      | details_sentAttemptMade    | 0                         |
+      | details_attachments        | [{"documentType": "23L"}] |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | RECAG007B |
-      | details_sentAttemptMade | 0 |
-      | details_attachments | [{"documentType": "Plico"}] |
+      | details                    | NOT_NULL                    |
+      | details_recIndex           | 0                           |
+      | details_deliveryDetailCode | RECAG007B                   |
+      | details_sentAttemptMade    | 0                           |
+      | details_attachments        | [{"documentType": "Plico"}] |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | PNAG012 |
-      | details_sentAttemptMade | 0 |
+      | details                    | NOT_NULL                                                                                                                                                                                                                 |
+      | details_recIndex           | 0                                                                                                                                                                                                                        |
+      | details_deliveryDetailCode | PNAG012                                                                                                                                                                                                                  |
+      | details_sentAttemptMade    | 0                                                                                                                                                                                                                        |
       | details_physicalAddress    | {"at": "Presso", "address": "@FAIL-GIACENZA-GT10_890_NO_RECAG012", "addressDetails": "SCALA B", "zip": "87100", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "province": "CS", "foreignState": "ITALIA"} |
-      | details_responseStatus | OK |
+      | details_responseStatus     | OK                                                                                                                                                                                                                       |
     # TODO come fa a essere OK e non KO il risultato atteso, se è una sequenza di tipo fail?
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
       | details_deliveryDetailCode | RECAG007C |
-      | details_sentAttemptMade | 0 |
+      | details_sentAttemptMade    | 0         |
     And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      | | |
+      |  |  |
     #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.60s-RECAG011B[DOC:ARCAD;DOC:23L].60s-RECAG007A.5s-RECAG007B[DOC:Plico].5s-RECAG007C"
     #PNAG012 come evento di feedback con data: RECAG011A + refinementDuration (1 minuto in DEV)
 
@@ -643,12 +643,12 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
   @giacenza890Simplified
   Scenario: [B2B_GIACENZA_890_WI1.1_14] Non Attesa elemento di timeline SEND_ANALOG_FEEDBACK con physicalAddress OK-NO012-lte10 (Scenario negativo)
     Given viene generata una nuova notifica
-      | subject | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo |
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL               |
       | physicalAddress_address | via@OK-NO012-lte10 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON080"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG010"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG011A"
@@ -659,12 +659,12 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
   @giacenza890Simplified
   Scenario: [B2B_GIACENZA_890_WI1.1_15] Non Attesa elemento di timeline SEND_ANALOG_FEEDBACK con physicalAddress OK-NO012-gt10 (Scenario negativo)
     Given viene generata una nuova notifica
-      | subject | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo |
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL              |
       | physicalAddress_address | via@OK-NO012-gt10 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON080"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG010"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG011A"
@@ -682,7 +682,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | taxId                   | CLMCST42R12D969Z          |
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | via@OK-Giacenza-lte10_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG010"
 
   @giacenza890Simplified @ignore
@@ -695,7 +695,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | taxId                   | CLMCST42R12D969Z   |
       | digitalDomicile         | NULL               |
       | physicalAddress_address | via@OK-Giacenza_RS |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON080"
   #"sequence": "@sequence.5s-CON080.5s-RECRS010.5s-RECRS011.5s-RECRN003A.5s-RECRN003B[DOC:AR].5s-RECRN003C"
 
@@ -709,7 +709,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | taxId                   | CLMCST42R12D969Z      |
       | digitalDomicile         | NULL                  |
       | physicalAddress_address | via@OK-WO-Giacenza_AR |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN010"
 
   @giacenza890Simplified @ignore
@@ -719,10 +719,10 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | senderDenomination | Comune di palermo               |
     And destinatario
       | denomination            | FAIL-Giacenza-Missing_11A_890     |
-      | taxId                   | CLMCST42R12D969Z      |
-      | digitalDomicile         | NULL                  |
+      | taxId                   | CLMCST42R12D969Z                  |
+      | digitalDomicile         | NULL                              |
       | physicalAddress_address | via@FAIL-Giacenza-Missing_11A_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRS011"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG012"
 
@@ -733,11 +733,11 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
     And destinatario
-      | denomination            | FAIL-Giacenza-Missing_11A_890     |
-      | taxId                   | CLMCST42R12D969Z      |
-      | digitalDomicile         | NULL                  |
+      | denomination            | FAIL-Giacenza-Missing_11A_890         |
+      | taxId                   | CLMCST42R12D969Z                      |
+      | digitalDomicile         | NULL                                  |
       | physicalAddress_address | @OK-Giacenza_890_refine_before_switch |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
   @giacenza890Simplified @ignore
@@ -746,11 +746,11 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
     And destinatario
-      | denomination            | FAIL-Giacenza-Missing_11A_890     |
-      | taxId                   | CLMCST42R12D969Z      |
-      | digitalDomicile         | NULL                  |
+      | denomination            | FAIL-Giacenza-Missing_11A_890        |
+      | taxId                   | CLMCST42R12D969Z                     |
+      | digitalDomicile         | NULL                                 |
       | physicalAddress_address | @OK-Giacenza_890_refine_after_switch |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
 

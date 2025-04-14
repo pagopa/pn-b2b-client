@@ -1,15 +1,14 @@
 package it.pagopa.pn.cucumber.steps.verificaPagamento;
 
-import io.cucumber.java.Transpose;
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.payment.BffPaymentInfoItem;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.payment.PaymentInfoRequest;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NewNotificationRequestV24;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaymentInfoClient;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
+import it.pagopa.pn.cucumber.steps.pa.notificationVersions.Destinatario;
 import it.pagopa.pn.cucumber.utils.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -42,13 +41,9 @@ public class VerificaPagamentoSteps {
         pnPaymentInfoClient = this.sharedSteps.getPnPaymentInfoClientImpl();
     }
 
-    @Given("viene generata una nuova notifica di pagamento")
-    public void generaNuovaNotifica(@Transpose NewNotificationRequestV24 notificationRequest) {
-        sharedSteps.vieneGenerataUnaNotifica(notificationRequest);
-    }
 
-    @And("con destinatario Mario Gherkin e:")
-    public void generaDestinatarioNotifica(io.cucumber.datatable.DataTable dataTable) {
+    @And("destinatario pagatore {destinatario} e:")
+    public void generaDestinatarioNotifica(Destinatario destinatario, DataTable dataTable) {
         Map<String, String> data = new HashMap<>(dataTable.asMap());
 
         String noticeCodeSuffix = getValue(data, PAYMENT_NOTICE_CODE.key);
@@ -68,7 +63,7 @@ public class VerificaPagamentoSteps {
         this.creditorTaxId = creditorTaxId;
 
         data.put(PAYMENT_NOTICE_CODE.key, noticeCode);
-        sharedSteps.destinatarioMarioGherkinParam(data);
+        sharedSteps.addDestinatarioWithParams(destinatario, data);
     }
 
     @When("la notifica viene inviata dal {string} e si attende che lo stato diventi ACCEPTED")
@@ -76,7 +71,7 @@ public class VerificaPagamentoSteps {
         log.info("Invio notifica con noticeCode {} e creditorTaxId {}", noticeCode, creditorTaxId);
 
         try {
-            sharedSteps.laNotificaVieneInviataOk(paType);
+            sharedSteps.sendNotification(paType, "ACCEPTED");
             increaseSuffixCount(this.noticeCodeSuffix);
         } catch (AssertionFailedError e) {
             Throwable cause = e.getCause();

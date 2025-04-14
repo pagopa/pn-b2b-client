@@ -9,12 +9,12 @@ Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal 
     And viene verificato che Sercq sia "abilitato" per il comune "default"
     And l'utente "Galileo Galilei" "ACCETTA" i tos per sercq
     And viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
     And destinatario
-      | denomination | Galileo Galilei |
-      | taxId | GLLGLL64B15G702I |
-      | digitalDomicile | NULL |
+      | denomination    | Galileo Galilei  |
+      | taxId           | GLLGLL64B15G702I |
+      | digitalDomicile | NULL             |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si controlla con check rapidi che lo stato diventi ACCEPTED
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" con address type "SERCQ" digitalAddressSource "PLATFORM" in "OK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
@@ -23,13 +23,13 @@ Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal 
   @perfezionamentoIrreperibile
   Scenario: [PERFEZIONAMENTO_IRREPERIBILE_4] Invio notifica digitale monodestinatario PF con indirizzo speciale associato
     Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
     And destinatario
-      | denomination | Cristoforo Colombo |
-      | taxId | CLMCST42R12D969Z |
+      | denomination            | Cristoforo Colombo        |
+      | taxId                   | CLMCST42R12D969Z          |
       | digitalDomicile_address | testpagopa1@pec.pagopa.it |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" con address type "PEC" digitalAddressSource "SPECIAL" in "OK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
 
@@ -44,7 +44,7 @@ Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal 
       | recipientType   | PF               |
       | taxId           | PRVMNL80A01F205M |
       | digitalDomicile | NULL             |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" con address type "PEC" digitalAddressSource "GENERAL" in "OK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
 
@@ -55,22 +55,22 @@ Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal 
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserito un recapito legale "test@OK-pecFirstFailSecondSuccess.it"
     And viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
     And destinatario
-      | denomination | Galileo Galilei |
-      | taxId | GLLGLL64B15G702I |
-      | digitalDomicile | NULL |
+      | denomination    | Galileo Galilei  |
+      | taxId           | GLLGLL64B15G702I |
+      | digitalDomicile | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si controlla con check rapidi che lo stato diventi ACCEPTED
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
-      | loadTimeline | true |
-      | details | NOT_NULL |
-      | details_responseStatus | KO |
-      | details_sendingReceipts | [{"id": null, "system": null}] |
-      | details_digitalAddress | {"address": "test@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
-      | details_recIndex | 0 |
-      | details_digitalAddressSource | PLATFORM |
-      | details_sentAttemptMade | 0 |
+      | loadTimeline                 | true                                                               |
+      | details                      | NOT_NULL                                                           |
+      | details_responseStatus       | KO                                                                 |
+      | details_sendingReceipts      | [{"id": null, "system": null}]                                     |
+      | details_digitalAddress       | {"address": "test@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
+      | details_recIndex             | 0                                                                  |
+      | details_digitalAddressSource | PLATFORM                                                           |
+      | details_sentAttemptMade      | 0                                                                  |
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" con address type "PEC" digitalAddressSource "PLATFORM" in "OK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
 
@@ -81,22 +81,22 @@ Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal 
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserito un recapito legale "test@OK-pecFirstFailSecondSuccess.it"
     And viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
     And destinatario
-      | denomination | Galileo Galilei |
-      | taxId | GLLGLL64B15G702I |
-      | digitalDomicile | NULL |
+      | denomination    | Galileo Galilei  |
+      | taxId           | GLLGLL64B15G702I |
+      | digitalDomicile | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si controlla con check rapidi che lo stato diventi ACCEPTED
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
-      | loadTimeline | true |
-      | details | NOT_NULL |
-      | details_responseStatus | KO |
-      | details_sendingReceipts | [{"id": null, "system": null}] |
-      | details_digitalAddress | {"address": "test@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
-      | details_recIndex | 0 |
-      | details_digitalAddressSource | PLATFORM |
-      | details_sentAttemptMade | 0 |
+      | loadTimeline                 | true                                                               |
+      | details                      | NOT_NULL                                                           |
+      | details_responseStatus       | KO                                                                 |
+      | details_sendingReceipts      | [{"id": null, "system": null}]                                     |
+      | details_digitalAddress       | {"address": "test@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
+      | details_recIndex             | 0                                                                  |
+      | details_digitalAddressSource | PLATFORM                                                           |
+      | details_sentAttemptMade      | 0                                                                  |
     And viene inserito un recapito legale "pec@FAIL.it"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" con address type "PEC" digitalAddressSource "PLATFORM" in "OK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
@@ -109,22 +109,22 @@ Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal 
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserito un recapito legale "test@OK-pecFirstFailSecondSuccess.it"
     And viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
     And destinatario
-      | denomination | Galileo Galilei |
-      | taxId | GLLGLL64B15G702I |
-      | digitalDomicile | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+      | denomination    | Galileo Galilei  |
+      | taxId           | GLLGLL64B15G702I |
+      | digitalDomicile | NULL             |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
-      | loadTimeline | true |
-      | details | NOT_NULL |
-      | details_responseStatus | KO |
-      | details_sendingReceipts | [{"id": null, "system": null}] |
-      | details_digitalAddress | {"address": "test@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
-      | details_recIndex | 0 |
-      | details_digitalAddressSource | PLATFORM |
-      | details_sentAttemptMade | 0 |
+      | loadTimeline                 | true                                                               |
+      | details                      | NOT_NULL                                                           |
+      | details_responseStatus       | KO                                                                 |
+      | details_sendingReceipts      | [{"id": null, "system": null}]                                     |
+      | details_digitalAddress       | {"address": "test@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
+      | details_recIndex             | 0                                                                  |
+      | details_digitalAddressSource | PLATFORM                                                           |
+      | details_sentAttemptMade      | 0                                                                  |
     And vengono rimossi eventuali recapiti presenti per l'utente
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" con address type "PEC" digitalAddressSource "PLATFORM" in "OK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
@@ -136,22 +136,22 @@ Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal 
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserito un recapito legale "example@FAIL-pecFirstKO.it"
     And viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
     And destinatario
-      | denomination | Galileo Galilei |
-      | taxId | GLLGLL64B15G702I |
-      | digitalDomicile | NULL |
+      | denomination    | Galileo Galilei  |
+      | taxId           | GLLGLL64B15G702I |
+      | digitalDomicile | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si controlla con check rapidi che lo stato diventi ACCEPTED
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
-      | loadTimeline | true |
-      | details | NOT_NULL |
-      | details_responseStatus | KO |
-      | details_sendingReceipts | [{"id": null, "system": null}] |
-      | details_digitalAddress | {"address": "example@FAIL-pecFirstKO.it", "type": "PEC"} |
-      | details_recIndex | 0 |
-      | details_digitalAddressSource | PLATFORM |
-      | details_sentAttemptMade | 0 |
+      | loadTimeline                 | true                                                     |
+      | details                      | NOT_NULL                                                 |
+      | details_responseStatus       | KO                                                       |
+      | details_sendingReceipts      | [{"id": null, "system": null}]                           |
+      | details_digitalAddress       | {"address": "example@FAIL-pecFirstKO.it", "type": "PEC"} |
+      | details_recIndex             | 0                                                        |
+      | details_digitalAddressSource | PLATFORM                                                 |
+      | details_sentAttemptMade      | 0                                                        |
     And viene inserito un recapito legale "example@pecSuccess.it"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" con address type "PEC" digitalAddressSource "PLATFORM" in "OK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
@@ -164,22 +164,22 @@ Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal 
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserito un recapito legale "test@OK-pecFirstFailSecondSuccess.it"
     And viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
     And destinatario
-      | denomination | Galileo Galilei |
-      | taxId | GLLGLL64B15G702I |
-      | digitalDomicile | NULL |
+      | denomination    | Galileo Galilei  |
+      | taxId           | GLLGLL64B15G702I |
+      | digitalDomicile | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si controlla con check rapidi che lo stato diventi ACCEPTED
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
-      | loadTimeline | true |
-      | details | NOT_NULL |
-      | details_responseStatus | KO |
-      | details_sendingReceipts | [{"id": null, "system": null}] |
-      | details_digitalAddress | {"address": "test@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
-      | details_recIndex | 0 |
-      | details_digitalAddressSource | PLATFORM |
-      | details_sentAttemptMade | 0 |
+      | loadTimeline                 | true                                                               |
+      | details                      | NOT_NULL                                                           |
+      | details_responseStatus       | KO                                                                 |
+      | details_sendingReceipts      | [{"id": null, "system": null}]                                     |
+      | details_digitalAddress       | {"address": "test@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
+      | details_recIndex             | 0                                                                  |
+      | details_digitalAddressSource | PLATFORM                                                           |
+      | details_sentAttemptMade      | 0                                                                  |
     And viene inserito un recapito legale "example@pecSuccess.it"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" con address type "PEC" digitalAddressSource "PLATFORM" in "OK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
@@ -189,21 +189,21 @@ Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal 
   @perfezionamentoIrreperibile @ignore
   Scenario: [PERFEZIONAMENTO_IRREPERIBILE_11] Invio notifica digitale monodestinatario PF con Indirizzo generale con esito negativo e secondo tentativo
     And viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
     And destinatario
-      | denomination | Galileo Galilei |
-      | taxId | GLLGLL64B15G702I |
-      | digitalDomicile | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+      | denomination    | Galileo Galilei  |
+      | taxId           | GLLGLL64B15G702I |
+      | digitalDomicile | NULL             |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
-      | details | NOT_NULL |
-      | details_responseStatus | KO |
-      | details_sendingReceipts | [{"id": null, "system": null}] |
-      | details_recIndex | 0 |
-      | details_digitalAddressSource | GENERAL |
-      | details_retryNumber | 0 |
-      | details_sentAttemptMade | 0 |
+      | details                      | NOT_NULL                       |
+      | details_responseStatus       | KO                             |
+      | details_sendingReceipts      | [{"id": null, "system": null}] |
+      | details_recIndex             | 0                              |
+      | details_digitalAddressSource | GENERAL                        |
+      | details_retryNumber          | 0                              |
+      | details_sentAttemptMade      | 0                              |
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" con address type "PEC" digitalAddressSource "GENERAL" in "OK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
 
@@ -211,22 +211,22 @@ Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal 
   @perfezionamentoIrreperibile
   Scenario: [PERFEZIONAMENTO_IRREPERIBILE_12] Invio notifica digitale monodestinatario PF con Domicilio Digitale
     Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
     And destinatario
-      | denomination | Cristoforo Colombo |
-      | taxId | CLMCST42R12D969Z |
+      | denomination            | Cristoforo Colombo                   |
+      | taxId                   | CLMCST42R12D969Z                     |
       | digitalDomicile_address | test@OK-pecFirstFailSecondSuccess.it |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
-      | loadTimeline | true |
-      | details | NOT_NULL |
-      | details_responseStatus | KO |
-      | details_sendingReceipts | [{"id": null, "system": null}] |
-      | details_digitalAddress | {"address": "test@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
-      | details_recIndex | 0 |
-      | details_digitalAddressSource | SPECIAL |
-      | details_sentAttemptMade | 0 |
+      | loadTimeline                 | true                                                               |
+      | details                      | NOT_NULL                                                           |
+      | details_responseStatus       | KO                                                                 |
+      | details_sendingReceipts      | [{"id": null, "system": null}]                                     |
+      | details_digitalAddress       | {"address": "test@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
+      | details_recIndex             | 0                                                                  |
+      | details_digitalAddressSource | SPECIAL                                                            |
+      | details_sentAttemptMade      | 0                                                                  |
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     And controllo che le tempistiche di arrivo tra l elemento "SEND_DIGITAL_FEEDBACK" con address type "PEC" digitalAddressSource "SPECIAL" in "OK" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "SUCCESSO DIGITALE"
 
@@ -236,22 +236,22 @@ Feature: Perfezionamento della notifica con destinatario irreperibile a 10g dal 
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserito un recapito legale "example@FAIL-pecFirstKOSecondKO.it"
     And viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
     And destinatario
-      | denomination | Galileo Galilei |
-      | taxId | GLLGLL64B15G702I |
-      | digitalDomicile | NULL |
+      | denomination    | Galileo Galilei  |
+      | taxId           | GLLGLL64B15G702I |
+      | digitalDomicile | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si controlla con check rapidi che lo stato diventi ACCEPTED
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
-      | loadTimeline | true |
-      | details | NOT_NULL |
-      | details_responseStatus | KO |
-      | details_sendingReceipts | [{"id": null, "system": null}] |
-      | details_digitalAddress | {"address": "example@FAIL-pecFirstKOSecondKO.it", "type": "PEC"} |
-      | details_recIndex | 0 |
-      | details_digitalAddressSource | PLATFORM |
-      | details_sentAttemptMade | 0 |
+      | loadTimeline                 | true                                                             |
+      | details                      | NOT_NULL                                                         |
+      | details_responseStatus       | KO                                                               |
+      | details_sendingReceipts      | [{"id": null, "system": null}]                                   |
+      | details_digitalAddress       | {"address": "example@FAIL-pecFirstKOSecondKO.it", "type": "PEC"} |
+      | details_recIndex             | 0                                                                |
+      | details_digitalAddressSource | PLATFORM                                                         |
+      | details_sentAttemptMade      | 0                                                                |
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     And esiste l'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW" per l'utente 0
     And controllo che le tempistiche di arrivo tra l elemento "DIGITAL_DELIVERY_CREATION_REQUEST" e l'elemento "SCHEDULE_REFINEMENT_WORKFLOW" siano corrette per la notifica "ERRORE DIGITALE"

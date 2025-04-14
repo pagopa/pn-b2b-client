@@ -17,26 +17,26 @@ Feature: calcolo costo notifica in base hai grammi con notifiche RS
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
-      | CAP   | COSTO | MUNICIPALITY | PROVINCE | SUBJECT                        |
-      | 60010 | 398   | BARBARA      | AN       | notifica analogica FSU         |
-      | 04100 | 338   | LE FERRIERE  | LT       | notifica analogica RECAPITISTA |
-      | 00123 | 311   | ROMA         | RM       | notifica analogica RECAPITISTA |
-      | 00018 | 398   | CRETONE      | RM       | notifica analogica RECAPITISTA |
-      | 70124 | 273   | BARI         | BA       | notifica analogica RECAPITISTA |
-      | 60012 | 342   | MONTERADO    | AN       | notifica analogica RECAPITISTA |
-      | 60126 | 293   | ANCONA       | AN       | notifica analogica RECAPITISTA |
-      | 80022 | 342   | ARZANO       | NA       | notifica analogica RECAPITISTA |
-      | 84124 | 293   | SALERNO      | SA       | notifica analogica RECAPITISTA |
-      | 80129 | 273   | NAPOLI       | NA       | notifica analogica RECAPITISTA |
-      | 27062 | 398   | CAMPOSPINOSO ALBAREDO   | PV       | notifica analogica RECAPITISTA |
-      | 92038 | 342   | MONTEVAGO               | AG       | notifica analogica RECAPITISTA |
-      | 92044 | 342   | PALMA DI MONTECHIARO    | AG       | notifica analogica RECAPITISTA |
+      | CAP   | COSTO | MUNICIPALITY          | PROVINCE | SUBJECT                        |
+      | 60010 | 398   | BARBARA               | AN       | notifica analogica FSU         |
+      | 04100 | 338   | LE FERRIERE           | LT       | notifica analogica RECAPITISTA |
+      | 00123 | 311   | ROMA                  | RM       | notifica analogica RECAPITISTA |
+      | 00018 | 398   | CRETONE               | RM       | notifica analogica RECAPITISTA |
+      | 70124 | 273   | BARI                  | BA       | notifica analogica RECAPITISTA |
+      | 60012 | 342   | MONTERADO             | AN       | notifica analogica RECAPITISTA |
+      | 60126 | 293   | ANCONA                | AN       | notifica analogica RECAPITISTA |
+      | 80022 | 342   | ARZANO                | NA       | notifica analogica RECAPITISTA |
+      | 84124 | 293   | SALERNO               | SA       | notifica analogica RECAPITISTA |
+      | 80129 | 273   | NAPOLI                | NA       | notifica analogica RECAPITISTA |
+      | 27062 | 398   | CAMPOSPINOSO ALBAREDO | PV       | notifica analogica RECAPITISTA |
+      | 92038 | 342   | MONTEVAGO             | AG       | notifica analogica RECAPITISTA |
+      | 92044 | 342   | PALMA DI MONTECHIARO  | AG       | notifica analogica RECAPITISTA |
 
-      | 14027 | 398   | TONENGO              | AT       | notifica analogica RECAPITISTA |
+      | 14027 | 398   | TONENGO               | AT       | notifica analogica RECAPITISTA |
 
   @costoAnalogicoGennaio25
   Scenario: [CALCOLO-COSTO_RS-20GR_2] (Gennaio) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso <= 20gr
@@ -51,7 +51,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche RS
       | physicalAddress_zip     | ZONE_1       |
       | physicalAddress_address | Via@ok_RIS   |
       | payment_pagoPaForm      | NOALLEGATO   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "729" della notifica
 
@@ -68,7 +68,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche RS
       | physicalAddress_zip     | ZONE_2       |
       | physicalAddress_address | Via@ok_RIS   |
       | payment_pagoPaForm      | NOALLEGATO   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "842" della notifica
 
@@ -85,6 +85,6 @@ Feature: calcolo costo notifica in base hai grammi con notifiche RS
       | physicalAddress_zip     | ZONE_3       |
       | physicalAddress_address | Via@ok_RIS   |
       | payment_pagoPaForm      | NOALLEGATO   |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "898" della notifica
