@@ -254,6 +254,18 @@ public class SharedSteps {
     }
 
     /**
+     * Metodo a soli fine di debugging, da non essere utilizzato in nessuno scenario.
+     * Se si ha già pronta una notifica e si vogliono testare dei metodi che riguardano la timeline,
+     * anziché crearla da zero, aspettare che arrivi in ACCEPTED, etc si imposta lo IUN qua e la PA e
+     * si può procedere con il resto dei metodi.
+     */
+    @Given("imposto lo iun di SharedSteps a {string} e la pa a {string}")
+    public void impostoIunAndPaForTestPurposes(String iun, String paName) {
+        this.notificationIun = iun;
+        setPA(paName);
+    }
+
+    /**
      * Per test di utilità generale, che non si prefiggono di testare qualcosa legato a una versione specifica, usare questo step
      */
     @Given("viene generata una nuova notifica")
