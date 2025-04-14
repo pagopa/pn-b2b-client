@@ -7,7 +7,7 @@ Feature: verifica compatibilità tra v2 a v2.1
       | senderDenomination | Comune di palermo               |
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" V2
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" con la versione "V2"
 
 
   @version

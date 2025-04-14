@@ -6,11 +6,17 @@ import it.pagopa.pn.client.b2b.pa.config.springconfig.ApiKeysConfiguration;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.BearerTokenConfiguration;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.TimingConfiguration;
+import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
+import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV26;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v26.PnPollingServiceValidationStatusV26;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -18,11 +24,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.util.Base64Utils;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import static it.pagopa.pn.client.b2b.pa.PnPaB2bUtils.*;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 
@@ -57,6 +67,7 @@ import static org.awaitility.Awaitility.await;
 })
 
 
+@Slf4j
 @TestPropertySource(properties = {"spring.profiles.active=test"})
 @EnableConfigurationProperties
 public class NewNotificationTest {
@@ -104,8 +115,8 @@ public class NewNotificationTest {
 
 
         Assertions.assertDoesNotThrow(() -> {
-            NewNotificationResponse newNotificationRequest = utils.uploadNotificationV24(request);
-            FullSentNotificationV26 newNotification = utils.waitForRequestAcceptationV26(newNotificationRequest);
+            NewNotificationResponse newNotificationRequest = uploadNotificationV24(request);
+            FullSentNotificationV26 newNotification = waitForRequestAcceptation(newNotificationRequest);
             await().atMost(10, SECONDS);
             utils.verifyNotification(newNotification);
         });
@@ -131,8 +142,8 @@ public class NewNotificationTest {
                 .addRecipientsItem(newRecipient(false, "Fiera", "FRMTTR76M06B715E", "classpath:/sample.pdf", "classpath:/f24_flat.json", RECIPIENT_TYPE_DIGITAL.DIGITAL_OK, RECIPIENT_TYPE_ANALOG.ANALOG_OK));
 
         Assertions.assertDoesNotThrow(() -> {
-            NewNotificationResponse newNotificationRequest = utils.uploadNotificationV24(request);
-            FullSentNotificationV26 newNotification = utils.waitForRequestAcceptationV26(newNotificationRequest);
+            NewNotificationResponse newNotificationRequest = uploadNotificationV24(request);
+            FullSentNotificationV26 newNotification = waitForRequestAcceptation(newNotificationRequest);
             await().atMost(10, SECONDS);
             utils.verifyNotification(newNotification);
         });
@@ -239,5 +250,73 @@ public class NewNotificationTest {
 
         await().atMost(10, SECONDS);
         return recipient;
+    }
+
+    private NewNotificationResponse uploadNotificationV24(NewNotificationRequestV24 request) throws IOException {
+        //PRELOAD DOCUMENTI NOTIFICA
+        List<NotificationDocument> newDocs = new ArrayList<>();
+        for (NotificationDocument doc : request.getDocuments()) {
+            try {
+                Thread.sleep(utils.getRandom().nextInt(350));
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new PnB2bException(e.getMessage());
+            }
+            //TODO MATTEO FINIRE
+//            if (doc != null) {
+//                newDocs.add(preloadDocument(doc));
+//            }
+        }
+        request.setDocuments(newDocs);
+        //PRELOAD DOCUMENTI DI PAGAMENTO
+        preloadPayDocument(request);
+        return getAndCheckSendNewNotification(request);
+    }
+
+    private NewNotificationResponse getAndCheckSendNewNotification(NewNotificationRequestV24 request) {
+        log.info(NEW_NOTIFICATION_REQUEST, request);
+        NewNotificationResponse response = utils.getClient().sendNewNotificationV24(request);
+        log.info(NEW_NOTIFICATION_REQUEST_RESPONSE, response);
+        if (response != null) {
+            try {
+                log.info(NEW_NOTIFICATION_IUN, new String(Base64Utils.decodeFromString(response.getNotificationRequestId())));
+            } catch (Exception e) {
+                throw new PnB2bException(e.getMessage());
+            }
+        }
+        return response;
+    }
+
+    private FullSentNotificationV26 waitForRequestAcceptation(NewNotificationResponse response) {
+        PnPollingServiceValidationStatusV26 validationStatus = (PnPollingServiceValidationStatusV26) utils.getPollingFactory().getPollingService(PnPollingStrategy.VALIDATION_STATUS_V26);
+        PnPollingResponseV26 pollingResponse = validationStatus.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(ACCEPTED).build());
+        return pollingResponse.getNotification() == null ? null : pollingResponse.getNotification();
+    }
+
+    private void preloadPayDocument(NewNotificationRequestV24 request) throws IOException {
+        for (NotificationRecipientV23 recipient : request.getRecipients()) {
+            List<NotificationPaymentItem> paymentList = recipient.getPayments();
+            if (paymentList != null) {
+                setAttachmentWithSleep(paymentList);
+            }
+        }
+    }
+
+    private void setAttachmentWithSleep(List<NotificationPaymentItem> paymentList) throws IOException {
+        for (NotificationPaymentItem paymentInfo : paymentList) {
+            try {
+                Thread.sleep(utils.getRandom().nextInt(350));
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new PnB2bException(e.getMessage());
+            }
+            //TODO MATTEO FINIRE
+//            if (paymentInfo.getPagoPa() != null) {
+//                paymentInfo.getPagoPa().setAttachment(preloadAttachment(paymentInfo.getPagoPa().getAttachment()));
+//            }
+//            if (paymentInfo.getF24() != null) {
+//                paymentInfo.getF24().setMetadataAttachment(preloadWithMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
+//            }
+        }
     }
 }

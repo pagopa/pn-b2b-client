@@ -1,9 +1,9 @@
-package it.pagopa.pn.cucumber.utils.datatest;
+package it.pagopa.pn.cucumber.utils.datatestVersions;
 
 import lombok.Data;
 
 /**
- * Interfaccia per le varie versioni di DataTest.
+ * Superclasse per le varie versioni di DataTest.
  * Si differenziano tra loro unicamente per la versione del campo
  * timelineElement
  */

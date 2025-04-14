@@ -33,7 +33,7 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
     private StreamRequestV27 streamRequest;
     private final AvanzamentoNotificheWebhookB2bSteps webhookSteps;
     private final StreamVersion streamVersion;
-    private boolean waitForAccepted;
+    private boolean waitForAccepted;//solo per versioni dalla 27 in su
 
     public WebhookStepsV27(AvanzamentoNotificheWebhookB2bSteps webhookSteps) {
         this.webhookSteps = webhookSteps;
@@ -436,11 +436,6 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
             pnPollingWebhook.setProgressResponseElementListV27(progressResponseElementList);
         }
         return pnPollingWebhook;
-    }
-
-    @Override
-    public void getTimelineElementVersionB2B(String iun) {
-        webhookSteps.getB2bClient().getSentNotificationV26(iun);
     }
 
     @Override

@@ -2,10 +2,16 @@ package it.pagopa.pn.cucumber.steps.gestioneCosti.domain;
 
 import com.opencsv.bean.CsvBindByPosition;
 import com.opencsv.bean.CsvCustomBindByPosition;
+import io.cucumber.java.DataTableType;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.model.ShipmentCalculateRequest;
 import it.pagopa.pn.cucumber.steps.gestioneCosti.converter.ShipmentCalculateRequestConverter;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Map;
+
+import static it.pagopa.pn.cucumber.utils.NotificationValue.getValue;
+import static java.util.Optional.ofNullable;
 
 @Getter
 @Setter
@@ -29,4 +35,14 @@ public class CalculateRequestParameter {
     @CsvBindByPosition(position = 10)
     private Integer expectedResult;
 
+    @DataTableType
+    public synchronized CalculateRequestParameter convertShipmentCalculateRequestElement(Map<String, String> data) {
+        CalculateRequestParameter requestParameter = new CalculateRequestParameter();
+        requestParameter.setGeokey(getValue(data, "geokey"));
+        requestParameter.setProduct(ofNullable(getValue(data, "product")).map(ShipmentCalculateRequest.ProductEnum::fromValue).orElse(null));
+        requestParameter.setNumSides(ofNullable(getValue(data, "numSides")).map(Integer::valueOf).orElse(null));
+        requestParameter.setIsReversePrinter(ofNullable(getValue(data, "isReversePrinter")).map(Boolean::valueOf).orElse(null));
+        requestParameter.setPageWeight(ofNullable(getValue(data, "pageWeight")).map(Integer::valueOf).orElse(null));
+        return requestParameter;
+    }
 }

@@ -19,7 +19,7 @@ Feature: verifica compatibilità tra v1 a v2
       | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" V1
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" con la versione "V1"
 
   @version
   Scenario: [B2B-PA-SEND_VERSION_V1_V2_3] Invio notifica digitale mono destinatario V2 e recupero tramite codice IUN V1 (p.fisica)_scenario positivo
@@ -46,7 +46,7 @@ Feature: verifica compatibilità tra v1 a v2
       | senderDenomination | Comune di milano            |
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED" V2
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V1
     And vengono letti gli eventi della timeline e si controlla che l'evento di timeline "NOTIFICATION_CANCELLED" non esista con la V1
 
@@ -58,7 +58,7 @@ Feature: verifica compatibilità tra v1 a v2
       | feePolicy          | DELIVERY_MODE                   |
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino allo stato della notifica "ACCEPTED" V1
+    And vengono letti gli eventi fino allo stato della notifica "ACCEPTED" con la versione "V1"
 
 
   @version

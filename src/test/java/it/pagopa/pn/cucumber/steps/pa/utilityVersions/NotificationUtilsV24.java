@@ -1,36 +1,77 @@
-package it.pagopa.pn.cucumber.steps;
+package it.pagopa.pn.cucumber.steps.pa.utilityVersions;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import io.cucumber.java.DataTableType;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.model.ShipmentCalculateRequest;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
+import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
-import it.pagopa.pn.cucumber.steps.gestioneCosti.domain.CalculateRequestParameter;
-import it.pagopa.pn.cucumber.utils.DataTest;
-import org.springframework.beans.factory.annotation.Autowired;
+import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationStepsV24;
+import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static it.pagopa.pn.client.b2b.pa.PnPaB2bUtils.*;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
-import static java.util.Optional.ofNullable;
 
+@Component
+public class NotificationUtilsV24 extends AbstractNotificationUtils {
 
-public class DataTableTypeUtil {
+    private NotificationStepsV24 notificationStep;
 
-    @Autowired
-    private PnPaB2bUtils utils;
+    public NotificationUtilsV24(NotificationStepsV24 notificationStep) {
+        this.notificationStep = notificationStep;
+    }
 
-    /**
-     * NOTA: a differenza degli altri convertitori di recipient, che sono stati inseriti come metodi privati delle classi
-     * che implementano {@link it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationStepsInterface},
-     * questo qua viene condiviso sia da V23 che da V24. Poiché non si può registrare un TableEntryTransformer per una classe
-     * più di una volta all'interno di un progetto Cucumber, questo metodo dovrà rimanere all'interno di questa classe.
-     */
-    @DataTableType
-    public synchronized NotificationRecipientV23 convertNotificationRecipientV23(Map<String, String> data) {
+    @Override
+    public PnPaB2bUtils getB2bUtils() {
+        return notificationStep.getSharedSteps().getB2bUtils();
+    }
+
+    public synchronized NewNotificationRequestV24 convertNotificationRequest(Map<String, String> data) {
+        NewNotificationRequestV24 notificationRequest = (new NewNotificationRequestV24()
+                .subject(getValue(data, SUBJECT.key))
+                .cancelledIun(getValue(data, CANCELLED_IUN.key))
+                .group(getValue(data, GROUP.key))
+                .idempotenceToken(getValue(data, IDEMPOTENCE_TOKEN.key))
+                ._abstract(getValue(data, ABSTRACT.key))
+                .senderDenomination(getValue(data, SENDER_DENOMINATION.key))
+                .senderTaxId(getValue(data, SENDER_TAX_ID.key))
+                .paProtocolNumber(getValue(data, PA_PROTOCOL_NUMBER.key))
+                .taxonomyCode(getValue(data, TAXONOMY_CODE.key))
+                .amount(getValue(data, AMOUNT.key) == null ? null : Integer.parseInt(getValue(data, AMOUNT.key)))
+                .paymentExpirationDate(getValue(data, PAYMENT_EXPIRATION_DATE.key) == null ?
+                        null : getValue(data, PAYMENT_EXPIRATION_DATE.key))
+                .notificationFeePolicy((getValue(data, NOTIFICATION_FEE_POLICY.key) == null ?
+                        null : (getValue(data, NOTIFICATION_FEE_POLICY.key).equalsIgnoreCase("FLAT_RATE") ?
+                        NotificationFeePolicy.FLAT_RATE :
+                        NotificationFeePolicy.DELIVERY_MODE)))
+                .physicalCommunicationType((getValue(data, PHYSICAL_COMMUNICATION_TYPE.key) == null ?
+                        null : (getValue(data, PHYSICAL_COMMUNICATION_TYPE.key).equalsIgnoreCase("REGISTERED_LETTER_890") ?
+                        NewNotificationRequestV24.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 :
+                        NewNotificationRequestV24.PhysicalCommunicationTypeEnum.AR_REGISTERED_LETTER)))
+                .paFee(getValue(data, PA_FEE.key) == null ? null : Integer.parseInt(getValue(data, PA_FEE.key)))
+                .vat(getValue(data, VAT.key) == null ? null : Integer.parseInt(getValue(data, VAT.key)))
+                .additionalLanguages(getValue(data, ADDITIONAL_LANGUAGES.key) == null ?
+                        null : List.of(getValue(data, ADDITIONAL_LANGUAGES.key)))
+                .pagoPaIntMode((getValue(data, PAGOPAINTMODE.key).equalsIgnoreCase("SYNC") ?
+                        NewNotificationRequestV24.PagoPaIntModeEnum.SYNC :
+                        (getValue(data, PAGOPAINTMODE.key).equalsIgnoreCase("ASYNC") ?
+                                NewNotificationRequestV24.PagoPaIntModeEnum.ASYNC :
+                                getValue(data, PAGOPAINTMODE.key).equalsIgnoreCase("NONE") ?
+                                        NewNotificationRequestV24.PagoPaIntModeEnum.NONE : null))));
+
+        notificationRequest = addDocument(notificationRequest, data);
+        try {
+            Thread.sleep(2);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return notificationRequest;
+    }
+
+    public synchronized NotificationRecipientV23 convertNotificationRecipient(Map<String, String> data) {
         List<NotificationPaymentItem> listPayment;
 
         NotificationRecipientV23 notificationRecipient = (new NotificationRecipientV23()
@@ -75,7 +116,7 @@ public class DataTableTypeUtil {
                                         .applyCost(getValue(data, PAYMENT_APPLY_COST_PAGOPA.key) == null ? null :
                                                 getValue(data, PAYMENT_APPLY_COST_PAGOPA.key).equalsIgnoreCase("SI"))
                                         .attachment(getValue(data, PAYMENT_PAGOPA_FORM.key).equalsIgnoreCase("NOALLEGATO") ?
-                                                null : utils.newAttachment(getDefaultValue(PAYMENT_PAGOPA_FORM.key)))));
+                                                null : newAttachment(getDefaultValue(PAYMENT_PAGOPA_FORM.key)))));
 
                 //LOAD METADATI F24
                 if (getValue(data, PAYMENT_F24.key) != null && !getValue(data, PAYMENT_F24.key).isEmpty()) {
@@ -133,7 +174,27 @@ public class DataTableTypeUtil {
         return notificationRecipient;
     }
 
-    public NotificationDocument getNotificationDocument(String documentElem) {
+    //documents
+    public NotificationDocument newDocument(String resourcePath) {
+        return new NotificationDocument().contentType(APPLICATION_PDF).ref(new NotificationAttachmentBodyRef().key(resourcePath));
+    }
+
+    private NewNotificationRequestV24 addDocument(NewNotificationRequestV24 notificationRequest, Map<String, String> data) {
+        String documentsToAdd = getValue(data, DOCUMENT.key);
+        if (documentsToAdd == null) {
+            return notificationRequest.addDocumentsItem(null);
+        }
+        if (documentsToAdd.contains(";")) {
+            for (String documentElem : documentsToAdd.split(";")) {
+                notificationRequest = notificationRequest.addDocumentsItem(getNotificationDocument(documentElem));
+            }
+        } else {
+            notificationRequest = notificationRequest.addDocumentsItem(getNotificationDocument(documentsToAdd));
+        }
+        return notificationRequest;
+    }
+
+    private NotificationDocument getNotificationDocument(String documentElem) {
         String document;
 
         switch (documentElem.toUpperCase().trim()) {
@@ -157,31 +218,60 @@ public class DataTableTypeUtil {
             case "ALLEGATO_4_COLORI" -> document = "classpath:/Allegato4_COLORI.pdf";
             default -> document = getDefaultValue(DOCUMENT.key);
         }
-        return utils.newDocument(document);
+        return newDocument(document);
     }
 
-    public void setMetadatiF24(Map<String, String> data, NotificationPaymentItem addPaymentsItem, int i) {
+    public NotificationDocument preloadDocument(NotificationDocument document) throws IOException {
+        PnPaB2bUtils.Pair<String, String> preloadDocument = getB2bUtils().preloadGeneric(document.getRef().getKey(), LOAD_TO_PRESIGNED);
+        documentSetKey(document, preloadDocument.getValue1());
+        documentSetVersionToken(document, "v1");
+        documentSetDigests(document, preloadDocument.getValue2());
+        return document;
+    }
 
-        if (!Objects.equals(getValue(data, PAYMENT_F24.key), null)) {
-            addPaymentsItem.f24(
-                    new F24Payment()
-                            .title(getValue(data, TITLE_PAYMENT.key) != null ? getValue(data, TITLE_PAYMENT.key) + "_" + i : null)
-                            .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key) == null ? null : getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI"))
-                            .metadataAttachment(getValue(data, PAYMENT_F24.key).equalsIgnoreCase("NO_METADATA_ATTACHMENT") ? null :
-                                    getNotificationMetadataAttachment(getValue(data, PAYMENT_F24.key))));
+    public void documentSetKey(NotificationDocument notificationDocument, String key) {
+        notificationDocument.getRef().setKey(key);
+    }
 
-        } else if (!Objects.equals(getValue(data, PAYMENT_F24_X.key), null)) {
-            boolean applyCost = i != 2 || !getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI");
-            if (getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("NO")) {
-                applyCost = false;
-            }
-            addPaymentsItem.f24(
-                    new F24Payment()
-                            .title(getValue(data, TITLE_PAYMENT.key) + "_" + i)
-                            .applyCost(applyCost)
-                            .metadataAttachment(getNotificationMetadataAttachment(getValue(data, PAYMENT_F24_X.key) + "_" + i)));
+    public void documentSetVersionToken(NotificationDocument notificationDocument, String version) {
+        notificationDocument.getRef().setVersionToken(version);
+    }
+
+    public void documentSetDigests(NotificationDocument notificationDocument, String sha256) {
+        notificationDocument.digests(new NotificationAttachmentDigests().sha256(sha256));
+    }
+
+    //attachments
+    public NotificationPaymentAttachment newAttachment(String resourcePath) {
+        return new NotificationPaymentAttachment().contentType(APPLICATION_PDF).ref(new NotificationAttachmentBodyRef().key(resourcePath));
+    }
+
+    private NotificationPaymentAttachment preloadAttachment(NotificationPaymentAttachment attachment) throws IOException {
+        if (attachment != null) {
+            PnPaB2bUtils.Pair<String, String> preloadAttachment = getB2bUtils().preloadGeneric(attachment.getRef().getKey(), LOAD_TO_PRESIGNED);
+            attachmentSetKey(attachment, preloadAttachment.getValue1());
+            attachmentSetVersionToken(attachment, "v1");
+            attachmentSetDigests(attachment, preloadAttachment.getValue2());
+            return attachment;
         }
+        return null;
+    }
 
+    private void attachmentSetKey(NotificationPaymentAttachment notificationPaymentAttachment, String key) {
+        notificationPaymentAttachment.getRef().setKey(key);
+    }
+
+    private void attachmentSetVersionToken(NotificationPaymentAttachment notificationPaymentAttachment, String version) {
+        notificationPaymentAttachment.getRef().setVersionToken(version);
+    }
+
+    private void attachmentSetDigests(NotificationPaymentAttachment notificationPaymentAttachment, String sha256) {
+        notificationPaymentAttachment.digests(new NotificationAttachmentDigests().sha256(sha256));
+    }
+
+    //metadataAttachments
+    public NotificationMetadataAttachment newMetadataAttachment(String resourcePath) {
+        return new NotificationMetadataAttachment().contentType(APPLICATION_JSON).ref(new NotificationAttachmentBodyRef().key(resourcePath));
     }
 
     private NotificationMetadataAttachment getNotificationMetadataAttachment(String metadataAttachment) {
@@ -250,73 +340,80 @@ public class DataTableTypeUtil {
             default -> metadati = getDefaultValue(PAYMENT_F24.key);
         }
 
-        return utils.newMetadataAttachment(metadati);
+        return newMetadataAttachment(metadati);
     }
 
-    @DataTableType
-    public synchronized DataTest convertTimelineElement(Map<String, String> data) throws JsonProcessingException {
-        String recIndex = getValue(data, DETAILS_REC_INDEX.key);
-        String sentAttemptMade = getValue(data, DETAILS_SENT_ATTEMPT_MADE.key);
-        String retryNumber = getValue(data, DETAILS_RETRY_NUMBER.key);
-        String responseStatus = getValue(data, DETAILS_RESPONSE_STATUS.key);
-        String digitalAddressSource = getValue(data, DETAILS_DIGITAL_ADDRESS_SOURCE.key);
-        String isAvailable = getValue(data, DETAILS_IS_AVAILABLE.key);
-        String isFirstRetry = getValue(data, IS_FIRST_SEND_RETRY.key);
-        String progressIndex = getValue(data, PROGRESS_INDEX.key);
-        String analogCost = getValue(data, DETAILS_ANALOG_COST.key);
-        String pollingTime = getValue(data, POLLING_TIME.key);
-        String numCheck = getValue(data, NUM_CHECK.key);
-        String pollingType = getValue(data, POLLING_TYPE.key);
-        String loadTimeline = getValue(data, LOAD_TIMELINE.key);
-
-        if (data.size() == 1 && data.get("NULL") != null) {
-            return null;
+    public NotificationMetadataAttachment preloadMetadataAttachment(NotificationMetadataAttachment attachment) throws IOException {
+        if (attachment != null) {
+            Pair<String, String> preloadAttachment = getB2bUtils().preloadGeneric(attachment.getRef().getKey(), LOAD_TO_PRESIGNED_METADATI);
+            metadataAttachmentSetKey(attachment, preloadAttachment.getValue1());
+            metadataAttachmentSetVersionToken(attachment, "v1");
+            metadataAttachmentSetDigests(attachment, preloadAttachment.getValue2());
+            return attachment;
         }
-
-        DataTest dataTest = new DataTest();
-        TimelineElementV26 timelineElement = new TimelineElementV26()
-                .legalFactsIds(getListValue(LegalFactsIdV20.class, data, LEGAL_FACT_IDS.key))
-                .details(getValue(data, DETAILS.key) == null ? null : new TimelineElementDetailsV26()
-                        .recIndex(recIndex != null ? Integer.parseInt(recIndex) : null)
-                        .digitalAddress(getObjValue(DigitalAddress.class, data, DETAILS_DIGITAL_ADDRESS.key))
-                        .refusalReasons(getListValue(NotificationRefusedErrorV25.class, data, DETAILS_REFUSAL_REASONS.key))
-                        .generatedAarUrl(getValue(data, DETAILS_GENERATED_AAR_URL.key))
-                        .responseStatus(responseStatus != null ? ResponseStatus.valueOf(responseStatus) : null)
-                        .digitalAddressSource(digitalAddressSource != null ? DigitalAddressSource.valueOf(digitalAddressSource) : null)
-                        .sentAttemptMade(sentAttemptMade != null ? Integer.parseInt(sentAttemptMade) : null)
-                        .retryNumber(retryNumber != null ? Integer.parseInt(retryNumber) : null)
-                        .sendingReceipts(getListValue(SendingReceipt.class, data, DETAILS_SENDING_RECEIPT.key))
-                        .isAvailable(isAvailable != null ? Boolean.valueOf(getValue(data, DETAILS_IS_AVAILABLE.key)) : null)
-                        .deliveryDetailCode(getValue(data, DETAILS_DELIVERY_DETAIL_CODE.key))
-                        .deliveryFailureCause(getValue(data, DETAILS_DELIVERY_FAILURE_CAUSE.key))
-                        .attachments(getListValue(AttachmentDetails.class, data, DETAILS_ATTACHMENTS.key))
-                        .physicalAddress(getObjValue(PhysicalAddress.class, data, DETAILS_PHYSICALADDRESS.key))
-                        .analogCost(analogCost != null ? Integer.parseInt(analogCost) : null)
-                        .delegateInfo(getObjValue(DelegateInfo.class, data, DETAILS_DELEGATE_INFO.key))
-                );
-
-        // IMPORTANT: no empty data check; enrich with new checks if it is needed
-        if (timelineElement.getDetails() != null || timelineElement.getLegalFactsIds() != null) {
-            dataTest.setTimelineElement(timelineElement);
-        }
-        dataTest.setFirstSendRetry(isFirstRetry != null ? Boolean.valueOf(isFirstRetry) : null);
-        dataTest.setProgressIndex(progressIndex != null ? Integer.parseInt(progressIndex) : null);
-        dataTest.setPollingTime(pollingTime != null ? Integer.parseInt(pollingTime) : null);
-        dataTest.setPollingType(pollingType);
-        dataTest.setNumCheck(numCheck != null ? Integer.parseInt(numCheck) : null);
-        dataTest.setLoadTimeline(loadTimeline != null ? Boolean.valueOf(loadTimeline) : null);
-
-        return dataTest;
+        return null;
     }
 
-    @DataTableType
-    public synchronized CalculateRequestParameter convertShipmentCalculateRequestElement(Map<String, String> data) {
-        CalculateRequestParameter requestParameter = new CalculateRequestParameter();
-        requestParameter.setGeokey(getValue(data, "geokey"));
-        requestParameter.setProduct(ofNullable(getValue(data, "product")).map(ShipmentCalculateRequest.ProductEnum::fromValue).orElse(null));
-        requestParameter.setNumSides(ofNullable(getValue(data, "numSides")).map(Integer::valueOf).orElse(null));
-        requestParameter.setIsReversePrinter(ofNullable(getValue(data, "isReversePrinter")).map(Boolean::valueOf).orElse(null));
-        requestParameter.setPageWeight(ofNullable(getValue(data, "pageWeight")).map(Integer::valueOf).orElse(null));
-        return requestParameter;
+    private void metadataAttachmentSetKey(NotificationMetadataAttachment notificationMetadataAttachment, String key) {
+        notificationMetadataAttachment.getRef().setKey(key);
+    }
+
+    private void metadataAttachmentSetVersionToken(NotificationMetadataAttachment notificationMetadataAttachment, String version) {
+        notificationMetadataAttachment.getRef().setVersionToken(version);
+    }
+
+    private void metadataAttachmentSetDigests(NotificationMetadataAttachment notificationMetadataAttachment, String sha256) {
+        notificationMetadataAttachment.digests(new NotificationAttachmentDigests().sha256(sha256));
+    }
+
+    //payDocument
+    public void preloadPayDocument(NewNotificationRequestV24 request) throws IOException {
+        for (NotificationRecipientV23 recipient : request.getRecipients()) {
+            List<NotificationPaymentItem> paymentList = recipient.getPayments();
+            if (paymentList != null) {
+                setAttachmentWithSleep(paymentList);
+            }
+        }
+    }
+
+    private void setAttachmentWithSleep(List<NotificationPaymentItem> paymentList) throws IOException {
+        for (NotificationPaymentItem paymentInfo : paymentList) {
+            try {
+                Thread.sleep(getB2bUtils().getRandom().nextInt(350));
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new PnB2bException(e.getMessage());
+            }
+            if (paymentInfo.getPagoPa() != null) {
+                paymentInfo.getPagoPa().setAttachment(preloadAttachment(paymentInfo.getPagoPa().getAttachment()));
+            }
+            if (paymentInfo.getF24() != null) {
+                paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
+            }
+        }
+    }
+
+    private void setMetadatiF24(Map<String, String> data, NotificationPaymentItem addPaymentsItem, int i) {
+
+        if (!Objects.equals(getValue(data, PAYMENT_F24.key), null)) {
+            addPaymentsItem.f24(
+                    new F24Payment()
+                            .title(getValue(data, TITLE_PAYMENT.key) != null ? getValue(data, TITLE_PAYMENT.key) + "_" + i : null)
+                            .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key) == null ? null : getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI"))
+                            .metadataAttachment(getValue(data, PAYMENT_F24.key).equalsIgnoreCase("NO_METADATA_ATTACHMENT") ? null :
+                                    getNotificationMetadataAttachment(getValue(data, PAYMENT_F24.key))));
+
+        } else if (!Objects.equals(getValue(data, PAYMENT_F24_X.key), null)) {
+            boolean applyCost = i != 2 || !getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI");
+            if (getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("NO")) {
+                applyCost = false;
+            }
+            addPaymentsItem.f24(
+                    new F24Payment()
+                            .title(getValue(data, TITLE_PAYMENT.key) + "_" + i)
+                            .applyCost(applyCost)
+                            .metadataAttachment(getNotificationMetadataAttachment(getValue(data, PAYMENT_F24_X.key) + "_" + i)));
+        }
+
     }
 }

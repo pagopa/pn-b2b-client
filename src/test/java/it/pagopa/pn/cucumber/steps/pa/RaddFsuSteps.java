@@ -180,7 +180,7 @@ public class RaddFsuSteps {
 
     private void uploadDocument(boolean usePresignedUrl) {
         try {
-            PnPaB2bUtils.Pair<String, String> uploadResponse = pnPaB2bUtils.preloadRadFsuDocument("classpath:/sample.pdf", usePresignedUrl);
+            PnPaB2bUtils.Pair<String, String> uploadResponse = pnPaB2bUtils.preloadRaddFsuDocument("classpath:/sample.pdf", usePresignedUrl);
             Assertions.assertNotNull(uploadResponse);
             this.documentUploadResponse = uploadResponse;
             log.info("documentUploadResponse: {}", documentUploadResponse);

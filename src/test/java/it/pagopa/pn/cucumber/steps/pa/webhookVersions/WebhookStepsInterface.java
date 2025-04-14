@@ -75,8 +75,6 @@ public interface WebhookStepsInterface {
 
     <T> PnPollingWebhook getPnPollingWebhook(T timeLineOrStatus);
 
-    void getTimelineElementVersionB2B(String iun);
-
     void compareTimestampWebhook(String timelineElementCategory, String webhookElementCategory, boolean mustBeEqual);
 
     void getStreamEventListForStressTest();

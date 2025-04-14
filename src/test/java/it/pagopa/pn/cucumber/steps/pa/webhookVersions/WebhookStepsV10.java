@@ -389,11 +389,6 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
     }
 
     @Override
-    public void getTimelineElementVersionB2B(String iun) {
-        webhookSteps.getB2bClient().getSentNotificationV2(iun);
-    }
-
-    @Override
     public void compareTimestampWebhook(String timelineElementCategory, String webhookElementCategory, boolean mustBeEqual) {
         String iun = webhookSteps.getSharedSteps().getNotificationIun();
         FullSentNotificationV20 fullSentNotification = webhookSteps.getB2bClient().getSentNotificationV2(iun);

@@ -1,6 +1,5 @@
 package it.pagopa.pn.cucumber.steps.pa.notificationVersions;
 
-import io.cucumber.java.DataTableType;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NewNotificationRequestStatusResponseV23;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.*;
@@ -9,6 +8,7 @@ import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV21;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
+import it.pagopa.pn.cucumber.steps.pa.utilityVersions.NotificationUtilsV21;
 import it.pagopa.pn.cucumber.steps.utilitySteps.Costanti;
 import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
 import it.pagopa.pn.cucumber.utils.FiscalCodeGenerator;
@@ -29,7 +29,6 @@ import static it.pagopa.pn.cucumber.steps.SharedSteps.threadWait;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario.DESTINATARIO_NESSUNO;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario.DESTINATARIO_SIGNOR_CASUALE;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.TAX_ID;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -40,12 +39,14 @@ public class NotificationStepsV21 implements NotificationStepsInterface {
 
     private NewNotificationRequestV21 notificationRequest;
     private NewNotificationResponse notificationResponse;
-    private final NotificationVersion version;
     private final SharedSteps sharedSteps;
+    private final NotificationVersion version;
+    private final NotificationUtilsV21 utils;
 
     public NotificationStepsV21(SharedSteps sharedSteps) {
-        version = NotificationVersion.V21;
         this.sharedSteps = sharedSteps;
+        version = NotificationVersion.V21;
+        utils = new NotificationUtilsV21(this);
     }
 
     @Override
@@ -54,20 +55,15 @@ public class NotificationStepsV21 implements NotificationStepsInterface {
     }
 
     @Override
-    public String getNotificationRequestId() {
-        return notificationResponse != null ? notificationResponse.getNotificationRequestId() : null;
-    }
-
-    @Override
     public void prepareNotificationRequest(Map<String, String> data) {
-        notificationRequest = convertNotificationRequest(data);
+        notificationRequest = utils.convertNotificationRequest(data);
         sharedSteps.setVersionUsed(version);
     }
 
     @Override
     public void prepareNotificationRequestSimileAllaPrecedente(boolean isCreditorTaxIdUguale, boolean isCodiceAvvisoUguale, boolean isPaProtocolNumberUguale, String idempotenceToken) {
-        NewNotificationRequestV21 newNotificationRequest = convertNotificationRequest(new HashMap<>());
-        NotificationRecipientV21 newRecipient = convertNotificationRecipient(new HashMap<>());
+        NewNotificationRequestV21 newNotificationRequest = utils.convertNotificationRequest(new HashMap<>());
+        NotificationRecipientV21 newRecipient = utils.convertNotificationRecipient(new HashMap<>());
 
         NotificationRecipientV21 oldRecipient = notificationRequest.getRecipients().get(0);
         newRecipient.setDenomination(oldRecipient.getDenomination());
@@ -112,7 +108,7 @@ public class NotificationStepsV21 implements NotificationStepsInterface {
     @Override
     public void addRecipientToNotification(Destinatario destinatario, Map<String, String> data) {
         if (destinatario != null && destinatario.equals(DESTINATARIO_NESSUNO)) return;
-        NotificationRecipientV21 notificationRecipient = convertNotificationRecipient(data);
+        NotificationRecipientV21 notificationRecipient = utils.convertNotificationRecipient(data);
         if (notificationRequest.getNotificationFeePolicy() == NotificationFeePolicy.DELIVERY_MODE
                 && NotificationValue.getValue(data, NotificationValue.PAYMENT.key) != null) {
             String pagopaFormValue = getValue(data, PAYMENT_PAGOPA_FORM.key);
@@ -185,15 +181,15 @@ public class NotificationStepsV21 implements NotificationStepsInterface {
                     threadWait(wait);
                     Assertions.assertNotNull(fullSentNotification);
                     newNotificationIun.set(fullSentNotification.getIun());
-                    sharedSteps.setNotificationIun(newNotificationIun.get());
                 } else if (status.equalsIgnoreCase(NOTIFICATION_STATUS_REFUSED)) {
                     String errorCode = waitForRequestRefused(notificationResponse, pollingStrategy);
                     sharedSteps.setErrorCode(errorCode);
                     threadWait(wait);
                     Assertions.assertFalse(errorCode.isEmpty());
+                    newNotificationIun.set(new String(Base64Utils.decodeFromString(notificationResponse.getNotificationRequestId())));
                 } else if (status.equalsIgnoreCase(NOTIFICATION_STATUS_CANCELLED)) {
-                    it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.RequestStatus response = sharedSteps.getB2bUtils().getClient().notificationCancellation(
-                            new String(Base64Utils.decodeFromString(notificationResponse.getNotificationRequestId())));
+                    newNotificationIun.set(new String(Base64Utils.decodeFromString(notificationResponse.getNotificationRequestId())));
+                    it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.RequestStatus response = sharedSteps.getB2bClient().notificationCancellation(newNotificationIun.get());
                     Assertions.assertNotNull(response);
                     Assertions.assertNotNull(response.getDetails());
                     Assertions.assertFalse(response.getDetails().isEmpty());
@@ -203,6 +199,8 @@ public class NotificationStepsV21 implements NotificationStepsInterface {
                     Assertions.assertFalse(refused);
                 }
             });
+            assertThat(newNotificationIun.get()).as("Lo IUN generato in fase di invio notifica non può essere nullo").isNotNull();
+            sharedSteps.setNotificationIun(newNotificationIun.get());
             return newNotificationIun.get();
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
@@ -215,7 +213,7 @@ public class NotificationStepsV21 implements NotificationStepsInterface {
     public Object uploadNotification() throws IOException {
         sharedSteps.setNotificationCreationDate(OffsetDateTime.now());
         //PRELOAD DOCUMENTI NOTIFICA
-        List<NotificationDocument> newdocs = new ArrayList<>();
+        List<NotificationDocument> newDocs = new ArrayList<>();
         for (NotificationDocument doc : notificationRequest.getDocuments()) {
             try {
                 Thread.sleep(sharedSteps.getB2bUtils().getRandom().nextInt(350));
@@ -224,12 +222,12 @@ public class NotificationStepsV21 implements NotificationStepsInterface {
                 throw new PnB2bException(e.getMessage());
             }
             if (doc != null) {
-                newdocs.add(this.preloadDocument(doc));
+                newDocs.add(utils.preloadDocument(doc));
             }
         }
-        notificationRequest.setDocuments(newdocs);
+        notificationRequest.setDocuments(newDocs);
         //PRELOAD DOCUMENTI DI PAGAMENTO
-        preloadPayDocument(notificationRequest);
+        utils.preloadPayDocument(notificationRequest);
         return getAndCheckSendNewNotification(notificationRequest);
     }
 
@@ -241,135 +239,15 @@ public class NotificationStepsV21 implements NotificationStepsInterface {
 
     @Override
     public void addDocumentItems(int numAllegati) {
-        int i = 0;
-        while (i < numAllegati) {
+        for (int i = 0; i < numAllegati; i++) {
             notificationRequest.addDocumentsItem(
-                    new NotificationDocument()
-                            .contentType(APPLICATION_PDF)
-                            .ref(new NotificationAttachmentBodyRef().key(getDefaultValue(DOCUMENT.key))));
-            i++;
+                    new NotificationDocument().contentType(APPLICATION_PDF).ref(new NotificationAttachmentBodyRef().key(getDefaultValue(DOCUMENT.key))));
         }
     }
 
     @Override
     public void performPriceVerification(String price, String date, Integer destinatario) {
         //TODO MATTEO IMPLEMENTARE?
-    }
-
-    @DataTableType
-    public synchronized NewNotificationRequestV21 convertNotificationRequest(Map<String, String> data) {
-        NewNotificationRequestV21 notificationRequest = (new NewNotificationRequestV21()
-                .subject(getValue(data, SUBJECT.key))
-                .cancelledIun(getValue(data, CANCELLED_IUN.key))
-                .group(getValue(data, GROUP.key))
-                .idempotenceToken(getValue(data, IDEMPOTENCE_TOKEN.key))
-                ._abstract(getValue(data, ABSTRACT.key))
-                .senderDenomination(getValue(data, SENDER_DENOMINATION.key))
-                .senderTaxId(getValue(data, SENDER_TAX_ID.key))
-                .paProtocolNumber(getValue(data, PA_PROTOCOL_NUMBER.key))
-                .taxonomyCode(getValue(data, TAXONOMY_CODE.key))
-                .amount(getValue(data, AMOUNT.key) == null ? null : Integer.parseInt(getValue(data, AMOUNT.key)))
-                .paymentExpirationDate(getValue(data, PAYMENT_EXPIRATION_DATE.key) == null ? null : getValue(data, PAYMENT_EXPIRATION_DATE.key))
-                .notificationFeePolicy(
-                        (getValue(data, NOTIFICATION_FEE_POLICY.key) == null ? null :
-                                (getValue(data, NOTIFICATION_FEE_POLICY.key).equalsIgnoreCase("FLAT_RATE") ?
-                                        NotificationFeePolicy.FLAT_RATE : NotificationFeePolicy.DELIVERY_MODE)))
-                .physicalCommunicationType(
-                        (getValue(data, PHYSICAL_COMMUNICATION_TYPE.key) == null ? null :
-                                (getValue(data, PHYSICAL_COMMUNICATION_TYPE.key).equalsIgnoreCase("REGISTERED_LETTER_890") ?
-                                        NewNotificationRequestV21.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 :
-                                        NewNotificationRequestV21.PhysicalCommunicationTypeEnum.AR_REGISTERED_LETTER)))
-                .paFee(getValue(data, PA_FEE.key) == null ? null : Integer.parseInt(getValue(data, PA_FEE.key)))
-                .vat(getValue(data, VAT.key) == null ? null : Integer.parseInt(getValue(data, VAT.key)))
-                .addDocumentsItem(getValue(data, DOCUMENT.key) == null ? null : sharedSteps.getB2bUtils().newDocumentV21(getDefaultValue(DOCUMENT.key)))
-                .pagoPaIntMode(
-                        (getValue(data, PAGOPAINTMODE.key).equalsIgnoreCase("SYNC") ?
-                                NewNotificationRequestV21.PagoPaIntModeEnum.SYNC :
-                                (getValue(data, PAGOPAINTMODE.key).equalsIgnoreCase("ASYNC") ?
-                                        NewNotificationRequestV21.PagoPaIntModeEnum.ASYNC : null))));
-        //.vat(getValue(data, VAT.key) == null ?  null : Integer.parseInt(getValue(data, VAT.key)))
-        try {
-            Thread.sleep(2);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return notificationRequest;
-    }
-
-    @DataTableType
-    public synchronized NotificationRecipientV21 convertNotificationRecipient(Map<String, String> data) {
-        List<NotificationPaymentItem> listPayment;
-
-        NotificationRecipientV21 notificationRecipient = (new NotificationRecipientV21()
-                .denomination(getValue(data, DENOMINATION.key))
-                .taxId(getValue(data, TAX_ID.key))
-                //.internalId(getValue(data,INTERNAL_ID.key))
-                .digitalDomicile(getValue(data, DIGITAL_DOMICILE.key) == null ? null : (new NotificationDigitalAddress()
-                        .type((getValue(data, DIGITAL_DOMICILE_TYPE.key) == null ? null : NotificationDigitalAddress.TypeEnum.PEC))
-                        .address(getValue(data, DIGITAL_DOMICILE_ADDRESS.key)))
-                )
-                .physicalAddress(getValue(data, PHYSICAL_ADDRES.key) == null ? null : new NotificationPhysicalAddress()
-                        .address(getValue(data, PHYSICAL_ADDRESS_ADDRESS.key))
-                        .addressDetails(getValue(data, PHYSICAL_ADDRESS_DETAILS.key))
-                        .municipality(getValue(data, PHYSICAL_ADDRESS_MUNICIPALITY.key))
-                        .at(getValue(data, PHYSICAL_ADDRESS_AT.key))
-                        .municipalityDetails(getValue(data, PHYSICAL_ADDRESS_MUNICIPALITYDETAILS.key))
-                        .province(getValue(data, PHYSICAL_ADDRESS_PROVINCE.key))
-                        .foreignState(getValue(data, PHYSICAL_ADDRESS_STATE.key))
-                        .zip(getValue(data, PHYSICAL_ADDRESS_ZIP.key))
-                )
-                .recipientType((getValue(data, RECIPIENT_TYPE.key) == null ? null :
-                        (getValue(data, RECIPIENT_TYPE.key).equalsIgnoreCase("PF") ?
-                                NotificationRecipientV21.RecipientTypeEnum.PF : NotificationRecipientV21.RecipientTypeEnum.PG)))
-                //GESTIONE ISTANZE DI PAGAMENTI
-        );
-        //N PAGAMENTI
-        if (getValue(data, NotificationValue.PAYMENT.key) != null && getValue(data, PAYMENT_MULTY_NUMBER.key) != null && !getValue(data, PAYMENT_MULTY_NUMBER.key).isEmpty()) {
-            listPayment = new ArrayList<>();
-            for (int i = 0; i < Integer.parseInt(getValue(data, PAYMENT_MULTY_NUMBER.key)); i++) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException exc) {
-                    throw new RuntimeException(exc);
-                }
-                NotificationPaymentItem addPaymentsItem = new NotificationPaymentItem();
-                addPaymentsItem.pagoPa(getValue(data, PAYMENT_PAGOPA_FORM.key) == null ? null :
-                        (getValue(data, PAYMENT_PAGOPA_FORM.key).equalsIgnoreCase("NO") ?
-                                null :
-                                new PagoPaPayment()
-                                        .creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key))
-                                        .noticeCode(getValue(data, PAYMENT_NOTICE_CODE.key))
-                                        .applyCost(getValue(data, PAYMENT_APPLY_COST_PAGOPA.key).equalsIgnoreCase("SI"))
-                                        .attachment(getValue(data, PAYMENT_PAGOPA_FORM.key).equalsIgnoreCase("NOALLEGATO") ?
-                                                null : sharedSteps.getB2bUtils().newAttachmentV21(getDefaultValue(PAYMENT_PAGOPA_FORM.key)))));
-
-                //LOAD METADATI F24
-                if (getValue(data, PAYMENT_F24.key) != null && getValue(data, PAYMENT_F24.key).equalsIgnoreCase("PAYMENT_F24_FLAT")) {
-                    addPaymentsItem.f24(
-                            new F24Payment()
-                                    .title(getValue(data, TITLE_PAYMENT.key) + "_" + i)
-                                    .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI"))
-                                    .metadataAttachment(sharedSteps.getB2bUtils().newMetadataAttachmentV21("classpath:/METADATA_CORRETTO_FLAT.json")));
-
-                } else if (getValue(data, PAYMENT_F24.key) != null && getValue(data, PAYMENT_F24.key).equalsIgnoreCase("PAYMENT_F24_STANDARD_0")) {
-                    addPaymentsItem.f24(
-                            new F24Payment()
-                                    .title(getValue(data, TITLE_PAYMENT.key) + "_" + i)
-                                    .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI"))
-                                    .metadataAttachment(sharedSteps.getB2bUtils().newMetadataAttachmentV21("classpath:/METADATA_CORRETTO_0.json")));
-
-                }
-                listPayment.add(addPaymentsItem);
-            }
-            notificationRecipient.setPayments(listPayment);
-        }
-
-        try {
-            Thread.sleep(2);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return notificationRecipient;
     }
 
     private FullSentNotificationV21 waitForRequestAccepted(NewNotificationResponse response, String pollingStrategy) {
@@ -418,56 +296,15 @@ public class NotificationStepsV21 implements NotificationStepsInterface {
         };
     }
 
-    private NotificationDocument preloadDocument(NotificationDocument document) throws IOException {
-        Pair<String, String> preloadDocument = sharedSteps.getB2bUtils().preloadGeneric(document.getRef().getKey(), LOAD_TO_PRESIGNED);
-        documentSetKey(document, preloadDocument.getValue1());
-        documentSetVersionToken(document, "v1");
-        documentSetDigests(document, preloadDocument.getValue2());
-        return document;
-    }
-
-    private NotificationPaymentAttachment preloadAttachment(NotificationPaymentAttachment attachment) throws IOException {
-        if (attachment != null) {
-            Pair<String, String> preloadAttachment = sharedSteps.getB2bUtils().preloadGeneric(attachment.getRef().getKey(), LOAD_TO_PRESIGNED);
-            attachmentSetKey(attachment, preloadAttachment.getValue1());
-            attachmentSetVersionToken(attachment, "v1");
-            attachmentSetDigests(attachment, preloadAttachment.getValue2());
-            return attachment;
-        }
-        return null;
-    }
-
-    private void documentSetKey(NotificationDocument notificationDocument, String key) {
-        notificationDocument.getRef().setKey(key);
-    }
-
-    private void documentSetVersionToken(NotificationDocument notificationDocument, String version) {
-        notificationDocument.getRef().setVersionToken(version);
-    }
-
-    private void documentSetDigests(NotificationDocument notificationDocument, String sha256) {
-        notificationDocument.digests(new NotificationAttachmentDigests().sha256(sha256));
-    }
-
-    private void attachmentSetKey(NotificationPaymentAttachment notificationPaymentAttachment, String key) {
-        notificationPaymentAttachment.getRef().setKey(key);
-    }
-
-    private void attachmentSetVersionToken(NotificationPaymentAttachment notificationPaymentAttachment, String version) {
-        notificationPaymentAttachment.getRef().setVersionToken(version);
-    }
-
-    private void attachmentSetDigests(NotificationPaymentAttachment notificationPaymentAttachment, String sha256) {
-        notificationPaymentAttachment.digests(new NotificationAttachmentDigests().sha256(sha256));
-    }
-
     private NewNotificationResponse getAndCheckSendNewNotification(NewNotificationRequestV21 request) {
         log.info(NEW_NOTIFICATION_REQUEST, request);
-        NewNotificationResponse response = sharedSteps.getB2bUtils().getClient().sendNewNotificationV21(request);
+        NewNotificationResponse response = sharedSteps.getB2bClient().sendNewNotificationV21(request);
         log.info(NEW_NOTIFICATION_REQUEST_RESPONSE, response);
         if (response != null) {
             try {
-                log.info(NEW_NOTIFICATION_IUN, new String(Base64Utils.decodeFromString(response.getNotificationRequestId())));
+                String iun = new String(Base64Utils.decodeFromString(response.getNotificationRequestId()));
+                log.info(NEW_NOTIFICATION_IUN, iun);
+                sharedSteps.setNotificationIun(iun);
             } catch (Exception e) {
                 throw new PnB2bException(e.getMessage());
             }
@@ -476,60 +313,11 @@ public class NotificationStepsV21 implements NotificationStepsInterface {
         return response;
     }
 
-    private void preloadPayDocument(NewNotificationRequestV21 request) throws IOException {
-        for (NotificationRecipientV21 recipient : request.getRecipients()) {
-            List<NotificationPaymentItem> paymentList = recipient.getPayments();
-            if (paymentList != null) {
-                setAttachmentWithSleep(paymentList);
-            }
-        }
-    }
-
-    private void setAttachmentWithSleep(List<NotificationPaymentItem> paymentList) throws IOException {
-        for (NotificationPaymentItem paymentInfo : paymentList) {
-            try {
-                Thread.sleep(sharedSteps.getB2bUtils().getRandom().nextInt(350));
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new PnB2bException(e.getMessage());
-            }
-            if (paymentInfo.getPagoPa() != null) {
-                paymentInfo.getPagoPa().setAttachment(preloadAttachment(paymentInfo.getPagoPa().getAttachment()));
-            }
-            if (paymentInfo.getF24() != null) {
-                paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
-            }
-        }
-    }
-
-    public NotificationMetadataAttachment preloadMetadataAttachment(NotificationMetadataAttachment attachment) throws IOException {
-        if (attachment != null) {
-            Pair<String, String> preloadAttachment = sharedSteps.getB2bUtils().preloadGeneric(attachment.getRef().getKey(), LOAD_TO_PRESIGNED_METADATI);
-            metadataAttachmentSetKey(attachment, preloadAttachment.getValue1());
-            metadataAttachmentSetVersionToken(attachment, "v1");
-            metadataAttachmentSetDigests(attachment, preloadAttachment.getValue2());
-            return attachment;
-        }
-        return null;
-    }
-
-    private void metadataAttachmentSetKey(NotificationMetadataAttachment notificationMetadataAttachment, String key) {
-        notificationMetadataAttachment.getRef().setKey(key);
-    }
-
-    private void metadataAttachmentSetVersionToken(NotificationMetadataAttachment notificationMetadataAttachment, String version) {
-        notificationMetadataAttachment.getRef().setVersionToken(version);
-    }
-
-    private void metadataAttachmentSetDigests(NotificationMetadataAttachment notificationMetadataAttachment, String sha256) {
-        notificationMetadataAttachment.digests(new NotificationAttachmentDigests().sha256(sha256));
-    }
-
     @Override
     public void uploadNotificationAllegatiUgualiPagamento() throws IOException {
         List<NotificationDocument> newDocs = new ArrayList<>();
         for (NotificationDocument doc : notificationRequest.getDocuments()) {
-            newDocs.add(preloadDocument(doc));
+            newDocs.add(utils.preloadDocument(doc));
         }
         notificationRequest.setDocuments(newDocs);
 
@@ -544,7 +332,7 @@ public class NotificationStepsV21 implements NotificationStepsInterface {
                                 .contentType(notificationRequest.getDocuments().get(0).getContentType()));
                     }
                     if (paymentInfo.getF24() != null) {
-                        paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
+                        paymentInfo.getF24().setMetadataAttachment(utils.preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
                     }
                 }
 
@@ -663,7 +451,7 @@ public class NotificationStepsV21 implements NotificationStepsInterface {
         String idempotenceToken = withIdempotenceToken ? notificationResponse.getIdempotenceToken() : null;
 
         NewNotificationRequestStatusResponseV23 newNotificationRequestStatusResponse = Assertions.assertDoesNotThrow(() ->
-                sharedSteps.getB2bClient().getNotificationRequestStatusAllParam(notificationRequestId, paProtocolNumber, idempotenceToken));
+                sharedSteps.getB2bClient().getNotificationRequestStatusAllParamV23(notificationRequestId, paProtocolNumber, idempotenceToken));
         assertThat(newNotificationRequestStatusResponse.getNotificationRequestStatus())
                 .as("Lo stato della richiesta di notifica non dovrebbe essere nullo")
                 .isNotNull();

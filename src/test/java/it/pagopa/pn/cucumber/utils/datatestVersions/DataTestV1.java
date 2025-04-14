@@ -1,7 +1,7 @@
-package it.pagopa.pn.cucumber.utils.datatest;
+package it.pagopa.pn.cucumber.utils.datatestVersions;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.*;
 import it.pagopa.pn.cucumber.utils.EventId;
 import it.pagopa.pn.cucumber.utils.TimelineEventId;
 import lombok.Data;
@@ -16,11 +16,11 @@ import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
 
 @Data
-public class DataTestV24 extends AbstractDataTest {
+public class DataTestV1 extends AbstractDataTest {
 
-    private TimelineElementV26 timelineElement;
+    private TimelineElement timelineElement;
 
-    public static DataTestV24 convertMap(Map<String, String> data) {
+    public static DataTestV1 convertMap(Map<String, String> data) {
 
         String recIndex = getValue(data, DETAILS_REC_INDEX.key);
         String sentAttemptMade = getValue(data, DETAILS_SENT_ATTEMPT_MADE.key);
@@ -41,13 +41,13 @@ public class DataTestV24 extends AbstractDataTest {
         }
 
         try {
-            DataTestV24 dataTest = new DataTestV24();
-            TimelineElementV26 timelineElement = new TimelineElementV26()
-                    .legalFactsIds(getListValue(LegalFactsIdV20.class, data, LEGAL_FACT_IDS.key))
-                    .details(getValue(data, DETAILS.key) == null ? null : new TimelineElementDetailsV26()
+            DataTestV1 dataTest = new DataTestV1();
+            TimelineElement timelineElement = new TimelineElement()
+                    .legalFactsIds(getListValue(LegalFactsId.class, data, LEGAL_FACT_IDS.key))
+                    .details(getValue(data, DETAILS.key) == null ? null : new TimelineElementDetails()
                             .recIndex(recIndex != null ? Integer.parseInt(recIndex) : null)
                             .digitalAddress(getObjValue(DigitalAddress.class, data, DETAILS_DIGITAL_ADDRESS.key))
-                            .refusalReasons(getListValue(NotificationRefusedErrorV25.class, data, DETAILS_REFUSAL_REASONS.key))
+                            .refusalReasons(getListValue(NotificationRefusedError.class, data, DETAILS_REFUSAL_REASONS.key))
                             .generatedAarUrl(getValue(data, DETAILS_GENERATED_AAR_URL.key))
                             .responseStatus(responseStatus != null ? ResponseStatus.valueOf(responseStatus) : null)
                             .digitalAddressSource(digitalAddressSource != null ? DigitalAddressSource.valueOf(digitalAddressSource) : null)
@@ -80,10 +80,10 @@ public class DataTestV24 extends AbstractDataTest {
         }
     }
 
-    public static void checkTimelineElementEquality(String timelineEventCategory, TimelineElementV26 elementFromNotification, DataTestV24 dataTest) {
-        TimelineElementV26 elementFromTest = dataTest.getTimelineElement();
-        TimelineElementDetailsV26 detailsFromNotification = elementFromNotification.getDetails();
-        TimelineElementDetailsV26 detailsFromTest = elementFromTest.getDetails();
+    public static void checkTimelineElementEquality(String timelineEventCategory, TimelineElement elementFromNotification, DataTestV1 dataTest) {
+        TimelineElement elementFromTest = dataTest.getTimelineElement();
+        TimelineElementDetails detailsFromNotification = elementFromNotification.getDetails();
+        TimelineElementDetails detailsFromTest = elementFromTest.getDetails();
         DelegateInfo delegateInfoFromTest = detailsFromTest != null ? detailsFromTest.getDelegateInfo() : null;
         DelegateInfo delegateInfoFromNotification = detailsFromNotification != null ? detailsFromNotification.getDelegateInfo() : null;
 
@@ -244,8 +244,8 @@ public class DataTestV24 extends AbstractDataTest {
         }
     }
 
-    public String getTimelineEventId(String timelineEventCategory, String iun, DataTestV24 dataFromTest) {
-        EventId event = getEventId(iun, dataFromTest);
+    public String getTimelineEventId(String timelineEventCategory, String iun) {
+        EventId event = getEventId(iun, this);
         return switch (timelineEventCategory) {
             case SEND_COURTESY_MESSAGE -> TimelineEventId.SEND_COURTESY_MESSAGE.buildEventId(event);
             case REQUEST_REFUSED -> TimelineEventId.REQUEST_REFUSED.buildEventId(event);
@@ -280,9 +280,9 @@ public class DataTestV24 extends AbstractDataTest {
         };
     }
 
-    private static EventId getEventId(String iun, DataTestV24 dataFromTest) {
-        TimelineElementV26 timelineElement = dataFromTest.getTimelineElement();
-        TimelineElementDetailsV26 timelineElementDetails = timelineElement.getDetails();
+    private static EventId getEventId(String iun, DataTestV1 dataFromTest) {
+        TimelineElement timelineElement = dataFromTest.getTimelineElement();
+        TimelineElementDetails timelineElementDetails = timelineElement.getDetails();
         DigitalAddress digitalAddress = timelineElementDetails == null ? null : timelineElementDetails.getDigitalAddress();
         DigitalAddressSource digitalAddressSource = timelineElementDetails == null ? null : timelineElementDetails.getDigitalAddressSource();
 

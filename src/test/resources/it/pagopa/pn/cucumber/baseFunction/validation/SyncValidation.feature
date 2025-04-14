@@ -111,8 +111,6 @@ Feature: verifica validazione sincrona
       | senderDenomination | Comune di milano            |
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b senza preload allegato dal "Comune_Multi" e si attende che lo stato diventi REFUSED
-#    Then viene generata una nuova notifica valida con uguale codice fiscale del creditore e uguale codice avviso
-        #TODO MATTEO TEST: step di sopra riscritto nella nuova versione (sotto)
     Then viene generata una nuova notifica con uguale codice fiscale del creditore e codice avviso uguale
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN

@@ -135,9 +135,6 @@ public class SharedSteps {
     private String idOrganizationCucumberSpa;
 
     @Getter
-    private final DataTableTypeUtil dataTableTypeUtil;
-
-    @Getter
     private final HashMap<String, String> mapAllegatiNotificaSha256 = new HashMap<>();
 
     private IPnWebUserAttributesClient iPnWebUserAttributesClient;
@@ -172,24 +169,12 @@ public class SharedSteps {
      * Lo IUN della notifica che viene creata (dell'ultima, nei rari casi di più notifiche create simultaneamente) e
      * viene salvato in questa variabile.
      * Tramite esso è poi possibile recuperare le FullSentNotification (di qualsivoglia versione) richiamando il B2B.
-     * Il getter controlla se lo IUN è valorizzato (notifica inviata successo). In caso contrario (NOTIFICATION_REFUSED)
-     * andiamo a recuperarlo decodificando in Base64 il requestId della notificationResponse.
-     * Se anche la notificationResponse è null, o si sta invocando qualche step al momento sbagliato, o qualcosa è andato storto.
+     * Qualora venga inviata una notifica che andrà in stato REFUSED (o la si cancelli prima che raggiunga lo stato REFUSED),
+     * lo IUN settato viene impostato decodificando in Base64 il requestId
      */
     @Setter
+    @Getter
     private String notificationIun;
-
-    public String getNotificationIun() {
-        if (notificationIun == null) {
-            String requestId = getNotificationStepInterface().getNotificationRequestId();
-            if (requestId == null) {
-                throw new RuntimeException("Lo IUN non è valorizzato e nemmeno la NotificationResponse, qualcosa è andato storto nei passaggi precedenti");
-            }
-            byte[] decodedBytes = Base64.getDecoder().decode(requestId);
-            notificationIun = new String(decodedBytes);
-        }
-        return notificationIun;
-    }
 
     @Before("@useB2B")
     public void beforeMethod() {
@@ -200,7 +185,7 @@ public class SharedSteps {
     }
 
     @Autowired
-    public SharedSteps(ApplicationContext context, DataTableTypeUtil dataTableTypeUtil, IPnPaB2bClient b2bClient,
+    public SharedSteps(ApplicationContext context, IPnPaB2bClient b2bClient,
                        PnPaB2bUtils b2bUtils, PnWebRecipientExternalClientImpl webRecipientClient,
                        PnExternalServiceClientImpl pnExternalServiceClient,
                        PnWebUserAttributesExternalClientImpl iPnWebUserAttributesClient, IPnWebPaClient webPaClient,
@@ -209,7 +194,6 @@ public class SharedSteps {
                        PnPaymentInfoClientImpl pnPaymentInfoClientImpl, PnB2bClientTimingConfigs timingConfigs,
                        PnPollingFactory pollingFactory, IPnTosPrivacyClientImpl iPnTosPrivacyClientImpl) {
         this.context = context;
-        this.dataTableTypeUtil = dataTableTypeUtil;
         this.b2bClient = b2bClient;
         this.webPaClient = webPaClient;
         this.b2bUtils = b2bUtils;
@@ -247,13 +231,9 @@ public class SharedSteps {
 
     /**
      * Restituisce lo FullSentNotification aggiornata all'ultima versione (quella maggiormente utilizzata a codice)
-     * TODO: se e quando verrà introdotta una nuova versione, ri-fattorizzare il tipo di oggetto ritornato e cambiare
-     * i punti di codice che richiamano questo metodo
      */
+    //TODO: all'introduzione di una nuova versione, ri-fattorizzare il tipo di oggetto ritornato e cambiare i punti di codice che richiamano questo metodo
     public FullSentNotificationV26 getSentNotificationLastVersion() {
-        if (getNotificationIun() == null) {
-            throw new RuntimeException("Lo IUN non è valorizzato e nemmeno la NotificationResponse, qualcosa è andato storto nei passaggi precedenti");
-        }
         return b2bClient.getSentNotificationV26(notificationIun);
     }
 
@@ -443,7 +423,7 @@ public class SharedSteps {
         String iun = getNotificationIun();
         Assertions.assertDoesNotThrow(() -> {
             RequestStatus resp = Assertions.assertDoesNotThrow(() -> b2bClient.notificationCancellation(iun));
-            
+
             assertThat(resp).as("La response non dev'essere null").isNotNull();
             assertThat(resp.getDetails()).as("I details della response non devono essere null").isNotNull();
             assertThat(resp.getDetails()).as("I details della response non devono essere vuoti").isNotEmpty();
@@ -520,13 +500,13 @@ public class SharedSteps {
         Assertions.assertEquals(400, this.notificationError.getStatusCode().value());
     }
 
-    //TODO: è identico al metodo sotto...perché? Editare i feature che richiamano lo step e procedere con la cancellazione?
     @When("la notifica viene inviata tramite api b2b senza preload allegato dal {string}")
     public void laNotificaVieneInviataTramiteApiB2bSenzaPreloadAllegato(String pa) {
         setPaAndSenderTaxId(pa);
         sendNotificationRefusedDueToError("NOT_FOUND_ALLEGATO", false);
     }
 
+    //TODO: è identico al metodo sopra...perché? Editare i feature che richiamano lo step e procedere con la cancellazione?
     @When("la notifica viene inviata tramite api b2b senza preload allegato dal {string} e si attende che lo stato diventi REFUSED")
     public void laNotificaVieneInviataSenzaPreloadAllegato(String paName) {
         setPaAndSenderTaxId(paName);
@@ -742,10 +722,11 @@ public class SharedSteps {
         assumeThat(versionUsed)
                 .as("Test skipped: I metodi sottostanti sono pensati per funzionare per la V24. Con qualsiasi altra versione fallirebbero")
                 .isEqualTo(NotificationVersion.V24);
-        AtomicReference<NewNotificationResponse> newResponse = new AtomicReference<>();
         //TODO MATTEO IMPORTANTE: al momento è progettato per funzionare solo con la V24.
         // Questi metodi sono l'ultimo scoglio da superare per avere un codice in grado di runnare con qualsiasi versione
-        NewNotificationRequestV24 notificationRequest = ((NotificationStepsV24) mapOfVersionSteps.get(NotificationVersion.V24)).getNotificationRequest();
+        NotificationStepsV24 notificationStep = (NotificationStepsV24) mapOfVersionSteps.get(NotificationVersion.V24);
+        NewNotificationRequestV24 notificationRequest = notificationStep.getNotificationRequest();
+        AtomicReference<NewNotificationResponse> newResponse = new AtomicReference<>();
         try {
             Assertions.assertDoesNotThrow(() -> {
                 notificationCreationDate = OffsetDateTime.now();
@@ -768,8 +749,6 @@ public class SharedSteps {
                             newResponse.set(b2bUtils.uploadNotificationOver15Allegato(notificationRequest));
                 }
                 errorCode = b2bUtils.waitForRequestRefused(newResponse.get());
-
-                NotificationStepsV24 notificationStep = (NotificationStepsV24) mapOfVersionSteps.get(NotificationVersion.V24);
                 notificationStep.setNotificationResponse(newResponse.get());
             });
             threadWait(getWorkFlowWait());
@@ -1176,19 +1155,6 @@ public class SharedSteps {
                 .orElse(null);
     }
 
-//    private String getIun(String timelineEventCategory) {
-//        String iun;
-//        if (timelineEventCategory.equals(REQUEST_REFUSED)) {
-//            String requestId = newNotificationResponse.getNotificationRequestId();
-//            byte[] decodedBytes = Base64.getDecoder().decode(requestId);
-//            iun = new String(decodedBytes);
-//        } else {
-//            // proceed with default flux
-//            iun = getNotificationIun();
-//        }
-//        return iun;
-//    }
-
     public Integer getSchedulingDelta() {
         if (timingConfigs.getSchedulingDeltaMillis() == null) {
             return SCHEDULING_DELTA_DEFAULT;
@@ -1202,10 +1168,6 @@ public class SharedSteps {
 
     private String getIuvGPD(int posizione) {
         return this.iuvGPD.get(posizione);
-    }
-
-    public String getNotificationRequestId() {
-        return getNotificationStepInterface().getNotificationRequestId();
     }
 
     public List<String> getDatiPagamentoVersionamento(Integer destinatario, Integer pagamento) {

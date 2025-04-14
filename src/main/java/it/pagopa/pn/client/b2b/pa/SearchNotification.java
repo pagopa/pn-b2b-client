@@ -23,11 +23,12 @@ public class SearchNotification implements CommandLineRunner {
     @Override
     public void run(String... args) {
         mainBean.doAll();
-        System.exit( 0 );
+        System.exit(0);
     }
 
     @Component
     public static class MainBean {
+
         private final PnPaB2bUtils utils;
 
         public MainBean(PnPaB2bUtils utils) {
@@ -35,7 +36,7 @@ public class SearchNotification implements CommandLineRunner {
         }
 
         public void doAll() {
-            log.info("MainBean Notification: {}",utils.getNotificationByIun( "TPZH-WLML-JUXK-202206-P-1" ) );
+            log.info("MainBean Notification: {}", utils.getNotificationByIun("TPZH-WLML-JUXK-202206-P-1"));
         }
     }
 }

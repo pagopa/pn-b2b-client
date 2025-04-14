@@ -31,7 +31,7 @@ public class AsyncSteps {
     private Integer costoBaseNotifica;
     private final SharedSteps sharedSteps;
     private final PnGPDClientImpl pnGPDClientImpl;
-    private final AvanzamentoNotificheB2bSteps avanzamentoNotificheB2bSteps;
+    private final PriceVerificationSteps priceVerificationSteps;
     private final PnPaymentInfoClientImpl pnPaymentInfoClientImpl;
     private final List<PaymentPositionModel> paymentPositionModel;
     private List<BffPaymentInfoItem> paymentInfoResponse;
@@ -43,9 +43,9 @@ public class AsyncSteps {
 
 
     @Autowired
-    public AsyncSteps(AvanzamentoNotificheB2bSteps avanzamentoNotificheB2bSteps, SharedSteps sharedSteps) {
-        this.avanzamentoNotificheB2bSteps = avanzamentoNotificheB2bSteps;
+    public AsyncSteps(SharedSteps sharedSteps, PriceVerificationSteps priceVerificationSteps) {
         this.sharedSteps = sharedSteps;
+        this.priceVerificationSteps = priceVerificationSteps;
         this.pnGPDClientImpl = sharedSteps.getPnGPDClientImpl();
         this.pnPaymentInfoClientImpl = sharedSteps.getPnPaymentInfoClientImpl();
         this.paymentPositionModel = new ArrayList<>();
@@ -342,7 +342,7 @@ public class AsyncSteps {
         try {
             log.info("Amount GPD: " + amountGPD);
             amountGPD = amountGPD - Integer.parseInt(String.valueOf(Objects.requireNonNull(paymentPositionModel.get(0).getPaymentOption()).get(0).getAmount()));
-            avanzamentoNotificheB2bSteps.priceVerificationV23(amountGPD, null, 0, tipoCosto);
+            priceVerificationSteps.priceVerificationV23(amountGPD, null, 0, tipoCosto);
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertionFailedErrorWithAmountGDPAndIUN(assertionFailedError, amountGPD);
         }

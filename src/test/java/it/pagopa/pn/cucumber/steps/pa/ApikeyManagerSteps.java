@@ -41,7 +41,6 @@ public class ApikeyManagerSteps {
                 apiKeys = this.apiKeyManagerClient.getApiKeys(null, null, null, true));
     }
 
-
     @Then("la lettura è avvenuta correttamente")
     public void laLetturaÈAvvenutaCorrettamente() {
         Assertions.assertNotNull(apiKeys);
@@ -291,7 +290,7 @@ public class ApikeyManagerSteps {
     @Then("si tenta il recupero dal sistema tramite codice IUN")
     public void siTentaIlRecuperoDalSistemaTramiteCodiceIUN() {
         try {
-            sharedSteps.getB2bUtils().getNotificationByIun(sharedSteps.getNotificationIun());
+            sharedSteps.getSentNotificationLastVersion();
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
         }
@@ -300,7 +299,7 @@ public class ApikeyManagerSteps {
     @Then("si tenta il recupero dal sistema tramite codice IUN con api v1")
     public void siTentaIlRecuperoDalSistemaTramiteCodiceIUNV1() {
         try {
-            sharedSteps.getB2bUtils().getNotificationByIunV1(sharedSteps.getNotificationIun());
+            sharedSteps.getB2bClient().getSentNotificationV1(sharedSteps.getNotificationIun());
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
         }
@@ -318,5 +317,4 @@ public class ApikeyManagerSteps {
             default -> throw new IllegalArgumentException("Invalid paName: " + paName);
         }
     }
-
 }

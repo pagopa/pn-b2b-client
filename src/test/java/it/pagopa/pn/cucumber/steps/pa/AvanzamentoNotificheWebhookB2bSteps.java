@@ -1082,12 +1082,12 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     @Then("la chiamata restituisce correttamente lo stream di elementi timeline versione {string}")
     public void checkForNoError(String version) {
         Assertions.assertNull(sharedSteps.getNotificationError());
-        checkTimelineElementVersionWebHook(version);
+        checkTimelineElementVersionWebhook(version);
     }
 
     //V23 and V24 only (VisualizzazioneTimeStampTecniciSLA.feature)
     @Then("gli elementi di timeline restituiti dal Webhook contengono i campi attesi in accordo alla versione {string}")
-    public void checkTimelineElementVersionWebHook(String version) {
+    public void checkTimelineElementVersionWebhook(String version) {
         if (version.equalsIgnoreCase("V24")) {
             WebhookStepsV24 webhookStepsV24 = (WebhookStepsV24) mapOfWebhookVersionSteps.get(StreamVersion.V24);
             Assertions.assertNotNull(webhookStepsV24.getProgressResponseElementList());
@@ -1113,23 +1113,23 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }
 
     private void checkTimelineElement(Object timeline) {
-        if (timeline instanceof TimelineElementV24 TimelineElementV24) {
-            Assertions.assertNotNull(TimelineElementV24.getIngestionTimestamp());
-            Assertions.assertNotNull(TimelineElementV24.getNotificationSentAt());
-            Assertions.assertNotNull(TimelineElementV24.getEventTimestamp());
-            log.info("Field presence checked for " + TimelineElementV24.getCategory().getValue());
-        } else if (timeline instanceof TimelineElementV23 webhookTimelineElementV23) {
-            Map timelineElementMap = JsonMapper.builder().addModule(new JavaTimeModule()).build().convertValue(webhookTimelineElementV23, Map.class);
-            Assertions.assertFalse(timelineElementMap.containsKey("ingestionTimeStamp"));
-            Assertions.assertFalse(timelineElementMap.containsKey("notificationSentAt"));
-            Assertions.assertFalse(timelineElementMap.containsKey("eventTimestamp"));
-            log.info("Absence of fields checked for " + webhookTimelineElementV23.getCategory().getValue());
+        if (timeline instanceof TimelineElementV24 b2bTimelineElementV24) {
+            Assertions.assertNotNull(b2bTimelineElementV24.getIngestionTimestamp());
+            Assertions.assertNotNull(b2bTimelineElementV24.getNotificationSentAt());
+            Assertions.assertNotNull(b2bTimelineElementV24.getEventTimestamp());
+            log.info("Field presence checked for " + b2bTimelineElementV24.getCategory().getValue());
         } else if (timeline instanceof it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23 b2bTimelineElementV23) {
             Map timelineElementMap = JsonMapper.builder().addModule(new JavaTimeModule()).build().convertValue(b2bTimelineElementV23, Map.class);
             Assertions.assertFalse(timelineElementMap.containsKey("ingestionTimeStamp"));
             Assertions.assertFalse(timelineElementMap.containsKey("notificationSentAt"));
             Assertions.assertFalse(timelineElementMap.containsKey("eventTimestamp"));
             log.info("Absence of fields checked for " + b2bTimelineElementV23.getCategory().getValue());
+        } else if (timeline instanceof TimelineElementV23 webhookTimelineElementV23) {
+            Map timelineElementMap = JsonMapper.builder().addModule(new JavaTimeModule()).build().convertValue(webhookTimelineElementV23, Map.class);
+            Assertions.assertFalse(timelineElementMap.containsKey("ingestionTimeStamp"));
+            Assertions.assertFalse(timelineElementMap.containsKey("notificationSentAt"));
+            Assertions.assertFalse(timelineElementMap.containsKey("eventTimestamp"));
+            log.info("Absence of fields checked for " + webhookTimelineElementV23.getCategory().getValue());
         }
     }
 
@@ -1148,13 +1148,6 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         WebhookStepsInterface webhookStepsInterface = getWebhookStep(version);
         UUID streamId = webhookStepsInterface.getStreamId();
         webhookStepsInterface.consumeEventStream(streamId);
-    }
-
-    //TODO MATTEO: diventato inutile, fa una get, ma non salva il risultato da nessuna parte
-    @When("si invoca l'api B2B versione {string} per ottenere gli elementi di timeline di tale notifica")
-    public void getTimelineElementVersionB2B(String version) {
-        String iun = sharedSteps.getNotificationIun();
-        getWebhookStep(version).getTimelineElementVersionB2B(iun);
     }
 
     @Then("tra gli elementi di timeline versione {string} di categoria {string} nessuno contiene un legalFact con categoria {string}")

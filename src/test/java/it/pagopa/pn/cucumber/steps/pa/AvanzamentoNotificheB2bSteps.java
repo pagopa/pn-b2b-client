@@ -4,7 +4,6 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
-import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
@@ -25,27 +24,19 @@ import it.pagopa.pn.cucumber.steps.utilitySteps.checkTimelineElement.TimelineEle
 import it.pagopa.pn.cucumber.utils.DataTest;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.pdfbox.Loader;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.time.Duration;
-import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationFeePolicy.DELIVERY_MODE;
 import static it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationFeePolicy.FLAT_RATE;
@@ -57,16 +48,15 @@ import static java.time.temporal.ChronoUnit.MINUTES;
 import static java.time.temporal.ChronoUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @Slf4j
 public class AvanzamentoNotificheB2bSteps {
 
-    @Autowired
-    private PnPaB2bUtils utils;
-    @Getter
-    private final IPnPaB2bClient b2bClient;
     @Getter
     private final SharedSteps sharedSteps;
+    @Getter
+    private final IPnPaB2bClient b2bClient;
     private final PnExternalServiceClientImpl externalClient;
     @Getter
     private final IPnPrivateDeliveryPushExternalClient pnPrivateDeliveryPushExternalClient;
@@ -75,12 +65,6 @@ public class AvanzamentoNotificheB2bSteps {
     private final PnPollingFactory pnPollingFactory;
     @Getter
     private final TimingForPolling timingForPolling;
-    @Value("${pn.external.costo_base_notifica}")
-    private Integer costoBaseNotifica;
-    @Value("${pn.external.allowed.future.offset.duration}")
-    private String pnEcConsAllowedFutureOffsetDuration;
-    @Value("${pn.consolidatore.requestId}")
-    private String requestIdConsolidator;
 
     private final Map<NotificationVersion, B2bStepsInterface> mapOfVersionSteps = NotificationVersion.getMapOfB2bSteps(this);
 
@@ -119,10 +103,15 @@ public class AvanzamentoNotificheB2bSteps {
         readEventsUpToStatus(sharedSteps.getVersionUsed(), status, true);
     }
 
-    @Then("vengono letti gli eventi fino allo stato della notifica {string} V1")
-    public void readingEventUpToTheStatusOfNotificationV1(String status) {
-        readEventsUpToStatus(NotificationVersion.V1, status, true);
+    @Then("vengono letti gli eventi fino allo stato della notifica {string} con la versione {string}")
+    public void readEventsUpToStatusWithVersion(String status, String version) {
+        readEventsUpToStatus(sharedSteps.getNotificationVersion(version), status, true);
     }
+
+//    @Then("vengono letti gli eventi fino allo stato della notifica {string} V1")
+//    public void readingEventUpToTheStatusOfNotificationV1(String status) {
+//        readEventsUpToStatus(NotificationVersion.V1, status, true);
+//    }
 
     @Then("vengono letti gli eventi fino allo stato della notifica {string} per il destinatario {int} e presente l'evento {string}")
     public void readingEventUpToTheStatusOfNotification(String status, int recIndex, String evento) {
@@ -136,7 +125,7 @@ public class AvanzamentoNotificheB2bSteps {
         getB2bStepsInterface(notificationVersion).checkFullSentNotificationWithVersion(isPresent, timelineEventCategory);
     }
 
-    //2 soli step richiamavano questo metodo, non serve più, useranno quello di sotto (universale), che
+    // Due soli step richiamavano questo metodo, non serve più, useranno quello di sotto (universale), che
     // era inutilizzato, mentre ora ha un'utilità generica (qualsiasi stato), sia che l'abbia o meno
 
 //    @Then("si verifica che la notifica {has} lo stato VIEWED")
@@ -431,9 +420,6 @@ public class AvanzamentoNotificheB2bSteps {
 //        // get timeline from delivery-push
 //        NotificationHistoryResponse notificationHistory = this.pnPrivateDeliveryPushExternalClient.getNotificationHistory(iun, sharedSteps.getRecipientsSize(), sharedSteps.getNotificationCreationDate());
 //        List<TimelineElementV26> timelineElementList = notificationHistory.getTimeline().stream().map(x -> sharedSteps.deepCopy(x, TimelineElementV26.class)).toList();
-//        FullSentNotificationV26 fullSentNotification = new FullSentNotificationV26();
-//        fullSentNotification.setTimeline(timelineElementList);
-//        sharedSteps.setNotificationIun(fullSentNotification.getIun()); //TODO MATTEO caso curioso...perché imposta una FullSentNotification vuota?
 //        return getTimelineElementByIdOrCategory(timelineEventCategory, dataFromTest, iun, timelineElementList);
 //    }
 
@@ -479,47 +465,41 @@ public class AvanzamentoNotificheB2bSteps {
 //        }
 //    }
 
-    @Then("viene verificato che il numero di elementi di timeline {string} della notifica sia di {long}")
-    public void checkNumElOfTimelineCategory(String timelineEventCategory, Long numEl) {
-        Long actualNumElements = sharedSteps.getSentNotificationLastVersion().getTimeline().stream().filter(
-                elem -> elem.getCategory().getValue().equals(timelineEventCategory)).count();
+    @Then("viene verificato che il numero di elementi di timeline {string} della notifica sia di {int}")
+    public void checkNumberOfTimelineElementsWithCategory(String timelineEventCategory, Integer size) {
         try {
-            Assertions.assertEquals(numEl, actualNumElements);
+            getB2bStepsInterface().checkNumberOfTimelineElements(timelineEventCategory, size);
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
-    @And("viene verificato che il numero di elementi di timeline {string} sia di {long}")
-    public void getTimelineElementListSize(String timelineEventCategory, Long size, @Transpose DataTest dataFromTest) {
-        String iun = sharedSteps.getNotificationIun();
-        //        if (timelineEventCategory.equals(REQUEST_REFUSED)) {
-//            String requestId = sharedSteps.getNotificationRequestId();
-//            byte[] decodedBytes = Base64.getDecoder().decode(requestId);
-//            iun = new String(decodedBytes);
-//        } else {
-//            // proceed with default flux
-//            iun = sharedSteps.getNotificationIun();
-//        }
-        FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
-        List<TimelineElementV26> timelineElementList = fullSentNotification.getTimeline();
-        // get timeline event id
-        String timelineEventId = sharedSteps.getTimelineEventId(timelineEventCategory, iun, dataFromTest);
-        if (timelineEventCategory.equals(SEND_ANALOG_PROGRESS)) {
-
-            TimelineElementV26 timelineElementFromTest = dataFromTest.getTimelineElement();
-            TimelineElementDetailsV26 timelineElementDetails = timelineElementFromTest.getDetails();
-
-            Assertions.assertEquals(size, timelineElementList.stream().filter(elem ->
-                    elem.getElementId().startsWith(timelineEventId)
-                            && elem.getDetails().getDeliveryDetailCode().equals(timelineElementDetails.getDeliveryDetailCode())).count());
-        } else {
-            Assertions.assertEquals(size, timelineElementList.stream().filter(elem ->
-                    elem.getElementId().startsWith(timelineEventId)).count());
+    @And("viene verificato che il numero di elementi di timeline {string} sia di {int}")
+    public void checkNumberOfTimelineElementsWithCategoryFromMap(String timelineEventCategory, Integer size, Map<String, String> dataMap) {
+        try {
+            getB2bStepsInterface().checkNumberOfTimelineElementsFromData(timelineEventCategory, size, dataMap);
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
-    }
 
-    //TODO: Tutti questi metodi fanno la stessa identica cosa, forse sarebbe il caso di cambiare gli step e ridurli a un unico metodo
+//        String iun = sharedSteps.getNotificationIun();
+//        FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+//        List<TimelineElementV26> timelineElementList = fullSentNotification.getTimeline();
+//        // get timeline event id
+//        String timelineEventId = sharedSteps.getTimelineEventId(timelineEventCategory, iun, dataFromTest);
+//        if (timelineEventCategory.equals(SEND_ANALOG_PROGRESS)) {
+//
+//            TimelineElementV26 timelineElementFromTest = dataFromTest.getTimelineElement();
+//            TimelineElementDetailsV26 timelineElementDetails = timelineElementFromTest.getDetails();
+//
+//            Assertions.assertEquals(size, timelineElementList.stream().filter(elem ->
+//                    elem.getElementId().startsWith(timelineEventId)
+//                            && elem.getDetails().getDeliveryDetailCode().equals(timelineElementDetails.getDeliveryDetailCode())).count());
+//        } else {
+//            Assertions.assertEquals(size, timelineElementList.stream().filter(elem ->
+//                    elem.getElementId().startsWith(timelineEventId)).count());
+//        }
+    }
 
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica annullata {string}")
     public void readingEventUpToTheTimelineElementOfNotificationDelete(String timelineEventCategory) {
@@ -527,24 +507,30 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string}")
-    public void readingEventUpToTheTimelineElementOfNotification(String timelineEventCategory) {
+    public void readEventUpToTimelineElement(String timelineEventCategory) {
         readEventsUpToTimelineElement(sharedSteps.getVersionUsed(), timelineEventCategory);
     }
 
-    @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} V1")
-    public void readingEventUpToTheTimelineElementOfNotificationV1(String timelineEventCategory) {
-        readEventsUpToTimelineElement(NotificationVersion.V1, timelineEventCategory);
+    @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} con la versione {string}")
+    public void readEventUpToTimelineElementWithVersion(String timelineEventCategory, String version) {
+        readEventsUpToTimelineElement(sharedSteps.getNotificationVersion(version), timelineEventCategory);
     }
 
-    @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} V2")
-    public void readingEventUpToTheTimelineElementOfNotificationV2(String timelineEventCategory) {
-        readEventsUpToTimelineElement(NotificationVersion.V2, timelineEventCategory);
-    }
+    //TODO: creato un unico metodo che legge con una versione che viene passata come parametro
+//    @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} V1")
+//    public void readingEventUpToTheTimelineElementOfNotificationV1(String timelineEventCategory) {
+//        readEventsUpToTimelineElement(NotificationVersion.V1, timelineEventCategory);
+//    }
 
-    @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} V21")
-    public void readingEventUpToTheTimelineElementOfNotificationV21(String timelineEventCategory) {
-        readEventsUpToTimelineElement(NotificationVersion.V21, timelineEventCategory);
-    }
+//    @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} V2")
+//    public void readingEventUpToTheTimelineElementOfNotificationV2(String timelineEventCategory) {
+//        readEventsUpToTimelineElement(NotificationVersion.V2, timelineEventCategory);
+//    }
+
+//    @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} V21")
+//    public void readingEventUpToTheTimelineElementOfNotificationV21(String timelineEventCategory) {
+//        readEventsUpToTimelineElement(NotificationVersion.V21, timelineEventCategory);
+//    }
 
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} abbia notificationCost uguale a {string}")
     public void TimelineElementOfNotification(String timelineEventCategory, String cost) {
@@ -1822,81 +1808,6 @@ public class AvanzamentoNotificheB2bSteps {
         getB2bStepsInterface().checkPriceForRecipient(recipientIndex, price);
     }
 
-    private void priceVerificationV1(String price, String date, Integer recipientIndex) {
-        List<String> datiPagamento = sharedSteps.getDatiPagamentoVersionamento(recipientIndex, 0);
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPriceResponse notificationPrice = this.b2bClient.getNotificationPrice(datiPagamento.get(0),
-                datiPagamento.get(1));
-        try {
-            Assertions.assertEquals(notificationPrice.getIun(), sharedSteps.getNotificationIun());
-            if (price != null) {
-                log.info("Costo notifica: {} destinatario: {}", notificationPrice.getAmount(), recipientIndex);
-                Assertions.assertEquals(Integer.parseInt(price), notificationPrice.getAmount());
-            }
-            if (date != null) {
-                Assertions.assertNotNull(notificationPrice.getRefinementDate());
-            }
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
-        }
-    }
-
-    private void priceVerificationV2(String price, String date, Integer destinatario) {
-        String iun = sharedSteps.getNotificationIun();
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.FullSentNotificationV20 fullSentNotification = sharedSteps.getB2bClient().getSentNotificationV2(iun);
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPriceResponse notificationPrice =
-                this.b2bClient.getNotificationPrice(fullSentNotification.getRecipients().get(destinatario).getPayment().getCreditorTaxId(), fullSentNotification.getRecipients().get(destinatario).getPayment().getNoticeCode());
-        try {
-            Assertions.assertEquals(notificationPrice.getIun(), fullSentNotification.getIun());
-            if (price != null) {
-                log.info("Costo notifica: {} destinatario: {}", notificationPrice.getAmount(), destinatario);
-                Assertions.assertEquals(notificationPrice.getAmount(), Integer.parseInt(price));
-            }
-            if (date != null) {
-                Assertions.assertNotNull(notificationPrice.getRefinementDate());
-            }
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
-        }
-    }
-
-    public List<NotificationPriceResponseV23> priceVerificationV23(Integer price, String date, Integer destinatario, String tipologiaCosto) {
-        FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
-        if (fullSentNotification != null) {
-            List<NotificationPaymentItem> listNotificationPaymentItem = fullSentNotification.getRecipients().get(destinatario).getPayments();
-            List<NotificationPriceResponseV23> listNotificationPriceV23 = new ArrayList<>();
-
-
-            if (listNotificationPaymentItem != null) {
-                for (NotificationPaymentItem notificationPaymentItem : listNotificationPaymentItem) {
-                    NotificationPriceResponseV23 notificationPriceV23 = this.b2bClient.getNotificationPriceV23(notificationPaymentItem.getPagoPa().getCreditorTaxId(), notificationPaymentItem.getPagoPa().getNoticeCode());
-
-                    try {
-                        Assertions.assertEquals(notificationPriceV23.getIun(), sharedSteps.getNotificationIun());
-                        if (price != null) {
-                            log.info("notificationPriceV23: {} destinatario: {}", notificationPriceV23, destinatario);
-                            switch (tipologiaCosto.toLowerCase()) {
-                                case "parziale" ->
-                                        Assertions.assertEquals(price, notificationPriceV23.getPartialPrice());
-                                case "totale" -> Assertions.assertEquals(price, notificationPriceV23.getTotalPrice());
-                                default ->
-                                        throw new IllegalArgumentException("Valore non valido per tipologiaCosto: " + tipologiaCosto);
-                            }
-                        }
-                        if (date != null) {
-                            Assertions.assertNotNull(notificationPriceV23.getRefinementDate());
-                            listNotificationPriceV23.add(notificationPriceV23);
-                        }
-
-                    } catch (AssertionFailedError assertionFailedError) {
-                        sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
-                    }
-                }
-                return listNotificationPriceV23;
-            }
-        }
-        return null;
-    }
-
     @Then("viene calcolato il costo = {string} della notifica per l'utente {int}")
     public void notificationPriceProcessPerDestinatario(String price, Integer destinatario) {
         try {
@@ -2611,7 +2522,7 @@ public class AvanzamentoNotificheB2bSteps {
     @Then("viene verificato che l'elemento di timeline {string} esista")
     public void checkIfTimelineElementExists(String timelineEventCategory, Map<String, String> data) {
         B2bStepsInterface b2bStepsInterface = getB2bStepsInterface();
-        b2bStepsInterface.checkIfTimelineElementFromDataExists(true, timelineEventCategory, data);
+        b2bStepsInterface.checkIfTimelineElementExistsFromData(true, timelineEventCategory, data);
     }
 
 //    public void vieneVerificatoElementoTimeline(String timelineEventCategory, @Transpose DataTest dataFromTest) {
@@ -2675,7 +2586,6 @@ public class AvanzamentoNotificheB2bSteps {
                 .fieldRegex(regex)
                 .build();
         b2bStepsInterface.performFurtherChecks(CHECK_FIELD_MATCHES_REGEX, checkFilters);
-
 
 //        DataTest dataTest = new DataTest();
 //        TimelineElementV26 testTimelineElement = new TimelineElementV26();
@@ -3027,72 +2937,76 @@ public class AvanzamentoNotificheB2bSteps {
         Assertions.assertTrue(test);
     }
 
-    @And("download attestazione opponibile AAR")
-    public void downloadLegalFactIdAAR() {
-        getLegalFactIdAAR("PN_AAR");
-    }
 
-    public LegalFactDownloadMetadataResponse getLegalFactIdAAR(String aarType) {
-        AtomicReference<LegalFactDownloadMetadataResponse> legalFactDownloadMetadataResponse = new AtomicReference<>();
-        try {
-            Thread.sleep(sharedSteps.getWait());
-        } catch (InterruptedException exc) {
-            throw new RuntimeException(exc);
-        }
+    //TODO MATTEO spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
+//    @Then("download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è {string}")
+//    public void downloadAttestazioneOpponibileAAREControlloDelContenutoDelFilePerVerificareSeIlTipoE(String aarType) {
+//        LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse = getLegalFactIdAAR("PN_AAR");
+//        byte[] source = utils.downloadFile(legalFactDownloadMetadataResponse.getUrl());
+//        Assertions.assertNotNull(source);
+//        Assertions.assertTrue(checkTypeAAR(source, aarType));
+//    }
 
-        TimelineElementV26 timelineElement = null;
-        for (TimelineElementV26 element : sharedSteps.getSentNotificationLastVersion().getTimeline()) {
-            if (Objects.requireNonNull(element.getCategory().getValue()).equals(AAR_GENERATION)) {
-                timelineElement = element;
-                break;
-            }
-        }
+    //TODO MATTEO spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
+//    @And("download attestazione opponibile AAR")
+//    public void downloadLegalFactIdAAR() {
+//        getLegalFactIdAAR("PN_AAR");
+//    }
 
-        Assertions.assertNotNull(timelineElement);
-        String keySearch = null;
-        if (!Objects.requireNonNull(timelineElement.getDetails()).getGeneratedAarUrl().isEmpty()) {
+    //TODO MATTEO spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
+//    private LegalFactDownloadMetadataResponse getLegalFactIdAAR(String aarType) {
+//        AtomicReference<LegalFactDownloadMetadataResponse> legalFactDownloadMetadataResponse = new AtomicReference<>();
+//        try {
+//            Thread.sleep(sharedSteps.getWait());
+//        } catch (InterruptedException exc) {
+//            throw new RuntimeException(exc);
+//        }
+//
+//        TimelineElementV26 timelineElement = null;
+//        for (TimelineElementV26 element : sharedSteps.getSentNotificationLastVersion().getTimeline()) {
+//            if (Objects.requireNonNull(element.getCategory().getValue()).equals(AAR_GENERATION)) {
+//                timelineElement = element;
+//                break;
+//            }
+//        }
+//
+//        Assertions.assertNotNull(timelineElement);
+//        String keySearch = null;
+//        if (!Objects.requireNonNull(timelineElement.getDetails()).getGeneratedAarUrl().isEmpty()) {
+//
+//            if (timelineElement.getDetails().getGeneratedAarUrl().contains(aarType)) {
+//                keySearch = timelineElement.getDetails().getGeneratedAarUrl().substring(timelineElement.getDetails().getGeneratedAarUrl().indexOf(aarType));
+//            }
+//
+//            String finalKeySearch = keySearch;
+//            try {
+//                Assertions.assertDoesNotThrow(() -> legalFactDownloadMetadataResponse.set(
+//                        this.b2bClient.getDownloadLegalFact(sharedSteps.getNotificationIun(), finalKeySearch)));
+//            } catch (AssertionFailedError assertionFailedError) {
+//                sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+//            }
+//        }
+//        return legalFactDownloadMetadataResponse.get();
+//    }
 
-            if (timelineElement.getDetails().getGeneratedAarUrl().contains(aarType)) {
-                keySearch = timelineElement.getDetails().getGeneratedAarUrl().substring(timelineElement.getDetails().getGeneratedAarUrl().indexOf(aarType));
-            }
-
-            String finalKeySearch = keySearch;
-            try {
-                Assertions.assertDoesNotThrow(() -> legalFactDownloadMetadataResponse.set(
-                        this.b2bClient.getDownloadLegalFact(sharedSteps.getNotificationIun(), finalKeySearch)));
-            } catch (AssertionFailedError assertionFailedError) {
-                sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
-            }
-        }
-        return legalFactDownloadMetadataResponse.get();
-    }
-
-
-    @Then("download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è {string}")
-    public void downloadAttestazioneOpponibileAAREControlloDelContenutoDelFilePerVerificareSeIlTipoE(String aarType) {
-        LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse = getLegalFactIdAAR("PN_AAR");
-        byte[] source = utils.downloadFile(legalFactDownloadMetadataResponse.getUrl());
-        Assertions.assertNotNull(source);
-        Assertions.assertTrue(checkTypeAAR(source, aarType));
-    }
-
-    private boolean checkTypeAAR(byte[] source, String aarType) {
-        Pattern pattern = Pattern.compile("\\((CAF)\\s");
-        try (final PDDocument document = Loader.loadPDF(source)) {
-            final PDFTextStripper pdfStripper = new PDFTextStripper();
-            pdfStripper.setSortByPosition(true);
-            String extractedText = pdfStripper.getText(document);
-            Matcher matcher = pattern.matcher(extractedText);
-            if (aarType.equals("AAR")) {  //if AAR then check ' CAF ' pattern NOT exist
-                return !matcher.find();
-            } else if (aarType.equals("AAR RADD")) { //if AAR RADD then check ' CAF ' pattern exist
-                return matcher.find();
-            }
-        } catch (Exception exception) {
-            log.error("Error parsing PDF {}", exception);
-        }
-        return false;
-    }
+    //TODO MATTEO spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
+//    private boolean checkTypeAAR(byte[] source, String aarType) {
+//        Pattern pattern = Pattern.compile("\\((CAF)\\s");
+//        try (final PDDocument document = Loader.loadPDF(source)) {
+//            final PDFTextStripper pdfStripper = new PDFTextStripper();
+//            pdfStripper.setSortByPosition(true);
+//            String extractedText = pdfStripper.getText(document);
+//            Matcher matcher = pattern.matcher(extractedText);
+//            if (aarType.equals("AAR")) {  //if AAR then check ' CAF ' pattern NOT exist
+//                return !matcher.find();
+//            } else if (aarType.equals("AAR RADD")) { //if AAR RADD then check ' CAF ' pattern exist
+//                return matcher.find();
+//            }
+//        } catch (Exception exception) {
+//            log.error("Error parsing PDF {}", exception);
+//        }
+//        return false;
+//    }
 
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} e verifica indirizzo secondo tentativo {string}")
     public void readingEventUpToTheTimelineElementOfNotificationWithVerifyPhysicalAddress(String timelineEventCategory, String attempt) {
@@ -3338,34 +3252,6 @@ public class AvanzamentoNotificheB2bSteps {
 //        }
     }
 
-    @Then("viene verificato il costo {string} di una notifica {string} del utente {string}")
-    public void notificationPriceVerificationIvaIncluded(String tipoCosto, String tipoNotifica, String user) {
-        FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
-        Assertions.assertNotNull(fullSentNotification);
-
-        Integer pricePartial;
-        Integer priceTotal;
-
-        if (fullSentNotification.getNotificationFeePolicy().equals(NotificationFeePolicy.DELIVERY_MODE)) {
-            pricePartial = calcoloPrezzo(tipoNotifica, tipoCosto, user, fullSentNotification);
-            priceTotal = calcoloPrezzo(tipoNotifica, tipoCosto, user, fullSentNotification);
-        } else if (fullSentNotification.getNotificationFeePolicy().equals(NotificationFeePolicy.FLAT_RATE)) {
-            pricePartial = 0;
-            priceTotal = 0;
-        } else {
-            throw new IllegalArgumentException();
-        }
-
-        switch (tipoCosto.toLowerCase()) {
-            case "parziale" -> {
-                priceVerificationV1(String.valueOf(pricePartial), null, Integer.parseInt(user));
-                priceVerificationV23(pricePartial, null, Integer.parseInt(user), tipoCosto);
-            }
-            case "totale" -> priceVerificationV23(priceTotal, null, Integer.parseInt(user), tipoCosto);
-            default -> throw new IllegalArgumentException();
-        }
-    }
-
     @Then("viene verificato che il campo {string} sia valorizzato a {int}")
     public void notificationPriceVerificationValueResponse(String toValidate, Integer valueToValidate) {
         try {
@@ -3381,42 +3267,6 @@ public class AvanzamentoNotificheB2bSteps {
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
-    }
-
-    public Integer calcoloPrezzo(String tipoNotifica, String tipoCosto, String user, FullSentNotificationV26 notificaV26) {
-
-        List<TimelineElementV26> listaNotifica = notificaV26.getTimeline().stream().filter(value -> value.getDetails() != null && value.getDetails().getAnalogCost() != null).toList();
-
-        int pricePartial;
-        int priceTotal;
-
-        Integer paFee = notificaV26.getPaFee();
-        Integer vat = notificaV26.getVat();
-
-
-        switch (tipoNotifica.toLowerCase()) {
-            case "890", "ar", "rir" -> {
-                TimelineElementV26 analogFirstAttempt = listaNotifica.stream().filter(value -> value.getElementId().contains("ATTEMPT_0") && value.getElementId().contains("RECINDEX_" + user)).findAny().orElse(null);
-                TimelineElementV26 analogSecondAttempt = listaNotifica.stream().filter(value -> value.getElementId().contains("ATTEMPT_1") && value.getElementId().contains("RECINDEX_" + user)).findAny().orElse(null);
-                Integer analogCostFirstAttempt = analogFirstAttempt.getDetails().getAnalogCost();
-                Integer analogCostSecondAttempt = analogSecondAttempt != null && analogSecondAttempt.getDetails() != null ? analogSecondAttempt.getDetails().getAnalogCost() : 0;
-                pricePartial = costoBaseNotifica + analogCostFirstAttempt + analogCostSecondAttempt;
-                priceTotal = Math.round(paFee + costoBaseNotifica + (analogCostFirstAttempt + analogCostSecondAttempt) + (float) ((analogCostFirstAttempt + analogCostSecondAttempt) * vat) / 100);
-            }
-            case "rs", "ris" -> {
-                TimelineElementV26 analogNotification = listaNotifica.stream().filter(value -> value.getElementId().contains("RECINDEX_" + user)).findAny().orElse(null);
-                Integer analogCost = analogNotification.getDetails().getAnalogCost();
-                pricePartial = costoBaseNotifica + analogCost;
-                priceTotal = paFee + costoBaseNotifica + analogCost + Math.round(((float) (analogCost) * vat / 100));
-            }
-            default -> throw new IllegalArgumentException();
-        }
-
-        return switch (tipoCosto.toLowerCase()) {
-            case "parziale" -> pricePartial;
-            case "totale" -> priceTotal;
-            default -> null;
-        };
     }
 
     @Then("viene verificato che tutti i campi per il calcolo del iva per il destinatario {int} siano valorizzati")
@@ -3529,41 +3379,6 @@ public class AvanzamentoNotificheB2bSteps {
     @And("viene verificato che il peso della busta cartacea sia di {int}")
     public void verifyPriceAndWeightInvioCartaceo(Integer weight) {
         getB2bStepsInterface().verifyPriceAndWeightInvioCartaceo(null, weight);
-    }
-
-    private Map<String, String> populateConsolidatoreMap(Instant date) {
-        String iun = sharedSteps.getNotificationIun();
-        Map<String, String> mapInfo = new HashMap<>();
-        mapInfo.put("requestId", requestIdConsolidator);
-        mapInfo.put("attachments", null);
-        mapInfo.put("clientRequestTimeStamp", utils.getOffsetDateTimeFromDate(date));
-        mapInfo.put("deliveryFailureCause", null);
-        mapInfo.put("discoveredAddress", null);
-        mapInfo.put("iun", iun);
-        mapInfo.put("productType", "890");
-        mapInfo.put("registeredLetterCode", null);
-        mapInfo.put("statusCode", "CON020");
-        mapInfo.put("statusDateTime", utils.getOffsetDateTimeFromDate(date));
-        mapInfo.put("statusDescription", "Affido conservato");
-        return mapInfo;
-    }
-
-    @Then("viene invocato il consolidatore con clientRequestTimeStamp e statusDateTime nel {string}")
-    public void vieneInvocatoIlConsolidatore(String statusDate) {
-        Instant now;
-        if (statusDate.equalsIgnoreCase("Futuro")) {
-            now = Instant.now()
-                    .plusSeconds(utils.convertToSeconds(pnEcConsAllowedFutureOffsetDuration)).plusSeconds(60);
-        } else {
-            now = Instant.now();
-        }
-
-        Map<String, String> mapInfo = populateConsolidatoreMap(now);
-        try {
-            externalClient.pushConsolidatoreNotification(mapInfo);
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
-        }
     }
 
 //    private PnPollingResponseV26 getPollingResponse(String timelineEventCategory, String deliveryDetailCode) {
@@ -3748,18 +3563,23 @@ public class AvanzamentoNotificheB2bSteps {
     @And("viene verificato che l'elemento di timeline {string} con response status {string} con la {string} {string}")
     public void vieneVerificatoCheLElementoDiTimelineConResponseStatusPerLa(String timelineElement, String responseStatus, String type, String address) {
 
-        FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
-        Assertions.assertNotNull(fullSentNotification);
-        Assertions.assertNotNull(fullSentNotification.getTimeline());
-        TimelineElementV26 element = fullSentNotification.getTimeline()
-                .stream()
-                .filter(data -> data.getElementId().startsWith(timelineElement))
-                .filter(data -> data.getDetails() != null)
-                .filter(data -> data.getDetails().getResponseStatus().equals(ResponseStatus.fromValue(responseStatus.toUpperCase())))
-                .filter(data -> data.getDetails().getDigitalAddress().getType().equalsIgnoreCase(type))
-                .filter(data -> data.getDetails().getDigitalAddress().getAddress().equalsIgnoreCase(address))
-                .findFirst().orElse(null);
-
-        Assertions.assertNotNull(element, "the element to check is not found iun: " + fullSentNotification.getIun());
+        try {
+            FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+            assertSoftly(softly -> {
+                assertThat(fullSentNotification).as("La fullSentNotification non dev'essere null").isNotNull();
+                assertThat(fullSentNotification.getTimeline()).as("La timeline della fullSentNotification non dev'essere null").isNotNull();
+                TimelineElementV26 te = fullSentNotification.getTimeline()
+                        .stream()
+                        .filter(data -> data.getElementId().startsWith(timelineElement))
+                        .filter(data -> data.getDetails() != null)
+                        .filter(data -> data.getDetails().getResponseStatus().equals(ResponseStatus.fromValue(responseStatus.toUpperCase())))
+                        .filter(data -> data.getDetails().getDigitalAddress().getType().equalsIgnoreCase(type))
+                        .filter(data -> data.getDetails().getDigitalAddress().getAddress().equalsIgnoreCase(address))
+                        .findFirst().orElse(null);
+                assertThat(te).as("Il timelineElement atteso non è stato trovato").isNotNull();
+            });
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        }
     }
 }

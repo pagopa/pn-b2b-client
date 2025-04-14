@@ -60,7 +60,7 @@ public interface B2bStepsInterface {
      */
     void checkIfTimelineElementExists(boolean exists, TimelineElementCheck furtherChecks, TimelineElementCheckFilters filterParams);
 
-    void checkIfTimelineElementFromDataExists(boolean exists, String timelineEventCategory, Map<String, String> data);
+    void checkIfTimelineElementExistsFromData(boolean exists, String timelineEventCategory, Map<String, String> dataMap);
 
     void checkIfStatusExists(boolean exists);
 
@@ -70,5 +70,9 @@ public interface B2bStepsInterface {
 
     //Lo step che lo implementa non è utilizzato, valuterei eliminazione (anche perché si può inglobare in un altro dei metodi già esistenti)
     void verificaAssenzaPagamentiF24();
+
+    void checkNumberOfTimelineElements(String timelineEventCategory, Integer size);
+
+    void checkNumberOfTimelineElementsFromData(String timelineEventCategory, Integer size, Map<String, String> data);
 
 }

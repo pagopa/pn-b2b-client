@@ -18,7 +18,7 @@ import it.pagopa.pn.cucumber.steps.utilitySteps.PollingType;
 import it.pagopa.pn.cucumber.steps.utilitySteps.WaitForEventPredicateFilters;
 import it.pagopa.pn.cucumber.steps.utilitySteps.checkTimelineElement.TimelineElementCheck;
 import it.pagopa.pn.cucumber.steps.utilitySteps.checkTimelineElement.TimelineElementCheckFilters;
-import it.pagopa.pn.cucumber.utils.datatest.DataTestV24;
+import it.pagopa.pn.cucumber.utils.datatestVersions.DataTestV24;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanUtils;
 import org.junit.jupiter.api.Assertions;
@@ -27,7 +27,10 @@ import org.opentest4j.AssertionFailedError;
 import java.lang.reflect.InvocationTargetException;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.IntStream;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
@@ -345,7 +348,7 @@ public class B2bStepsV24 implements B2bStepsInterface {
     }
 
     @Override
-    public void checkIfTimelineElementFromDataExists(boolean exists, String timelineEventCategory, Map<String, String> dataMap) {
+    public void checkIfTimelineElementExistsFromData(boolean exists, String timelineEventCategory, Map<String, String> dataMap) {
         try {
             DataTestV24 dataTest = DataTestV24.convertMap(dataMap);
             boolean mustLoadTimeline = dataTest != null && dataTest.isLoadTimeline();
@@ -434,9 +437,7 @@ public class B2bStepsV24 implements B2bStepsInterface {
     }
 
     private TimelineElementV26 getTimelineByDeliveryPush(String timelineEventCategory, DataTestV24 dataTest) {
-        String requestId = b2bSteps.getSharedSteps().getNotificationRequestId();
-        byte[] decodedBytes = Base64.getDecoder().decode(requestId);
-        String iun = new String(decodedBytes);
+        String iun = b2bSteps.getSharedSteps().getNotificationIun();
         // get timeline from delivery-push
         NotificationHistoryResponse notificationHistory = b2bSteps.getPnPrivateDeliveryPushExternalClient().getNotificationHistory(
                 iun,
@@ -459,7 +460,7 @@ public class B2bStepsV24 implements B2bStepsInterface {
         TimelineElementV26 timelineElement;
         // get timeline event id
         if (dataFromTest != null && dataFromTest.getTimelineElement() != null) {
-            String timelineEventId = dataFromTest.getTimelineEventId(timelineEventCategory, iun, dataFromTest);
+            String timelineEventId = dataFromTest.getTimelineEventId(timelineEventCategory, iun);
             timelineElement = timelineElementList.stream().filter(elem -> elem.getElementId().startsWith(timelineEventId)).findAny().orElse(null);
         } else {
             timelineElement = timelineElementList.stream().filter(elem -> elem.getCategory().getValue().equals(timelineEventCategory)).findAny().orElse(null);
@@ -481,7 +482,7 @@ public class B2bStepsV24 implements B2bStepsInterface {
 
         if (dataFromTest != null && dataFromTest.getTimelineElement() != null) {
             // get timeline event id
-            String timelineEventId = dataFromTest.getTimelineEventId(timelineEventCategory, iun, dataFromTest);
+            String timelineEventId = dataFromTest.getTimelineEventId(timelineEventCategory, iun);
             if (timelineEventCategory.equals(SEND_ANALOG_PROGRESS)
                     || timelineEventCategory.equals(SEND_SIMPLE_REGISTERED_LETTER_PROGRESS)) {
                 TimelineElementV26 timelineElementFromTest = dataFromTest.getTimelineElement();
@@ -860,6 +861,38 @@ public class B2bStepsV24 implements B2bStepsInterface {
         } catch (AssertionFailedError assertionFailedError) {
             b2bSteps.getSharedSteps().throwAssertionErrorWithIUN(assertionFailedError);
         }
+    }
+
+    @Override
+    public void checkNumberOfTimelineElements(String timelineEventCategory, Integer size) {
+        int actualNumber = (int) getFullSentNotificationVersioned().getTimeline().stream().filter(x ->
+                x.getCategory().getValue().equals(timelineEventCategory)).count();
+        assertThat(actualNumber)
+                .as("Il numero di elementi di timeline con categoria " + timelineEventCategory + " non coincide con quanto atteso")
+                .isEqualTo(size);
+    }
+
+    @Override
+    public void checkNumberOfTimelineElementsFromData(String timelineEventCategory, Integer size, Map<String, String> dataMap) {
+
+        DataTestV24 dataTest = DataTestV24.convertMap(dataMap);
+        String iun = b2bSteps.getSharedSteps().getNotificationIun();
+        FullSentNotificationV26 fullSentNotification = getFullSentNotificationVersioned();
+        List<TimelineElementV26> timelineElementList = fullSentNotification.getTimeline();
+        String timelineEventId = dataTest.getTimelineEventId(iun, timelineEventCategory);
+        int actualNumber;
+
+        if (timelineEventCategory.equals(SEND_ANALOG_PROGRESS)) {
+            TimelineElementDetailsV26 timelineElementDetails = dataTest.getTimelineElement().getDetails();
+            actualNumber = (int) timelineElementList.stream().filter(x ->
+                    x.getElementId().startsWith(timelineEventId)
+                            && x.getDetails().getDeliveryDetailCode().equals(timelineElementDetails.getDeliveryDetailCode())).count();
+        } else {
+            actualNumber = (int) timelineElementList.stream().filter(x -> x.getElementId().startsWith(timelineEventId)).count();
+        }
+        assertThat(actualNumber)
+                .as("Il numero di elementi di timeline che corrispondono al dato passato in input non coincide con quanto atteso: \n " + dataTest.getTimelineElement())
+                .isEqualTo(size);
     }
 
     private String getProperty(String fieldPath, TimelineElementV26 lastTimelineElement)

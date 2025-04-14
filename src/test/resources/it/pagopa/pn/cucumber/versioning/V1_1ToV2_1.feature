@@ -11,7 +11,7 @@ Feature: verifica compatibilità tra v1.1 a v2.1
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" V1
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" con la versione "V1"
 
 
   @version
@@ -48,7 +48,7 @@ Feature: verifica compatibilità tra v1.1 a v2.1
       | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" V1
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   @version
   Scenario: [B2B-PA-SEND_VERSION_V1_V21_5] Invio notifica V1.1 ed attesa elemento di timeline DIGITAL_SUCCESS_WORKFLOW_scenario V2.1 positivo
@@ -116,7 +116,7 @@ Feature: verifica compatibilità tra v1.1 a v2.1
     When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     And vengono letti gli eventi e verifico che l'utente 0 non abbia associato un evento "NOTIFICATION_CANCELLATION_REQUEST" V1
-    And vengono letti gli eventi fino allo stato della notifica "CANCELLED" V1
+    And vengono letti gli eventi fino allo stato della notifica "CANCELLED" con la versione "V1"
 
 
   @version
@@ -155,7 +155,7 @@ Feature: verifica compatibilità tra v1.1 a v2.1
       | senderDenomination | Comune di milano            |
     And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
-    Then vengono letti gli eventi fino allo stato della notifica "ACCEPTED" V1
+    Then vengono letti gli eventi fino allo stato della notifica "ACCEPTED" con la versione "V1"
 
   @version
   Scenario: [B2B-PA-SEND_VERSION_V1_V21_14] Invio notifica digitale mono destinatario e mono pagamento con PagopaForm_scenario V2.1 e recupero con V1.1 positivo

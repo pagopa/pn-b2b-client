@@ -24,6 +24,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.AAR_GENERATION;
 
 
 @Slf4j
@@ -289,7 +295,6 @@ public class LegalFactContentVerifySteps {
         downloadLegalFactPecRecipient("PEC_RECEIPT", true, false, false, null);
     }
 
-    //TODO MATTEO LEGALFACT
     @Then("{string} richiede il download dell'attestazione opponibile PEC_RECEIPT")
     public void userDownloadLegalFactPecRecipient(String user) {
         sharedSteps.selectUser(user);
@@ -401,6 +406,72 @@ public class LegalFactContentVerifySteps {
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
         }
+    }
+
+    @Then("download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è {string}")
+    public void downloadAttestazioneOpponibileAAREControlloDelContenutoDelFilePerVerificareSeIlTipoE(String aarType) {
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse = getLegalFactIdAAR("PN_AAR");
+        byte[] source = sharedSteps.getB2bUtils().downloadFile(legalFactDownloadMetadataResponse.getUrl());
+        Assertions.assertNotNull(source);
+        Assertions.assertTrue(checkTypeAAR(source, aarType));
+    }
+
+    @And("download attestazione opponibile AAR")
+    public void downloadLegalFactIdAAR() {
+        getLegalFactIdAAR("PN_AAR");
+    }
+
+    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactDownloadMetadataResponse getLegalFactIdAAR(String aarType) {
+        AtomicReference<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactDownloadMetadataResponse> legalFactDownloadMetadataResponse = new AtomicReference<>();
+        try {
+            Thread.sleep(sharedSteps.getWait());
+        } catch (InterruptedException exc) {
+            throw new RuntimeException(exc);
+        }
+
+        TimelineElementV26 timelineElement = null;
+        for (TimelineElementV26 element : sharedSteps.getSentNotificationLastVersion().getTimeline()) {
+            if (Objects.requireNonNull(element.getCategory().getValue()).equals(AAR_GENERATION)) {
+                timelineElement = element;
+                break;
+            }
+        }
+
+        Assertions.assertNotNull(timelineElement);
+        String keySearch = null;
+        if (!Objects.requireNonNull(timelineElement.getDetails()).getGeneratedAarUrl().isEmpty()) {
+
+            if (timelineElement.getDetails().getGeneratedAarUrl().contains(aarType)) {
+                keySearch = timelineElement.getDetails().getGeneratedAarUrl().substring(timelineElement.getDetails().getGeneratedAarUrl().indexOf(aarType));
+            }
+
+            String finalKeySearch = keySearch;
+            try {
+                Assertions.assertDoesNotThrow(() -> legalFactDownloadMetadataResponse.set(
+                        sharedSteps.getB2bClient().getDownloadLegalFact(sharedSteps.getNotificationIun(), finalKeySearch)));
+            } catch (AssertionFailedError assertionFailedError) {
+                sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+            }
+        }
+        return legalFactDownloadMetadataResponse.get();
+    }
+
+    private boolean checkTypeAAR(byte[] source, String aarType) {
+        Pattern pattern = Pattern.compile("\\((CAF)\\s");
+        try (final PDDocument document = Loader.loadPDF(source)) {
+            final PDFTextStripper pdfStripper = new PDFTextStripper();
+            pdfStripper.setSortByPosition(true);
+            String extractedText = pdfStripper.getText(document);
+            Matcher matcher = pattern.matcher(extractedText);
+            if (aarType.equals("AAR")) {  //if AAR then check ' CAF ' pattern NOT exist
+                return !matcher.find();
+            } else if (aarType.equals("AAR RADD")) { //if AAR RADD then check ' CAF ' pattern exist
+                return matcher.find();
+            }
+        } catch (Exception exception) {
+            log.error("Error parsing PDF {}", exception);
+        }
+        return false;
     }
 
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactDownloadMetadataResponse takeLegalFact(String legalFactCategory, String deliveryDetailCode) {

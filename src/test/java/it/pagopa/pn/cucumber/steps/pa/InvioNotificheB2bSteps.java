@@ -36,7 +36,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.ByteArrayInputStream;
@@ -87,9 +86,7 @@ public class InvioNotificheB2bSteps {
     private String sha256DocumentDownload;
     private NotificationAttachmentDownloadMetadataResponse downloadResponse;
     private List<ReceivedMessage> documentiPec;
-
     private final JavaMailSender emailSender;
-
     private List<String> blackListTaxIds;
 
     private final Map<NotificationVersion, InvioNotificheStepsInterface> mapOfVersionSteps = Map.ofEntries(
@@ -124,19 +121,19 @@ public class InvioNotificheB2bSteps {
     @And("la notifica può essere correttamente recuperata dal sistema tramite codice IUN")
     public void notificationCanBeRetrievedWithIUN() {
         AtomicReference<FullSentNotificationV26> notificationByIun = new AtomicReference<>();
-        notificationCanBeRetrievedWithIUN(notificationByIun, b2bUtils::getNotificationByIun);
+        notificationCanBeRetrievedWithIUN(notificationByIun, b2bClient::getSentNotificationV26);
     }
 
     @And("la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V1")
     public void notificationCanBeRetrievedWithIUNV1() {
         AtomicReference<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification> notificationByIun = new AtomicReference<>();
-        notificationCanBeRetrievedWithIUN(notificationByIun, b2bUtils::getNotificationByIunV1);
+        notificationCanBeRetrievedWithIUN(notificationByIun, b2bClient::getSentNotificationV1);
     }
 
     @And("la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V20")
     public void notificationCanBeRetrievedWithIUNV2() {
         AtomicReference<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.FullSentNotificationV20> notificationByIun = new AtomicReference<>();
-        notificationCanBeRetrievedWithIUN(notificationByIun, b2bUtils::getNotificationByIunV2);
+        notificationCanBeRetrievedWithIUN(notificationByIun, b2bClient::getSentNotificationV2);
     }
 
     private <T> void notificationCanBeRetrievedWithIUN(AtomicReference<T> notificationByIun, Function<String, T> getNotificationByIunFunction) {
@@ -159,7 +156,7 @@ public class InvioNotificheB2bSteps {
     @And("la notifica non può essere recuperata dal sistema tramite codice IUN con OpenApi V20 generando un errore")
     public void notificationCanBeRetrievedWithIUNV2Error() {
         try {
-            b2bUtils.getNotificationByIunV2(sharedSteps.getNotificationIun());
+            b2bClient.getSentNotificationV2(sharedSteps.getNotificationIun());
         } catch (HttpStatusCodeException e) {
             sharedSteps.setNotificationError(e);
         }
@@ -168,7 +165,7 @@ public class InvioNotificheB2bSteps {
     @And("la notifica non può essere recuperata dal sistema tramite codice IUN con OpenApi V10 generando un errore")
     public void notificationCanBeRetrievedWithIUNV1Error() {
         try {
-            b2bUtils.getNotificationByIunV1(sharedSteps.getNotificationIun());
+            b2bClient.getSentNotificationV1(sharedSteps.getNotificationIun());
         } catch (HttpStatusCodeException e) {
             sharedSteps.setNotificationError(e);
         }
@@ -357,7 +354,7 @@ public class InvioNotificheB2bSteps {
     @Then("la notifica viene recuperata dal sistema tramite codice IUN")
     public void laNotificaVieneRecuperataDalSistemaTramiteCodiceIUN() {
         try {
-            b2bUtils.getNotificationByIun(sharedSteps.getNotificationIun());
+            sharedSteps.getSentNotificationLastVersion();
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
         }
@@ -389,7 +386,7 @@ public class InvioNotificheB2bSteps {
     public void preLoadingOfMetaDatiAttachmentF24() {
         NotificationMetadataAttachment notificationPaymentAttachment = b2bUtils.newMetadataAttachment("classpath:/METADATA_CORRETTO.json");
         AtomicReference<NotificationMetadataAttachment> notificationDocumentAtomic = new AtomicReference<>();
-        assertThatCode(() -> notificationDocumentAtomic.set(b2bUtils.preloadMetadataAttachmentV21(notificationPaymentAttachment)))
+        assertThatCode(() -> notificationDocumentAtomic.set(b2bUtils.preloadWithMetadataAttachment(notificationPaymentAttachment)))
                 .as("Il caricamento e l'assegnazione dei metadati dell'allegato di notifica non devono generare eccezioni")
                 .doesNotThrowAnyException();
         try {
@@ -410,7 +407,7 @@ public class InvioNotificheB2bSteps {
             case "F24" -> this.notificationMetadataAttachment.getRef().getKey();
             default -> throw new IllegalArgumentException();
         };
-        assertThat(checkRetetion(key, retentionTimePreLoad))
+        assertThat(checkRetention(key, retentionTimePreLoad))
                 .as("La verifica della retention per la chiave " + key + "  con il tempo di retention deve restituire true", key, retentionTimePreLoad)
                 .isTrue();
     }
@@ -426,7 +423,7 @@ public class InvioNotificheB2bSteps {
                     fullSentNotification.getRecipients().get(0).getPayments().get(0).getF24().getMetadataAttachment().getRef().getKey();
             default -> throw new IllegalArgumentException();
         };
-        assertThat(checkRetetion(key, retentionTimeLoad))
+        assertThat(checkRetention(key, retentionTimeLoad))
                 .as("La verifica della retention per la chiave " + key + " con il tempo di retention deve restituire true", key, retentionTimeLoad)
                 .isTrue();
     }
@@ -509,34 +506,25 @@ public class InvioNotificheB2bSteps {
         }
     }
 
-
     @Given("viene letta la notifica {string} dal {string}")
-    public void vieneLettaLaNotificaDal(String IUN, String paName) {
+    public void vieneLettaLaNotificaDal(String iun, String paName) {
         sharedSteps.setPA(paName);
-        FullSentNotificationV26 notificationByIun = b2bUtils.getNotificationByIun(IUN);
+        FullSentNotificationV26 notificationByIun = sharedSteps.getB2bClient().getSentNotificationV26(iun);
         Assertions.assertNotNull(notificationByIun);
-    }
-
-    @When("si tenta il recupero della notifica dal sistema tramite codice IUN {string}")
-    public void retrievalAttemptedIUN(String iun) {
-        getNotificationByIun(iun);
     }
 
     @When("si tenta il recupero della notifica dal sistema")
     public void retrievalAttemptedIUN() {
-        getNotificationByIun("");
-    }
-
-    private void getNotificationByIun(String iun) {
         try {
-            if (!iun.isEmpty()) {
-                b2bUtils.getNotificationByIun(iun);
-            } else {
-                b2bUtils.getNotificationByIun(new String(Base64Utils.decodeFromString(this.sharedSteps.getNotificationRequestId())));
-            }
+            b2bClient.getSentNotificationV26(sharedSteps.getNotificationIun());
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
         }
+    }
+
+    @When("si tenta il recupero della notifica dal sistema tramite codice IUN {string}")
+    public void retrievalAttemptedIUN(String iun) {
+        getNotificationByIunVersioning(iun, MOST_RECENT);
     }
 
     @When("si tenta il recupero della notifica dal sistema tramite codice IUN {string} con la V1")
@@ -552,9 +540,11 @@ public class InvioNotificheB2bSteps {
     private void getNotificationByIunVersioning(String iun, String version) {
         try {
             if (version.equalsIgnoreCase("V1")) {
-                b2bUtils.getNotificationByIunV1(iun);
+                b2bClient.getSentNotificationV1(iun);
             } else if (version.equalsIgnoreCase("V2")) {
-                b2bUtils.getNotificationByIunV2(iun);
+                b2bClient.getSentNotificationV2(iun);
+            } else {
+                b2bClient.getSentNotificationV26(iun);
             }
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
@@ -657,7 +647,6 @@ public class InvioNotificheB2bSteps {
     @Then("l'operazione non ha prodotto errori")
     public void operationProducedNotAnError() {
         HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
-
         assertThat(httpStatusCodeException)
                 .as("Verifica che non siano stati generati errori HTTP")
                 .isNull();
@@ -697,12 +686,12 @@ public class InvioNotificheB2bSteps {
     @Then("si verifica la corretta acquisizione della notifica con verifica sha256 dell'allegato di pagamento {string}")
     public void correctAcquisitionNotificationVerifySha256AllegatiPagamento(String attachment) {
         assertThatCode(() -> b2bUtils.verifyNotificationAndSha256AllegatiPagamento(sharedSteps.getSentNotificationLastVersion(), attachment))
-                .as("Verifica fallita per la notifica e l'hash SHA-256 dell'allegato di pagamento . Assicurati che non vengano sollevate eccezioni.", attachment)
+                .as("Verifica fallita per la notifica e l'hash SHA-256 dell'allegato di pagamento. Assicurati che non vengano sollevate eccezioni.", attachment)
                 .doesNotThrowAnyException();
     }
 
 
-    private boolean checkRetetion(String fileKey, Integer retentionTime) {
+    private boolean checkRetention(String fileKey, Integer retentionTime) {
         PnExternalServiceClientImpl.SafeStorageResponse safeStorageResponse = safeStorageClient.safeStorageInfo(fileKey);
         System.out.println(safeStorageResponse);
         LocalDateTime localDateTimeNow = LocalDate.now().atStartOfDay();
@@ -752,7 +741,7 @@ public class InvioNotificheB2bSteps {
     @And("la notifica non può essere annullata dal sistema tramite codice IUN")
     public void notificationCaNotBeCanceledWithIUN() {
         try {
-            sharedSteps.getB2bClient().notificationCancellation(new String(Base64Utils.decodeFromString(this.sharedSteps.getNotificationRequestId())));
+            sharedSteps.getB2bClient().notificationCancellation(sharedSteps.getNotificationIun());
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
         }
@@ -845,7 +834,7 @@ public class InvioNotificheB2bSteps {
         String iun = sharedSteps.getNotificationIun();
 
         try {
-            assertThatCode(() -> notificationByIun.set(b2bUtils.getNotificationByIunV1(iun)))
+            assertThatCode(() -> notificationByIun.set(b2bClient.getSentNotificationV1(iun)))
                     .as("La chiamata per ottenere la notifica tramite IUN non dovrebbe generare eccezioni")
                     .doesNotThrowAnyException();
 
@@ -871,7 +860,7 @@ public class InvioNotificheB2bSteps {
         AtomicReference<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.FullSentNotificationV20> notificationByIun = new AtomicReference<>();
         String iun = sharedSteps.getNotificationIun();
         try {
-            assertThatCode(() -> notificationByIun.set(b2bUtils.getNotificationByIunV2(iun)))
+            assertThatCode(() -> notificationByIun.set(b2bClient.getSentNotificationV2(iun)))
                     .as("La chiamata per ottenere la notifica tramite IUN non dovrebbe generare eccezioni")
                     .doesNotThrowAnyException();
 
@@ -893,7 +882,7 @@ public class InvioNotificheB2bSteps {
         AtomicReference<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification> notificationByIun = new AtomicReference<>();
         String iun = sharedSteps.getNotificationIun();
         try {
-            assertThatCode(() -> notificationByIun.set(b2bUtils.getNotificationByIunV1(iun)))
+            assertThatCode(() -> notificationByIun.set(b2bClient.getSentNotificationV1(iun)))
                     .as("La chiamata per ottenere la notifica tramite IUN non dovrebbe generare eccezioni")
                     .doesNotThrowAnyException();
 
@@ -904,7 +893,6 @@ public class InvioNotificheB2bSteps {
             assertThat(notificationByIun.get().getRecipients().get(0).getPayment().getNoticeCode())
                     .as("Il codice della notifica del pagamento non dovrebbe essere nullo")
                     .isNotNull();
-
 
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
