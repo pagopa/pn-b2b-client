@@ -9,8 +9,8 @@ import it.pagopa.pn.client.b2b.pa.service.IBffMandateServiceApi;
 import it.pagopa.pn.client.b2b.pa.service.IMandateReverseServiceClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebMandateClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
-import it.pagopa.pn.client.b2b.pa.service.impl.B2bMandateServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.B2bMandateServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.web.generated.openapi.clients.bff.recipientmandate.model.BffMandate;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.AcceptRequestDto;
@@ -25,6 +25,8 @@ import org.springframework.web.client.HttpStatusCodeException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Predicate;
+
+import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.*;
 
 public class MandateReverseSteps {
     private final IMandateReverseServiceClient mandateReverseServiceClient;
@@ -45,8 +47,8 @@ public class MandateReverseSteps {
         this.bffMandateServiceApi = bffMandateServiceApi;
     }
 
-   @Given("viene effettuata una richiesta di creazione delega con i seguenti parametri:")
-   public void createMandatePG(Map<String, String> data) {
+    @Given("viene effettuata una richiesta di creazione delega con i seguenti parametri:")
+    public void createMandatePG(Map<String, String> data) {
         selectPG(data.get("delegate"));
         MandateDtoRequest request = new MandateDtoRequest();
         request.setDatefrom(getDate(data.getOrDefault("dateFrom", "TODAY")));
@@ -57,7 +59,7 @@ public class MandateReverseSteps {
         } catch (HttpStatusCodeException statusCodeException) {
             reverseMandateStatusCodeException = statusCodeException;
         }
-   }
+    }
 
     @Then("si verifica che la chiamata sia fallita con status code: {int}")
     public void checkStatusCode(int statusCode) {
@@ -84,7 +86,7 @@ public class MandateReverseSteps {
     public void notificationDelegatedNotVisible(String delegate) {
         selectPG(delegate);
         Assertions.assertThrows(HttpClientErrorException.NotFound.class,
-                () -> b2BRecipientExternalClient.getReceivedNotification(sharedSteps.getIunVersionamento(), reverseMandateResponse));
+                () -> b2BRecipientExternalClient.getReceivedNotification(sharedSteps.getNotificationIun(), reverseMandateResponse));
     }
 
     @Then("si verifica che la delega è stata creata senza un gruppo associato")
@@ -151,7 +153,8 @@ public class MandateReverseSteps {
                 this.mandateServiceClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
             }
             default -> throw new IllegalStateException("Unexpected value: " + user.trim().toLowerCase());
-        };
+        }
+        ;
     }
 
     private Optional<MandateDto> isMandatePresent(String delegator) {
@@ -171,14 +174,19 @@ public class MandateReverseSteps {
 
     private UserDto getUserDto(String delegator) {
         return switch (delegator) {
-            case "Mario Cucumber" -> createUserDto("Mario Cucumber", "Mario", "Cucumber", "FRMTTR76M06B715E", null, true);
+            case MARIO_CUCUMBER ->
+                    createUserDto(MARIO_CUCUMBER, "Mario", "Cucumber", MARIO_CUCUMBER_TAX_ID, null, true);
+            case GHERKIN_SRL -> createUserDto(GHERKIN_SRL, "gherkin", "srl", GHERKIN_SRL_TAX_ID, GHERKIN_SRL, false);
+            case CUCUMBER_SPA ->
+                    createUserDto(CUCUMBER_SPA, "cucumber", "spa", CUCUMBER_SPA_TAX_ID, CUCUMBER_SPA, false);
             case "EMPTY_FISCAL_CODE" -> createUserDto("Cristoforo Colombo", "Cristoforo", "Colombo", null, null, true);
-            case "INVALID_FISCAL_CODE" -> createUserDto("Cristoforo Colombo", "Cristoforo", "Colombo", "AAA8090ZAC", null, true);
+            case "INVALID_FISCAL_CODE" ->
+                    createUserDto("Cristoforo Colombo", "Cristoforo", "Colombo", "AAA8090ZAC", null, true);
             case "EMPTY_NAME" -> createUserDto(null, null, null, "CLMCST42R12D969Z", null, true);
-            case "FIRST_NAME_NOT_VALID" -> createUserDto("Cristoforo Colombo", "PippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippo", "Colombo", "FRMTTR76M06B715E", null, true);
-            case "LAST_NAME_NOT_VALID" -> createUserDto("Cristoforo Colombo", "Cristoforo", "PippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippo", "FRMTTR76M06B715E", null, true);
-            case "GherkinSrl" -> createUserDto("gherkinsrl", "gherkin", "srl", "12666810299", "gherkinsrl", false);
-            case "CucumberSpa" -> createUserDto("cucumberspa", "cucumber", "spa", "20517490320", "cucumberspa", false);
+            case "FIRST_NAME_NOT_VALID" ->
+                    createUserDto("Cristoforo Colombo", "PippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippo", "Colombo", "FRMTTR76M06B715E", null, true);
+            case "LAST_NAME_NOT_VALID" ->
+                    createUserDto("Cristoforo Colombo", "Cristoforo", "PippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippo", "FRMTTR76M06B715E", null, true);
             default -> throw new IllegalStateException("Unexpected value: " + delegator);
         };
     }
@@ -208,9 +216,9 @@ public class MandateReverseSteps {
 
     private String getTaxIdByUser(String user) {
         return switch (user) {
-            case "Mario Cucumber" -> sharedSteps.getMarioCucumberTaxID();
-            case "GherkinSrl" -> sharedSteps.getGherkinSrltaxId();
-            case "CucumberSpa" -> sharedSteps.getCucumberSpataxId();
+            case MARIO_CUCUMBER -> MARIO_CUCUMBER_TAX_ID;
+            case GHERKIN_SRL -> GHERKIN_SRL_TAX_ID;
+            case CUCUMBER_SPA -> CUCUMBER_SPA_TAX_ID;
             default -> throw new IllegalArgumentException();
         };
     }
