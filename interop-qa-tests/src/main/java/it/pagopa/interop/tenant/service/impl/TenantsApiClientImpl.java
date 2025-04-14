@@ -9,6 +9,8 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredAttributesR
 import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredTenantAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Tenant;
 import it.pagopa.interop.generated.openapi.clients.bff.model.TenantDelegatedFeaturesFlagsUpdateSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.VerifiedAttributesResponse;
+import it.pagopa.interop.generated.openapi.clients.bff.model.VerifiedTenantAttributeSeed;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import java.util.UUID;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -70,6 +72,16 @@ public class TenantsApiClientImpl implements ITenantsApi {
     @Override
     public Tenant getTenant(String xCorrelationId, UUID tenantId) {
         return tenantsApi.getTenant(xCorrelationId, tenantId);
+    }
+
+    @Override
+    public void verifyVerifiedAttribute(String xCorrelationId, UUID tenantId, VerifiedTenantAttributeSeed verifiedTenantAttributeSeed) {
+        tenantsApi.verifyVerifiedAttribute(xCorrelationId, tenantId, verifiedTenantAttributeSeed);
+    }
+
+    @Override
+    public VerifiedAttributesResponse getVerifiedAttributes(String xCorrelationId, UUID tenantId) {
+        return tenantsApi.getVerifiedAttributes(xCorrelationId, tenantId);
     }
 
     @Override

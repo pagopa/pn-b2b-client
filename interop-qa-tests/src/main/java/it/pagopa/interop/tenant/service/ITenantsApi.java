@@ -6,6 +6,8 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedTenantAttr
 import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredAttributesResponse;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredTenantAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Tenant;
+import it.pagopa.interop.generated.openapi.clients.bff.model.VerifiedAttributesResponse;
+import it.pagopa.interop.generated.openapi.clients.bff.model.VerifiedTenantAttributeSeed;
 
 import java.util.UUID;
 
@@ -21,4 +23,8 @@ public interface ITenantsApi extends SettableBearerToken {
     void updateTenantDelegatedFeatures(boolean isProducerFeatureEnabled, boolean isConsumerFeatureEnabled);
 
     Tenant getTenant(String xCorrelationId, UUID tenantId);
+
+    void verifyVerifiedAttribute(String xCorrelationId, UUID tenantId, VerifiedTenantAttributeSeed verifiedTenantAttributeSeed);
+
+    VerifiedAttributesResponse getVerifiedAttributes(String xCorrelationId, UUID tenantId);
 }

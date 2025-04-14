@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.agreement;
 
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
@@ -55,5 +56,29 @@ public class AgreementActivateSteps {
         dataPreparationService.bringDescriptorToGivenState(eserviceId, descriptorId, EServiceDescriptorState.valueOf(descriptorState), false);
         sharedStepsContext.getEServicesCommonContext().setEserviceId(eserviceId);
         sharedStepsContext.getEServicesCommonContext().setDescriptorId(descriptorId);
+    }
+
+    @Given("{string} ha già creato un attributo verificato")
+    public void tenantHasAlreadyCreatedVerifiedAttribute(String tenantType) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        UUID attributeId = dataPreparationService.createAttribute(AttributeKind.VERIFIED, null);
+        sharedStepsContext.getAttributeCommonContext().getRequiredVerifiedAttributes().add(List.of(attributeId));
+    }
+
+    @Given("{string} ha già verificato l'attributo verificato a {string}")
+    public void tenantHasAlreadyVerifiedAttribute(String verifier, String consumer) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(verifier, null));
+        UUID consumerId = identityService.getOrganizationId(consumer);
+        UUID verifierId = identityService.getOrganizationId(verifier);
+
+        dataPreparationService.assignVerifiedAttributeToTenant(consumerId, verifierId,
+                sharedStepsContext.getAttributeCommonContext().getAttributeId(),
+                sharedStepsContext.getAgreementId(), null);
+    }
+
+    @When("l'utente richiede una operazione di attivazione di quella richiesta di fruizione")
+    public void userRequiresAgreementActivation() {
+        dataPreparationService.activateAgreement(sharedStepsContext.getAgreementId(), null);
+
     }
 }

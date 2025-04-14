@@ -13,6 +13,8 @@ import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
+
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
@@ -167,5 +169,15 @@ public class AgreementCommonSteps {
                 res -> res.getState().equals(AgreementState.ARCHIVED),
                 "The agreement was not archived"
         );
+    }
+
+    @Given("{string} ha già dichiarato un attributo")
+    public void tenantDeclaresAnAttribute(String tenantType) {
+        UUID tenantId = this.identityService.getOrganizationId(tenantType);
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        UUID attributeId = dataPreparationService.createAttribute(AttributeKind.DECLARED, null);
+        dataPreparationService.declareDeclaredAttribute(tenantId, attributeId);
+        sharedStepsContext.getAttributeCommonContext().getRequiredDeclaredAttributes().add(List.of(attributeId));
+        sharedStepsContext.getAttributeCommonContext().setAttributeId(attributeId);
     }
 }

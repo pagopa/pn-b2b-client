@@ -25,6 +25,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactUser;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredTenantAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
@@ -45,6 +46,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.RejectPurposeVersio
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormConfig;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.VerifiedTenantAttributeSeed;
 import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
 import it.pagopa.interop.purpose.domain.RiskAnalysis;
 import it.pagopa.interop.purpose.domain.RiskAnalysisDataFromJson;
@@ -318,6 +320,17 @@ public class DataPreparationService {
         return ((Attribute) httpCallExecutor.getResponse()).getId();
     }
 
+    public void declareDeclaredAttribute(UUID tenantId, UUID attributeId) {
+        httpCallExecutor.performCall(() -> tenantsApi.addDeclaredAttribute(new DeclaredTenantAttributeSeed().id(attributeId)));
+        assertValidResponse();
+        pollingService.makePolling(
+                () -> tenantsApi.getDeclaredAttributes(sharedStepsContext.getXCorrelationId(), tenantId),
+                res -> res.getAttributes().stream().anyMatch(attr -> attr.getId().equals(attributeId)),
+                String.format("Declared attribute with id: %s not found!", attributeId)
+        );
+
+    }
+
     public void assignCertifiedAttributeToTenant(UUID tenantId, UUID attributeId) {
         httpCallExecutor.performCall(
                 () -> tenantsApi.addCertifiedAttribute(tenantId, new CertifiedTenantAttributeSeed().id(attributeId)));
@@ -327,6 +340,22 @@ public class DataPreparationService {
                 () -> tenantsApi.getCertifiedAttributes(tenantId),
                 res -> res.getAttributes().stream().anyMatch(attr -> attr.getId().equals(attributeId)),
                 "There was an error while retrieving the attributes"
+        );
+    }
+
+    public void assignVerifiedAttributeToTenant(UUID tenantId, UUID verifierId, UUID attributeId, UUID agreementId, String expirationDate  ) {
+        httpCallExecutor.performCall(
+                () -> tenantsApi.verifyVerifiedAttribute(sharedStepsContext.getXCorrelationId(), tenantId,
+                        new VerifiedTenantAttributeSeed().id(attributeId).agreementId(agreementId).expirationDate(expirationDate)));
+        assertValidResponse();
+
+        pollingService.makePolling(
+                () -> tenantsApi.getVerifiedAttributes(sharedStepsContext.getXCorrelationId(), tenantId),
+                res -> res.getAttributes().stream()
+                        .filter(attr -> attr.getId().equals(attributeId))
+                        .anyMatch(attr -> attr.getVerifiedBy().stream().anyMatch(tenantVerifier -> tenantVerifier.getId().equals(verifierId))
+                        && attr.getRevokedBy().stream().anyMatch(tenantRevoker -> tenantRevoker.getId().equals(verifierId))),
+                String.format("Verified attribute with id: %s not found!", attributeId)
         );
     }
 
@@ -672,7 +701,7 @@ public class DataPreparationService {
                 }
                 return isActive;
             },
-            "There was an error while rejecting the agreement"
+            "There was an error while activating the agreement"
         );
     }
 

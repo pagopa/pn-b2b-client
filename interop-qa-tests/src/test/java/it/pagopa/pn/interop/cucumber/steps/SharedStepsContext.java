@@ -4,6 +4,7 @@ import io.cucumber.java.Before;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.pn.interop.cucumber.steps.common.AttributeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.ClientCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.DelegationCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
@@ -35,6 +36,7 @@ public class SharedStepsContext {
     private PurposeCommonContext purposeCommonContext;
     private EServicesCommonContext eServicesCommonContext;
     private DelegationCommonContext delegationCommonContext;
+    private AttributeCommonContext attributeCommonContext;
 
     public SharedStepsContext(
         HttpCallExecutor httpCallExecutor,
@@ -52,6 +54,7 @@ public class SharedStepsContext {
         purposeCommonContext = new PurposeCommonContext();
         eServicesCommonContext = new EServicesCommonContext();
         delegationCommonContext = new DelegationCommonContext();
+        attributeCommonContext = new AttributeCommonContext();
     }
 
     public String getXCorrelationId() {
