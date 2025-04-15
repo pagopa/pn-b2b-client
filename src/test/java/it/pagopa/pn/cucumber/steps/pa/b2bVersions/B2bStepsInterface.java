@@ -75,4 +75,11 @@ public interface B2bStepsInterface {
 
     void checkNumberOfTimelineElementsFromData(String timelineEventCategory, Integer size, Map<String, String> data);
 
+    void waitForScheduleRefinement(Map<String, String> dataMap) throws InterruptedException;
+
+    void waitForSecondAttempt(String timelineEventCategory, Map<String, String> dataMap) throws InterruptedException;
+
+    void checkOrdineEventiUnivoci(String category1, Boolean isSuccessivo, String category2);
+
+    void vieneSchedulatoIlPerfezionamento(String timelineEventCategory, Map<String, String> dataMap);
 }

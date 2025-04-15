@@ -34,6 +34,11 @@ public class ParameterTypes {
         return condition.equals("contiene");
     }
 
+    @ParameterType("uguale|successivo|precedente")
+    public static Boolean isSuccessivo(String condition) {
+        return condition.equals("uguale") ? null : condition.equals("successivo");
+    }
+
     @ParameterType("pari|superiore|inferiore")
     public static Boolean isSuperiore(String condition) {
         return condition.equals("pari") ? null : condition.equals("superiore");

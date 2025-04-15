@@ -981,6 +981,11 @@ public class SharedSteps {
         return timingConfigs.getWaitMillis() + secureRandom.nextInt(WAIT_UPPER_BOUND);
     }
 
+    /**
+     * Usati solo dalle classi che implementano B2bStepsInterface (prima in AvanzamentoNotificheB2bSteps)
+     * TODO: si potrebbero estrapolare da SharedSteps e mettere in una classe di utility a parte
+     */
+
     public Duration getSchedulingDaysSuccessDigitalRefinement() {
         if (timingConfigs.getSchedulingDaysSuccessDigitalRefinement() == null) {
             return DURATION_DIGITAL_REFINEMENT_DEFAULT_SUCCESS;
@@ -1080,6 +1085,7 @@ public class SharedSteps {
         return groups;
     }
 
+
     public String getTimelineEventId(String timelineEventCategory, String iun, DataTest dataFromTest) {
         EventId event = getEventId(iun, dataFromTest);
         return switch (timelineEventCategory) {
@@ -1143,10 +1149,9 @@ public class SharedSteps {
     public List<TimelineElementV26> getTimelineElementsByEventId(String timelineEventCategory, DataTest dataFromTest) {
         FullSentNotificationV26 fullSentNotification = getSentNotificationLastVersion();
         List<TimelineElementV26> timelineElementList = fullSentNotification.getTimeline();
-        String iun = getNotificationIun();//TODO MATTEO TEST
         if (dataFromTest != null && dataFromTest.getTimelineElement() != null) {
             // get timeline event id
-            String timelineEventId = getTimelineEventId(timelineEventCategory, iun, dataFromTest);
+            String timelineEventId = getTimelineEventId(timelineEventCategory, notificationIun, dataFromTest);
             if (timelineEventCategory.equals(TimelineElementCategoryV26.SEND_ANALOG_PROGRESS.getValue())
                     || timelineEventCategory.equals(TimelineElementCategoryV26.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS.getValue())) {
                 TimelineElementV26 timelineElementFromTest = dataFromTest.getTimelineElement();
