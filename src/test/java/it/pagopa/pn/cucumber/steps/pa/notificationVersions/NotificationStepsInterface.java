@@ -33,6 +33,10 @@ public interface NotificationStepsInterface {
 
     String sendNotification(int wait, String status, String pollingStrategy);
 
+    /**
+     * Metodo chiave, in quanto è qui che viene valorizzato lo IUN della notifica generata che viene poi salvato in SharedSteps
+     * su cui poggia la quasi totalità delle logiche dell'applicativo
+     */
     Object uploadNotification() throws IOException;
 
     void setIuvToRecipient(Integer posizione, String iuvGPD);

@@ -266,6 +266,21 @@ public class SharedSteps {
     }
 
     /**
+     * Effettua un controllo sulla versione che si sta utilizzando, per verificare se è pari o superiore
+     * a quella in uso.
+     * Sarebbe buona prassi iniziare tutti gli scenari futuri con questo step, in modo che se mai
+     * si decidesse per qualche motivo di runnare un NRT con una versione precedente, i test coinvolti
+     * verrebbero skippati senza essere conteggiati come fail.
+     */
+    @Given("il test è effettuabile con API versione {string} o superiore")
+    public void checkApiVersion(String version) {
+        NotificationVersion notificationVersion = getNotificationVersion(version);
+        assumeThat(notificationVersion.getValue())
+                .as("Test skipped: la versione")
+                .isGreaterThanOrEqualTo(versionUsed.getValue());
+    }
+
+    /**
      * Per test di utilità generale, che non si prefiggono di testare qualcosa legato a una versione specifica, usare questo step
      */
     @Given("viene generata una nuova notifica")
@@ -432,9 +447,8 @@ public class SharedSteps {
     public void laNotificaVieneInviataOkAndCancelled(String paName) {
         setPaAndSenderTaxId(paName);
         getNotificationStepInterface().sendNotification(WAIT_EXTRA_RAPID, NOTIFICATION_STATUS_ACCEPTED, VALIDATION_STATUS);
-        String iun = getNotificationIun();
         Assertions.assertDoesNotThrow(() -> {
-            RequestStatus resp = Assertions.assertDoesNotThrow(() -> b2bClient.notificationCancellation(iun));
+            RequestStatus resp = Assertions.assertDoesNotThrow(() -> b2bClient.notificationCancellation(notificationIun));
 
             assertThat(resp).as("La response non dev'essere null").isNotNull();
             assertThat(resp.getDetails()).as("I details della response non devono essere null").isNotNull();
@@ -460,10 +474,9 @@ public class SharedSteps {
     @And("la notifica {string} essere annullata dal sistema tramite codice IUN dal comune {string}")
     public void notificationCanBeCanceledWithIunByComune(String annullabile, String paName) {
         setPA(paName);
-        String iun = getNotificationIun();
         if (annullabile.equalsIgnoreCase("può")) {
             Assertions.assertDoesNotThrow(() -> {
-                RequestStatus response = b2bClient.notificationCancellation(iun);
+                RequestStatus response = b2bClient.notificationCancellation(notificationIun);
                 Assertions.assertNotNull(response);
                 Assertions.assertNotNull(response.getDetails());
                 Assertions.assertFalse(response.getDetails().isEmpty());
@@ -471,7 +484,7 @@ public class SharedSteps {
             });
         } else {
             try {
-                b2bClient.notificationCancellation(iun);
+                b2bClient.notificationCancellation(notificationIun);
             } catch (HttpStatusCodeException exception) {
                 this.notificationError = exception;
             }
@@ -486,7 +499,7 @@ public class SharedSteps {
     @And("viene effettuato recupero stato della notifica dal comune {string} con la versione {string}")
     public void getNotificationRequestStatus(String paName, String version) {
         setPaAndSenderTaxId(paName);
-        String requestId = Base64Utils.encodeToString(getNotificationIun().getBytes());
+        String requestId = Base64Utils.encodeToString(notificationIun.getBytes());
         NotificationVersion notificationVersion = getNotificationVersion(version);
         getNotificationStepInterface(notificationVersion).getNotificationRequestStatus(requestId);
     }
@@ -709,7 +722,7 @@ public class SharedSteps {
 
     @Then("stampa log dello IUN della notifica {string} con allegato {string} su comune {string}")
     public void stampaLogDelloIUNDellaNotificaConAllegatoSuComune(String notificationType, String attachment, String municipality) {
-        log.info("notifica STAMPA COLORI IUN: {}, notifica: {}, allegato: {}, comune: {}", getNotificationIun(), notificationType, attachment, municipality);
+        log.info("notifica STAMPA COLORI IUN: {}, notifica: {}, allegato: {}, comune: {}", notificationIun, notificationType, attachment, municipality);
     }
 
     @Then("si verifica che la notifica non viene accettata causa {string}")
@@ -949,12 +962,12 @@ public class SharedSteps {
     private String decorateErrorMsg(String originalMessage) {
         return originalMessage +
                 "{VERSION: " + versionUsed + ", " +
-                "IUN: " + Optional.ofNullable(getNotificationIun()).orElse("not found") + " }";
+                "IUN: " + Optional.ofNullable(notificationIun).orElse("not found") + " }";
     }
 
     public void throwAssertionFailedErrorWithAmountGDPAndIUN(AssertionFailedError assertionFailedError, Integer amountGDP) {
         String message = assertionFailedError.getMessage() +
-                "{IUN: " + getNotificationIun() + ", amountGDP " + (amountGDP == null ? "NULL" : amountGDP.toString()) + "}";
+                "{IUN: " + notificationIun + ", amountGDP " + (amountGDP == null ? "NULL" : amountGDP.toString()) + "}";
         throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
     }
 

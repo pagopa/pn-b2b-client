@@ -35,8 +35,8 @@ Feature: verifica compatibilità tra v1.1 a v2.1
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     When la notifica può essere annullata dal sistema tramite codice IUN
-    When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
-    Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST" con la versione "più recente"
+    Then vengono letti gli eventi fino allo stato della notifica "CANCELLED" con la versione "più recente"
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V1
 
 

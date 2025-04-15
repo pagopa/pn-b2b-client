@@ -14,6 +14,11 @@ import java.time.temporal.ChronoUnit;
 // i nomi delle PA, le versioni di webhook e notifica, le operazioni che si possono svolgere su un'apiKey (rotate, block, create...)
 public class ParameterTypes {
 
+    @ParameterType("esista|non esista")
+    public static boolean exists(String condition) {
+        return condition.equals("esista");
+    }
+
     @ParameterType("abbia|non abbia")
     public static boolean has(String value) {
         return value.equals("abbia");

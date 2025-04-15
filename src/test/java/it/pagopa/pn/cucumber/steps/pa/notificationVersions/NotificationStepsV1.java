@@ -20,7 +20,6 @@ import org.springframework.util.Base64Utils;
 import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static it.pagopa.pn.client.b2b.pa.PnPaB2bUtils.*;
 import static it.pagopa.pn.cucumber.steps.SharedSteps.threadWait;
@@ -160,7 +159,6 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
 
     @Override
     public String sendNotification(int wait, String status, String pollingStrategy) {
-        AtomicReference<String> newNotificationIun = new AtomicReference<>(null);
         try {
             Assertions.assertDoesNotThrow(() -> {
                 notificationResponse = (NewNotificationResponse) uploadNotification();
@@ -168,29 +166,24 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
                     threadWait(wait);
                     FullSentNotification fullSentNotification = waitForRequestAccepted(notificationResponse, pollingStrategy);
                     threadWait(wait);
-                    Assertions.assertNotNull(fullSentNotification);
-                    newNotificationIun.set(fullSentNotification.getIun());
+                    assertThat(fullSentNotification).as("La fullSentNotification della notifica appena creata non dev'essere null").isNotNull();
                 } else if (status.equalsIgnoreCase(NOTIFICATION_STATUS_REFUSED)) {
                     String errorCode = waitForRequestRefused(notificationResponse, pollingStrategy);
                     sharedSteps.setErrorCode(errorCode);
                     threadWait(wait);
-                    Assertions.assertFalse(errorCode.isEmpty());
-                    newNotificationIun.set(new String(Base64Utils.decodeFromString(notificationResponse.getNotificationRequestId())));
+                    assertThat(errorCode).as("Il codice di errore non dev'essere vuoto").isNotEmpty();
                 } else if (status.equalsIgnoreCase(NOTIFICATION_STATUS_CANCELLED)) {
-                    newNotificationIun.set(new String(Base64Utils.decodeFromString(notificationResponse.getNotificationRequestId())));
-                    RequestStatus response = sharedSteps.getB2bClient().notificationCancellation(newNotificationIun.get());
-                    Assertions.assertNotNull(response);
-                    Assertions.assertNotNull(response.getDetails());
-                    Assertions.assertFalse(response.getDetails().isEmpty());
-                    Assertions.assertTrue("NOTIFICATION_CANCELLATION_ACCEPTED".equalsIgnoreCase(response.getDetails().get(0).getCode()));
+                    RequestStatus response = sharedSteps.getB2bClient().notificationCancellation(sharedSteps.getNotificationIun());
+                    assertThat(response).as("La response della chiamata di cancellazione non dev'essere null").isNotNull();
+                    assertThat(response.getDetails()).as("I details della response della chiamata di cancellazione non devono essere null").isNotNull();
+                    assertThat(response.getDetails()).as("I details della response della chiamata di cancellazione non devono essere vuoti").isNotEmpty();
+                    assertThat(response.getDetails().get(0).getCode()).isEqualToIgnoringCase("NOTIFICATION_CANCELLATION_ACCEPTED");
                     boolean refused = waitForRequestNotRefused(notificationResponse, pollingStrategy);
                     threadWait(wait);
                     Assertions.assertFalse(refused);
                 }
             });
-            assertThat(newNotificationIun.get()).as("Lo IUN generato in fase di invio notifica non può essere nullo").isNotNull();
-            sharedSteps.setNotificationIun(newNotificationIun.get());
-            return newNotificationIun.get();
+            return sharedSteps.getNotificationIun();
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
                     "{RequestID: " + (notificationResponse == null ? "NULL" : notificationResponse.getNotificationRequestId()) + " }";
@@ -214,6 +207,10 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
         }
         log.info(NEW_NOTIFICATION_REQUEST, notificationRequest);
         NewNotificationResponse response = sharedSteps.getB2bClient().sendNewNotificationV1(notificationRequest);
+        String iun = new String(Base64Utils.decodeFromString(response.getNotificationRequestId()));
+        assertThat(iun).as("Lo IUN generato in fase di invio notifica non può essere nullo").isNotNull();
+        log.info(NEW_NOTIFICATION_IUN, iun);
+        sharedSteps.setNotificationIun(iun);
         log.info(NEW_NOTIFICATION_REQUEST_RESPONSE, response);
         notificationResponse = response;
         return response;
