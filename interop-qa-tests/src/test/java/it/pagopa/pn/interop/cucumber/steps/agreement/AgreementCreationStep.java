@@ -1,10 +1,13 @@
 package it.pagopa.pn.interop.cucumber.steps.agreement;
 
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
@@ -13,6 +16,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescr
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
 
 import java.util.List;
@@ -136,5 +140,49 @@ public class AgreementCreationStep {
                 res -> res.getState().getValue().equals(agreementState),
                 String.format("The agreement is not in the expected state %s", agreementState)
         );
+    }
+
+    @When("l'utente crea una richiesta di fruizione in bozza per (la penultima)(l'ultima) versione di quell'e-service")
+    public void createDraftAgreementRequestForLatestVersion() {
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getAgreementClient().createAgreement(
+                        new AgreementPayload()
+                                .eserviceId(sharedStepsContext.getEServicesCommonContext().getEserviceId())
+                                .descriptorId(sharedStepsContext.getEServicesCommonContext().getDescriptorId())
+                ));
+    }
+
+    @Given("{string} ha creato un attributo certificato e non lo ha assegnato a {string}")
+    public void tenantHasAlreadyCreatedCertifiedAttributeNotAssigned(String certifier, String tenantType) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(certifier, null));
+
+        sharedStepsContext.getAttributeCommonContext().setAttributeId(
+                dataPreparationService.createAttribute(AttributeKind.CERTIFIED, null)
+        );
+    }
+
+    @Given("{string} ha già creato un e-service in stato {string} che richiede quell'attributo certificato con approvazione {agreementApprovalPolicy}")
+    public void createEServiceWithCertifiedAttributeApproval(String tenantType, String descriptorState, AgreementApprovalPolicy agreementApprovalPolicy) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(new EServiceSeed(), new UpdateEServiceDescriptorSeed()
+                .attributes(new DescriptorAttributesSeed().addCertifiedItem(
+                        List.of(new DescriptorAttributeSeed().id(sharedStepsContext.getAttributeCommonContext().getAttributeId()).explicitAttributeVerification(true))))
+                .agreementApprovalPolicy(agreementApprovalPolicy));
+
+        dataPreparationService.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(), eServiceDescriptor.getDescriptorId(),
+                EServiceDescriptorState.valueOf(descriptorState), false);
+
+        sharedStepsContext.getEServicesCommonContext().setEserviceId(eServiceDescriptor.getEServiceId());
+        sharedStepsContext.getEServicesCommonContext().setDescriptorId(eServiceDescriptor.getDescriptorId());
+    }
+
+    @Given("{string} ha già pubblicato una nuova versione per quell'e-service")
+    public void tenantHasAlreadyPublishedNewEServiceVersion(String tenantType) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        EServicesCommonContext eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
+        eServicesCommonContext.setOldDescriptorId(eServicesCommonContext.getDescriptorId());
+        eServicesCommonContext.setDescriptorId(dataPreparationService.createNextDraftDescriptor(eServicesCommonContext.getEserviceId()));
+        dataPreparationService.bringDescriptorToGivenState(eServicesCommonContext.getEserviceId(), eServicesCommonContext.getDescriptorId(),
+                EServiceDescriptorState.PUBLISHED, false);
     }
 }

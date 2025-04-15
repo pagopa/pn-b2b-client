@@ -24,7 +24,7 @@ public class DelegationParameterTypes {
     public AgreementApprovalPolicy agreementApprovalPolicy(String agreementApprovalPolicy) {
         return switch (agreementApprovalPolicy) {
             case "manuale" -> MANUAL;
-            case "automatico" -> AUTOMATIC;
+            case "automatico", "automatica" -> AUTOMATIC;
             default ->
                     throw new IllegalArgumentException("Invalid approve policy: " + agreementApprovalPolicy);
         };

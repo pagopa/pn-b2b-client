@@ -8,12 +8,14 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.Agreement;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementRejectionPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementSubmissionPayload;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganizations;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import java.io.File;
 import java.util.UUID;
 
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -75,6 +77,21 @@ public class AgreementClientImpl implements IAgreementClient {
     @Override
     public File addAgreementConsumerDocument(String xCorrelationId, UUID agreementId, String name, String prettyName, org.springframework.core.io.Resource doc) {
         return agreementsApi.addAgreementConsumerDocument(xCorrelationId, agreementId, name, prettyName, doc);
+    }
+
+    @Override
+    public CreatedResource cloneAgreement(String xCorrelationId, UUID agreementId) {
+        return agreementsApi.cloneAgreement(xCorrelationId, agreementId);
+    }
+
+    @Override
+    public ResponseEntity<CompactOrganizations> getAgreementConsumers(String xCorrelationId, Integer offset, Integer limit, String q) {
+        return agreementsApi.getAgreementConsumersWithHttpInfo(xCorrelationId, offset, limit, q);
+    }
+
+    @Override
+    public void deleteAgreement(String xCorrelationId, UUID agreementId) {
+        agreementsApi.deleteAgreement(xCorrelationId, agreementId);
     }
 
     @Override
