@@ -705,6 +705,17 @@ public class DataPreparationService {
         );
     }
 
+    public void revokeCertifiedAttributeToTenant(UUID tenantId, UUID attributeId) {
+        httpCallExecutor.performCall(() -> tenantsApi.revokeCertifiedAttribute(tenantId, attributeId));
+        assertValidResponse();
+        pollingService.makePolling(
+                () -> tenantsApi.getCertifiedAttributes(tenantId),
+                res -> res.getAttributes().stream().anyMatch(attr -> attr.getId().equals(attributeId) && attr.getRevocationTimestamp() != null),
+                "There was an error while revoking the certified atrtibute!"
+        );
+    }
+
+
     private Resource createBlobFile(String fileNameToCreate) {
         Path filePath = Paths.get("src/main/resources/interface.yaml");
         byte[] fileContent = null;

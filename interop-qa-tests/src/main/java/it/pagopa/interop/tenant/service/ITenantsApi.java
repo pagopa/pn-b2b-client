@@ -27,4 +27,6 @@ public interface ITenantsApi extends SettableBearerToken {
     void verifyVerifiedAttribute(String xCorrelationId, UUID tenantId, VerifiedTenantAttributeSeed verifiedTenantAttributeSeed);
 
     VerifiedAttributesResponse getVerifiedAttributes(String xCorrelationId, UUID tenantId);
+
+    void revokeCertifiedAttribute(UUID tenantId, UUID attributeId);
 }

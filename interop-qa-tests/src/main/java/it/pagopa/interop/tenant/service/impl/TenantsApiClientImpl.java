@@ -85,6 +85,11 @@ public class TenantsApiClientImpl implements ITenantsApi {
     }
 
     @Override
+    public void revokeCertifiedAttribute(UUID tenantId, UUID attributeId) {
+        tenantsApi.revokeCertifiedAttribute(tenantId, attributeId);
+    }
+
+    @Override
     public void setBearerToken(String bearerToken) {
         this.tenantsApi.setApiClient(createApiClient(bearerToken));
     }

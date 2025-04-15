@@ -1,12 +1,21 @@
 package it.pagopa.pn.interop.cucumber.steps.agreement;
 
 import io.cucumber.java.en.Given;
+import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
+
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -91,5 +100,41 @@ public class AgreementCreationStep {
         sharedStepsContext.setAgreementId(agreementId);
 
         dataPreparationService.submitAgreement(agreementId, AgreementState.PENDING);
+    }
+
+    @Given("{string} ha già creato un e-service in stato {string} che richiede quell'attributo certificato con approvazione {agreementApprovalPolicy}")
+    public void tenantHasAlreadyCreateEServiceWhichRequireCertifiedAttribute(String tenantType, String descriptorState, AgreementApprovalPolicy agreementApprovalPolicy) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+
+        EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(new EServiceSeed(),
+                new UpdateEServiceDescriptorSeed()
+                        .attributes(new DescriptorAttributesSeed()
+                                .addCertifiedItem(List.of(new DescriptorAttributeSeed()
+                                .id(sharedStepsContext.getAttributeCommonContext().getAttributeId())
+                                .explicitAttributeVerification(true)))
+                        )
+                        .agreementApprovalPolicy(agreementApprovalPolicy)
+        );
+        dataPreparationService.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(), eServiceDescriptor.getDescriptorId(),
+                EServiceDescriptorState.valueOf(descriptorState), false);
+        sharedStepsContext.getEServicesCommonContext().setEserviceId(eServiceDescriptor.getEServiceId());
+        sharedStepsContext.getEServicesCommonContext().setDescriptorId(eServiceDescriptor.getDescriptorId());
+    }
+
+    @Given("{string} ha già revocato quell'attributo a {string}")
+    public void tenantHasAlreadyRevokedAttributeToSpecificTenant(String certifier, String tenantType) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(certifier, null));
+        UUID tenantId = identityService.getOrganizationId(tenantType);
+
+        dataPreparationService.revokeCertifiedAttributeToTenant(tenantId, sharedStepsContext.getAttributeCommonContext().getAttributeId());
+    }
+
+    @Given("la richiesta di fruizione è passata in stato {string}")
+    public void verifyAgreementState(String agreementState) {
+        sharedStepsContext.getPollingService().makePolling(
+                () -> clientTokenConfigurator.getAgreementClient().getAgreementById(sharedStepsContext.getXCorrelationId(), sharedStepsContext.getAgreementId()),
+                res -> res.getState().getValue().equals(agreementState),
+                String.format("The agreement is not in the expected state %s", agreementState)
+        );
     }
 }

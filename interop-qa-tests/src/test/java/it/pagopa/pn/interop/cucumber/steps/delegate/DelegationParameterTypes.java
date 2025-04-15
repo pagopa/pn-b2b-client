@@ -20,7 +20,7 @@ public class DelegationParameterTypes {
         };
     }
 
-    @ParameterType("manuale|automatico")
+    @ParameterType("manuale|automatic[oa]")
     public AgreementApprovalPolicy agreementApprovalPolicy(String agreementApprovalPolicy) {
         return switch (agreementApprovalPolicy) {
             case "manuale" -> MANUAL;
