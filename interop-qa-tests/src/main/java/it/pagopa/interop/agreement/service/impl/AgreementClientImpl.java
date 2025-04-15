@@ -90,6 +90,11 @@ public class AgreementClientImpl implements IAgreementClient {
     }
 
     @Override
+    public File getAgreementConsumerDocument(String xCorrelationId, UUID agreementId, UUID documentId) {
+        return agreementsApi.getAgreementConsumerDocument(xCorrelationId, agreementId, documentId);
+    }
+
+    @Override
     public void deleteAgreement(String xCorrelationId, UUID agreementId) {
         agreementsApi.deleteAgreement(xCorrelationId, agreementId);
     }

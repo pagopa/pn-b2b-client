@@ -23,6 +23,7 @@ public interface IAgreementClient extends SettableBearerToken {
     File addAgreementConsumerDocument(String xCorrelationId, UUID agreementId, String name, String prettyName, org.springframework.core.io.Resource doc);
     CreatedResource cloneAgreement(String xCorrelationId, UUID agreementId);
     ResponseEntity<CompactOrganizations> getAgreementConsumers(String xCorrelationId, Integer offset, Integer limit, String q);
+    File getAgreementConsumerDocument(String xCorrelationId, UUID agreementId, UUID documentId);
     void deleteAgreement(String xCorrelationId, UUID agreementId);
     void removeAgreementConsumerDocument(String xCorrelationId, UUID agreementId, UUID documentId);
 
