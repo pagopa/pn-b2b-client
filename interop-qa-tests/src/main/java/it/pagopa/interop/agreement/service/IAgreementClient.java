@@ -24,5 +24,7 @@ public interface IAgreementClient extends SettableBearerToken {
     CreatedResource cloneAgreement(String xCorrelationId, UUID agreementId);
     ResponseEntity<CompactOrganizations> getAgreementConsumers(String xCorrelationId, Integer offset, Integer limit, String q);
     void deleteAgreement(String xCorrelationId, UUID agreementId);
+    void removeAgreementConsumerDocument(String xCorrelationId, UUID agreementId, UUID documentId);
+
 
 }

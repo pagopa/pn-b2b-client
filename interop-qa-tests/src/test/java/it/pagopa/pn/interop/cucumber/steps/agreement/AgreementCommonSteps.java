@@ -15,6 +15,7 @@ import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
@@ -179,5 +180,15 @@ public class AgreementCommonSteps {
         dataPreparationService.declareDeclaredAttribute(tenantId, attributeId);
         sharedStepsContext.getAttributeCommonContext().getRequiredDeclaredAttributes().add(List.of(attributeId));
         sharedStepsContext.getAttributeCommonContext().setAttributeId(attributeId);
+    }
+
+    @Given("{string} ha già creato una richiesta di fruizione in stato {string} con un documento allegato")
+    public void tenantHasAlreadyCreatedAgreementWithSpecificStateAndAttachments(String consumer, String agreementState) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(consumer, null));
+        Map<String, UUID> result = dataPreparationService.createAgreementWithGivenStateAndDocument(
+                AgreementState.fromValue(agreementState), sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                sharedStepsContext.getEServicesCommonContext().getDescriptorId());
+        sharedStepsContext.setAgreementId(result.get("agreementId"));
+        sharedStepsContext.getAgreementCommonContext().setDocumentId(result.get("descriptorId"));
     }
 }

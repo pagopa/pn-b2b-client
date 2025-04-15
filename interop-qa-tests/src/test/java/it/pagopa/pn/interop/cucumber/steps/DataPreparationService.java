@@ -12,6 +12,7 @@ import it.pagopa.interop.attribute.service.IAttributeApiClient;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.IProducerClient;
 import it.pagopa.interop.authorization.service.utils.PollingService;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Agreement;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementRejectionPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
@@ -235,6 +236,18 @@ public class DataPreparationService {
         };
     }
 
+    public Map<String, UUID> createAgreementWithGivenStateAndDocument(AgreementState agreementState, UUID eserviceId, UUID descriptorId) {
+        try {
+            Resource doc = createBlobFile("src/main/resources/dummy.pdf", "documento-test-qa.pdf");
+            UUID agreementId = createAgreementWithGivenState(agreementState, eserviceId, descriptorId, null, doc.getFile());
+            Agreement agreement = agreementClient.getAgreementById(sharedStepsContext.getXCorrelationId(), agreementId);
+            UUID documentId = agreement.getConsumerDocuments().get(0).getId();
+            return Map.of("agreementId", agreementId, "documentId", documentId);
+        } catch (IOException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
+
     public UUID createAndCheckAgreement(UUID eServiceID, UUID descriptorId) {
         return createAndCheckAgreement(eServiceID, descriptorId, null);
     }
@@ -455,7 +468,7 @@ public class DataPreparationService {
 
     public UUID addDocumentToDescriptor(UUID eServiceId, UUID descriptorId) {
         String prettyName = String.format("Documento_test_qa-%d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE));
-        Resource resource = createBlobFile("documento-test-qa.pdf");
+        Resource resource = createBlobFile("src/main/resources/interface.yaml", "documento-test-qa.pdf");
 
         httpCallExecutor.performCall(() -> eServiceClient.createEServiceDocument(sharedStepsContext.getXCorrelationId(), eServiceId, descriptorId, "DOCUMENT", prettyName, resource));
         assertValidResponse();
@@ -470,7 +483,7 @@ public class DataPreparationService {
     }
 
     public void addInterfaceToDescriptor(UUID eServiceId, UUID descriptorId) {
-        Resource resource = createBlobFile("interface.yaml");
+        Resource resource = createBlobFile("src/main/resources/interface.yaml", "interface.yaml");
         httpCallExecutor.performCall(() -> eServiceClient.createEServiceDocument(sharedStepsContext.getXCorrelationId(), eServiceId, descriptorId, "INTERFACE", "Interfaccia", resource));
         assertValidResponse();
 
@@ -716,8 +729,8 @@ public class DataPreparationService {
     }
 
 
-    private Resource createBlobFile(String fileNameToCreate) {
-        Path filePath = Paths.get("src/main/resources/interface.yaml");
+    private Resource createBlobFile(String blobFilePath, String fileNameToCreate) {
+        Path filePath = Paths.get(blobFilePath);
         byte[] fileContent = null;
         try {
             fileContent = Files.readAllBytes(filePath);

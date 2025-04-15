@@ -95,6 +95,11 @@ public class AgreementClientImpl implements IAgreementClient {
     }
 
     @Override
+    public void removeAgreementConsumerDocument(String xCorrelationId, UUID agreementId, UUID documentId) {
+        agreementsApi.removeAgreementConsumerDocument(xCorrelationId, agreementId, documentId);
+    }
+
+    @Override
     public void setBearerToken(String bearerToken) {
         this.agreementsApi.setApiClient(createApiClient(bearerToken));
     }
