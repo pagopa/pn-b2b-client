@@ -150,15 +150,15 @@ public class RicezioneNotificheWebSteps {
     @And("lato api l'elemento di timeline della notifica {string} con deliveryDetailCode {string} non è visibile")
     public void timelineEventWithCategoryAndDeliveryDetailCodeNotPresent(String category, String deliveryDetailCode) {
 
-        Assertions.assertNull(getTimelineElementV26(category, deliveryDetailCode));
+        Assertions.assertNull(getTimelineElement(category, deliveryDetailCode));
     }
 
     @And("lato api l'elemento di timeline della notifica {string} con deliveryDetailCode {string} è visibile")
     public void timelineEventWithCategoryAndDeliveryDetailCodePresent(String category, String deliveryDetailCode) {
-        Assertions.assertNotNull(getTimelineElementV26(category, deliveryDetailCode));
+        Assertions.assertNotNull(getTimelineElement(category, deliveryDetailCode));
     }
 
-    private TimelineElementV27 getTimelineElementV26(String category, String deliveryDetailCode) {
+    private TimelineElementV27 getTimelineElement(String category, String deliveryDetailCode) {
         fullNotification.getTimeline().forEach(x -> log.info(x.toString()));
         return fullNotification.getTimeline().stream()
                 .filter(x -> x.getCategory().toString().equals(category) &&

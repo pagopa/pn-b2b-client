@@ -1,6 +1,6 @@
 package it.pagopa.pn.cucumber.utils;
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV27;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class DataTest {
-    private TimelineElementV23 timelineElement;
+    private TimelineElementV27 timelineElement;
     private boolean isFirstSendRetry;
     private Integer progressIndex;
     private Integer pollingTime;

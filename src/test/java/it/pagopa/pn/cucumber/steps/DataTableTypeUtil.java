@@ -717,12 +717,12 @@ public class DataTableTypeUtil {
         }
 
         DataTest dataTest = new DataTest();
-        TimelineElementV23 timelineElement = new TimelineElementV23()
-                .legalFactsIds(getListValue(LegalFactsId.class, data, LEGAL_FACT_IDS.key))
-                .details(getValue(data, DETAILS.key) == null ? null : new TimelineElementDetailsV23()
+        TimelineElementV27 timelineElement = new TimelineElementV27()
+                .legalFactsIds(getListValue(LegalFactsIdV20.class, data, LEGAL_FACT_IDS.key))
+                .details(getValue(data, DETAILS.key) == null ? null : new TimelineElementDetailsV27()
                         .recIndex(recIndex != null ? Integer.parseInt(recIndex) : null)
                         .digitalAddress(getObjValue(DigitalAddress.class, data, DETAILS_DIGITAL_ADDRESS.key))
-                        .refusalReasons(getListValue(NotificationRefusedErrorV23.class, data, DETAILS_REFUSAL_REASONS.key))
+                        .refusalReasons(getListValue(NotificationRefusedErrorV27.class, data, DETAILS_REFUSAL_REASONS.key))
                         .generatedAarUrl(getValue(data, DETAILS_GENERATED_AAR_URL.key))
                         .responseStatus(responseStatus != null ? ResponseStatus.valueOf(responseStatus) : null)
                         .digitalAddressSource(digitalAddressSource != null ? DigitalAddressSource.valueOf(digitalAddressSource) : null)
@@ -736,6 +736,7 @@ public class DataTableTypeUtil {
                         .physicalAddress(getObjValue(PhysicalAddress.class, data, DETAILS_PHYSICALADDRESS.key))
                         .analogCost(analogCost != null ? Integer.parseInt(analogCost) : null)
                         .delegateInfo(getObjValue(DelegateInfo.class, data, DETAILS_DELEGATE_INFO.key))
+                        .registry(getValue(data, REGISTRY.key))
                 );
 
         // IMPORTANT: no empty data check; enrich with new checks if it is needed

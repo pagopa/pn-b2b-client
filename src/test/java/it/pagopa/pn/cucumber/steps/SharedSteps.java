@@ -1186,8 +1186,8 @@ public class SharedSteps {
     }
 
     private static EventId getEventId(String iun, DataTest dataFromTest) {
-        TimelineElementV23 timelineElement = dataFromTest.getTimelineElement();
-        TimelineElementDetailsV23 timelineElementDetails = timelineElement.getDetails();
+        TimelineElementV27 timelineElement = dataFromTest.getTimelineElement();
+        TimelineElementDetailsV27 timelineElementDetails = timelineElement.getDetails();
         DigitalAddress digitalAddress = timelineElementDetails == null ? null : timelineElementDetails.getDigitalAddress();
         DigitalAddressSource digitalAddressSource = timelineElementDetails == null ? null : timelineElementDetails.getDigitalAddressSource();
 
@@ -1217,8 +1217,8 @@ public class SharedSteps {
             // get timeline event id
             String timelineEventId = getTimelineEventId(timelineEventCategory, iun, dataFromTest);
             if (timelineEventCategory.equals(SEND_ANALOG_PROGRESS) || timelineEventCategory.equals(SEND_SIMPLE_REGISTERED_LETTER_PROGRESS)) {
-                TimelineElementV23 timelineElementFromTest = dataFromTest.getTimelineElement();
-                TimelineElementDetailsV23 timelineElementDetails = timelineElementFromTest.getDetails();
+                TimelineElementV27 timelineElementFromTest = dataFromTest.getTimelineElement();
+                TimelineElementDetailsV27 timelineElementDetails = timelineElementFromTest.getDetails();
                 return timelineElementList.stream()
                         .filter(
                                 elem -> Objects.requireNonNull(elem.getElementId()).startsWith(timelineEventId)
