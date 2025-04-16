@@ -1,14 +1,13 @@
 package it.pagopa.pn.interop.cucumber.steps.common;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -19,5 +18,4 @@ public class AttributeCommonContext {
     List<List<UUID>> requiredCertifiedAttributes = new ArrayList<>();
     List<List<UUID>> requiredDeclaredAttributes = new ArrayList<>();
     List<List<UUID>> requiredVerifiedAttributes = new ArrayList<>();
-
 }

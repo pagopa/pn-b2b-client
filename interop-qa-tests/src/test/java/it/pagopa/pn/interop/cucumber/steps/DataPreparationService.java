@@ -55,11 +55,9 @@ import it.pagopa.interop.purpose.domain.TEServiceMode;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,7 +70,6 @@ import javax.annotation.Nullable;
 
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.FileSystemResource;
@@ -94,6 +91,7 @@ public class DataPreparationService {
     private final HttpCallExecutor httpCallExecutor;
     private final RiskAnalysisDataInitializer riskAnalysisDataInitializer;
     private final SharedStepsContext sharedStepsContext;
+    private final CommonUtils commonUtils;
     private final BlobFileCreator blobFileCreator;
     public static final String ERROR_RETRIEVING_AGREEMENT = "There was an error while retrieving the agreement by ID!";
     public static final String ERROR_RETRIEVING_PRODUCER_DESCRIPTOR = "There was an error while retrieving the producer e-service descriptor";
@@ -110,7 +108,8 @@ public class DataPreparationService {
     public DataPreparationService(ClientTokenConfigurator clientTokenConfigurator,
                                   RiskAnalysisDataInitializer riskAnalysisDataInitializer,
                                   SharedStepsContext sharedStepsContext,
-                                  BlobFileCreator blobFileCreator) {
+                                  BlobFileCreator blobFileCreator,
+                                  CommonUtils commonUtils) {
         this.authorizationClient = clientTokenConfigurator.getAuthorizationClient();
         this.agreementClient = clientTokenConfigurator.getAgreementClient();
         this.attributeApiClient = clientTokenConfigurator.getAttributeApiClient();
@@ -123,6 +122,7 @@ public class DataPreparationService {
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
         this.riskAnalysisDataInitializer = riskAnalysisDataInitializer;
+        this.commonUtils = commonUtils;
     }
 
     public UUID createClient(String clientKind, ClientSeed partialClientSeed) {
@@ -321,7 +321,7 @@ public class DataPreparationService {
     }
 
     public UUID createAttribute(AttributeKind attributeKind, String name) {
-        String actualName = name != null ? null : String.format("new_attribute_%d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE));
+        String actualName = name == null ? String.format("new_attribute_%d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)) : name;
         switch (attributeKind) {
             case CERTIFIED -> httpCallExecutor.performCall(() -> attributeApiClient.createCertifiedAttribute(sharedStepsContext.getXCorrelationId(), new CertifiedAttributeSeed().description(DESCRIPTION_TEST).name(actualName)));
             case VERIFIED -> httpCallExecutor.performCall(() -> attributeApiClient.createVerifiedAttribute(sharedStepsContext.getXCorrelationId(), new AttributeSeed().description(DESCRIPTION_TEST).name(actualName)));
@@ -734,8 +734,7 @@ public class DataPreparationService {
     }
 
     private void assertValidResponse() {
-        Assertions.assertFalse(httpCallExecutor.getClientResponse().isError(),
-                "Something went wrong: " + httpCallExecutor.getClientResponse().getReasonPhrase());
+        commonUtils.assertValidResponse();
     }
 
     private ClientSeed merge(ClientSeed defaultClientSeed, ClientSeed partialClientSeed) {
