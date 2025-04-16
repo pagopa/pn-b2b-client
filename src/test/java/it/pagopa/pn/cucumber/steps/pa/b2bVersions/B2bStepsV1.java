@@ -73,6 +73,19 @@ public class B2bStepsV1 implements B2bStepsInterface {
     }
 
     @Override
+    public void verifyTestCompatibilityWithVersion(String eventCategoryOrStatus, boolean isEventCategory) {
+        if (isEventCategory) {
+            assumeThat(TimelineElementCategory.valueOf(eventCategoryOrStatus))
+                    .as("Test skipped: TimelineElementCategory " + eventCategoryOrStatus + " non esiste per la versione " + TimelineElementCategory.class)
+                    .isNotNull();
+        } else {
+            assumeThat(NotificationStatus.valueOf(eventCategoryOrStatus))
+                    .as("Test skipped: NotificationStatus " + eventCategoryOrStatus + " non esiste per la versione " + NotificationStatus.class)
+                    .isNotNull();
+        }
+    }
+
+    @Override
     public void checkFullSentNotificationWithVersion(boolean isPresent, String timelineEventCategory) {
         FullSentNotification fullSentNotification = getFullSentNotificationVersioned();
         TimelineElement timelineElement = fullSentNotification.getTimeline().stream().filter(
@@ -860,7 +873,7 @@ public class B2bStepsV1 implements B2bStepsInterface {
         String iun = b2bSteps.getSharedSteps().getNotificationIun();
         FullSentNotification fullSentNotification = getFullSentNotificationVersioned();
         List<TimelineElement> timelineElementList = fullSentNotification.getTimeline();
-        String timelineEventId = dataTest.getTimelineEventId(iun, timelineEventCategory);
+        String timelineEventId = dataTest.getTimelineEventId(timelineEventCategory, iun);
         int actualNumber;
 
         if (timelineEventCategory.equals(SEND_ANALOG_PROGRESS)) {

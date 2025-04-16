@@ -58,6 +58,8 @@ Feature: avanzamento notifiche asincrone b2b PG - controllo costi
 
 
   @Async
+    #TODO 16/04/2025: il test fallisce perchè la notifica va in refused anziché accepted, pn-delivery lancia la seguente eccezione:
+    #Duplicated notification for creditorTaxId##noticeCode=77777777777##302060121423682502
   Scenario: [B2B_ASYNC_3_PG] Notifica mono PG-Verifica amount GPD per notifica ASYNC in stato “NOTIFICATION_CANCELLED“
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Gherkin Analogic" con Piva "00749900049"
     Given viene generata una nuova notifica
@@ -111,8 +113,9 @@ Feature: avanzamento notifiche asincrone b2b PG - controllo costi
     And viene effettuato il controllo del amount di GPD con amount notifica del utente 1
     Then vengono cancellate le posizioni debitorie
 
-
   @Async @mockNR
+    #TODO 16/04/2025: il test fallisce perchè la notifica va in refused anziché accepted, pn-delivery lancia la seguente eccezione:
+    #Duplicated notification for creditorTaxId##noticeCode=77777777777##302060121423682502
   Scenario: [B2B_ASYNC_5_PG] Notifica mono PG-Verifica amount GPD per notifica ASYNC fino a "SEND_ANALOG_DOMICILE" al secondo tentativo
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Gherkin Analogic" con Piva "05722930657"
     Given viene generata una nuova notifica

@@ -42,6 +42,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.AAR_GENERATION;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 
 @Slf4j
@@ -222,22 +223,28 @@ public class LegalFactContentVerifySteps {
     }
 
     private void assertLegalFactParserResponse(PnParserLegalFactResponse pnParserLegalFactResponse) {
-        Assertions.assertNotNull(pnParserLegalFactResponse);
-        Assertions.assertNotNull(pnParserLegalFactResponse.getResponse().getPnLegalFact());
+        assertThat(pnParserLegalFactResponse).as("La PnParserLegalFactResponse non dev'essere null").isNotNull();
+        assertThat(pnParserLegalFactResponse.getResponse().getPnLegalFact())
+                .as("Il LegalFact della PnParserLegalFactResponse non dev'essere null")
+                .isNotNull();
         log.info("PN_LEGAL_FACT:\n {}", pnParserLegalFactResponse.getResponse().getPnLegalFact());
     }
 
     private void assertLegalFactType(PnParserLegalFactResponse pnParserLegalFactResponse, String legalFactType) {
         String actual = pnParserLegalFactResponse.getResponse().getField().replace("ﬁ", "fi");
         String expected = IPnParserLegalFact.LegalFactTypeTitle.getTitleByType(IPnParserLegalFact.LegalFactType.valueOf(legalFactType));
-        Assertions.assertEquals(expected, actual);
+        assertThat(actual).as("Il title del del LegalFact non coincide col valore atteso").isEqualTo(expected);
     }
 
     private void assertLegalFactFieldValue(PnParserLegalFactResponse pnParserLegalFactResponse, String legalFactField, String legalFactValue) {
-        Assertions.assertNotNull(pnParserLegalFactResponse.getResponse().getField());
-        Assertions.assertEquals(legalFactValue, pnParserLegalFactResponse.getResponse().getField().replace("ﬁ", "fi"));
+        assertThat(pnParserLegalFactResponse.getResponse().getField())
+                .as("Il campo " + legalFactField + " non dev'essere null")
+                .isNotNull();
+        assertThat(pnParserLegalFactResponse.getResponse().getField().replace("ﬁ", "fi"))
+                .as("Il campo (ripulito dall'eventuale legatura tipografica) non coincide col valore atteso")
+                .isEqualTo(legalFactValue);
         String actual = pnParserLegalFactResponse.getResponse().getPnLegalFact().getAllLegalFactValues().fieldValue().get(IPnParserLegalFact.LegalFactField.valueOf(legalFactField)).replace("ﬁ", "fi");
-        Assertions.assertEquals(legalFactValue, actual);
+        assertThat(actual).as("Il campo " + legalFactField + " non coincide col valore atteso").isEqualTo(legalFactValue);
     }
 
     private void assertLegalFactDestinatario(PnParserLegalFactResponse pnParserLegalFactResponse, List<PnDestinatarioAnalogico> destinatarioAnalogicoList, int multiDestinatarioPosition) {
@@ -246,13 +253,26 @@ public class LegalFactContentVerifySteps {
 
         try {
             if (multiDestinatarioPosition == 0) {
-                Assertions.assertEquals(destinatarioAnalogicoList.size(), pnLegalFactNotificaPresaInCaricoMultiDestinatario.getDestinatariAnalogici().size());
-                Assertions.assertTrue(destinatarioAnalogicoList.containsAll(pnLegalFactNotificaPresaInCaricoMultiDestinatario.getDestinatariAnalogici())
-                        && pnLegalFactNotificaPresaInCaricoMultiDestinatario.getDestinatariAnalogici().containsAll(destinatarioAnalogicoList));
+
+                assertThat(pnLegalFactNotificaPresaInCaricoMultiDestinatario.getDestinatariAnalogici().size())
+                        .as("La size dei destinatari non coincide con quanto atteso")
+                        .isEqualTo(destinatarioAnalogicoList.size());
+                assertThat(destinatarioAnalogicoList).asList()
+                        .as("La lista dei destinatari (expected) non contiene tutti i destinatari della response (actual)")
+                        .containsAll(pnLegalFactNotificaPresaInCaricoMultiDestinatario.getDestinatariAnalogici());
+                assertThat(pnLegalFactNotificaPresaInCaricoMultiDestinatario.getDestinatariAnalogici()).asList()
+                        .as("La lista dei destinatari della response (actual) non contiene tutti i destinatari (expected)")
+                        .containsAll(destinatarioAnalogicoList);
             } else {
-                Assertions.assertEquals(multiDestinatarioPosition, pnLegalFactNotificaPresaInCaricoMultiDestinatario.getDestinatariAnalogici().indexOf(destinatarioAnalogicoList.get(0)) + 1);
-                Assertions.assertEquals(destinatarioAnalogicoList.get(0), pnLegalFactNotificaPresaInCaricoMultiDestinatario.getDestinatariAnalogici().get(multiDestinatarioPosition - 1));
-                Assertions.assertTrue(pnLegalFactNotificaPresaInCaricoMultiDestinatario.getDestinatariAnalogici().containsAll(destinatarioAnalogicoList));
+                assertThat(pnLegalFactNotificaPresaInCaricoMultiDestinatario.getDestinatariAnalogici().indexOf(destinatarioAnalogicoList.get(0)) + 1)
+                        .as("L'indice del destinatario non coincide con quanto atteso")
+                        .isEqualTo(multiDestinatarioPosition);
+                assertThat(pnLegalFactNotificaPresaInCaricoMultiDestinatario.getDestinatariAnalogici().get(multiDestinatarioPosition - 1))
+                        .as("Il destinatario non coincide con quanto atteso")
+                        .isEqualTo(destinatarioAnalogicoList.get(0));
+                assertThat(pnLegalFactNotificaPresaInCaricoMultiDestinatario.getDestinatariAnalogici()).asList()
+                        .as("La lista dei destinatari della response (actual) non contiene tutti i destinatari (expected)")
+                        .containsAll(destinatarioAnalogicoList);
             }
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);

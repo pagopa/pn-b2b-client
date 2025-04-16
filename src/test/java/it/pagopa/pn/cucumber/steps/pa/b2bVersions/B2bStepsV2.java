@@ -45,6 +45,7 @@ import static java.util.Objects.nonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
+import static org.assertj.core.api.Assumptions.assumeThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.awaitility.Awaitility.await;
 
@@ -69,6 +70,19 @@ public class B2bStepsV2 implements B2bStepsInterface {
 
     private FullSentNotificationV20 getFullSentNotificationVersioned() {
         return (FullSentNotificationV20) getFullSentNotification();
+    }
+
+    @Override
+    public void verifyTestCompatibilityWithVersion(String eventCategoryOrStatus, boolean isEventCategory) {
+        if (isEventCategory) {
+            assumeThat(TimelineElementCategory.valueOf(eventCategoryOrStatus))
+                    .as("Test skipped: TimelineElementCategory " + eventCategoryOrStatus + " non esiste per la versione " + TimelineElementCategory.class)
+                    .isNotNull();
+        } else {
+            assumeThat(NotificationStatus.valueOf(eventCategoryOrStatus))
+                    .as("Test skipped: NotificationStatus " + eventCategoryOrStatus + " non esiste per la versione " + NotificationStatus.class)
+                    .isNotNull();
+        }
     }
 
     @Override
@@ -861,7 +875,7 @@ public class B2bStepsV2 implements B2bStepsInterface {
         String iun = b2bSteps.getSharedSteps().getNotificationIun();
         FullSentNotificationV20 fullSentNotification = getFullSentNotificationVersioned();
         List<TimelineElementV20> timelineElementList = fullSentNotification.getTimeline();
-        String timelineEventId = dataTest.getTimelineEventId(iun, timelineEventCategory);
+        String timelineEventId = dataTest.getTimelineEventId(timelineEventCategory, iun);
         int actualNumber;
 
         if (timelineEventCategory.equals(SEND_ANALOG_PROGRESS)) {

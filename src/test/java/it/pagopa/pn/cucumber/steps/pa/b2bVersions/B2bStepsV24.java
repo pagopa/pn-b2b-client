@@ -45,6 +45,7 @@ import static java.util.Objects.nonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
+import static org.assertj.core.api.Assumptions.assumeThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.awaitility.Awaitility.await;
 
@@ -72,11 +73,25 @@ public class B2bStepsV24 implements B2bStepsInterface {
     }
 
     @Override
+    public void verifyTestCompatibilityWithVersion(String eventCategoryOrStatus, boolean isEventCategory) {
+        if (isEventCategory) {
+            assumeThat(TimelineElementCategoryV26.valueOf(eventCategoryOrStatus))
+                    .as("Test skipped: TimelineElementCategory " + eventCategoryOrStatus + " non esiste per la versione " + TimelineElementCategoryV26.class)
+                    .isNotNull();
+        } else {
+            assumeThat(NotificationStatusV26.valueOf(eventCategoryOrStatus))
+                    .as("Test skipped: NotificationStatus " + eventCategoryOrStatus + " non esiste per la versione " + NotificationStatusV26.class)
+                    .isNotNull();
+        }
+    }
+
+    @Override
     public void checkFullSentNotificationWithVersion(boolean isPresent, String timelineEventCategory) {
         FullSentNotificationV26 fullSentNotification = getFullSentNotificationVersioned();
         TimelineElementV26 timelineElement = fullSentNotification.getTimeline().stream().filter(
                 te -> te.getCategory().getValue().equals(timelineEventCategory)).findAny().orElse(null);
         if (isPresent) {
+            verifyTestCompatibilityWithVersion(timelineEventCategory, true);
             assertThat(timelineElement)
                     .as("Il controllo sulla fullSentNotification V26 dovrebbe restituire almeno un elemento")
                     .isNotNull();
@@ -91,6 +106,7 @@ public class B2bStepsV24 implements B2bStepsInterface {
     public void readEventsUpToTimelineElement(String timelineEventCategory) {
         WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder().build();
         waitForEventOrStatus(TIMELINE_SLOW, TIMELINE, timelineEventCategory, filters);
+        verifyTestCompatibilityWithVersion(timelineEventCategory, true);
         checkIfTimelineElementExists(true, null, null);
     }
 
@@ -100,6 +116,9 @@ public class B2bStepsV24 implements B2bStepsInterface {
                 .statusHistory(status)
                 .build();
         waitForEventOrStatus(STATUS_RAPID, STATUS, status, filters);
+        if (exists) {
+            verifyTestCompatibilityWithVersion(status, false);
+        }
         checkIfStatusExists(exists);
     }
 
@@ -879,7 +898,7 @@ public class B2bStepsV24 implements B2bStepsInterface {
         String iun = b2bSteps.getSharedSteps().getNotificationIun();
         FullSentNotificationV26 fullSentNotification = getFullSentNotificationVersioned();
         List<TimelineElementV26> timelineElementList = fullSentNotification.getTimeline();
-        String timelineEventId = dataTest.getTimelineEventId(iun, timelineEventCategory);
+        String timelineEventId = dataTest.getTimelineEventId(timelineEventCategory, iun);
         int actualNumber;
 
         if (timelineEventCategory.equals(SEND_ANALOG_PROGRESS)) {

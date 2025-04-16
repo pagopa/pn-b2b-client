@@ -18,6 +18,8 @@ public interface B2bStepsInterface {
      */
     Object getFullSentNotification();
 
+    void verifyTestCompatibilityWithVersion(String eventCategoryOrStatus, boolean isEventCategory);
+
     void checkFullSentNotificationWithVersion(boolean isPresent, String timelineEventCategory);
 
     void readEventsUpToTimelineElement(String timelineEventCategory);
