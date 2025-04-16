@@ -8,10 +8,10 @@ Feature: Creazione attributo certificato
     When l'utente crea un attributo certificato
     Then si ottiene status code <risultato>
 
-    # 16/04/2025 Nonostante il commento che segue PA1 restituisce esito positivo
+    # NOTE 16/04/2025 Nonostante il commento che segue PA1 restituisce esito positivo in ambiente QA
     Examples: #PA1 e Privato non sono enti certificatori
       | ente    | ruolo        | risultato |
-      | PA1     | admin        |       200 |
+      | PA1     | admin        |       403 |
       | PA1     | api          |       403 |
       | PA1     | security     |       403 |
       | PA1     | api,security |       403 |

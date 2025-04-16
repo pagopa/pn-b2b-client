@@ -2,14 +2,12 @@
 Feature: Listing attributi
   Tutti gli utenti autenticati possono leggere la lista degli attributi
 
+  # NOTE 16/04/2025 riproduzione dello scenario come presente nel repo interop-qa-tests
   @attribute_listing1
   Scenario Outline: Restituisce gli attributi disponibili
-    # 16/04/2025 A ruoli diversi da ADMIN e API non è concessa la creazione di attributi
-    Given l'utente è un "admin" di "<ente>"
-    And PA1 ha già creato 5 attributi DECLARED
-
-    When l'utente è un "<ruolo>" di "<ente>"
-    And l'utente richiede una operazione di listing degli attributi
+    Given l'utente è un "<ruolo>" di "<ente>"
+    Given PA1 ha già creato 5 attributi DECLARED
+    When l'utente richiede una operazione di listing degli attributi
     Then si ottiene status code 200 e la lista di 5 attributi
     Examples:
       | ente    | ruolo        |
@@ -23,13 +21,36 @@ Feature: Listing attributi
       | PA1     | security     |
       | PA1     | support      |
       | PA1     | api,security |
+      | Privato | admin        |
+      | Privato | api          |
+      | Privato | security     |
+      | Privato | support      |
+      | Privato | api,security |
 
+  # NOTE 16/04/2025 adattamento dello scenario così che risultati funzionante nell'attuale
+  # ambiente di QA
+  #@attribute_listing1
+  #Scenario Outline: Restituisce gli attributi disponibili
+    # 16/04/2025 A ruoli diversi da ADMIN e API non è concessa la creazione di attributi
+  #  Given l'utente è un "admin" di "<ente>"
+  #  And PA1 ha già creato 5 attributi DECLARED
+
+  #  When l'utente è un "<ruolo>" di "<ente>"
+  #  And l'utente richiede una operazione di listing degli attributi
+  #  Then si ottiene status code 200 e la lista di 5 attributi
+  #  Examples:
+  #    | ente    | ruolo        |
+  #    | GSP     | admin        |
+  #    | GSP     | api          |
+  #    | GSP     | security     |
+  #    | GSP     | support      |
+  #    | GSP     | api,security |
+  #    | PA1     | admin        |
+  #    | PA1     | api          |
+  #    | PA1     | security     |
+  #    | PA1     | support      |
+  #    | PA1     | api,security |
     # 16/04/2025 "Privato" non è abilitato, errore 403: "Requester origin IVASS is not allowed"
-    #  | Privato | admin        |
-    #  | Privato | api          |
-    #  | Privato | security     |
-    #  | Privato | support      |
-    #  | Privato | api,security |
 
   @attribute_listing2
   Scenario: A fronte di 5 attributi in db e una richiesta di 3 attributi, restituisce solo i primi 3 risultati
