@@ -1821,6 +1821,14 @@ Feature: Test API of e-service template
       | api,security  |
 
   @e-service-template-instance-create
+  Scenario: [INTEROP-EST-157-B] La creazione di più di un e-service a partire da un template attivo non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente tenta la creazione di un nuovo e-service a partire dal template indicando tutte le specifiche
+    When l'utente tenta la creazione di un nuovo e-service a partire dal template indicando tutte le specifiche
+    Then si ottiene response status code 400
+
+  @e-service-template-instance-create
   Scenario Outline: [INTEROP-EST-158] La creazione di un nuovo e-service a partire da un template in stato DRAFT o SUSPENDED non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
