@@ -191,4 +191,19 @@ public class AgreementCommonSteps {
         sharedStepsContext.setAgreementId(result.get("agreementId"));
         sharedStepsContext.getAgreementCommonContext().setDocumentId(result.get("descriptorId"));
     }
+
+    @Given("{string} ha una richiesta di fruizione in stato {string} per ognuno di quegli e-services")
+    public void tenantHasAlreadyAnAgreementForEachEService(String consumer, String agreementState) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(consumer, null));
+
+        List<UUID> agreementIds = sharedStepsContext.getEServicesCommonContext().getPublishedEservicesIds()
+                        .stream()
+                        .map(eServiceDescriptor -> dataPreparationService.createAgreementWithGivenState(
+                                AgreementState.fromValue(agreementState),
+                                eServiceDescriptor.getEServiceId(),
+                                eServiceDescriptor.getDescriptorId(),
+                                null))
+                        .toList();
+        sharedStepsContext.getAgreementCommonContext().setAgreementIds(agreementIds);
+    }
 }

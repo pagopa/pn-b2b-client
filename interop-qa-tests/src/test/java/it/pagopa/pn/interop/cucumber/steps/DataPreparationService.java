@@ -69,6 +69,8 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nullable;
+
+import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -92,6 +94,7 @@ public class DataPreparationService {
     private final HttpCallExecutor httpCallExecutor;
     private final RiskAnalysisDataInitializer riskAnalysisDataInitializer;
     private final SharedStepsContext sharedStepsContext;
+    private final BlobFileCreator blobFileCreator;
     public static final String ERROR_RETRIEVING_AGREEMENT = "There was an error while retrieving the agreement by ID!";
     public static final String ERROR_RETRIEVING_PRODUCER_DESCRIPTOR = "There was an error while retrieving the producer e-service descriptor";
     public static final String ERROR_RETRIEVING_PURPOSE = "There was an error while retrieving the purpose!";
@@ -106,7 +109,8 @@ public class DataPreparationService {
 
     public DataPreparationService(ClientTokenConfigurator clientTokenConfigurator,
                                   RiskAnalysisDataInitializer riskAnalysisDataInitializer,
-                                  SharedStepsContext sharedStepsContext) {
+                                  SharedStepsContext sharedStepsContext,
+                                  BlobFileCreator blobFileCreator) {
         this.authorizationClient = clientTokenConfigurator.getAuthorizationClient();
         this.agreementClient = clientTokenConfigurator.getAgreementClient();
         this.attributeApiClient = clientTokenConfigurator.getAttributeApiClient();
@@ -115,6 +119,7 @@ public class DataPreparationService {
         this.producerClient = clientTokenConfigurator.getProducerClient();
         this.purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
         this.sharedStepsContext = sharedStepsContext;
+        this.blobFileCreator = blobFileCreator;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
         this.riskAnalysisDataInitializer = riskAnalysisDataInitializer;
@@ -238,7 +243,7 @@ public class DataPreparationService {
 
     public Map<String, UUID> createAgreementWithGivenStateAndDocument(AgreementState agreementState, UUID eserviceId, UUID descriptorId) {
         try {
-            Resource doc = createBlobFile("src/main/resources/dummy.pdf", "documento-test-qa.pdf");
+            Resource doc = blobFileCreator.createBlobFile("src/main/resources/dummy.pdf", "documento-test-qa.pdf");
             UUID agreementId = createAgreementWithGivenState(agreementState, eserviceId, descriptorId, null, doc.getFile());
             Agreement agreement = agreementClient.getAgreementById(sharedStepsContext.getXCorrelationId(), agreementId);
             UUID documentId = agreement.getConsumerDocuments().get(0).getId();
@@ -468,7 +473,7 @@ public class DataPreparationService {
 
     public UUID addDocumentToDescriptor(UUID eServiceId, UUID descriptorId) {
         String prettyName = String.format("Documento_test_qa-%d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE));
-        Resource resource = createBlobFile("src/main/resources/interface.yaml", "documento-test-qa.pdf");
+        Resource resource = blobFileCreator.createBlobFile("src/main/resources/interface.yaml", "documento-test-qa.pdf");
 
         httpCallExecutor.performCall(() -> eServiceClient.createEServiceDocument(sharedStepsContext.getXCorrelationId(), eServiceId, descriptorId, "DOCUMENT", prettyName, resource));
         assertValidResponse();
@@ -483,7 +488,7 @@ public class DataPreparationService {
     }
 
     public void addInterfaceToDescriptor(UUID eServiceId, UUID descriptorId) {
-        Resource resource = createBlobFile("src/main/resources/interface.yaml", "interface.yaml");
+        Resource resource = blobFileCreator.createBlobFile("src/main/resources/interface.yaml", "interface.yaml");
         httpCallExecutor.performCall(() -> eServiceClient.createEServiceDocument(sharedStepsContext.getXCorrelationId(), eServiceId, descriptorId, "INTERFACE", "Interfaccia", resource));
         assertValidResponse();
 
@@ -726,20 +731,6 @@ public class DataPreparationService {
                 res -> res.getAttributes().stream().anyMatch(attr -> attr.getId().equals(attributeId) && attr.getRevocationTimestamp() != null),
                 "There was an error while revoking the certified atrtibute!"
         );
-    }
-
-
-    private Resource createBlobFile(String blobFilePath, String fileNameToCreate) {
-        Path filePath = Paths.get(blobFilePath);
-        byte[] fileContent = null;
-        try {
-            fileContent = Files.readAllBytes(filePath);
-            Path newFilePath = Paths.get(fileNameToCreate);
-            Files.write(newFilePath, fileContent);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return new FileSystemResource(filePath);
     }
 
     private void assertValidResponse() {

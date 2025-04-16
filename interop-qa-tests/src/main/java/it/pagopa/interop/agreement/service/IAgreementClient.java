@@ -5,6 +5,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.Agreement;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementRejectionPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementSubmissionPayload;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CompactEServicesLight;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganizations;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import java.util.UUID;
 public interface IAgreementClient extends SettableBearerToken {
     CreatedResource createAgreement(AgreementPayload agreementPayload);
     Agreement getAgreementById(String xCorrelationId, UUID agreementId);
+    ResponseEntity<File> getAgreementContract(String xCorrelationId, UUID agreementId);
     Agreement activateAgreement(String xCorrelationId, UUID agreementId);
     Agreement submitAgreement(String xCorrelationId, UUID agreementId, AgreementSubmissionPayload agreementSubmissionPayload);
     Agreement suspendAgreement(String xCorrelationId, UUID agreementId);
@@ -26,6 +28,8 @@ public interface IAgreementClient extends SettableBearerToken {
     File getAgreementConsumerDocument(String xCorrelationId, UUID agreementId, UUID documentId);
     void deleteAgreement(String xCorrelationId, UUID agreementId);
     void removeAgreementConsumerDocument(String xCorrelationId, UUID agreementId, UUID documentId);
+    ResponseEntity<CompactEServicesLight> getAgreementEServiceConsumers(String xCorrelationId, Integer offset, Integer limit, String q);
+
 
 
 }

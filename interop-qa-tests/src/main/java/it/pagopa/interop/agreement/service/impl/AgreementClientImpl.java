@@ -8,6 +8,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.Agreement;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementRejectionPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementSubmissionPayload;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CompactEServicesLight;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganizations;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import java.io.File;
@@ -47,6 +48,11 @@ public class AgreementClientImpl implements IAgreementClient {
     @Override
     public Agreement getAgreementById(String xCorrelationId, UUID agreementId) {
         return agreementsApi.getAgreementById(xCorrelationId, agreementId);
+    }
+
+    @Override
+    public ResponseEntity<File> getAgreementContract(String xCorrelationId, UUID agreementId) {
+        return agreementsApi.getAgreementContractWithHttpInfo(xCorrelationId, agreementId);
     }
 
     @Override
@@ -102,6 +108,11 @@ public class AgreementClientImpl implements IAgreementClient {
     @Override
     public void removeAgreementConsumerDocument(String xCorrelationId, UUID agreementId, UUID documentId) {
         agreementsApi.removeAgreementConsumerDocument(xCorrelationId, agreementId, documentId);
+    }
+
+    @Override
+    public ResponseEntity<CompactEServicesLight> getAgreementEServiceConsumers(String xCorrelationId, Integer offset, Integer limit, String q) {
+        return agreementsApi.getAgreementEServiceConsumersWithHttpInfo(xCorrelationId, offset, limit, q);
     }
 
     @Override

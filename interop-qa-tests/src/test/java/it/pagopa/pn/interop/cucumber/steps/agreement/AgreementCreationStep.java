@@ -161,21 +161,6 @@ public class AgreementCreationStep {
         );
     }
 
-    @Given("{string} ha già creato un e-service in stato {string} che richiede quell'attributo certificato con approvazione {agreementApprovalPolicy}")
-    public void createEServiceWithCertifiedAttributeApproval(String tenantType, String descriptorState, AgreementApprovalPolicy agreementApprovalPolicy) {
-        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(new EServiceSeed(), new UpdateEServiceDescriptorSeed()
-                .attributes(new DescriptorAttributesSeed().addCertifiedItem(
-                        List.of(new DescriptorAttributeSeed().id(sharedStepsContext.getAttributeCommonContext().getAttributeId()).explicitAttributeVerification(true))))
-                .agreementApprovalPolicy(agreementApprovalPolicy));
-
-        dataPreparationService.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(), eServiceDescriptor.getDescriptorId(),
-                EServiceDescriptorState.valueOf(descriptorState), false);
-
-        sharedStepsContext.getEServicesCommonContext().setEserviceId(eServiceDescriptor.getEServiceId());
-        sharedStepsContext.getEServicesCommonContext().setDescriptorId(eServiceDescriptor.getDescriptorId());
-    }
-
     @Given("{string} ha già pubblicato una nuova versione per quell'e-service")
     public void tenantHasAlreadyPublishedNewEServiceVersion(String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));

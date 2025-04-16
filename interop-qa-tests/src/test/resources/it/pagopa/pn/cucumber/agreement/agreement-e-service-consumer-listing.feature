@@ -29,7 +29,7 @@ Feature: Listing e-service con richieste di fruizione attive lato fruitore
       | Privato | api,security |
 
   @agreement_e_service_consumer_listing2
-  Scenario Outline: A fronte di 5 e-service, restituisce solo i primi 3 risultati
+  Scenario: A fronte di 5 e-service, restituisce solo i primi 3 risultati
     Given l'utente è un "admin" di "PA2"
     Given "PA1" ha già creato e pubblicato 5 e-services
     Given "PA2" ha una richiesta di fruizione in stato "ACTIVE" per ognuno di quegli e-services
@@ -37,7 +37,7 @@ Feature: Listing e-service con richieste di fruizione attive lato fruitore
     Then si ottiene status code 200 e la lista di 3 e-service
 
   @agreement_e_service_consumer_listing3
-  Scenario Outline: A fronte di 5 e-service in db e una richiesta di offset 2, restituisce solo 3 risultati
+  Scenario: A fronte di 5 e-service in db e una richiesta di offset 2, restituisce solo 3 risultati
     Given l'utente è un "admin" di "PA2"
     Given "PA1" ha già creato e pubblicato 5 e-services
     Given "PA2" ha una richiesta di fruizione in stato "ACTIVE" per ognuno di quegli e-services
@@ -45,7 +45,7 @@ Feature: Listing e-service con richieste di fruizione attive lato fruitore
     Then si ottiene status code 200 e la lista di 3 e-service
 
   @agreement_e_service_consumer_listing4
-  Scenario Outline: Restituisce gli e-service il cui nome contiene la keyword "test" all'interno del nome, con ricerca case insensitive
+  Scenario: Restituisce gli e-service il cui nome contiene la keyword "test" all'interno del nome, con ricerca case insensitive
     Given l'utente è un "admin" di "PA2"
     Given "PA1" ha già creato e pubblicato un e-service contenente la keyword "test"
     Given "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -53,7 +53,7 @@ Feature: Listing e-service con richieste di fruizione attive lato fruitore
     Then si ottiene status code 200 e la lista di 1 e-service
 
   @agreement_e_service_consumer_listing5
-  Scenario Outline: Restituisce un insieme vuoto di e-service per una ricerca che non porta risultati (es. stringa “disosfdio sjfjods” all’interno del nome. Scopo del test è verificare che, se non ci sono risultati, il server risponda con 200 e array vuoto e non con un errore)
+  Scenario: Restituisce un insieme vuoto di e-service per una ricerca che non porta risultati (es. stringa “disosfdio sjfjods” all’interno del nome. Scopo del test è verificare che, se non ci sono risultati, il server risponda con 200 e array vuoto e non con un errore)
     Given l'utente è un "admin" di "PA2"
     Given "PA1" ha già creato e pubblicato un e-service contenente la keyword "test"
     Given "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service

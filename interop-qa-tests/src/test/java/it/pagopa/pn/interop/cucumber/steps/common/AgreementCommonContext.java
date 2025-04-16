@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -18,5 +20,6 @@ public class AgreementCommonContext {
     private ResponseEntity<CompactOrganizations> responseOffsetOne;
     private ResponseEntity<CompactOrganizations> responseOffsetTwo;
     private UUID documentId;
+    private List<UUID> agreementIds = new ArrayList<>();
 
 }
