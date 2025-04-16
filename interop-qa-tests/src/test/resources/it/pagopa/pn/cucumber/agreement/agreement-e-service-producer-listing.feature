@@ -26,7 +26,7 @@ Feature: Listing e-service con richieste di fruizione attive lato erogatore
       | PA1  | api,security |
 
   @agreement_e_service_producer_listing2
-  Scenario Outline: A fronte di 5 e-service, restituisce solo i primi 3 risultati
+  Scenario: A fronte di 5 e-service, restituisce solo i primi 3 risultati
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato e pubblicato 5 e-services
     Given "GSP" ha un agreement attivo per ciascun e-service di "PA1"
@@ -34,7 +34,7 @@ Feature: Listing e-service con richieste di fruizione attive lato erogatore
     Then si ottiene status code 200 e la lista di 3 e-service
 
   @agreement_e_service_producer_listing3
-  Scenario Outline: A fronte di 5 e-service in db e una richiesta di offset 2, restituisce solo 3 risultati
+  Scenario: A fronte di 5 e-service in db e una richiesta di offset 2, restituisce solo 3 risultati
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato e pubblicato 5 e-services
     Given "GSP" ha un agreement attivo per ciascun e-service di "PA1"
@@ -42,7 +42,7 @@ Feature: Listing e-service con richieste di fruizione attive lato erogatore
     Then si ottiene status code 200 e la lista di 3 e-service
 
   @agreement_e_service_producer_listing4
-  Scenario Outline: Restituisce gli e-service il cui nome contiene la keyword "test" all'interno del nome, con ricerca case insensitive
+  Scenario: Restituisce gli e-service il cui nome contiene la keyword "test" all'interno del nome, con ricerca case insensitive
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato e pubblicato 2 e-services
     Given "GSP" ha un agreement attivo per ciascun e-service di "PA1"
@@ -52,7 +52,7 @@ Feature: Listing e-service con richieste di fruizione attive lato erogatore
     Then si ottiene status code 200 e la lista di 1 e-service
 
   @agreement_e_service_producer_listing5
-  Scenario Outline: Restituisce un insieme vuoto di e-service per una ricerca che non porta risultati
+  Scenario: Restituisce un insieme vuoto di e-service per una ricerca che non porta risultati
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato e pubblicato 2 e-services
     Given "GSP" ha un agreement attivo per ciascun e-service di "PA1"

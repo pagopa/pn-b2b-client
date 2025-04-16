@@ -26,7 +26,7 @@ Feature: Rifiuto di una richiesta di fruizione
       | PA1  | api,security |       403 |
 
   @agreement_rejection2
-  Scenario Outline: Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato PENDING, alla richiesta di rifiuto SENZA messaggio da parte di un utente con sufficienti permessi dell’ente erogatore, ottiene un errore
+  Scenario: Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato PENDING, alla richiesta di rifiuto SENZA messaggio da parte di un utente con sufficienti permessi dell’ente erogatore, ottiene un errore
     Given l'utente è un "admin" di "PA2"
     Given "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
     Given "PA1" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
@@ -48,7 +48,7 @@ Feature: Rifiuto di una richiesta di fruizione
       | ARCHIVED       |
 
   @agreement_rejection3b
-  Scenario Outline: Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato REJECTED,alla richiesta di rifiuto con messaggio da parte di un utente con sufficienti permessi dell’ente erogatore, ottiene un errore
+  Scenario: Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato REJECTED,alla richiesta di rifiuto con messaggio da parte di un utente con sufficienti permessi dell’ente erogatore, ottiene un errore
     Given l'utente è un "admin" di "PA2"
     Given "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
     Given "PA1" ha già creato e inviato una richiesta di fruizione per quell'e-service ed è in attesa di approvazione

@@ -21,5 +21,6 @@ public class AgreementCommonContext {
     private ResponseEntity<CompactOrganizations> responseOffsetTwo;
     private UUID documentId;
     private List<UUID> agreementIds = new ArrayList<>();
+    private UUID responseAgreementId;
 
 }

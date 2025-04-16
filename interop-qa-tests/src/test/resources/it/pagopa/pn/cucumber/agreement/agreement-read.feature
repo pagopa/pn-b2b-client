@@ -48,7 +48,7 @@ Feature: Lettura richiesta di fruizione
   Scenario Outline: Per una richiesta di fruizione precedentemente creata dall’ente, la quale è in stato MISSING_CERTIFIED_ATTRIBUTES, alla richiesta di lettura, va a buon fine
     Given l'utente è un "admin" di "<enteFruitore>"
     Given "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"
-    Given "<enteErogatore>" ha già creato un e-service in stato "PUBLISHED" che richiede quell'attributo certificato con approvazione "AUTOMATIC"
+    Given "<enteErogatore>" ha già creato un e-service in stato "PUBLISHED" che richiede quell'attributo certificato con approvazione automatica
     Given "<enteFruitore>" ha una richiesta di fruizione in stato "DRAFT" per quell'e-service
     Given "<enteCertificatore>" ha già revocato quell'attributo a "<enteFruitore>"
     Given la richiesta di fruizione è passata in stato "MISSING_CERTIFIED_ATTRIBUTES"
@@ -60,7 +60,7 @@ Feature: Lettura richiesta di fruizione
       | GSP          | PA2               | PA1           |
 
   @agreement_read4
-  Scenario Outline: Per una richiesta di fruizione precedentemente creata dall’ente, la quale è in stato ACTIVE, alla richiesta di lettura da parte di un ente nè fruitore nè erogatore, va a buon fine
+  Scenario: Per una richiesta di fruizione precedentemente creata dall’ente, la quale è in stato ACTIVE, alla richiesta di lettura da parte di un ente nè fruitore nè erogatore, va a buon fine
     Given l'utente è un "admin" di "PA1"
     Given "GSP" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     Given "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service

@@ -7,11 +7,14 @@ import it.pagopa.interop.generated.openapi.clients.bff.api.AgreementsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Agreement;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementRejectionPayload;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementSubmissionPayload;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementUpdatePayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactEServicesLight;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganizations;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import java.io.File;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -71,6 +74,16 @@ public class AgreementClientImpl implements IAgreementClient {
     }
 
     @Override
+    public Agreement updateAgreement(String xCorrelationId, UUID agreementId, AgreementUpdatePayload agreementUpdatePayload) {
+        return agreementsApi.updateAgreement(xCorrelationId, agreementId, agreementUpdatePayload);
+    }
+
+    @Override
+    public Agreement upgradeAgreement(String xCorrelationId, UUID agreementId) {
+        return agreementsApi.upgradeAgreement(xCorrelationId, agreementId);
+    }
+
+    @Override
     public void archiveAgreement(String xCorrelationId, UUID agreementId) {
         agreementsApi.archiveAgreement(xCorrelationId, agreementId);
     }
@@ -96,6 +109,11 @@ public class AgreementClientImpl implements IAgreementClient {
     }
 
     @Override
+    public ResponseEntity<CompactOrganizations> getAgreementProducers(String xCorrelationId, Integer offset, Integer limit, String q) {
+        return agreementsApi.getAgreementProducersWithHttpInfo(xCorrelationId, offset, limit, q);
+    }
+
+    @Override
     public File getAgreementConsumerDocument(String xCorrelationId, UUID agreementId, UUID documentId) {
         return agreementsApi.getAgreementConsumerDocument(xCorrelationId, agreementId, documentId);
     }
@@ -113,6 +131,11 @@ public class AgreementClientImpl implements IAgreementClient {
     @Override
     public ResponseEntity<CompactEServicesLight> getAgreementEServiceConsumers(String xCorrelationId, Integer offset, Integer limit, String q) {
         return agreementsApi.getAgreementEServiceConsumersWithHttpInfo(xCorrelationId, offset, limit, q);
+    }
+
+    @Override
+    public ResponseEntity<CompactEServicesLight> getAgreementEServiceProducers(String xCorrelationId, Integer offset, Integer limit, String q, List<AgreementState> states) {
+        return agreementsApi.getAgreementEServiceProducersWithHttpInfo(xCorrelationId, offset, limit, q, states);
     }
 
     @Override

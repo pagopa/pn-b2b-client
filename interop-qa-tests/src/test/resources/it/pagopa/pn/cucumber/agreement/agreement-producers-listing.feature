@@ -33,7 +33,7 @@ Feature: Listing erogatori con richieste di fruizione
       | Privato | api,security |
 
   @agreement_producers_listing2
-  Scenario Outline: A fronte di 3 erogatori con i quali il fruitore ha almeno una richiesta di fruizione e una richiesta di offset 2, restituisce solo 1 risultato
+  Scenario: A fronte di 3 erogatori con i quali il fruitore ha almeno una richiesta di fruizione e una richiesta di offset 2, restituisce solo 1 risultato
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -45,7 +45,7 @@ Feature: Listing erogatori con richieste di fruizione
     Then si ottiene status code 200 con la corretta verifica dell'offset
 
   @agreement_producers_listing3
-  Scenario Outline: Restituisce gli erogatori il cui nome dell’ente contiene la keyword "Comune di Milano" all'interno del nome, con ricerca case insensitive. In questo scenario il nome di PA1 è "Comune di Milano"
+  Scenario: Restituisce gli erogatori il cui nome dell’ente contiene la keyword "Comune di Milano" all'interno del nome, con ricerca case insensitive. In questo scenario il nome di PA1 è "Comune di Milano"
     Given l'utente è un "admin" di "GSP"
     Given "PA1" ha già creato e pubblicato 1 e-service
     Given "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -55,7 +55,7 @@ Feature: Listing erogatori con richieste di fruizione
     Then si ottiene status code 200 e la lista di 1 erogatore
 
   @agreement_producers_listing4
-  Scenario Outline: Restituisce un insieme vuoto di erogatori per una ricerca che non porta risultati
+  Scenario: Restituisce un insieme vuoto di erogatori per una ricerca che non porta risultati
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service

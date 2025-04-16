@@ -30,7 +30,7 @@ Feature: Listing richieste di fruizione
       | Privato | api,security |
 
   @agreement_listing2
-  Scenario Outline: A fronte di 5 richieste di fruizione in db e una richiesta di offset 3, restituisce solo 2 risultati
+  Scenario: A fronte di 5 richieste di fruizione in db e una richiesta di offset 3, restituisce solo 2 risultati
     Given l'utente è un "admin" di "PA2"
     Given "PA1" ha già creato e pubblicato 5 e-services
     Given "GSP" ha un agreement attivo per ciascun e-service di "PA1"
@@ -38,7 +38,7 @@ Feature: Listing richieste di fruizione
     Then si ottiene status code 200 e la lista di 2 richieste di fruizione
 
   @agreement_listing3 @no-parallel
-  Scenario Outline: Restituisce le richieste di fruizione che un erogatore si trova create dai fruitori dei propri e-service
+  Scenario: Restituisce le richieste di fruizione che un erogatore si trova create dai fruitori dei propri e-service
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato e pubblicato 5 e-services
     Given "PA2" ha un agreement attivo per ciascun e-service di "PA1"
@@ -47,7 +47,7 @@ Feature: Listing richieste di fruizione
     Then si ottiene status code 200 e la lista di 10 richieste di fruizione
 
   @agreement_listing4
-  Scenario Outline: Restituisce le richieste di fruizione che un fruitore ha creato
+  Scenario: Restituisce le richieste di fruizione che un fruitore ha creato
     Given l'utente è un "admin" di "PA2"
     Given "PA1" ha già creato e pubblicato 5 e-services
     Given "PA2" ha un agreement attivo per ciascun e-service di "PA1"
@@ -56,7 +56,7 @@ Feature: Listing richieste di fruizione
     Then si ottiene status code 200 e la lista di 5 richieste di fruizione
 
   @agreement_listing5
-  Scenario Outline: Restituisce le richieste di fruizione associate ad alcuni specifici e-service
+  Scenario: Restituisce le richieste di fruizione associate ad alcuni specifici e-service
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato e pubblicato 5 e-services
     Given "GSP" ha un agreement attivo per ciascun e-service di "PA1"
@@ -65,7 +65,7 @@ Feature: Listing richieste di fruizione
     Then si ottiene status code 200 e la lista di 6 richieste di fruizione
 
   @agreement_listing6
-  Scenario Outline: Restituisce le richieste di fruizione di uno specifico fruitore che sono in uno o più specifici stati
+  Scenario: Restituisce le richieste di fruizione di uno specifico fruitore che sono in uno o più specifici stati
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato e pubblicato 5 e-services
     Given "GSP" ha un agreement in stato "ACTIVE" per l'e-service numero 1 di "PA1"
@@ -75,7 +75,7 @@ Feature: Listing richieste di fruizione
     Then si ottiene status code 200 e la lista di 2 richiesta di fruizione
 
   @agreement_listing7
-  Scenario Outline: Restituisce le richieste di fruizione di uno specifico fruitore che possono essere aggiornate ad una nuova versione di e-service
+  Scenario: Restituisce le richieste di fruizione di uno specifico fruitore che possono essere aggiornate ad una nuova versione di e-service
     Given l'utente è un "admin" di "GSP"
     Given "PA1" ha già creato e pubblicato 5 e-services
     Given "GSP" ha un agreement attivo per ciascun e-service di "PA1"
@@ -84,7 +84,7 @@ Feature: Listing richieste di fruizione
     Then si ottiene status code 200 e la lista di 2 richieste di fruizione
 
   @agreement_listing8
-  Scenario Outline: Restituisce un insieme vuoto di richieste di fruizione per una ricerca che non porta risultati
+  Scenario: Restituisce un insieme vuoto di richieste di fruizione per una ricerca che non porta risultati
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato e pubblicato 2 e-services
     When l'utente richiede una operazione di listing delle richieste di fruizione

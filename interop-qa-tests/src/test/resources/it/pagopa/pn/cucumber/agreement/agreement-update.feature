@@ -28,7 +28,7 @@ Feature: Aggiornamento di una richiesta di fruizione in bozza
       | Privato | support      |       403 |
 
   @agreement_update2a
-  Scenario Outline: Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato REJECTED, alla richiesta di aggiornamento della bozza da parte di un utente con sufficienti permessi dell’ente fruitore con un messaggio per l’erogatore (consumerNotes) aggiornato, ottiene un errore
+  Scenario: Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato REJECTED, alla richiesta di aggiornamento della bozza da parte di un utente con sufficienti permessi dell’ente fruitore con un messaggio per l’erogatore (consumerNotes) aggiornato, ottiene un errore
     Given l'utente è un "admin" di "PA1"
     Given "GSP" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
     Given "PA1" ha già creato e inviato una richiesta di fruizione per quell'e-service ed è in attesa di approvazione
@@ -40,7 +40,7 @@ Feature: Aggiornamento di una richiesta di fruizione in bozza
   Scenario Outline: Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato MISSING_CERTIFIED_ATTRIBUTES, alla richiesta di aggiornamento della bozza da parte di un utente con sufficienti permessi dell’ente fruitore con un messaggio per l’erogatore (consumerNotes) aggiornato, ottiene un errore
     Given l'utente è un "admin" di "<enteFruitore>"
     Given "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"
-    Given "<enteErogatore>" ha già creato un e-service in stato "PUBLISHED" che richiede quell'attributo certificato con approvazione "AUTOMATIC"
+    Given "<enteErogatore>" ha già creato un e-service in stato "PUBLISHED" che richiede quell'attributo certificato con approvazione automatica
     Given "<enteFruitore>" ha una richiesta di fruizione in stato "DRAFT" per quell'e-service
     Given "<enteCertificatore>" ha già revocato quell'attributo a "<enteFruitore>"
     Given la richiesta di fruizione è passata in stato "MISSING_CERTIFIED_ATTRIBUTES"
