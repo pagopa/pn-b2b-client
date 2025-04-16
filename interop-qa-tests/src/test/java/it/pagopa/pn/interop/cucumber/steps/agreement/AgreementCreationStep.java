@@ -106,6 +106,7 @@ public class AgreementCreationStep {
         dataPreparationService.submitAgreement(agreementId, AgreementState.PENDING);
     }
 
+    /* FIXME momentaneamente disabilitato per togliere l'ambiguità con lo step tenantHasAlreadyCreateEServiceWhichRequireCertifiedAttribute e poter definire i test senza errori
     @Given("{string} ha già creato un e-service in stato {string} che richiede quell'attributo certificato con approvazione {agreementApprovalPolicy}")
     public void tenantHasAlreadyCreateEServiceWhichRequireCertifiedAttribute(String tenantType, String descriptorState, AgreementApprovalPolicy agreementApprovalPolicy) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
@@ -159,7 +160,7 @@ public class AgreementCreationStep {
         sharedStepsContext.getAttributeCommonContext().setAttributeId(
                 dataPreparationService.createAttribute(AttributeKind.CERTIFIED, null)
         );
-    }
+    }*/
 
     @Given("{string} ha già pubblicato una nuova versione per quell'e-service")
     public void tenantHasAlreadyPublishedNewEServiceVersion(String tenantType) {

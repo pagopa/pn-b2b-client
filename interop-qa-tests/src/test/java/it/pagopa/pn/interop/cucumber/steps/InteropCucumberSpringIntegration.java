@@ -27,6 +27,7 @@ import it.pagopa.interop.tracing.config.TracingClientConfigs;
 import it.pagopa.interop.tracing.service.impl.DevAbstractInteropTracingClient;
 import it.pagopa.interop.tracing.service.impl.QAAbstractInteropTracingClient;
 import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.TracingFileUtils;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -64,7 +65,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
     BlobFileCreator.class,
     TracingClientConfigs.class,
     DevAbstractInteropTracingClient.class,
-    QAAbstractInteropTracingClient.class
+    QAAbstractInteropTracingClient.class,
+    CommonUtils.class
 })
 @EnableScheduling
 @EnableConfigurationProperties
