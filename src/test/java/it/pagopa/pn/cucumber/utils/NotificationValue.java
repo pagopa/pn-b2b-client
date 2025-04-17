@@ -3,6 +3,7 @@ package it.pagopa.pn.cucumber.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -88,7 +89,8 @@ public enum NotificationValue {
     DETAILS_PHYSICALADDRESS("details_physicalAddress", null, false),
     DETAILS_ANALOG_COST("details_analogCost", null, false),
     DETAILS_DELEGATE_INFO("details_delegateInfo", null, false),
-    PAGOPAINTMODE("pagoPaIntMode","NONE",false);
+    PAGOPAINTMODE("pagoPaIntMode","NONE",false),
+    REGISTRY("registry",null,false);//Todo v28 ?
 
     private static final String NULL_VALUE = "NULL";
     public static final String EXCLUDE_VALUE = "NO";

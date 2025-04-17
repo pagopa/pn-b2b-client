@@ -67,7 +67,8 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     private static final Map<String, SettableApiKey.ApiKeyType> paForStream = Map.of(
             COMUNE_1, SettableApiKey.ApiKeyType.MVP_1,
             COMUNE_2, SettableApiKey.ApiKeyType.MVP_2,
-            COMUNE_MULTI, SettableApiKey.ApiKeyType.GA);
+            COMUNE_MULTI, SettableApiKey.ApiKeyType.GA
+    );
 
     @Autowired
     public AvanzamentoNotificheWebhookB2bSteps(
@@ -573,7 +574,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             progressResponseElement = webhookStepsInterface.searchStatusElementInWebhook(null, 0, 0, searchElementResult);
             log.debug("PROGRESS-ELEMENT: " + progressResponseElement);
 
-            FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+            FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
             NotificationStatusHistoryElementV26 notificationStatusHistoryElement = fullSentNotification
                     .getNotificationStatusHistory().stream()
                     .filter(elem -> elem.getStatus().getValue().equals(notificationInternalStatus.getValue()))
@@ -710,7 +711,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         } else {
             try {
                 Assertions.assertNotNull(progressResponseElement);
-                FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+                FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
                 Assertions.assertFalse(fullSentNotification
                         .getTimeline()
                         .stream()

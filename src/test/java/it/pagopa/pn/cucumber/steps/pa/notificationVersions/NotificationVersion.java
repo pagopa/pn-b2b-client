@@ -8,7 +8,7 @@ import lombok.Getter;
 import java.util.Map;
 
 public enum NotificationVersion {
-    V1(1), V2(2), V21(21), V23(23), V24(24);
+    V1(1), V2(2), V21(21), V23(23), V24(24), V25(25);
 
     /**
      * Scopo di questo campo è quello di poter comparare le versioni con < o >
@@ -28,7 +28,8 @@ public enum NotificationVersion {
                 V2, new NotificationStepsV2(sharedSteps),
                 V21, new NotificationStepsV21(sharedSteps),
                 V23, new NotificationStepsV23(sharedSteps),
-                V24, new NotificationStepsV24(sharedSteps)
+                V24, new NotificationStepsV24(sharedSteps),
+                V25, new NotificationStepsV25(sharedSteps)
         );
     }
 

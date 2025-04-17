@@ -7,7 +7,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV26;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV27;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddAlternativeClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.RaddOperator;
@@ -674,7 +674,7 @@ public class RaddAltSteps {
     }
 
     private String getRecipientZeroTaxId() {
-        FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         return fullSentNotification.getRecipients().get(0).getTaxId();
     }
 

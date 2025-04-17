@@ -3,7 +3,7 @@ package it.pagopa.pn.client.b2b.pa.service.impl;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.ApiClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.api.RecipientReadApi;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.FullReceivedNotificationV25;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.FullReceivedNotificationV26;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationAttachmentDownloadMetadataResponse;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationSearchResponse;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationStatusV26;
@@ -165,8 +165,8 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
         return this.bearerTokenSetted;
     }
 
-    public FullReceivedNotificationV25 getReceivedNotification(String iun, String mandateId) throws RestClientException {
-        return recipientReadApi.getReceivedNotificationV25(iun, mandateId);
+    public FullReceivedNotificationV26 getReceivedNotification(String iun, String mandateId) throws RestClientException {
+        return recipientReadApi.getReceivedNotificationV26(iun, mandateId);
     }
 
     @Override

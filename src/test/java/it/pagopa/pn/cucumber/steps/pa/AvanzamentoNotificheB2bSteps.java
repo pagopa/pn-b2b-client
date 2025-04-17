@@ -526,12 +526,12 @@ public class AvanzamentoNotificheB2bSteps {
     @Then("gli eventi di timeline ricevuti sono i seguenti$")
     public void verifyTimelineEventsAreTheOnesExpected(List<String> expectedEvents) {
         List<String> actualTimeline = Optional.ofNullable(sharedSteps.getSentNotificationLastVersion())
-                .map(FullSentNotificationV26::getTimeline)
+                .map(FullSentNotificationV27::getTimeline)
                 .orElse(List.of())
                 .stream()
-                .map(TimelineElementV26::getCategory)
+                .map(TimelineElementV27::getCategory)
                 .filter(Objects::nonNull)
-                .map(TimelineElementCategoryV26::toString)
+                .map(TimelineElementCategoryV27::toString)
                 .toList();
         try {
             Assertions.assertFalse(expectedEvents.stream().anyMatch(Predicate.not(actualTimeline::contains)));
@@ -548,7 +548,7 @@ public class AvanzamentoNotificheB2bSteps {
     @Then("si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente {int}")
     public void verificationDateScheduleRefinementWithRefinement(Integer destinatario) {
         try {
-            FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+            FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
             OffsetDateTime ricezioneRaccomandata = fullSentNotification.getTimeline().stream().filter(elem ->
                     elem.getCategory().getValue().equals(SCHEDULE_REFINEMENT)
                             && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getDetails().getSchedulingDate();
@@ -570,7 +570,7 @@ public class AvanzamentoNotificheB2bSteps {
     @Then("si verifica che il timestamp dell'elemento di timeline della notifica SEND_ANALOG_FEEDBACK con deliveryDetailCode RECAG012 sia uguale al timestamp di REFINEMENT")
     public void verificationDateDeliveryDetailCodeRECAG012WithRefinement() {
         try {
-            FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+            FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
             OffsetDateTime ricezioneRECAG012 = fullSentNotification.getTimeline().stream().filter(elem ->
                     elem.getCategory().getValue().equals(SEND_ANALOG_FEEDBACK)
                             && elem.getDetails().getDeliveryDetailCode().equals("RECAG012")).findAny().get().getDetails().getEventTimestamp();
@@ -595,7 +595,7 @@ public class AvanzamentoNotificheB2bSteps {
     @Then("verifica date business in timeline COMPLETELY_UNREACHABLE per l'utente {int}")
     public void verificationDateCompletelyUnreachableWithRefinement(Integer destinatario) {
         try {
-            FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+            FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
             OffsetDateTime schedulingDate = fullSentNotification.getTimeline().stream().filter(elem -> elem.getCategory().getValue().equals(SCHEDULE_REFINEMENT) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
             OffsetDateTime completelyUnreachableDate = fullSentNotification.getTimeline().stream().filter(elem -> elem.getCategory().getValue().equals(COMPLETELY_UNREACHABLE) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
             OffsetDateTime completelyUnreachableRequestDate = fullSentNotification.getTimeline().stream().filter(elem -> elem.getCategory().getValue().equals(COMPLETELY_UNREACHABLE_CREATION_REQUEST) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
@@ -639,7 +639,7 @@ public class AvanzamentoNotificheB2bSteps {
     @Then("verifica date business in timeline ANALOG_SUCCESS_WORKFLOW per l'utente {int} al tentativo {int}")
     public void verificationDateScheduleRefinementWithSendAnalogFeedback(Integer destinatario, Integer tentativo) {
         try {
-            FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+            FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
             OffsetDateTime schedulingDate = fullSentNotification.getTimeline().stream().filter(elem -> elem.getCategory().getValue().equals(SCHEDULE_REFINEMENT) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
             OffsetDateTime sendAnalogProgressNotificationDate = fullSentNotification.getTimeline().stream().filter(elem -> elem.getCategory().getValue().equals(SEND_ANALOG_PROGRESS) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getDetails().getNotificationDate();
             OffsetDateTime sendAnalogProgressTimestampDate = fullSentNotification.getTimeline().stream().filter(elem -> elem.getCategory().getValue().equals(SEND_ANALOG_PROGRESS) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
@@ -1039,7 +1039,32 @@ public class AvanzamentoNotificheB2bSteps {
 
     @And("viene verificato il campo sendRequestId dell' evento di timeline {string}")
     public void vieneVerificatoCampoSendRequestIdEventoTimeline(String timelineEventCategory) {
+        PnPollingServiceTimelineRapidV28 timelineRapid = (PnPollingServiceTimelineRapidV28) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_RAPID_V28);
 
+        PnPollingResponseV28 pnPollingResponse = timelineRapid.waitForEvent(sharedSteps.getNotificationIun(),
+                PnPollingParameter.builder()
+                        .value(timelineEventCategory)
+                        .build());
+        log.info("NOTIFICATION_TIMELINE: " + pnPollingResponse.getNotification().getTimeline());
+        try {
+            Assertions.assertTrue(pnPollingResponse.getResult());
+            Assertions.assertNotNull(pnPollingResponse.getTimelineElement());
+            TimelineElementV27 te = pnPollingResponse.getTimelineElement();
+            log.info("TIMELINE_ELEMENT: " + te);
+            Assertions.assertNotNull(te.getDetails());
+            Assertions.assertNotNull(te.getDetails().getSendRequestId());
+            String sendRequestId = te.getDetails().getSendRequestId();
+            TimelineElementV27 timelineElementRelative = pnPollingResponse
+                    .getNotification()
+                    .getTimeline()
+                    .stream()
+                    .filter(elem -> Objects.requireNonNull(elem.getElementId()).equals(sendRequestId))
+                    .findAny()
+                    .orElse(null);
+            Assertions.assertNotNull(timelineElementRelative);
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        }
         WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder().build();
         B2bStepsInterface b2bStepsInterface = getB2bStepsInterface();
         b2bStepsInterface.waitForEventOrStatus(TIMELINE_RAPID, TIMELINE, timelineEventCategory, filters);
@@ -1793,7 +1818,7 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
     private void priceVerificationProcessCost(String price, String date, Integer destinatario) {
-        FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
 
         it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationFeePolicy notificationFeePolicy =
                 fullSentNotification.getNotificationFeePolicy().equals(NotificationFeePolicy.DELIVERY_MODE) ? DELIVERY_MODE : FLAT_RATE;
@@ -2639,7 +2664,7 @@ public class AvanzamentoNotificheB2bSteps {
     public void verificationDateScheduleRefinementWithRefinementPlus10Days() {
 
         try {
-            FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+            FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
             OffsetDateTime scheduleDate = fullSentNotification.getTimeline().stream().filter(elem -> elem.getCategory().getValue().equals(SEND_ANALOG_FEEDBACK)).findAny().get().getTimestamp().plus(sharedSteps.getSchedulingDaysSuccessAnalogRefinement());
             OffsetDateTime refinementDate = fullSentNotification.getTimeline().stream().filter(elem -> elem.getCategory().getValue().equals(REFINEMENT)).findAny().get().getTimestamp();
             log.info("scheduleDate : {}", scheduleDate);
@@ -3290,7 +3315,7 @@ public class AvanzamentoNotificheB2bSteps {
     @Then("viene verificato che il campo {string} sia valorizzato a {int}")
     public void notificationPriceVerificationValueResponse(String toValidate, Integer valueToValidate) {
         try {
-            FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+            FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
             Assertions.assertNotNull(fullSentNotification);
 
             switch (toValidate.toLowerCase()) {
@@ -3428,13 +3453,13 @@ public class AvanzamentoNotificheB2bSteps {
 
     @And("viene verificato che il timestamp dell'evento {string} sia immediatamente successivo a quello dell'evento {string} con una differenza massima di {int} secondi")
     public void confrontoTimestampEventi(String nextTimelineEvent, String previousTimelineEvent, Integer delta) {
-        FullSentNotificationV26 fullSentNotificationV26 = sharedSteps.getSentNotificationLastVersion();
-        List<TimelineElementV26> timelineElements = fullSentNotificationV26.getTimeline();
+        FullSentNotificationV27 fullSentNotificationV26 = sharedSteps.getSentNotificationLastVersion();
+        List<TimelineElementV27> timelineElements = fullSentNotificationV26.getTimeline();
 
-        Optional<TimelineElementV26> timelineElementV26OptionalNext = timelineElements.stream()
+        Optional<TimelineElementV27> timelineElementV26OptionalNext = timelineElements.stream()
                 .filter(element -> element.getCategory() != null && element.getCategory().toString().equals(nextTimelineEvent))
                 .findFirst();
-        Optional<TimelineElementV26> timelineElementV26OptionalPrevious = timelineElements.stream()
+        Optional<TimelineElementV27> timelineElementV26OptionalPrevious = timelineElements.stream()
                 .filter(element -> element.getCategory() != null && element.getCategory().toString().equals(previousTimelineEvent))
                 .findFirst();
         Assertions.assertTrue(timelineElementV26OptionalNext.isPresent() && timelineElementV26OptionalPrevious.isPresent());
@@ -3525,18 +3550,18 @@ public class AvanzamentoNotificheB2bSteps {
 
     @And("controllo che le tempistiche di arrivo tra l elemento {string} con address type {string} digitalAddressSource {string} in {string} e l'elemento {string} siano corrette per la notifica {string}")
     public void controlloCheLeTempisticheDiArrivoTraLElementoConAddressTypeDigitalAddressSourceInELElementoSianoCorrettePerLaNotifica(String firstElement, String addressType, String digitalAddressSource, String responseStatus, String secondElement, String notificationType) {
-        FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
 
         Assertions.assertNotNull(fullSentNotification);
         Assertions.assertNotNull(fullSentNotification.getTimeline());
         String iun = fullSentNotification.getIun();
 
-        TimelineElementV26 firstElementToCheck = getElementToCheck(firstElement, addressType, digitalAddressSource, responseStatus);
+        TimelineElementV27 firstElementToCheck = getElementToCheck(firstElement, addressType, digitalAddressSource, responseStatus);
 
         Assertions.assertNotNull(firstElementToCheck, "first element to check not found iun: " + iun);
         Assertions.assertNotNull(firstElementToCheck.getEventTimestamp(), "EventTimestamp for first element to check not found iun: " + iun);
 
-        TimelineElementV26 secondElementToCheck = getElementToCheck(secondElement);
+        TimelineElementV27 secondElementToCheck = getElementToCheck(secondElement);
 
         Assertions.assertNotNull(secondElementToCheck, "second element to check not found iun: " + iun);
         Assertions.assertNotNull(secondElementToCheck.getDetails(), "Details for second element to check not found iun: " + iun);
@@ -3550,7 +3575,7 @@ public class AvanzamentoNotificheB2bSteps {
         Assertions.assertEquals(minsToCheck, differenceInMinutes, "Time between first and second element not correct: " + iun + " expected wait " + minsToCheck + " actual wait " + differenceInMinutes);
     }
 
-    private OffsetDateTime getFirstElementTime(TimelineElementV26 firstElementToCheck, String firstElement, String addressType, String iun) {
+    private OffsetDateTime getFirstElementTime(TimelineElementV27 firstElementToCheck, String firstElement, String addressType, String iun) {
         if (firstElement.equalsIgnoreCase("SEND_DIGITAL_FEEDBACK") && addressType.equals("SERCQ")) {
             Assertions.assertNotNull(firstElementToCheck.getDetails(), "Details for first element to check not found iun: " + iun);
             Assertions.assertNotNull(firstElementToCheck.getDetails().getNotificationDate(), "NotificationDate for first element to check not found iun: " + iun);
@@ -3562,13 +3587,13 @@ public class AvanzamentoNotificheB2bSteps {
         } else return firstElementToCheck.getEventTimestamp();
     }
 
-    private TimelineElementV26 getElementToCheck(String secondElement) {
+    private TimelineElementV27 getElementToCheck(String secondElement) {
         return sharedSteps.getSentNotificationLastVersion().getTimeline()
                 .stream().filter(data -> data.getElementId().startsWith(secondElement))
                 .findFirst().orElse(null);
     }
 
-    private TimelineElementV26 getElementToCheck(String firstElement, String addressType, String digitalAddressSource, String responseStatus) {
+    private TimelineElementV27 getElementToCheck(String firstElement, String addressType, String digitalAddressSource, String responseStatus) {
         return sharedSteps.getSentNotificationLastVersion().getTimeline()
                 .stream()
                 .filter(data -> data.getElementId().startsWith(firstElement))
@@ -3599,11 +3624,12 @@ public class AvanzamentoNotificheB2bSteps {
     public void vieneVerificatoCheLElementoDiTimelineConResponseStatusPerLa(String timelineElement, String responseStatus, String type, String address) {
 
         try {
-            FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+            //TODO V28 MATTEO
+            FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
             assertSoftly(softly -> {
                 assertThat(fullSentNotification).as("La fullSentNotification non dev'essere null").isNotNull();
                 assertThat(fullSentNotification.getTimeline()).as("La timeline della fullSentNotification non dev'essere null").isNotNull();
-                TimelineElementV26 te = fullSentNotification.getTimeline()
+                TimelineElementV27 te = fullSentNotification.getTimeline()
                         .stream()
                         .filter(data -> data.getElementId().startsWith(timelineElement))
                         .filter(data -> data.getDetails() != null)
@@ -3718,5 +3744,11 @@ public class AvanzamentoNotificheB2bSteps {
         dataTest.setLoadTimeline(loadTimeline != null ? Boolean.valueOf(loadTimeline) : null);
 
         return dataTest;
+    }
+
+    @Then("recuperando la fullSentNotification con la versione B2b {string} {isPresent} l'elemento di timeline {string}")
+    public void checkPresenceOfTimelineElement(String version, boolean isPresent, String timelineEventCategory) {
+        NotificationVersion notificationVersion = NotificationVersion.valueOf(version);
+        getB2bStepsInterface(notificationVersion).checkFullSentNotificationWithVersion(isPresent, timelineEventCategory);
     }
 }

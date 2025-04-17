@@ -1,0 +1,833 @@
+Feature: test per il recupero indirizzo al primo tentativo vas
+
+
+
+    # "physicalAddress": {
+  #   "address": ";0;^;@j]b$",
+  #   "municipality": "'h;#5\"wt",
+  #   "at": ">~`^a$Rh_[",
+  #   "addressDetails": "9Z`%TMv",
+  #   "zip": "-N  e",
+  #   municipalityDetails": "_t",
+  #   "province": "",
+  #   "foreignState": ""
+  # },
+
+
+  #Via Umbria 5L, 35127, PADOVA (PD) --- FRMTTR76M06B715E
+
+# PPPPLT80A01H501V ->
+# | details_physicalAddress | {"address": "xxx", "municipality": "ROMA", "municipalityDetails": "", "at": "Presso", "addressDetails": "", "province": "RM", "zip": "00121", "foreignState": "ITALIA"} |
+# 01113570442 ->
+# | details_physicalAddress | {"address": "xxx", "municipality": "ROMA", "municipalityDetails": "ROMA", "at": "Presso", "addressDetails": "", "province": "RM", "zip": "00121", "foreignState": "ITALIA"} |
+# FRMTTR76M06B715E ->
+# | details_physicalAddress | {"address": "xxx", "municipality": "PADOVA", "municipalityDetails": "", "at": "Presso", "addressDetails": "", "province": "PD", "zip": "35127", "foreignState": "ITALIA"} |
+
+
+  # Indirizzi recuperati dai registri - CREAZIONE notifica andata a buon fine -CONSEGNA andata a buon fine.
+  @ricercaIndirizzoVas
+  Scenario: [1-19_3-11-15] Invio notifica AR monodestinatario verso PF con campo address vuoto e recupero indirizzo da ANPR Vas attivo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+    And destinatario
+      | denomination                        | PF Censito       |
+      | taxId                               | FRMTTR76M06B715E |
+      | digitalDomicile_address             | NULL             |
+      | physicalAddress_address             | NULL             |
+      | physicalAddress_municipality        | NULL             |
+      | physicalAddress_municipalityDetails | NULL             |
+      | at                                  | NULL             |
+      | physicalAddress_addressDetails      | NULL             |
+      | physicalAddress_province            | NULL             |
+      | physicalAddress_State               | NULL             |
+      | physicalAddress_zip                 | NULL             |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino allo stato della notifica "xxx"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_VALIDATION_CALL"
+    #And esiste l'elemento di timeline della notifica "PUBLIC_REGISTRY_VALIDATION_RESPONSE" abbia notificationCost uguale a "null" per l'utente 0
+    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
+      | loadTimeline               | true                                                                                                                                                                      |
+      | registry                   | ANPR                                                                                                                                                                      |
+
+      | details                    | NOT_NULL                                                                                                                                                                  |
+      | details_recIndex           | 0                                                                                                                                                                         |
+      | details_deliveryDetailCode | XXX                                                                                                                                                                       |
+      | details_physicalAddress    | {"address": "xxx", "municipality": "PADOVA", "municipalityDetails": "", "at": "Presso", "addressDetails": "", "province": "PD", "zip": "35127", "foreignState": "ITALIA"} |
+      | details_responseStatus     | OK                                                                                                                                                                        |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | details                    | NOT_NULL                                                                                                                                                                  |
+      | details_recIndex           | 0                                                                                                                                                                         |
+
+      | details_deliveryDetailCode | XXX                                                                                                                                                                       |
+      | details_physicalAddress    | {"address": "xxx", "municipality": "PADOVA", "municipalityDetails": "", "at": "Presso", "addressDetails": "", "province": "PD", "zip": "35127", "foreignState": "ITALIA"} |
+      | details_responseStatus     | ok                                                                                                                                                                        |
+
+    #STEP codice 200 del test 15
+  #Call una sola volta 3
+  #Call lista corretta di utenze 3
+  #Response registro ANPR 3/11
+
+
+
+  @ricercaIndirizzoVas
+  Scenario: [4_4] Invio notifica 890 monodestinatario verso PG con campo address vuoto e recupero indirizzo da RI Vas attivo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+    And destinatario
+      | denomination                        | PG Censito  |
+      | taxId                               | 01113570442 |
+      | digitalDomicile_address             | test@pec.it |
+      | physicalAddress_address             | NULL        |
+      | physicalAddress_municipality        | NULL        |
+      | physicalAddress_municipalityDetails | NULL        |
+      | at                                  | NULL        |
+      | physicalAddress_addressDetails      | NULL        |
+      | physicalAddress_province            | NULL        |
+      | physicalAddress_State               | NULL        |
+      | physicalAddress_zip                 | NULL        |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino allo stato della notifica "xxx"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_VALIDATION_CALL"
+
+    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
+      | registry         | RI       |
+      | details          | NOT_NULL |
+      | details_recIndex | 0        |
+
+  #Call una sola volta
+  #Call lista corretta di utenze
+
+
+  @ricercaIndirizzoVas
+  Scenario: [5_5] Invio notifica multidestinatario AR verso PF-PG con campo address vuoto e recupero indirizzo dai registri nazionali Vas attivo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+    And destinatario
+      | denomination                        | PF Censito       |
+      | taxId                               | FRMTTR76M06B715E |
+      | digitalDomicile_address             | test@pec.it      |
+      | physicalAddress_address             | NULL             |
+      | physicalAddress_municipality        | NULL             |
+      | physicalAddress_municipalityDetails | NULL             |
+      | at                                  | NULL             |
+      | physicalAddress_addressDetails      | NULL             |
+      | physicalAddress_province            | NULL             |
+      | physicalAddress_State               | NULL             |
+      | physicalAddress_zip                 | NULL             |
+    And destinatario
+      | denomination                        | PG Censito  |
+      | taxId                               | 01113570442 |
+      | digitalDomicile_address             | test@pec.it |
+      | physicalAddress_address             | NULL        |
+      | physicalAddress_municipality        | NULL        |
+      | physicalAddress_municipalityDetails | NULL        |
+      | at                                  | NULL        |
+      | physicalAddress_addressDetails      | NULL        |
+      | physicalAddress_province            | NULL        |
+      | physicalAddress_State               | NULL        |
+      | physicalAddress_zip                 | NULL        |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino allo stato della notifica "xxx"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_VALIDATION_CALL"
+    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
+      | details          | NOT_NULL |
+      | details_recIndex | 0        |
+      | registry         | ANPR     |
+    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
+      | details          | NOT_NULL |
+      | details_recIndex | 1        |
+      | registry         | RI       |
+  #Call una sola volta
+  #Call lista corretta di utenze
+
+
+
+
+
+  # Indirizzi non recuperati dai registri - CREAZIONE notifica fallita.
+
+
+  @ricercaIndirizzoVas
+  Scenario: [13-22_6] Invio notifica AR monodestinatario verso PF con campo address vuoto e nessun indirizzo trovato da ANPR notifica rifiutata Vas attivo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+    And destinatario
+      | denomination                        | PF Non Censito |
+      | taxId                               | XXX            |
+      | digitalDomicile_address             | test@pec.it    |
+      | physicalAddress_address             | NULL           |
+      | physicalAddress_municipality        | NULL           |
+      | physicalAddress_municipalityDetails | NULL           |
+      | at                                  | NULL           |
+      | physicalAddress_addressDetails      | NULL           |
+      | physicalAddress_province            | NULL           |
+      | physicalAddress_State               | NULL           |
+      | physicalAddress_zip                 | NULL           |
+    When la notifica viene inviata tramite api b2b dal "AB" e si attende che lo stato diventi "REFUSED"
+    Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
+      | loadTimeline           | true                   |
+      | details                | NOT_NULL               |
+      | details_refusalReasons | [{"errorCode": "ADDRESS_NOT_FOUND"}] |
+
+
+  @ricercaIndirizzoVas
+  Scenario: [14_7] Invio notifica AR monodestinatario verso PG con campo address vuoto e nessun indirizzo trovato da RI notifica rifiutata Vas attivo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+    And destinatario
+      | denomination                        | PG Non Censito |
+      | taxId                               | XXX            |
+      | digitalDomicile_address             | test@pec.it    |
+      | physicalAddress_address             | NULL           |
+      | physicalAddress_municipality        | NULL           |
+      | physicalAddress_municipalityDetails | NULL           |
+      | at                                  | NULL           |
+      | physicalAddress_addressDetails      | NULL           |
+      | physicalAddress_province            | NULL           |
+      | physicalAddress_State               | NULL           |
+      | physicalAddress_zip                 | NULL           |
+    When la notifica viene inviata tramite api b2b dal "AB" e si attende che lo stato diventi "REFUSED"
+    Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
+      | loadTimeline           | true                   |
+      | details                | NOT_NULL               |
+      | details_refusalReasons | [{"errorCode": "ADDRESS_NOT_FOUND"}] |
+  # Call una volta
+  #Call lista utenze
+  #Response non esista
+
+
+
+ #*** ADD _8. entrambi non censiti
+  @ricercaIndirizzoVas
+  Scenario: [_8] Invio notifica multidestinatario AR verso PF-PG con campo address vuoto entrambi NON censiti Vas attivo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+    And destinatario
+      | denomination                        | PF Non Censito |
+      | taxId                               | xxx            |
+      | digitalDomicile_address             | test@pec.it    |
+      | physicalAddress_address             | via bologna 7  |
+      | physicalAddress_municipality        | Bologna        |
+      | physicalAddress_municipalityDetails | NULL           |
+      | at                                  | NULL           |
+      | physicalAddress_addressDetails      | NULL           |
+      | physicalAddress_province            | NULL           |
+      | physicalAddress_State               | NULL           |
+      | physicalAddress_zip                 | NULL           |
+    And destinatario
+      | denomination                        | PG Non Censito |
+      | taxId                               | xxx            |
+      | digitalDomicile_address             | test@pec.it    |
+      | physicalAddress_address             | NULL           |
+      | physicalAddress_municipality        | NULL           |
+      | physicalAddress_municipalityDetails | NULL           |
+      | at                                  | NULL           |
+      | physicalAddress_addressDetails      | NULL           |
+      | physicalAddress_province            | NULL           |
+      | physicalAddress_State               | NULL           |
+      | physicalAddress_zip                 | NULL           |
+    When la notifica viene inviata tramite api b2b dal "AB" e si attende che lo stato diventi "REFUSED"
+    Then vengono letti gli eventi fino allo stato della notifica "xxx"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_VALIDATION_CALL"
+    Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
+      | loadTimeline           | true                   |
+      | details                | NOT_NULL               |
+      | details_refusalReasons | [{"errorCode": "ADDRESS_NOT_FOUND"}] |
+  # Call una volta/lista utenze
+  #Response non esista
+
+
+
+  @ricercaIndirizzoVas
+  Scenario: [15_10M] Invio notifica AR multidestinatario verso PF-PG con campo address vuoto e un solo indirizzo trovato da RI notifica rifiutata Vas attivo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+    And destinatario
+      | denomination                        | PF Non Censito |
+      | taxId                               | XXX            |
+      | digitalDomicile_address             | test@pec.it    |
+      | physicalAddress_address             | NULL           |
+      | physicalAddress_municipality        | NULL           |
+      | physicalAddress_municipalityDetails | NULL           |
+      | at                                  | NULL           |
+      | physicalAddress_addressDetails      | NULL           |
+      | physicalAddress_province            | BNULLO         |
+      | physicalAddress_State               | NULL           |
+      | physicalAddress_zip                 | NULL           |
+    And destinatario
+      | denomination                        | PG Censito  |
+      | taxId                               | 01113570442 |
+      | digitalDomicile_address             | test@pec.it |
+      | physicalAddress_address             | NULL        |
+      | physicalAddress_municipality        | NULL        |
+      | physicalAddress_municipalityDetails | NULL        |
+      | at                                  | NULL        |
+      | physicalAddress_addressDetails      | NULL        |
+      | physicalAddress_province            | NULL        |
+      | physicalAddress_State               | NULL        |
+      | physicalAddress_zip                 | NULL        |
+    When la notifica viene inviata tramite api b2b dal "AB" e si attende che lo stato diventi "REFUSED"
+    Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
+      | loadTimeline           | true                   |
+      | details                | NOT_NULL               |
+      | details_refusalReasons | [{"errorCode": "ADDRESS_NOT_FOUND"}] |
+
+# Inserimento MANUALE + VAS.
+
+  @ricercaIndirizzoVas
+  Scenario: [16_9M] Invio notifica AR multidestinatario verso PF-PG con campo address vuoto e uno compilato e indirizzo trovato da RI notifica accettata Vas attivo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+    And destinatario
+      | denomination                        | PagoPA S.p.A            |
+      | taxId                               | 15376371009             |
+      | digitalDomicile                     | NULL                    |
+      | recipientType                       | PG                      |
+      | physicalAddress_address             | Piazza Colonna 370      |
+      | physicalAddress_municipality        | Roma                    |
+      | physicalAddress_municipalityDetails | NULL                    |
+      | at                                  | NULL                    |
+      | physicalAddress_addressDetails      | NULL                    |
+      | physicalAddress_province            | RM                      |
+      | physicalAddress_State               | ITALIA                  |
+      | physicalAddress_zip                 | 00187                   |
+    And destinatario
+      | denomination                        | PG Censito  |
+      | taxId                               | 01113570442 |
+      | digitalDomicile_address             | test@pec.it |
+      | physicalAddress_address             | NULL        |
+      | physicalAddress_municipality        | NULL        |
+      | physicalAddress_municipalityDetails | NULL        |
+      | at                                  | NULL        |
+      | physicalAddress_addressDetails      | NULL        |
+      | physicalAddress_province            | NULL        |
+      | physicalAddress_State               | NULL        |
+      | physicalAddress_zip                 | NULL        |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_VALIDATION_CALL"
+    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
+      | details          | NOT_NULL |
+      | details_recIndex | 1        |
+      #   Verificare corretti elementi per PF 0 PS ATTUALMENTE SONO 2 PG
+
+
+
+  @ricercaIndirizzoVas
+  Scenario: [17?] Invio notifica 890 multidestinatario verso PF-PG con campo address vuoto e uno compilato e indirizzo non trovato da RI notifica rifiutata Vas attivo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+    And destinatario
+      | denomination                        | PG            |
+      | taxId                               | 01113570442   |
+      | digitalDomicile_address             | test@pec.it   |
+      | physicalAddress_address             | via bologna 7 |
+      | physicalAddress_municipality        | Bologna       |
+      | physicalAddress_municipalityDetails | NULL          |
+      | at                                  | NULL          |
+      | physicalAddress_addressDetails      | NULL          |
+      | physicalAddress_province            | BO            |
+      | physicalAddress_State               | ITALIA        |
+      | physicalAddress_zip                 | 40069         |
+    And destinatario
+      | denomination                        | PF Non Censitop |
+      | taxId                               | XXX             |
+      | digitalDomicile_address             | test@pec.it     |
+      | physicalAddress_address             | NULL            |
+      | physicalAddress_municipality        | NULL            |
+      | physicalAddress_municipalityDetails | NULL            |
+      | at                                  | NULL            |
+      | physicalAddress_addressDetails      | NULL            |
+      | physicalAddress_province            | NULL            |
+      | physicalAddress_State               | NULL            |
+      | physicalAddress_zip                 | NULL            |
+    When la notifica viene inviata tramite api b2b dal "AB" e si attende che lo stato diventi "REFUSED"
+    Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
+      | loadTimeline           | true                   |
+      | details                | NOT_NULL               |
+      | details_refusalReasons | [{"errorCode": "ADDRESS_NOT_FOUND"}] |
+
+
+  #Abilitazione PA / FeatureFlag / WI-VAS-1.3 + WI-VAS-1.4 + client WI-VAS-1.5 ********************
+
+
+  @ricercaIndirizzoVas
+  Scenario: [20_16] Crezione notifica PA abilitata - Feature flag Attivo - Client versione precedente e notifica rifiutata
+    Given viene generata una nuova notifica con la versione "V24"
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+    And destinatario
+      | denomination                        | PG Censito  |
+      | taxId                               | 01113570442 |
+      | digitalDomicile_address             | test@pec.it |
+      | physicalAddress_address             | NULL        |
+      | physicalAddress_municipality        | NULL        |
+      | physicalAddress_municipalityDetails | NULL        |
+      | at                                  | NULL        |
+      | physicalAddress_addressDetails      | NULL        |
+      | physicalAddress_province            | NULL        |
+      | physicalAddress_State               | NULL        |
+      | physicalAddress_zip                 | NULL        |
+    #When la notifica viene inviata tramite api b2b con la versione "V24" dal "AB" e si attende che lo stato diventi "REFUSED"
+    When la notifica viene inviata tramite api b2b dal "AB" e si attende che lo stato diventi "REFUSED"
+    Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
+      | loadTimeline           | true                   |
+      | details                | NOT_NULL               |
+      | details_refusalReasons | [{"errorCode": "xxx"}] |
+# client non aggiornato
+
+
+
+# ***ADD _17 : PA non abilitata - Feature flag Attivo - Client non aggiornato e notifica rifiutata
+  @ricercaIndirizzoVas
+  Scenario: [23_19] Crezione notifica PA NON abilitata - Feature flag Attivo - Client NON aggiornato e notifica rifiutata
+    Given viene generata una nuova notifica con la versione "V24"
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+    And destinatario
+      | denomination                        | PG Censito  |
+      | taxId                               | 01113570442 |
+      | digitalDomicile_address             | test@pec.it |
+      | physicalAddress_address             | NULL        |
+      | physicalAddress_municipality        | NULL        |
+      | physicalAddress_municipalityDetails | NULL        |
+      | at                                  | NULL        |
+      | physicalAddress_addressDetails      | NULL        |
+      | physicalAddress_province            | NULL        |
+      | physicalAddress_State               | NULL        |
+      | physicalAddress_zip                 | NULL        |
+   # When la notifica viene inviata tramite api b2b con la versione "V24" dal "NON AB" e si attende che lo stato diventi "REFUSED"
+    When la notifica viene inviata tramite api b2b dal "AB" e si attende che lo stato diventi "REFUSED"
+    Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
+      | loadTimeline           | true                   |
+      | details                | NOT_NULL               |
+      | details_refusalReasons | [{"errorCode": "xxx"}] |
+#Client non aggiornato
+
+
+
+# ***ADD _18 : PA non abilitata - Feature flag Attivo - Client aggiornato e notifica rifiutata
+  @ricercaIndirizzoVas
+  Scenario: [23_19] Crezione notifica PA NON abilitata - Feature flag Attivo - Client aggiornato e notifica rifiutata
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+    And destinatario
+      | denomination                        | PG Censito  |
+      | taxId                               | 01113570442 |
+      | digitalDomicile_address             | test@pec.it |
+      | physicalAddress_address             | NULL        |
+      | physicalAddress_municipality        | NULL        |
+      | physicalAddress_municipalityDetails | NULL        |
+      | at                                  | NULL        |
+      | physicalAddress_addressDetails      | NULL        |
+      | physicalAddress_province            | NULL        |
+      | physicalAddress_State               | NULL        |
+      | physicalAddress_zip                 | NULL        |
+    When la notifica viene inviata tramite api b2b dal "NON AB" e si attende che lo stato diventi "REFUSED"
+    Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
+      | loadTimeline           | true                   |
+      | details                | NOT_NULL               |
+      | details_refusalReasons | [{"errorCode": "xxx"}] |
+
+
+
+  # *************** Feature flaf OFF
+
+
+  @ricercaIndirizzoVas
+  Scenario: [23_19] Crezione notifica PA abilitata - Feature flag Spento - Client aggiornato e notifica rifiutata
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+    And destinatario
+      | denomination                        | PG Censito    |
+      | taxId                               | 01113570442   |
+      | digitalDomicile_address             | test@pec.it   |
+      | physicalAddress_address             | via bologna 7 |
+      | physicalAddress_municipality        | Bologna       |
+      | physicalAddress_municipalityDetails | NULL          |
+      | at                                  | NULL          |
+      | physicalAddress_addressDetails      | NULL          |
+      | physicalAddress_province            | BO            |
+      | physicalAddress_State               | ITALIA        |
+      | physicalAddress_zip                 | 40069         |
+    When la notifica viene inviata tramite api b2b dal "AB" e si attende che lo stato diventi "REFUSED"
+    Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
+      | loadTimeline           | true                   |
+      | details                | NOT_NULL               |
+      | details_refusalReasons | [{"errorCode": "xxx"}] |
+
+  @ricercaIndirizzoVas
+  Scenario: [24_20] Crezione notifica PA abilitata - Feature flag Spento - Client versione precedente e notifica rifiutata
+    Given viene generata una nuova notifica con la versione "V24"
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+    And destinatario
+      | denomination                        | PG Censito  |
+      | taxId                               | 01113570442 |
+      | digitalDomicile_address             | test@pec.it |
+      | physicalAddress_address             | NULL        |
+      | physicalAddress_municipality        | NULL        |
+      | physicalAddress_municipalityDetails | NULL        |
+      | at                                  | NULL        |
+      | physicalAddress_addressDetails      | NULL        |
+      | physicalAddress_province            | NULL        |
+      | physicalAddress_State               | NULL        |
+      | physicalAddress_zip                 | NULL        |
+    When la notifica viene inviata tramite api b2b con la versione "V24" dal "AB" e si attende che lo stato diventi "REFUSED"
+    Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
+      | loadTimeline           | true                   |
+      | details                | NOT_NULL               |
+      | details_refusalReasons | [{"errorCode": "xxx"}] |
+
+  @ricercaIndirizzoVas
+  Scenario: [25_21] Crezione notifica PA non abilitata - Feature flag Spento - Client aggiornato e notifica rifiutata
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+    And destinatario
+      | denomination                        | PG Censito  |
+      | taxId                               | 01113570442 |
+      | digitalDomicile_address             | test@pec.it |
+      | physicalAddress_address             | NULL        |
+      | physicalAddress_municipality        | NULL        |
+      | physicalAddress_municipalityDetails | NULL        |
+      | at                                  | NULL        |
+      | physicalAddress_addressDetails      | NULL        |
+      | physicalAddress_province            | NULL        |
+      | physicalAddress_State               | NULL        |
+      | physicalAddress_zip                 | NULL        |
+    When la notifica viene inviata tramite api b2b dal "NON AB" e si attende che lo stato diventi "REFUSED"
+    Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
+      | loadTimeline           | true                   |
+      | details                | NOT_NULL               |
+      | details_refusalReasons | [{"errorCode": "xxx"}] |
+
+
+  @ricercaIndirizzoVas
+  Scenario: [26_22] Crezione notifica PA non abilitata - Feature flag Spento - Client non aggiornato e notifica rifiutata
+    Given viene generata una nuova notifica con la versione "V24"
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+    And destinatario
+      | denomination                        | PG Censito  |
+      | taxId                               | 01113570442 |
+      | digitalDomicile_address             | test@pec.it |
+      | physicalAddress_address             | NULL        |
+      | physicalAddress_municipality        | NULL        |
+      | physicalAddress_municipalityDetails | NULL        |
+      | at                                  | NULL        |
+      | physicalAddress_addressDetails      | NULL        |
+      | physicalAddress_province            | NULL        |
+      | physicalAddress_State               | NULL        |
+      | physicalAddress_zip                 | NULL        |
+    #When la notifica viene inviata tramite api b2b con la versione "V24" dal "NON AB" e si attende che lo stato diventi "REFUSED"
+    When la notifica viene inviata tramite api b2b dal "AB" e si attende che lo stato diventi "REFUSED"
+    Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
+      | loadTimeline           | true                   |
+      | details                | NOT_NULL               |
+      | details_refusalReasons | [{"errorCode": "xxx"}] |
+
+
+
+
+  # ***** Client non aggiornato in lettura
+
+  @ricercaIndirizzoVas
+  Scenario: [] Crezione notifica PA abilitata - Feature flag Attivo - Client Non aggiornato in lettura
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+    And destinatario
+      | denomination                        | PG Censito  |
+      | taxId                               | 01113570442 |
+      | digitalDomicile_address             | test@pec.it |
+      | physicalAddress_address             | NULL        |
+      | physicalAddress_municipality        | NULL        |
+      | physicalAddress_municipalityDetails | NULL        |
+      | at                                  | NULL        |
+      | physicalAddress_addressDetails      | NULL        |
+      | physicalAddress_province            | NULL        |
+      | physicalAddress_State               | NULL        |
+      | physicalAddress_zip                 | NULL        |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_VALIDATION_RESPONSE"
+    Then recuperando la fullSentNotification con la versione B2b "V24" non è presente l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE"
+    Then recuperando la fullSentNotification con la versione B2b "V24" non è presente l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL"
+
+
+
+
+    # ********************************  Api lato Destinatario
+
+  @ricercaIndirizzoVas
+  Scenario: []
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_890 |
+      | digitalDomicile         | NULL               |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
+    And attendo che gli elementi di timeline SEND_ANALOG_PROGRESS vengano ricevuti tutti
+    And la notifica può essere correttamente recuperata da "Mario Cucumber"
+    Then lato api l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG008A" è visibile
+    And lato destinatario vengono letti i dettagli della notifica lato web dal destinatario "Mario Cucumber"
+    Then lato destinatario dal web l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG008A" non è visibile
+    And lato mittente vengono letti i dettagli della notifica lato web "Comune_Multi"
+    And lato mittente dal web l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG008A" non è visibile
+
+
+  @ricercaIndirizzoVas
+  Scenario: []
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | @FAIL_DECEDUTO_890 |
+      | digitalDomicile         | NULL               |
+    When la notifica viene inviata tramite api b2b dal "" e si attende che lo stato diventi "ACCEPTED"
+    #Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
+    And la notifica può essere correttamente recuperata da "Mario Cucumber"
+    Then lato api l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG012A" non è visibile
+    Then lato api l'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG012" è visibile
+    And lato destinatario vengono letti i dettagli della notifica lato web dal destinatario "Mario Cucumber"
+    Then lato destinatario dal web l'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG012" è visibile
+    Then lato destinatario dal web l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG012A" non è presente
+    And lato mittente vengono letti i dettagli della notifica lato web "Comune_Multi"
+    And lato mittente dal web l'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG012" è visibile
+    And lato mittente dal web l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG012A" non è presente
+
+
+
+
+#******************************************   Stream
+
+
+
+  @cleanWebhook @webhook1
+  Scenario: [] Invio notifica e controllo che stream con eventType vuoto e versione da V26 contenga elemento ANALOG_WORKFLOW_RECIPIENT_DECEASED
+#    Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V26"
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario
+      | denomination                        | PG Censito    |
+      | taxId                               | 01113570442   |
+      | digitalDomicile_address             | test@pec.it   |
+      | physicalAddress_address             | via bologna 7 |
+      | physicalAddress_municipality        | Bologna       |
+      | physicalAddress_municipalityDetails | NULL          |
+      | at                                  | NULL          |
+      | physicalAddress_addressDetails      | NULL          |
+      | physicalAddress_province            | BO            |
+      | physicalAddress_State               | ITALIA        |
+      | physicalAddress_zip                 | 40069         |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione ""
+    And si crea il nuovo stream per il "Comune_Multi" con versione ""
+    Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "" con la versione ""
+
+
+  @cleanWebhook @webhook1
+  Scenario: []
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario
+      | denomination                        | PG Censito    |
+      | taxId                               | 01113570442   |
+      | digitalDomicile_address             | test@pec.it   |
+      | physicalAddress_address             | via bologna 7 |
+      | physicalAddress_municipality        | Bologna       |
+      | physicalAddress_municipalityDetails | NULL          |
+      | at                                  | NULL          |
+      | physicalAddress_addressDetails      | NULL          |
+      | physicalAddress_province            | BO            |
+      | physicalAddress_State               | ITALIA        |
+      | physicalAddress_zip                 | 40069         |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V28"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V28"
+    Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "" con la versione "v28"
+
+
+
+  # ******************** flag costi
+
+
+
+  @ricercaIndirizzoVas @ricercaIndirizzoVasTrue
+  Scenario: [_45] Invio notifica AR monodestinatario verso PF con campo address vuoto e recupero indirizzo da ANPR Vas attivo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+    And destinatario
+      | denomination                        | PF Errore 429 |
+      | taxId                               | xxx           |
+      | digitalDomicile_address             | NULL          |
+      | physicalAddress_address             | NULL          |
+      | physicalAddress_municipality        | NULL          |
+      | physicalAddress_municipalityDetails | NULL          |
+      | at                                  | NULL          |
+      | physicalAddress_addressDetails      | NULL          |
+      | physicalAddress_province            | NULL          |
+      | physicalAddress_State               | NULL          |
+      | physicalAddress_zip                 | NULL          |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
+    Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
+      | loadTimeline           | true                   |
+      | details                | NOT_NULL               |
+      | details_refusalReasons | [{"errorCode": "xxx"}] |
+
+    #And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_VALIDATION_CALL"
+    #And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
+    #  | loadTimeline               | true         |                                                                                                                                                                                             |
+
+
+  @ricercaIndirizzoVas @ricercaIndirizzoVasFalse
+  Scenario: [_45-46-47-False] Invio notifica AR monodestinatario verso PF con campo address vuoto e recupero indirizzo da ANPR Vas attivo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+    And destinatario
+      | denomination                        | PF Errore 429 |
+      | taxId                               | xxx           |
+      | digitalDomicile_address             | NULL          |
+      | physicalAddress_address             | NULL          |
+      | physicalAddress_municipality        | NULL          |
+      | physicalAddress_municipalityDetails | NULL          |
+      | at                                  | NULL          |
+      | physicalAddress_addressDetails      | NULL          |
+      | physicalAddress_province            | NULL          |
+      | physicalAddress_State               | NULL          |
+      | physicalAddress_zip                 | NULL          |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
+    Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
+      | loadTimeline             | true                   |
+      | details                  | NOT_NULL               |
+      | details_refusalReasons   | [{"errorCode": "xxx"}] |
+      | details_notificationCost | 0                      |
+    #And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_VALIDATION_CALL"
+    #And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
+    #  | loadTimeline               | true         |
+
+
+
+  @ricercaIndirizzoVas @ricercaIndirizzoVasTrue
+  Scenario: [_45-46-47-True] Invio notifica AR monodestinatario verso PF con campo address vuoto e recupero indirizzo da ANPR Vas attivo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+    And destinatario
+      | denomination                        | PF Errore 429 |
+      | taxId                               | xxx           |
+      | digitalDomicile_address             | NULL          |
+      | physicalAddress_address             | NULL          |
+      | physicalAddress_municipality        | NULL          |
+      | physicalAddress_municipalityDetails | NULL          |
+      | at                                  | NULL          |
+      | physicalAddress_addressDetails      | NULL          |
+      | physicalAddress_province            | NULL          |
+      | physicalAddress_State               | NULL          |
+      | physicalAddress_zip                 | NULL          |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
+    Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
+      | loadTimeline             | true                   |
+      | details                  | NOT_NULL               |
+      | details_refusalReasons   | [{"errorCode": "xxx"}] |
+      | details_notificationCost | 1                      |
+    #And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_VALIDATION_CALL"
+    #And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
+    #  | loadTimeline               | true         |
+
+
+
+
+# ********************    3 destinatari
+
+
+
+
+  @ricercaIndirizzoVas
+  Scenario: [5_5] Invio notifica multidestinatario AR verso PF-PG con campo address vuoto e recupero indirizzo dai registri nazionali Vas attivo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+    And destinatario
+      | denomination                        | PF Censito       |
+      | taxId                               | FRMTTR76M06B715E |
+      | digitalDomicile_address             | test@pec.it      |
+      | physicalAddress_address             | NULL             |
+      | physicalAddress_municipality        | NULL             |
+      | physicalAddress_municipalityDetails | NULL             |
+      | at                                  | NULL             |
+      | physicalAddress_addressDetails      | NULL             |
+      | physicalAddress_province            | NULL             |
+      | physicalAddress_State               | NULL             |
+      | physicalAddress_zip                 | NULL             |
+    And destinatario
+      | denomination                        | PF ERRORE   |
+      | taxId                               | xxx         |
+      | digitalDomicile_address             | test@pec.it |
+      | physicalAddress_address             | NULL        |
+      | physicalAddress_municipality        | NULL        |
+      | physicalAddress_municipalityDetails | NULL        |
+      | at                                  | NULL        |
+      | physicalAddress_addressDetails      | NULL        |
+      | physicalAddress_province            | NULL        |
+      | physicalAddress_State               | NULL        |
+      | physicalAddress_zip                 | NULL        |
+    And destinatario
+      | denomination                        | PG NON Censito |
+      | taxId                               | xxx            |
+      | digitalDomicile_address             | test@pec.it    |
+      | physicalAddress_address             | NULL           |
+      | physicalAddress_municipality        | NULL           |
+      | physicalAddress_municipalityDetails | NULL           |
+      | at                                  | NULL           |
+      | physicalAddress_addressDetails      | NULL           |
+      | physicalAddress_province            | NULL           |
+      | physicalAddress_State               | NULL           |
+      | physicalAddress_zip                 | NULL           |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino allo stato della notifica "xxx"
+
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_VALIDATION_CALL"
+    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
+      | details          | NOT_NULL |
+      | details_recIndex | 0        |
+      | registry         | ANPR     |
+    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
+      | details          | NOT_NULL |
+      | details_recIndex | 1        |
+      | registry         | RI       |
+  #Call una sola volta
+  #Call lista corretta di utenze
+
+
+
+
+#Sperimentazione: 27-28
+#12/13/14 tentativi
+
+  #23/24/24
+  #_23 dettaglio notifica mittente - GET /delivery/v2.5/notifications/sent/${IUN} -> nessun nuovo elemento
+  #_24 dettaglio notifica mittente - GET /delivery/v2.6/notifications/sent/${IUN} -> nuovi elementi
+  #_25 dettaglio notifica destinatario - GET/delivery/v2.5/notifications/received/{iun}  -> nessun nuovo lemento -> token
+  #_26 dettaglio notifica destinatario - GET/delivery/v2.6/notifications/received/{iun}  -> nuovi elementi
+
+  #"Gherkin Analogic" con Piva "05722930657"
+

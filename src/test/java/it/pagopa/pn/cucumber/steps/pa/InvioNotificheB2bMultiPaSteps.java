@@ -1,7 +1,7 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
 import io.cucumber.java.en.Then;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV26;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV27;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchResponse;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
@@ -34,10 +34,11 @@ public class InvioNotificheB2bMultiPaSteps {
     public void notificationCanBeRetrievedWithIUNByPA(String paName) {
         sharedSteps.setPA(paName);
         try {
-            AtomicReference<FullSentNotificationV26> fullSentNotification = new AtomicReference<>();
+            AtomicReference<FullSentNotificationV27> fullSentNotification = new AtomicReference<>();
             assertThatCode(() -> fullSentNotification.set(sharedSteps.getSentNotificationLastVersion()))
                     .as("L'invocazione del metodo per il recupero della fullSentNotification non deve lanciare eccezioni")
                     .doesNotThrowAnyException();
+            //TODO V28 MATTEO
             assertThat(fullSentNotification.get()).as("La fullSentNotification recuperata non dev'essere null").isNotNull();
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);

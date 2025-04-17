@@ -7,6 +7,9 @@ import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV26;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v26.PnPollingServiceValidationStatusV26;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV25;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV28;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v28.PnPollingServiceValidationStatusV28;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnRaddAlternativeClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnRaddFsuClient;
@@ -116,8 +119,8 @@ public class PnPaB2bUtils {
 
     //TODO: non usare. chiamare piuttosto sharedSteps.getB2bClient().getSentNotificationV26(iun)
     //Pressochè inutile, usato ormai solo in SearchNotification.
-    public FullSentNotificationV26 getNotificationByIun(String iun) {
-        return client.getSentNotificationV26(iun);
+    public FullSentNotificationV27 getNotificationByIun(String iun) {
+        return client.getSentNotificationV27(iun);
     }
 
     public boolean downloadUrlAndCheckContent(String strUrl, String contentType) {
@@ -551,10 +554,10 @@ public class PnPaB2bUtils {
         }
     }
 
-    public void verifyNotificationAndSha256AllegatiPagamento(FullSentNotificationV26 fsn, String attachment) throws IllegalStateException {
+    public void verifyNotificationAndSha256AllegatiPagamento(FullSentNotificationV27 fsn, String attachment) throws IllegalStateException {
         verifySha256Notification(fsn);
         for (int i = 0; i < fsn.getRecipients().size(); i++) {
-            NotificationRecipientV23 recipient = fsn.getRecipients().get(i);
+            NotificationRecipientV24 recipient = fsn.getRecipients().get(i);
             if (fsn.getRecipients().get(i).getPayments() != null &&
                     Objects.requireNonNull(recipient.getPayments()).get(0).getPagoPa() != null) {
                 NotificationAttachmentDownloadMetadataResponse resp;
@@ -606,7 +609,7 @@ public class PnPaB2bUtils {
         }
     }
 
-    private void extractAttachment(FullSentNotificationV26 fsn, NotificationRecipientV23 recipient) {
+    private void extractAttachment(FullSentNotificationV27 fsn, NotificationRecipientV24 recipient) {
         if (Objects.requireNonNull(recipient.getPayments()).get(0).getF24() != null) {
             NotificationAttachmentDownloadMetadataResponse resp = client.getSentNotificationAttachment(fsn.getIun(), fsn.getRecipients().indexOf(recipient), F_24, 0);
             if (resp != null && resp.getRetryAfter() != null && resp.getRetryAfter() > 0) {
@@ -621,7 +624,7 @@ public class PnPaB2bUtils {
         }
     }
 
-    private void extractAndCheckAttachment(FullSentNotificationV26 fsn, NotificationRecipientV23 recipient) {
+    private void extractAndCheckAttachment(FullSentNotificationV27 fsn, NotificationRecipientV24 recipient) {
         if (Objects.requireNonNull(recipient.getPayments()).get(0).getPagoPa() != null) {
             NotificationAttachmentDownloadMetadataResponse resp = client.getSentNotificationAttachment(fsn.getIun(), fsn.getRecipients().indexOf(recipient), PAGOPA, 0);
             checkAttachment(resp.getFilename(), resp.getUrl(), resp.getSha256());

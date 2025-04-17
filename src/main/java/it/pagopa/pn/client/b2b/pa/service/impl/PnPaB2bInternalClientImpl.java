@@ -183,18 +183,36 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
     /**
      * V24
      */
+    @Override
     public NewNotificationResponse sendNewNotificationV24(NewNotificationRequestV24 newNotificationRequest) {
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NewNotificationRequestV24 request;
-        request = deepCopy(newNotificationRequest, it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NewNotificationRequestV24.class);
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NewNotificationResponse response;
-        response = newNotificationApi.sendNewNotificationV24(operatorId, CxTypeAuthFleet.PA, paId, "B2B", request, groups, null, null);
-        return deepCopy(response, NewNotificationResponse.class);
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public NewNotificationRequestStatusResponseV24 getNotificationRequestStatusV24(String notificationRequestId) {
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NewNotificationRequestStatusResponseV24 resp;
-        resp = senderReadB2BApi.getNotificationRequestStatusV24(
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public NewNotificationRequestStatusResponseV24 getNotificationRequestStatusAllParamV24(String notificationRequestId, String paProtocolNumber, String idempotenceToken) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * V25
+     */
+    public NewNotificationResponse sendNewNotificationV25(NewNotificationRequestV25 newNotificationRequest) {
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NewNotificationRequestV25 request;
+        request = deepCopy(newNotificationRequest, it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NewNotificationRequestV25.class);
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NewNotificationResponse response;
+        response = newNotificationApi.sendNewNotificationV25(operatorId, CxTypeAuthFleet.PA, paId, "B2B", request, groups, null, null);
+        return deepCopy(response, NewNotificationResponse.class);
+    }
+
+    @Override
+    public NewNotificationRequestStatusResponseV25 getNotificationRequestStatusV25(String notificationRequestId) {
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NewNotificationRequestStatusResponseV25 resp;
+        resp = senderReadB2BApi.getNotificationRequestStatusV25(
                 operatorId,
                 CxTypeAuthFleet.PA,
                 paId,
@@ -203,13 +221,13 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
                 null,
                 null
         );
-        return deepCopy(resp, NewNotificationRequestStatusResponseV24.class);
+        return deepCopy(resp, NewNotificationRequestStatusResponseV25.class);
     }
 
     @Override
-    public NewNotificationRequestStatusResponseV24 getNotificationRequestStatusAllParamV24(String notificationRequestId, String paProtocolNumber, String idempotenceToken) {
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NewNotificationRequestStatusResponseV24 resp;
-        resp = senderReadB2BApi.getNotificationRequestStatusV24(
+    public NewNotificationRequestStatusResponseV25 getNotificationRequestStatusAllParamV25(String notificationRequestId, String paProtocolNumber, String idempotenceToken) {
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NewNotificationRequestStatusResponseV25 resp;
+        resp = senderReadB2BApi.getNotificationRequestStatusV25(
                 operatorId,
                 CxTypeAuthFleet.PA,
                 paId,
@@ -218,7 +236,7 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
                 paProtocolNumber,
                 idempotenceToken
         );
-        return deepCopy(resp, NewNotificationRequestStatusResponseV24.class);
+        return deepCopy(resp, NewNotificationRequestStatusResponseV25.class);
     }
 
     /**
@@ -256,9 +274,14 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
 
     @Override
     public FullSentNotificationV26 getSentNotificationV26(String iun) {
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.FullSentNotificationV26 resp;
-        resp = senderReadB2BApi.getSentNotificationV26(operatorId, CxTypeAuthFleet.PA, paId, iun, groups);
-        return deepCopy(resp, FullSentNotificationV26.class);
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public FullSentNotificationV27 getSentNotificationV27(String iun) {
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.FullSentNotificationV27 resp;
+        resp = senderReadB2BApi.getSentNotificationV27(operatorId, CxTypeAuthFleet.PA, paId, iun, groups);
+        return deepCopy(resp, FullSentNotificationV27.class);
     }
 
 
@@ -298,7 +321,6 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
     public NotificationPriceResponseV23 getNotificationPriceV23(String paTaxId, String noticeCode) throws RestClientException {
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NotificationPriceResponseV23
                 notificationPrice = this.notificationPriceV23Api.getNotificationPriceV23(paTaxId, noticeCode);
-
         return deepCopy(notificationPrice, NotificationPriceResponseV23.class);
     }
 
@@ -313,8 +335,6 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
     public void paymentEventsRequestF24(PaymentEventsRequestF24 paymentEventsRequestF24) throws RestClientException, UnsupportedOperationException {
         throw new UnsupportedOperationException();
     }
-
-    @Override
     public RequestStatus notificationCancellation(String iun) throws RestClientException {
         throw new UnsupportedOperationException();
     }
@@ -329,13 +349,11 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
         throw new UnsupportedOperationException();
     }
 
-    @Override
     public ApiKeyType getApiKeySetted() {
         throw new UnsupportedOperationException();
     }
 
     public List<PreLoadResponse> presignedUploadRequest(List<PreLoadRequest> preLoadRequest) {
-
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.PreLoadRequest[] requests;
         requests = deepCopy(preLoadRequest, it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.PreLoadRequest[].class);
 
