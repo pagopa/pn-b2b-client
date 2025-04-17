@@ -28,11 +28,15 @@ Feature: Test API of e-service template
       | api         |
 
   @e-service-template-create
-  Scenario: [INTEROP-EST-003] La creazione di un e-service template NON può riuscire se viene specificato il nome di un template già esistente
+  Scenario Outline: [INTEROP-EST-003] La creazione di un e-service template NON può riuscire se viene specificato il nome di un template già esistente
     Given l'utente è un "admin" di "PA1"
-    When l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
-    And l'utente effettua la creazione di un e-service template in modalità erogazione usando lo stesso nome
+    When l'utente effettua la creazione di un e-service template in modalità <modo> in stato di DRAFT
+    And l'utente effettua la creazione di un e-service template in modalità <modo> usando lo stesso nome
     Then si ottiene response status code 409
+    Examples:
+      | modo         |
+      | erogazione   |
+      | ricezione    |
 
   @e-service-template-version-suspend
   Scenario Outline: [INTEROP-EST-006] La sospensione di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
@@ -241,7 +245,48 @@ Feature: Test API of e-service template
     When l'utente tenta delle modifiche alla versione di un e-service template inesistente
     Then si ottiene response status code 404
 
-  @e-service-template-riskAnalysis-update
+  @e-service-template-riskAnalysis-add
+  Scenario Outline: [INTEROP-EST-021] L'aggiunta di una risk analysis a un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta l'aggiunta di una risk analysis all'e-service template
+    Then si ottiene response status code 403
+    Examples:
+      | ruolo         | stato     |
+      | security      | DRAFT     |
+      | support       | DRAFT     |
+      | security      | PUBLISHED |
+      | support       | PUBLISHED |
+      | security      | SUSPENDED |
+      | support       | SUSPENDED |
+
+  @e-service-template-riskAnalysis-add
+  Scenario Outline: [INTEROP-EST-022] L'aggiunta di una risk analysis a un e-service template in stato DRAFT può essere fatta da un ente in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta l'aggiunta di una risk analysis all'e-service template
+    Then si ottiene response status code 200
+    And l'aggiunta della risk analysis all'e-service è stata effettuata correttamente
+    Examples:
+      | ruolo         |
+      | admin         |
+      | api           |
+      | api, security |
+
+  @e-service-template-riskAnalysis-add
+  Scenario Outline: [INTEROP-EST-023] L'aggiunta di una risk analysis a un e-service template in stato PUBLISHED o SUSPENDED non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
+    When l'utente tenta l'aggiunta di una risk analysis all'e-service template
+    Then si ottiene response status code 403
+    Examples:
+      | stato     |
+      | PUBLISHED |
+      | SUSPENDED |
+
+  @e-service-template-riskAnalysis-add
   Scenario Outline: [INTEROP-EST-024] L'aggiunta di una risk analysis a un e-service template in modalità erogazione non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
@@ -253,6 +298,136 @@ Feature: Test API of e-service template
       | admin         |
       | api           |
       | api,security  |
+
+  @e-service-template-riskAnalysis-add
+  Scenario: [INTEROP-EST-025] L'aggiunta di una risk analysis a un e-service template in stato DRAFT non può essere fatta da una PA diversa da quella creatrice del template
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    When l'utente è un "admin" di "PA2"
+    And l'utente tenta l'aggiunta di una risk analysis all'e-service template
+    Then si ottiene response status code 403
+
+  @e-service-template-riskAnalysis-add
+  Scenario: [INTEROP-EST-027] L'aggiunta di una risk analysis a un e-service template in stato DRAFT non può essere fatta specificando lo stesso nome di una risk analysis precedentemente creata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    And l'utente effettua l'aggiunta di una risk analysis all'e-service template con successo
+    When l'utente tenta l'aggiunta di una risk analysis all'e-service template specificando lo stesso nome
+    Then si ottiene response status code 409
+
+  @e-service-template-riskAnalysis-delete
+  Scenario Outline: [INTEROP-EST-028] La cancellazione di una risk analysis di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
+    And l'utente effettua l'aggiunta di una risk analysis all'e-service template con successo
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la cancellazione della risk analysis dell'e-service template
+    Then si ottiene response status code 403
+    Examples:
+      | ruolo         | stato     |
+      | security      | DRAFT     |
+      | support       | DRAFT     |
+      | security      | PUBLISHED |
+      | support       | PUBLISHED |
+      | security      | SUSPENDED |
+      | support       | SUSPENDED |
+
+  @e-service-template-riskAnalysis-delete
+  Scenario Outline: [INTEROP-EST-029] La cancellazione di una risk analysis di un e-service template in stato DRAFT può essere fatta da un ente in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    And l'utente effettua l'aggiunta di una risk analysis all'e-service template con successo
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la cancellazione della risk analysis dell'e-service template
+    Then si ottiene response status code 200
+    And la cancellazione della risk analysis dell'e-service è stata effettuata correttamente
+    Examples:
+      | ruolo         |
+      | admin         |
+      | api           |
+      | api,security  |
+
+  @e-service-template-riskAnalysis-delete
+  Scenario: [INTEROP-EST-030] La cancellazione di una risk analysis di un e-service template in stato DRAFT non può essere fatta da una PA diversa da quella creatrice del template
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    And l'utente effettua l'aggiunta di una risk analysis all'e-service template con successo
+    When l'utente è un "admin" di "PA2"
+    And l'utente tenta la cancellazione della risk analysis dell'e-service template
+    Then si ottiene response status code 403
+
+  @e-service-template-riskAnalysis-delete
+  Scenario: [INTEROP-EST-031] La cancellazione di una risk analysis inesistente non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    When l'utente tenta la cancellazione di una risk analysis inesistente nell'e-service template
+    Then si ottiene response status code 404
+
+  @e-service-template-riskAnalysis-delete
+  Scenario: [INTEROP-EST-032] La cancellazione di una risk analysis già eliminata non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    And l'utente effettua l'aggiunta di una risk analysis all'e-service template con successo
+    And l'utente effettua la cancellazione della risk analysis dell'e-service template con successo
+    When l'utente tenta la cancellazione della risk analysis dell'e-service template
+    Then si ottiene response status code 404
+
+  @e-service-template-riskAnalysis-update
+  Scenario Outline: [INTEROP-EST-033] La modifica di una risk analysis di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
+    And l'utente effettua l'aggiunta di una risk analysis all'e-service template con successo
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la modifica della risk analysis dell'e-service template
+    Then si ottiene response status code 403
+    Examples:
+      | ruolo         | stato     |
+      | security      | DRAFT     |
+      | support       | DRAFT     |
+      | security      | PUBLISHED |
+      | support       | PUBLISHED |
+      | security      | SUSPENDED |
+      | support       | SUSPENDED |
+
+  @e-service-template-riskAnalysis-update
+  Scenario Outline: [INTEROP-EST-034] La modifica di una risk analysis di un e-service template in stato DRAFT può essere fatta da un ente in veste di ADMIN o API
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    And l'utente effettua l'aggiunta di una risk analysis all'e-service template con successo
+    When l'utente è un "<ruolo>" di "PA1"
+    And l'utente tenta la modifica della risk analysis dell'e-service template
+    Then si ottiene response status code 200
+    And la modifica della risk analysis dell'e-service è stata effettuata correttamente
+    Examples:
+      | ruolo         |
+      | admin         |
+      | api           |
+      | api,security  |
+
+  @e-service-template-riskAnalysis-update
+  Scenario: [INTEROP-EST-035] La modifica di una risk analysis di un e-service template in stato DRAFT non può essere fatta da una PA diversa da quella creatrice del template
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    And l'utente effettua l'aggiunta di una risk analysis all'e-service template con successo
+    When l'utente è un "admin" di "PA2"
+    And l'utente tenta la modifica della risk analysis dell'e-service template
+    Then si ottiene response status code 403
+
+  @e-service-template-riskAnalysis-update
+  Scenario: [INTEROP-EST-036] La modifica di una risk analysis inesistente non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    When l'utente tenta la modifica di una risk analysis inesistente nell'e-service template
+    Then si ottiene response status code 404
+
+  @e-service-template-riskAnalysis-update
+  Scenario: [INTEROP-EST-037] La modifica di una risk analysis inserendo il nome di un'altra risk analysis esistente nell'e-service template non può essere effettuata
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    And l'utente effettua l'aggiunta di una risk analysis all'e-service template con successo
+    And l'utente effettua l'aggiunta di una risk analysis all'e-service template con successo
+    When l'utente tenta la modifica di una risk analysis inserendo il nome di un'altra risk analysis
+    Then si ottiene response status code 404
 
   # Ticket aperto https://pagopa.atlassian.net/browse/PIN-6482 .
   # 31/03/2025 E' stato ri-catalogato come bug generico, perché sembra la causa riguardi anche
@@ -1806,6 +1981,7 @@ Feature: Test API of e-service template
       | security      |
       | support       |
 
+  # NOTA 16/04/2025: non mappato in SRS https://pagopa.atlassian.net/wiki/spaces/PDNDI/pages/1429864566/SRS+Template+e-service
   @e-service-template-instance-create
   Scenario Outline: [INTEROP-EST-157] La creazione di un nuovo e-service completamente specificato a partire da un template attivo può essere effettuata da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
