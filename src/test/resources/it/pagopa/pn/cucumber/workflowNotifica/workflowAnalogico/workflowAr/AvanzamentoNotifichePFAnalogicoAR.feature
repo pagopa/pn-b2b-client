@@ -462,7 +462,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo AR
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
 
-  @workflowAnalogico
+  @workflowAnalogico @hotfixGiacenza
   Scenario: [B2B_TIMELINE_ANALOG_RIR_2] Attesa elemento di timeline SEND_ANALOG_FEEDBACK_fail_RIR_scenario negativo
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -478,7 +478,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo AR
       | details_sentAttemptMade    | 0         |
       | details_responseStatus     | KO        |
 
-  @workflowAnalogico
+  @workflowAnalogico @hotfixGiacenza
   Scenario: [B2B_TIMELINE_ANALOG_RIR_4] Invio notifica ed attesa elemento di timeline SEND_ANALOG_PROGRESSdeliveryDetailCode "RECRI001" scenario positivo PN-6634
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -490,7 +490,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo AR
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRI001"
 
 
-  @workflowAnalogico
+  @workflowAnalogico @hotfixGiacenza
   Scenario: [B2B_TIMELINE_ANALOG_RIR_5] Invio notifica ed attesa elemento di timeline SEND_ANALOG_PROGRESS_deliveryDetailCode "RECRI002" scenario positivo PN-6634
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
