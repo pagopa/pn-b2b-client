@@ -91,7 +91,6 @@ public class B2bStepsV24 implements B2bStepsInterface {
         TimelineElementV26 timelineElement = fullSentNotification.getTimeline().stream().filter(
                 te -> te.getCategory().getValue().equals(timelineEventCategory)).findAny().orElse(null);
         if (isPresent) {
-            verifyTestCompatibilityWithVersion(timelineEventCategory, true);
             assertThat(timelineElement)
                     .as("Il controllo sulla fullSentNotification V26 dovrebbe restituire almeno un elemento")
                     .isNotNull();
@@ -104,21 +103,21 @@ public class B2bStepsV24 implements B2bStepsInterface {
 
     @Override
     public void readEventsUpToTimelineElement(String timelineEventCategory) {
+        verifyTestCompatibilityWithVersion(timelineEventCategory, true);
         WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder().build();
         waitForEventOrStatus(TIMELINE_SLOW, TIMELINE, timelineEventCategory, filters);
-        verifyTestCompatibilityWithVersion(timelineEventCategory, true);
         checkIfTimelineElementExists(true, null, null);
     }
 
     @Override
     public void readEventsUpToStatus(String status, boolean exists) {
+        if (exists) {
+            verifyTestCompatibilityWithVersion(status, false);
+        }
         WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder()
                 .statusHistory(status)
                 .build();
         waitForEventOrStatus(STATUS_RAPID, STATUS, status, filters);
-        if (exists) {
-            verifyTestCompatibilityWithVersion(status, false);
-        }
         checkIfStatusExists(exists);
     }
 
@@ -373,6 +372,9 @@ public class B2bStepsV24 implements B2bStepsInterface {
 
     @Override
     public void checkIfTimelineElementExistsFromData(boolean exists, String timelineEventCategory, Map<String, String> dataMap) {
+        if (exists) {
+            verifyTestCompatibilityWithVersion(timelineEventCategory, true);
+        }
         try {
             DataTestV24 dataTest = DataTestV24.convertMap(dataMap);
             boolean mustLoadTimeline = dataTest != null && dataTest.isLoadTimeline();

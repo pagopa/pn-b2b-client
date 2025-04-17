@@ -103,6 +103,7 @@ public class B2bStepsV2 implements B2bStepsInterface {
 
     @Override
     public void readEventsUpToTimelineElement(String timelineEventCategory) {
+        verifyTestCompatibilityWithVersion(timelineEventCategory, true);
         WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder().build();
         waitForEventOrStatus(TIMELINE_SLOW, TIMELINE, timelineEventCategory, filters);
         checkIfTimelineElementExists(true, null, null);
@@ -110,6 +111,9 @@ public class B2bStepsV2 implements B2bStepsInterface {
 
     @Override
     public void readEventsUpToStatus(String status, boolean exists) {
+        if (exists) {
+            verifyTestCompatibilityWithVersion(status, false);
+        }
         WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder()
                 .statusHistory(status)
                 .build();
@@ -293,6 +297,9 @@ public class B2bStepsV2 implements B2bStepsInterface {
 
     @Override
     public void checkIfTimelineElementExistsFromData(boolean exists, String timelineEventCategory, Map<String, String> dataMap) {
+        if (exists) {
+            verifyTestCompatibilityWithVersion(timelineEventCategory, true);
+        }
         try {
             DataTestV20 dataTest = DataTestV20.convertMap(dataMap);
             boolean mustLoadTimeline = dataTest != null && dataTest.isLoadTimeline();
