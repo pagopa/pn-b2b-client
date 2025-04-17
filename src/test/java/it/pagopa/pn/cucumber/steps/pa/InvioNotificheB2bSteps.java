@@ -508,10 +508,10 @@ public class InvioNotificheB2bSteps {
 
     @Given("viene letta la notifica {string} dal {string}")
     public void vieneLettaLaNotificaDal(String iun, String paName) {
-        //TODO V28 MATTEO
         sharedSteps.setPA(paName);
-        FullSentNotificationV26 notificationByIun = sharedSteps.getB2bClient().getSentNotificationV26(iun);
-        Assertions.assertNotNull(notificationByIun);
+        assertThat(sharedSteps.getSentNotificationLastVersionByIun(iun))
+                .as("La FullSentNotification letta non dev'essere null")
+                .isNotNull();
     }
 
     @When("si tenta il recupero della notifica dal sistema")

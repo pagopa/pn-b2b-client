@@ -279,10 +279,10 @@ public class WebhookStepsV24 implements WebhookStepsInterface {
                         .streamId(eventStreamList.get(position).getStreamId())
                         .build());
 
-        log.info("WEBHOOK_PROGRESS_RESPONSE_ELEMENT_V24: " + pnPollingResponse.getProgressResponseElementV24());
-        if (pnPollingResponse.getProgressResponseElementV24() != null) {
-            progressResponseElement = pnPollingResponse.getProgressResponseElementV24();
-            progressResponseElementList = pnPollingResponse.getProgressResponseElementListV24();
+        log.info("WEBHOOK_PROGRESS_RESPONSE_ELEMENT_V24: " + pnPollingResponse.getProgressResponseElement());
+        if (pnPollingResponse.getProgressResponseElement() != null) {
+            progressResponseElement = pnPollingResponse.getProgressResponseElement();
+            progressResponseElementList = pnPollingResponse.getProgressResponseElementList();
             return progressResponseElement;
         }
         return null;
@@ -302,10 +302,10 @@ public class WebhookStepsV24 implements WebhookStepsInterface {
                         .streamId(eventStreamList.get(position).getStreamId())
                         .build());
 
-        log.info("WEBHOOK_PROGRESS_RESPONSE_ELEMENT_V24: " + pnPollingResponse.getProgressResponseElementV24());
-        if (pnPollingResponse.getProgressResponseElementListV24() != null) {
-            progressResponseElement = pnPollingResponse.getProgressResponseElementV24();
-            progressResponseElementList = pnPollingResponse.getProgressResponseElementListV24();
+        log.info("WEBHOOK_PROGRESS_RESPONSE_ELEMENT_V24: " + pnPollingResponse.getProgressResponseElement());
+        if (pnPollingResponse.getProgressResponseElementList() != null) {
+            progressResponseElement = pnPollingResponse.getProgressResponseElement();
+            progressResponseElementList = pnPollingResponse.getProgressResponseElementList();
             return progressResponseElement;
         }
         return null;

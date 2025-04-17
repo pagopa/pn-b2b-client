@@ -542,8 +542,7 @@ public class RicezioneNotificheWebDelegheSteps {
 
     private it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementV27 getTimelineElementWebRecipient(it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV27 timelineElementCategory) {
 
-        //FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();//todo v28
-        FullSentNotificationV27 fullSentNotification = sharedSteps.getB2bClient().getSentNotificationV27(sharedSteps.getNotificationIun());
+        FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         FullReceivedNotificationV26 result = webRecipientClient.getReceivedNotification(fullSentNotification.getIun(), null);
         log.info("NOTIFICATION_TIMELINE: " + fullSentNotification.getTimeline());
         return result

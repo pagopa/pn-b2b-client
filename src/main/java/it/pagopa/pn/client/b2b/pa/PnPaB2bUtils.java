@@ -7,9 +7,6 @@ import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV26;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v26.PnPollingServiceValidationStatusV26;
-import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV25;
-import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV28;
-import it.pagopa.pn.client.b2b.pa.polling.impl.v28.PnPollingServiceValidationStatusV28;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnRaddAlternativeClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnRaddFsuClient;
@@ -521,7 +518,7 @@ public class PnPaB2bUtils {
     /**
      * Metodi per le notifiche V24
      */
-    public void verifyNotification(FullSentNotificationV26 fsn) throws IllegalStateException {
+    public void verifyNotification(FullSentNotificationV27 fsn) throws IllegalStateException {
         //Verify Sha
         for (NotificationDocument doc : fsn.getDocuments()) {
             int docIdx = Integer.parseInt(Objects.requireNonNull(doc.getDocIdx()));
@@ -546,7 +543,7 @@ public class PnPaB2bUtils {
         }
     }
 
-    private void verifySha256Notification(FullSentNotificationV26 fsn) {
+    private void verifySha256Notification(FullSentNotificationV27 fsn) {
         for (NotificationDocument doc : fsn.getDocuments()) {
             int docIdx = Integer.parseInt(Objects.requireNonNull(doc.getDocIdx()));
             NotificationAttachmentDownloadMetadataResponse response = client.getSentNotificationDocument(fsn.getIun(), docIdx);

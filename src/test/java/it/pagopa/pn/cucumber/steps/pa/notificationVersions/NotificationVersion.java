@@ -39,7 +39,8 @@ public enum NotificationVersion {
                 V2, new B2bStepsV2(b2bSteps),
                 V21, new B2bStepsV21(b2bSteps),
                 V23, new B2bStepsV23(b2bSteps),
-                V24, new B2bStepsV24(b2bSteps)
+                V24, new B2bStepsV24(b2bSteps),
+                V25, new B2bStepsV25(b2bSteps)
         );
     }
 }

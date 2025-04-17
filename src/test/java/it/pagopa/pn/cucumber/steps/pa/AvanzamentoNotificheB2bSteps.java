@@ -7,6 +7,10 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
+import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV28;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v28.PnPollingServiceTimelineRapidV28;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnPrivateDeliveryPushExternalClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
@@ -1342,8 +1346,8 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("verifica generazione Atto opponibile senza la messa a disposizione in DIGITAL_DELIVERY_CREATION_REQUEST")
     public void paVerifyGenerazioneLegalFact() {
-        TimelineElementV26 timelineElement = null;
-        for (TimelineElementV26 element : sharedSteps.getSentNotificationLastVersion().getTimeline()) {
+        TimelineElementV27 timelineElement = null;
+        for (TimelineElementV27 element : sharedSteps.getSentNotificationLastVersion().getTimeline()) {
             if (element.getCategory().getValue().equals(DIGITAL_DELIVERY_CREATION_REQUEST)) {
                 timelineElement = element;
                 break;
@@ -3651,14 +3655,14 @@ public class AvanzamentoNotificheB2bSteps {
      */
     @And("lo scarto temporale tra {string} e {string} è {isSuperiore} a {int} {unitaTemporale}")
     public void checkScartoTemporaleTraDueDeliveryDetailCode(String code1, String code2, Boolean isSuperiore, int timeQuantity, ChronoUnit unitaTemporale) {
-        FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
-        TimelineElementV26 t1 = fullSentNotification.getTimeline().stream().filter(t ->
+        FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        TimelineElementV27 t1 = fullSentNotification.getTimeline().stream().filter(t ->
                         t.getDetails() != null
                                 && t.getDetails().getDeliveryDetailCode() != null
                                 && t.getDetails().getDeliveryDetailCode().equals(code1))
                 .findFirst()
                 .orElse(null);
-        TimelineElementV26 t2 = fullSentNotification.getTimeline().stream().filter(t ->
+        TimelineElementV27 t2 = fullSentNotification.getTimeline().stream().filter(t ->
                         t.getDetails() != null
                                 && t.getDetails().getDeliveryDetailCode() != null
                                 && t.getDetails().getDeliveryDetailCode().equals(code2))
@@ -3711,12 +3715,12 @@ public class AvanzamentoNotificheB2bSteps {
         }
 
         DataTest dataTest = new DataTest();
-        TimelineElementV26 timelineElement = new TimelineElementV26()
+        TimelineElementV27 timelineElement = new TimelineElementV27()
                 .legalFactsIds(getListValue(LegalFactsIdV20.class, data, LEGAL_FACT_IDS.key))
-                .details(getValue(data, DETAILS.key) == null ? null : new TimelineElementDetailsV26()
+                .details(getValue(data, DETAILS.key) == null ? null : new TimelineElementDetailsV27()
                         .recIndex(recIndex != null ? Integer.parseInt(recIndex) : null)
                         .digitalAddress(getObjValue(DigitalAddress.class, data, DETAILS_DIGITAL_ADDRESS.key))
-                        .refusalReasons(getListValue(NotificationRefusedErrorV25.class, data, DETAILS_REFUSAL_REASONS.key))
+                        .refusalReasons(getListValue(NotificationRefusedErrorV27.class, data, DETAILS_REFUSAL_REASONS.key))
                         .generatedAarUrl(getValue(data, DETAILS_GENERATED_AAR_URL.key))
                         .responseStatus(responseStatus != null ? ResponseStatus.valueOf(responseStatus) : null)
                         .digitalAddressSource(digitalAddressSource != null ? DigitalAddressSource.valueOf(digitalAddressSource) : null)
@@ -3744,11 +3748,5 @@ public class AvanzamentoNotificheB2bSteps {
         dataTest.setLoadTimeline(loadTimeline != null ? Boolean.valueOf(loadTimeline) : null);
 
         return dataTest;
-    }
-
-    @Then("recuperando la fullSentNotification con la versione B2b {string} {isPresent} l'elemento di timeline {string}")
-    public void checkPresenceOfTimelineElement(String version, boolean isPresent, String timelineEventCategory) {
-        NotificationVersion notificationVersion = NotificationVersion.valueOf(version);
-        getB2bStepsInterface(notificationVersion).checkFullSentNotificationWithVersion(isPresent, timelineEventCategory);
     }
 }

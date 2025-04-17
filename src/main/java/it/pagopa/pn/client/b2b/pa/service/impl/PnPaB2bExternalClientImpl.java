@@ -389,7 +389,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     @Override
     public NewNotificationResponse sendNewNotificationV25(NewNotificationRequestV25 newNotificationRequest) {
         refreshAndSetTokenInteropClient();
-        return senderReadB2BApiV2.retrieveNotificationRequestStatus(notificationRequestId, paProtocolNumber, idempotenceToken);
+        return newNotificationApi.sendNewNotificationV25(newNotificationRequest);
     }
 
     @Override

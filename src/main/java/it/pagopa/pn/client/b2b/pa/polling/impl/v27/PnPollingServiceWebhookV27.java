@@ -48,7 +48,7 @@ public class PnPollingServiceWebhookV27 extends PnPollingTemplate<PnPollingRespo
                 pnPollingParameter.setDeepCount(deepCount);
                 listResponseEntity = webhookB2bClient.consumeEventStreamHttpV27(pnPollingParameter.getStreamId(), pnPollingParameter.getLastEventId());
                 progressResponseElementListV27 = listResponseEntity.getBody();
-                pnPollingResponse.setProgressResponseElementListV27(listResponseEntity.getBody());
+                pnPollingResponse.setProgressResponseElementList(listResponseEntity.getBody());
                 log.info("ELEMENTI NEL WEBHOOK: " + Objects.requireNonNull(progressResponseElementListV27));
                 if (deepCount >= 250) {
                     throw new PnPollingException("LOP: PROGRESS-ELEMENTS: " + progressResponseElementListV27
@@ -69,8 +69,8 @@ public class PnPollingServiceWebhookV27 extends PnPollingTemplate<PnPollingRespo
     @Override
     protected Predicate<PnPollingResponseV27> checkCondition(String iun, PnPollingParameter pnPollingParameter) {
         return pnPollingResponse -> {
-            if (pnPollingResponse.getProgressResponseElementListV27() == null
-                    || pnPollingResponse.getProgressResponseElementListV27().isEmpty()) {
+            if (pnPollingResponse.getProgressResponseElementList() == null
+                    || pnPollingResponse.getProgressResponseElementList().isEmpty()) {
                 pnPollingResponse.setResult(false);
                 return false;
             }
@@ -122,7 +122,7 @@ public class PnPollingServiceWebhookV27 extends PnPollingTemplate<PnPollingRespo
 
 
     private boolean isWaitTerminated(PnPollingResponseV27 pnPollingResponse, PnPollingParameter pnPollingParameter) {
-        ProgressResponseElementV27 progressResponseElementV27 = pnPollingResponse.getProgressResponseElementListV27()
+        ProgressResponseElementV27 progressResponseElementV27 = pnPollingResponse.getProgressResponseElementList()
                 .stream()
                 .peek(progressResponseElement -> {
                     if (!pnPollingParameter.getPnPollingWebhook().getProgressResponseElementListV27().contains(progressResponseElement)) {
@@ -133,7 +133,7 @@ public class PnPollingServiceWebhookV27 extends PnPollingTemplate<PnPollingRespo
                 .findAny()
                 .orElse(null);
         if (progressResponseElementV27 != null) {
-            pnPollingResponse.setProgressResponseElementV27(progressResponseElementV27);
+            pnPollingResponse.setProgressResponseElement(progressResponseElementV27);
             return true;
         }
         return false;
@@ -141,7 +141,7 @@ public class PnPollingServiceWebhookV27 extends PnPollingTemplate<PnPollingRespo
 
     private void selectLastEventId(PnPollingResponseV27 pnPollingResponse, PnPollingParameter pnPollingParameter) {
         ProgressResponseElementV27 lastProgress = pnPollingResponse
-                .getProgressResponseElementListV27()
+                .getProgressResponseElementList()
                 .stream()
                 .reduce((prev, curr) -> prev.getEventId().compareTo(curr.getEventId()) < 0 ? curr : prev)
                 .orElse(null);

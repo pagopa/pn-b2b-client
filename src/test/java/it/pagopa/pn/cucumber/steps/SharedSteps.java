@@ -237,6 +237,16 @@ public class SharedSteps {
         return b2bClient.getSentNotificationV27(notificationIun);
     }
 
+    /**
+     * Restituisce lo FullSentNotification aggiornata all'ultima versione (quella maggiormente utilizzata a codice)
+     * ma a differenza del metodo sopra anzichè usare il notificationIun di SharedSteps usa uno IUN arbitrario.
+     * Usato in un solo punto del codice
+     */
+    //TODO: all'introduzione di una nuova versione, ri-fattorizzare il tipo di oggetto ritornato e cambiare i punti di codice che richiamano questo metodo
+    public FullSentNotificationV27 getSentNotificationLastVersionByIun(String iun) {
+        return b2bClient.getSentNotificationV27(iun);
+    }
+
     public NotificationVersion getNotificationVersion(String version) {
         if (version.trim().equalsIgnoreCase(MOST_RECENT)) {
             return NotificationVersion.V25;//TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente

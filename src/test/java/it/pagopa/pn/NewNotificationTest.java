@@ -11,8 +11,8 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
-import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV26;
-import it.pagopa.pn.client.b2b.pa.polling.impl.v26.PnPollingServiceValidationStatusV26;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV28;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v28.PnPollingServiceValidationStatusV28;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
@@ -87,18 +87,18 @@ public class NewNotificationTest {
         // modificare se si vuole inviare un f24. invia i metadati in base al delivery_mode
         boolean enableF24Attachment = true;
         // modifica pure i parametri a piacimento
-        NewNotificationRequestV24 request = new NewNotificationRequestV24()
+        NewNotificationRequestV25 request = new NewNotificationRequestV25()
                 .subject("Test inserimento " + dateFormat.format(calendar.getTime()))
                 .cancelledIun(null)
                 ._abstract("Abstract della notifica")
                 .senderDenomination("Comune di Sappada")
-                .pagoPaIntMode(NewNotificationRequestV24.PagoPaIntModeEnum.SYNC)
+                .pagoPaIntMode(NewNotificationRequestV25.PagoPaIntModeEnum.SYNC)
                 .taxonomyCode("010202N")
                 .paFee(100)
                 .vat(22)
                 .senderTaxId("00207190257")
                 .notificationFeePolicy(policy)
-                .physicalCommunicationType(NewNotificationRequestV24.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890)
+                .physicalCommunicationType(NewNotificationRequestV25.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890)
                 .paProtocolNumber(String.valueOf(System.currentTimeMillis()))
                 .addDocumentsItem(newDocument("classpath:/sample.pdf"))
                 .addRecipientsItem(newRecipient(
@@ -115,8 +115,8 @@ public class NewNotificationTest {
 
 
         Assertions.assertDoesNotThrow(() -> {
-            NewNotificationResponse newNotificationRequest = uploadNotificationV24(request);
-            FullSentNotificationV26 newNotification = waitForRequestAcceptation(newNotificationRequest);
+            NewNotificationResponse newNotificationRequest = uploadNotification(request);
+            FullSentNotificationV27 newNotification = waitForRequestAcceptation(newNotificationRequest);
             await().atMost(10, SECONDS);
             utils.verifyNotification(newNotification);
         });
@@ -128,22 +128,22 @@ public class NewNotificationTest {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
-        NewNotificationRequestV24 request = new NewNotificationRequestV24()
+        NewNotificationRequestV25 request = new NewNotificationRequestV25()
                 .cancelledIun(null)
                 ._abstract("Abstract della notifica")
                 .senderDenomination("Comune di Sappada")
                 //.senderTaxId("01199250158")
                 .senderTaxId("00207190257")
                 .notificationFeePolicy(NotificationFeePolicy.FLAT_RATE)
-                .physicalCommunicationType(NewNotificationRequestV24.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890)
+                .physicalCommunicationType(NewNotificationRequestV25.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890)
                 .paProtocolNumber(String.valueOf(System.currentTimeMillis()))
                 .addDocumentsItem(newDocument("classpath:/sample.pdf"))
                 .addRecipientsItem(newRecipient(false, "Leo ", "CNCGPP80A01H501J", "classpath:/sample.pdf", "classpath:/f24_flat.json", RECIPIENT_TYPE_DIGITAL.NO_DIGITAL, RECIPIENT_TYPE_ANALOG.ANALOG_KO))
                 .addRecipientsItem(newRecipient(false, "Fiera", "FRMTTR76M06B715E", "classpath:/sample.pdf", "classpath:/f24_flat.json", RECIPIENT_TYPE_DIGITAL.DIGITAL_OK, RECIPIENT_TYPE_ANALOG.ANALOG_OK));
 
         Assertions.assertDoesNotThrow(() -> {
-            NewNotificationResponse newNotificationRequest = uploadNotificationV24(request);
-            FullSentNotificationV26 newNotification = waitForRequestAcceptation(newNotificationRequest);
+            NewNotificationResponse newNotificationRequest = uploadNotification(request);
+            FullSentNotificationV27 newNotification = waitForRequestAcceptation(newNotificationRequest);
             await().atMost(10, SECONDS);
             utils.verifyNotification(newNotification);
         });
@@ -175,9 +175,9 @@ public class NewNotificationTest {
         ANALOG_OK, ANALOG_KO
     }
 
-    private NotificationRecipientV23 newRecipient(boolean withApplyCost, String prefix, String taxId, String resourcePath, String resourcePathF24, RECIPIENT_TYPE_DIGITAL recipientTypeDigital, RECIPIENT_TYPE_ANALOG recipientTypeAnalog) {
+    private NotificationRecipientV24 newRecipient(boolean withApplyCost, String prefix, String taxId, String resourcePath, String resourcePathF24, RECIPIENT_TYPE_DIGITAL recipientTypeDigital, RECIPIENT_TYPE_ANALOG recipientTypeAnalog) {
         long epochMillis = System.currentTimeMillis();
-        NotificationRecipientV23 recipient = new NotificationRecipientV23()
+        NotificationRecipientV24 recipient = new NotificationRecipientV24()
                 .denomination(prefix + " denomination")
                 .taxId(taxId)
                 .digitalDomicile(recipientTypeDigital == RECIPIENT_TYPE_DIGITAL.NO_DIGITAL ? null :
@@ -204,7 +204,7 @@ public class NewNotificationTest {
                                         .foreignState("ITALIA")
                                         .zip("00173")
                 )
-                .recipientType(NotificationRecipientV23.RecipientTypeEnum.PF)
+                .recipientType(NotificationRecipientV24.RecipientTypeEnum.PF)
                 .payments(List.of(new NotificationPaymentItem()
                                 .pagoPa(new PagoPaPayment().creditorTaxId("77777777777")
                                         .noticeCode(String.format("30201%13d", epochMillis))
@@ -252,7 +252,7 @@ public class NewNotificationTest {
         return recipient;
     }
 
-    private NewNotificationResponse uploadNotificationV24(NewNotificationRequestV24 request) throws IOException {
+    private NewNotificationResponse uploadNotification(NewNotificationRequestV25 request) throws IOException {
         //PRELOAD DOCUMENTI NOTIFICA
         List<NotificationDocument> newDocs = new ArrayList<>();
         for (NotificationDocument doc : request.getDocuments()) {
@@ -273,9 +273,9 @@ public class NewNotificationTest {
         return getAndCheckSendNewNotification(request);
     }
 
-    private NewNotificationResponse getAndCheckSendNewNotification(NewNotificationRequestV24 request) {
+    private NewNotificationResponse getAndCheckSendNewNotification(NewNotificationRequestV25 request) {
         log.info(NEW_NOTIFICATION_REQUEST, request);
-        NewNotificationResponse response = utils.getClient().sendNewNotificationV24(request);
+        NewNotificationResponse response = utils.getClient().sendNewNotificationV25(request);
         log.info(NEW_NOTIFICATION_REQUEST_RESPONSE, response);
         if (response != null) {
             try {
@@ -287,14 +287,14 @@ public class NewNotificationTest {
         return response;
     }
 
-    private FullSentNotificationV26 waitForRequestAcceptation(NewNotificationResponse response) {
-        PnPollingServiceValidationStatusV26 validationStatus = (PnPollingServiceValidationStatusV26) utils.getPollingFactory().getPollingService(PnPollingStrategy.VALIDATION_STATUS_V26);
-        PnPollingResponseV26 pollingResponse = validationStatus.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(ACCEPTED).build());
+    private FullSentNotificationV27 waitForRequestAcceptation(NewNotificationResponse response) {
+        PnPollingServiceValidationStatusV28 validationStatus = (PnPollingServiceValidationStatusV28) utils.getPollingFactory().getPollingService(PnPollingStrategy.VALIDATION_STATUS_V28);
+        PnPollingResponseV28 pollingResponse = validationStatus.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(ACCEPTED).build());
         return pollingResponse.getNotification() == null ? null : pollingResponse.getNotification();
     }
 
-    private void preloadPayDocument(NewNotificationRequestV24 request) throws IOException {
-        for (NotificationRecipientV23 recipient : request.getRecipients()) {
+    private void preloadPayDocument(NewNotificationRequestV25 request) throws IOException {
+        for (NotificationRecipientV24 recipient : request.getRecipients()) {
             List<NotificationPaymentItem> paymentList = recipient.getPayments();
             if (paymentList != null) {
                 setAttachmentWithSleep(paymentList);
