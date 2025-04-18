@@ -276,7 +276,7 @@ public class SharedSteps {
     public void checkApiVersion(String version) {
         NotificationVersion notificationVersion = getNotificationVersion(version);
         assumeThat(notificationVersion.getValue())
-                .as("Test skipped: la versione")
+                .as("Test skipped: la versione" + versionUsed + " non supporta questo test pensato per la " + version + " o superiore")
                 .isGreaterThanOrEqualTo(versionUsed.getValue());
     }
 
