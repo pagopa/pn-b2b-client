@@ -38,45 +38,43 @@ public class ConsumerDelegationsApiClientImpl implements IConsumerDelegationsApi
     }
 
     @Override
-    public CreatedResource createConsumerDelegation(String xCorrelationId,
-        DelegationSeed delegationSeed) throws RestClientException {
-        return consumerDelegationsApi.createConsumerDelegation(xCorrelationId, delegationSeed);
+    public CreatedResource createConsumerDelegation(DelegationSeed delegationSeed) throws RestClientException {
+        return consumerDelegationsApi.createConsumerDelegation(delegationSeed);
     }
 
     @Override
-    public CompactEServices getConsumerDelegatedEservices(String xCorrelationId, UUID delegatorId,
+    public CompactEServices getConsumerDelegatedEservices(UUID delegatorId,
         Integer offset, Integer limit, String q) throws RestClientException {
-        return consumerDelegationsApi.getConsumerDelegatedEservices(xCorrelationId, delegatorId, offset, limit, q);
+        return consumerDelegationsApi.getConsumerDelegatedEservices(delegatorId, offset, limit, q);
     }
 
     @Override
-    public DelegationTenants getConsumerDelegators(String xCorrelationId, Integer offset,
+    public DelegationTenants getConsumerDelegators(Integer offset,
         Integer limit, String q, List<UUID> eserviceIds) throws RestClientException {
-        return consumerDelegationsApi.getConsumerDelegators(xCorrelationId, offset, limit, q, eserviceIds);
+        return consumerDelegationsApi.getConsumerDelegators(offset, limit, q, eserviceIds);
     }
 
     @Override
-    public DelegationTenants getConsumerDelegatorsWithAgreements(String xCorrelationId,
-        Integer offset, Integer limit, String q) throws RestClientException {
-        return consumerDelegationsApi.getConsumerDelegatorsWithAgreements(xCorrelationId, offset, limit, q);
+    public DelegationTenants getConsumerDelegatorsWithAgreements(Integer offset, Integer limit, String q) throws RestClientException {
+        return consumerDelegationsApi.getConsumerDelegatorsWithAgreements(offset, limit, q);
     }
 
     @Override
-    public void rejectConsumerDelegation(String xCorrelationId, UUID delegationId,
+    public void rejectConsumerDelegation(UUID delegationId,
         RejectDelegationPayload rejectDelegationPayload) throws RestClientException {
-        consumerDelegationsApi.rejectConsumerDelegation(xCorrelationId, delegationId, rejectDelegationPayload);
+        consumerDelegationsApi.rejectConsumerDelegation(delegationId, rejectDelegationPayload);
     }
 
     @Override
-    public void revokeConsumerDelegation(String xCorrelationId, String delegationId)
+    public void revokeConsumerDelegation(String delegationId)
         throws RestClientException {
-        consumerDelegationsApi.revokeConsumerDelegation(xCorrelationId, delegationId);
+        consumerDelegationsApi.revokeConsumerDelegation(delegationId);
     }
 
     @Override
-    public void approveConsumerDelegation(String xCorrelationId, UUID delegationId)
+    public void approveConsumerDelegation(UUID delegationId)
         throws RestClientException {
-        consumerDelegationsApi.approveConsumerDelegation(xCorrelationId, delegationId);
+        consumerDelegationsApi.approveConsumerDelegation(delegationId);
     }
 
     @Override

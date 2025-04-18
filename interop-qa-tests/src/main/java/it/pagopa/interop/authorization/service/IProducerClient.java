@@ -6,5 +6,5 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDes
 import java.util.UUID;
 
 public interface IProducerClient extends SettableBearerToken {
-    ProducerEServiceDescriptor getProducerEServiceDescriptor(String xCorrelationId, UUID eserviceId, UUID descriptorId);
+    ProducerEServiceDescriptor getProducerEServiceDescriptor(UUID eserviceId, UUID descriptorId);
 }

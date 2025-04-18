@@ -38,9 +38,9 @@ public class ClientPurposeAddSteps {
     private void userRetrievesFinalization(UUID clientId) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(() ->
-                authorizationClient.addClientPurpose(sharedStepsContext.getXCorrelationId(),
+                authorizationClient.addClientPurpose(
                     clientId,
-                        new PurposeAdditionDetailsSeed().purposeId(UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId())))
+                    new PurposeAdditionDetailsSeed().purposeId(UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId())))
         );
     }
 }
