@@ -294,7 +294,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico AR
     And vengono letti gli eventi e verifico che l'utente 1 non abbia associato un evento "ANALOG_SUCCESS_WORKFLOW"
 
 
-  @workflowAnalogico @hotfixGiacenza
+  @workflowAnalogico
   Scenario: [B2B_TIMELINE_MULTI_ANALOG_RIR_2] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario negativo
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |

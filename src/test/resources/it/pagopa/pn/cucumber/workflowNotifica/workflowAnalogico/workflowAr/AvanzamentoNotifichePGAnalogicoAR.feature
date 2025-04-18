@@ -163,7 +163,7 @@ Feature: avanzamento notifiche analogico AR persona giuridica
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
 
-  @workflowAnalogico @mockNR @hotfixGiacenza
+  @workflowAnalogico @mockNR
   Scenario: [B2B_TIMELINE_PG_ANALOG_RIR_2] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario negativo
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
