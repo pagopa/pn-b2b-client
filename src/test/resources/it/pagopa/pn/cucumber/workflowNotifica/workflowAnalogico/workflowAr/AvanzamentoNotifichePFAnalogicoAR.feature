@@ -471,7 +471,12 @@ Feature: avanzamento notifiche b2b con workflow cartaceo AR
       | digitalDomicile         | NULL         |
       | physicalAddress_address | Via@FAIL_RIR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con responseStatus "OK"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
+      | details_sentAttemptMade    | 0         |
+      | details_responseStatus     | KO        |
 
   @workflowAnalogico
   Scenario: [B2B_TIMELINE_ANALOG_RIR_4] Invio notifica ed attesa elemento di timeline SEND_ANALOG_PROGRESSdeliveryDetailCode "RECRI001" scenario positivo PN-6634
@@ -495,3 +500,9 @@ Feature: avanzamento notifiche b2b con workflow cartaceo AR
       | physicalAddress_address | Via@fail_RIR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRI002"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
+      | details_sentAttemptMade    | 0         |
+      | details_responseStatus     | KO        |
