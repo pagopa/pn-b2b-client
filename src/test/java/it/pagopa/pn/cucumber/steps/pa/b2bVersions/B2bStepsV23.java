@@ -139,29 +139,30 @@ public class B2bStepsV23 implements B2bStepsInterface {
         log.info("indirizzo Normalizzato: {}", timelineElement.getDetails().getNormalizedAddress());
         try {
             assertSoftly(softly -> {
+                String testCase = "NormalizedAddress " + b2bSteps.mapValueFromTable(table, "testCase") + ": ";
                 assertThat(b2bSteps.mapValueFromTable(table, "physicalAddress_address"))
-                        .as("NormalizedAddress: il physical address non coincide col valore atteso")
+                        .as(testCase + " il physical address non coincide col valore atteso")
                         .isEqualTo(timelineElement.getDetails().getNormalizedAddress().getAddress());
                 assertThat(b2bSteps.mapValueFromTable(table, "at"))
-                        .as("NormalizedAddress: il campo at(presso) non coincide col valore atteso")
+                        .as(testCase + " il campo at(presso) non coincide col valore atteso")
                         .isEqualTo(timelineElement.getDetails().getNormalizedAddress().getAt());
                 assertThat(b2bSteps.mapValueFromTable(table, "physicalAddress_addressDetails"))
-                        .as("NormalizedAddress: addressDetails non coincide col valore atteso")
+                        .as(testCase + " addressDetails non coincide col valore atteso")
                         .isEqualTo(timelineElement.getDetails().getNormalizedAddress().getAddressDetails());
                 assertThat(b2bSteps.mapValueFromTable(table, "physicalAddress_zip"))
-                        .as("NormalizedAddress: lo zipCode non coincide col valore atteso")
+                        .as(testCase + " lo zipCode non coincide col valore atteso")
                         .isEqualTo(timelineElement.getDetails().getNormalizedAddress().getZip());
                 assertThat(b2bSteps.mapValueFromTable(table, "physicalAddress_municipality"))
-                        .as("NormalizedAddress: la municipality non coincide col valore atteso")
+                        .as(testCase + " la municipality non coincide col valore atteso")
                         .isEqualTo(timelineElement.getDetails().getNormalizedAddress().getMunicipality());
                 assertThat(b2bSteps.mapValueFromTable(table, "physicalAddress_municipalityDetails"))
-                        .as("NormalizedAddress: i municipalityDetails non coincidono col valore atteso")
+                        .as(testCase + " i municipalityDetails non coincidono col valore atteso")
                         .isEqualTo(timelineElement.getDetails().getNormalizedAddress().getMunicipalityDetails());
                 assertThat(b2bSteps.mapValueFromTable(table, "physicalAddress_province"))
-                        .as("NormalizedAddress: la provincia non coincide col valore atteso")
+                        .as(testCase + " la provincia non coincide col valore atteso")
                         .isEqualTo(timelineElement.getDetails().getNormalizedAddress().getProvince());
                 assertThat(b2bSteps.mapValueFromTable(table, "physicalAddress_State"))
-                        .as("NormalizedAddress: il physical address non coincide col valore atteso")
+                        .as(testCase + " il physical address non coincide col valore atteso")
                         .isEqualTo(timelineElement.getDetails().getNormalizedAddress().getForeignState());
             });
         } catch (AssertionFailedError assertionFailedError) {
