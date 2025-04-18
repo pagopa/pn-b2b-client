@@ -27,7 +27,8 @@ Feature: test per il recupero indirizzo al primo tentativo vas
   # Indirizzi recuperati dai registri - CREAZIONE notifica andata a buon fine -CONSEGNA andata a buon fine.
   @ricercaIndirizzoVas
   Scenario: [1-19_3-11-15] Invio notifica AR monodestinatario verso PF con campo address vuoto e recupero indirizzo da ANPR Vas attivo
-    Given viene generata una nuova notifica
+    Given il test è effettuabile con API versione "V25" o superiore
+    And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
@@ -72,7 +73,8 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 
   @ricercaIndirizzoVas
   Scenario: [4_4] Invio notifica 890 monodestinatario verso PG con campo address vuoto e recupero indirizzo da RI Vas attivo
-    Given viene generata una nuova notifica
+    Given il test è effettuabile con API versione "V25" o superiore
+    And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
@@ -102,7 +104,8 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 
   @ricercaIndirizzoVas
   Scenario: [5_5] Invio notifica multidestinatario AR verso PF-PG con campo address vuoto e recupero indirizzo dai registri nazionali Vas attivo
-    Given viene generata una nuova notifica
+    Given il test è effettuabile con API versione "V25" o superiore
+    And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
@@ -152,7 +155,8 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 
   @ricercaIndirizzoVas
   Scenario: [13-22_6] Invio notifica AR monodestinatario verso PF con campo address vuoto e nessun indirizzo trovato da ANPR notifica rifiutata Vas attivo
-    Given viene generata una nuova notifica
+    Given il test è effettuabile con API versione "V25" o superiore
+    And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
@@ -169,14 +173,15 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | physicalAddress_zip                 | NULL           |
     When la notifica viene inviata tramite api b2b dal "AB" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
-      | loadTimeline           | true                   |
-      | details                | NOT_NULL               |
+      | loadTimeline           | true                                 |
+      | details                | NOT_NULL                             |
       | details_refusalReasons | [{"errorCode": "ADDRESS_NOT_FOUND"}] |
 
 
   @ricercaIndirizzoVas
   Scenario: [14_7] Invio notifica AR monodestinatario verso PG con campo address vuoto e nessun indirizzo trovato da RI notifica rifiutata Vas attivo
-    Given viene generata una nuova notifica
+    Given il test è effettuabile con API versione "V25" o superiore
+    And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
@@ -193,8 +198,8 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | physicalAddress_zip                 | NULL           |
     When la notifica viene inviata tramite api b2b dal "AB" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
-      | loadTimeline           | true                   |
-      | details                | NOT_NULL               |
+      | loadTimeline           | true                                 |
+      | details                | NOT_NULL                             |
       | details_refusalReasons | [{"errorCode": "ADDRESS_NOT_FOUND"}] |
   # Call una volta
   #Call lista utenze
@@ -205,7 +210,8 @@ Feature: test per il recupero indirizzo al primo tentativo vas
  #*** ADD _8. entrambi non censiti
   @ricercaIndirizzoVas
   Scenario: [_8] Invio notifica multidestinatario AR verso PF-PG con campo address vuoto entrambi NON censiti Vas attivo
-    Given viene generata una nuova notifica
+    Given il test è effettuabile con API versione "V25" o superiore
+    And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
@@ -236,8 +242,8 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     Then vengono letti gli eventi fino allo stato della notifica "xxx"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_VALIDATION_CALL"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
-      | loadTimeline           | true                   |
-      | details                | NOT_NULL               |
+      | loadTimeline           | true                                 |
+      | details                | NOT_NULL                             |
       | details_refusalReasons | [{"errorCode": "ADDRESS_NOT_FOUND"}] |
   # Call una volta/lista utenze
   #Response non esista
@@ -246,7 +252,8 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 
   @ricercaIndirizzoVas
   Scenario: [15_10M] Invio notifica AR multidestinatario verso PF-PG con campo address vuoto e un solo indirizzo trovato da RI notifica rifiutata Vas attivo
-    Given viene generata una nuova notifica
+    Given il test è effettuabile con API versione "V25" o superiore
+    And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
@@ -275,30 +282,31 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | physicalAddress_zip                 | NULL        |
     When la notifica viene inviata tramite api b2b dal "AB" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
-      | loadTimeline           | true                   |
-      | details                | NOT_NULL               |
+      | loadTimeline           | true                                 |
+      | details                | NOT_NULL                             |
       | details_refusalReasons | [{"errorCode": "ADDRESS_NOT_FOUND"}] |
 
 # Inserimento MANUALE + VAS.
 
   @ricercaIndirizzoVas
   Scenario: [16_9M] Invio notifica AR multidestinatario verso PF-PG con campo address vuoto e uno compilato e indirizzo trovato da RI notifica accettata Vas attivo
-    Given viene generata una nuova notifica
+    Given il test è effettuabile con API versione "V25" o superiore
+    And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
-      | denomination                        | PagoPA S.p.A            |
-      | taxId                               | 15376371009             |
-      | digitalDomicile                     | NULL                    |
-      | recipientType                       | PG                      |
-      | physicalAddress_address             | Piazza Colonna 370      |
-      | physicalAddress_municipality        | Roma                    |
-      | physicalAddress_municipalityDetails | NULL                    |
-      | at                                  | NULL                    |
-      | physicalAddress_addressDetails      | NULL                    |
-      | physicalAddress_province            | RM                      |
-      | physicalAddress_State               | ITALIA                  |
-      | physicalAddress_zip                 | 00187                   |
+      | denomination                        | PagoPA S.p.A       |
+      | taxId                               | 15376371009        |
+      | digitalDomicile                     | NULL               |
+      | recipientType                       | PG                 |
+      | physicalAddress_address             | Piazza Colonna 370 |
+      | physicalAddress_municipality        | Roma               |
+      | physicalAddress_municipalityDetails | NULL               |
+      | at                                  | NULL               |
+      | physicalAddress_addressDetails      | NULL               |
+      | physicalAddress_province            | RM                 |
+      | physicalAddress_State               | ITALIA             |
+      | physicalAddress_zip                 | 00187              |
     And destinatario
       | denomination                        | PG Censito  |
       | taxId                               | 01113570442 |
@@ -322,7 +330,8 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 
   @ricercaIndirizzoVas
   Scenario: [17?] Invio notifica 890 multidestinatario verso PF-PG con campo address vuoto e uno compilato e indirizzo non trovato da RI notifica rifiutata Vas attivo
-    Given viene generata una nuova notifica
+    Given il test è effettuabile con API versione "V25" o superiore
+    And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
@@ -351,8 +360,8 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | physicalAddress_zip                 | NULL            |
     When la notifica viene inviata tramite api b2b dal "AB" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
-      | loadTimeline           | true                   |
-      | details                | NOT_NULL               |
+      | loadTimeline           | true                                 |
+      | details                | NOT_NULL                             |
       | details_refusalReasons | [{"errorCode": "ADDRESS_NOT_FOUND"}] |
 
 
@@ -361,7 +370,8 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 
   @ricercaIndirizzoVas
   Scenario: [20_16] Crezione notifica PA abilitata - Feature flag Attivo - Client versione precedente e notifica rifiutata
-    Given viene generata una nuova notifica con la versione "V24"
+    Given il test è effettuabile con API versione "V25" o superiore
+    And viene generata una nuova notifica con la versione "V24"
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
@@ -389,6 +399,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 # ***ADD _17 : PA non abilitata - Feature flag Attivo - Client non aggiornato e notifica rifiutata
   @ricercaIndirizzoVas
   Scenario: [23_19] Crezione notifica PA NON abilitata - Feature flag Attivo - Client NON aggiornato e notifica rifiutata
+    Given il test è effettuabile con API versione "V25" o superiore
     Given viene generata una nuova notifica con la versione "V24"
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
@@ -417,7 +428,8 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 # ***ADD _18 : PA non abilitata - Feature flag Attivo - Client aggiornato e notifica rifiutata
   @ricercaIndirizzoVas
   Scenario: [23_19] Crezione notifica PA NON abilitata - Feature flag Attivo - Client aggiornato e notifica rifiutata
-    Given viene generata una nuova notifica
+    Given il test è effettuabile con API versione "V25" o superiore
+    And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
@@ -445,7 +457,8 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 
   @ricercaIndirizzoVas
   Scenario: [23_19] Crezione notifica PA abilitata - Feature flag Spento - Client aggiornato e notifica rifiutata
-    Given viene generata una nuova notifica
+    Given il test è effettuabile con API versione "V25" o superiore
+    And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
@@ -468,7 +481,8 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 
   @ricercaIndirizzoVas
   Scenario: [24_20] Crezione notifica PA abilitata - Feature flag Spento - Client versione precedente e notifica rifiutata
-    Given viene generata una nuova notifica con la versione "V24"
+    Given il test è effettuabile con API versione "V25" o superiore
+    And viene generata una nuova notifica con la versione "V24"
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
@@ -491,7 +505,8 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 
   @ricercaIndirizzoVas
   Scenario: [25_21] Crezione notifica PA non abilitata - Feature flag Spento - Client aggiornato e notifica rifiutata
-    Given viene generata una nuova notifica
+    Given il test è effettuabile con API versione "V25" o superiore
+    And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
@@ -515,7 +530,8 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 
   @ricercaIndirizzoVas
   Scenario: [26_22] Crezione notifica PA non abilitata - Feature flag Spento - Client non aggiornato e notifica rifiutata
-    Given viene generata una nuova notifica con la versione "V24"
+    Given il test è effettuabile con API versione "V25" o superiore
+    And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
@@ -544,7 +560,8 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 
   @ricercaIndirizzoVas
   Scenario: [] Crezione notifica PA abilitata - Feature flag Attivo - Client Non aggiornato in lettura
-    Given viene generata una nuova notifica
+    Given il test è effettuabile con API versione "V25" o superiore
+    And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
@@ -561,8 +578,8 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | physicalAddress_zip                 | NULL        |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_VALIDATION_RESPONSE"
-    Then recuperando la fullSentNotification con la versione B2b "V24" non è presente l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE"
-    Then recuperando la fullSentNotification con la versione B2b "V24" non è presente l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL"
+    Then recuperando la fullSentNotification con la versione b2b "V24" non è presente l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE"
+    Then recuperando la fullSentNotification con la versione b2b "V24" non è presente l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL"
 
 
 
@@ -571,7 +588,8 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 
   @ricercaIndirizzoVas
   Scenario: []
-    Given viene generata una nuova notifica
+    Given il test è effettuabile con API versione "V25" o superiore
+    And viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
     And destinatario Mario Cucumber e:
@@ -590,7 +608,8 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 
   @ricercaIndirizzoVas
   Scenario: []
-    Given viene generata una nuova notifica
+    Given il test è effettuabile con API versione "V25" o superiore
+    And viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
     And destinatario Mario Cucumber e:
@@ -618,7 +637,8 @@ Feature: test per il recupero indirizzo al primo tentativo vas
   @cleanWebhook @webhook1
   Scenario: [] Invio notifica e controllo che stream con eventType vuoto e versione da V26 contenga elemento ANALOG_WORKFLOW_RECIPIENT_DECEASED
 #    Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V26"
-    Given viene generata una nuova notifica
+    Given il test è effettuabile con API versione "V25" o superiore
+    And viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
@@ -642,7 +662,8 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 
   @cleanWebhook @webhook1
   Scenario: []
-    Given viene generata una nuova notifica
+    Given il test è effettuabile con API versione "V25" o superiore
+    And viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
@@ -671,7 +692,8 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 
   @ricercaIndirizzoVas @ricercaIndirizzoVasTrue
   Scenario: [_45] Invio notifica AR monodestinatario verso PF con campo address vuoto e recupero indirizzo da ANPR Vas attivo
-    Given viene generata una nuova notifica
+    Given il test è effettuabile con API versione "V25" o superiore
+    And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
@@ -699,7 +721,8 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 
   @ricercaIndirizzoVas @ricercaIndirizzoVasFalse
   Scenario: [_45-46-47-False] Invio notifica AR monodestinatario verso PF con campo address vuoto e recupero indirizzo da ANPR Vas attivo
-    Given viene generata una nuova notifica
+    Given il test è effettuabile con API versione "V25" o superiore
+    And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
@@ -728,7 +751,8 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 
   @ricercaIndirizzoVas @ricercaIndirizzoVasTrue
   Scenario: [_45-46-47-True] Invio notifica AR monodestinatario verso PF con campo address vuoto e recupero indirizzo da ANPR Vas attivo
-    Given viene generata una nuova notifica
+    Given il test è effettuabile con API versione "V25" o superiore
+    And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
@@ -763,7 +787,8 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 
   @ricercaIndirizzoVas
   Scenario: [5_5] Invio notifica multidestinatario AR verso PF-PG con campo address vuoto e recupero indirizzo dai registri nazionali Vas attivo
-    Given viene generata una nuova notifica
+    Given il test è effettuabile con API versione "V25" o superiore
+    And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
