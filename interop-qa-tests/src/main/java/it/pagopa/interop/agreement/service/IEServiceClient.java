@@ -5,12 +5,14 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceDesc
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
+import org.springframework.http.ResponseEntity;
 
 import java.util.UUID;
 
 public interface IEServiceClient extends SettableBearerToken {
 
     CreatedEServiceDescriptor createEService(String xCorrelationId, EServiceSeed eserviceSeed);
+    ResponseEntity<Void> activateDescriptor(String xCorrelationId, UUID eServiceId, UUID descriptorId);
     CreatedResource updateDraftDescriptor(String xCorrelationId, UUID eServiceId, UUID descriptorId, UpdateEServiceDescriptorSeed updateEServiceDescriptorSeed);
     CreatedResource createEServiceDocument(String xCorrelationId, UUID eServiceId, UUID descriptorId, String kind, String prettyName, org.springframework.core.io.Resource doc);
     void publishDescriptor(String xCorrelationId, UUID eServiceId, UUID descriptorId);

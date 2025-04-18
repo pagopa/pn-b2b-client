@@ -19,6 +19,8 @@ public class EServicesCommonContext {
     private List<EServiceDescriptor> publishedEservicesIds = new ArrayList<>();
     private UUID eserviceId;
     private UUID descriptorId;
+    private UUID documentId;
     private UUID oldDescriptorId;
+    private String name;
 
 }

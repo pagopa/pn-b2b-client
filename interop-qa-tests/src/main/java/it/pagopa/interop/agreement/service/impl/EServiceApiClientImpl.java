@@ -6,6 +6,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EservicesApi;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -38,6 +39,11 @@ public class EServiceApiClientImpl implements IEServiceClient {
     @Override
     public CreatedEServiceDescriptor createEService(String xCorrelationId, EServiceSeed eserviceSeed) {
         return eservicesApi.createEService(xCorrelationId, eserviceSeed);
+    }
+
+    @Override
+    public ResponseEntity<Void> activateDescriptor(String xCorrelationId, UUID eServiceId, UUID descriptorId) {
+        return eservicesApi.activateDescriptorWithHttpInfo(xCorrelationId, eServiceId, descriptorId);
     }
 
     @Override
