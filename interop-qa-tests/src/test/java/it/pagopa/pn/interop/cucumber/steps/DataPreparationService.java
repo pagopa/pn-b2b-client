@@ -30,11 +30,14 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredTenantAttri
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysis;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTechnology;
 import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject3;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKey;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKeys;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Purpose;
@@ -731,6 +734,24 @@ public class DataPreparationService {
                 res -> res.getAttributes().stream().anyMatch(attr -> attr.getId().equals(attributeId) && attr.getRevocationTimestamp() != null),
                 "There was an error while revoking the certified atrtibute!"
         );
+    }
+
+    public UUID addRiskAnalysisToEService(UUID eServiceId, EServiceRiskAnalysisSeed eServiceRiskAnalysisSeed) {
+        httpCallExecutor.performCall(() -> eServiceClient.addRiskAnalysisToEService(eServiceId, eServiceRiskAnalysisSeed));
+        assertValidResponse();
+
+        pollingService.makePolling(
+                () -> httpCallExecutor.performCall(
+                        () -> producerClient.getProducerEServiceDetails(eServiceId)
+                ),
+                res -> Optional.ofNullable((ProducerEServiceDetails) httpCallExecutor.getResponse())
+                        .map(ProducerEServiceDetails::getRiskAnalysis)
+                        .map(list -> list.get(0))
+                        .map(EServiceRiskAnalysis::getId)
+                        .isPresent(),
+                "Risk analysis not found!"
+        );
+        return ((ProducerEServiceDetails) httpCallExecutor.getResponse()).getRiskAnalysis().get(0).getId();
     }
 
     private void assertValidResponse() {

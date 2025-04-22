@@ -3,7 +3,9 @@ package it.pagopa.interop.agreement.service;
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.FileResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import org.springframework.http.ResponseEntity;
 
@@ -18,4 +20,7 @@ public interface IEServiceClient extends SettableBearerToken {
     void publishDescriptor(String xCorrelationId, UUID eServiceId, UUID descriptorId);
     void suspendDescriptor(String xCorrelationId, UUID eServiceId, UUID descriptorId);
     CreatedResource createDescriptor(String xCorrelationId, UUID eServiceId);
+    void deleteDraft(UUID eServiceId, UUID descriptorId);
+    void addRiskAnalysisToEService(UUID eServiceId, EServiceRiskAnalysisSeed eserviceRiskAnalysisSeed);
+    FileResource exportEServiceDescriptor(UUID eserviceId, UUID descriptorId);
 }

@@ -2,9 +2,11 @@ package it.pagopa.interop.authorization.service;
 
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDetails;
 
 import java.util.UUID;
 
 public interface IProducerClient extends SettableBearerToken {
-    ProducerEServiceDescriptor getProducerEServiceDescriptor(String xCorrelationId, UUID eserviceId, UUID descriptorId);
+    ProducerEServiceDescriptor getProducerEServiceDescriptor(UUID eserviceId, UUID descriptorId);
+    ProducerEServiceDetails getProducerEServiceDetails(UUID eserviceId);
 }

@@ -10,6 +10,7 @@ import it.pagopa.pn.interop.cucumber.steps.common.ClientCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.DelegationCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
+import it.pagopa.pn.interop.cucumber.steps.common.RiskAnalysisCommonContext;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +40,7 @@ public class SharedStepsContext {
     private DelegationCommonContext delegationCommonContext;
     private AttributeCommonContext attributeCommonContext;
     private AgreementCommonContext agreementCommonContext;
+    private RiskAnalysisCommonContext riskAnalysisCommonContext;
 
     public SharedStepsContext(
         HttpCallExecutor httpCallExecutor,
@@ -58,6 +60,7 @@ public class SharedStepsContext {
         delegationCommonContext = new DelegationCommonContext();
         attributeCommonContext = new AttributeCommonContext();
         agreementCommonContext = new AgreementCommonContext();
+        riskAnalysisCommonContext = new RiskAnalysisCommonContext();
     }
 
     public String getXCorrelationId() {
