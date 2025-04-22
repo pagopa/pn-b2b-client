@@ -43,7 +43,6 @@ public class DescriptorCreationSteps {
     public void userCreatesDraftDescriptor() {
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getEServiceClient().createDescriptor(
-                        sharedStepsContext.getXCorrelationId(),
                         sharedStepsContext.getEServicesCommonContext().getEserviceId()
                 )
         );
@@ -52,7 +51,6 @@ public class DescriptorCreationSteps {
     @Then("si ottiene status code 200 e il descrittore contiene i campi del precedente")
     public void verifyStatusCodeAndDescriptor() {
         ProducerEServiceDescriptor descriptor = clientTokenConfigurator.getProducerClient().getProducerEServiceDescriptor(
-                sharedStepsContext.getXCorrelationId(),
                 sharedStepsContext.getEServicesCommonContext().getEserviceId(),
                 sharedStepsContext.getEServicesCommonContext().getDescriptorId()
         );
@@ -61,7 +59,6 @@ public class DescriptorCreationSteps {
         sharedStepsContext.getPollingService().makePolling(
                 () -> sharedStepsContext.getHttpCallExecutor().performCall(
                         () -> clientTokenConfigurator.getProducerClient().getProducerEServiceDescriptor(
-                                sharedStepsContext.getXCorrelationId(),
                                 sharedStepsContext.getEServicesCommonContext().getEserviceId(),
                                 newDescriptorId
                         )
@@ -71,7 +68,6 @@ public class DescriptorCreationSteps {
         );
 
         ProducerEServiceDescriptor newDescriptor = clientTokenConfigurator.getProducerClient().getProducerEServiceDescriptor(
-                sharedStepsContext.getXCorrelationId(),
                 sharedStepsContext.getEServicesCommonContext().getEserviceId(),
                 newDescriptorId
         );

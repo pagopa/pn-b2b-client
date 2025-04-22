@@ -21,7 +21,7 @@ public class AgreementConsumersListingSteps {
     public void listFirstConsumersOfOwnEServices(int limit) {
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient()
-                        .getAgreementConsumers(sharedStepsContext.getXCorrelationId(), 0, limit, null)
+                        .getAgreementConsumers(0, limit, null)
         );
     }
 
@@ -29,11 +29,11 @@ public class AgreementConsumersListingSteps {
     public void listConsumersOfOwnedEServicesWithOffset(int offset) {
         sharedStepsContext.getAgreementCommonContext().setResponseOffsetOne(
                 clientTokenConfigurator.getAgreementClient()
-                        .getAgreementConsumers(sharedStepsContext.getXCorrelationId(), offset, 50, null)
+                        .getAgreementConsumers(offset, 50, null)
         );
         sharedStepsContext.getAgreementCommonContext().setResponseOffsetTwo(
                 clientTokenConfigurator.getAgreementClient()
-                        .getAgreementConsumers(sharedStepsContext.getXCorrelationId(), offset - 1, 50, null)
+                        .getAgreementConsumers(offset - 1, 50, null)
         );
     }
 
@@ -41,7 +41,7 @@ public class AgreementConsumersListingSteps {
     public void searchConsumersOfOwnedEServices(String keyword) {
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient()
-                        .getAgreementConsumers(sharedStepsContext.getXCorrelationId(), 0, 50, keyword)
+                        .getAgreementConsumers(0, 50, keyword)
         );
     }
 

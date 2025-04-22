@@ -21,8 +21,7 @@ public class AgreementDocumentUploadSteps {
     @When("l'utente carica un documento allegato a quella richiesta di fruizione")
     public void uploadAgreementAttachment() {
         Resource doc = blobFileCreator.createBlobFile("src/main/resources/dummy.pdf", "documento-test-qa.pdf");
-        clientTokenConfigurator.getAgreementClient().addAgreementConsumerDocument(
-                sharedStepsContext.getXCorrelationId(), sharedStepsContext.getAgreementId(),
+        clientTokenConfigurator.getAgreementClient().addAgreementConsumerDocument(sharedStepsContext.getAgreementId(),
                 "documento-test-qa.pdf", "documento-test-qa", doc);
 
     }

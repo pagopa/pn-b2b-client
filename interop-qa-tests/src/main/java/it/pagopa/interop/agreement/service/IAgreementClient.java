@@ -18,25 +18,24 @@ import java.util.UUID;
 
 public interface IAgreementClient extends SettableBearerToken {
     CreatedResource createAgreement(AgreementPayload agreementPayload);
-    Agreement getAgreementById(String xCorrelationId, UUID agreementId);
-    ResponseEntity<File> getAgreementContract(String xCorrelationId, UUID agreementId);
-    Agreement activateAgreement(String xCorrelationId, UUID agreementId);
-    Agreement submitAgreement(String xCorrelationId, UUID agreementId, AgreementSubmissionPayload agreementSubmissionPayload);
-    Agreement suspendAgreement(String xCorrelationId, UUID agreementId);
-    Agreement updateAgreement(String xCorrelationId, UUID agreementId, AgreementUpdatePayload agreementUpdatePayload);
-    Agreement upgradeAgreement(String xCorrelationId, UUID agreementId);
-    void archiveAgreement(String xCorrelationId, UUID agreementId);
-    Agreement rejectAgreement(String xCorrelationId, UUID agreementId, AgreementRejectionPayload agreementRejectionPayload);
-    File addAgreementConsumerDocument(String xCorrelationId, UUID agreementId, String name, String prettyName, org.springframework.core.io.Resource doc);
-    CreatedResource cloneAgreement(String xCorrelationId, UUID agreementId);
-    ResponseEntity<CompactOrganizations> getAgreementConsumers(String xCorrelationId, Integer offset, Integer limit, String q);
-    ResponseEntity<CompactOrganizations> getAgreementProducers(String xCorrelationId, Integer offset, Integer limit, String q);
-    File getAgreementConsumerDocument(String xCorrelationId, UUID agreementId, UUID documentId);
-    void deleteAgreement(String xCorrelationId, UUID agreementId);
-    void removeAgreementConsumerDocument(String xCorrelationId, UUID agreementId, UUID documentId);
-    ResponseEntity<CompactEServicesLight> getAgreementEServiceConsumers(String xCorrelationId, Integer offset, Integer limit, String q);
-    ResponseEntity<CompactEServicesLight> getAgreementEServiceProducers(String xCorrelationId, Integer offset, Integer limit, String q, List<AgreementState> states);
-
+    Agreement getAgreementById(UUID agreementId);
+    ResponseEntity<File> getAgreementContract(UUID agreementId);
+    Agreement activateAgreement(UUID agreementId);
+    Agreement submitAgreement(UUID agreementId, AgreementSubmissionPayload agreementSubmissionPayload);
+    Agreement suspendAgreement(UUID agreementId);
+    Agreement updateAgreement(UUID agreementId, AgreementUpdatePayload agreementUpdatePayload);
+    Agreement upgradeAgreement(UUID agreementId);
+    void archiveAgreement(UUID agreementId);
+    Agreement rejectAgreement(UUID agreementId, AgreementRejectionPayload agreementRejectionPayload);
+    File addAgreementConsumerDocument(UUID agreementId, String name, String prettyName, org.springframework.core.io.Resource doc);
+    CreatedResource cloneAgreement(UUID agreementId);
+    ResponseEntity<CompactOrganizations> getAgreementConsumers(Integer offset, Integer limit, String q);
+    ResponseEntity<CompactOrganizations> getAgreementProducers(Integer offset, Integer limit, String q);
+    File getAgreementConsumerDocument(UUID agreementId, UUID documentId);
+    void deleteAgreement(UUID agreementId);
+    void removeAgreementConsumerDocument(UUID agreementId, UUID documentId);
+    ResponseEntity<CompactEServicesLight> getAgreementEServiceConsumers(Integer offset, Integer limit, String q);
+    ResponseEntity<CompactEServicesLight> getAgreementEServiceProducers(Integer offset, Integer limit, String q);
 
 
 }

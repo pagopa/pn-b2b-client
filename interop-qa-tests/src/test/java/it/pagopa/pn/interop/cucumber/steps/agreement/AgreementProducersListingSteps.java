@@ -21,29 +21,25 @@ public class AgreementProducersListingSteps {
     @When("l'utente richiede una operazione di listing degli erogatori degli e-service per cui ha una richiesta di fruizione limitata ai primi {int}")
     public void requireProducerListingOperationWithLimit(int limit) {
         sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getAgreementClient().getAgreementProducers(
-                        sharedStepsContext.getXCorrelationId(), 0, limit, null)
+                () -> clientTokenConfigurator.getAgreementClient().getAgreementProducers(0, limit, null)
         );
     }
 
     @When("l'utente richiede una operazione di listing degli erogatori degli e-service per cui ha una richiesta di fruizione con offset {int}")
     public void requireProducerListingOperationWithOffset(int offset) {
         sharedStepsContext.getAgreementCommonContext().setResponseOffsetOne(
-                clientTokenConfigurator.getAgreementClient().getAgreementProducers(
-                        sharedStepsContext.getXCorrelationId(), offset, 50, null)
+                clientTokenConfigurator.getAgreementClient().getAgreementProducers(offset, 50, null)
         );
 
         sharedStepsContext.getAgreementCommonContext().setResponseOffsetTwo(
-                clientTokenConfigurator.getAgreementClient().getAgreementProducers(
-                        sharedStepsContext.getXCorrelationId(), offset + 1, 50, null)
+                clientTokenConfigurator.getAgreementClient().getAgreementProducers(offset + 1, 50, null)
         );
     }
 
     @When("l'utente richiede una operazione di listing degli erogatori degli e-service per cui ha una richiesta di fruizione filtrando per la keyword {string}")
     public void requireProducerListingOperationWithKeyword(String keyword) {
         sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getAgreementClient().getAgreementProducers(
-                        sharedStepsContext.getXCorrelationId(), 0, 50, keyword)
+                () -> clientTokenConfigurator.getAgreementClient().getAgreementProducers(0, 50, keyword)
         );
     }
 

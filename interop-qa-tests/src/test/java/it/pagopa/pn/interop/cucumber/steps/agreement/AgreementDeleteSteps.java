@@ -17,6 +17,6 @@ public class AgreementDeleteSteps {
     public void tenantRequiresAgreementCancellation() {
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient()
-                        .deleteAgreement(sharedStepsContext.getXCorrelationId(), sharedStepsContext.getAgreementId()));
+                        .deleteAgreement(sharedStepsContext.getAgreementId()));
     }
 }

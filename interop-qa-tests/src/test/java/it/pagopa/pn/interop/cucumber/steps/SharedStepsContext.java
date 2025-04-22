@@ -63,8 +63,4 @@ public class SharedStepsContext {
         riskAnalysisCommonContext = new RiskAnalysisCommonContext();
     }
 
-    public String getXCorrelationId() {
-        return String.valueOf(testSeed);
-    }
-
 }

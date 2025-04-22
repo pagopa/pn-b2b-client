@@ -17,6 +17,6 @@ public class AgreementCloneSteps {
     public void userCloneAgreement() {
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient()
-                        .cloneAgreement(sharedStepsContext.getXCorrelationId(), sharedStepsContext.getAgreementId()));
+                        .cloneAgreement(sharedStepsContext.getAgreementId()));
     }
 }

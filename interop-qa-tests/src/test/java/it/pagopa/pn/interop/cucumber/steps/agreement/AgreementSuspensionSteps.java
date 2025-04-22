@@ -17,7 +17,7 @@ public class AgreementSuspensionSteps {
     @When("l'utente richiede una operazione di sospensione di quella richiesta di fruizione")
     public void requireSuspendAgreement() {
         sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getAgreementClient().suspendAgreement(sharedStepsContext.getXCorrelationId(), sharedStepsContext.getAgreementId())
+                () -> clientTokenConfigurator.getAgreementClient().suspendAgreement(sharedStepsContext.getAgreementId())
         );
     }
 

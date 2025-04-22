@@ -32,8 +32,8 @@ public class AgreementSubmitSteps {
     @When("l'utente inoltra quella richiesta di fruizione")
     public void tenantSubmitAgreement() {
         sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getAgreementClient().submitAgreement(
-                        sharedStepsContext.getXCorrelationId(), this.sharedStepsContext.getAgreementId(), new AgreementSubmissionPayload())
+                () -> clientTokenConfigurator.getAgreementClient().submitAgreement(this.sharedStepsContext.getAgreementId(),
+                        new AgreementSubmissionPayload())
         );
     }
 
@@ -51,8 +51,7 @@ public class AgreementSubmitSteps {
     @Then("la richiesta di fruizione assume lo stato {string}")
     public void agreementReachSpecificStatus(String agremeentState) {
         sharedStepsContext.getPollingService().makePolling(
-                () -> clientTokenConfigurator.getAgreementClient().getAgreementById(
-                        sharedStepsContext.getXCorrelationId(), sharedStepsContext.getAgreementId()),
+                () -> clientTokenConfigurator.getAgreementClient().getAgreementById(sharedStepsContext.getAgreementId()),
                 res -> res.getState().equals(AgreementState.valueOf(agremeentState)),
                 String.format("Agreement with id: %s and state: %s was not found!", sharedStepsContext.getAgreementId(), agremeentState.toUpperCase())
         );

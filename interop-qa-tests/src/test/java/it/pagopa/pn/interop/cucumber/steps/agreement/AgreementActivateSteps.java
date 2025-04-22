@@ -95,7 +95,7 @@ public class AgreementActivateSteps {
     public void userRequiresAgreementActivation() {
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient()
-                        .activateAgreement(sharedStepsContext.getXCorrelationId(), sharedStepsContext.getAgreementId()));
+                        .activateAgreement(sharedStepsContext.getAgreementId()));
     }
 
     @Given("{string} ha già sospeso quella richiesta di fruizione come {clientType}")

@@ -27,7 +27,7 @@ public class EServiceCatalogListingSteps {
     @Given("{string} ha già creato e pubblicato un e-service contenente la keyword {string}")
     public void tenantHasAlreadyCreatedEServiceWithKeyword(String tenantType, String keyword) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        String eServiceName = String.format("e-service-%s-%s", sharedStepsContext.getXCorrelationId(), keyword);
+        String eServiceName = String.format("e-service-%s-%s", sharedStepsContext.getTestSeed(), keyword);
 
         EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(
                 new EServiceSeed().name(eServiceName),

@@ -50,12 +50,11 @@ public class DelegationCommonStep {
     @Given("l'ente {string} rimuove la disponibilità a ricevere deleghe in fruizione")
     public void tenantRemoveConsumerDelegationAvailability(String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        String correlationId = sharedStepsContext.getXCorrelationId();
         UUID tenantId = this.identityService.getOrganizationId(tenantType);
         try {
             tenantsApi.updateTenantDelegatedFeatures(false, false);
             pollingService.makePolling(
-                () -> tenantsApi.getTenant(correlationId, tenantId),
+                () -> tenantsApi.getTenant(tenantId),
         result -> result.getFeatures().stream()
                     .map(TenantFeature::getDelegatedConsumer)
                     .allMatch(Objects::isNull),

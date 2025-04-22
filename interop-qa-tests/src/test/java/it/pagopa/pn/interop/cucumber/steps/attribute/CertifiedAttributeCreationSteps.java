@@ -25,7 +25,6 @@ public class CertifiedAttributeCreationSteps {
     @When("l'utente crea un attributo certificato")
     public void createCertifiedAttribute() {
         httpCallExecutor.performCall(() -> attributeApiClient.createCertifiedAttributeRE(
-            sharedStepsContext.getXCorrelationId(),
             new CertifiedAttributeSeed()
                 .name("new certified attribute %d".formatted(RandomUtils.nextInt()))
                 .description("description test")));

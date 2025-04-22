@@ -26,7 +26,6 @@ public class DeclaredAttributeCreationSteps {
     @When("l'utente crea un attributo dichiarato")
     public void createDeclaredAttribute() {
         httpCallExecutor.performCall(() -> attributeApiClient.createDeclaredAttributeRE(
-            sharedStepsContext.getXCorrelationId(),
             new AttributeSeed()
                 .name("new declared attribute %d".formatted(RandomUtils.nextInt()))
                 .description("description test")));

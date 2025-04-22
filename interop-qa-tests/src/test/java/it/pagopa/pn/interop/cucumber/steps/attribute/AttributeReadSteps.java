@@ -31,7 +31,6 @@ public class AttributeReadSteps {
     @When("l'utente richiede una operazione di lettura di quel attributo")
     public void readAttribute() {
         httpCallExecutor.performCall(() -> attributeApiClient.getAttributeByIdRE(
-            sharedStepsContext.getXCorrelationId(),
             attributeCommonContext.getAttributeId()));
         commonUtils.assertValidResponse();
     }

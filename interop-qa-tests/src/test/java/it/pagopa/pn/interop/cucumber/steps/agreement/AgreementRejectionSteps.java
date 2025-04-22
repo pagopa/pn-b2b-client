@@ -17,16 +17,16 @@ public class AgreementRejectionSteps {
     @When("l'utente richiede una operazione di rifiuto di quella richiesta di fruizione con messaggio")
     public void rejectAgreementWithMessage() {
         sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getAgreementClient().rejectAgreement(
-                        sharedStepsContext.getXCorrelationId(), sharedStepsContext.getAgreementId(), new AgreementRejectionPayload().reason("rejection reason: qa-testing"))
+                () -> clientTokenConfigurator.getAgreementClient().rejectAgreement(sharedStepsContext.getAgreementId(),
+                        new AgreementRejectionPayload().reason("rejection reason: qa-testing"))
         );
     }
 
     @When("l'utente richiede una operazione di rifiuto di quella richiesta di fruizione senza messaggio")
     public void rejectAgreementWithoutMessage() {
         sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getAgreementClient().rejectAgreement(
-                        sharedStepsContext.getXCorrelationId(), sharedStepsContext.getAgreementId(), new AgreementRejectionPayload().reason(""))
+                () -> clientTokenConfigurator.getAgreementClient().rejectAgreement(sharedStepsContext.getAgreementId(),
+                        new AgreementRejectionPayload().reason(""))
         );
     }
 }

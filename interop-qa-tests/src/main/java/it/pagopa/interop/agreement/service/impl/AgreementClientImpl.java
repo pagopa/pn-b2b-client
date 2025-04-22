@@ -49,93 +49,93 @@ public class AgreementClientImpl implements IAgreementClient {
     }
 
     @Override
-    public Agreement getAgreementById(String xCorrelationId, UUID agreementId) {
-        return agreementsApi.getAgreementById(xCorrelationId, agreementId);
+    public Agreement getAgreementById(UUID agreementId) {
+        return agreementsApi.getAgreementById(agreementId);
     }
 
     @Override
-    public ResponseEntity<File> getAgreementContract(String xCorrelationId, UUID agreementId) {
-        return agreementsApi.getAgreementContractWithHttpInfo(xCorrelationId, agreementId);
+    public ResponseEntity<File> getAgreementContract(UUID agreementId) {
+        return agreementsApi.getAgreementContractWithHttpInfo(agreementId);
     }
 
     @Override
-    public Agreement activateAgreement(String xCorrelationId, UUID agreementId) {
-        return agreementsApi.activateAgreement(xCorrelationId, agreementId);
+    public Agreement activateAgreement(UUID agreementId) {
+        return agreementsApi.activateAgreement(agreementId);
     }
 
     @Override
-    public Agreement submitAgreement(String xCorrelationId, UUID agreementId, AgreementSubmissionPayload agreementSubmissionPayload) {
-        return agreementsApi.submitAgreement(xCorrelationId, agreementId, agreementSubmissionPayload);
+    public Agreement submitAgreement(UUID agreementId, AgreementSubmissionPayload agreementSubmissionPayload) {
+        return agreementsApi.submitAgreement(agreementId, agreementSubmissionPayload);
     }
 
     @Override
-    public Agreement suspendAgreement(String xCorrelationId, UUID agreementId) {
-        return agreementsApi.suspendAgreement(xCorrelationId, agreementId);
+    public Agreement suspendAgreement(UUID agreementId) {
+        return agreementsApi.suspendAgreement(agreementId);
     }
 
     @Override
-    public Agreement updateAgreement(String xCorrelationId, UUID agreementId, AgreementUpdatePayload agreementUpdatePayload) {
-        return agreementsApi.updateAgreement(xCorrelationId, agreementId, agreementUpdatePayload);
+    public Agreement updateAgreement(UUID agreementId, AgreementUpdatePayload agreementUpdatePayload) {
+        return agreementsApi.updateAgreement(agreementId, agreementUpdatePayload);
     }
 
     @Override
-    public Agreement upgradeAgreement(String xCorrelationId, UUID agreementId) {
-        return agreementsApi.upgradeAgreement(xCorrelationId, agreementId);
+    public Agreement upgradeAgreement(UUID agreementId) {
+        return agreementsApi.upgradeAgreement(agreementId);
     }
 
     @Override
-    public void archiveAgreement(String xCorrelationId, UUID agreementId) {
-        agreementsApi.archiveAgreement(xCorrelationId, agreementId);
+    public void archiveAgreement(UUID agreementId) {
+        agreementsApi.archiveAgreement(agreementId);
     }
 
     @Override
-    public Agreement rejectAgreement(String xCorrelationId, UUID agreementId, AgreementRejectionPayload agreementRejectionPayload) {
-        return agreementsApi.rejectAgreement(xCorrelationId, agreementId, agreementRejectionPayload);
+    public Agreement rejectAgreement(UUID agreementId, AgreementRejectionPayload agreementRejectionPayload) {
+        return agreementsApi.rejectAgreement(agreementId, agreementRejectionPayload);
     }
 
     @Override
-    public File addAgreementConsumerDocument(String xCorrelationId, UUID agreementId, String name, String prettyName, org.springframework.core.io.Resource doc) {
-        return agreementsApi.addAgreementConsumerDocument(xCorrelationId, agreementId, name, prettyName, doc);
+    public File addAgreementConsumerDocument(UUID agreementId, String name, String prettyName, org.springframework.core.io.Resource doc) {
+        return agreementsApi.addAgreementConsumerDocument(agreementId, name, prettyName, doc);
     }
 
     @Override
-    public CreatedResource cloneAgreement(String xCorrelationId, UUID agreementId) {
-        return agreementsApi.cloneAgreement(xCorrelationId, agreementId);
+    public CreatedResource cloneAgreement(UUID agreementId) {
+        return agreementsApi.cloneAgreement(agreementId);
     }
 
     @Override
-    public ResponseEntity<CompactOrganizations> getAgreementConsumers(String xCorrelationId, Integer offset, Integer limit, String q) {
-        return agreementsApi.getAgreementConsumersWithHttpInfo(xCorrelationId, offset, limit, q);
+    public ResponseEntity<CompactOrganizations> getAgreementConsumers(Integer offset, Integer limit, String q) {
+        return agreementsApi.getAgreementsConsumersWithHttpInfo(offset, limit, q);
     }
 
     @Override
-    public ResponseEntity<CompactOrganizations> getAgreementProducers(String xCorrelationId, Integer offset, Integer limit, String q) {
-        return agreementsApi.getAgreementProducersWithHttpInfo(xCorrelationId, offset, limit, q);
+    public ResponseEntity<CompactOrganizations> getAgreementProducers(Integer offset, Integer limit, String q) {
+        return agreementsApi.getAgreementsProducersWithHttpInfo(offset, limit, q);
     }
 
     @Override
-    public File getAgreementConsumerDocument(String xCorrelationId, UUID agreementId, UUID documentId) {
-        return agreementsApi.getAgreementConsumerDocument(xCorrelationId, agreementId, documentId);
+    public File getAgreementConsumerDocument(UUID agreementId, UUID documentId) {
+        return agreementsApi.getAgreementConsumerDocument(agreementId, documentId);
     }
 
     @Override
-    public void deleteAgreement(String xCorrelationId, UUID agreementId) {
-        agreementsApi.deleteAgreement(xCorrelationId, agreementId);
+    public void deleteAgreement(UUID agreementId) {
+        agreementsApi.deleteAgreement(agreementId);
     }
 
     @Override
-    public void removeAgreementConsumerDocument(String xCorrelationId, UUID agreementId, UUID documentId) {
-        agreementsApi.removeAgreementConsumerDocument(xCorrelationId, agreementId, documentId);
+    public void removeAgreementConsumerDocument(UUID agreementId, UUID documentId) {
+        agreementsApi.removeAgreementConsumerDocument(agreementId, documentId);
     }
 
     @Override
-    public ResponseEntity<CompactEServicesLight> getAgreementEServiceConsumers(String xCorrelationId, Integer offset, Integer limit, String q) {
-        return agreementsApi.getAgreementEServiceConsumersWithHttpInfo(xCorrelationId, offset, limit, q);
+    public ResponseEntity<CompactEServicesLight> getAgreementEServiceConsumers(Integer offset, Integer limit, String q) {
+        return agreementsApi.getAgreementsConsumerEServicesWithHttpInfo(offset, limit, q);
     }
 
     @Override
-    public ResponseEntity<CompactEServicesLight> getAgreementEServiceProducers(String xCorrelationId, Integer offset, Integer limit, String q, List<AgreementState> states) {
-        return agreementsApi.getAgreementEServiceProducersWithHttpInfo(xCorrelationId, offset, limit, q, states);
+    public ResponseEntity<CompactEServicesLight> getAgreementEServiceProducers(Integer offset, Integer limit, String q) {
+        return agreementsApi.getAgreementsProducerEServicesWithHttpInfo(offset, limit, q);
     }
 
     @Override

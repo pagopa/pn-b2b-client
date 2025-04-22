@@ -15,6 +15,6 @@ public class AgreementArchiveSteps {
 
     @When("l'utente richiede una operazione di archiviazione della richiesta di fruizione")
     public void userRequireAgreementArchive() {
-        clientTokenConfigurator.getAgreementClient().archiveAgreement(sharedStepsContext.getXCorrelationId(), sharedStepsContext.getAgreementId());
+        clientTokenConfigurator.getAgreementClient().archiveAgreement(sharedStepsContext.getAgreementId());
     }
 }

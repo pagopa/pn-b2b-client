@@ -37,9 +37,9 @@ public class PurposeActivationStep {
                         ? sharedStepsContext.getPurposeCommonContext().getWaitingForApprovalVersionId()
                         : sharedStepsContext.getPurposeCommonContext().getVersionId();
         if (versionId == null) throw new IllegalArgumentException("No versionId found!");
-        httpCallExecutor.performCall(() -> purposeApiClient.activatePurposeVersion(sharedStepsContext.getXCorrelationId(),
+        httpCallExecutor.performCall(() -> purposeApiClient.activatePurposeVersion(
                 UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId()), UUID.fromString(versionId)));
-        pollingService.makePolling(() -> purposeApiClient.getPurpose(sharedStepsContext.getXCorrelationId(), UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId())),
+        pollingService.makePolling(() -> purposeApiClient.getPurpose(UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId())),
                 res -> Optional.ofNullable(res.getCurrentVersion()).map(PurposeVersion::getState).filter(status -> status == PurposeVersionState.ACTIVE).isPresent(),
                 "There was an error while activating the purpose!");
     }

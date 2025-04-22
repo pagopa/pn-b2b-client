@@ -39,37 +39,37 @@ public class EServiceApiClientImpl implements IEServiceClient {
     }
 
     @Override
-    public CreatedEServiceDescriptor createEService(String xCorrelationId, EServiceSeed eserviceSeed) {
+    public CreatedEServiceDescriptor createEService(EServiceSeed eserviceSeed) {
         return eservicesApi.createEService(eserviceSeed);
     }
 
     @Override
-    public ResponseEntity<Void> activateDescriptor(String xCorrelationId, UUID eServiceId, UUID descriptorId) {
+    public ResponseEntity<Void> activateDescriptor(UUID eServiceId, UUID descriptorId) {
         return eservicesApi.activateDescriptorWithHttpInfo(eServiceId, descriptorId);
     }
 
     @Override
-    public CreatedResource updateDraftDescriptor(String xCorrelationId, UUID eServiceId, UUID descriptorId, UpdateEServiceDescriptorSeed updateEServiceDescriptorSeed) {
+    public CreatedResource updateDraftDescriptor(UUID eServiceId, UUID descriptorId, UpdateEServiceDescriptorSeed updateEServiceDescriptorSeed) {
         return eservicesApi.updateDraftDescriptor(eServiceId, descriptorId, updateEServiceDescriptorSeed);
     }
 
     @Override
-    public CreatedResource createEServiceDocument(String xCorrelationId, UUID eServiceId, UUID descriptorId, String kind, String prettyName, org.springframework.core.io.Resource doc) {
+    public CreatedResource createEServiceDocument(UUID eServiceId, UUID descriptorId, String kind, String prettyName, org.springframework.core.io.Resource doc) {
         return eservicesApi.createEServiceDocument(eServiceId, descriptorId, kind, prettyName, doc);
     }
 
     @Override
-    public void publishDescriptor(String xCorrelationId, UUID eServiceId, UUID descriptorId) {
+    public void publishDescriptor(UUID eServiceId, UUID descriptorId) {
         eservicesApi.publishDescriptor(eServiceId, descriptorId);
     }
 
     @Override
-    public void suspendDescriptor(String xCorrelationId, UUID eServiceId, UUID descriptorId) {
+    public void suspendDescriptor(UUID eServiceId, UUID descriptorId) {
         eservicesApi.suspendDescriptor(eServiceId, descriptorId);
     }
 
     @Override
-    public CreatedResource createDescriptor(String xCorrelationId, UUID eServiceId) {
+    public CreatedResource createDescriptor(UUID eServiceId) {
         return eservicesApi.createDescriptor(eServiceId);
     }
 
@@ -82,7 +82,6 @@ public class EServiceApiClientImpl implements IEServiceClient {
     public void addRiskAnalysisToEService(UUID eServiceId, EServiceRiskAnalysisSeed eserviceRiskAnalysisSeed) {
         eservicesApi.addRiskAnalysisToEService(eServiceId, eserviceRiskAnalysisSeed);
     }
-
 
     public FileResource exportEServiceDescriptor(UUID eserviceId, UUID descriptorId) {
         return eservicesApi.exportEServiceDescriptor(eserviceId, descriptorId);

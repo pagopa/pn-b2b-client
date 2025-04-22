@@ -30,7 +30,6 @@ public class EServiceCreationSteps {
     public void createEServiceWithSameName() {
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getEServiceClient().createEService(
-                        sharedStepsContext.getXCorrelationId(),
                         new EServiceSeed().name(sharedStepsContext.getEServicesCommonContext().getName())
                                 .description("Questo è un e-service di test").technology(EServiceTechnology.REST)
                                 .mode(EServiceMode.DELIVER)
@@ -40,7 +39,7 @@ public class EServiceCreationSteps {
 
     @Given("l'utente ha già creato un e-service contenente anche il primo descrittore")
     public void userCreateEServiceWithDescriptor() {
-        String eserviceName = String.format("e-service-%s", sharedStepsContext.getXCorrelationId());
+        String eserviceName = String.format("e-service-%s", sharedStepsContext.getTestSeed());
         EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(new EServiceSeed().name(eserviceName), new UpdateEServiceDescriptorSeed());
         EServicesCommonContext eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
         eServicesCommonContext.setName(eserviceName);
@@ -50,9 +49,8 @@ public class EServiceCreationSteps {
 
     @When("l'utente crea un e-service")
     public void userCreatesEservice() {
-        String eserviceName = String.format("e-service-%s", sharedStepsContext.getXCorrelationId());
-        CreatedEServiceDescriptor createdEServiceDescriptor = clientTokenConfigurator.getEServiceClient().createEService(sharedStepsContext.getXCorrelationId(),
-                new EServiceSeed().name(eserviceName)
+        String eserviceName = String.format("e-service-%s", sharedStepsContext.getTestSeed());
+        CreatedEServiceDescriptor createdEServiceDescriptor = clientTokenConfigurator.getEServiceClient().createEService(new EServiceSeed().name(eserviceName)
                         .description("Questo è un e-service di test").technology(EServiceTechnology.REST)
                         .mode(EServiceMode.DELIVER));
         EServicesCommonContext eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();

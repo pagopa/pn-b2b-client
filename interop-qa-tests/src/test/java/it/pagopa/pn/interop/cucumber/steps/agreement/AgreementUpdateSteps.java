@@ -17,8 +17,7 @@ public class AgreementUpdateSteps {
     @When("l'utente richiede una operazione di aggiornamento di quella richiesta di fruizione con messaggio")
     public void requireUpdateAgreement() {
         sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getAgreementClient().updateAgreement(
-                        sharedStepsContext.getXCorrelationId(), sharedStepsContext.getAgreementId(),
+                () -> clientTokenConfigurator.getAgreementClient().updateAgreement(sharedStepsContext.getAgreementId(),
                         new AgreementUpdatePayload().consumerNotes("consumer note updated - QA"))
         );
     }

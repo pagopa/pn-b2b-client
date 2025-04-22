@@ -82,7 +82,6 @@ public class AttributeListingSteps {
 
     private AttributeListRequestBuilder getAttributeListRequestPrototype() {
         return AttributeListRequest.builder()
-            .xCorrelationId(sharedStepsContext.getXCorrelationId())
             .limit(50)
             .offset(0)
             .kinds(List.of(VERIFIED, CERTIFIED, DECLARED))
@@ -93,7 +92,6 @@ public class AttributeListingSteps {
     private void listAttributes(AttributeListRequest attributeListRequest) {
         httpCallExecutor.performCall(() ->
             attributeApiClient.getAttributes(
-                attributeListRequest.getXCorrelationId(),
                 attributeListRequest.getLimit(),
                 attributeListRequest.getOffset(),
                 attributeListRequest.getKinds(),

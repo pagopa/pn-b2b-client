@@ -129,7 +129,7 @@ public class AgreementCreationStep {
     @Given("la richiesta di fruizione è passata in stato {string}")
     public void verifyAgreementState(String agreementState) {
         sharedStepsContext.getPollingService().makePolling(
-                () -> clientTokenConfigurator.getAgreementClient().getAgreementById(sharedStepsContext.getXCorrelationId(), sharedStepsContext.getAgreementId()),
+                () -> clientTokenConfigurator.getAgreementClient().getAgreementById(sharedStepsContext.getAgreementId()),
                 res -> res.getState().getValue().equals(agreementState),
                 String.format("The agreement is not in the expected state %s", agreementState)
         );

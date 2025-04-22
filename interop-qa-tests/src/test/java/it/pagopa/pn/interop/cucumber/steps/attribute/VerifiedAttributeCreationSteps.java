@@ -25,7 +25,6 @@ public class VerifiedAttributeCreationSteps {
     @When("l'utente crea un attributo verificato")
     public void createVerifiedAttribute() {
         httpCallExecutor.performCall(() -> attributeApiClient.createVerifiedAttributeRE(
-            sharedStepsContext.getXCorrelationId(),
             new AttributeSeed()
                 .name("new verified attribute %d".formatted(RandomUtils.nextInt()))
                 .description("description test")));

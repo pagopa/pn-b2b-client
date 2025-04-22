@@ -77,7 +77,6 @@ public class DescriptorPublicationSteps {
     public void userPublishDescriptor() {
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getEServiceClient().publishDescriptor(
-                        sharedStepsContext.getXCorrelationId(),
                         sharedStepsContext.getEServicesCommonContext().getEserviceId(),
                         sharedStepsContext.getEServicesCommonContext().getDescriptorId()
                 )

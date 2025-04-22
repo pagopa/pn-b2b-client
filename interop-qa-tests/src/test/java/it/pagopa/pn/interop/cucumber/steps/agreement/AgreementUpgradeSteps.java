@@ -39,8 +39,7 @@ public class AgreementUpgradeSteps {
     @When("l'utente richiede un'operazione di upgrade di quella richiesta di fruizione")
     public void requireAgreementUpgrade() {
         sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getAgreementClient().upgradeAgreement(
-                        sharedStepsContext.getXCorrelationId(), sharedStepsContext.getAgreementId())
+                () -> clientTokenConfigurator.getAgreementClient().upgradeAgreement(sharedStepsContext.getAgreementId())
         );
     }
 
@@ -97,13 +96,13 @@ public class AgreementUpgradeSteps {
 
         sharedStepsContext.getPollingService().makePolling(
                 () -> httpCallExecutor.performCall(
-                        () -> clientTokenConfigurator.getAgreementClient().getAgreementById(sharedStepsContext.getXCorrelationId(),
+                        () -> clientTokenConfigurator.getAgreementClient().getAgreementById(
                                 sharedStepsContext.getAgreementCommonContext().getResponseAgreementId())),
                 res -> httpCallExecutor.getClientResponse() != HttpStatus.NOT_FOUND,
                 "There was an error while retrieving the agreement by id!"
         );
 
-        Agreement createdAgreement = clientTokenConfigurator.getAgreementClient().getAgreementById(sharedStepsContext.getXCorrelationId(),
+        Agreement createdAgreement = clientTokenConfigurator.getAgreementClient().getAgreementById(
                 sharedStepsContext.getAgreementCommonContext().getResponseAgreementId());
         Assertions.assertEquals(AgreementState.DRAFT, createdAgreement.getState());
     }
@@ -115,14 +114,12 @@ public class AgreementUpgradeSteps {
 
         sharedStepsContext.getPollingService().makePolling(
                 () -> httpCallExecutor.performCall(
-                        () -> clientTokenConfigurator.getAgreementClient().getAgreementById(
-                                sharedStepsContext.getXCorrelationId(), sharedStepsContext.getAgreementCommonContext().getResponseAgreementId())),
+                        () -> clientTokenConfigurator.getAgreementClient().getAgreementById(sharedStepsContext.getAgreementCommonContext().getResponseAgreementId())),
                 res -> res != HttpStatus.NOT_FOUND,
                 "There was an error while retrieving the agreement by id!"
         );
 
-        Agreement createdAgreement = clientTokenConfigurator.getAgreementClient().getAgreementById(
-                sharedStepsContext.getXCorrelationId(), sharedStepsContext.getAgreementId());
+        Agreement createdAgreement = clientTokenConfigurator.getAgreementClient().getAgreementById(sharedStepsContext.getAgreementId());
         Assertions.assertEquals(sharedStepsContext.getEServicesCommonContext().getDescriptorId(), createdAgreement.getDescriptorId());
     }
 }

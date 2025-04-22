@@ -19,7 +19,7 @@ public class AgreementDownloadSteps {
     public void areementContractIsAlreadyAvailable() {
         sharedStepsContext.getPollingService().makePolling(
                 () -> clientTokenConfigurator.getAgreementClient()
-                        .getAgreementById(sharedStepsContext.getXCorrelationId(), sharedStepsContext.getAgreementId()),
+                        .getAgreementById(sharedStepsContext.getAgreementId()),
                 Agreement::getIsContractPresent,
                 "The agreement contract was not found!"
         );
@@ -29,7 +29,7 @@ public class AgreementDownloadSteps {
     public void getAgreementContract() {
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient()
-                        .getAgreementContract(sharedStepsContext.getXCorrelationId(), sharedStepsContext.getAgreementId())
+                        .getAgreementContract(sharedStepsContext.getAgreementId())
         );
     }
 }

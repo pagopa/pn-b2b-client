@@ -17,7 +17,7 @@ public class AgreementDocumentReadSteps {
     public void tenantReadsAgreementAttachment() {
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient()
-                        .getAgreementConsumerDocument(sharedStepsContext.getXCorrelationId(),
+                        .getAgreementConsumerDocument(
                                 sharedStepsContext.getAgreementId(),
                                 sharedStepsContext.getAgreementCommonContext().getDocumentId())
         );

@@ -18,15 +18,15 @@ public interface ITenantsApi extends SettableBearerToken {
 
     void addDeclaredAttribute(DeclaredTenantAttributeSeed declaredTenantAttributeSeed);
 
-    DeclaredAttributesResponse getDeclaredAttributes(String xCorrelationId, UUID tenantId);
+    DeclaredAttributesResponse getDeclaredAttributes(UUID tenantId);
 
     void updateTenantDelegatedFeatures(boolean isProducerFeatureEnabled, boolean isConsumerFeatureEnabled);
 
-    Tenant getTenant(String xCorrelationId, UUID tenantId);
+    Tenant getTenant(UUID tenantId);
 
-    void verifyVerifiedAttribute(String xCorrelationId, UUID tenantId, VerifiedTenantAttributeSeed verifiedTenantAttributeSeed);
+    void verifyVerifiedAttribute(UUID tenantId, VerifiedTenantAttributeSeed verifiedTenantAttributeSeed);
 
-    VerifiedAttributesResponse getVerifiedAttributes(String xCorrelationId, UUID tenantId);
+    VerifiedAttributesResponse getVerifiedAttributes(UUID tenantId);
 
     void revokeCertifiedAttribute(UUID tenantId, UUID attributeId);
 }
