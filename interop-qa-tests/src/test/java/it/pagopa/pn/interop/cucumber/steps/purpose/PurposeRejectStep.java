@@ -33,7 +33,7 @@ public class PurposeRejectStep {
                 ? sharedStepsContext.getPurposeCommonContext().getWaitingForApprovalVersionId()
                 : sharedStepsContext.getPurposeCommonContext().getVersionId();
 
-        httpCallExecutor.performCall(() -> purposeApiClient.rejectPurposeVersion(sharedStepsContext.getXCorrelationId(),
+        httpCallExecutor.performCall(() -> purposeApiClient.rejectPurposeVersion(
                 UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId()),
                 UUID.fromString(versionId),
                 new RejectPurposeVersionPayload().rejectionReason("Motivazione di rifiuto")));

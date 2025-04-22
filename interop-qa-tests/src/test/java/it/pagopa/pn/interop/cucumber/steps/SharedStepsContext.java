@@ -54,8 +54,4 @@ public class SharedStepsContext {
         delegationCommonContext = new DelegationCommonContext();
     }
 
-    public String getXCorrelationId() {
-        return String.valueOf(testSeed);
-    }
-
 }
