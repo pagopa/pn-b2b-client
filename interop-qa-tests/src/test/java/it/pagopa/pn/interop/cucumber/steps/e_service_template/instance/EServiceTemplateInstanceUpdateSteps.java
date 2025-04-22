@@ -53,8 +53,10 @@ public class EServiceTemplateInstanceUpdateSteps {
     @When("l'utente tenta la modifica dei campi dell'istanza dell'e-service template")
     public void editEServiceInstanceFields() {
         UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
-        lastUpdateEServiceTemplateInstanceSeed = easyRandom.nextObject(
-            UpdateEServiceTemplateInstanceSeed.class);
+        lastUpdateEServiceTemplateInstanceSeed = new UpdateEServiceTemplateInstanceSeed()
+            .isClientAccessDelegable(true)
+            .isConsumerDelegable(true)
+            .isSignalHubEnabled(true);
         editEServiceInstanceFields(eServiceId, lastUpdateEServiceTemplateInstanceSeed);
     }
 

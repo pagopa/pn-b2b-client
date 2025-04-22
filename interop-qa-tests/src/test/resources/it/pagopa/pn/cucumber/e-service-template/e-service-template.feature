@@ -2036,24 +2036,24 @@ Feature: Test API of e-service template
     Then si ottiene response status code 400
 
   # Diversamente dal solito il ruolo SUPPORT è sufficiente per eseguire l'operazione, come confermato qui
-  # https://pagopaspa.slack.com/archives/C085C3D1U84/p1743151686805009?thread_ts=1743147000.650779&cid=C085C3D1U84
+    # https://pagopaspa.slack.com/archives/C085C3D1U84/p1743151686805009?thread_ts=1743147000.650779&cid=C085C3D1U84
+  # 22/04/2025 da quando è stata rimossa la possibilità di creare più di un'istanza per e-service
+    # template si ha che l'unica cardinalità di risultato possibile è 1
   @e-service-template-instance-read
   Scenario Outline: [INTEROP-EST-184] La visualizzazione dell'elenco di tutte le istanze di un e-service template attivo può essere effettuata da un ente in veste di ADMIN, API o SUPPORT
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
-    And l'utente effettua la creazione di un nuovo e-service in stato DRAFT a partire dal template con successo indicando solo le specifiche strettamente necessarie
-    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
-    And l'utente effettua la creazione di un nuovo e-service in stato SUSPENDED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And l'utente effettua la creazione di un nuovo e-service in stato <stato> a partire dal template con successo indicando solo le specifiche strettamente necessarie
     When l'utente è un "<ruolo>" di "PA1"
     And l'utente tenta la visualizzazione dell'elenco di tutte le istanze dell'e-service template
     Then si ottiene response status code 200
-    And sono state visualizzate 1 istanza in stato DRAFT, 1 in stato PUBLISHED e 1 in stato SUSPENDED
+    And sono state visualizzate solo e soltanto 1 istanze, tutte in stato <stato>
     Examples:
-      | ruolo         |
-      | admin         |
-      | api           |
-      | api,security  |
-      | support       |
+      | ruolo         | stato     |
+      | admin         | DRAFT     |
+      | api           | PUBLISHED |
+      | api,security  | SUSPENDED |
+      | support       | DRAFT     |
 
   @e-service-template-instance-read
   Scenario: [INTEROP-EST-185] La visualizzazione dell'elenco di tutte le istanze di un e-service template attivo NON può essere effettuata da un ente NON in veste di ADMIN o API
@@ -2086,6 +2086,12 @@ Feature: Test API of e-service template
     When l'utente è un "<ruolo>" di "PA1"
     And l'utente tenta la modifica dei campi dell'istanza dell'e-service template
     Then si ottiene response status code 200
+
+    # 22/04/2025 le combinazioni lecite di campi isConsumerDelegable e isClientAccessDelegable vengono
+    # modificate correttamente. Non viene restituito un messaggio di errore per quelle illecite
+    # e al momento non c'è modo di verificare la corretta valorizzazione di isSignalHubEnabled. Tickets:
+    # https://pagopa.atlassian.net/browse/PIN-6640
+    # https://pagopa.atlassian.net/browse/PIN-6641
     And i campi dell'istanza dell'e-service template sono stati modificati correttamente
     Examples:
       | ruolo         |
