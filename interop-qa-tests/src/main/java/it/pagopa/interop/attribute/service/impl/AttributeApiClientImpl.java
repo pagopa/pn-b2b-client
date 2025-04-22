@@ -37,23 +37,23 @@ public class AttributeApiClientImpl implements IAttributeApiClient {
     }
 
     @Override
-    public Attribute createCertifiedAttribute(String xCorrelationId, CertifiedAttributeSeed certifiedAttributeSeed) {
-        return attributesApi.createCertifiedAttribute(xCorrelationId, certifiedAttributeSeed);
+    public Attribute createCertifiedAttribute(CertifiedAttributeSeed certifiedAttributeSeed) {
+        return attributesApi.createCertifiedAttribute(certifiedAttributeSeed);
     }
 
     @Override
-    public Attribute createVerifiedAttribute(String xCorrelationId, AttributeSeed attributeSeed) {
-        return attributesApi.createVerifiedAttribute(xCorrelationId, attributeSeed);
+    public Attribute createVerifiedAttribute(AttributeSeed attributeSeed) {
+        return attributesApi.createVerifiedAttribute(attributeSeed);
     }
 
     @Override
-    public Attribute createDeclaredAttribute(String xCorrelationId, AttributeSeed attributeSeed) {
-        return attributesApi.createDeclaredAttribute(xCorrelationId, attributeSeed);
+    public Attribute createDeclaredAttribute(AttributeSeed attributeSeed) {
+        return attributesApi.createDeclaredAttribute(attributeSeed);
     }
 
     @Override
-    public Attributes getAttributes(String xCorrelationId, Integer limit, Integer offset, List<AttributeKind> kinds, String q, String origin) {
-        return attributesApi.getAttributes(xCorrelationId, limit, offset, kinds, q, origin);
+    public Attributes getAttributes(Integer limit, Integer offset, List<AttributeKind> kinds, String q, String origin) {
+        return attributesApi.getAttributes(limit, offset, kinds, q, origin);
     }
 
     @Override

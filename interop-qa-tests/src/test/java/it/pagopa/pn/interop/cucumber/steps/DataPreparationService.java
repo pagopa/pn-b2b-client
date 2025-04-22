@@ -124,14 +124,14 @@ public class DataPreparationService {
     public UUID createClient(String clientKind, ClientSeed partialClientSeed) {
         ClientSeed mergedClientSeed = merge(DEFAULT_CLIENT_SEED, partialClientSeed);
         if ("CONSUMER".equals(clientKind)) {
-            httpCallExecutor.performCall(() -> authorizationClient.createConsumerClient(sharedStepsContext.getXCorrelationId(), mergedClientSeed));
+            httpCallExecutor.performCall(() -> authorizationClient.createConsumerClient(mergedClientSeed));
         } else {
-            httpCallExecutor.performCall(() -> authorizationClient.createApiClient(sharedStepsContext.getXCorrelationId(), mergedClientSeed));
+            httpCallExecutor.performCall(() -> authorizationClient.createApiClient(mergedClientSeed));
         }
         assertValidResponse();
         UUID clientId = ((CreatedResource) httpCallExecutor.getResponse()).getId();
         pollingService.makePolling(
-                () -> httpCallExecutor.performCall(() -> authorizationClient.getClient(sharedStepsContext.getXCorrelationId(), clientId)),
+                () -> httpCallExecutor.performCall(() -> authorizationClient.getClient(clientId)),
                 res -> res != HttpStatus.NOT_FOUND,
                 "Failed to retrieve the client!"
         );
@@ -141,13 +141,13 @@ public class DataPreparationService {
     public void addMemberToClient(UUID clientId, UUID userId) {
         InlineObject3 inlineObject = new InlineObject3().addUserIdsItem(userId);
         pollingService.makePolling(
-                () -> httpCallExecutor.performCall(() -> authorizationClient.addUsersToClient(sharedStepsContext.getXCorrelationId(), clientId, inlineObject)),
+                () -> httpCallExecutor.performCall(() -> authorizationClient.addUsersToClient(clientId, inlineObject)),
                 res -> !res.is5xxServerError(),
                 "Failed to add a user to the client!"
         );
         assertValidResponse();
         pollingService.makePolling(
-                () -> httpCallExecutor.performCall(() -> authorizationClient.getClientUsers(sharedStepsContext.getXCorrelationId(), clientId)),
+                () -> httpCallExecutor.performCall(() -> authorizationClient.getClientUsers(clientId)),
                 res -> Optional.ofNullable(httpCallExecutor.getResponse())
                         .map(obj -> (List<CompactUser>) obj)
                         .orElse(List.of())
@@ -159,11 +159,11 @@ public class DataPreparationService {
 
     public void addPurposeToClient(UUID clientId, UUID purposeId) {
         PurposeAdditionDetailsSeed purposeAdditionDetailsSeed = new PurposeAdditionDetailsSeed().purposeId(purposeId);
-        httpCallExecutor.performCall(() -> authorizationClient.addClientPurpose(sharedStepsContext.getXCorrelationId(), clientId, purposeAdditionDetailsSeed));
+        httpCallExecutor.performCall(() -> authorizationClient.addClientPurpose(clientId, purposeAdditionDetailsSeed));
         assertValidResponse();
 
         pollingService.makePolling(
-                () -> authorizationClient.getClient(sharedStepsContext.getXCorrelationId(), clientId),
+                () -> authorizationClient.getClient(clientId),
                 res -> res.getPurposes().stream().anyMatch(purp -> purp.getPurposeId().equals(purposeId)),
                 "Failed to add a purpose to the client!"
         );
@@ -171,12 +171,12 @@ public class DataPreparationService {
 
     public void archivePurpose(UUID purposeId, UUID versionId) {
         httpCallExecutor.performCall(() ->
-                purposeApiClient.archivePurposeVersion(sharedStepsContext.getXCorrelationId(), purposeId, versionId)
+                purposeApiClient.archivePurposeVersion(purposeId, versionId)
         );
         assertValidResponse();
         pollingService.makePolling(
                 () -> httpCallExecutor.performCall(
-                        () -> purposeApiClient.getPurpose(sharedStepsContext.getXCorrelationId(), purposeId)),
+                        () -> purposeApiClient.getPurpose(purposeId)),
                 res -> ((Purpose) httpCallExecutor.getResponse()).getCurrentVersion() != null
                         ? ((Purpose) httpCallExecutor.getResponse()).getCurrentVersion().getState().getValue().equals(PurposeVersionState.ARCHIVED.getValue())
                         : Boolean.FALSE,
@@ -187,7 +187,7 @@ public class DataPreparationService {
     public String addPublicKeyToClient(UUID clientId, KeySeed keySeed) {
         pollingService.makePolling(
                 () -> httpCallExecutor.performCall(
-                        () -> authorizationClient.createKeys(sharedStepsContext.getXCorrelationId(), clientId, List.of(keySeed))),
+                        () -> authorizationClient.createKeys(clientId, List.of(keySeed))),
                 res -> res != HttpStatus.INTERNAL_SERVER_ERROR,
                 "Failed to create a new key!"
         );
@@ -196,7 +196,7 @@ public class DataPreparationService {
 
         pollingService.makePolling(
                 () -> httpCallExecutor.performCall(
-                        () -> authorizationClient.getClientKeys(sharedStepsContext.getXCorrelationId(), clientId, null)),
+                        () -> authorizationClient.getClientKeys(clientId, 0, 50, null)),
                 res -> {
                     keyFound.set(((PublicKeys) httpCallExecutor.getResponse()).getKeys().stream()
                             .filter(ks -> ks.getName().equals(keySeed.getName()))
@@ -254,7 +254,7 @@ public class DataPreparationService {
             () -> new NoSuchElementException("Failed to create an agreement: result of agreement creation API is '%s'".formatted(httpCallExecutor.getResponseStatus())));
         assertValidResponse();
         pollingService.makePolling(
-            () ->  httpCallExecutor.performCall(() -> agreementClient.getAgreementById(sharedStepsContext.getXCorrelationId(), agreementId)),
+            () ->  httpCallExecutor.performCall(() -> agreementClient.getAgreementById(agreementId)),
             res -> res != HttpStatus.NOT_FOUND,
             ERROR_RETRIEVING_AGREEMENT
         );
@@ -262,20 +262,20 @@ public class DataPreparationService {
     }
 
     public void submitAgreement(UUID agreementId, AgreementState expectedState) {
-        httpCallExecutor.performCall(() -> agreementClient.submitAgreement(sharedStepsContext.getXCorrelationId(), agreementId, new AgreementSubmissionPayload()));
+        httpCallExecutor.performCall(() -> agreementClient.submitAgreement(agreementId, new AgreementSubmissionPayload()));
         assertValidResponse();
         pollingService.makePolling(
-                () -> agreementClient.getAgreementById(sharedStepsContext.getXCorrelationId(), agreementId),
+                () -> agreementClient.getAgreementById(agreementId),
                 res -> res.getState() == expectedState,
                 ERROR_RETRIEVING_AGREEMENT
         );
     }
 
     public void suspendAgreement(UUID agreementId, ClientType suspendedBy) {
-        httpCallExecutor.performCall(() -> agreementClient.suspendAgreement(sharedStepsContext.getXCorrelationId(), agreementId));
+        httpCallExecutor.performCall(() -> agreementClient.suspendAgreement(agreementId));
         assertValidResponse();
         pollingService.makePolling(
-                () -> agreementClient.getAgreementById(sharedStepsContext.getXCorrelationId(), agreementId),
+                () -> agreementClient.getAgreementById(agreementId),
                 res -> isTrue(res.getState().equals(AgreementState.SUSPENDED)
                     && ClientType.PRODUCER.equals(suspendedBy) ? res.getSuspendedByProducer()
                     : res.getSuspendedByConsumer()),
@@ -285,10 +285,10 @@ public class DataPreparationService {
     }
 
     public void archiveAgreement(UUID agreementId) {
-        httpCallExecutor.performCall(() -> agreementClient.archiveAgreement(sharedStepsContext.getXCorrelationId(), agreementId));
+        httpCallExecutor.performCall(() -> agreementClient.archiveAgreement(agreementId));
         assertValidResponse();
         pollingService.makePolling(
-                () -> agreementClient.getAgreementById(sharedStepsContext.getXCorrelationId(), agreementId),
+                () -> agreementClient.getAgreementById(agreementId),
                 res -> res.getState() == AgreementState.ARCHIVED,
                 ERROR_RETRIEVING_AGREEMENT
         );
@@ -296,9 +296,9 @@ public class DataPreparationService {
 
     public void addConsumerDocumentToAgreement(UUID agreementId, File doc) {
         httpCallExecutor.performCall(
-                () -> agreementClient.addAgreementConsumerDocument(sharedStepsContext.getXCorrelationId(), agreementId, "documento-test-qa.pdf", "documento-test-qa", new FileSystemResource(doc)));
+                () -> agreementClient.addAgreementConsumerDocument(agreementId, "documento-test-qa.pdf", "documento-test-qa", new FileSystemResource(doc)));
         pollingService.makePolling(
-                () -> agreementClient.getAgreementById(sharedStepsContext.getXCorrelationId(), agreementId),
+                () -> agreementClient.getAgreementById(agreementId),
                 res -> !res.getConsumerDocuments().isEmpty(),
                 ERROR_RETRIEVING_AGREEMENT
         );
@@ -307,15 +307,15 @@ public class DataPreparationService {
     public Attribute createAttribute(AttributeKind attributeKind, String name) {
         String actualName = name != null ? null : String.format("new_attribute_%d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE));
         switch (attributeKind) {
-            case CERTIFIED -> httpCallExecutor.performCall(() -> attributeApiClient.createCertifiedAttribute(sharedStepsContext.getXCorrelationId(), new CertifiedAttributeSeed().description(DESCRIPTION_TEST).name(actualName)));
-            case VERIFIED -> httpCallExecutor.performCall(() -> attributeApiClient.createVerifiedAttribute(sharedStepsContext.getXCorrelationId(), new AttributeSeed().description(DESCRIPTION_TEST).name(actualName)));
-            case DECLARED -> httpCallExecutor.performCall(() -> attributeApiClient.createDeclaredAttribute(sharedStepsContext.getXCorrelationId(), new AttributeSeed().description(DESCRIPTION_TEST).name(actualName)));
+            case CERTIFIED -> httpCallExecutor.performCall(() -> attributeApiClient.createCertifiedAttribute(new CertifiedAttributeSeed().description(DESCRIPTION_TEST).name(actualName)));
+            case VERIFIED -> httpCallExecutor.performCall(() -> attributeApiClient.createVerifiedAttribute(new AttributeSeed().description(DESCRIPTION_TEST).name(actualName)));
+            case DECLARED -> httpCallExecutor.performCall(() -> attributeApiClient.createDeclaredAttribute(new AttributeSeed().description(DESCRIPTION_TEST).name(actualName)));
             default -> throw new IllegalArgumentException("Invalid attributeKind: " + attributeKind);
         }
         assertValidResponse();
 
         pollingService.makePolling(
-                () -> attributeApiClient.getAttributes(sharedStepsContext.getXCorrelationId(), 1, 0, List.of(attributeKind), actualName, null),
+                () -> attributeApiClient.getAttributes(1, 0, List.of(attributeKind), actualName, null),
                 res -> !res.getResults().isEmpty(),
                 "There was an error while retrieving the attributes"
         );
@@ -358,13 +358,13 @@ public class DataPreparationService {
                 .isClientAccessDelegable(false);
         EServiceSeed eServiceSeed = merge(defaultEserviceSeed, partialEserviceSeed);
 
-        httpCallExecutor.performCall(() -> eServiceClient.createEService(sharedStepsContext.getXCorrelationId(), eServiceSeed));
+        httpCallExecutor.performCall(() -> eServiceClient.createEService(eServiceSeed));
         assertValidResponse();
         UUID eserviceId = ((CreatedEServiceDescriptor)httpCallExecutor.getResponse()).getId();
         UUID descriptorId = ((CreatedEServiceDescriptor)httpCallExecutor.getResponse()).getDescriptorId();
 
         pollingService.makePolling(
-                () -> httpCallExecutor.performCall(() -> producerClient.getProducerEServiceDescriptor(sharedStepsContext.getXCorrelationId(), eserviceId, descriptorId)),
+                () -> httpCallExecutor.performCall(() -> producerClient.getProducerEServiceDescriptor(eserviceId, descriptorId)),
                 res -> res != HttpStatus.NOT_FOUND,
                 ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
@@ -374,7 +374,7 @@ public class DataPreparationService {
     }
 
     public void updateDraftDescriptor(UUID eServiceId, UUID descriptorId, UpdateEServiceDescriptorSeed partialDescriptorSeed) {
-        ProducerEServiceDescriptor descriptor = producerClient.getProducerEServiceDescriptor(sharedStepsContext.getXCorrelationId(), eServiceId, descriptorId);
+        ProducerEServiceDescriptor descriptor = producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId);
         UpdateEServiceDescriptorSeed currentDescriptorSeed = new UpdateEServiceDescriptorSeed()
                 .agreementApprovalPolicy(descriptor.getAgreementApprovalPolicy())
                 .attributes(new DescriptorAttributesSeed().addCertifiedItem(List.of()).addDeclaredItem(List.of()).addVerifiedItem(List.of()))
@@ -386,7 +386,7 @@ public class DataPreparationService {
         UpdateEServiceDescriptorSeed descriptorSeed = mergeDescriptorSeed(currentDescriptorSeed, partialDescriptorSeed)
                 .dailyCallsPerConsumer(50).dailyCallsTotal(1000).audience(List.of("pagopa.it"));
 
-        httpCallExecutor.performCall(() -> eServiceClient.updateDraftDescriptor(sharedStepsContext.getXCorrelationId(), eServiceId, descriptorId, descriptorSeed));
+        httpCallExecutor.performCall(() -> eServiceClient.updateDraftDescriptor(eServiceId, descriptorId, descriptorSeed));
         assertValidResponse();
         try {
             Thread.sleep(2000);
@@ -451,7 +451,7 @@ public class DataPreparationService {
 
         // Check until the first descriptor is in desired state
         pollingService.makePolling(
-                () -> producerClient.getProducerEServiceDescriptor(sharedStepsContext.getXCorrelationId(), eServiceId, descriptorId),
+                () -> producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId),
                 res -> res.getState() == descriptorState,
                 ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
@@ -509,12 +509,12 @@ public class DataPreparationService {
         String prettyName = String.format("Documento_test_qa-%d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE));
         Resource resource = createBlobFile("documento-test-qa.pdf");
 
-        httpCallExecutor.performCall(() -> eServiceClient.createEServiceDocument(sharedStepsContext.getXCorrelationId(), eServiceId, descriptorId, "DOCUMENT", prettyName, resource));
+        httpCallExecutor.performCall(() -> eServiceClient.createEServiceDocument(eServiceId, descriptorId, "DOCUMENT", prettyName, resource));
         assertValidResponse();
         UUID documentId = ((CreatedResource) httpCallExecutor.getResponse()).getId();
 
         pollingService.makePolling(
-                () -> producerClient.getProducerEServiceDescriptor(sharedStepsContext.getXCorrelationId(), eServiceId, descriptorId),
+                () -> producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId),
                 res -> res.getDocs().stream().anyMatch(doc -> doc.getPrettyName().equals(prettyName)),
                 ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
@@ -523,11 +523,11 @@ public class DataPreparationService {
 
     public void addInterfaceToDescriptor(UUID eServiceId, UUID descriptorId) {
         Resource resource = createBlobFile("interface.yaml");
-        httpCallExecutor.performCall(() -> eServiceClient.createEServiceDocument(sharedStepsContext.getXCorrelationId(), eServiceId, descriptorId, "INTERFACE", "Interfaccia", resource));
+        httpCallExecutor.performCall(() -> eServiceClient.createEServiceDocument(eServiceId, descriptorId, "INTERFACE", "Interfaccia", resource));
         assertValidResponse();
 
         pollingService.makePolling(
-                () -> producerClient.getProducerEServiceDescriptor(sharedStepsContext.getXCorrelationId(), eServiceId, descriptorId),
+                () -> producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId),
                 res -> res.getInterface() != null,
                 ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
@@ -543,7 +543,7 @@ public class DataPreparationService {
         assertValidResponse();
 
         pollingService.makePolling(
-            () -> producerClient.getProducerEServiceDescriptor(sharedStepsContext.getXCorrelationId(), eServiceId, descriptorId),
+            () -> producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId),
             res -> res.getInterface() != null,
             "There was an error while retrieving the producer e-service descriptor"
         );
@@ -553,12 +553,12 @@ public class DataPreparationService {
         updateDraftDescriptor(eServiceId, descriptorId,
             new UpdateEServiceDescriptorSeed().audience(List.of("pagopa.it")));
         httpCallExecutor.performCall(
-            () -> eServiceClient.publishDescriptor(sharedStepsContext.getXCorrelationId(),
+            () -> eServiceClient.publishDescriptor(
                 eServiceId, descriptorId));
         assertValidResponse();
         pollingService.makePolling(
             () -> producerClient.getProducerEServiceDescriptor(
-                sharedStepsContext.getXCorrelationId(), eServiceId, descriptorId),
+                eServiceId, descriptorId),
             res -> res.getState() == EServiceDescriptorState.PUBLISHED,
             "There was an error while retrieving the producer e-service descriptor"
         );
@@ -566,31 +566,31 @@ public class DataPreparationService {
 
     public void publishTemplateInstanceDescriptor(UUID eServiceId, UUID descriptorId) {
         updateTemplateInstanceDraftDescriptor(eServiceId, descriptorId);
-        httpCallExecutor.performCall(() -> eServiceClient.publishDescriptor(sharedStepsContext.getXCorrelationId(), eServiceId, descriptorId));
+        httpCallExecutor.performCall(() -> eServiceClient.publishDescriptor(eServiceId, descriptorId));
         assertValidResponse();
         pollingService.makePolling(
-            () -> producerClient.getProducerEServiceDescriptor(sharedStepsContext.getXCorrelationId(), eServiceId, descriptorId),
+            () -> producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId),
             res -> res.getState() == EServiceDescriptorState.PUBLISHED,
             ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
     }
 
     public void suspendDescriptor(UUID eServiceId, UUID descriptorId) {
-        httpCallExecutor.performCall(() -> eServiceClient.suspendDescriptor(sharedStepsContext.getXCorrelationId(), eServiceId, descriptorId));
+        httpCallExecutor.performCall(() -> eServiceClient.suspendDescriptor(eServiceId, descriptorId));
         assertValidResponse();
         pollingService.makePolling(
-                () -> producerClient.getProducerEServiceDescriptor(sharedStepsContext.getXCorrelationId(), eServiceId, descriptorId),
+                () -> producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId),
                 res -> res.getState() == EServiceDescriptorState.SUSPENDED,
                 ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
     }
 
     public UUID createNextDraftDescriptor(UUID eServiceId) {
-        httpCallExecutor.performCall(() -> eServiceClient.createDescriptor(sharedStepsContext.getXCorrelationId(), eServiceId));
+        httpCallExecutor.performCall(() -> eServiceClient.createDescriptor(eServiceId));
         assertValidResponse();
         UUID descriptorId = ((CreatedResource) httpCallExecutor.getResponse()).getId();
         pollingService.makePolling(
-                () -> httpCallExecutor.performCall(() -> producerClient.getProducerEServiceDescriptor(sharedStepsContext.getXCorrelationId(), eServiceId, descriptorId)),
+                () -> httpCallExecutor.performCall(() -> producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId)),
                 res -> res != HttpStatus.NOT_FOUND,
                 ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
@@ -601,7 +601,7 @@ public class DataPreparationService {
         String templateType = (tenantType.equals("PA1") || tenantType.equals("PA2")) ? "PA" : "Privato/GSP";
         RiskAnalysisDataFromJson.RiskAnalysisTemplate riskAnalysisTemplate = riskAnalysisDataInitializer.getRiskAnalysisData().get(templateType);
         RiskAnalysisDataFromJson.RiskAnalysisAttributes riskAnalysisAttributes = (completed) ? riskAnalysisTemplate.getCompleted() : riskAnalysisTemplate.getUncompleted();
-        httpCallExecutor.performCall(() -> purposeApiClient.retrieveLatestRiskAnalysisConfiguration(sharedStepsContext.getXCorrelationId()));
+        httpCallExecutor.performCall(() -> purposeApiClient.retrieveLatestRiskAnalysisConfiguration());
         assertValidResponse();
         String version = ((RiskAnalysisFormConfig) httpCallExecutor.getResponse()).getVersion();
         return new RiskAnalysis("finalità test", new RiskAnalysisFormSeed().version(version).answers(riskAnalysisAttributes.toMap()));
@@ -629,7 +629,7 @@ public class DataPreparationService {
             purposeEServiceSeed.setEserviceId(teServiceMode.getEserviceId());
             purposeEServiceSeed.setConsumerId(teServiceMode.getConsumerId());
             purposeEServiceSeed.setRiskAnalysisId(teServiceMode.getRiskAnalysisId());
-            httpCallExecutor.performCall(() -> purposeApiClient.createPurposeForReceiveEservice(sharedStepsContext.getXCorrelationId(), purposeEServiceSeed));
+            httpCallExecutor.performCall(() -> purposeApiClient.createPurposeForReceiveEservice(purposeEServiceSeed));
         }
         else {
             // For modes other than RECEIVE, build a PurposeSeed
@@ -644,7 +644,7 @@ public class DataPreparationService {
             purposeSeed.setEserviceId(teServiceMode.getEserviceId());
             purposeSeed.setConsumerId(teServiceMode.getConsumerId());
             purposeSeed.setRiskAnalysisForm(teServiceMode.getRiskAnalysisFormSeed());
-            httpCallExecutor.performCall(() -> purposeApiClient.createPurpose(sharedStepsContext.getXCorrelationId(), purposeSeed));
+            httpCallExecutor.performCall(() -> purposeApiClient.createPurpose(purposeSeed));
         }
         assertValidResponse();
         UUID purposeId = ((CreatedResource) httpCallExecutor.getResponse()).getId();
@@ -652,7 +652,7 @@ public class DataPreparationService {
         AtomicReference<UUID> waitingForApprovalVersionId = new AtomicReference<>();
 
         pollingService.makePolling(
-                () -> httpCallExecutor.performCall(() -> purposeApiClient.getPurpose(sharedStepsContext.getXCorrelationId(), purposeId)),
+                () -> httpCallExecutor.performCall(() -> purposeApiClient.getPurpose(purposeId)),
                 res -> {
                     if (res == HttpStatus.OK) {
                         UUID id = Optional.ofNullable((Purpose) httpCallExecutor.getResponse())
@@ -673,13 +673,13 @@ public class DataPreparationService {
             return;
         }
         // 2. Activate the purpose version
-        httpCallExecutor.performCall(() -> purposeApiClient.activatePurposeVersion(sharedStepsContext.getXCorrelationId(), purposeId, currentVersion.get()));
+        httpCallExecutor.performCall(() -> purposeApiClient.activatePurposeVersion(purposeId, currentVersion.get()));
         assertValidResponse();
 
         // 3. If the state required is WAITING_FOR_APPROVAL, we need to wait until the purpose version is in that state and return the purposeId
         if (purposeState == PurposeVersionState.WAITING_FOR_APPROVAL) {
             pollingService.makePolling(
-                    () -> purposeApiClient.getPurpose(sharedStepsContext.getXCorrelationId(), purposeId),
+                    () -> purposeApiClient.getPurpose(purposeId),
                     res -> {
                         if (Optional.ofNullable(res.getWaitingForApprovalVersion()).map(PurposeVersion::getId).isPresent()) {
                             waitingForApprovalVersionId.set(res.getWaitingForApprovalVersion().getId());
@@ -695,7 +695,7 @@ public class DataPreparationService {
         }
 
         pollingService.makePolling(
-                () -> purposeApiClient.getPurpose(sharedStepsContext.getXCorrelationId(), purposeId),
+                () -> purposeApiClient.getPurpose(purposeId),
                 res -> {
                     if (PurposeVersionState.ACTIVE == Optional.ofNullable(res.getCurrentVersion()).map(PurposeVersion::getState).orElse(null)) {
                         currentVersion.set(res.getCurrentVersion().getId());
@@ -708,10 +708,10 @@ public class DataPreparationService {
 
         // 4. If the state required is SUSPENDED call the endpoint to suspend the purpose version
         if (purposeState == PurposeVersionState.SUSPENDED) {
-            httpCallExecutor.performCall(() -> purposeApiClient.suspendPurposeVersion(sharedStepsContext.getXCorrelationId(), purposeId, currentVersion.get()));
+            httpCallExecutor.performCall(() -> purposeApiClient.suspendPurposeVersion(purposeId, currentVersion.get()));
             assertValidResponse();
             pollingService.makePolling(
-                    () -> purposeApiClient.getPurpose(sharedStepsContext.getXCorrelationId(), purposeId),
+                    () -> purposeApiClient.getPurpose(purposeId),
                     res -> {
                         if (PurposeVersionState.SUSPENDED == Optional.ofNullable(res.getCurrentVersion()).map(PurposeVersion::getState).orElse(null)) {
                             currentVersion.set(res.getCurrentVersion().getId());
@@ -724,10 +724,10 @@ public class DataPreparationService {
         }
         // 5. If the state required is ARCHIVED call the endpoint to archive the purpose version
         if (purposeState == PurposeVersionState.ARCHIVED) {
-            httpCallExecutor.performCall(() -> purposeApiClient.archivePurposeVersion(sharedStepsContext.getXCorrelationId(), purposeId, currentVersion.get()));
+            httpCallExecutor.performCall(() -> purposeApiClient.archivePurposeVersion(purposeId, currentVersion.get()));
             assertValidResponse();
             pollingService.makePolling(
-                    () -> purposeApiClient.getPurpose(sharedStepsContext.getXCorrelationId(), purposeId),
+                    () -> purposeApiClient.getPurpose(purposeId),
                     res -> {
                         if (PurposeVersionState.ARCHIVED == Optional.ofNullable(res.getCurrentVersion()).map(PurposeVersion::getState).orElse(null)) {
                             currentVersion.set(res.getCurrentVersion().getId());
@@ -743,11 +743,11 @@ public class DataPreparationService {
     }
 
     public void rejectPurposeVersion(UUID purposeId, UUID versionId) {
-        httpCallExecutor.performCall(() -> purposeApiClient.rejectPurposeVersion(sharedStepsContext.getXCorrelationId(), purposeId, versionId, new RejectPurposeVersionPayload().rejectionReason("Testing QA purposes")));
+        httpCallExecutor.performCall(() -> purposeApiClient.rejectPurposeVersion(purposeId, versionId, new RejectPurposeVersionPayload().rejectionReason("Testing QA purposes")));
         assertValidResponse();
 
         pollingService.makePolling(
-                () -> purposeApiClient.getPurpose(sharedStepsContext.getXCorrelationId(), purposeId),
+                () -> purposeApiClient.getPurpose(purposeId),
                 res -> {
                     Optional<PurposeVersionState> versionState = res.getVersions().stream().filter(v -> v.getId().equals(versionId)).map(PurposeVersion::getState).findFirst();
                     return versionState.isPresent() && versionState.get().equals(PurposeVersionState.REJECTED);
@@ -757,22 +757,22 @@ public class DataPreparationService {
     }
 
     public void rejectAgreement(UUID agreementId) {
-        httpCallExecutor.performCall(() -> agreementClient.rejectAgreement(sharedStepsContext.getXCorrelationId(), agreementId,
+        httpCallExecutor.performCall(() -> agreementClient.rejectAgreement(agreementId,
                 new AgreementRejectionPayload().reason("Agreement rejected during QA")));
         assertValidResponse();
 
         pollingService.makePolling(
-                () -> agreementClient.getAgreementById(sharedStepsContext.getXCorrelationId(), agreementId),
+                () -> agreementClient.getAgreementById(agreementId),
                 res -> res.getState().equals(AgreementState.REJECTED),
                 "There was an error while rejecting the agreement"
         );
     }
 
     public void activateAgreement(UUID agreementId, ClientType reactivatedBy) {
-        httpCallExecutor.performCall(() -> agreementClient.activateAgreement(sharedStepsContext.getXCorrelationId(), agreementId));
+        httpCallExecutor.performCall(() -> agreementClient.activateAgreement(agreementId));
         assertValidResponse();
         pollingService.makePolling(
-            () -> agreementClient.getAgreementById(sharedStepsContext.getXCorrelationId(), agreementId),
+            () -> agreementClient.getAgreementById(agreementId),
             res -> {
                 AgreementState state = res.getState();
                 boolean isActive = (state == AgreementState.ACTIVE);

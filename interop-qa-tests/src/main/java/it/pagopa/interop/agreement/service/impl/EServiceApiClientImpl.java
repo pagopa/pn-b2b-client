@@ -50,33 +50,33 @@ public class EServiceApiClientImpl implements IEServiceClient {
     }
 
     @Override
-    public CreatedEServiceDescriptor createEService(String xCorrelationId, EServiceSeed eserviceSeed) {
-        return eservicesApi.createEService(xCorrelationId, eserviceSeed);
+    public CreatedEServiceDescriptor createEService(EServiceSeed eserviceSeed) {
+        return eservicesApi.createEService(eserviceSeed);
     }
 
     @Override
-    public CreatedResource updateDraftDescriptor(String xCorrelationId, UUID eServiceId, UUID descriptorId, UpdateEServiceDescriptorSeed updateEServiceDescriptorSeed) {
-        return eservicesApi.updateDraftDescriptor(xCorrelationId, eServiceId, descriptorId, updateEServiceDescriptorSeed);
+    public CreatedResource updateDraftDescriptor(UUID eServiceId, UUID descriptorId, UpdateEServiceDescriptorSeed updateEServiceDescriptorSeed) {
+        return eservicesApi.updateDraftDescriptor(eServiceId, descriptorId, updateEServiceDescriptorSeed);
     }
 
     @Override
-    public CreatedResource createEServiceDocument(String xCorrelationId, UUID eServiceId, UUID descriptorId, String kind, String prettyName, org.springframework.core.io.Resource doc) {
-        return eservicesApi.createEServiceDocument(xCorrelationId, eServiceId, descriptorId, kind, prettyName, doc);
+    public CreatedResource createEServiceDocument(UUID eServiceId, UUID descriptorId, String kind, String prettyName, org.springframework.core.io.Resource doc) {
+        return eservicesApi.createEServiceDocument(eServiceId, descriptorId, kind, prettyName, doc);
     }
 
     @Override
-    public void publishDescriptor(String xCorrelationId, UUID eServiceId, UUID descriptorId) {
-        eservicesApi.publishDescriptor(xCorrelationId, eServiceId, descriptorId);
+    public void publishDescriptor(UUID eServiceId, UUID descriptorId) {
+        eservicesApi.publishDescriptor(eServiceId, descriptorId);
     }
 
     @Override
-    public void suspendDescriptor(String xCorrelationId, UUID eServiceId, UUID descriptorId) {
-        eservicesApi.suspendDescriptor(xCorrelationId, eServiceId, descriptorId);
+    public void suspendDescriptor(UUID eServiceId, UUID descriptorId) {
+        eservicesApi.suspendDescriptor(eServiceId, descriptorId);
     }
 
     @Override
-    public CreatedResource createDescriptor(String xCorrelationId, UUID eServiceId) {
-        return eservicesApi.createDescriptor(xCorrelationId, eServiceId);
+    public CreatedResource createDescriptor(UUID eServiceId) {
+        return eservicesApi.createDescriptor(eServiceId);
     }
 
     @Override
