@@ -66,7 +66,6 @@ public class EServiceTemplateInstanceUpgradeSteps {
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(
                     () -> eServiceClient.getProducerEServiceDescriptorWithHttpInfo(
-                        sharedStepsContext.getXCorrelationId(),
                         sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate(),
                         lastEServiceDescriptorIdUpdatedFromTemplate
                     ),
@@ -97,7 +96,6 @@ public class EServiceTemplateInstanceUpgradeSteps {
         clientTokenConfigurator.setBearerToken(userToken);
         httpCallExecutor.performCall(
             () -> eServiceClient.upgradeEServiceInstanceWithHttpInfo(
-                sharedStepsContext.getXCorrelationId(),
                 uuid),
             ResponseEntity::getStatusCode);
 

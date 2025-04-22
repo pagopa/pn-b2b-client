@@ -51,7 +51,6 @@ public class EServiceTemplateDeleteSteps {
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(
                     () -> eServiceTemplateClient.getEServiceTemplateWithHttpInfo(
-                        sharedStepsContext.getXCorrelationId(),
                         eServiceTemplateId),
                     ResponseEntity::getStatusCode),
                 Objects::isNull, // perché in caso di errore come 404 al momento HttpCallExecutor non valorizza la response

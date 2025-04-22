@@ -43,7 +43,7 @@ public class EServiceTemplateSteps {
         String userToken = getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);
         httpCallExecutor.performCall(
-            () -> eServiceTemplateClient.getCreatorEServiceTemplates(sharedStepsContext.getXCorrelationId()),
+            eServiceTemplateClient::getCreatorEServiceTemplates,
             ResponseEntity::getStatusCode);
     }
 
@@ -56,7 +56,6 @@ public class EServiceTemplateSteps {
     private List<ProducerEServiceTemplate> getFromProducersBy(List<EServiceTemplateInfo> templatesManaged) {
         return templatesManaged.stream()
             .map(t -> eServiceTemplateClient.getCreatorEServiceTemplates(
-                sharedStepsContext.getXCorrelationId(),
                 0,
                 50,
                 t.name()))
@@ -72,7 +71,6 @@ public class EServiceTemplateSteps {
 
         httpCallExecutor.performCall(
             () -> eServiceTemplateClient.getEServiceTemplateCreators(
-                sharedStepsContext.getXCorrelationId(),
                 0,
                 50,
                 null),

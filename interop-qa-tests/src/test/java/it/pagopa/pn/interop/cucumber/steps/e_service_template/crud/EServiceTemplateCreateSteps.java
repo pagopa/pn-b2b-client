@@ -82,8 +82,7 @@ public class EServiceTemplateCreateSteps {
         String userToken = sharedStepsContext.getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);
 
-        httpCallExecutor.performCall(() -> eServiceTemplateClient.createEServiceTemplate(
-            sharedStepsContext.getXCorrelationId(), templateSeed));
+        httpCallExecutor.performCall(() -> eServiceTemplateClient.createEServiceTemplate(templateSeed));
         if (httpCallExecutor.getResponseStatus().isError()) {
             return; // a questo punto si prevede che i passi successivi riconoscano l'errore
         }
@@ -92,7 +91,6 @@ public class EServiceTemplateCreateSteps {
         pollingService.makePolling(
             () -> httpCallExecutor.performCall(
                 () -> eServiceTemplateClient.getEServiceTemplateVersion(
-                    sharedStepsContext.getXCorrelationId(),
                     creationResponse.getId(),
                     creationResponse.getVersionId())),
             res -> res != HttpStatus.NOT_FOUND,

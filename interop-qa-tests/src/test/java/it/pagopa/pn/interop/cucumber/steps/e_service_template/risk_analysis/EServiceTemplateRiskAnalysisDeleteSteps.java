@@ -53,7 +53,6 @@ public class EServiceTemplateRiskAnalysisDeleteSteps {
 
         UUID riskAnalysisId;
         List<EServiceRiskAnalysis> riskAnalysis = eServiceTemplateClient.getEServiceTemplate(
-            sharedStepsContext.getXCorrelationId(),
             eServiceTemplateId).getRiskAnalysis();
         if(isEmpty(riskAnalysis)) {
             throw new IllegalStateException("Nessuna risk analysis presente nell'e-service template");
@@ -82,7 +81,6 @@ public class EServiceTemplateRiskAnalysisDeleteSteps {
         try {
             pollingService.makePolling(
                 () -> eServiceTemplateClient.getEServiceTemplateWithHttpInfo(
-                    sharedStepsContext.getXCorrelationId(),
                     eServiceTemplateId),
                 res -> res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody()) && isEmpty(res.getBody().getRiskAnalysis()),
                 "La risk analysis non è stata cancellata correttamente dall'e-service template, oppure l'e-service template risulta nullo."
@@ -97,7 +95,6 @@ public class EServiceTemplateRiskAnalysisDeleteSteps {
         clientTokenConfigurator.setBearerToken(userToken);
         httpCallExecutor.performCall(
             () -> eServiceTemplateClient.deleteRiskAnalysis(
-                sharedStepsContext.getXCorrelationId(),
                 eServiceTemplateId,
                 riskAnalysisId));
     }

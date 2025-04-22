@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.UUID;
 
 public interface IConsumerDelegationsApiClient extends SettableBearerToken {
-    DelegationTenants getConsumerDelegatorsWithAgreements(String xCorrelationId, Integer offset, Integer limit, String q);
-    DelegationTenants getConsumerDelegators(String xCorrelationId, Integer offset, Integer limit, String q, List<UUID> eserviceIds);
-    CompactEServices getConsumerDelegatedEservices(String xCorrelationId, UUID delegatorId, Integer offset, Integer limit, String q);
+    DelegationTenants getConsumerDelegatorsWithAgreements(Integer offset, Integer limit, String q);
+    DelegationTenants getConsumerDelegators(Integer offset, Integer limit, String q, List<UUID> eserviceIds);
+    CompactEServices getConsumerDelegatedEservices(UUID delegatorId, Integer offset, Integer limit, String q);
 
-    CreatedResource createConsumerDelegation(String xCorrelationId, DelegationSeed delegationSeed);
-    void approveConsumerDelegation(String xCorrelationId, UUID delegationId);
-    void rejectConsumerDelegation(String xCorrelationId, UUID delegationId, RejectDelegationPayload rejectDelegationPayload);
-    void revokeConsumerDelegation(String xCorrelationId, String delegationId);
+    CreatedResource createConsumerDelegation(DelegationSeed delegationSeed);
+    void approveConsumerDelegation(UUID delegationId);
+    void rejectConsumerDelegation(UUID delegationId, RejectDelegationPayload rejectDelegationPayload);
+    void revokeConsumerDelegation(String delegationId);
 }

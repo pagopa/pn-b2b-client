@@ -51,7 +51,7 @@ public class PurposeCommonStep {
     public void tenantViewCreatedPurpose(DelegationRole delegationRole) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         purposeApiClient.getPurpose(
-            sharedStepsContext.getXCorrelationId(),
+            
             UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId()));
     }
 
@@ -109,7 +109,7 @@ public class PurposeCommonStep {
         String tenantType = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         pollingService.makePolling(
-                () -> purposeApiClient.getPurpose(sharedStepsContext.getXCorrelationId(), UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId())),
+                () -> purposeApiClient.getPurpose(UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId())),
                 res -> Optional.ofNullable(res).map(Purpose::getCurrentVersion).map(PurposeVersion::getState).filter(state -> state.equals(PurposeVersionState.ARCHIVED)).isPresent(),
                 "The purpose was not archived"
         );

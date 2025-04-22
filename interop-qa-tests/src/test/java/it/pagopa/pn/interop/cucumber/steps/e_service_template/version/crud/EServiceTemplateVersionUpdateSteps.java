@@ -149,7 +149,6 @@ public class EServiceTemplateVersionUpdateSteps {
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(
                     () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
-                        sharedStepsContext.getXCorrelationId(),
                         eServiceTemplateId,
                         eServiceTemplateVersionId),
                     ResponseEntity::getStatusCode),
@@ -178,7 +177,6 @@ public class EServiceTemplateVersionUpdateSteps {
         clientTokenConfigurator.setBearerToken(userToken);
         httpCallExecutor.performCall(
             () -> eServiceTemplateClient.updateEServiceTemplateVersion(
-                sharedStepsContext.getXCorrelationId(),
                 eServiceTemplateId,
                 eServiceTemplateVersionId,
                 sameNameUpdateSeed));

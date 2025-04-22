@@ -98,8 +98,7 @@ public class AgreementCommonSteps {
         Attribute attribute = dataPreparationService.createAttribute(
             attributeKind, null);
         sharedStepsContext.getEServiceTemplateStepContext().addCreatedAttribute(attribute);
-        dataPreparationService.assignDeclaredAttributeToTenant(
-            sharedStepsContext.getXCorrelationId(), tenantId, attribute.getId());
+        dataPreparationService.assignDeclaredAttributeToTenant(tenantId, attribute.getId());
     }
 
     @Given("{string} ha già creato e pubblicato {int} e-service(s)")
@@ -184,7 +183,7 @@ public class AgreementCommonSteps {
         String tenantType = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         pollingService.makePolling(
-                () -> agreementClient.getAgreementById(sharedStepsContext.getXCorrelationId(), sharedStepsContext.getAgreementId()),
+                () -> agreementClient.getAgreementById(sharedStepsContext.getAgreementId()),
                 res -> res.getState().equals(AgreementState.ARCHIVED),
                 "The agreement was not archived"
         );

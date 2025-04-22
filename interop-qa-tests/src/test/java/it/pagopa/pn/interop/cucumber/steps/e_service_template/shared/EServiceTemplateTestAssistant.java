@@ -173,7 +173,6 @@ public class EServiceTemplateTestAssistant {
         clientTokenConfigurator.setBearerToken(userToken);
         httpCallExecutor.performCall(
             () -> eServiceTemplateClient.addDocumentWithHttpInfo(
-                sharedStepsContext.getXCorrelationId(),
                 eServiceTemplateId,
                 eServiceTemplateVersionId,
                 kind,
@@ -211,7 +210,6 @@ public class EServiceTemplateTestAssistant {
             // controlla la coerenza con quanto contenuto nel template
             pollingService.makePolling(
                 () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
-                    sharedStepsContext.getXCorrelationId(),
                     eServiceTemplateId,
                     eServiceTemplateVersionId),
                 res -> {
@@ -235,7 +233,6 @@ public class EServiceTemplateTestAssistant {
             // controlla la coerenza del documento stesso
             pollingService.makePolling(
                 () -> eServiceTemplateClient.getDocumentWithHttpInfo(
-                    sharedStepsContext.getXCorrelationId(),
                     eServiceTemplateId,
                     eServiceTemplateVersionId,
                     lastAddedDocument.id()),
@@ -290,7 +287,6 @@ public class EServiceTemplateTestAssistant {
         clientTokenConfigurator.setBearerToken(userToken);
         httpCallExecutor.performCall(
             () -> eServiceTemplateClient.addRiskAnalysis(
-                sharedStepsContext.getXCorrelationId(),
                 eServiceTemplateId,
                 riskAnalysisSeed));
     }
@@ -303,7 +299,6 @@ public class EServiceTemplateTestAssistant {
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(
                     () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
-                        sharedStepsContext.getXCorrelationId(),
                         eServiceTemplateId,
                         eServiceTemplateVersionId),
                     ResponseEntity::getStatusCode),
@@ -354,7 +349,6 @@ public class EServiceTemplateTestAssistant {
 
     public void publishEServiceTemplate(UUID templateId, UUID templateVersionId) {
         Runnable templatePublisher = () -> eServiceTemplateClient.publishEServiceTemplate(
-            sharedStepsContext.getXCorrelationId(),
             templateId,
             templateVersionId);
         Predicate<ResponseEntity<EServiceTemplateVersionDetails>> pollingStopPredicate = res ->
@@ -365,7 +359,6 @@ public class EServiceTemplateTestAssistant {
 
     public void suspendEServiceTemplate(UUID templateId, UUID templateVersionId) {
         Runnable templateSuspender = () -> eServiceTemplateClient.suspendEServiceTemplate(
-            sharedStepsContext.getXCorrelationId(),
             templateId,
             templateVersionId);
         Predicate<ResponseEntity<EServiceTemplateVersionDetails>> pollingStopPredicate = res ->
@@ -376,7 +369,6 @@ public class EServiceTemplateTestAssistant {
 
     public void activateEServiceTemplate(UUID templateId, UUID templateVersionId) {
         Runnable templateActivator = () -> eServiceTemplateClient.activateEServiceTemplate(
-            sharedStepsContext.getXCorrelationId(),
             templateId,
             templateVersionId);
         Predicate<ResponseEntity<EServiceTemplateVersionDetails>> pollingStopPredicate = res ->
@@ -401,7 +393,6 @@ public class EServiceTemplateTestAssistant {
              * test - è quella appena effettuata, non questa, che serve solo ad attendere
              * l'effettivo mutamento di stato. */
             () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
-                sharedStepsContext.getXCorrelationId(),
                 templateId,
                 templateVersionId),
             pollingStopPredicate,
@@ -414,7 +405,6 @@ public class EServiceTemplateTestAssistant {
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(
                     () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
-                        sharedStepsContext.getXCorrelationId(),
                         sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(),
                         sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId()),
                     ResponseEntity::getStatusCode),
