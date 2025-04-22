@@ -59,20 +59,20 @@ public class DelegationAcceptStep {
 
     private void approveProducerDelegation() {
         httpCallExecutor.performCall(
-                () -> producerDelegationsApiClient.approveProducerDelegation(sharedStepsContext.getXCorrelationId(),
+                () -> producerDelegationsApiClient.approveProducerDelegation(
                         sharedStepsContext.getDelegationCommonContext().getDelegationId()));
     }
 
     private void approveConsumerDelegation() {
         httpCallExecutor.performCall(
-                () -> consumerDelegationsApiClient.approveConsumerDelegation(sharedStepsContext.getXCorrelationId(),
+                () -> consumerDelegationsApiClient.approveConsumerDelegation(
                         sharedStepsContext.getDelegationCommonContext().getDelegationId()));
     }
 
     public void waitUntilDelegationIsApprove() {
         // wait until delegation is correctly approved
         pollingService.makePolling(
-                () -> delegationApiClient.getDelegation(sharedStepsContext.getXCorrelationId(),
+                () -> delegationApiClient.getDelegation(
                         String.valueOf(sharedStepsContext.getDelegationCommonContext().getDelegationId())),
                 res ->  res.getState().equals(DelegationState.ACTIVE),
                 "There was an error while accepting the delegation!"

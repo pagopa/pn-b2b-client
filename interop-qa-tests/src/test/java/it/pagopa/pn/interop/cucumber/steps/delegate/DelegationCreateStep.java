@@ -171,7 +171,7 @@ public class DelegationCreateStep {
         String tenantType, DelegationAvailabilityStrategy<T, U> delegationStrategy, Boolean isDelegatedProducer, Boolean isDelegatedConsumer) {
         httpCallExecutor.performCall(() -> delegationStrategy.getDelegationAvailabilityDeclarer().accept(isDelegatedProducer, isDelegatedConsumer));
         if (httpCallExecutor.getResponseStatus() == HttpStatus.OK)
-            pollingService.makePolling(() -> tenantsApi.getTenant(sharedStepsContext.getXCorrelationId(), identityService.getOrganizationId(tenantType)),
+            pollingService.makePolling(() -> tenantsApi.getTenant(identityService.getOrganizationId(tenantType)),
                 res -> Optional.ofNullable(res.getFeatures())
                         .orElse(List.of())
                         .stream()
@@ -195,7 +195,7 @@ public class DelegationCreateStep {
     @And("la delega è stata creata correttamente")
     public void delegationIsPresent() {
         pollingService.makePolling(
-                () -> httpCallExecutor.performCall(() -> delegationApiClient.getDelegation(sharedStepsContext.getXCorrelationId(),
+                () -> httpCallExecutor.performCall(() -> delegationApiClient.getDelegation(
                         String.valueOf(sharedStepsContext.getDelegationCommonContext().getDelegationId()))),
                 res -> res != HttpStatus.NOT_FOUND,
                 "There was an error while creating the delegation!"
@@ -204,21 +204,21 @@ public class DelegationCreateStep {
 
     private void createDelegate(
         String tenantType,
-        BiFunction<String, DelegationSeed, CreatedResource> delegationCreator) {
+        Function<DelegationSeed, CreatedResource> delegationCreator) {
         this.createDelegate(tenantType, delegationCreator, DelegationProxy.ofMainDelegation(sharedStepsContext.getDelegationCommonContext()));
     }
 
     private void createDelegate(
         String tenantType,
-        BiFunction<String, DelegationSeed, CreatedResource> delegationCreator,
+        Function<DelegationSeed, CreatedResource> delegationCreator,
         DelegationProxy delegationProxy) {
         UUID organizationId = identityService.getOrganizationId(tenantType);
-        httpCallExecutor.performCall(() -> delegationCreator.apply(sharedStepsContext.getXCorrelationId(),
+        httpCallExecutor.performCall(() -> delegationCreator.apply(
                 new DelegationSeed().eserviceId(sharedStepsContext.getEServicesCommonContext().getEserviceId()).delegateId(organizationId)));
         if (httpCallExecutor.getResponseStatus() == HttpStatus.OK) {
             delegationProxy.setDelegationId(((CreatedResource) httpCallExecutor.getResponse()).getId());
             pollingService.makePolling(
-                    () -> httpCallExecutor.performCall(() -> delegationApiClient.getDelegation(sharedStepsContext.getXCorrelationId(),
+                    () -> httpCallExecutor.performCall(() -> delegationApiClient.getDelegation(
                             String.valueOf(delegationProxy.getDelegationId()))),
                     res -> res != HttpStatus.NOT_FOUND,
                     "There was an error while creating the delegation!"

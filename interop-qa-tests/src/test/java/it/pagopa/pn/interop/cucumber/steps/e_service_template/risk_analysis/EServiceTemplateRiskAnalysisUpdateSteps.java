@@ -52,7 +52,6 @@ public class EServiceTemplateRiskAnalysisUpdateSteps {
         UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
 
         List<EServiceRiskAnalysis> riskAnalysis = eServiceTemplateClient.getEServiceTemplate(
-            sharedStepsContext.getXCorrelationId(),
             eServiceTemplateId).getRiskAnalysis();
         if(isEmpty(riskAnalysis)) {
             throw new IllegalStateException("Nessuna risk analysis presente nell'e-service template");
@@ -70,7 +69,6 @@ public class EServiceTemplateRiskAnalysisUpdateSteps {
         //  l'id subito dopo la creazione, e quindi collocato in contesto di classe come per
         //  gli altri id
         List<EServiceRiskAnalysis> riskAnalysis = eServiceTemplateClient.getEServiceTemplate(
-            sharedStepsContext.getXCorrelationId(),
             sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id()).getRiskAnalysis();
         if(isEmpty(riskAnalysis)) {
             throw new IllegalStateException("Nessuna risk analysis presente nell'e-service template");
@@ -95,7 +93,6 @@ public class EServiceTemplateRiskAnalysisUpdateSteps {
         pollingService.makePolling(
             () -> httpCallExecutor.performCall(
                 () -> eServiceTemplateClient.getEServiceTemplateWithHttpInfo(
-                    sharedStepsContext.getXCorrelationId(),
                     eServiceTemplateId),
                 ResponseEntity::getStatusCode),
             res -> res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody()) && res.getBody().getRiskAnalysis().size() >= 2,
@@ -119,7 +116,6 @@ public class EServiceTemplateRiskAnalysisUpdateSteps {
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(
                     () -> eServiceTemplateClient.getEServiceTemplateWithHttpInfo(
-                        sharedStepsContext.getXCorrelationId(),
                         eServiceTemplateId),
                     ResponseEntity::getStatusCode),
                 res -> res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody()) && testAssistant.areConsistent(sharedStepsContext.getEServiceTemplateStepContext().getLastAddedRiskAnalysis(), res.getBody().getRiskAnalysis().get(sharedStepsContext.getEServiceTemplateStepContext().getLastAddedRiskAnalysisIndex())),
@@ -150,7 +146,6 @@ public class EServiceTemplateRiskAnalysisUpdateSteps {
         clientTokenConfigurator.setBearerToken(userToken);
         httpCallExecutor.performCall(
             () -> eServiceTemplateClient.editRiskAnalysisWithHttpInfo(
-                sharedStepsContext.getXCorrelationId(),
                 eServiceTemplateId,
                 riskAnalysisId,
                 editedRiskAnalysisSeed),

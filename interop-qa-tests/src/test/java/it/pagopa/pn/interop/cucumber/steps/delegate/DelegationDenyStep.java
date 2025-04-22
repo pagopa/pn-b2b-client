@@ -60,7 +60,7 @@ public class DelegationDenyStep {
 
     private void rejectProducerDelegation() {
         httpCallExecutor.performCall(
-                () -> producerDelegationsApiClient.rejectProducerDelegation(sharedStepsContext.getXCorrelationId(),
+                () -> producerDelegationsApiClient.rejectProducerDelegation(
                         sharedStepsContext.getDelegationCommonContext().getDelegationId(),
                         new RejectDelegationPayload().rejectionReason("Missing all required data!")));
     }
@@ -69,7 +69,7 @@ public class DelegationDenyStep {
     public void rejectConsumerDelegation(String tenantType) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(
-                () -> consumerDelegationsApiClient.rejectConsumerDelegation(sharedStepsContext.getXCorrelationId(),
+                () -> consumerDelegationsApiClient.rejectConsumerDelegation(
                         sharedStepsContext.getDelegationCommonContext().getDelegationId(),
                         new RejectDelegationPayload().rejectionReason("Missing all required data!")));
         if (httpCallExecutor.getResponseStatus() == HttpStatus.OK) waitForDelegationState(DelegationState.REJECTED);
@@ -79,7 +79,7 @@ public class DelegationDenyStep {
     public void delegationIsRevokedByTenantWithRole(String tenantType, String role) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, role));
         httpCallExecutor.performCall(
-                () -> producerDelegationsApiClient.revokeProducerDelegation(sharedStepsContext.getXCorrelationId(),
+                () -> producerDelegationsApiClient.revokeProducerDelegation(
                         String.valueOf(sharedStepsContext.getDelegationCommonContext().getDelegationId())));
     }
 
@@ -87,7 +87,7 @@ public class DelegationDenyStep {
     public void consumerDelegationIsRevokedByTenantWithRole(String tenantType, String role) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, role));
         httpCallExecutor.performCall(
-                () -> consumerDelegationsApiClient.revokeConsumerDelegation(sharedStepsContext.getXCorrelationId(),
+                () -> consumerDelegationsApiClient.revokeConsumerDelegation(
                         String.valueOf(sharedStepsContext.getDelegationCommonContext().getDelegationId())));
         if (httpCallExecutor.getResponseStatus() == HttpStatus.OK) waitForDelegationState(DelegationState.REVOKED);
     }
@@ -101,7 +101,7 @@ public class DelegationDenyStep {
     private void waitForDelegationState(DelegationState delegationState) {
         // wait until delegation is correctly rejected
         pollingService.makePolling(
-                () -> delegationApiClient.getDelegation(sharedStepsContext.getXCorrelationId(),
+                () -> delegationApiClient.getDelegation(
                         String.valueOf(sharedStepsContext.getDelegationCommonContext().getDelegationId())),
                 res ->  res.getState().equals(delegationState),
                 "There was an error while revoking the delegation!"

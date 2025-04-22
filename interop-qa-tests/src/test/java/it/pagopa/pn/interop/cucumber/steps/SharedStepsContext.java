@@ -57,8 +57,4 @@ public class SharedStepsContext {
         eServiceTemplateStepContext = new EServiceTemplateStepContext();
     }
 
-    public String getXCorrelationId() {
-        return String.valueOf(testSeed);
-    }
-
 }

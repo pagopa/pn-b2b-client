@@ -13,7 +13,6 @@ import it.pagopa.interop.e_service_template.mapper.DescriptorAttributesMapper;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext.EServiceTemplateInfoMapper;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
 import java.util.UUID;
@@ -80,9 +79,7 @@ public class EServiceTemplateVersionDeleteSteps {
         try {
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(
-                    () -> eServiceTemplateClient.getEServiceTemplateWithHttpInfo(
-                        sharedStepsContext.getXCorrelationId(),
-                        eServiceTemplateId),
+                    () -> eServiceTemplateClient.getEServiceTemplateWithHttpInfo(eServiceTemplateId),
                     ResponseEntity::getStatusCode),
                 res -> res.getStatusCode().is2xxSuccessful() && nonNull(res.getBody()) && res.getBody().getVersions().size() == 1,
                 "La versione dell'e-service template non è stata cancellata correttamente"
@@ -115,7 +112,6 @@ public class EServiceTemplateVersionDeleteSteps {
         clientTokenConfigurator.setBearerToken(userToken);
         httpCallExecutor.performCall(
             () -> eServiceTemplateClient.deleteEServiceTemplateVersionWithHttpInfo(
-                sharedStepsContext.getXCorrelationId(),
                 eServiceTemplateId,
                 eServiceTemplateVersionId),
             ResponseEntity::getStatusCode);

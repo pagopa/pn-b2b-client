@@ -27,28 +27,28 @@ public class ClientKeyUploadSteps {
     @When("l'utente richiede il caricamento di una chiave pubblica di tipo {string}")
     public void userLoadsPublicKeyWithType(String keyType) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-        httpCallExecutor.performCall(() -> authorizationClient.createKeys(sharedStepsContext.getXCorrelationId(), sharedStepsContext.getClientCommonContext().getFirstClient(),
+        httpCallExecutor.performCall(() -> authorizationClient.createKeys(sharedStepsContext.getClientCommonContext().getFirstClient(),
                 KeyPairGeneratorUtil.createKeySeed(
                     KeyPairGeneratorUtil.createBase64PublicKey(keyType, 2048))));
     }
 
     @When("l'utente richiede il caricamento di una chiave pubblica di tipo {string} di lunghezza {int}")
     public void userLoadsPublicKeyWithTypeAndSize(String keyType, int keyLength) {
-        httpCallExecutor.performCall(() -> authorizationClient.createKeys(sharedStepsContext.getXCorrelationId(), sharedStepsContext.getClientCommonContext().getFirstClient(),
+        httpCallExecutor.performCall(() -> authorizationClient.createKeys(sharedStepsContext.getClientCommonContext().getFirstClient(),
                 KeyPairGeneratorUtil.createKeySeed(
                     KeyPairGeneratorUtil.createBase64PublicKey(keyType, keyLength))));
     }
 
     @When("l'utente richiede il caricamento di una chiave pubblica di tipo {string} di lunghezza {int} senza i delimitatori di inizio e fine")
     public void userLoadsPulicKeyWithoutDelimitators (String keyType, int keyLength) {
-        httpCallExecutor.performCall(() -> authorizationClient.createKeys(sharedStepsContext.getXCorrelationId(), sharedStepsContext.getClientCommonContext().getFirstClient(),
+        httpCallExecutor.performCall(() -> authorizationClient.createKeys(sharedStepsContext.getClientCommonContext().getFirstClient(),
                 KeyPairGeneratorUtil.createKeySeed(
                     KeyPairGeneratorUtil.createBase64PublicKey(keyType, keyLength, false))));
     }
 
     @When("l'utente richiede il caricamento di una chiave pubblica di tipo RSA di lunghezza 2048 con lo stesso kid")
     public void userLoadsPublicKeyWithTypeAndSizeAndSameKid() {
-        httpCallExecutor.performCall(() -> authorizationClient.createKeys(sharedStepsContext.getXCorrelationId(), sharedStepsContext.getClientCommonContext().getFirstClient(),
+        httpCallExecutor.performCall(() -> authorizationClient.createKeys(sharedStepsContext.getClientCommonContext().getFirstClient(),
                 KeyPairGeneratorUtil.createKeySeed(
                     sharedStepsContext.getClientCommonContext().getClientPublicKey())));
     }

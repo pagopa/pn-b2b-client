@@ -13,7 +13,6 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateNam
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
 import java.util.UUID;
 import lombok.Data;
@@ -80,7 +79,6 @@ public class EServiceTemplateNameUpdateSteps {
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(
                     () -> eServiceTemplateClient.getEServiceTemplateWithHttpInfo(
-                        sharedStepsContext.getXCorrelationId(),
                         eServiceTemplateId),
                     ResponseEntity::getStatusCode),
                 res -> {
@@ -109,7 +107,7 @@ public class EServiceTemplateNameUpdateSteps {
         clientTokenConfigurator.setBearerToken(userToken);
         httpCallExecutor.performCall(
             () -> eServiceTemplateClient.updateEServiceTemplateNameWithHttpInfo(
-                sharedStepsContext.getXCorrelationId(),
+
                 eServiceTemplateId,
                 lastTemplateNameUpdateSeed),
             ResponseEntity::getStatusCode);

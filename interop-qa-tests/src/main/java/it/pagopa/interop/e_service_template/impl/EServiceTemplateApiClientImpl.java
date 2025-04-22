@@ -54,46 +54,40 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
     }
 
     @Override
-    public CreatedEServiceTemplateVersion createEServiceTemplate(String xCorrelationId,
-        EServiceTemplateSeed eserviceSeed) {
-        return eserviceTemplatesApi.createEServiceTemplate(xCorrelationId, eserviceSeed);
+    public CreatedEServiceTemplateVersion createEServiceTemplate(EServiceTemplateSeed eserviceSeed) {
+        return eserviceTemplatesApi.createEServiceTemplate(eserviceSeed);
     }
 
     @Override
-    public void updateEServiceTemplate(String xCorrelationId, UUID eServiceTemplateId,
+    public void updateEServiceTemplate(UUID eServiceTemplateId,
         UpdateEServiceTemplateSeed updateEServiceTemplateSeed) {
-        eserviceTemplatesApi.updateEServiceTemplate(xCorrelationId, eServiceTemplateId, updateEServiceTemplateSeed);
+        eserviceTemplatesApi.updateEServiceTemplate(eServiceTemplateId, updateEServiceTemplateSeed);
     }
 
     @Override
-    public ResponseEntity<Void> updateEServiceTemplateWithHttpInfo(String xCorrelationId,
-        UUID eServiceTemplateId,
+    public ResponseEntity<Void> updateEServiceTemplateWithHttpInfo(UUID eServiceTemplateId,
         UpdateEServiceTemplateSeed updateEServiceTemplateSeed) {
-        return eserviceTemplatesApi.updateEServiceTemplateWithHttpInfo(xCorrelationId, eServiceTemplateId, updateEServiceTemplateSeed);
+        return eserviceTemplatesApi.updateEServiceTemplateWithHttpInfo(eServiceTemplateId, updateEServiceTemplateSeed);
     }
 
     @Override
-    public CreatedResource createEServiceTemplateVersion(String xCorrelationId,
-        UUID eServiceTemplateId) {
-        return eserviceTemplatesApi.createEServiceTemplateVersion(xCorrelationId, eServiceTemplateId);
+    public CreatedResource createEServiceTemplateVersion(UUID eServiceTemplateId) {
+        return eserviceTemplatesApi.createEServiceTemplateVersion(eServiceTemplateId);
     }
 
     @Override
     public ResponseEntity<CreatedResource> createEServiceTemplateVersionWithHttpInfo(
-        String xCorrelationId,
         UUID eServiceTemplateId) {
-        return eserviceTemplatesApi.createEServiceTemplateVersionWithHttpInfo(xCorrelationId, eServiceTemplateId);
+        return eserviceTemplatesApi.createEServiceTemplateVersionWithHttpInfo(eServiceTemplateId);
     }
 
     @Override
     public void updateEServiceTemplateVersion(
-        String xCorrelationId,
         UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId,
         UpdateEServiceTemplateVersionSeed seed)
     {
         eserviceTemplatesApi.updateDraftTemplateVersion(
-            xCorrelationId,
             eServiceTemplateId,
             eServiceTemplateVersionId,
             seed);
@@ -101,353 +95,312 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
 
     @Override
     public ResponseEntity<Void> updateEServiceTemplateVersionWithHttpInfo(
-        String xCorrelationId,
         UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId,
         UpdateEServiceTemplateVersionSeed seed)
     {
         return eserviceTemplatesApi.updateDraftTemplateVersionWithHttpInfo(
-            xCorrelationId,
             eServiceTemplateId,
             eServiceTemplateVersionId,
             seed);
     }
 
     @Override
-    public void deleteEServiceTemplateVersion(String xCorrelationId, UUID eServiceTemplateId,
+    public void deleteEServiceTemplateVersion(UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId) {
         eserviceTemplatesApi.deleteDraftTemplateVersion(
-            xCorrelationId,
             eServiceTemplateId,
             eServiceTemplateVersionId);
     }
 
     @Override
-    public ResponseEntity<Void> deleteEServiceTemplateVersionWithHttpInfo(String xCorrelationId,
-        UUID eServiceTemplateId,
+    public ResponseEntity<Void> deleteEServiceTemplateVersionWithHttpInfo(UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId) {
         return eserviceTemplatesApi.deleteDraftTemplateVersionWithHttpInfo(
-            xCorrelationId,
             eServiceTemplateId,
             eServiceTemplateVersionId);
     }
 
     @Override
-    public void publishEServiceTemplate(String xCorrelationId, UUID eServiceTemplateId,
+    public void publishEServiceTemplate(UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId) {
         eserviceTemplatesApi.publishEServiceTemplateVersion(
-            xCorrelationId,
             eServiceTemplateId,
             eServiceTemplateVersionId);
     }
 
     @Override
-    public ResponseEntity<Void> publishEServiceTemplateWithHttpInfo(String xCorrelationId,
-        UUID eServiceTemplateId,
+    public ResponseEntity<Void> publishEServiceTemplateWithHttpInfo(UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId) {
         return eserviceTemplatesApi.publishEServiceTemplateVersionWithHttpInfo(
-            xCorrelationId,
             eServiceTemplateId,
             eServiceTemplateVersionId);
     }
 
     @Override
-    public void suspendEServiceTemplate(String xCorrelationId, UUID eServiceTemplateId,
+    public void suspendEServiceTemplate(UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId) {
         eserviceTemplatesApi.suspendEServiceTemplateVersion(
-            xCorrelationId,
             eServiceTemplateId,
             eServiceTemplateVersionId);
     }
 
     @Override
-    public ResponseEntity<Void> suspendEServiceTemplateWithHttpInfo(String xCorrelationId,
-        UUID eServiceTemplateId,
+    public ResponseEntity<Void> suspendEServiceTemplateWithHttpInfo(UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId) {
         return eserviceTemplatesApi.suspendEServiceTemplateVersionWithHttpInfo(
-            xCorrelationId,
             eServiceTemplateId,
             eServiceTemplateVersionId);
     }
 
     @Override
-    public void activateEServiceTemplate(String xCorrelationId, UUID eServiceTemplateId,
+    public void activateEServiceTemplate(UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId) {
         eserviceTemplatesApi.activateEServiceTemplateVersion(
-            xCorrelationId,
             eServiceTemplateId,
             eServiceTemplateVersionId);
     }
 
     @Override
-    public ResponseEntity<Void> activateEServiceTemplateWithHttpInfo(String xCorrelationId,
-        UUID eServiceTemplateId,
+    public ResponseEntity<Void> activateEServiceTemplateWithHttpInfo(UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId) {
         return eserviceTemplatesApi.activateEServiceTemplateVersionWithHttpInfo(
-            xCorrelationId,
             eServiceTemplateId,
             eServiceTemplateVersionId);
     }
 
     @Override
     public ResponseEntity<EServiceTemplateDetails> getEServiceTemplateWithHttpInfo(
-        String xCorrelationId,
         UUID eServiceTemplateId) {
-        return eserviceTemplatesApi.getEServiceTemplateWithHttpInfo(xCorrelationId, eServiceTemplateId);
+        return eserviceTemplatesApi.getEServiceTemplateWithHttpInfo(eServiceTemplateId);
     }
 
     @Override
-    public EServiceTemplateDetails getEServiceTemplate(String xCorrelationId,
-        UUID eServiceTemplateId) {
-        return eserviceTemplatesApi.getEServiceTemplate(xCorrelationId, eServiceTemplateId);
+    public EServiceTemplateDetails getEServiceTemplate(UUID eServiceTemplateId) {
+        return eserviceTemplatesApi.getEServiceTemplate(eServiceTemplateId);
     }
 
     @Override
-    public EServiceTemplateVersionDetails getEServiceTemplateVersion(String xCorrelationId,
-        UUID eServiceTemplateId, UUID eServiceTemplateVersionId) {
-        return eserviceTemplatesApi.getEServiceTemplateVersion(xCorrelationId, eServiceTemplateId,
+    public EServiceTemplateVersionDetails getEServiceTemplateVersion(UUID eServiceTemplateId, UUID eServiceTemplateVersionId) {
+        return eserviceTemplatesApi.getEServiceTemplateVersion(eServiceTemplateId,
             eServiceTemplateVersionId);
     }
 
     @Override
     public ResponseEntity<EServiceTemplateVersionDetails> getEServiceTemplateVersionWithHttpInfo(
-        String xCorrelationId,
         UUID eServiceTemplateId, UUID eServiceTemplateVersionId) {
-        return eserviceTemplatesApi.getEServiceTemplateVersionWithHttpInfo(xCorrelationId, eServiceTemplateId,
+        return eserviceTemplatesApi.getEServiceTemplateVersionWithHttpInfo(eServiceTemplateId,
             eServiceTemplateVersionId);
     }
 
     @Override
     public void addRiskAnalysis(
-        String xCorrelationId,
         UUID eServiceTemplateId,
         EServiceRiskAnalysisSeed seed
     ) {
-        this.eserviceTemplatesApi.createEServiceTemplateRiskAnalysis(xCorrelationId, eServiceTemplateId, seed);
+        this.eserviceTemplatesApi.createEServiceTemplateRiskAnalysis(eServiceTemplateId, seed);
     }
 
     @Override
     public void deleteRiskAnalysis(
-        String xCorrelationId,
         UUID eServiceTemplateId,
         UUID riskAnalysisId
     ) {
-        this.eserviceTemplatesApi.deleteEServiceTemplateRiskAnalysis(xCorrelationId, eServiceTemplateId, riskAnalysisId);
+        this.eserviceTemplatesApi.deleteEServiceTemplateRiskAnalysis(eServiceTemplateId, riskAnalysisId);
     }
 
     @Override
     public void editRiskAnalysis(
-        String xCorrelationId,
         UUID eServiceTemplateId,
         UUID riskAnalysisId,
         EServiceRiskAnalysisSeed seed
     ) {
-        this.eserviceTemplatesApi.updateEServiceTemplateRiskAnalysis(xCorrelationId, eServiceTemplateId, riskAnalysisId, seed);
+        this.eserviceTemplatesApi.updateEServiceTemplateRiskAnalysis(eServiceTemplateId, riskAnalysisId, seed);
     }
 
     @Override
     public ResponseEntity<Void> editRiskAnalysisWithHttpInfo(
-        String xCorrelationId,
         UUID eServiceTemplateId,
         UUID riskAnalysisId,
         EServiceRiskAnalysisSeed seed
     ) {
-        return this.eserviceTemplatesApi.updateEServiceTemplateRiskAnalysisWithHttpInfo(xCorrelationId, eServiceTemplateId, riskAnalysisId, seed);
+        return this.eserviceTemplatesApi.updateEServiceTemplateRiskAnalysisWithHttpInfo(eServiceTemplateId, riskAnalysisId, seed);
     }
 
     @Override
     public CreatedResource addDocument(
-        String xCorrelationId,
         UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId,
         EServiceTemplateDocumentKind kind,
         String prettyName,
         Resource doc
     ) {
-        return this.eserviceTemplatesApi.createEServiceTemplateDocument(xCorrelationId, eServiceTemplateId, eServiceTemplateVersionId,
+        return this.eserviceTemplatesApi.createEServiceTemplateDocument(eServiceTemplateId, eServiceTemplateVersionId,
             kind.name(), prettyName, doc);
     }
 
     @Override
     public ResponseEntity<CreatedResource> addDocumentWithHttpInfo(
-        String xCorrelationId,
         UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId,
         EServiceTemplateDocumentKind kind,
         String prettyName,
         Resource doc
     ) {
-        return this.eserviceTemplatesApi.createEServiceTemplateDocumentWithHttpInfo(xCorrelationId, eServiceTemplateId, eServiceTemplateVersionId,
+        return this.eserviceTemplatesApi.createEServiceTemplateDocumentWithHttpInfo(eServiceTemplateId, eServiceTemplateVersionId,
             kind.name(), prettyName, doc);
     }
 
     @Override
     public File getDocument(
-        String xCorrelationId,
         UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId,
         UUID documentId
     ) {
-        return this.eserviceTemplatesApi.getEServiceTemplateDocumentById(xCorrelationId, eServiceTemplateId, eServiceTemplateVersionId, documentId);
+        return this.eserviceTemplatesApi.getEServiceTemplateDocumentById(eServiceTemplateId, eServiceTemplateVersionId, documentId);
     }
 
     @Override
     public ResponseEntity<File> getDocumentWithHttpInfo(
-        String xCorrelationId,
         UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId,
         UUID documentId
     ) {
-        return this.eserviceTemplatesApi.getEServiceTemplateDocumentByIdWithHttpInfo(xCorrelationId, eServiceTemplateId, eServiceTemplateVersionId, documentId);
+        return this.eserviceTemplatesApi.getEServiceTemplateDocumentByIdWithHttpInfo(eServiceTemplateId, eServiceTemplateVersionId, documentId);
     }
 
     @Override
     public void updateDocument(
-        String xCorrelationId,
         UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId,
         UUID documentId,
         UpdateEServiceTemplateVersionDocumentSeed updateEServiceTemplateVersionDocumentSeed
     ) {
-        this.eserviceTemplatesApi.updateEServiceTemplateDocumentById(xCorrelationId, eServiceTemplateId, eServiceTemplateVersionId, documentId, updateEServiceTemplateVersionDocumentSeed);
+        this.eserviceTemplatesApi.updateEServiceTemplateDocumentById(eServiceTemplateId, eServiceTemplateVersionId, documentId, updateEServiceTemplateVersionDocumentSeed);
     }
 
     @Override
     public ResponseEntity<Void> updateDocumentWithHttpInfo(
-        String xCorrelationId,
         UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId,
         UUID documentId,
         UpdateEServiceTemplateVersionDocumentSeed updateEServiceTemplateVersionDocumentSeed
     ) {
-        return this.eserviceTemplatesApi.updateEServiceTemplateDocumentByIdWithHttpInfo(xCorrelationId, eServiceTemplateId, eServiceTemplateVersionId, documentId, updateEServiceTemplateVersionDocumentSeed);
+        return this.eserviceTemplatesApi.updateEServiceTemplateDocumentByIdWithHttpInfo(eServiceTemplateId, eServiceTemplateVersionId, documentId, updateEServiceTemplateVersionDocumentSeed);
     }
 
     @Override
-    public void deleteDocument(String xCorrelationId, UUID eServiceTemplateId,
+    public void deleteDocument(UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId, UUID documentId) {
-        this.eserviceTemplatesApi.deleteEServiceTemplateDocumentById(xCorrelationId, eServiceTemplateId, eServiceTemplateVersionId, documentId);
+        this.eserviceTemplatesApi.deleteEServiceTemplateDocumentById(eServiceTemplateId, eServiceTemplateVersionId, documentId);
     }
 
     @Override
-    public ResponseEntity<Void> deleteDocumentWithHttpInfo(String xCorrelationId,
-        UUID eServiceTemplateId,
+    public ResponseEntity<Void> deleteDocumentWithHttpInfo(UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId, UUID documentId) {
-        return this.eserviceTemplatesApi.deleteEServiceTemplateDocumentByIdWithHttpInfo(xCorrelationId, eServiceTemplateId, eServiceTemplateVersionId, documentId);
+        return this.eserviceTemplatesApi.deleteEServiceTemplateDocumentByIdWithHttpInfo(eServiceTemplateId, eServiceTemplateVersionId, documentId);
     }
 
     @Override
-    public void updateEServiceTemplateName(String xCorrelationId, UUID eServiceTemplateId,
+    public void updateEServiceTemplateName(UUID eServiceTemplateId,
         EServiceTemplateNameUpdateSeed eserviceTemplateNameUpdateSeed) {
-        this.eserviceTemplatesApi.updateEServiceTemplateName(xCorrelationId, eServiceTemplateId, eserviceTemplateNameUpdateSeed);
+        this.eserviceTemplatesApi.updateEServiceTemplateName(eServiceTemplateId, eserviceTemplateNameUpdateSeed);
     }
 
     @Override
-    public ResponseEntity<Void> updateEServiceTemplateNameWithHttpInfo(String xCorrelationId,
-        UUID eServiceTemplateId,
+    public ResponseEntity<Void> updateEServiceTemplateNameWithHttpInfo(UUID eServiceTemplateId,
         EServiceTemplateNameUpdateSeed eserviceTemplateNameUpdateSeed) {
-        return this.eserviceTemplatesApi.updateEServiceTemplateNameWithHttpInfo(xCorrelationId, eServiceTemplateId, eserviceTemplateNameUpdateSeed);
+        return this.eserviceTemplatesApi.updateEServiceTemplateNameWithHttpInfo(eServiceTemplateId, eserviceTemplateNameUpdateSeed);
     }
 
     @Override
-    public void updateEServiceIntendedTarget(String xCorrelationId,
-        UUID eServiceTemplateId,
+    public void updateEServiceIntendedTarget(UUID eServiceTemplateId,
         EServiceTemplateIntendedTargetUpdateSeed seed) {
-        this.eserviceTemplatesApi.updateEServiceTemplateIntendedTarget(xCorrelationId, eServiceTemplateId, seed);
+        this.eserviceTemplatesApi.updateEServiceTemplateIntendedTarget(eServiceTemplateId, seed);
     }
 
     @Override
     public ResponseEntity<Void> updateEServiceIntendedTargetWithHttpInfo(
-        String xCorrelationId,
         UUID eServiceTemplateId,
         EServiceTemplateIntendedTargetUpdateSeed seed) {
-        return this.eserviceTemplatesApi.updateEServiceTemplateIntendedTargetWithHttpInfo(xCorrelationId, eServiceTemplateId, seed);
+        return this.eserviceTemplatesApi.updateEServiceTemplateIntendedTargetWithHttpInfo(eServiceTemplateId, seed);
     }
 
     @Override
-    public void updateEServiceTemplateDescription(String xCorrelationId,
-        UUID eServiceTemplateId,
+    public void updateEServiceTemplateDescription(UUID eServiceTemplateId,
         EServiceTemplateDescriptionUpdateSeed seed) {
-        this.eserviceTemplatesApi.updateEServiceTemplateDescription(xCorrelationId, eServiceTemplateId, seed);
+        this.eserviceTemplatesApi.updateEServiceTemplateDescription(eServiceTemplateId, seed);
     }
 
     @Override
     public ResponseEntity<Void> updateEServiceTemplateDescriptionWithHttpInfo(
-        String xCorrelationId,
         UUID eServiceTemplateId,
         EServiceTemplateDescriptionUpdateSeed seed) {
-        return this.eserviceTemplatesApi.updateEServiceTemplateDescriptionWithHttpInfo(xCorrelationId, eServiceTemplateId, seed);
+        return this.eserviceTemplatesApi.updateEServiceTemplateDescriptionWithHttpInfo(eServiceTemplateId, seed);
     }
 
     @Override
-    public void updateEServiceTemplateVersionQuotas(String xCorrelationId, UUID eServiceTemplateId,
+    public void updateEServiceTemplateVersionQuotas(UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId, EServiceTemplateVersionQuotasUpdateSeed seed) {
-        this.eserviceTemplatesApi.updateTemplateVersionQuotas(xCorrelationId, eServiceTemplateId, eServiceTemplateVersionId, seed);
+        this.eserviceTemplatesApi.updateTemplateVersionQuotas(eServiceTemplateId, eServiceTemplateVersionId, seed);
     }
 
     @Override
     public ResponseEntity<Void> updateEServiceTemplateVersionQuotasWithHttpInfo(
-        String xCorrelationId,
         UUID eServiceTemplateId, UUID eServiceTemplateVersionId,
         EServiceTemplateVersionQuotasUpdateSeed seed) {
-        return this.eserviceTemplatesApi.updateTemplateVersionQuotasWithHttpInfo(xCorrelationId, eServiceTemplateId, eServiceTemplateVersionId, seed);
+        return this.eserviceTemplatesApi.updateTemplateVersionQuotasWithHttpInfo(eServiceTemplateId, eServiceTemplateVersionId, seed);
     }
 
     @Override
-    public CreatedResource updateEServiceTemplateVersionAttributes(String xCorrelationId,
-        UUID eServiceTemplateId,
+    public CreatedResource updateEServiceTemplateVersionAttributes(UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId, DescriptorAttributesSeed seed) {
-        return this.eserviceTemplatesApi.updateEServiceTemplateVersionAttributes(xCorrelationId, eServiceTemplateId, eServiceTemplateVersionId, seed);
+        return this.eserviceTemplatesApi.updateEServiceTemplateVersionAttributes(eServiceTemplateId, eServiceTemplateVersionId, seed);
     }
 
     @Override
     public ResponseEntity<CreatedResource> updateEServiceTemplateVersionAttributesWithHttpInfo(
-        String xCorrelationId,
         UUID eServiceTemplateId, UUID eServiceTemplateVersionId,
         DescriptorAttributesSeed seed) {
-        return this.eserviceTemplatesApi.updateEServiceTemplateVersionAttributesWithHttpInfo(xCorrelationId, eServiceTemplateId, eServiceTemplateVersionId, seed);
+        return this.eserviceTemplatesApi.updateEServiceTemplateVersionAttributesWithHttpInfo(eServiceTemplateId, eServiceTemplateVersionId, seed);
     }
 
     // DEV. NOTE: si cambia naming convention omettendo il suffisso "withHttpInfo" rendendolo implicito da qui in avanti
     @Override
-    public ResponseEntity<CatalogEServiceTemplates> getEServiceTemplatesCatalog(
-        String xCorrelationId) {
-        return this.getEServiceTemplatesCatalog(xCorrelationId, 0, 50, null, null);
+    public ResponseEntity<CatalogEServiceTemplates> getEServiceTemplatesCatalog() {
+        return this.getEServiceTemplatesCatalog(0, 50, null, null);
+    }
+
+    @Override
+    public ResponseEntity<ProducerEServiceTemplates> getCreatorEServiceTemplates() {
+        return this.eserviceTemplatesApi.getCreatorEServiceTemplatesWithHttpInfo(0, 50, null);
     }
 
     @Override
     public ResponseEntity<ProducerEServiceTemplates> getCreatorEServiceTemplates(
-        String xCorrelationId) {
-        return this.eserviceTemplatesApi.getCreatorEServiceTemplatesWithHttpInfo(xCorrelationId, 0, 50, null);
-    }
-
-    @Override
-    public ResponseEntity<ProducerEServiceTemplates> getCreatorEServiceTemplates(
-        String xCorrelationId,
         Integer offset,
         Integer limit,
         String q) {
-        return this.eserviceTemplatesApi.getCreatorEServiceTemplatesWithHttpInfo(xCorrelationId, offset, limit, q);
+        return this.eserviceTemplatesApi.getCreatorEServiceTemplatesWithHttpInfo(offset, limit, q);
     }
 
     @Override
-    public ResponseEntity<CompactOrganizations> getEServiceTemplateCreators(String xCorrelationId) {
-        return this.getEServiceTemplateCreators(xCorrelationId, 0, 50, null);
+    public ResponseEntity<CompactOrganizations> getEServiceTemplateCreators() {
+        return this.getEServiceTemplateCreators(0, 50, null);
     }
 
     @Override
     public ResponseEntity<CompactOrganizations> getEServiceTemplateCreators(
-        String xCorrelationId,
         Integer offset,
         Integer limit,
         String q) {
-        return this.eserviceTemplatesApi.getEServiceTemplateCreatorsWithHttpInfo(xCorrelationId, offset, limit, q);
+        return this.eserviceTemplatesApi.getEServiceTemplateCreatorsWithHttpInfo(offset, limit, q);
     }
 
     @Override
     public ResponseEntity<CatalogEServiceTemplates> getEServiceTemplatesCatalog(
-        String xCorrelationId, Integer offset, Integer limit, String q, List<UUID> creatorsIds) {
-        return this.eserviceTemplatesApi.getEServiceTemplatesCatalogWithHttpInfo(xCorrelationId, offset, limit, q, creatorsIds);
+        Integer offset, Integer limit, String q, List<UUID> creatorsIds) {
+        return this.eserviceTemplatesApi.getEServiceTemplatesCatalogWithHttpInfo(offset, limit, q, creatorsIds);
     }
 
     @Override

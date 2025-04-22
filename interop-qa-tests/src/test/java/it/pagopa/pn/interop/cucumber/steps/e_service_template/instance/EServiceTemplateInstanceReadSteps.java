@@ -82,7 +82,6 @@ public class EServiceTemplateInstanceReadSteps {
         clientTokenConfigurator.setBearerToken(userToken);
         httpCallExecutor.performCall(
             () -> eServiceClient.getEServiceTemplateInstancesWithHttpInfo(
-                sharedStepsContext.getXCorrelationId(),
                 templateId
             ),
             ResponseEntity::getStatusCode);

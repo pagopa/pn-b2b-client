@@ -23,7 +23,7 @@ public class ClientKeyContentReadSteps {
     @When("l'utente richiede la lettura del contenuto della chiave pubblica")
     public void readPublicKey() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-        httpCallExecutor.performCall(() -> authorizationClient.getEncodedClientKeyById(sharedStepsContext.getXCorrelationId(),
+        httpCallExecutor.performCall(() -> authorizationClient.getEncodedClientKeyById(
                 sharedStepsContext.getClientCommonContext().getFirstClient(),
                 sharedStepsContext.getClientCommonContext().getKeyId()));
     }

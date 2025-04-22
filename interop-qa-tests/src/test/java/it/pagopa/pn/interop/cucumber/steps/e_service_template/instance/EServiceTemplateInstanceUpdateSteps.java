@@ -79,7 +79,6 @@ public class EServiceTemplateInstanceUpdateSteps {
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(
                     () -> eServiceClient.getEServiceTemplateInstancesWithHttpInfo(
-                        sharedStepsContext.getXCorrelationId(),
                         sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id()),
                     ResponseEntity::getStatusCode),
                 res ->
@@ -95,7 +94,6 @@ public class EServiceTemplateInstanceUpdateSteps {
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(
                     () -> eServiceClient.getProducerEServiceDetailsWithHttpInfo(
-                        sharedStepsContext.getXCorrelationId(),
                         sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate()),
                     ResponseEntity::getStatusCode),
                 res ->

@@ -76,7 +76,6 @@ public class EServiceTemplateDescriptionUpdateSteps {
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(
                     () -> eServiceTemplateClient.getEServiceTemplateWithHttpInfo(
-                        sharedStepsContext.getXCorrelationId(),
                         eServiceTemplateId),
                     ResponseEntity::getStatusCode),
                 res -> {
@@ -107,7 +106,6 @@ public class EServiceTemplateDescriptionUpdateSteps {
         clientTokenConfigurator.setBearerToken(userToken);
         httpCallExecutor.performCall(
             () -> eServiceTemplateClient.updateEServiceTemplateDescriptionWithHttpInfo(
-                sharedStepsContext.getXCorrelationId(),
                 eServiceTemplateId,
                 lastTemplateDescriptionUpdateSeed),
             ResponseEntity::getStatusCode);

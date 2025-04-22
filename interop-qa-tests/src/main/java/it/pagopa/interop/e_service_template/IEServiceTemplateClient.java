@@ -29,109 +29,93 @@ public interface IEServiceTemplateClient extends SettableBearerToken {
         INTERFACE, DOCUMENT
     }
 
-    CreatedEServiceTemplateVersion createEServiceTemplate(String xCorrelationId, EServiceTemplateSeed eserviceSeed);
+    CreatedEServiceTemplateVersion createEServiceTemplate(EServiceTemplateSeed eserviceSeed);
 
-    void updateEServiceTemplate(String xCorrelationId, UUID eServiceTemplateId,
+    void updateEServiceTemplate(UUID eServiceTemplateId,
         UpdateEServiceTemplateSeed updateEServiceTemplateSeed);
 
-    ResponseEntity<Void> updateEServiceTemplateWithHttpInfo(String xCorrelationId,
-        UUID eServiceTemplateId,
+    ResponseEntity<Void> updateEServiceTemplateWithHttpInfo(UUID eServiceTemplateId,
         UpdateEServiceTemplateSeed updateEServiceTemplateSeed);
 
-    CreatedResource createEServiceTemplateVersion(String xCorrelationId, UUID eServiceTemplateId);
+    CreatedResource createEServiceTemplateVersion(UUID eServiceTemplateId);
 
-    ResponseEntity<CreatedResource> createEServiceTemplateVersionWithHttpInfo(String xCorrelationId,
-        UUID eServiceTemplateId);
+    ResponseEntity<CreatedResource> createEServiceTemplateVersionWithHttpInfo(UUID eServiceTemplateId);
 
     void updateEServiceTemplateVersion(
-        String xCorrelationId,
         UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId,
         UpdateEServiceTemplateVersionSeed seed);
 
     ResponseEntity<Void> updateEServiceTemplateVersionWithHttpInfo(
-        String xCorrelationId,
         UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId,
         UpdateEServiceTemplateVersionSeed seed);
 
-    void deleteEServiceTemplateVersion(String xCorrelationId, UUID eServiceTemplateId,
+    void deleteEServiceTemplateVersion(UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId);
 
-    ResponseEntity<Void> deleteEServiceTemplateVersionWithHttpInfo(String xCorrelationId,
-        UUID eServiceTemplateId,
+    ResponseEntity<Void> deleteEServiceTemplateVersionWithHttpInfo(UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId);
 
-    void publishEServiceTemplate(String xCorrelationId, UUID eServiceTemplateId,
+    void publishEServiceTemplate(UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId);
 
-    ResponseEntity<Void> publishEServiceTemplateWithHttpInfo(String xCorrelationId,
-        UUID eServiceTemplateId,
+    ResponseEntity<Void> publishEServiceTemplateWithHttpInfo(UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId);
 
-    void suspendEServiceTemplate(String xCorrelationId, UUID eServiceTemplateId,
+    void suspendEServiceTemplate(UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId);
 
-    ResponseEntity<Void> suspendEServiceTemplateWithHttpInfo(String xCorrelationId,
-        UUID eServiceTemplateId,
+    ResponseEntity<Void> suspendEServiceTemplateWithHttpInfo(UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId);
 
-    void activateEServiceTemplate(String xCorrelationId, UUID eServiceTemplateId,
+    void activateEServiceTemplate(UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId);
 
-    ResponseEntity<Void> activateEServiceTemplateWithHttpInfo(String xCorrelationId,
-        UUID eServiceTemplateId,
+    ResponseEntity<Void> activateEServiceTemplateWithHttpInfo(UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId);
 
-    ResponseEntity<EServiceTemplateDetails> getEServiceTemplateWithHttpInfo(String xCorrelationId,
-        UUID eServiceTemplateId);
+    ResponseEntity<EServiceTemplateDetails> getEServiceTemplateWithHttpInfo(UUID eServiceTemplateId);
 
-    EServiceTemplateDetails getEServiceTemplate(String xCorrelationId, UUID eServiceTemplateId);
+    EServiceTemplateDetails getEServiceTemplate(UUID eServiceTemplateId);
 
-    EServiceTemplateVersionDetails getEServiceTemplateVersion(String xCorrelationId, UUID eServiceTemplateId, UUID eServiceTemplateVersionId);
+    EServiceTemplateVersionDetails getEServiceTemplateVersion(UUID eServiceTemplateId, UUID eServiceTemplateVersionId);
 
     ResponseEntity<EServiceTemplateVersionDetails> getEServiceTemplateVersionWithHttpInfo(
-        String xCorrelationId,
         UUID eServiceTemplateId, UUID eServiceTemplateVersionId);
 
-    void addRiskAnalysis(String xCorrelationId, UUID eServiceTemplateId,
+    void addRiskAnalysis(UUID eServiceTemplateId,
         EServiceRiskAnalysisSeed seed);
 
     void deleteRiskAnalysis(
-        String xCorrelationId,
         UUID eServiceTemplateId,
         UUID riskAnalysisId);
 
     void editRiskAnalysis(
-        String xCorrelationId,
         UUID eServiceTemplateId,
         UUID riskAnalysisId,
         EServiceRiskAnalysisSeed seed
     );
 
     ResponseEntity<Void> editRiskAnalysisWithHttpInfo(
-        String xCorrelationId,
         UUID eServiceTemplateId,
         UUID riskAnalysisId,
         EServiceRiskAnalysisSeed seed
     );
 
     File getDocument(
-        String xCorrelationId,
         UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId,
         UUID documentId
     );
 
     ResponseEntity<File> getDocumentWithHttpInfo(
-        String xCorrelationId,
         UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId,
         UUID documentId
     );
 
     ResponseEntity<CreatedResource> addDocumentWithHttpInfo(
-        String xCorrelationId,
         UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId,
         EServiceTemplateDocumentKind kind,
@@ -140,7 +124,6 @@ public interface IEServiceTemplateClient extends SettableBearerToken {
     );
 
     CreatedResource addDocument(
-        String xCorrelationId,
         UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId,
         EServiceTemplateDocumentKind kind,
@@ -149,7 +132,6 @@ public interface IEServiceTemplateClient extends SettableBearerToken {
     );
 
     void updateDocument(
-        String xCorrelationId,
         UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId,
         UUID documentId,
@@ -157,78 +139,66 @@ public interface IEServiceTemplateClient extends SettableBearerToken {
     );
 
     ResponseEntity<Void> updateDocumentWithHttpInfo(
-        String xCorrelationId,
         UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId,
         UUID documentId,
         UpdateEServiceTemplateVersionDocumentSeed updateEServiceTemplateVersionDocumentSeed
     );
 
-    void deleteDocument(String xCorrelationId, UUID eServiceTemplateId,
+    void deleteDocument(UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId, UUID documentId);
 
-    ResponseEntity<Void> deleteDocumentWithHttpInfo(String xCorrelationId, UUID eServiceTemplateId,
+    ResponseEntity<Void> deleteDocumentWithHttpInfo(UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId, UUID documentId);
 
-    void updateEServiceTemplateName(String xCorrelationId, UUID eServiceTemplateId,
+    void updateEServiceTemplateName(UUID eServiceTemplateId,
         EServiceTemplateNameUpdateSeed eserviceTemplateNameUpdateSeed);
 
-    ResponseEntity<Void> updateEServiceTemplateNameWithHttpInfo(String xCorrelationId,
-        UUID eServiceTemplateId,
+    ResponseEntity<Void> updateEServiceTemplateNameWithHttpInfo(UUID eServiceTemplateId,
         EServiceTemplateNameUpdateSeed eserviceTemplateNameUpdateSeed);
 
-    void updateEServiceIntendedTarget(String xCorrelationId, UUID eServiceTemplateId,
+    void updateEServiceIntendedTarget(UUID eServiceTemplateId,
         EServiceTemplateIntendedTargetUpdateSeed seed);
 
     ResponseEntity<Void> updateEServiceIntendedTargetWithHttpInfo(
-        String xCorrelationId,
         UUID eServiceTemplateId,
         EServiceTemplateIntendedTargetUpdateSeed seed);
 
-    void updateEServiceTemplateDescription(String xCorrelationId,
-        UUID eServiceTemplateId,
+    void updateEServiceTemplateDescription(UUID eServiceTemplateId,
         EServiceTemplateDescriptionUpdateSeed seed);
 
     ResponseEntity<Void> updateEServiceTemplateDescriptionWithHttpInfo(
-        String xCorrelationId,
         UUID eServiceTemplateId,
         EServiceTemplateDescriptionUpdateSeed seed);
 
-    void updateEServiceTemplateVersionQuotas(String xCorrelationId, UUID eServiceTemplateId,
+    void updateEServiceTemplateVersionQuotas(UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId, EServiceTemplateVersionQuotasUpdateSeed seed);
 
-    ResponseEntity<Void> updateEServiceTemplateVersionQuotasWithHttpInfo(String xCorrelationId,
-        UUID eServiceTemplateId, UUID eServiceTemplateVersionId,
+    ResponseEntity<Void> updateEServiceTemplateVersionQuotasWithHttpInfo(UUID eServiceTemplateId, UUID eServiceTemplateVersionId,
         EServiceTemplateVersionQuotasUpdateSeed seed);
 
-    CreatedResource updateEServiceTemplateVersionAttributes(String xCorrelationId,
-        UUID eServiceTemplateId,
+    CreatedResource updateEServiceTemplateVersionAttributes(UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId, DescriptorAttributesSeed seed);
 
     ResponseEntity<CreatedResource> updateEServiceTemplateVersionAttributesWithHttpInfo(
-        String xCorrelationId,
-        UUID eServiceTemplateId, UUID eServiceTemplateVersionId,
-        DescriptorAttributesSeed seed);
+        UUID eServiceTemplateId, UUID eServiceTemplateVersionId, DescriptorAttributesSeed seed);
 
     // DEV. NOTE: si cambia naming convention omettendo il suffisso "withHttpInfo", rendendolo implicito da qui in avanti
-    ResponseEntity<CatalogEServiceTemplates> getEServiceTemplatesCatalog(String xCorrelationId);
+    ResponseEntity<CatalogEServiceTemplates> getEServiceTemplatesCatalog();
 
-    ResponseEntity<ProducerEServiceTemplates> getCreatorEServiceTemplates(String xCorrelationId);
+    ResponseEntity<ProducerEServiceTemplates> getCreatorEServiceTemplates();
 
     ResponseEntity<ProducerEServiceTemplates> getCreatorEServiceTemplates(
-        String xCorrelationId,
         Integer offset,
         Integer limit,
         String q);
 
-    ResponseEntity<CompactOrganizations> getEServiceTemplateCreators(String xCorrelationId);
+    ResponseEntity<CompactOrganizations> getEServiceTemplateCreators();
 
     ResponseEntity<CompactOrganizations> getEServiceTemplateCreators(
-        String xCorrelationId,
         Integer offset,
         Integer limit,
         String q);
 
-    ResponseEntity<CatalogEServiceTemplates> getEServiceTemplatesCatalog(String xCorrelationId,
-        Integer offset, Integer limit, String q, List<UUID> creatorsIds);
+    ResponseEntity<CatalogEServiceTemplates> getEServiceTemplatesCatalog(Integer offset, Integer limit, String q, List<UUID> creatorsIds);
 }

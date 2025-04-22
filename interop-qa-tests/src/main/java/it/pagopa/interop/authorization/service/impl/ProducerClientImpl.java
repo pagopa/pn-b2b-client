@@ -33,8 +33,8 @@ public class ProducerClientImpl implements IProducerClient {
     }
 
     @Override
-    public ProducerEServiceDescriptor getProducerEServiceDescriptor(String xCorrelationId, UUID eserviceId, UUID descriptorId) {
-        return eservicesApi.getProducerEServiceDescriptor(xCorrelationId, eserviceId, descriptorId);
+    public ProducerEServiceDescriptor getProducerEServiceDescriptor(UUID eserviceId, UUID descriptorId) {
+        return eservicesApi.getProducerEServiceDescriptor(eserviceId, descriptorId);
     }
 
     @Override
