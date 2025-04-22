@@ -96,7 +96,6 @@ public class EServiceTemplateQuotaUpdateSteps {
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(
                     () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
-                        sharedStepsContext.getXCorrelationId(),
                         sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(),
                         sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId()),
                     ResponseEntity::getStatusCode),
@@ -120,7 +119,6 @@ public class EServiceTemplateQuotaUpdateSteps {
         clientTokenConfigurator.setBearerToken(userToken);
         httpCallExecutor.performCall(
             () -> eServiceTemplateClient.updateEServiceTemplateVersionQuotasWithHttpInfo(
-                sharedStepsContext.getXCorrelationId(),
                 eServiceTemplateId,
                 eServiceTemplateVersionId,
                 lastTemplateVersionQuotasUpdateSeed),

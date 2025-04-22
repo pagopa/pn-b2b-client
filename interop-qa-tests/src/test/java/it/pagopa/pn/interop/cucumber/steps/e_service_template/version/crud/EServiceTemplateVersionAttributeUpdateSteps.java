@@ -141,7 +141,6 @@ public class EServiceTemplateVersionAttributeUpdateSteps {
         clientTokenConfigurator.setBearerToken(userToken);
         httpCallExecutor.performCall(
             () -> eServiceTemplateClient.updateEServiceTemplateVersionAttributesWithHttpInfo(
-                sharedStepsContext.getXCorrelationId(),
                 eServiceTemplateId,
                 eServiceTemplateVersionId,
                 lastAttributesUpdateSeed),

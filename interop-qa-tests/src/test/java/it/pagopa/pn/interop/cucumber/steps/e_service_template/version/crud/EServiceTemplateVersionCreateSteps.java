@@ -86,7 +86,6 @@ public class EServiceTemplateVersionCreateSteps {
         clientTokenConfigurator.setBearerToken(userToken);
         httpCallExecutor.performCall(
             () -> eServiceTemplateClient.createEServiceTemplateVersionWithHttpInfo(
-                sharedStepsContext.getXCorrelationId(),
                 eServiceTemplateId),
             ResponseEntity::getStatusCode);
 

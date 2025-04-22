@@ -101,7 +101,6 @@ public class EServiceTemplateInstanceCreateSteps {
 
     private UUID getDescriptorId(String eServiceName, EServiceDescriptorState state) {
         ResponseEntity<ProducerEServices> producerEServicesWithHttpInfo = eServiceClient.getProducerEServicesWithHttpInfo(
-            sharedStepsContext.getXCorrelationId(),
             eServiceName);
         UUID descriptorId;
         int index = producerEServicesWithHttpInfo.getBody().getResults().size() - 1;
@@ -121,7 +120,6 @@ public class EServiceTemplateInstanceCreateSteps {
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(
                     () -> eServiceClient.getEServiceTemplateInstancesWithHttpInfo(
-                        sharedStepsContext.getXCorrelationId(),
                         sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id()
                     ),
                     ResponseEntity::getStatusCode),
@@ -141,7 +139,6 @@ public class EServiceTemplateInstanceCreateSteps {
             );
 
             EServiceTemplateVersionDetails eServiceSourceTemplate = this.eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
-                sharedStepsContext.getXCorrelationId(),
                 sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(),
                 sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId()).getBody();
             Optional<EServiceTemplateInstance> eServiceCreatedFromTemplate = ((ResponseEntity<EServiceTemplateInstances>) httpCallExecutor.getResponse()).getBody()
@@ -220,7 +217,6 @@ public class EServiceTemplateInstanceCreateSteps {
         pollingService.makePolling(
             () -> httpCallExecutor.performCall(
                 () -> eServiceClient.getProducerEServiceDetailsWithHttpInfo(
-                    sharedStepsContext.getXCorrelationId(),
                     this.sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceCreatedFromTemplate().getId()
                 ),
                 ResponseEntity::getStatusCode),
@@ -259,7 +255,6 @@ public class EServiceTemplateInstanceCreateSteps {
     private void createEServiceInstance(UUID id, InstanceEServiceSeed seed) {
         httpCallExecutor.performCall(
             () -> eServiceClient.createEServiceInstanceFromTemplateWithHttpInfo(
-                sharedStepsContext.getXCorrelationId(),
                 id,
                 seed),
             ResponseEntity::getStatusCode);

@@ -81,49 +81,46 @@ public class EServiceApiClientImpl implements IEServiceClient {
 
     @Override
     public ResponseEntity<CreatedResource> createEServiceInstanceFromTemplateWithHttpInfo(
-        String xCorrelationId, UUID templateId, InstanceEServiceSeed instanceEServiceSeed) {
+        UUID templateId, InstanceEServiceSeed instanceEServiceSeed) {
         /* DEV. NOTE 10/03/2025: al momento InstanceEServiceSeed è required dalla API, tuttavia
         * nessuno dei suoi campi lo è; per comodità si permette a questo metodo di passare NULL
         * mappandolo con un'istanza vuota. */
         return this.eservicesApi.createEServiceInstanceFromTemplateWithHttpInfo(
-            xCorrelationId,
             templateId,
             isNull(instanceEServiceSeed) ? new InstanceEServiceSeed() : instanceEServiceSeed);
     }
 
     @Override
     public ResponseEntity<EServiceTemplateInstances> getEServiceTemplateInstancesWithHttpInfo(
-        String xCorrelationId, UUID templateId) {
+        UUID templateId) {
         /* Di default l'api NON restituisce le istanze in stato DRAFT, invece si chiedono in
          * questo modo tutte quante */
         List<EServiceDescriptorState> states = Arrays.stream(EServiceDescriptorState.values()).toList();
-        return this.eservicesApi.getEServiceTemplateInstancesWithHttpInfo(xCorrelationId, templateId, 0, 50, null, states);
+        return this.eservicesApi.getEServiceTemplateInstancesWithHttpInfo(templateId, 0, 50, null, states);
     }
 
     @Override
     public ResponseEntity<EServiceTemplateInstances> getEServiceTemplateInstancesWithHttpInfo(
-        String xCorrelationId, UUID templateId, Integer offset, Integer limit, String producerName,
+        UUID templateId, Integer offset, Integer limit, String producerName,
         List<EServiceDescriptorState> states) {
-        return this.eservicesApi.getEServiceTemplateInstancesWithHttpInfo(xCorrelationId, templateId, offset, limit, producerName, states);
+        return this.eservicesApi.getEServiceTemplateInstancesWithHttpInfo(templateId, offset, limit, producerName, states);
     }
 
     @Override
-    public ResponseEntity<CreatedResource> upgradeEServiceInstanceWithHttpInfo(
-        String xCorrelationId,
-        UUID eServiceId) {
-        return this.eservicesApi.upgradeEServiceInstanceWithHttpInfo(xCorrelationId, eServiceId);
+    public ResponseEntity<CreatedResource> upgradeEServiceInstanceWithHttpInfo(UUID eServiceId) {
+        return this.eservicesApi.upgradeEServiceInstanceWithHttpInfo(eServiceId);
     }
 
     @Override
     public ResponseEntity<ProducerEServiceDescriptor> getProducerEServiceDescriptorWithHttpInfo(
-        String xCorrelationId, UUID eserviceId, UUID descriptorId) {
-        return this.eservicesApi.getProducerEServiceDescriptorWithHttpInfo(xCorrelationId, eserviceId, descriptorId);
+        UUID eserviceId, UUID descriptorId) {
+        return this.eservicesApi.getProducerEServiceDescriptorWithHttpInfo(eserviceId, descriptorId);
     }
 
     @Override
     public ResponseEntity<ProducerEServices> getProducerEServicesWithHttpInfo(
-        String xCorrelationId, String eServiceName) {
-        return this.eservicesApi.getProducerEServicesWithHttpInfo(xCorrelationId, 0, 50, eServiceName, null, null);
+        String eServiceName) {
+        return this.eservicesApi.getProducerEServicesWithHttpInfo(0, 50, eServiceName, null, null);
     }
 
     @Override
@@ -136,36 +133,34 @@ public class EServiceApiClientImpl implements IEServiceClient {
 
     @Override
     public ResponseEntity<CreatedResource> updateDraftDescriptorTemplateInstanceWithHttpInfo(
-        String xCorrelationId,
         UUID eServiceId,
         UUID descriptorId,
         UpdateEServiceDescriptorTemplateInstanceSeed updateEServiceDescriptorTemplateInstanceSeed
     ) {
-        return this.eservicesApi.updateDraftDescriptorTemplateInstanceWithHttpInfo(xCorrelationId, eServiceId, descriptorId, updateEServiceDescriptorTemplateInstanceSeed);
+        return this.eservicesApi.updateDraftDescriptorTemplateInstanceWithHttpInfo(eServiceId, descriptorId, updateEServiceDescriptorTemplateInstanceSeed);
     }
 
 
     @Override
     public ResponseEntity<CreatedResource> updateTemplateInstanceDescriptorWithHttpInfo(
-        String xCorrelationId,
         UUID eServiceId,
         UUID descriptorId,
         UpdateEServiceTemplateInstanceDescriptorQuotas descriptorQuotas
     ) {
-        return this.eservicesApi.updateTemplateInstanceDescriptorWithHttpInfo(xCorrelationId, eServiceId, descriptorId, descriptorQuotas);
+        return this.eservicesApi.updateTemplateInstanceDescriptorWithHttpInfo(eServiceId, descriptorId, descriptorQuotas);
     }
 
     @Override
     public ResponseEntity<ProducerEServiceDetails> getProducerEServiceDetailsWithHttpInfo(
-        String xCorrelationId, UUID eserviceId) {
-        return this.eservicesApi.getProducerEServiceDetailsWithHttpInfo(xCorrelationId, eserviceId);
+        UUID eserviceId) {
+        return this.eservicesApi.getProducerEServiceDetailsWithHttpInfo(eserviceId);
     }
 
     @Override
     public ResponseEntity<CreatedResource> addEServiceTemplateInstanceInterfaceRestWithHttpInfo(
-        String xCorrelationId, UUID eServiceId, UUID descriptorId,
+        UUID eServiceId, UUID descriptorId,
         TemplateInstanceInterfaceRESTSeed templateInstanceInterfaceRESTSeed) {
-        return this.eservicesApi.addEServiceTemplateInstanceInterfaceRestWithHttpInfo(xCorrelationId, eServiceId, descriptorId, templateInstanceInterfaceRESTSeed);
+        return this.eservicesApi.addEServiceTemplateInstanceInterfaceRestWithHttpInfo(eServiceId, descriptorId, templateInstanceInterfaceRESTSeed);
     }
 
     @Override

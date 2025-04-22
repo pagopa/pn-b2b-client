@@ -16,7 +16,6 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTempl
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -100,7 +99,6 @@ public class EServiceTemplateDocumentDeleteSteps {
         try {
             pollingService.makePolling(
                 () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
-                    sharedStepsContext.getXCorrelationId(),
                     eServiceTemplateId,
                     eServiceTemplateVersionId),
                 res -> {
@@ -122,7 +120,6 @@ public class EServiceTemplateDocumentDeleteSteps {
         clientTokenConfigurator.setBearerToken(userToken);
         httpCallExecutor.performCall(
             () -> eServiceTemplateClient.deleteDocumentWithHttpInfo(
-                sharedStepsContext.getXCorrelationId(),
                 eServiceTemplateId,
                 eServiceTemplateVersionId,
                 documentId),

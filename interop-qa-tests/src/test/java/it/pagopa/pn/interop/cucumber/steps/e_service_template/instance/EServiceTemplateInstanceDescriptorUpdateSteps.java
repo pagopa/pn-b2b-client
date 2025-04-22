@@ -151,7 +151,6 @@ public class EServiceTemplateInstanceDescriptorUpdateSteps {
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(
                     () -> eServiceClient.getProducerEServiceDescriptorWithHttpInfo(
-                        sharedStepsContext.getXCorrelationId(),
                         eServiceTemplateInstanceId,
                         eServiceTemplateInstanceDescriptorId),
                     ResponseEntity::getStatusCode),
@@ -177,7 +176,6 @@ public class EServiceTemplateInstanceDescriptorUpdateSteps {
         clientTokenConfigurator.setBearerToken(userToken);
         httpCallExecutor.performCall(
             () -> eServiceClient.updateDraftDescriptorTemplateInstanceWithHttpInfo(
-                sharedStepsContext.getXCorrelationId(),
                 eServiceId,
                 eServiceDescriptorId,
                 seed),
@@ -193,7 +191,6 @@ public class EServiceTemplateInstanceDescriptorUpdateSteps {
         clientTokenConfigurator.setBearerToken(userToken);
         httpCallExecutor.performCall(
             () -> eServiceClient.updateTemplateInstanceDescriptorWithHttpInfo(
-                sharedStepsContext.getXCorrelationId(),
                 eServiceId,
                 eServiceDescriptorId,
                 seed),

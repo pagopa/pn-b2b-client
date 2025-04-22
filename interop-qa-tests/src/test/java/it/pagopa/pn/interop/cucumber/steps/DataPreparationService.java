@@ -334,7 +334,7 @@ public class DataPreparationService {
         );
     }
 
-    public void assignDeclaredAttributeToTenant(String xCorrelationId, UUID tenantId, UUID attributeId) {
+    public void assignDeclaredAttributeToTenant(UUID tenantId, UUID attributeId) {
         httpCallExecutor.performCall(
             () -> tenantsApi.addDeclaredAttribute(new DeclaredTenantAttributeSeed().id(attributeId)));
         assertValidResponse();
@@ -402,7 +402,7 @@ public class DataPreparationService {
             .addAudienceItem("some audience item")
             .agreementApprovalPolicy(AgreementApprovalPolicy.AUTOMATIC);
 
-        httpCallExecutor.performCall(() -> eServiceClient.updateDraftDescriptorTemplateInstanceWithHttpInfo(sharedStepsContext.getXCorrelationId(), eServiceId, descriptorId, seed));
+        httpCallExecutor.performCall(() -> eServiceClient.updateDraftDescriptorTemplateInstanceWithHttpInfo(eServiceId, descriptorId, seed));
         assertValidResponse();
         try {
             Thread.sleep(2000);
@@ -498,7 +498,7 @@ public class DataPreparationService {
 
         // Check until the first descriptor is in desired state
         pollingService.makePolling(
-            () -> producerClient.getProducerEServiceDescriptor(sharedStepsContext.getXCorrelationId(), eServiceId, descriptorId),
+            () -> producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId),
             res -> res.getState() == descriptorState,
             "There was an error while retrieving the producer e-service descriptor"
         );
@@ -539,7 +539,7 @@ public class DataPreparationService {
             .contactName("Some contact name")
             .contactEmail("some@contact-email.it")
             .addServerUrlsItem(URI.create("http://www.some.url.it"));
-        httpCallExecutor.performCall(() -> eServiceClient.addEServiceTemplateInstanceInterfaceRestWithHttpInfo(sharedStepsContext.getXCorrelationId(), eServiceId, descriptorId, seed));
+        httpCallExecutor.performCall(() -> eServiceClient.addEServiceTemplateInstanceInterfaceRestWithHttpInfo(eServiceId, descriptorId, seed));
         assertValidResponse();
 
         pollingService.makePolling(

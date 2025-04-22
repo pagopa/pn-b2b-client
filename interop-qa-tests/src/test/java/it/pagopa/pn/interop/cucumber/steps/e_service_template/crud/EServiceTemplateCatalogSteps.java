@@ -41,7 +41,7 @@ public class EServiceTemplateCatalogSteps {
         String userToken = sharedStepsContext.getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);
         httpCallExecutor.performCall(
-            () -> eServiceTemplateClient.getEServiceTemplatesCatalog(sharedStepsContext.getXCorrelationId()),
+            () -> eServiceTemplateClient.getEServiceTemplatesCatalog(),
             ResponseEntity::getStatusCode);
     }
 
@@ -63,7 +63,6 @@ public class EServiceTemplateCatalogSteps {
         return templatesManaged.stream()
             .map(t ->
                 eServiceTemplateClient.getEServiceTemplatesCatalog(
-                    sharedStepsContext.getXCorrelationId(),
                     0,
                     50,
                     t.name(),
