@@ -50,15 +50,13 @@ public class EServiceCreationSteps {
     @When("l'utente crea un e-service")
     public void userCreatesEservice() {
         String eserviceName = String.format("e-service-%s", sharedStepsContext.getTestSeed());
-        CreatedEServiceDescriptor createdEServiceDescriptor = clientTokenConfigurator.getEServiceClient().createEService(new EServiceSeed().name(eserviceName)
+
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getEServiceClient().createEService(new EServiceSeed().name(eserviceName)
                         .description("Questo è un e-service di test").technology(EServiceTechnology.REST)
-                        .mode(EServiceMode.DELIVER));
+                        .mode(EServiceMode.DELIVER))
+        );
         EServicesCommonContext eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
         eServicesCommonContext.setName(eserviceName);
-        //TODO da controllare se bisogna salvare direttamente createdEServiceDescriptor dentro eServiceCommonContext
-        eServicesCommonContext.setEserviceId(createdEServiceDescriptor.getId());
-        eServicesCommonContext.setDescriptorId(createdEServiceDescriptor.getDescriptorId());
     }
-
-
 }

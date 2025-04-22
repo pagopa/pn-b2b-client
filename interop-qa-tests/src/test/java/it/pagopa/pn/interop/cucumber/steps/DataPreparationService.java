@@ -427,11 +427,11 @@ public class DataPreparationService {
         }
     }
 
-    public Map<String, Object> bringDescriptorToGivenState(UUID eServiceId, UUID descriptorId, EServiceDescriptorState descriptorState, boolean withDocument) {
+    public Map<String, UUID> bringDescriptorToGivenState(UUID eServiceId, UUID descriptorId, EServiceDescriptorState descriptorState, boolean withDocument) {
         // 1 add document to descriptor
         UUID documentId = null;
-        Map<String, Object> result = new HashMap<>();
-        if (withDocument) documentId = addDocumentToDescriptor(eServiceId, descriptorId);
+        Map<String, UUID> result = new HashMap<>();
+        if (withDocument) documentId = addDocumentToDescriptor(eServiceId, descriptorId, null);
         result.put("descriptorId", descriptorId);
         result.put("documentId", documentId);
 
@@ -474,8 +474,8 @@ public class DataPreparationService {
         return result;
     }
 
-    public UUID addDocumentToDescriptor(UUID eServiceId, UUID descriptorId) {
-        String prettyName = String.format("Documento_test_qa-%d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE));
+    public UUID addDocumentToDescriptor(UUID eServiceId, UUID descriptorId, String name) {
+        String prettyName = (name == null) ? String.format("Documento_test_qa-%d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)) : name;
         Resource resource = blobFileCreator.createBlobFile("src/main/resources/interface.yaml", "documento-test-qa.pdf");
 
         httpCallExecutor.performCall(() -> eServiceClient.createEServiceDocument(eServiceId, descriptorId, "DOCUMENT", prettyName, resource));
@@ -490,7 +490,7 @@ public class DataPreparationService {
         return documentId;
     }
 
-    public void addInterfaceToDescriptor(UUID eServiceId, UUID descriptorId) {
+    public UUID addInterfaceToDescriptor(UUID eServiceId, UUID descriptorId) {
         Resource resource = blobFileCreator.createBlobFile("src/main/resources/interface.yaml", "interface.yaml");
         httpCallExecutor.performCall(() -> eServiceClient.createEServiceDocument(eServiceId, descriptorId, "INTERFACE", "Interfaccia", resource));
         assertValidResponse();
@@ -501,6 +501,7 @@ public class DataPreparationService {
                 ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
 
+        return ((CreatedResource) httpCallExecutor.getResponse()).getId();
     }
 
     public void publishDescriptor(UUID eServiceId, UUID descriptorId) {

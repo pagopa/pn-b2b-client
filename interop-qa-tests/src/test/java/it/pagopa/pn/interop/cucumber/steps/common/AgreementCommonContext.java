@@ -22,5 +22,7 @@ public class AgreementCommonContext {
     private UUID documentId;
     private List<UUID> agreementIds = new ArrayList<>();
     private UUID responseAgreementId;
+    private UUID eserviceSubscribedId;
+    private UUID descriptorSubscribedId;
 
 }

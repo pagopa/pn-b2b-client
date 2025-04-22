@@ -61,12 +61,11 @@ public class CatalogCommonSteps {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
 
         EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(new EServiceSeed(), new UpdateEServiceDescriptorSeed());
-        Map<String, Object> result = dataPreparationService.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(), eServiceDescriptor.getDescriptorId(),
+        Map<String, UUID> result = dataPreparationService.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(), eServiceDescriptor.getDescriptorId(),
                 EServiceDescriptorState.valueOf(descriptorState), true);
         EServicesCommonContext eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
         eServicesCommonContext.setEserviceId(eServiceDescriptor.getEServiceId());
         eServicesCommonContext.setDescriptorId(eServiceDescriptor.getDescriptorId());
-        eServicesCommonContext.setDocumentId(Optional.ofNullable(result)
-                .map(x -> x.get("documentId")).map(String::valueOf).map(UUID::fromString).orElse(null));
+        eServicesCommonContext.setDocumentId(Optional.ofNullable(result).map(x -> x.get("documentId")).orElse(null));
     }
 }

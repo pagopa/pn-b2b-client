@@ -1,19 +1,29 @@
 package it.pagopa.pn.interop.cucumber.steps.catalog;
 
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 public class EServiceCatalogListingSteps {
     private final DataPreparationService dataPreparationService;
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
     private final IdentityService identityService;
+    private final EServicesCommonContext eServicesCommonContext;
 
     public EServiceCatalogListingSteps(DataPreparationService dataPreparationService,
                                        ClientTokenConfigurator clientTokenConfigurator,
@@ -22,6 +32,116 @@ public class EServiceCatalogListingSteps {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.identityService = sharedStepsContext.getIdentityService();
+        this.eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
+    }
+
+    @Given("{string} ha già creato {int} e-services in catalogo in stato PUBLISHED o SUSPENDED e {int} in stato DRAFT")
+    public void tenantHasAlreadyCreatedEservicesWithSpecificState(String tenantType, int countEServices, int countDraftEServices) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        int suspendedEServices = countEServices / 2;
+        int publishedEServices = countEServices - suspendedEServices;
+        int draftEServices = countDraftEServices;
+        int totalEServices = countEServices + draftEServices;
+
+        List<EServiceDescriptor> eServiceDescriptors = new ArrayList<>();
+        // 1. Create the draft e-services with draft descriptors
+        for (int i=0; i<totalEServices; i++) {
+            EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(
+                    new EServiceSeed().name(String.format("eservice-%d-%d", i, sharedStepsContext.getTestSeed())),
+                    new UpdateEServiceDescriptorSeed());
+            eServiceDescriptors.add(eServiceDescriptor);
+        }
+
+        // 2. Take only the ids of the e-services that needs to be published and suspended
+        List<EServiceDescriptor> idsToPublishAndSuspend = eServiceDescriptors.subList(0, suspendedEServices + publishedEServices);
+
+        // 3. For each draft descriptor, in order to publish it, add the document interface
+        idsToPublishAndSuspend.forEach(e -> dataPreparationService.addInterfaceToDescriptor(e.getEServiceId(), e.getDescriptorId()));
+
+        // 4. Publish the descriptors
+        idsToPublishAndSuspend.forEach(e -> dataPreparationService.publishDescriptor(e.getEServiceId(), e.getDescriptorId()));
+
+        // 5. Suspend the desired number of descriptors
+        List<EServiceDescriptor> idsToSuspend = idsToPublishAndSuspend.subList(0, suspendedEServices);
+        idsToSuspend.forEach(e -> dataPreparationService.suspendDescriptor(e.getEServiceId(), e.getDescriptorId()));
+
+        eServicesCommonContext.setPublishedEservicesIds(idsToPublishAndSuspend.subList(0, suspendedEServices));
+        eServicesCommonContext.setSuspendedEservicesIds(idsToSuspend);
+        eServicesCommonContext.setDraftEServicesIds(eServiceDescriptors.subList(0, suspendedEServices + publishedEServices));
+    }
+
+    @Given("{string} ha un agreement attivo con un e-service di {string}")
+    public void tenantAlreadyHasAnActiveAgreement(String tenantType, String producer) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+
+        EServiceDescriptor eServiceDescriptor = eServicesCommonContext.getPublishedEservicesIds().get(0);
+        UUID agreementId = dataPreparationService.createAgreement(eServiceDescriptor.getEServiceId(), eServiceDescriptor.getDescriptorId(), null)
+                .orElseThrow(() -> new RuntimeException("Failed to create an agreement!"));
+        dataPreparationService.submitAgreement(agreementId, AgreementState.ACTIVE);
+        sharedStepsContext.setAgreementId(agreementId);
+        sharedStepsContext.getAgreementCommonContext().setEserviceSubscribedId(eServiceDescriptor.getEServiceId());
+        sharedStepsContext.getAgreementCommonContext().setDescriptorSubscribedId(eServiceDescriptor.getDescriptorId());
+    }
+
+    @When("l'utente richiede la lista di e-services per i quali ha almeno un agreement attivo")
+    public void requireEServiceListWithActiveAgreement() {
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getEServiceClient().getEServicesCatalog(
+                        0, 12, String.valueOf(sharedStepsContext.getTestSeed()), List.of(), List.of(),
+                        List.of(EServiceDescriptorState.PUBLISHED, EServiceDescriptorState.SUSPENDED), List.of(AgreementState.ACTIVE),
+                        null, null)
+        );
+    }
+
+    @When("l'utente richiede una operazione di listing sul catalogo")
+    public void requireEServiceCatalogList() {
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getEServiceClient().getEServicesCatalog(
+                        0, 12, String.valueOf(sharedStepsContext.getTestSeed()), List.of(), List.of(),
+                        List.of(EServiceDescriptorState.PUBLISHED, EServiceDescriptorState.SUSPENDED), null,
+                        null, null)
+        );
+    }
+
+    @When("l'utente richiede una operazione di listing sul catalogo limitata ai primi {int} e-services")
+    public void requireEServiceCatalogListWithLimit(int limit) {
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getEServiceClient().getEServicesCatalog(
+                        0, limit, String.valueOf(sharedStepsContext.getTestSeed()), List.of(), List.of(),
+                        List.of(EServiceDescriptorState.PUBLISHED, EServiceDescriptorState.SUSPENDED), null,
+                        null, null)
+        );
+    }
+
+    @When("l'utente richiede una operazione di listing sul catalogo con offset {int}")
+    public void requireEServiceCatalogListWithOffset(int offset) {
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getEServiceClient().getEServicesCatalog(
+                        offset, 12, String.valueOf(sharedStepsContext.getTestSeed()), List.of(), List.of(),
+                        List.of(EServiceDescriptorState.PUBLISHED, EServiceDescriptorState.SUSPENDED), null,
+                        null, null)
+        );
+    }
+
+    @When("l'utente richiede una operazione di listing degli e-services dell'erogatore {string}")
+    public void requireEServiceCatalogListForProducer(String producer) {
+        UUID producerId = identityService.getOrganizationId(producer);
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getEServiceClient().getEServicesCatalog(
+                        0, 12, String.valueOf(sharedStepsContext.getTestSeed()), List.of(producerId), List.of(),
+                        List.of(EServiceDescriptorState.PUBLISHED, EServiceDescriptorState.SUSPENDED), null,
+                        null, null)
+        );
+    }
+
+    @When("l'utente richiede una operazione di listing sul catalogo filtrando per la keyword {string}")
+    public void requireEServiceCatalogListByKeyword(String keyword) {
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getEServiceClient().getEServicesCatalog(
+                        0, 12, String.format("%s-%s", sharedStepsContext.getTestSeed(), keyword), List.of(), List.of(),
+                        List.of(EServiceDescriptorState.PUBLISHED, EServiceDescriptorState.SUSPENDED), null,
+                        null, null)
+        );
     }
 
     @Given("{string} ha già creato e pubblicato un e-service contenente la keyword {string}")
@@ -33,8 +153,8 @@ public class EServiceCatalogListingSteps {
                 new EServiceSeed().name(eServiceName),
                 new UpdateEServiceDescriptorSeed());
 
-        sharedStepsContext.getEServicesCommonContext().setEserviceId(eServiceDescriptor.getEServiceId());
-        sharedStepsContext.getEServicesCommonContext().setDescriptorId(eServiceDescriptor.getDescriptorId());
+        eServicesCommonContext.setEserviceId(eServiceDescriptor.getEServiceId());
+        eServicesCommonContext.setDescriptorId(eServiceDescriptor.getDescriptorId());
 
         dataPreparationService.addInterfaceToDescriptor(eServiceDescriptor.getEServiceId(), eServiceDescriptor.getDescriptorId());
         dataPreparationService.publishDescriptor(eServiceDescriptor.getEServiceId(), eServiceDescriptor.getDescriptorId());

@@ -6,11 +6,13 @@ import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EservicesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDetails;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServices;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -41,6 +43,11 @@ public class ProducerClientImpl implements IProducerClient {
     @Override
     public ProducerEServiceDetails getProducerEServiceDetails(UUID eserviceId) {
         return eservicesApi.getProducerEServiceDetails(eserviceId);
+    }
+
+    @Override
+    public ProducerEServices getProducerEServices(Integer offset, Integer limit, String q, List<UUID> consumersIds, Boolean delegated) {
+        return eservicesApi.getProducerEServices(offset, limit, q, consumersIds, delegated);
     }
 
     @Override

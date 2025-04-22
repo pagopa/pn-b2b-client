@@ -17,9 +17,13 @@ import java.util.UUID;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class EServicesCommonContext {
     private List<EServiceDescriptor> publishedEservicesIds = new ArrayList<>();
+    private List<EServiceDescriptor> suspendedEservicesIds = new ArrayList<>();
+    private List<EServiceDescriptor> draftEServicesIds = new ArrayList<>();
     private UUID eserviceId;
     private UUID descriptorId;
     private UUID documentId;
+    private UUID documentId2;
+    private UUID interfaceId;
     private UUID oldDescriptorId;
     private String name;
 

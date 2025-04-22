@@ -4,8 +4,16 @@ import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EservicesApi;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServiceDescriptor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServices;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptionUpdateSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.FileResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorDocumentSeed;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +24,9 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceDesc
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
+
+import java.io.File;
+import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -41,6 +52,11 @@ public class EServiceApiClientImpl implements IEServiceClient {
     @Override
     public CreatedEServiceDescriptor createEService(EServiceSeed eserviceSeed) {
         return eservicesApi.createEService(eserviceSeed);
+    }
+
+    @Override
+    public void deleteEService(UUID eServiceId) {
+        eservicesApi.deleteEService(eServiceId);
     }
 
     @Override
@@ -79,12 +95,47 @@ public class EServiceApiClientImpl implements IEServiceClient {
     }
 
     @Override
+    public void deleteEServiceDocumentById(UUID eServiceId, UUID descriptorId, UUID documentId) {
+        eservicesApi.deleteEServiceDocumentById(eServiceId, descriptorId, documentId);
+    }
+
+    @Override
     public void addRiskAnalysisToEService(UUID eServiceId, EServiceRiskAnalysisSeed eserviceRiskAnalysisSeed) {
         eservicesApi.addRiskAnalysisToEService(eServiceId, eserviceRiskAnalysisSeed);
     }
 
     public FileResource exportEServiceDescriptor(UUID eserviceId, UUID descriptorId) {
         return eservicesApi.exportEServiceDescriptor(eserviceId, descriptorId);
+    }
+
+    public CatalogEServices getEServicesCatalog(Integer offset, Integer limit, String q, List<UUID> producersIds,
+                                                List<UUID> attributesIds, List<EServiceDescriptorState> states,
+                                                List<AgreementState> agreementStates, EServiceMode mode, Boolean isConsumerDelegable) {
+        return eservicesApi.getEServicesCatalog(offset, limit, q, producersIds, attributesIds, states, agreementStates, mode, isConsumerDelegable);
+    }
+
+    public CatalogEServiceDescriptor getCatalogEServiceDescriptor(UUID eserviceId, UUID descriptorId) {
+        return eservicesApi.getCatalogEServiceDescriptor(eserviceId, descriptorId);
+    }
+
+    public File getEServiceDocumentById(UUID eServiceId, UUID descriptorId, UUID documentId) {
+        return eservicesApi.getEServiceDocumentById(eServiceId.toString(), descriptorId.toString(), documentId.toString());
+    }
+
+    public EServiceDoc updateEServiceDocumentById(UUID eServiceId, UUID descriptorId, UUID documentId, UpdateEServiceDescriptorDocumentSeed updateEServiceDescriptorDocumentSeed) {
+        return eservicesApi.updateEServiceDocumentById(eServiceId, descriptorId, documentId, updateEServiceDescriptorDocumentSeed);
+    }
+
+    public CreatedResource updateEServiceDescription(UUID eServiceId, EServiceDescriptionUpdateSeed eserviceDescriptionUpdateSeed) {
+        return eservicesApi.updateEServiceDescription(eServiceId, eserviceDescriptionUpdateSeed);
+    }
+
+    public CreatedEServiceDescriptor cloneEServiceByDescriptor(UUID eServiceId, UUID descriptorId) {
+        return eservicesApi.cloneEServiceByDescriptor(eServiceId, descriptorId);
+    }
+
+    public File getEServiceConsumers(UUID eServiceId) {
+        return eservicesApi.getEServiceConsumers(eServiceId);
     }
 
     @Override
