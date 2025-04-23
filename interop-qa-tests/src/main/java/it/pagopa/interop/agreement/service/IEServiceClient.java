@@ -10,11 +10,14 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescription
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysis;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.FileResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PresignedUrl;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorDocumentSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceSeed;
 import org.springframework.http.ResponseEntity;
 
 import java.io.File;
@@ -25,6 +28,7 @@ public interface IEServiceClient extends SettableBearerToken {
 
     CreatedEServiceDescriptor createEService(EServiceSeed eserviceSeed);
     void deleteEService(UUID eServiceId);
+    void deleteEServiceRiskAnalysis(UUID eServiceId, UUID riskAnalysisId);
     ResponseEntity<Void> activateDescriptor(UUID eServiceId, UUID descriptorId);
     CreatedResource updateDraftDescriptor(UUID eServiceId, UUID descriptorId, UpdateEServiceDescriptorSeed updateEServiceDescriptorSeed);
     CreatedResource createEServiceDocument(UUID eServiceId, UUID descriptorId, String kind, String prettyName, org.springframework.core.io.Resource doc);
@@ -41,8 +45,12 @@ public interface IEServiceClient extends SettableBearerToken {
     CatalogEServiceDescriptor getCatalogEServiceDescriptor(UUID eserviceId, UUID descriptorId);
     File getEServiceDocumentById(UUID eServiceId, UUID descriptorId, UUID documentId);
     EServiceDoc updateEServiceDocumentById(UUID eServiceId, UUID descriptorId, UUID documentId, UpdateEServiceDescriptorDocumentSeed updateEServiceDescriptorDocumentSeed);
+    CreatedResource updateEServiceById(UUID eServiceId, UpdateEServiceSeed updateEServiceSeed);
     CreatedResource updateEServiceDescription(UUID eServiceId, EServiceDescriptionUpdateSeed eserviceDescriptionUpdateSeed);
     CreatedEServiceDescriptor cloneEServiceByDescriptor(UUID eServiceId, UUID descriptorId);
     File getEServiceConsumers(UUID eServiceId);
-
+    EServiceRiskAnalysis getEServiceRiskAnalysis(UUID eServiceId, UUID riskAnalysisId);
+    void updateEServiceRiskAnalysis(UUID eServiceId, UUID riskAnalysisId, EServiceRiskAnalysisSeed eserviceRiskAnalysisSeed);
+    PresignedUrl getImportEservicePresignedUrl(String fileName);
+    CreatedEServiceDescriptor importEService(FileResource fileResource);
 }

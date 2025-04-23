@@ -29,14 +29,14 @@ Feature: Cancellazione di un documento
       | GSP  | admin | DEPRECATED       |       204 |
 
   @document_delete2
-  Scenario Outline: Per un e-service che ha un solo descrittore, il quale è in stato ARCHIVED alla richiesta di cancellazione di un documento precedentemente caricato, si ottiene un errore
+  Scenario: Per un e-service che ha un solo descrittore, il quale è in stato ARCHIVED alla richiesta di cancellazione di un documento precedentemente caricato, si ottiene un errore
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service con un descrittore in stato "ARCHIVED" e un documento già caricato
     When l'utente cancella quel documento
     Then si ottiene status code 400
 
   @document_delete3
-  Scenario Outline: Per un e-service che ha un solo descrittore, il quale è in stato DRAFT, alla richiesta di cancellazione di un'interfaccia precedentemente caricata, l'operazione va a buon fine
+  Scenario: Per un e-service che ha un solo descrittore, il quale è in stato DRAFT, alla richiesta di cancellazione di un'interfaccia precedentemente caricata, l'operazione va a buon fine
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service con un descrittore in stato DRAFT con un'interfaccia già caricata
     When l'utente cancella quell'interfaccia

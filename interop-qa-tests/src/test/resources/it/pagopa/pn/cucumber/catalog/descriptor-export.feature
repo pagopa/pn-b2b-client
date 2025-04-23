@@ -30,21 +30,21 @@ Feature: Export di un descrittore
       | PA1  | admin | SUSPENDED        |
 
   @descriptor_export2
-  Scenario Outline: La richiesta di export di un descrittore di un e-service, in stato DRAFT, ritorna un errore
+  Scenario: La richiesta di export di un descrittore di un e-service, in stato DRAFT, ritorna un errore
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     When l'utente effettua una richiesta di export del descrittore
     Then si ottiene status code 400
 
   @descriptor_export3
-  Scenario Outline: La richiesta di export di un descrittore di un e-service, senza documenti, da parte di un ente che non è l’erogatore, ritorna un errore
+  Scenario: La richiesta di export di un descrittore di un e-service, senza documenti, da parte di un ente che non è l’erogatore, ritorna un errore
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     When l'utente effettua una richiesta di export del descrittore
     Then si ottiene status code 403
 
   @descriptor_export4
-  Scenario Outline: La richiesta di export di un descrittore di un e-service, senza documenti, in erogazione inversa, con un’analisi del rischio compilata, va a buon fine. Il documento di configurazione che è parte del pacchetto esportato contiene anche l’analisi del rischio compilata dall’erogatore
+  Scenario: La richiesta di export di un descrittore di un e-service, senza documenti, in erogazione inversa, con un’analisi del rischio compilata, va a buon fine. Il documento di configurazione che è parte del pacchetto esportato contiene anche l’analisi del rischio compilata dall’erogatore
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "PUBLISHED"
     When l'utente effettua una richiesta di export del descrittore
@@ -53,7 +53,7 @@ Feature: Export di un descrittore
     And il documento di configurazione contiene anche l’analisi del rischio compilata dall’erogatore
 
   @descriptor_export5
-  Scenario Outline: La richiesta di export di un descrittore di un e-service, con due documenti, va a buon fine e vengono esportati anche i documenti
+  Scenario: La richiesta di export di un descrittore di un e-service, con due documenti, va a buon fine e vengono esportati anche i documenti
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED" e un documento già caricato
     Given l'utente ha già aggiunto un documento al descrittore

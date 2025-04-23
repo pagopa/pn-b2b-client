@@ -11,9 +11,12 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescription
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysis;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.FileResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PresignedUrl;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorDocumentSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceSeed;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
@@ -57,6 +60,11 @@ public class EServiceApiClientImpl implements IEServiceClient {
     @Override
     public void deleteEService(UUID eServiceId) {
         eservicesApi.deleteEService(eServiceId);
+    }
+
+    @Override
+    public void deleteEServiceRiskAnalysis(UUID eServiceId, UUID riskAnalysisId) {
+        eservicesApi.deleteEServiceRiskAnalysis(eServiceId, riskAnalysisId);
     }
 
     @Override
@@ -126,6 +134,10 @@ public class EServiceApiClientImpl implements IEServiceClient {
         return eservicesApi.updateEServiceDocumentById(eServiceId, descriptorId, documentId, updateEServiceDescriptorDocumentSeed);
     }
 
+    public CreatedResource updateEServiceById(UUID eServiceId, UpdateEServiceSeed updateEServiceSeed) {
+        return eservicesApi.updateEServiceById(eServiceId, updateEServiceSeed);
+    }
+
     public CreatedResource updateEServiceDescription(UUID eServiceId, EServiceDescriptionUpdateSeed eserviceDescriptionUpdateSeed) {
         return eservicesApi.updateEServiceDescription(eServiceId, eserviceDescriptionUpdateSeed);
     }
@@ -136,6 +148,25 @@ public class EServiceApiClientImpl implements IEServiceClient {
 
     public File getEServiceConsumers(UUID eServiceId) {
         return eservicesApi.getEServiceConsumers(eServiceId);
+    }
+
+    public EServiceRiskAnalysis getEServiceRiskAnalysis(UUID eServiceId, UUID riskAnalysisId) {
+        return eservicesApi.getEServiceRiskAnalysis(eServiceId, riskAnalysisId);
+    }
+
+    @Override
+    public void updateEServiceRiskAnalysis(UUID eServiceId, UUID riskAnalysisId, EServiceRiskAnalysisSeed eserviceRiskAnalysisSeed) {
+        eservicesApi.updateEServiceRiskAnalysis(eServiceId, riskAnalysisId, eserviceRiskAnalysisSeed);
+    }
+
+    @Override
+    public PresignedUrl getImportEservicePresignedUrl(String fileName) {
+        return eservicesApi.getImportEservicePresignedUrl(fileName);
+    }
+
+    @Override
+    public CreatedEServiceDescriptor importEService(FileResource fileResource) {
+        return eservicesApi.importEService(fileResource);
     }
 
     @Override

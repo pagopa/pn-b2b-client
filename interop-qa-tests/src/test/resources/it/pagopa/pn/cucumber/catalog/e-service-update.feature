@@ -23,7 +23,7 @@ Feature: Aggiornamento di un e-service non pubblicato
       | PA1  | support      |       403 |
 
   @eservice_updating2
-  Scenario Outline: Per un e-service precedentemente creato, il quale ha un solo descrittore in stato DRAFT, l’aggiornamento dei campi dell’e-service avviene correttamente
+  Scenario: Per un e-service precedentemente creato, il quale ha un solo descrittore in stato DRAFT, l’aggiornamento dei campi dell’e-service avviene correttamente
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     When l'utente aggiorna quell'e-service
