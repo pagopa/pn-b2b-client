@@ -1,13 +1,20 @@
 package it.pagopa.pn.interop.cucumber.steps.purpose;
 
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
+import it.pagopa.interop.agreement.domain.EServiceDescriptor;
+import it.pagopa.interop.authorization.service.utils.IdentityService;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
@@ -20,14 +27,37 @@ public class PurposeActivationStep {
     private final SharedStepsContext sharedStepsContext;
     private final PollingService pollingService;
     private final HttpCallExecutor httpCallExecutor;
+    private final IdentityService identityService;
+    private final DataPreparationService dataPreparationService;
+    private final EServicesCommonContext eServicesCommonContext;
 
     public PurposeActivationStep(ClientTokenConfigurator clientTokenConfigurator,
-                                 SharedStepsContext sharedStepsContext) {
+                                 SharedStepsContext sharedStepsContext,
+                                 DataPreparationService dataPreparationService) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
         this.sharedStepsContext = sharedStepsContext;
         this.pollingService = sharedStepsContext.getPollingService();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+        this.identityService = sharedStepsContext.getIdentityService();
+        this.dataPreparationService = dataPreparationService;
+        this.eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
+    }
+
+    @Given("{string} ha già creato e pubblicato un e-service con una soglia di carico tale da gestire una sola chiamata")
+    public void tenantHasAlreadyCreatedAndPublishedEService(String tenantType) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        String eserviceName = String.format("e-service-%d", sharedStepsContext.getTestSeed());
+
+        EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(
+                new EServiceSeed().name(eserviceName),
+                new UpdateEServiceDescriptorSeed().dailyCallsPerConsumer(1).dailyCallsTotal(1)
+        );
+        eServicesCommonContext.setEserviceId(eServiceDescriptor.getEServiceId());
+        eServicesCommonContext.setDescriptorId(eServiceDescriptor.getDescriptorId());
+
+        dataPreparationService.addInterfaceToDescriptor(eServicesCommonContext.getEserviceId(), eServicesCommonContext.getDescriptorId());
+        dataPreparationService.publishDescriptor(eServicesCommonContext.getEserviceId(), eServicesCommonContext.getDescriptorId());
     }
 
     @When("l'utente (ri)attiva la finalità in stato {string} per quell'e-service")
@@ -43,4 +73,9 @@ public class PurposeActivationStep {
                 res -> Optional.ofNullable(res.getCurrentVersion()).map(PurposeVersion::getState).filter(status -> status == PurposeVersionState.ACTIVE).isPresent(),
                 "There was an error while activating the purpose!");
     }
+
+//    @When("l'utente (ri)attiva la prima finalità in stato {string} per quell'e-service")
+//    public void userActivatesFirstPurposeInStateForThatEService(String state) {
+//
+//    }
 }
