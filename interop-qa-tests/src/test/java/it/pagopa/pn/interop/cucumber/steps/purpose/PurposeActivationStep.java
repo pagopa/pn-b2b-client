@@ -1,10 +1,12 @@
 package it.pagopa.pn.interop.cucumber.steps.purpose;
 
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Purpose;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.interop.authorization.service.utils.PollingService;
@@ -16,7 +18,9 @@ import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -74,8 +78,35 @@ public class PurposeActivationStep {
                 "There was an error while activating the purpose!");
     }
 
-//    @When("l'utente (ri)attiva la prima finalità in stato {string} per quell'e-service")
-//    public void userActivatesFirstPurposeInStateForThatEService(String state) {
-//
-//    }
+    @When("l'utente (ri)attiva la prima finalità in stato {string} per quell'e-service")
+    public void userActivatesFirstPurposeInStateForThatEService(String state) {
+        String purposeId = sharedStepsContext.getPurposeCommonContext().getPurposesIds().get(0);
+        String waitingForApprovalVersionId = sharedStepsContext.getPurposeCommonContext().getWaitingForApprovalVersionIds().get(0);
+        String currentVersionId = sharedStepsContext.getPurposeCommonContext().getCurrentVersionIds().get(0);
+        String versionId = List.of("WAITING_FOR_APPROVAL", "REJECTED").contains(state) ? waitingForApprovalVersionId : currentVersionId;
+
+        httpCallExecutor.performCall(
+                () -> clientTokenConfigurator.getPurposeApiClient().activatePurposeVersion(UUID.fromString(purposeId), UUID.fromString(versionId))
+        );
+    }
+
+    @Then("si ottiene status code {int} e la finalità in stato {string}")
+    public void verifyStatusCodeAndPurposeState(int statusCode, String desiredState) {
+        PurposeVersionState purposeVersionState = PurposeVersionState.fromValue(desiredState);
+        sharedStepsContext.getPollingService().makePolling(
+                () -> httpCallExecutor.performCall(
+                        () -> clientTokenConfigurator.getPurposeApiClient().getPurpose(UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId()))
+                ),
+                res -> {
+                    Purpose purpose = (Purpose) httpCallExecutor.getResponse();
+                    return "WAITING_FOR_APPROVAL".equals(desiredState)
+                            ? purpose.getWaitingForApprovalVersion().getState() == purposeVersionState
+                            : purposeVersionState == PurposeVersionState.REJECTED
+                                ? purpose.getRejectedVersion().getState() == purposeVersionState
+                                : purpose.getCurrentVersion().getState() == purposeVersionState;
+                },
+                "Purpose with desired state not found!"
+        );
+        Assertions.assertEquals(statusCode, httpCallExecutor.getClientResponse().value());
+    }
 }
