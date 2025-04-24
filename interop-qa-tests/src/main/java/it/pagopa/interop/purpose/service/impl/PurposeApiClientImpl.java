@@ -5,6 +5,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.PurposesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Purpose;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeCloneSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeEServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionResource;
@@ -76,6 +77,11 @@ public class PurposeApiClientImpl implements IPurposeApiClient {
     @Override
     public void rejectPurposeVersion(UUID purposeId, UUID versionId, RejectPurposeVersionPayload rejectPurposeVersionPayload) {
         purposesApi.rejectPurposeVersion(purposeId, versionId, rejectPurposeVersionPayload);
+    }
+
+    @Override
+    public PurposeVersionResource clonePurpose(UUID purposeId, PurposeCloneSeed purposeCloneSeed) {
+        return purposesApi.clonePurpose(purposeId, purposeCloneSeed);
     }
 
     @Override

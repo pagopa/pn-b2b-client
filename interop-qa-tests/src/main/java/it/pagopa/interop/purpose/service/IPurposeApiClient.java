@@ -14,5 +14,5 @@ public interface IPurposeApiClient extends SettableBearerToken {
     PurposeVersionResource suspendPurposeVersion(UUID purposeId, UUID versionId);
     PurposeVersionResource archivePurposeVersion(UUID purposeId, UUID versionId);
     void rejectPurposeVersion(UUID purposeId, UUID versionId, RejectPurposeVersionPayload rejectPurposeVersionPayload);
-
+    PurposeVersionResource clonePurpose(UUID purposeId, PurposeCloneSeed purposeCloneSeed);
 }
