@@ -12,7 +12,6 @@ import it.pagopa.interop.purpose.domain.TEServiceMode;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
 
 import java.util.Random;
 import java.util.UUID;

@@ -8,8 +8,13 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.Purpose;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeCloneSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeEServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeUpdateContent;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Purposes;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RejectPurposeVersionPayload;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ReversePurposeUpdateContent;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormConfig;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -17,6 +22,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.File;
+import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -45,8 +52,18 @@ public class PurposeApiClientImpl implements IPurposeApiClient {
     }
 
     @Override
+    public RiskAnalysisFormConfig retrieveRiskAnalysisConfigurationByVersion(String riskAnalysisVersion, UUID eserviceId) {
+        return purposesApi.retrieveRiskAnalysisConfigurationByVersion(riskAnalysisVersion, eserviceId);
+    }
+
+    @Override
     public CreatedResource createPurpose(PurposeSeed purposeSeed) {
         return purposesApi.createPurpose(purposeSeed);
+    }
+
+    @Override
+    public PurposeVersionResource createPurposeVersion(UUID purposeId, PurposeVersionSeed purposeVersionSeed) {
+        return purposesApi.createPurposeVersion(purposeId, purposeVersionSeed);
     }
 
     @Override
@@ -82,6 +99,41 @@ public class PurposeApiClientImpl implements IPurposeApiClient {
     @Override
     public PurposeVersionResource clonePurpose(UUID purposeId, PurposeCloneSeed purposeCloneSeed) {
         return purposesApi.clonePurpose(purposeId, purposeCloneSeed);
+    }
+
+    @Override
+    public void deletePurposeVersion(UUID purposeId, UUID versionId) {
+        purposesApi.deletePurposeVersion(purposeId, versionId);
+    }
+
+    @Override
+    public void deletePurpose(UUID purposeId) {
+        purposesApi.deletePurpose(purposeId);
+    }
+
+    @Override
+    public Purposes getConsumerPurposes(Integer offset, Integer limit, String q, List<UUID> eservicesIds, List<UUID> producersIds, List<PurposeVersionState> states) {
+        return purposesApi.getConsumerPurposes(offset, limit, q, eservicesIds, producersIds, states);
+    }
+
+    @Override
+    public Purposes getProducerPurposes(Integer offset, Integer limit, String q, List<UUID> eservicesIds, List<UUID> consumersIds, List<PurposeVersionState> states) {
+        return purposesApi.getProducerPurposes(offset, limit, q, eservicesIds, consumersIds, states);
+    }
+
+    @Override
+    public File getRiskAnalysisDocument(UUID purposeId, UUID versionId, UUID documentId) {
+        return purposesApi.getRiskAnalysisDocument(purposeId, versionId, documentId);
+    }
+
+    @Override
+    public PurposeVersionResource updatePurpose(UUID purposeId, PurposeUpdateContent purposeUpdateContent) {
+        return purposesApi.updatePurpose(purposeId, purposeUpdateContent);
+    }
+
+    @Override
+    public PurposeVersionResource updateReversePurpose(UUID purposeId, ReversePurposeUpdateContent reversePurposeUpdateContent) {
+        return purposesApi.updateReversePurpose(purposeId, reversePurposeUpdateContent);
     }
 
     @Override

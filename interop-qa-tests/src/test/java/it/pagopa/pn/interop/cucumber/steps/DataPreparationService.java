@@ -45,6 +45,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeAdditionDeta
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeEServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersion;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RejectPurposeVersionPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormConfig;
@@ -52,6 +53,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSee
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.VerifiedTenantAttributeSeed;
 import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
+import it.pagopa.interop.purpose.domain.CreatedEserviceVersion;
 import it.pagopa.interop.purpose.domain.RiskAnalysis;
 import it.pagopa.interop.purpose.domain.RiskAnalysisDataFromJson;
 import it.pagopa.interop.purpose.domain.TEServiceMode;
@@ -680,6 +682,36 @@ public class DataPreparationService {
         }
         sharedStepsContext.getPurposeCommonContext().setPurposeId(String.valueOf(purposeId));
         sharedStepsContext.getPurposeCommonContext().setVersionId(String.valueOf(currentVersion.get()));
+    }
+
+    public CreatedEserviceVersion createNewPurposeVersion(UUID purposeId, PurposeVersionSeed purposeVersionSeed) {
+        httpCallExecutor.performCall(
+                () -> purposeApiClient.createPurposeVersion(
+                        UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId()), purposeVersionSeed)
+        );
+        AtomicReference<UUID> currentVersionId = new AtomicReference<>();
+        AtomicReference<UUID> waitingForApprovalVersionId = new AtomicReference<>();
+
+        assertValidResponse();
+        boolean shouldWaitForApproval = purposeVersionSeed.getDailyCalls() > 50;
+
+        pollingService.makePolling(
+                () -> purposeApiClient.getPurpose(purposeId),
+                res -> {
+                    currentVersionId.set(res.getCurrentVersion().getId());
+                    if (shouldWaitForApproval) {
+                        waitingForApprovalVersionId.set(res.getWaitingForApprovalVersion().getId());
+                        return res.getWaitingForApprovalVersion().getState().equals("WAITING_FOR_APPROVAL");
+                    }
+                    return res.getCurrentVersion().getDailyCalls() == purposeVersionSeed.getDailyCalls();
+                },
+                "Ther was an error while creating the new purpose version!"
+        );
+        return CreatedEserviceVersion.builder()
+                .purposeId(purposeId)
+                .currentVersionId(currentVersionId.get())
+                .waitingForApprovalVersionId(waitingForApprovalVersionId.get())
+                .build();
     }
 
     public void rejectPurposeVersion(UUID purposeId, UUID versionId) {
