@@ -769,7 +769,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
     And lo scarto temporale tra "RECRN010" e "<expectedDeliveryDetailCode>" è superiore a <intervallo>
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "PNRN012"
     #i 10 giorni (per ovvie ragioni di tempistiche) in fase di test diventano 1 minuto
-    And lo scarto temporale tra "RECRN010" e "PNRN012" è pari a 1 minutiQA
+    And lo scarto temporale tra "RECRN010" e "PNRN012" è pari a 1 minuti
     Examples:
       | sequenceName                 | expectedDeliveryDetailCode | intervallo |
       #per i seguenti due casi, i 10 giorni diventano 1 minuto (parametro: RefinementDuration)
