@@ -790,12 +790,12 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN010"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "<expectedDeliveryDetailCode>"
-    And lo scarto temporale tra "RECRN010" e "<expectedDeliveryDetailCode>" è inferiore a <intervallo>
+    And lo scarto temporale tra "RECRN010" e "<expectedDeliveryDetailCode>" è inferiore a 1 minuti
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "<expectedFeedbackDeliveryDetailCode>"
     Examples:
-      | sequenceName         | expectedDeliveryDetailCode | intervallo | expectedFeedbackDeliveryDetailCode |
+      | sequenceName         | expectedDeliveryDetailCode | expectedFeedbackDeliveryDetailCode |
       #per i seguenti due casi, i 10 giorni diventano 1 minuto (parametro: RefinementDuration)
-      | Via@OK-Giacenza_AR   | RECRN003A                  | 1 minuti   | RECRN003C                          |
-      | Via@FAIL-Giacenza_AR | RECRN004A                  | 1 minuti   | RECRN004C                          |
+      | Via@OK-Giacenza_AR   | RECRN003A                  | RECRN003C                          |
+      | Via@FAIL-Giacenza_AR | RECRN004A                  | RECRN004C                          |
 
 
