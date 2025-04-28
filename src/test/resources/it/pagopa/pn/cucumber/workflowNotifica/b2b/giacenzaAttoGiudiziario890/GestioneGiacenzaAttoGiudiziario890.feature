@@ -767,7 +767,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN010"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "<expectedDeliveryDetailCode>"
     And lo scarto temporale tra "RECRN010" e "<expectedDeliveryDetailCode>" è superiore a <intervallo>
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "PNRN012"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "PNRN012"
     #i 10 giorni (per ovvie ragioni di tempistiche) in fase di test diventano 1 minuto
     And lo scarto temporale tra "RECRN010" e "PNRN012" è pari a 1 minutiQA
     Examples:
@@ -777,5 +777,26 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | Via@FAIL-Giacenza-gt10_AR    | RECRN004A                  | 1 minuti   |
       #in questo caso, i 30 giorni diventano 80 secondi (parametro: CompiutaGiacenzaArDuration)
       | Via@FAIL-CompiutaGiacenza_AR | RECRN005A                  | 80 secondi |
+
+  @perfezionamentoAR @workflowAnalogico
+  Scenario Outline: [B2B_PERFEZIONAMENTO_AR_2] Verifica che quando l'intervallo tra RECRN010 e l'expectedDeliveryDetailCode è inferiore a 10gg, venga generato un SEND_ANALOG_FEEDBACK con deliveryDetailCode = expectedFeedbackDeliveryDetailCode
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario
+      | denomination            | userTest         |
+      | taxId                   | CLMCST42R12D969Z |
+      | digitalDomicile         | NULL             |
+      | physicalAddress_address | <sequenceName>   |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN010"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "<expectedDeliveryDetailCode>"
+    And lo scarto temporale tra "RECRN010" e "<expectedDeliveryDetailCode>" è inferiore a <intervallo>
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "<expectedFeedbackDeliveryDetailCode>"
+    Examples:
+      | sequenceName         | expectedDeliveryDetailCode | intervallo | expectedFeedbackDeliveryDetailCode |
+      #per i seguenti due casi, i 10 giorni diventano 1 minuto (parametro: RefinementDuration)
+      | Via@OK-Giacenza_AR   | RECRN003A                  | 1 minuti   | RECRN003C                          |
+      | Via@FAIL-Giacenza_AR | RECRN004A                  | 1 minuti   | RECRN004C                          |
 
 
