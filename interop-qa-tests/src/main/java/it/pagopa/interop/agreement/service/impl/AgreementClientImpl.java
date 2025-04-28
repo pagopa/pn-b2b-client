@@ -43,38 +43,38 @@ public class AgreementClientImpl implements IAgreementClient {
     }
 
     @Override
-    public Agreement getAgreementById(String xCorrelationId, UUID agreementId) {
-        return agreementsApi.getAgreementById(xCorrelationId, agreementId);
+    public Agreement getAgreementById(UUID agreementId) {
+        return agreementsApi.getAgreementById(agreementId);
     }
 
     @Override
-    public Agreement activateAgreement(String xCorrelationId, UUID agreementId) {
-        return agreementsApi.activateAgreement(xCorrelationId, agreementId);
+    public Agreement activateAgreement(UUID agreementId) {
+        return agreementsApi.activateAgreement(agreementId);
     }
 
     @Override
-    public Agreement submitAgreement(String xCorrelationId, UUID agreementId, AgreementSubmissionPayload agreementSubmissionPayload) {
-        return agreementsApi.submitAgreement(xCorrelationId, agreementId, agreementSubmissionPayload);
+    public Agreement submitAgreement(UUID agreementId, AgreementSubmissionPayload agreementSubmissionPayload) {
+        return agreementsApi.submitAgreement(agreementId, agreementSubmissionPayload);
     }
 
     @Override
-    public Agreement suspendAgreement(String xCorrelationId, UUID agreementId) {
-        return agreementsApi.suspendAgreement(xCorrelationId, agreementId);
+    public Agreement suspendAgreement(UUID agreementId) {
+        return agreementsApi.suspendAgreement(agreementId);
     }
 
     @Override
-    public void archiveAgreement(String xCorrelationId, UUID agreementId) {
-        agreementsApi.archiveAgreement(xCorrelationId, agreementId);
+    public void archiveAgreement(UUID agreementId) {
+        agreementsApi.archiveAgreement(agreementId);
     }
 
     @Override
-    public Agreement rejectAgreement(String xCorrelationId, UUID agreementId, AgreementRejectionPayload agreementRejectionPayload) {
-        return agreementsApi.rejectAgreement(xCorrelationId, agreementId, agreementRejectionPayload);
+    public Agreement rejectAgreement(UUID agreementId, AgreementRejectionPayload agreementRejectionPayload) {
+        return agreementsApi.rejectAgreement(agreementId, agreementRejectionPayload);
     }
 
     @Override
-    public File addAgreementConsumerDocument(String xCorrelationId, UUID agreementId, String name, String prettyName, org.springframework.core.io.Resource doc) {
-        return agreementsApi.addAgreementConsumerDocument(xCorrelationId, agreementId, name, prettyName, doc);
+    public File addAgreementConsumerDocument(UUID agreementId, String name, String prettyName, org.springframework.core.io.Resource doc) {
+        return agreementsApi.addAgreementConsumerDocument(agreementId, name, prettyName, doc);
     }
 
     @Override

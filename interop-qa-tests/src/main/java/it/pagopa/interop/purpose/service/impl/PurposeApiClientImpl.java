@@ -39,43 +39,43 @@ public class PurposeApiClientImpl implements IPurposeApiClient {
     }
 
     @Override
-    public RiskAnalysisFormConfig retrieveLatestRiskAnalysisConfiguration(String xCorrelationId) {
-        return purposesApi.retrieveLatestRiskAnalysisConfiguration(xCorrelationId, null);
+    public RiskAnalysisFormConfig retrieveLatestRiskAnalysisConfiguration() {
+        return purposesApi.retrieveLatestRiskAnalysisConfiguration(null);
     }
 
     @Override
-    public CreatedResource createPurpose(String xCorrelationId, PurposeSeed purposeSeed) {
-        return purposesApi.createPurpose(xCorrelationId, purposeSeed);
+    public CreatedResource createPurpose(PurposeSeed purposeSeed) {
+        return purposesApi.createPurpose(purposeSeed);
     }
 
     @Override
-    public CreatedResource createPurposeForReceiveEservice(String xCorrelationId, PurposeEServiceSeed purposeEServiceSeed) {
-        return purposesApi.createPurposeForReceiveEservice(xCorrelationId, purposeEServiceSeed);
+    public CreatedResource createPurposeForReceiveEservice(PurposeEServiceSeed purposeEServiceSeed) {
+        return purposesApi.createPurposeForReceiveEservice(purposeEServiceSeed);
     }
 
     @Override
-    public Purpose getPurpose(String xCorrelationId, UUID purposeId) {
-        return purposesApi.getPurpose(xCorrelationId, purposeId);
+    public Purpose getPurpose(UUID purposeId) {
+        return purposesApi.getPurpose(purposeId);
     }
 
     @Override
-    public PurposeVersionResource activatePurposeVersion(String xCorrelationId, UUID purposeId, UUID versionId) {
-        return purposesApi.activatePurposeVersion(xCorrelationId, purposeId, versionId);
+    public PurposeVersionResource activatePurposeVersion(UUID purposeId, UUID versionId) {
+        return purposesApi.activatePurposeVersion(purposeId, versionId);
     }
 
     @Override
-    public PurposeVersionResource suspendPurposeVersion(String xCorrelationId, UUID purposeId, UUID versionId) {
-        return purposesApi.suspendPurposeVersion(xCorrelationId, purposeId, versionId);
+    public PurposeVersionResource suspendPurposeVersion(UUID purposeId, UUID versionId) {
+        return purposesApi.suspendPurposeVersion(purposeId, versionId);
     }
 
     @Override
-    public PurposeVersionResource archivePurposeVersion(String xCorrelationId, UUID purposeId, UUID versionId) {
-        return purposesApi.archivePurposeVersion(xCorrelationId, purposeId, versionId);
+    public PurposeVersionResource archivePurposeVersion(UUID purposeId, UUID versionId) {
+        return purposesApi.archivePurposeVersion(purposeId, versionId);
     }
 
     @Override
-    public void rejectPurposeVersion(String xCorrelationId, UUID purposeId, UUID versionId, RejectPurposeVersionPayload rejectPurposeVersionPayload) {
-        purposesApi.rejectPurposeVersion(xCorrelationId, purposeId, versionId, rejectPurposeVersionPayload);
+    public void rejectPurposeVersion(UUID purposeId, UUID versionId, RejectPurposeVersionPayload rejectPurposeVersionPayload) {
+        purposesApi.rejectPurposeVersion(purposeId, versionId, rejectPurposeVersionPayload);
     }
 
     @Override

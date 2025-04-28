@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
-import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.delegate.service.IConsumerDelegationsApiClient;
 import it.pagopa.interop.delegate.service.IDelegationApiClient;
@@ -56,7 +55,7 @@ public class DelegationListingStep {
         for (int i = 0; i < pageNumber; i++) {
             AtomicInteger offset = new AtomicInteger(i);
             httpCallExecutor.performCall(
-                    () -> delegationApiClient.getDelegation(sharedStepsContext.getXCorrelationId(), offset.get(), 50, List.of(), List.of(), List.of(), null, List.of())
+                    () -> delegationApiClient.getDelegation(offset.get(), 50, List.of(), List.of(), List.of(), null, List.of())
             );
             delegationList.add((CompactDelegations) httpCallExecutor.getResponse());
         }
@@ -65,26 +64,25 @@ public class DelegationListingStep {
     @And("l'ente {delegationRole} visualizza l'elenco delle deleghe ricevute")
     public void retrieveDelegateDelegationsList(DelegationRole delegationRole) {
         UUID tenantId = sharedStepsContext.getDelegationCommonContext().getIdBy(delegationRole);
-        httpCallExecutor.performCall(() -> delegationApiClient.getDelegation(sharedStepsContext.getXCorrelationId(), 0, 2, List.of(), List.of(), List.of(tenantId), null, List.of()));
+        httpCallExecutor.performCall(() -> delegationApiClient.getDelegation(0, 2, List.of(), List.of(), List.of(tenantId), null, List.of()));
     }
 
     @And("l'ente {delegationRole} visualizza l'elenco delle deleghe conferite")
     public void retrieveDelegatorDelegationsList(DelegationRole delegationRole) {
         UUID tenantId = sharedStepsContext.getDelegationCommonContext().getIdBy(delegationRole);
-        httpCallExecutor.performCall(() -> delegationApiClient.getDelegation(sharedStepsContext.getXCorrelationId(), 0, 2, List.of(), List.of(tenantId), List.of(), null, List.of()));
+        httpCallExecutor.performCall(() -> delegationApiClient.getDelegation(0, 2, List.of(), List.of(tenantId), List.of(), null, List.of()));
     }
 
     @And("l'utente visualizza il dettaglio della delega creata")
     public void retrieveDelegationDetails() {
-        String xCorrelationId = sharedStepsContext.getXCorrelationId();
         String delegationId = String.valueOf(sharedStepsContext.getDelegationCommonContext().getDelegationId());
-        httpCallExecutor.performCall(() -> delegationApiClient.getDelegation(xCorrelationId, delegationId));
+        httpCallExecutor.performCall(() -> delegationApiClient.getDelegation(delegationId));
     }
 
     @And("l'utente recupera la lista delle deleghe in stato ACTIVE e WAITING_FOR_APPROVAL")
     public void retrieveDelegationsListByStatus() {
         pollingService.makePolling(
-                () -> httpCallExecutor.performCall(() ->  delegationApiClient.getDelegation(sharedStepsContext.getXCorrelationId(), 0, 50, List.of(DelegationState.ACTIVE, DelegationState.WAITING_FOR_APPROVAL),
+                () -> httpCallExecutor.performCall(() ->  delegationApiClient.getDelegation(0, 50, List.of(DelegationState.ACTIVE, DelegationState.WAITING_FOR_APPROVAL),
                         List.of(), List.of(), null, List.of())),
             HttpStatus::is2xxSuccessful,
                 "There was an error while retrieving the delegations!"
@@ -117,7 +115,7 @@ public class DelegationListingStep {
     @And("si recupera la lista dei delegatori e si verifica che non sia vuota")
     public void retrieveDelegators() {
         try {
-            delegationTenants = consumerDelegationsApiClient.getConsumerDelegators(sharedStepsContext.getXCorrelationId(), 0, 50, null,
+            delegationTenants = consumerDelegationsApiClient.getConsumerDelegators(0, 50, null,
                     List.of(sharedStepsContext.getEServicesCommonContext().getEserviceId()));
         } catch (RestClientException e) {
             throw new RuntimeException("There was an error while retrieving the delegators list: ", e);
@@ -128,7 +126,7 @@ public class DelegationListingStep {
     @And("si recupera la lista dei delegatori con deleghe ATTIVE e si verifica che non sia vuota")
     public void retrieveDelegatorsWithActiveAgreement() {
         try {
-            delegationTenants = consumerDelegationsApiClient.getConsumerDelegatorsWithAgreements(sharedStepsContext.getXCorrelationId(), 0, 50, null);
+            delegationTenants = consumerDelegationsApiClient.getConsumerDelegatorsWithAgreements(0, 50, null);
         } catch (RestClientException e) {
             throw new RuntimeException("There was an error while retrieving the delegators with an active agreement: ", e);
         }
@@ -138,7 +136,7 @@ public class DelegationListingStep {
     @And("viene recuperata la lista degli e-service delegati e si verifica che non sia vuota")
     public void retrieveDelegatedEServices() {
         try {
-            compactEServices = consumerDelegationsApiClient.getConsumerDelegatedEservices(sharedStepsContext.getXCorrelationId(),
+            compactEServices = consumerDelegationsApiClient.getConsumerDelegatedEservices(
                     sharedStepsContext.getDelegationCommonContext().getDelegatorId(), 0, 50, null);
         } catch (RestClientException e) {
             throw new RuntimeException("There was an error while retrieving the delegated e-service list: ", e);

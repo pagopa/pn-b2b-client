@@ -43,80 +43,80 @@ public class AuthorizationClientImpl implements IAuthorizationClient {
     }
 
     @Override
-    public CreatedResource createConsumerClient(String xCorrelationId, ClientSeed clientSeed) {
-        return clientsApi.createConsumerClient(xCorrelationId, clientSeed);
+    public CreatedResource createConsumerClient(ClientSeed clientSeed) {
+        return clientsApi.createConsumerClient(clientSeed);
     }
 
     @Override
-    public CreatedResource createApiClient(String xCorrelationId, ClientSeed clientSeed) {
-        return clientsApi.createApiClient(xCorrelationId, clientSeed);
+    public CreatedResource createApiClient(ClientSeed clientSeed) {
+        return clientsApi.createApiClient(clientSeed);
     }
 
     @Override
-    public void deleteClient(String xCorrelationId, UUID clientId) {
-        clientsApi.deleteClient(xCorrelationId, clientId);
+    public void deleteClient(UUID clientId) {
+        clientsApi.deleteClient(clientId);
     }
 
     @Override
-    public void getEncodedClientKeyById(String xCorrelationId, UUID clientId, String keyId) {
-        clientsApi.getEncodedClientKeyById(xCorrelationId, clientId, keyId);
+    public void getEncodedClientKeyById(UUID clientId, String keyId) {
+        clientsApi.getEncodedClientKeyById(clientId, keyId);
     }
 
     @Override
-    public void deleteClientKeyById(String xCorrelationId, UUID clientId, String keyId) {
-        clientsApi.deleteClientKeyById(xCorrelationId, clientId, keyId);
+    public void deleteClientKeyById(UUID clientId, String keyId) {
+        clientsApi.deleteClientKeyById(clientId, keyId);
     }
 
     @Override
-    public void removeUserFromClient(String xCorrelationId, UUID clientId, UUID userId) {
-        clientsApi.removeUserFromClient(xCorrelationId, clientId, userId);
+    public void removeUserFromClient(UUID clientId, UUID userId) {
+        clientsApi.removeUserFromClient(clientId, userId);
     }
 
     @Override
-    public List<CompactUser> getClientUsers(String xCorrelationId, UUID clientId) {
-        return clientsApi.getClientUsers(xCorrelationId, clientId);
+    public List<CompactUser> getClientUsers(UUID clientId) {
+        return clientsApi.getClientUsers(clientId);
     }
 
     @Override
-    public PublicKey getClientKeyById(String xCorrelationId, UUID clientId, String keyId) {
-        return clientsApi.getClientKeyById(xCorrelationId, clientId, keyId);
+    public PublicKey getClientKeyById(UUID clientId, String keyId) {
+        return clientsApi.getClientKeyById(clientId, keyId);
     }
 
     @Override
-    public void createKeys(String xCorrelationId, UUID clientId, List<KeySeed> keySeed) {
-        clientsApi.createKeys(xCorrelationId, clientId, keySeed);
+    public void createKeys(UUID clientId, List<KeySeed> keySeed) {
+        keySeed.forEach(seed -> clientsApi.createKey(clientId, seed));
     }
 
     @Override
-    public PublicKeys getClientKeys(String xCorrelationId, UUID clientId, List<UUID> userIds) {
-        return clientsApi.getClientKeys(xCorrelationId, clientId, userIds);
+    public PublicKeys getClientKeys(UUID clientId, Integer offset, Integer limit,  List<UUID> userIds) {
+        return clientsApi.getClientKeys(clientId, 0, 50, userIds);
     }
 
     @Override
-    public void addClientPurpose(String xCorrelationId, UUID clientId,
+    public void addClientPurpose(UUID clientId,
             PurposeAdditionDetailsSeed purposeAdditionDetailsSeed) {
-        clientsApi.addClientPurpose(xCorrelationId, clientId, purposeAdditionDetailsSeed);
+        clientsApi.addClientPurpose(clientId, purposeAdditionDetailsSeed);
     }
 
     @Override
-    public CompactClients getClients(String xCorrelationId, Integer offset, Integer limit, String q, List<UUID> userIds,
+    public CompactClients getClients(Integer offset, Integer limit, String q, List<UUID> userIds,
             ClientKind kind) {
-        return clientsApi.getClients(xCorrelationId, offset, limit, q, userIds, kind);
+        return clientsApi.getClients(offset, limit, q, userIds, kind);
     }
 
     @Override
-    public Client getClient(String xCorrelationId, UUID clientId) {
-        return clientsApi.getClient(xCorrelationId, clientId);
+    public Client getClient(UUID clientId) {
+        return clientsApi.getClient(clientId);
     }
 
     @Override
-    public void removeClientPurpose(String xCorrelationId, UUID clientId, UUID purposeId) {
-        clientsApi.removeClientPurpose(xCorrelationId, clientId, purposeId);
+    public void removeClientPurpose(UUID clientId, UUID purposeId) {
+        clientsApi.removeClientPurpose(clientId, purposeId);
     }
 
     @Override
-    public CreatedResource addUsersToClient(String xCorrelationId, UUID clientId, InlineObject3 inlineObject3) {
-        return clientsApi.addUsersToClient(xCorrelationId, clientId, inlineObject3);
+    public CreatedResource addUsersToClient(UUID clientId, InlineObject3 inlineObject3) {
+        return clientsApi.addUsersToClient(clientId, inlineObject3);
     }
 
     @Override

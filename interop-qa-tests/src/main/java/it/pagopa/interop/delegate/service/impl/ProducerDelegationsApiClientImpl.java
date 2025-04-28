@@ -35,23 +35,23 @@ public class ProducerDelegationsApiClientImpl implements IProducerDelegationsApi
     }
 
     @Override
-    public CreatedResource createProducerDelegation(String xCorrelationId, DelegationSeed delegationSeed) {
-        return producerDelegationsApi.createProducerDelegation(xCorrelationId, delegationSeed);
+    public CreatedResource createProducerDelegation(DelegationSeed delegationSeed) {
+        return producerDelegationsApi.createProducerDelegation(delegationSeed);
     }
 
     @Override
-    public void approveProducerDelegation(String xCorrelationId, UUID delegationId) {
-        producerDelegationsApi.approveProducerDelegation(xCorrelationId, delegationId);
+    public void approveProducerDelegation(UUID delegationId) {
+        producerDelegationsApi.approveProducerDelegation(delegationId);
     }
 
     @Override
-    public void rejectProducerDelegation(String xCorrelationId, UUID delegationId, RejectDelegationPayload rejectDelegationPayload) {
-        producerDelegationsApi.rejectProducerDelegation(xCorrelationId, delegationId, rejectDelegationPayload);
+    public void rejectProducerDelegation(UUID delegationId, RejectDelegationPayload rejectDelegationPayload) {
+        producerDelegationsApi.rejectProducerDelegation(delegationId, rejectDelegationPayload);
     }
 
     @Override
-    public void revokeProducerDelegation(String xCorrelationId, String delegationId) {
-        producerDelegationsApi.revokeProducerDelegation(xCorrelationId, delegationId);
+    public void revokeProducerDelegation(String delegationId) {
+        producerDelegationsApi.revokeProducerDelegation(delegationId);
     }
 
     @Override

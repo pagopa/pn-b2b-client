@@ -30,7 +30,7 @@ public class ClientKeyListingSteps {
 
     @When("l'utente richiede una operazione di listing delle chiavi di quel client")
     public void userAskClientKeyLists() {
-        httpCallExecutor.performCall(() -> authorizationClient.getClientKeys(sharedStepsContext.getXCorrelationId(), sharedStepsContext.getClientCommonContext().getFirstClient(), null));
+        httpCallExecutor.performCall(() -> authorizationClient.getClientKeys(sharedStepsContext.getClientCommonContext().getFirstClient(), 0, 50, null));
     }
 
     @Then("si ottiene status code {int} e la lista di {int} chiavi")
@@ -41,7 +41,10 @@ public class ClientKeyListingSteps {
 
     @When("l'utente richiede una operazione di listing delle chiavi di quel client create dall'utente {string}")
     public void retrieveKeysCreatedByUser(String role) {
-        httpCallExecutor.performCall(() -> authorizationClient.getClientKeys(sharedStepsContext.getXCorrelationId(), sharedStepsContext.getClientCommonContext().getFirstClient(),
+        httpCallExecutor.performCall(() -> authorizationClient.getClientKeys(
+            sharedStepsContext.getClientCommonContext().getFirstClient(),
+                0,
+                50,
                 List.of(identityService.getUserId(sharedStepsContext.getTenantType(), role))));
     }
 }

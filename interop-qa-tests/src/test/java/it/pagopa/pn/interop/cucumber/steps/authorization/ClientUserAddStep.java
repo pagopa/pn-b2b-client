@@ -31,7 +31,7 @@ public class ClientUserAddStep {
         UUID userId = identityService.getUserId(tenantType, "admin");
         InlineObject3 inlineObject = new InlineObject3().addUserIdsItem(userId);
         httpCallExecutor.performCall(
-                () -> authorizationClient.addUsersToClient(sharedStepsContext.getXCorrelationId(), sharedStepsContext.getClientCommonContext().getFirstClient(), inlineObject));
+                () -> authorizationClient.addUsersToClient(sharedStepsContext.getClientCommonContext().getFirstClient(), inlineObject));
     }
 
 }
