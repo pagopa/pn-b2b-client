@@ -49,12 +49,13 @@ public class ParameterTypes {
         return condition.equals("pari") ? null : condition.equals("superiore");
     }
 
-    @ParameterType("giorni|ore|minuti")
+    @ParameterType("giorni|ore|minuti|secondi")
     public static ChronoUnit unitaTemporale(String value) {
         return switch (value) {
             case "giorni" -> ChronoUnit.DAYS;
             case "ore" -> ChronoUnit.HOURS;
             case "minuti" -> ChronoUnit.MINUTES;
+            case "secondi" -> ChronoUnit.SECONDS;
             default ->
                     throw new IllegalArgumentException("unità temporale non riconosciuta. Valutare se inserirla nei ParameterTypes");
         };

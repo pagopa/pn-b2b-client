@@ -3642,13 +3642,14 @@ public class AvanzamentoNotificheB2bSteps {
                 .findFirst()
                 .orElse(null);
 
-        OffsetDateTime date1 = t1.getEventTimestamp().truncatedTo(MINUTES);
-        OffsetDateTime date2 = t2.getEventTimestamp().truncatedTo(MINUTES);
+        OffsetDateTime date1 = t1.getEventTimestamp();
+        OffsetDateTime date2 = t2.getEventTimestamp();
 
         OffsetDateTime expectedDate =
                 unitaTemporale == DAYS ? date1.plusDays(timeQuantity) :
                         unitaTemporale == HOURS ? date1.plusHours(timeQuantity) :
-                                date1.plusMinutes(timeQuantity);
+                                unitaTemporale == MINUTES ? date1.plusMinutes(timeQuantity) :
+                                        date1.plusSeconds(timeQuantity);
         if (isSuperiore == null) {
             assertThat(date2)
                     .as("La data di " + code2 + " non è pari a quella di " + code1)
