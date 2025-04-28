@@ -778,14 +778,3 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | Via@FAIL-CompiutaGiacenza_AR | RECRN005A                  | 80 secondi |
 
 
-  Scenario: [MATTEO_TEST]
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-#      |  |  |
-#      | NULL | NULL |
-#      | details                    | NOT_NULL |
-#      | details_recIndex           | 0        |
-#      | details_deliveryDetailCode | CON080   |
-#      | details_sentAttemptMade    | 0        |
-#      | loadTimeline               | true     |
-
-

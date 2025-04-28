@@ -1338,34 +1338,34 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
-    //TODO MATTEO spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
+    //spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
 //    @Then("la PA richiede il download dell'attestazione opponibile {string} senza legalFactType")
 //    public void paRequiresDownloadOfLegalFactId(String legalFactCategory) {
 //        downloadLegalFactId(legalFactCategory, true, false, false, null);
 //    }
 
-    //TODO MATTEO spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
+    //spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
 //    @Then("la PA richiede il download dell'attestazione opponibile {string}")
 //    public void paRequiresDownloadOfLegalFact(String legalFactCategory) {
 //        String legalFactUrl = downloadLegalFact(legalFactCategory, true, false, false, null);
 //        legalFactContentVerifySteps.setLegalFactUrl(legalFactUrl);
 //    }
 
-    //TODO MATTEO spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
+    //spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
 //    @Then("la PA richiede il download dell'attestazione opponibile {string} con deliveryDetailCode {string}")
 //    public void paRequiresDownloadOfLegalFactWithDeliveryDetailCode(String legalFactCategory, String deliveryDetailCode) {
 //        String legalFactUrl = downloadLegalFact(legalFactCategory, true, false, false, deliveryDetailCode);
 //        legalFactContentVerifySteps.setLegalFactUrl(legalFactUrl);
 //    }
 
-    //TODO MATTEO spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
+    //spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
 //    @Then("viene richiesto tramite appIO il download dell'attestazione opponibile {string}")
 //    public void appIODownloadLegalFact(String legalFactCategory) {
 //        String legalFactUrl = downloadLegalFact(legalFactCategory, false, true, false, null);
 //        legalFactContentVerifySteps.setLegalFactUrl(legalFactUrl);
 //    }
 
-    //TODO MATTEO spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
+    //spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
 //    @Then("{string} richiede il download dell'attestazione opponibile {string}")
 //    public void userDownloadLegalFact(String user, String legalFactCategory) {
 //        sharedSteps.selectUser(user);
@@ -1373,20 +1373,20 @@ public class AvanzamentoNotificheB2bSteps {
 //        legalFactContentVerifySteps.setLegalFactUrl(legalFactUrl);
 //    }
 
-    //TODO MATTEO spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
+    //spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
 //    @Then("la PA richiede il download dell'attestazione opponibile PEC_RECEIPT")
 //    public void paRequiresDownloadOfLegalFactPecRecipient() {
 //        downloadLegalFactPecRecipient("PEC_RECEIPT", true, false, false, null);
 //    }
 
-    //TODO MATTEO spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
+    //spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
 //    @Then("{string} richiede il download dell'attestazione opponibile PEC_RECEIPT")
 //    public void userDownloadLegalFactPecRecipient(String user) {
 //        sharedSteps.selectUser(user);
 //        downloadLegalFactPecRecipient("PEC_RECEIPT", false, false, true, null);
 //    }
 
-    //TODO MATTEO spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
+    //spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
 //    @Then("{string} richiede il download dell'attestazione opponibile {string} con errore {string}")
 //    public void userDownloadLegalFactError(String user, String legalFactCategory, String statusCode) {
 //        try {
@@ -1398,21 +1398,21 @@ public class AvanzamentoNotificheB2bSteps {
 //        }
 //    }
 
-    //TODO MATTEO spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
+    //spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
 //    @And("ricerca ed effettua download del legalFact con la categoria {string}")
 //    public void ricercaEdEffettuaDownloadDelLegalFactConLaCategoria(String legalFactCategory) {
 //        String legalFactUrl = downloadLegalFact(legalFactCategory, false, false, true, null);
 //        legalFactContentVerifySteps.setLegalFactUrl(legalFactUrl);
 //    }
 
-    //TODO MATTEO spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
+    //spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
 //    @And("ricerca ed effettua download del legalFact con la categoria {string} con DetailCode {string}")
 //    public void ricercaEdEffettuaDownloadDelLegalFactConLaCategoria(String legalFactCategory, String deliveryDetailCode) {
 //        String legalFactUrl = downloadLegalFact(legalFactCategory, false, false, true, deliveryDetailCode);
 //        legalFactContentVerifySteps.setLegalFactUrl(legalFactUrl);
 //    }
 
-    //TODO MATTEO spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
+    //spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
 //    @Then("viene verificato che la chiave dell'attestazione opponibile {string} è {string}")
 //    public void verifiedThatTheKeyOfTheLegalFactIs(String legalFactCategory, String key) {
 //        try {
@@ -1433,7 +1433,7 @@ public class AvanzamentoNotificheB2bSteps {
 //        }
 //    }
 
-    //TODO MATTEO spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
+    //spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
 //    @Then("l'ente {string} richiede l'attestazione opponibile {string}")
 //    public void paRequiresLegalFact(String paName, String legalFactCategory) {
 //        sharedSteps.setPA(paName);
@@ -1444,7 +1444,7 @@ public class AvanzamentoNotificheB2bSteps {
 //        }
 //    }
 
-    //TODO MATTEO spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
+    //spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
 //    @Then("l'ente {string} richiede l'attestazione opponibile {string} con deliveryDetailCode {string}")
 //    public void paRequiresLegalFactConDeliveryDetailCode(String paName, String legalFactCategory, String deliveryDetailCode) {
 //        sharedSteps.setPA(paName);
@@ -1455,7 +1455,7 @@ public class AvanzamentoNotificheB2bSteps {
 //        }
 //    }
 
-    //TODO MATTEO spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
+    //spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
 //    @Then("tra gli elementi di timeline con categoria {string} è presente un legalFact con categoria {string}")
 //    public void checkLegalFactAllVersions(String timelineElementCategory, String legalFactCategory) {
 //        List<LegalFactsIdV20> legalFactsList = this.sharedSteps.getSentNotificationLastVersion().getTimeline().stream().filter(
@@ -1469,7 +1469,7 @@ public class AvanzamentoNotificheB2bSteps {
 //        log.info("LEGAL FACT URL: " + legalFact.getKey());
 //    }
 
-    //TODO MATTEO spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
+    //spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
 //    public String getKeyLegalFact(String key) {
 //        if (key.contains("PN_LEGAL_FACTS")) {
 //            return key.substring(key.indexOf("PN_LEGAL_FACTS"));
@@ -1485,7 +1485,7 @@ public class AvanzamentoNotificheB2bSteps {
 //        return null;
 //    }
 
-    //TODO MATTEO spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
+    //spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
 //    private LegalFactDownloadMetadataResponse takeLegalFact(String legalFactCategory, String deliveryDetailCode) {
 //        try {
 //            Thread.sleep(sharedSteps.getWait());
@@ -1527,7 +1527,7 @@ public class AvanzamentoNotificheB2bSteps {
 //        return legalFactDownloadMetadataResponse;
 //    }
 
-    //TODO MATTEO spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
+    //spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
 //    private String downloadLegalFact(String legalFactCategory, boolean pa, boolean appIO, boolean webRecipient, String deliveryDetailCode) {
 //        try {
 //            Thread.sleep(sharedSteps.getWait());
@@ -1590,7 +1590,7 @@ public class AvanzamentoNotificheB2bSteps {
 //        return null;
 //    }
 
-    //TODO MATTEO spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
+    //spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
 //    private void downloadLegalFactPecRecipient(String legalFactCategory, boolean pa, boolean appIO, boolean webRecipient, String deliveryDetailCode) {
 //        try {
 //            Thread.sleep(sharedSteps.getWait());
@@ -1662,7 +1662,7 @@ public class AvanzamentoNotificheB2bSteps {
 //        }
 //    }
 
-    //TODO MATTEO spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
+    //spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
 //    private void downloadLegalFactId(String legalFactCategory, boolean pa, boolean appIO, boolean webRecipient, String deliveryDetailCode) {
 //        try {
 //            Thread.sleep(sharedSteps.getWait());
@@ -2657,10 +2657,8 @@ public class AvanzamentoNotificheB2bSteps {
 
     @And("viene verificato che l'elemento di timeline {string} non esista")
     public void vieneVerificatoCheElementoTimelineNonEsista(String timelineEventCategory, Map<String, String> dataMap) {
-
         getB2bStepsInterface().verifyTimelineElementDoesNotExists(true, timelineEventCategory, dataMap);
 
-        //TODO MATTEO TEST
 //        loadTimeline(timelineEventCategory, false, dataTest);
 //        TimelineElementV26 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataMap);
 //        try {
@@ -2674,10 +2672,8 @@ public class AvanzamentoNotificheB2bSteps {
     // TODO 12/02/2025 Accorpare con vieneVerificatoCheElementoTimelineNonEsista(String timelineEventCategory, parametrizzando il load della timeline
     @And("viene verificato che l'elemento di timeline {string} non esista nella timeline caricata")
     public void vieneVerificatoCheElementoTimelineNonEsistaNotLoadTimeline(String timelineEventCategory, Map<String, String> dataMap) {
-
         getB2bStepsInterface().verifyTimelineElementDoesNotExists(false, timelineEventCategory, dataMap);
 
-        //TODO MATTEO TEST
 //        TimelineElementV26 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataMap);
 //        try {
 //            log.info("TIMELINE_ELEMENT: " + timelineElement);
@@ -2976,7 +2972,7 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
-    //TODO MATTEO spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
+    //spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
 //    @Then("download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è {string}")
 //    public void downloadAttestazioneOpponibileAAREControlloDelContenutoDelFilePerVerificareSeIlTipoE(String aarType) {
 //        LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse = getLegalFactIdAAR("PN_AAR");
@@ -2985,13 +2981,13 @@ public class AvanzamentoNotificheB2bSteps {
 //        Assertions.assertTrue(checkTypeAAR(source, aarType));
 //    }
 
-    //TODO MATTEO spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
+    //spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
 //    @And("download attestazione opponibile AAR")
 //    public void downloadLegalFactIdAAR() {
 //        getLegalFactIdAAR("PN_AAR");
 //    }
 
-    //TODO MATTEO spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
+    //spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
 //    private LegalFactDownloadMetadataResponse getLegalFactIdAAR(String aarType) {
 //        AtomicReference<LegalFactDownloadMetadataResponse> legalFactDownloadMetadataResponse = new AtomicReference<>();
 //        try {
@@ -3027,7 +3023,7 @@ public class AvanzamentoNotificheB2bSteps {
 //        return legalFactDownloadMetadataResponse.get();
 //    }
 
-    //TODO MATTEO spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
+    //spostato in LegalFactContentVerifySteps, qua non c'entrava nulla
 //    private boolean checkTypeAAR(byte[] source, String aarType) {
 //        Pattern pattern = Pattern.compile("\\((CAF)\\s");
 //        try (final PDDocument document = Loader.loadPDF(source)) {
