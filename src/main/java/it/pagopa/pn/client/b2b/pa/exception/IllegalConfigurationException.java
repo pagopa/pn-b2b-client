@@ -5,6 +5,7 @@ import lombok.Getter;
 
 @Getter
 public class IllegalConfigurationException extends RuntimeException {
+
     private final String message;
 
     public IllegalConfigurationException(String message) {
