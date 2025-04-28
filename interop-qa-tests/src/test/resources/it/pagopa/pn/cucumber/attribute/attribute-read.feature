@@ -2,6 +2,10 @@
 Feature: Lettura singolo attributo
   Tutti gli utenti autenticati possono leggere le informazioni di un singolo attributo
 
+  @attribute_read
+  Feature: Lettura singolo attributo
+  Tutti gli utenti autenticati possono leggere le informazioni di un singolo attributo
+
   # NOTE 16/04/2025 riproduzione dello scenario come presente nel repo interop-qa-tests
   @attribute_read1
   Scenario Outline: Alla richiesta di un attributo presente in DB, restituisce il risultato

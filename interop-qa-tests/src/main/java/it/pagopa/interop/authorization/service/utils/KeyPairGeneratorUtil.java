@@ -71,10 +71,14 @@ public class KeyPairGeneratorUtil {
     }
 
     public static List<KeySeed> createKeySeed(String key) {
+        return createKeySeed(key, getRandomInt());
+    }
+
+    public static List<KeySeed> createKeySeed(String key, int firstId) {
         KeySeed keySeed = new KeySeed();
         keySeed.setUse(KeyUse.SIG);
         keySeed.setAlg("RS256");
-        keySeed.setName(String.format("key-%d-%d", getRandomInt(), getRandomInt()));
+        keySeed.setName(String.format("key-%d-%d", firstId, getRandomInt()));
         keySeed.setKey(key);
         return List.of(keySeed);
     }
