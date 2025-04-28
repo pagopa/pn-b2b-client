@@ -5,7 +5,6 @@ import io.cucumber.java.After;
 import io.cucumber.java.Transpose;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddAlternativeClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.RaddOperator;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD.Address;
@@ -13,6 +12,7 @@ import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCsv.*;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.dataTable.DataTableTypeRaddAlt;
+import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
@@ -40,7 +40,6 @@ public class AnagraficaRaddAltSteps {
 
     private final PnRaddAlternativeClientImpl raddAltClient;
     private final SharedSteps sharedSteps;
-    private final PnPaB2bUtils pnPaB2bUtils;
     private final DataTableTypeRaddAlt dataTableTypeRaddAlt;
 
     private String fileCsvName;
@@ -60,11 +59,9 @@ public class AnagraficaRaddAltSteps {
     private List<Address> addresses = new ArrayList<>();
 
     @Autowired
-    public AnagraficaRaddAltSteps(PnRaddAlternativeClientImpl raddAltClient, PnPaB2bUtils pnPaB2bUtils, SharedSteps sharedSteps,
-                                  DataTableTypeRaddAlt dataTableTypeRaddAlt) {
+    public AnagraficaRaddAltSteps(PnRaddAlternativeClientImpl raddAltClient, SharedSteps sharedSteps, DataTableTypeRaddAlt dataTableTypeRaddAlt) {
         this.raddAltClient = raddAltClient;
         this.sharedSteps = sharedSteps;
-        this.pnPaB2bUtils = pnPaB2bUtils;
         this.dataTableTypeRaddAlt = dataTableTypeRaddAlt;
     }
 
@@ -82,7 +79,7 @@ public class AnagraficaRaddAltSteps {
             Assertions.assertNotNull(responseUploadCsv.getUrl());
             Assertions.assertNotNull(responseUploadCsv.getFileKey());
             this.requestid = responseUploadCsv.getRequestId();
-            pnPaB2bUtils.preloadRaddCsvDocument("classpath:/" + this.fileCsvName, this.shaCSV, responseUploadCsv, true);
+            B2bUtils.preloadRaddCsvDocument(sharedSteps.getContext(), "classpath:/" + this.fileCsvName, this.shaCSV, responseUploadCsv, true);
 
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
@@ -101,7 +98,7 @@ public class AnagraficaRaddAltSteps {
             RegistryUploadResponse responseUploadCsv = raddAltClient.uploadRegistryRequests(this.uid, registryUploadRequest);
             if (responseUploadCsv != null) {
                 this.requestid = responseUploadCsv.getRequestId();
-                pnPaB2bUtils.preloadRaddCsvDocument("classpath:/" + this.fileCsvName, this.shaCSV, responseUploadCsv, true);
+                B2bUtils.preloadRaddCsvDocument(sharedSteps.getContext(), "classpath:/" + this.fileCsvName, this.shaCSV, responseUploadCsv, true);
             }
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
@@ -121,7 +118,7 @@ public class AnagraficaRaddAltSteps {
 
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
-            pnPaB2bUtils.preloadRaddCsvDocument("classpath:/" + this.fileCsvName, this.shaCSV, responseUploadCsv, true);
+            B2bUtils.preloadRaddCsvDocument(sharedSteps.getContext(), "classpath:/" + this.fileCsvName, this.shaCSV, responseUploadCsv, true);
         }
     }
 
@@ -616,7 +613,7 @@ public class AnagraficaRaddAltSteps {
             }
         }
 
-        this.shaCSV = pnPaB2bUtils.computeSha256("classpath:/" + this.fileCsvName);
+        this.shaCSV = B2bUtils.computeSha256(sharedSteps.getContext(), "classpath:/" + this.fileCsvName);
     }
 
     @Then("viene cambiato raddista con {string}")

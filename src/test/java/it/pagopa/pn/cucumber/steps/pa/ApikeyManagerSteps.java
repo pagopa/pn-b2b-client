@@ -28,7 +28,6 @@ public class ApikeyManagerSteps {
     private String firstGroupUsed;
     private String responseNewApiKeyTaxId;
 
-
     @Autowired
     public ApikeyManagerSteps(IPnApiKeyManagerClient apiKeyManagerClient, SharedSteps sharedSteps) {
         this.sharedSteps = sharedSteps;
@@ -125,7 +124,6 @@ public class ApikeyManagerSteps {
     @When("viene impostata l'apikey appena generata")
     public void vieneImpostataLApikeyAppenaGenerataPerIl() {
         sharedSteps.getB2bClient().setApiKey(responseNewApiKey.getApiKey());
-        sharedSteps.getB2bUtils().setClient(sharedSteps.getB2bClient());
         sharedSteps.setRequestNewApiKey(requestNewApiKey);
         sharedSteps.setResponseNewApiKey(responseNewApiKey);
     }

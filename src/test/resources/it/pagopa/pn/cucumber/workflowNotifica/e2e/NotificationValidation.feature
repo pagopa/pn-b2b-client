@@ -36,7 +36,6 @@ Feature: Validazione notifica e2e
       | details                | NOT_NULL                                  |
       | details_refusalReasons | [{"errorCode": "FILE_PDF_INVALID_ERROR"}] |
 
-
   @e2e  @asyncValidation
   Scenario: [E2E-NOTIFICATION_VALIDATION_ATTACHMENT_4] validazione fallita allegati notifica - file non caricato su SafeStorage
     Given viene generata una nuova notifica
@@ -65,7 +64,6 @@ Feature: Validazione notifica e2e
       | loadTimeline           | true                                      |
       | details                | NOT_NULL                                  |
       | details_refusalReasons | [{"errorCode": "F24_METADATA_NOT_VALID"}] |
-
 
   @e2e  @asyncValidation
   Scenario: [E2E-NOTIFICATION_VALIDATION_ATTACHMENT_6] validazione fallita allegati notifica - Sha256 Json differenti
@@ -112,7 +110,6 @@ Feature: Validazione notifica e2e
       | details                | NOT_NULL                             |
       | details_refusalReasons | [{"errorCode": "NOT_VALID_ADDRESS"}] |
 
-
   @e2e  @asyncValidation
   Scenario: [E2E-NOTIFICATION_VALIDATION_ASINC_OK] Invio notifica digitale ed attesa elemento di timeline REQUEST_ACCEPTED e controllo che sia presente nel campo legalFactsIds l'atto opponibile a terzi con category SENDER_ACK positivo
     Given viene generata una nuova notifica
@@ -123,7 +120,6 @@ Feature: Validazione notifica e2e
     And viene verificato che l'elemento di timeline "REQUEST_ACCEPTED" esista
       | loadTimeline  | true                         |
       | legalFactsIds | [{"category": "SENDER_ACK"}] |
-
 
   @e2e  @asyncValidation
   Scenario: [E2E-NOTIFICATION_VALIDATION_AAR_GENERATION] Invio notifica digitale ed attesa elemento di timeline AAR_GENERATION sia presente il campo generatedAarUrl valorizzato positivo
@@ -137,4 +133,3 @@ Feature: Validazione notifica e2e
       | details                 | NOT_NULL |
       | details_recIndex        | 0        |
       | details_generatedAarUrl | NOT_NULL |
-        

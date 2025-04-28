@@ -61,7 +61,7 @@ public class AvanzamentoNotificheB2bSteps {
     @Getter
     private final TimingForPolling timingForPolling;
 
-    private final Map<NotificationVersion, B2bStepsInterface> mapOfVersionSteps = NotificationVersion.getMapOfB2bSteps(this);
+    private final Map<NotificationVersion, B2bStepsInterface> mapOfVersionSteps = new HashMap<>();
 
     @Autowired
     public AvanzamentoNotificheB2bSteps(SharedSteps sharedSteps,
@@ -83,6 +83,9 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
     private B2bStepsInterface getB2bStepsInterface(NotificationVersion notificationVersion) {
+        if (mapOfVersionSteps.get(notificationVersion) == null) {
+            mapOfVersionSteps.put(notificationVersion, NotificationVersion.createB2bStep(notificationVersion, this));
+        }
         return mapOfVersionSteps.get(notificationVersion);
     }
 

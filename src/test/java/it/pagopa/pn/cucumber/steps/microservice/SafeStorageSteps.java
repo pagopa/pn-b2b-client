@@ -6,13 +6,14 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.service.IPnSafeStoragePrivateClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.model.*;
+import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.utils.IndicizzazioneStepsPojo;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 
@@ -27,21 +28,22 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @Slf4j
 public class SafeStorageSteps {
 
+    private final ApplicationContext context;
     private final IPnSafeStoragePrivateClient safeStorageClient;
-    private final PnPaB2bUtils b2bUtils;
     private final IndicizzazioneStepsPojo indicizzazioneStepsPojo;
 
     @Autowired
-    public SafeStorageSteps(IPnSafeStoragePrivateClient safeStorageClient, PnPaB2bUtils b2bUtils) {
+    public SafeStorageSteps(ApplicationContext context, IPnSafeStoragePrivateClient safeStorageClient) {
+        this.context = context;
         this.safeStorageClient = safeStorageClient;
-        this.b2bUtils = b2bUtils;
-        this.indicizzazioneStepsPojo = new IndicizzazioneStepsPojo();
+        indicizzazioneStepsPojo = new IndicizzazioneStepsPojo();
     }
 
-    private String computeSha(String resourceName) {
+    private String computeAndSetSha(String resourceName) {
         try {
-            this.indicizzazioneStepsPojo.setSha256(this.b2bUtils.computeSha256(resourceName));
-            return this.indicizzazioneStepsPojo.getSha256();
+            String sha = B2bUtils.computeSha256(context, resourceName);
+            indicizzazioneStepsPojo.setSha256(sha);
+            return sha;
         } catch (IOException e) {
             throw new IllegalStateException(e.getMessage() + " NON è stato possibile computare lo sha");
         }
@@ -50,9 +52,9 @@ public class SafeStorageSteps {
     @Given("esiste un limite {string} con valore pari a {int}")
     public void setLimit(String limitName, int limitValue) {
         try {
-            Field field = this.indicizzazioneStepsPojo.getClass().getDeclaredField(limitName);
+            Field field = indicizzazioneStepsPojo.getClass().getDeclaredField(limitName);
             field.setAccessible(true);
-            field.setInt(this.indicizzazioneStepsPojo, limitValue);
+            field.setInt(indicizzazioneStepsPojo, limitValue);
         } catch (Exception e) {
             log.info(e.getMessage());
         }
@@ -99,13 +101,13 @@ public class SafeStorageSteps {
 
     @Given("(il documento viene aggiornato)(i documenti vengono aggiornati) aggiungendo {string} valori per volta al tag {string}, fino a raggiungere il limite di {string}")
     public void singleAddValuesUntilMax(String maxValuesPerTagPerRequest, String tagName, String maxValuesPerTagDocument) {
-        int maxValuesPerTagPerRequestInt = retriveLimitFromPojo(this.indicizzazioneStepsPojo, maxValuesPerTagPerRequest);
-        int maxValuesPerTagDocumentInt = retriveLimitFromPojo(this.indicizzazioneStepsPojo, maxValuesPerTagDocument);
+        int maxValuesPerTagPerRequestInt = retriveLimitFromPojo(indicizzazioneStepsPojo, maxValuesPerTagPerRequest);
+        int maxValuesPerTagDocumentInt = retriveLimitFromPojo(indicizzazioneStepsPojo, maxValuesPerTagDocument);
         int counterTagsAdded = 0;
         while (counterTagsAdded < maxValuesPerTagDocumentInt) {
             int valuesToAdd = getQuantityToAddInIteration(maxValuesPerTagDocumentInt, maxValuesPerTagPerRequestInt, counterTagsAdded);
             List<String> tagValues = createTagValues(counterTagsAdded, "PARI", String.valueOf(valuesToAdd));
-            if (this.indicizzazioneStepsPojo.getCreatedFiles().size() == 1) {
+            if (indicizzazioneStepsPojo.getCreatedFiles().size() == 1) {
                 updateSingleContinuativo(tagName, tagValues);
             } else {
                 updateMassiveContinuativo(tagName, tagValues);
@@ -120,7 +122,7 @@ public class SafeStorageSteps {
 
     private void uploadDocumentsWithTags(String type, Map<String, List<String>> tagMap, Integer quantity) {
         String resourcePath = type.equals("PN_LEGAL_FACTS_ST") ? "classpath:/long_file.pdf" : "classpath:/multa.pdf";
-        String sha256 = computeSha(resourcePath);
+        String sha256 = computeAndSetSha(resourcePath);
         FileCreationRequest request = new FileCreationRequest();
         request.setContentType("application/pdf");
         request.setStatus("SAVED");
@@ -128,10 +130,10 @@ public class SafeStorageSteps {
         request.setTags(tagMap);
         for (int i = 0; i < quantity; i++) {
             try {
-                FileCreationResponse fileCreationResponse = this.safeStorageClient.createFile(sha256, "SHA256", request);
+                FileCreationResponse fileCreationResponse = safeStorageClient.createFile(sha256, "SHA256", request);
                 loadToPresignedUrl(fileCreationResponse, sha256, resourcePath);
             } catch (HttpClientErrorException httpExc) {
-                this.indicizzazioneStepsPojo.setHttpException(httpExc);
+                indicizzazioneStepsPojo.setHttpException(httpExc);
             }
         }
     }
@@ -139,7 +141,7 @@ public class SafeStorageSteps {
     @When("il documento viene modificato associandogli il tag {string} con un numero di valori {string} a {string}")
     public void updateSingleWithNValues(String tagName, String comparator, String limit) {
         int quantity = getLimitValue(comparator, limit);
-        String fileKey = this.indicizzazioneStepsPojo.getCreatedFiles().get(0).getKey();
+        String fileKey = indicizzazioneStepsPojo.getCreatedFiles().get(0).getKey();
         List<String> tagValues = new LinkedList<>();
         for (int i = 0; i < quantity; i++) {
             tagValues.add("test" + (i + 1));
@@ -147,11 +149,11 @@ public class SafeStorageSteps {
         AdditionalFileTagsUpdateRequest request = new AdditionalFileTagsUpdateRequest();
         request.putSETItem(tagName, tagValues);
         try {
-            this.indicizzazioneStepsPojo.setUpdateSingleResponseEntity(safeStorageClient.additionalFileTagsUpdateWithHttpInfo(
+            indicizzazioneStepsPojo.setUpdateSingleResponseEntity(safeStorageClient.additionalFileTagsUpdateWithHttpInfo(
                     fileKey, "pn-test", request));
         } catch (HttpClientErrorException e) {
             log.info("Errore durante l'aggiornamento del documento: {}", e.getMessage());
-            this.indicizzazioneStepsPojo.setHttpException(e);
+            indicizzazioneStepsPojo.setHttpException(e);
         }
     }
 
@@ -159,9 +161,9 @@ public class SafeStorageSteps {
     public void updateMassiviWithNValues(String tagName, String comparator, String limit) {
         int quantity = getLimitValue(comparator, limit);
 
-        assertThat(this.indicizzazioneStepsPojo.getCreatedFiles().size()).isEqualTo(2);
-        String fileKey1 = this.indicizzazioneStepsPojo.getCreatedFiles().get(0).getKey();
-        String fileKey2 = this.indicizzazioneStepsPojo.getCreatedFiles().get(1).getKey();
+        assertThat(indicizzazioneStepsPojo.getCreatedFiles().size()).isEqualTo(2);
+        String fileKey1 = indicizzazioneStepsPojo.getCreatedFiles().get(0).getKey();
+        String fileKey2 = indicizzazioneStepsPojo.getCreatedFiles().get(1).getKey();
 
         List<String> tagValues = new LinkedList<>();
         for (int i = 0; i < quantity; i++) {
@@ -182,30 +184,30 @@ public class SafeStorageSteps {
 
         request.setTags(tagsList);
         try {
-            this.indicizzazioneStepsPojo.setUpdateMassiveResponseEntity(safeStorageClient.additionalFileTagsMassiveUpdateWithHttpInfo("pn-test", request));
+            indicizzazioneStepsPojo.setUpdateMassiveResponseEntity(safeStorageClient.additionalFileTagsMassiveUpdateWithHttpInfo("pn-test", request));
         } catch (HttpClientErrorException e) {
             log.info("Errore durante l'aggiornamento dei documento: {}", e.getMessage());
-            this.indicizzazioneStepsPojo.setHttpException(e);
+            indicizzazioneStepsPojo.setHttpException(e);
         }
     }
 
     private void updateSingleContinuativo(String tagName, List<String> tagValues) {
         AdditionalFileTagsUpdateRequest request = new AdditionalFileTagsUpdateRequest();
         request.putSETItem(tagName, tagValues);
-        String fileKey = this.indicizzazioneStepsPojo.getCreatedFiles().get(0).getKey();
+        String fileKey = indicizzazioneStepsPojo.getCreatedFiles().get(0).getKey();
         try {
-            this.indicizzazioneStepsPojo.setUpdateSingleResponseEntity(
+            indicizzazioneStepsPojo.setUpdateSingleResponseEntity(
                     safeStorageClient.additionalFileTagsUpdateWithHttpInfo(fileKey, "pn-test", request));
         } catch (HttpClientErrorException e) {
             log.info("Errore durante l'aggiornamento del documento: {}", e.getMessage());
-            this.indicizzazioneStepsPojo.setHttpException(e);
+            indicizzazioneStepsPojo.setHttpException(e);
         }
     }
 
     private void updateMassiveContinuativo(String tagName, List<String> tagValues) {
         List<Tags> tagsList = new LinkedList<>();
         AdditionalFileTagsMassiveUpdateRequest request = new AdditionalFileTagsMassiveUpdateRequest();
-        this.indicizzazioneStepsPojo.getCreatedFiles().forEach(file -> {
+        indicizzazioneStepsPojo.getCreatedFiles().forEach(file -> {
             Tags newTag = new Tags();
             newTag.setFileKey(file.getKey());
             newTag.putSETItem(tagName, tagValues);
@@ -213,11 +215,11 @@ public class SafeStorageSteps {
         });
         request.setTags(tagsList);
         try {
-            this.indicizzazioneStepsPojo.setUpdateMassiveResponseEntity(
+            indicizzazioneStepsPojo.setUpdateMassiveResponseEntity(
                     safeStorageClient.additionalFileTagsMassiveUpdateWithHttpInfo("pn-test", request));
         } catch (HttpClientErrorException e) {
             log.info("Errore durante l'aggiornamento dei documento: {}", e.getMessage());
-            this.indicizzazioneStepsPojo.setHttpException(e);
+            indicizzazioneStepsPojo.setHttpException(e);
         }
     }
 
@@ -236,7 +238,7 @@ public class SafeStorageSteps {
      */
     private int getLimitValue(String comparator, String limit) {
         int quantity = limit.matches("[0-9]+") ?
-                Integer.parseInt(limit) : retriveLimitFromPojo(this.indicizzazioneStepsPojo, limit);
+                Integer.parseInt(limit) : retriveLimitFromPojo(indicizzazioneStepsPojo, limit);
         if (comparator.equalsIgnoreCase("SUPERIORE")) {
             quantity += 1;
         } else if (comparator.equalsIgnoreCase("INFERIORE")) {
@@ -248,14 +250,14 @@ public class SafeStorageSteps {
     @Given("Viene caricato un nuovo documento di tipo {string}")
     public void uploadNewDocument(String type) {
         String resourcePath = "classpath:/multa.pdf";
-        String sha256 = computeSha(resourcePath);
+        String sha256 = computeAndSetSha(resourcePath);
 
         FileCreationRequest request = new FileCreationRequest();
         request.setContentType("application/pdf");
         request.setStatus("SAVED");
         request.setDocumentType(type);
 
-        FileCreationResponse fileCreationResponse = this.safeStorageClient.createFile(sha256, "SHA256", request);
+        FileCreationResponse fileCreationResponse = safeStorageClient.createFile(sha256, "SHA256", request);
         loadToPresignedUrl(fileCreationResponse, sha256, resourcePath);
     }
 
@@ -269,7 +271,7 @@ public class SafeStorageSteps {
     @Given("Viene caricato un nuovo documento di tipo {string} con tag associati")
     public void uploadNewDocumentWithTags(String type, List<String> tagList) {
         String resourcePath = type.equals("PN_LEGAL_FACTS_ST") ? "classpath:/long_file.pdf" : "classpath:/multa.pdf";
-        String sha256 = computeSha(resourcePath);
+        String sha256 = computeAndSetSha(resourcePath);
         FileCreationRequest request = new FileCreationRequest();
         request.setContentType("application/pdf");
         request.setStatus("SAVED");
@@ -277,17 +279,17 @@ public class SafeStorageSteps {
         request.setTags(tagList.stream().collect(Collectors.toMap(
                 tag -> tag.split(":")[0], tag -> Arrays.asList(tag.split(":")[1].split(",")))));
         try {
-            FileCreationResponse fileCreationResponse = this.safeStorageClient.createFile(sha256, "SHA256", request);
+            FileCreationResponse fileCreationResponse = safeStorageClient.createFile(sha256, "SHA256", request);
             loadToPresignedUrl(fileCreationResponse, sha256, resourcePath);
         } catch (HttpClientErrorException httpExc) {
-            this.indicizzazioneStepsPojo.setHttpException(httpExc);
+            indicizzazioneStepsPojo.setHttpException(httpExc);
         }
     }
 
     @Given("Viene caricato un nuovo documento di tipo {string} con un tag avente {int} valori associati")
     public void uploadNewDocumentWithTags(String type, Integer tagNumber) {
         String resourcePath = type.equals("PN_LEGAL_FACTS_ST") ? "classpath:/long_file.pdf" : "classpath:/multa.pdf";
-        String sha256 = computeSha(resourcePath);
+        String sha256 = computeAndSetSha(resourcePath);
         FileCreationRequest request = new FileCreationRequest();
         request.setContentType("application/pdf");
         request.setStatus("SAVED");
@@ -299,10 +301,10 @@ public class SafeStorageSteps {
         request.setTags(new HashMap<>());
         request.getTags().put("global_multivalue", values);
         try {
-            FileCreationResponse fileCreationResponse = this.safeStorageClient.createFile(sha256, "SHA256", request);
+            FileCreationResponse fileCreationResponse = safeStorageClient.createFile(sha256, "SHA256", request);
             loadToPresignedUrl(fileCreationResponse, sha256, resourcePath);
         } catch (HttpClientErrorException httpExc) {
-            this.indicizzazioneStepsPojo.setHttpException(httpExc);
+            indicizzazioneStepsPojo.setHttpException(httpExc);
         }
     }
 
@@ -318,10 +320,10 @@ public class SafeStorageSteps {
         String secret = fileCreationResponse.getSecret();
         String url = fileCreationResponse.getUploadUrl();
 
-        this.b2bUtils.loadToPresigned(url, secret, sha256, resourcePath);
+        B2bUtils.loadToPresigned(context, url, secret, sha256, resourcePath, B2bUtils.APPLICATION_PDF);
         log.info("FILEKEY: " + fileKey);
 
-        this.indicizzazioneStepsPojo.getCreatedFiles().add(fileCreationResponse);
+        indicizzazioneStepsPojo.getCreatedFiles().add(fileCreationResponse);
         log.info("File successfully created");
     }
 
@@ -330,36 +332,35 @@ public class SafeStorageSteps {
         try {
             switch (operation) {
                 case "CREATE_FILE" ->
-                        this.safeStorageClient.createFileWithHttpInfo(client, "", "", new FileCreationRequest());
-                case "GET_FILE" -> this.safeStorageClient.getFileWithHttpInfo(
-                        "test", client, true, true);
+                        safeStorageClient.createFileWithHttpInfo(client, "", "", new FileCreationRequest());
+                case "GET_FILE" -> safeStorageClient.getFileWithHttpInfo("test", client, true, true);
                 case "UPDATE_SINGLE" ->
-                        this.safeStorageClient.additionalFileTagsUpdateWithHttpInfo("test", client, new AdditionalFileTagsUpdateRequest());
-                case "UPDATE_MASSIVE" -> this.safeStorageClient.additionalFileTagsMassiveUpdateWithHttpInfo(
-                        client, new AdditionalFileTagsMassiveUpdateRequest());
-                case "GET_TAGS" -> this.safeStorageClient.additionalFileTagsGetWithHttpInfo(
-                        "PN_NOTIFICATION_ATTACHMENTS-eabd62ef59444526beeab293b2255ace.pdf", client);
-                case "SEARCH_FILE" -> this.safeStorageClient.additionalFileTagsSearchWithHttpInfo(
-                        client, "AND", true, new HashMap<>());
+                        safeStorageClient.additionalFileTagsUpdateWithHttpInfo("test", client, new AdditionalFileTagsUpdateRequest());
+                case "UPDATE_MASSIVE" ->
+                        safeStorageClient.additionalFileTagsMassiveUpdateWithHttpInfo(client, new AdditionalFileTagsMassiveUpdateRequest());
+                case "GET_TAGS" ->
+                        safeStorageClient.additionalFileTagsGetWithHttpInfo("PN_NOTIFICATION_ATTACHMENTS-eabd62ef59444526beeab293b2255ace.pdf", client);
+                case "SEARCH_FILE" ->
+                        safeStorageClient.additionalFileTagsSearchWithHttpInfo(client, "AND", true, new HashMap<>());
                 default -> throw new IllegalArgumentException("Operazione non supportata: " + operation);
             }
         } catch (HttpClientErrorException httpExc) {
-            this.indicizzazioneStepsPojo.setHttpException(httpExc);
+            indicizzazioneStepsPojo.setHttpException(httpExc);
         }
     }
 
     @Then("La chiamata genera un errore con status code {int}")
     public void checkForStatusCode(Integer statusCode) {
-        assertThat(this.indicizzazioneStepsPojo.getHttpException()).as("Diversamente da quanto atteso la chiamata non ha prodotto alcuna eccezione").isNotNull();
+        assertThat(indicizzazioneStepsPojo.getHttpException()).as("Diversamente da quanto atteso la chiamata non ha prodotto alcuna eccezione").isNotNull();
         assertThat(statusCode)
                 .as("Il codice di errore non combacia con quanto atteso")
-                .isEqualTo(this.indicizzazioneStepsPojo.getHttpException().getRawStatusCode());
+                .isEqualTo(indicizzazioneStepsPojo.getHttpException().getRawStatusCode());
     }
 
     @And("Il messaggio di errore riporta la dicitura {string}")
     public void checkForStatusCode(String errorMessage) {
-        assertThat(this.indicizzazioneStepsPojo.getHttpException()).as("Diversamente da quanto atteso la chiamata non ha prodotto alcuna eccezione").isNotNull();
-        assertThat(this.indicizzazioneStepsPojo.getHttpException().getMessage())
+        assertThat(indicizzazioneStepsPojo.getHttpException()).as("Diversamente da quanto atteso la chiamata non ha prodotto alcuna eccezione").isNotNull();
+        assertThat(indicizzazioneStepsPojo.getHttpException().getMessage())
                 .as("Il messaggio di errore riporta la seguente dicitura: ")
                 .contains(errorMessage);
     }
@@ -370,10 +371,10 @@ public class SafeStorageSteps {
         try {
             ResponseEntity<AdditionalFileTagsMassiveUpdateResponse> response = safeStorageClient.additionalFileTagsMassiveUpdateWithHttpInfo(
                     "pn-test", createWrongMassiveRequest(data));
-            this.indicizzazioneStepsPojo.setUpdateMassiveResponseEntity(response);
+            indicizzazioneStepsPojo.setUpdateMassiveResponseEntity(response);
         } catch (HttpClientErrorException e) {
             log.info("Errore durante l'aggiornamento del documento: {}", e.getMessage());
-            this.indicizzazioneStepsPojo.setHttpException(e);
+            indicizzazioneStepsPojo.setHttpException(e);
         }
     }
 
@@ -383,7 +384,7 @@ public class SafeStorageSteps {
         data.forEach(d -> {
             Tags newTag = new Tags();
             int documentIndex = Integer.parseInt(d.get("documentIndex"));
-            newTag.setFileKey(this.indicizzazioneStepsPojo.getCreatedFiles().get(documentIndex - 1).getKey());
+            newTag.setFileKey(indicizzazioneStepsPojo.getCreatedFiles().get(documentIndex - 1).getKey());
             if (d.get("operation").equals("SET")) {
                 newTag.putSETItem(d.get("tag").split(":")[0],
                         Arrays.stream(d.get("tag").split(":")[1].split(",")).toList());
@@ -399,39 +400,39 @@ public class SafeStorageSteps {
 
     @When("Si modifica il documento {int} secondo le seguenti operazioni")
     public void updateDocument(Integer documentIndex, DataTable dataTable) {
-        Assertions.assertTrue(documentIndex <= this.indicizzazioneStepsPojo.getCreatedFiles().size());
+        Assertions.assertTrue(documentIndex <= indicizzazioneStepsPojo.getCreatedFiles().size());
         Map<String, String> data = dataTable.asMap(String.class, String.class);
-        String fileKey = this.indicizzazioneStepsPojo.getCreatedFiles().get(documentIndex - 1).getKey();
+        String fileKey = indicizzazioneStepsPojo.getCreatedFiles().get(documentIndex - 1).getKey();
         try {
-            this.indicizzazioneStepsPojo.setUpdateSingleResponseEntity(safeStorageClient.additionalFileTagsUpdateWithHttpInfo(
+            indicizzazioneStepsPojo.setUpdateSingleResponseEntity(safeStorageClient.additionalFileTagsUpdateWithHttpInfo(
                     fileKey, "pn-test", createUpdateRequest(data)));
         } catch (HttpClientErrorException e) {
             log.info("Errore durante l'aggiornamento del documento: {}", e.getMessage());
-            this.indicizzazioneStepsPojo.setHttpException(e);
+            indicizzazioneStepsPojo.setHttpException(e);
         }
     }
 
     @When("Si modifica il documento {int} associando valori a un singolo tag in numero {string} a {string}")
     public void updateDocument(Integer documentIndex, String comparator, String limit) {
         int quantity = getLimitValue(comparator, limit);
-        Assertions.assertTrue(documentIndex <= this.indicizzazioneStepsPojo.getCreatedFiles().size());
-        String fileKey = this.indicizzazioneStepsPojo.getCreatedFiles().get(documentIndex - 1).getKey();
+        Assertions.assertTrue(documentIndex <= indicizzazioneStepsPojo.getCreatedFiles().size());
+        String fileKey = indicizzazioneStepsPojo.getCreatedFiles().get(documentIndex - 1).getKey();
         try {
-            this.indicizzazioneStepsPojo.setUpdateSingleResponseEntity(safeStorageClient.additionalFileTagsUpdateWithHttpInfo(
+            indicizzazioneStepsPojo.setUpdateSingleResponseEntity(safeStorageClient.additionalFileTagsUpdateWithHttpInfo(
                     fileKey, "pn-test", createUpdateRequest(0, quantity)));
         } catch (HttpClientErrorException e) {
             log.info("Errore durante l'aggiornamento del documento: {}", e.getMessage());
-            this.indicizzazioneStepsPojo.setHttpException(e);
+            indicizzazioneStepsPojo.setHttpException(e);
         }
     }
 
     @When("tali documenti vengono modificati simultaneamente associando a ciascuno il tag {string}")
     public void updateAllDocumentsWithSameTag(String tagName) {
-        Assertions.assertFalse(this.indicizzazioneStepsPojo.getCreatedFiles().isEmpty());
+        Assertions.assertFalse(indicizzazioneStepsPojo.getCreatedFiles().isEmpty());
         AdditionalFileTagsMassiveUpdateRequest request = new AdditionalFileTagsMassiveUpdateRequest();
         List<Tags> tagsList = new LinkedList<>();
-        for (int i = 0; i < this.indicizzazioneStepsPojo.getCreatedFiles().size(); i++) {
-            String fileKey = this.indicizzazioneStepsPojo.getCreatedFiles().get(i).getKey();
+        for (int i = 0; i < indicizzazioneStepsPojo.getCreatedFiles().size(); i++) {
+            String fileKey = indicizzazioneStepsPojo.getCreatedFiles().get(i).getKey();
             Tags newTag = new Tags();
             newTag.setFileKey(fileKey);
             newTag.putSETItem(tagName, List.of("test" + (i + 1)));
@@ -441,10 +442,10 @@ public class SafeStorageSteps {
         try {
             ResponseEntity<AdditionalFileTagsMassiveUpdateResponse> response =
                     safeStorageClient.additionalFileTagsMassiveUpdateWithHttpInfo("pn-test", request);
-            this.indicizzazioneStepsPojo.setUpdateMassiveResponseEntity(response);
+            indicizzazioneStepsPojo.setUpdateMassiveResponseEntity(response);
         } catch (HttpClientErrorException e) {
             log.info("Errore durante l'aggiornamento del documento: {}", e.getMessage());
-            this.indicizzazioneStepsPojo.setHttpException(e);
+            indicizzazioneStepsPojo.setHttpException(e);
         }
     }
 
@@ -454,10 +455,10 @@ public class SafeStorageSteps {
         try {
             ResponseEntity<AdditionalFileTagsMassiveUpdateResponse> response = safeStorageClient.additionalFileTagsMassiveUpdateWithHttpInfo(
                     "pn-test", createMassiveRequest(data));
-            this.indicizzazioneStepsPojo.setUpdateMassiveResponseEntity(response);
+            indicizzazioneStepsPojo.setUpdateMassiveResponseEntity(response);
         } catch (HttpClientErrorException e) {
             log.info("Errore durante l'aggiornamento del documento: {}", e.getMessage());
-            this.indicizzazioneStepsPojo.setHttpException(e);
+            indicizzazioneStepsPojo.setHttpException(e);
         }
     }
 
@@ -467,7 +468,7 @@ public class SafeStorageSteps {
         Set<Integer> indexes = data.stream().map(x -> Integer.valueOf(x.get("documentIndex"))).collect(Collectors.toSet());
         indexes.forEach(i -> {
             Tags newTag = new Tags();
-            newTag.setFileKey(this.indicizzazioneStepsPojo.getCreatedFiles().get(i - 1).getKey());
+            newTag.setFileKey(indicizzazioneStepsPojo.getCreatedFiles().get(i - 1).getKey());
             List<Map<String, String>> documentMaps = data.stream().filter(map -> Integer.valueOf(map.get("documentIndex")).equals(i)).toList();
             populateTag(newTag, documentMaps);
             tagsList.add(newTag);
@@ -488,16 +489,16 @@ public class SafeStorageSteps {
                     map -> Integer.valueOf(map.get("documentIndex")).equals(index)).toList();
             populateTag(newTag, documentMaps);
             tagsList.add(newTag);
-            this.indicizzazioneStepsPojo.getFileKeyInesistenti().add(newTag.getFileKey());
+            indicizzazioneStepsPojo.getFileKeyInesistenti().add(newTag.getFileKey());
         }
         request.setTags(tagsList);
         try {
             ResponseEntity<AdditionalFileTagsMassiveUpdateResponse> response = safeStorageClient.additionalFileTagsMassiveUpdateWithHttpInfo(
                     "pn-test", request);
-            this.indicizzazioneStepsPojo.setUpdateMassiveResponseEntity(response);
+            indicizzazioneStepsPojo.setUpdateMassiveResponseEntity(response);
         } catch (HttpClientErrorException e) {
             log.info("Errore durante l'aggiornamento del documento: {}", e.getMessage());
-            this.indicizzazioneStepsPojo.setHttpException(e);
+            indicizzazioneStepsPojo.setHttpException(e);
         }
         return request;
     }
@@ -506,8 +507,8 @@ public class SafeStorageSteps {
     public AdditionalFileTagsMassiveUpdateRequest createMassiveRequestEsistenteAndInesistente(Integer numberOfDocuments, List<Map<String, String>> data) {
         AdditionalFileTagsMassiveUpdateRequest request = new AdditionalFileTagsMassiveUpdateRequest();
         List<Tags> tagsList = new LinkedList<>();
-        for (int i = 0; i < this.indicizzazioneStepsPojo.getCreatedFiles().size(); i++) {
-            FileCreationResponse document = this.indicizzazioneStepsPojo.getCreatedFiles().get(i);
+        for (int i = 0; i < indicizzazioneStepsPojo.getCreatedFiles().size(); i++) {
+            FileCreationResponse document = indicizzazioneStepsPojo.getCreatedFiles().get(i);
             Tags newTag = new Tags();
             newTag.setFileKey(document.getKey());
             int index = i + 1;
@@ -518,21 +519,21 @@ public class SafeStorageSteps {
         for (int i = 0; i < numberOfDocuments; i++) {
             Tags newTag = new Tags();
             newTag.setFileKey("fileKeyInesistente" + (i + 1));
-            int index = this.indicizzazioneStepsPojo.getCreatedFiles().size() + i + 1;
+            int index = indicizzazioneStepsPojo.getCreatedFiles().size() + i + 1;
             List<Map<String, String>> documentMaps = data.stream().filter(
                     map -> Integer.valueOf(map.get("documentIndex")).equals(index)).toList();
             populateTag(newTag, documentMaps);
             tagsList.add(newTag);
-            this.indicizzazioneStepsPojo.getFileKeyInesistenti().add(newTag.getFileKey());
+            indicizzazioneStepsPojo.getFileKeyInesistenti().add(newTag.getFileKey());
         }
         request.setTags(tagsList);
         try {
             ResponseEntity<AdditionalFileTagsMassiveUpdateResponse> response = safeStorageClient.additionalFileTagsMassiveUpdateWithHttpInfo(
                     "pn-test", request);
-            this.indicizzazioneStepsPojo.setUpdateMassiveResponseEntity(response);
+            indicizzazioneStepsPojo.setUpdateMassiveResponseEntity(response);
         } catch (HttpClientErrorException e) {
             log.info("Errore durante l'aggiornamento del documento: {}", e.getMessage());
-            this.indicizzazioneStepsPojo.setHttpException(e);
+            indicizzazioneStepsPojo.setHttpException(e);
         }
         return request;
     }
@@ -554,7 +555,7 @@ public class SafeStorageSteps {
 
     @And("I primi {int} documenti vengono modificati secondo le seguenti operazioni")
     public void updateNDocuments(Integer documentIndex, DataTable dataTable) {
-        int createdFiles = this.indicizzazioneStepsPojo.getCreatedFiles().size();
+        int createdFiles = indicizzazioneStepsPojo.getCreatedFiles().size();
         assertThat(documentIndex)
                 .as("Indice documento (" + documentIndex + ") superiore al numero di documenti creati (" + createdFiles + ")")
                 .isLessThanOrEqualTo(createdFiles);
@@ -606,7 +607,7 @@ public class SafeStorageSteps {
         if (!expectedTags.contains("null")) {
             try {
                 Map<String, List<String>> tagMap = safeStorageClient.getFile(
-                        this.indicizzazioneStepsPojo.getCreatedFiles().get(documentIndex - 1).getKey(),
+                        indicizzazioneStepsPojo.getCreatedFiles().get(documentIndex - 1).getKey(),
                         false, true).getTags();
                 assert tagMap != null;
                 Assertions.assertEquals(expectedTags.size(), tagMap.size());
@@ -621,21 +622,21 @@ public class SafeStorageSteps {
                     tagValues.forEach(t -> Assertions.assertTrue(tagMap.get(tagName).contains(t)));
                 });
             } catch (HttpClientErrorException httpExc) {
-                this.indicizzazioneStepsPojo.setHttpException(httpExc);
+                indicizzazioneStepsPojo.setHttpException(httpExc);
             }
         }
     }
 
     @Then("Il risultato della search contiene le fileKey relative ai seguenti documenti")
     public void checkSearchResult(DataTable dataTable) {
-        List<String> searchResult = this.indicizzazioneStepsPojo.getAdditionalFileTagsSearchResponseResponseEntity().getBody().getFileKeys()
+        List<String> searchResult = indicizzazioneStepsPojo.getAdditionalFileTagsSearchResponseResponseEntity().getBody().getFileKeys()
                 .stream().map(AdditionalFileTagsSearchResponseFileKeys::getFileKey).toList();
         List<String> documentIndexes = dataTable.asList();
         if (documentIndexes.contains("null")) {
             Assertions.assertTrue(searchResult.isEmpty());
         } else {
             List<String> expectedFileKeys = new LinkedList<>();
-            documentIndexes.forEach(x -> expectedFileKeys.add(this.indicizzazioneStepsPojo.getCreatedFiles().get(Integer.parseInt(x) - 1).getKey()));
+            documentIndexes.forEach(x -> expectedFileKeys.add(indicizzazioneStepsPojo.getCreatedFiles().get(Integer.parseInt(x) - 1).getKey()));
             expectedFileKeys.forEach(x -> Assertions.assertTrue(searchResult.contains(x)));
         }
     }
@@ -669,8 +670,8 @@ public class SafeStorageSteps {
 
     @Then("L'update massivo va in successo con stato {int}")
     public void checkUpdateMassiveStatusCode(Integer statusCode) {
-        Assertions.assertNotNull(this.indicizzazioneStepsPojo.getUpdateMassiveResponseEntity());
-        Assertions.assertEquals(this.indicizzazioneStepsPojo.getUpdateMassiveResponseEntity().getStatusCodeValue(), statusCode);
+        Assertions.assertNotNull(indicizzazioneStepsPojo.getUpdateMassiveResponseEntity());
+        Assertions.assertEquals(indicizzazioneStepsPojo.getUpdateMassiveResponseEntity().getStatusCodeValue(), statusCode);
     }
 
     @When("Vengono ricercate con logica {string} le fileKey aventi i seguenti tag")
@@ -688,7 +689,7 @@ public class SafeStorageSteps {
                     "pn-test", logic, true, tagMap);
             indicizzazioneStepsPojo.setAdditionalFileTagsSearchResponseResponseEntity(response);
         } catch (HttpClientErrorException httpExc) {
-            this.indicizzazioneStepsPojo.setHttpException(httpExc);
+            indicizzazioneStepsPojo.setHttpException(httpExc);
         }
     }
 
@@ -707,21 +708,21 @@ public class SafeStorageSteps {
                     "pn-test", logic, true, tagMap);
             indicizzazioneStepsPojo.setAdditionalFileTagsSearchResponseResponseEntity(response);
         } catch (HttpClientErrorException httpExc) {
-            this.indicizzazioneStepsPojo.setHttpException(httpExc);
+            indicizzazioneStepsPojo.setHttpException(httpExc);
         }
     }
 
     @And("La response contiene uno o più errori {string} riportanti la dicitura {string} riguardanti il documento {int}")
     public void checkUpdateMassiveErrors(String errorCode, String errorMessage, Integer documentIndex) {
-        Assertions.assertNotNull(this.indicizzazioneStepsPojo.getUpdateMassiveResponseEntity());
-        Assertions.assertNotNull(this.indicizzazioneStepsPojo.getUpdateMassiveResponseEntity().getBody());
+        Assertions.assertNotNull(indicizzazioneStepsPojo.getUpdateMassiveResponseEntity());
+        Assertions.assertNotNull(indicizzazioneStepsPojo.getUpdateMassiveResponseEntity().getBody());
         ErrorDetail fileKeyError;
-        if (this.indicizzazioneStepsPojo.getFileKeyInesistenti().isEmpty()) {
-            String faultyFileKey = this.indicizzazioneStepsPojo.getCreatedFiles().get(documentIndex - 1).getKey();
-            fileKeyError = this.indicizzazioneStepsPojo.getUpdateMassiveResponseEntity().getBody().getErrors()
+        if (indicizzazioneStepsPojo.getFileKeyInesistenti().isEmpty()) {
+            String faultyFileKey = indicizzazioneStepsPojo.getCreatedFiles().get(documentIndex - 1).getKey();
+            fileKeyError = indicizzazioneStepsPojo.getUpdateMassiveResponseEntity().getBody().getErrors()
                     .stream().filter(x -> x.getFileKey().contains(faultyFileKey)).findFirst().orElse(null);
         } else {
-            fileKeyError = this.indicizzazioneStepsPojo.getUpdateMassiveResponseEntity().getBody().getErrors().get(documentIndex - this.indicizzazioneStepsPojo.getCreatedFiles().size() - 1);
+            fileKeyError = indicizzazioneStepsPojo.getUpdateMassiveResponseEntity().getBody().getErrors().get(documentIndex - indicizzazioneStepsPojo.getCreatedFiles().size() - 1);
         }
         assertThat(fileKeyError).as("Diversamente da quanto atteso la chiamata non ha prodotto alcuna eccezione").isNotNull();
         log.info("Errore sulla filekey " + fileKeyError.getFileKey().get(0));
@@ -742,7 +743,7 @@ public class SafeStorageSteps {
 
     @After("@aggiuntaTag")
     public void cleanDocuments() {
-        this.indicizzazioneStepsPojo.getCreatedFiles().forEach(file -> {
+        indicizzazioneStepsPojo.getCreatedFiles().forEach(file -> {
             AdditionalFileTagsUpdateRequest request = new AdditionalFileTagsUpdateRequest();
             Map<String, List<String>> tagMap = safeStorageClient.additionalFileTagsGet(file.getKey()).getTags();
             log.info("PRE-CANCELLAZIONE: " + tagMap.toString());

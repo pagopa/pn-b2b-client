@@ -1,30 +1,36 @@
 package it.pagopa.pn.cucumber.steps.pa.utilityVersions;
 
-import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactDownloadMetadataResponse;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationAttachmentDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.*;
-import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationStepsV21;
+import it.pagopa.pn.client.b2b.pa.polling.IPnPollingService;
+import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
+import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV21;
+import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.cucumber.utils.NotificationValue;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import static it.pagopa.pn.client.b2b.pa.PnPaB2bUtils.*;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static it.pagopa.pn.cucumber.utils.NotificationValue.TAX_ID;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
 
-public class NotificationUtilsV21 extends AbstractNotificationUtils {
+@Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+public class NotificationUtilsV21 extends B2bUtils {
 
-    private NotificationStepsV21 notificationStep;
-
-    public NotificationUtilsV21(NotificationStepsV21 notificationStep) {
-        this.notificationStep = notificationStep;
-    }
-
-    @Override
-    public PnPaB2bUtils getB2bUtils() {
-        return notificationStep.getSharedSteps().getB2bUtils();
+    @Autowired
+    public NotificationUtilsV21(ApplicationContext context, IPnPaB2bClient b2bClient, PnPollingFactory pollingFactory) {
+        super(context, b2bClient, pollingFactory);
     }
 
     public synchronized NewNotificationRequestV21 convertNotificationRequest(Map<String, String> data) {
@@ -147,7 +153,7 @@ public class NotificationUtilsV21 extends AbstractNotificationUtils {
     }
 
     public NotificationDocument preloadDocument(NotificationDocument document) throws IOException {
-        Pair<String, String> preloadDocument = getB2bUtils().preloadGeneric(document.getRef().getKey(), LOAD_TO_PRESIGNED);
+        Pair<String, String> preloadDocument = preloadGeneric(context, b2bClient, document.getRef().getKey(), APPLICATION_PDF);
         documentSetKey(document, preloadDocument.getValue1());
         documentSetVersionToken(document, "v1");
         documentSetDigests(document, preloadDocument.getValue2());
@@ -173,7 +179,7 @@ public class NotificationUtilsV21 extends AbstractNotificationUtils {
 
     public NotificationPaymentAttachment preloadAttachment(NotificationPaymentAttachment attachment) throws IOException {
         if (attachment != null) {
-            Pair<String, String> preloadAttachment = getB2bUtils().preloadGeneric(attachment.getRef().getKey(), LOAD_TO_PRESIGNED);
+            Pair<String, String> preloadAttachment = preloadGeneric(context, b2bClient, attachment.getRef().getKey(), APPLICATION_PDF);
             attachmentSetKey(attachment, preloadAttachment.getValue1());
             attachmentSetVersionToken(attachment, "v1");
             attachmentSetDigests(attachment, preloadAttachment.getValue2());
@@ -201,7 +207,7 @@ public class NotificationUtilsV21 extends AbstractNotificationUtils {
 
     public NotificationMetadataAttachment preloadMetadataAttachment(NotificationMetadataAttachment attachment) throws IOException {
         if (attachment != null) {
-            Pair<String, String> preloadAttachment = getB2bUtils().preloadGeneric(attachment.getRef().getKey(), LOAD_TO_PRESIGNED_METADATI);
+            Pair<String, String> preloadAttachment = preloadGeneric(context, b2bClient, attachment.getRef().getKey(), APPLICATION_JSON);
             metadataAttachmentSetKey(attachment, preloadAttachment.getValue1());
             metadataAttachmentSetVersionToken(attachment, "v1");
             metadataAttachmentSetDigests(attachment, preloadAttachment.getValue2());
@@ -235,7 +241,7 @@ public class NotificationUtilsV21 extends AbstractNotificationUtils {
     private void setAttachmentWithSleep(List<NotificationPaymentItem> paymentList) throws IOException {
         for (NotificationPaymentItem paymentInfo : paymentList) {
             try {
-                Thread.sleep(getB2bUtils().getRandom().nextInt(350));
+                Thread.sleep(new Random().nextInt(350));
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 throw new PnB2bException(e.getMessage());
@@ -245,6 +251,247 @@ public class NotificationUtilsV21 extends AbstractNotificationUtils {
             }
             if (paymentInfo.getF24() != null) {
                 paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
+            }
+        }
+    }
+
+    public void verifyNotification(String iun) throws IllegalStateException {
+        FullSentNotificationV21 fsn = b2bClient.getSentNotificationV21(iun);
+        //Verify Sha
+        for (NotificationDocument doc : fsn.getDocuments()) {
+            int docIdx = Integer.parseInt(Objects.requireNonNull(doc.getDocIdx()));
+            NotificationAttachmentDownloadMetadataResponse response = b2bClient.getSentNotificationDocument(iun, docIdx);
+            checkSha256(response.getUrl(), response.getSha256(), docIdx);
+        }
+        //Verify Attachments
+        fsn.getRecipients().stream().filter(recipient -> recipient.getPayments() != null && !recipient.getPayments().isEmpty())
+                .forEach(recipient -> {
+                    extractAndCheckAttachment(fsn, recipient);
+                    extractAttachment(fsn, recipient);
+                });
+        //Verify LegalFacts format
+        List<LegalFactsId> legalFactsIdList = Objects.requireNonNull(fsn.getTimeline().get(0).getLegalFactsIds());
+        for (LegalFactsId legalFactsId : legalFactsIdList) {
+            LegalFactDownloadMetadataResponse resp = getLegalFact(b2bClient, iun, legalFactsId.getKey());
+            checkLegalFactFormat(resp.getUrl(), legalFactsId);
+        }
+        //Verify status
+        if (fsn.getNotificationStatus().getValue().equals(NOTIFICATION_STATUS_REFUSED)) {
+            throw new IllegalStateException(WRONG_STATUS + fsn.getNotificationStatus());
+        }
+    }
+
+    private void verifySha256Notification(FullSentNotificationV21 fsn) {
+        for (NotificationDocument doc : fsn.getDocuments()) {
+            int docIdx = Integer.parseInt(Objects.requireNonNull(doc.getDocIdx()));
+            NotificationAttachmentDownloadMetadataResponse response = b2bClient.getSentNotificationDocument(fsn.getIun(), docIdx);
+            checkSha256(response.getUrl(), response.getSha256(), docIdx);
+        }
+    }
+
+    private void extractAndCheckAttachment(FullSentNotificationV21 fsn, NotificationRecipientV21 recipient) {
+        if (Objects.requireNonNull(recipient.getPayments()).get(0).getPagoPa() != null) {
+            NotificationAttachmentDownloadMetadataResponse resp = b2bClient.getSentNotificationAttachment(fsn.getIun(), fsn.getRecipients().indexOf(recipient), PAGOPA, 0);
+            checkAttachment(resp.getFilename(), resp.getUrl(), resp.getSha256());
+        }
+    }
+
+    private void extractAttachment(FullSentNotificationV21 fsn, NotificationRecipientV21 recipient) {
+        if (Objects.requireNonNull(recipient.getPayments()).get(0).getF24() != null) {
+            NotificationAttachmentDownloadMetadataResponse resp = b2bClient.getSentNotificationAttachment(fsn.getIun(), fsn.getRecipients().indexOf(recipient), F_24, 0);
+            if (resp != null && resp.getRetryAfter() != null && resp.getRetryAfter() > 0) {
+                try {
+                    Thread.sleep(resp.getRetryAfter() * 3L);
+                    b2bClient.getSentNotificationAttachment(fsn.getIun(), fsn.getRecipients().indexOf(recipient), "F24", 0);
+                } catch (InterruptedException exc) {
+                    Thread.currentThread().interrupt();
+                    throw new PnB2bException(exc.getMessage());
+                }
+            }
+        }
+    }
+
+    public NewNotificationResponse uploadNotification(NewNotificationRequestV21 request) throws IOException {
+        //PRELOAD DOCUMENTI NOTIFICA
+        List<NotificationDocument> documents = new ArrayList<>();
+        for (NotificationDocument doc : request.getDocuments()) {
+            try {
+                Thread.sleep(new Random().nextInt(350));
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new PnB2bException(e.getMessage());
+            }
+            if (doc != null) {
+                documents.add(preloadDocument(doc));
+            }
+        }
+        request.setDocuments(documents);
+        //PRELOAD DOCUMENTI DI PAGAMENTO
+        preloadPayDocument(request);
+        return b2bClient.sendNewNotificationV21(request);
+    }
+
+    public PnPollingResponseV21 waitForEvent(NewNotificationResponse response, String pollingStrategy, String notificationStatus) {
+        IPnPollingService pollingService = pollingFactory.getPollingService(getPollingStrategy(pollingStrategy));
+        return (PnPollingResponseV21) pollingService.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(notificationStatus).build());
+    }
+
+    public static String getPollingStrategy(String pollingStrategy) {
+        return switch (pollingStrategy) {
+            case TIMELINE_RAPID -> PnPollingStrategy.TIMELINE_RAPID_V21;
+            case STATUS_RAPID -> PnPollingStrategy.STATUS_RAPID_V21;
+            case TIMELINE_SLOW -> PnPollingStrategy.TIMELINE_SLOW_V21;
+            case STATUS_SLOW -> PnPollingStrategy.STATUS_SLOW_V21;
+            case VALIDATION_STATUS -> PnPollingStrategy.VALIDATION_STATUS_V21;
+            default ->
+                    throw new RuntimeException("PnPollingStrategy non riconosciuta per la versione 21: " + pollingStrategy);
+        };
+    }
+
+    /**
+     * Metodi per createAndSendNotificationRequestWithError
+     */
+    private NotificationDocument preloadDocumentWithoutUpload(NotificationDocument document) throws IOException {
+        String resourceName = "classpath:/test.xml";
+//        Pair<String, String> preloadDocument = preloadGeneric(context, b2bClient, resourceName, LOAD_TO_PRESIGNED);//TODO MATTEO OLD not working
+        Pair<String, String> preloadDocument = preloadGeneric(context, b2bClient, resourceName, APPLICATION_PDF);
+        documentSetKey(document, preloadDocument.getValue1());
+        documentSetVersionToken(document, "v1");
+        documentSetDigests(document, preloadDocument.getValue2());
+        return document;
+    }
+
+    private NotificationMetadataAttachment preloadMetadataAttachmentWithoutUpload(NotificationMetadataAttachment attachment) throws IOException {
+        if (attachment != null) {
+            String resourceName = "classpath:/test.xml";
+            Pair<String, String> preloadAttachment = preloadGeneric(context, b2bClient, resourceName, APPLICATION_JSON);
+            metadataAttachmentSetKey(attachment, preloadAttachment.getValue1());
+            metadataAttachmentSetVersionToken(attachment, "v1");
+            metadataAttachmentSetDigests(attachment, preloadAttachment.getValue2());
+            return attachment;
+        }
+        return null;
+    }
+
+    public NewNotificationRequestV21 buildNotificationNotFoundAllegato(NewNotificationRequestV21 request, boolean isWithoutUpload) throws IOException {
+        if (!request.getDocuments().isEmpty() && !isWithoutUpload) {
+            NotificationDocument notificationDocument = request.getDocuments().get(0);
+            notificationDocument.getRef().setKey(PN_NOTIFICATION_ATTACHMENTS_ZBEDA_19_F_8997469_BB_75_D_28_FF_12_BDF_321_PDF);
+        }
+        List<NotificationDocument> newDocs = new ArrayList<>();
+        for (NotificationDocument doc : request.getDocuments()) {
+            if (isWithoutUpload) {
+                newDocs.add(preloadDocumentWithoutUpload(doc));
+            } else {
+                newDocs.add(preloadDocument(doc));
+            }
+        }
+        request.setDocuments(newDocs);
+        setAttachmentAndMetadata(request, isWithoutUpload);
+        return request;
+    }
+
+    public NewNotificationRequestV21 buildNotificationNotFoundAllegatoJson(NewNotificationRequestV21 request, boolean isWithoutUpload) throws IOException {
+        List<NotificationDocument> newDocs = new ArrayList<>();
+        for (NotificationDocument doc : request.getDocuments()) {
+            newDocs.add(preloadDocument(doc));
+        }
+        request.setDocuments(newDocs);
+        setAttachmentAndMetadata(request, isWithoutUpload);
+        return request;
+    }
+
+    public NewNotificationRequestV21 buildNotificationNotEqualSha(NewNotificationRequestV21 request) throws IOException {
+        List<NotificationDocument> newDocs = new ArrayList<>();
+        for (NotificationDocument doc : request.getDocuments()) {
+            newDocs.add(preloadDocument(doc));
+        }
+        request.setDocuments(newDocs);
+        setAttachmentAndMetadata(request, false);
+        if (!request.getDocuments().isEmpty()) {
+            NotificationDocument notificationDocument = request.getDocuments().get(0);
+            // the document uploaded to safe storage is multa.pdf...I compute a different sha256 and I replace the old one
+            String sha256 = computeSha256(context, "classpath:/multa.pdf");
+            notificationDocument.setDigests(new NotificationAttachmentDigests().sha256(sha256));
+        }
+        return request;
+    }
+
+    public NewNotificationRequestV21 buildNotificationNotEqualShaJson(NewNotificationRequestV21 request) throws IOException {
+        String sha256 = null;
+        if (!request.getRecipients().isEmpty()) {
+            // the document uploaded to safe storage is multa.pdf...I compute a different sha256 and I replace the old one
+            sha256 = computeSha256(context, "classpath:/multa.pdf");
+        }
+        List<NotificationDocument> newDocs = new ArrayList<>();
+        for (NotificationDocument doc : request.getDocuments()) {
+            newDocs.add(preloadDocument(doc));
+        }
+        request.setDocuments(newDocs);
+        setAttachmentAndMetadata(request, false);
+        Objects.requireNonNull(Objects.requireNonNull(request.getRecipients().get(0).getPayments()).get(0).getF24()).getMetadataAttachment().getDigests().setSha256(sha256);
+        return request;
+    }
+
+    public NewNotificationRequestV21 buildNotificationWrongExtension(NewNotificationRequestV21 request) throws IOException {
+        if (!request.getDocuments().isEmpty()) {
+            NotificationDocument notificationDocument = request.getDocuments().get(0);
+            notificationDocument.getRef().setKey("classpath:/sample.txt");
+        }
+        List<NotificationDocument> newDocs = new ArrayList<>();
+        for (NotificationDocument doc : request.getDocuments()) {
+            newDocs.add(preloadDocument(doc));
+        }
+        request.setDocuments(newDocs);
+        setAttachmentAndMetadata(request, false);
+        return request;
+    }
+
+    public NewNotificationRequestV21 buildNotificationOverSizeAllegato(NewNotificationRequestV21 request) throws IOException {
+        NotificationDocument notificationDocument = newDocument("classpath:/200MB_PDF.pdf");
+        List<NotificationDocument> newDocs = new ArrayList<>();
+        newDocs.add(preloadDocument(notificationDocument));
+        request.setDocuments(newDocs);
+        setAttachmentAndMetadata(request, false);
+        return request;
+    }
+
+    public NewNotificationRequestV21 buildNotificationInjectionAllegato(NewNotificationRequestV21 request) throws IOException {
+        NotificationDocument notificationDocument = newDocument("classpath:/sample_injection.xml.pdf");
+        List<NotificationDocument> newDocs = new ArrayList<>();
+        newDocs.add(preloadDocument(notificationDocument));
+        request.setDocuments(newDocs);
+        setAttachmentAndMetadata(request, false);
+        return request;
+    }
+
+    public NewNotificationRequestV21 buildNotificationOver15Allegato(NewNotificationRequestV21 request) throws IOException {
+        NotificationDocument notificationDocument = newDocument("classpath:/sample.pdf");
+        List<NotificationDocument> newDocs = new ArrayList<>();
+        for (int i = 0; i < 20; i++) {
+            newDocs.add(preloadDocument(notificationDocument));
+        }
+        request.setDocuments(newDocs);
+        setAttachmentAndMetadata(request, false);
+        return request;
+    }
+
+    private void setAttachmentAndMetadata(NewNotificationRequestV21 newNotificationRequest, boolean isWithoutUpload) throws IOException {
+        for (NotificationRecipientV21 recipient : newNotificationRequest.getRecipients()) {
+            List<NotificationPaymentItem> paymentList = recipient.getPayments();
+            if (paymentList != null) {
+                for (NotificationPaymentItem paymentInfo : paymentList) {
+                    if (paymentInfo.getPagoPa() != null) {
+                        paymentInfo.getPagoPa().setAttachment(preloadAttachment(paymentInfo.getPagoPa().getAttachment()));
+                    }
+                    if (paymentInfo.getF24() != null) {
+                        if (isWithoutUpload) {
+                            paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachmentWithoutUpload(paymentInfo.getF24().getMetadataAttachment()));
+                        } else {
+                            paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
+                        }
+                    }
+                }
             }
         }
     }

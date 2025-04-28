@@ -1,6 +1,5 @@
 package it.pagopa.pn;
 
-import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.ApiKeysConfiguration;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.BearerTokenConfiguration;
@@ -9,13 +8,11 @@ import it.pagopa.pn.client.b2b.pa.config.springconfig.TimingConfiguration;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
-import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
-import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
-import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV26;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v26.PnPollingServiceValidationStatusV26;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
+import it.pagopa.pn.cucumber.steps.pa.utilityVersions.NotificationUtilsV24;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
@@ -28,11 +25,12 @@ import org.springframework.util.Base64Utils;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import static it.pagopa.pn.client.b2b.pa.PnPaB2bUtils.*;
+import static it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils.*;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOTIFICATION_STATUS_ACCEPTED;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.VALIDATION_STATUS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 
@@ -42,7 +40,6 @@ import static org.awaitility.Awaitility.await;
         BearerTokenConfiguration.class,
         TimingConfiguration.class,
         RestTemplateConfiguration.class,
-        PnPaB2bUtils.class,
         PnPaB2bExternalClientImpl.class,
         PnWebRecipientExternalClientImpl.class,
         PnWebhookB2bExternalClientImpl.class,
@@ -64,6 +61,9 @@ import static org.awaitility.Awaitility.await;
         TimingForPolling.class,
         PnB2bClientTimingConfigs.class,
         PnPollingFactory.class,
+        //TODO: al variare della versione di notifica utilizzata nel test, aggiornare questi due valori
+        NotificationUtilsV24.class,
+        PnPollingServiceValidationStatusV26.class,
 })
 
 
@@ -73,8 +73,7 @@ import static org.awaitility.Awaitility.await;
 public class NewNotificationTest {
 
     @Autowired
-    private PnPaB2bUtils utils;
-
+    private NotificationUtilsV24 utils;
 
     @Test
     void insertNewNotification() {
@@ -107,18 +106,14 @@ public class NewNotificationTest {
                         "DVNLRD52D15M059P",
                         "classpath:/sample.pdf",
                         enableF24Attachment ? (policy == NotificationFeePolicy.FLAT_RATE ? "classpath:/f24_flat.json" : "classpath:/f24_deliverymode.json") : null,
-                        RECIPIENT_TYPE_DIGITAL.DIGITAL_KO, RECIPIENT_TYPE_ANALOG.ANALOG_OK))
-                //.addRecipientsItem( newRecipient( policy!=NotificationFeePolicy.FLAT_RATE,"Fiera ", "FRMTTR76M06B715E","classpath:/sample.pdf",
-                //        enableF24Attachment?(policy==NotificationFeePolicy.FLAT_RATE?"classpath:/f24_flat.json":"classpath:/f24_deliverymode.json"):null,
-                //        RECIPIENT_TYPE_DIGITAL.NO_DIGITAL, RECIPIENT_TYPE_ANALOG.ANALOG_OK))
-                ;
+                        RECIPIENT_TYPE_DIGITAL.DIGITAL_KO, RECIPIENT_TYPE_ANALOG.ANALOG_OK));
 
 
         Assertions.assertDoesNotThrow(() -> {
-            NewNotificationResponse newNotificationRequest = uploadNotificationV24(request);
-            FullSentNotificationV26 newNotification = waitForRequestAcceptation(newNotificationRequest);
+            NewNotificationResponse newNotificationResponse = sendAndLogNewNotification(request);
+            FullSentNotificationV26 newNotification = utils.waitForEvent(newNotificationResponse, VALIDATION_STATUS, NOTIFICATION_STATUS_ACCEPTED).getNotification();
             await().atMost(10, SECONDS);
-            utils.verifyNotification(newNotification);
+            utils.verifyNotification(newNotification.getIun());
         });
     }
 
@@ -138,14 +133,26 @@ public class NewNotificationTest {
                 .physicalCommunicationType(NewNotificationRequestV24.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890)
                 .paProtocolNumber(String.valueOf(System.currentTimeMillis()))
                 .addDocumentsItem(newDocument("classpath:/sample.pdf"))
-                .addRecipientsItem(newRecipient(false, "Leo ", "CNCGPP80A01H501J", "classpath:/sample.pdf", "classpath:/f24_flat.json", RECIPIENT_TYPE_DIGITAL.NO_DIGITAL, RECIPIENT_TYPE_ANALOG.ANALOG_KO))
-                .addRecipientsItem(newRecipient(false, "Fiera", "FRMTTR76M06B715E", "classpath:/sample.pdf", "classpath:/f24_flat.json", RECIPIENT_TYPE_DIGITAL.DIGITAL_OK, RECIPIENT_TYPE_ANALOG.ANALOG_OK));
+                .addRecipientsItem(newRecipient(
+                        false,
+                        "Leo ",
+                        "CNCGPP80A01H501J",
+                        "classpath:/sample.pdf",
+                        "classpath:/f24_flat.json",
+                        RECIPIENT_TYPE_DIGITAL.NO_DIGITAL, RECIPIENT_TYPE_ANALOG.ANALOG_OK))
+                .addRecipientsItem(newRecipient(
+                        false,
+                        "Fiera",
+                        "FRMTTR76M06B715E",
+                        "classpath:/sample.pdf",
+                        "classpath:/f24_flat.json",
+                        RECIPIENT_TYPE_DIGITAL.DIGITAL_OK, RECIPIENT_TYPE_ANALOG.ANALOG_OK));
 
         Assertions.assertDoesNotThrow(() -> {
-            NewNotificationResponse newNotificationRequest = uploadNotificationV24(request);
-            FullSentNotificationV26 newNotification = waitForRequestAcceptation(newNotificationRequest);
+            NewNotificationResponse newNotificationResponse = sendAndLogNewNotification(request);
+            FullSentNotificationV26 newNotification = utils.waitForEvent(newNotificationResponse, VALIDATION_STATUS, NOTIFICATION_STATUS_ACCEPTED).getNotification();
             await().atMost(10, SECONDS);
-            utils.verifyNotification(newNotification);
+            utils.verifyNotification(newNotification.getIun());
         });
     }
 
@@ -252,31 +259,10 @@ public class NewNotificationTest {
         return recipient;
     }
 
-    private NewNotificationResponse uploadNotificationV24(NewNotificationRequestV24 request) throws IOException {
-        //PRELOAD DOCUMENTI NOTIFICA
-        List<NotificationDocument> newDocs = new ArrayList<>();
-        for (NotificationDocument doc : request.getDocuments()) {
-            try {
-                Thread.sleep(utils.getRandom().nextInt(350));
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new PnB2bException(e.getMessage());
-            }
-            //TODO MATTEO FINIRE
-//            if (doc != null) {
-//                newDocs.add(preloadDocument(doc));
-//            }
-        }
-        request.setDocuments(newDocs);
-        //PRELOAD DOCUMENTI DI PAGAMENTO
-        preloadPayDocument(request);
-        return getAndCheckSendNewNotification(request);
-    }
-
-    private NewNotificationResponse getAndCheckSendNewNotification(NewNotificationRequestV24 request) {
+    private NewNotificationResponse sendAndLogNewNotification(NewNotificationRequestV24 request) throws IOException {
         log.info(NEW_NOTIFICATION_REQUEST, request);
-        NewNotificationResponse response = utils.getClient().sendNewNotificationV24(request);
-        log.info(NEW_NOTIFICATION_REQUEST_RESPONSE, response);
+        NewNotificationResponse response = utils.uploadNotification(request, true);
+        log.info(NEW_NOTIFICATION_RESPONSE, response);
         if (response != null) {
             try {
                 log.info(NEW_NOTIFICATION_IUN, new String(Base64Utils.decodeFromString(response.getNotificationRequestId())));
@@ -285,38 +271,5 @@ public class NewNotificationTest {
             }
         }
         return response;
-    }
-
-    private FullSentNotificationV26 waitForRequestAcceptation(NewNotificationResponse response) {
-        PnPollingServiceValidationStatusV26 validationStatus = (PnPollingServiceValidationStatusV26) utils.getPollingFactory().getPollingService(PnPollingStrategy.VALIDATION_STATUS_V26);
-        PnPollingResponseV26 pollingResponse = validationStatus.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(ACCEPTED).build());
-        return pollingResponse.getNotification() == null ? null : pollingResponse.getNotification();
-    }
-
-    private void preloadPayDocument(NewNotificationRequestV24 request) throws IOException {
-        for (NotificationRecipientV23 recipient : request.getRecipients()) {
-            List<NotificationPaymentItem> paymentList = recipient.getPayments();
-            if (paymentList != null) {
-                setAttachmentWithSleep(paymentList);
-            }
-        }
-    }
-
-    private void setAttachmentWithSleep(List<NotificationPaymentItem> paymentList) throws IOException {
-        for (NotificationPaymentItem paymentInfo : paymentList) {
-            try {
-                Thread.sleep(utils.getRandom().nextInt(350));
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new PnB2bException(e.getMessage());
-            }
-            //TODO MATTEO FINIRE
-//            if (paymentInfo.getPagoPa() != null) {
-//                paymentInfo.getPagoPa().setAttachment(preloadAttachment(paymentInfo.getPagoPa().getAttachment()));
-//            }
-//            if (paymentInfo.getF24() != null) {
-//                paymentInfo.getF24().setMetadataAttachment(preloadWithMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
-//            }
-        }
     }
 }

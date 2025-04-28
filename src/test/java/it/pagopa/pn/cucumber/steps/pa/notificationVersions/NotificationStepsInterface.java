@@ -8,13 +8,6 @@ import java.util.Map;
 
 public interface NotificationStepsInterface {
 
-    default void throwUnsupportedMethodException(String methodName) {
-        methodName = methodName == null ? "" : methodName + " ";
-        throw new RuntimeException("Metodo " + methodName + "non previsto per la versione " + getVersionString());
-    }
-
-    String getVersionString();
-
     void prepareNotificationRequest(Map<String, String> data);
 
     void prepareNotificationRequestSimileAllaPrecedente(boolean isCreditorTaxIdUguale, boolean isCodiceAvvisoUguale, boolean isPaProtocolNumberUguale, String idempotenceToken);
@@ -23,6 +16,9 @@ public interface NotificationStepsInterface {
 
     void addRecipientToNotification(Destinatario destinatario, Map<String, String> data);
 
+    /**
+     * Metodo che lascia spazio di manovra per poter creare recipient customizzati a seconda delle esigenze
+     */
     void addRecipientToNotificationSpecialCondition(Destinatario destinatario, Map<String, String> data, String condition, Integer otherRecipientIndex);
 
     void setSenderTaxId(String senderTaxId);
@@ -36,8 +32,12 @@ public interface NotificationStepsInterface {
     /**
      * Metodo chiave, in quanto è qui che viene valorizzato lo IUN della notifica generata che viene poi salvato in SharedSteps
      * su cui poggia la quasi totalità delle logiche dell'applicativo
+     *
+     * @param isRegularUpload da passare sempre a true: il solo caso in cui viene passato false, è quando viene richiamato dal metodo
+     * @see #createAndSendNotificationRequestWithError, (che deve portare al REFUSED in fase di validazione asincrona)
+     * in modo che salti il preload di documenti e altre operazioni che vengono invece regolarmente effettuate quando il parametro è true
      */
-    Object uploadNotification() throws IOException;
+    Object uploadNotification(boolean isRegularUpload) throws IOException;
 
     void setIuvToRecipient(Integer posizione, String iuvGPD);
 
@@ -47,7 +47,7 @@ public interface NotificationStepsInterface {
 
     void uploadNotificationAllegatiUgualiPagamento() throws IOException;
 
-    void addIuvGdpToDestinatario(String denominazione, String iuvGdp, Integer paymentIndex);
+    void addIuvGpdToDestinatario(String denominazione, String iuvGpd, Integer paymentIndex);
 
     List<String> getDatiPagamento(String iun, Integer destinatario, Integer pagamento);
 
@@ -68,4 +68,12 @@ public interface NotificationStepsInterface {
     void verifyCorrectAcquisition();
 
     void verifyStatus(boolean withNotificationRequestId, boolean withPaProtocolNumber, boolean withIdempotenceToken);
+
+    void verifyNotification(String notificationIun);
+
+    void createAndSendNotificationRequestWithError(String errorType, Boolean isWithoutUpload);
+
+    String getCreditorTaxId(int recipientIndex);
+
+    String getNoticeCode(int recipientIndex);
 }
