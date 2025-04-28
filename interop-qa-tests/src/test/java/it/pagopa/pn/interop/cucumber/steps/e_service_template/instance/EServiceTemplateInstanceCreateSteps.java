@@ -78,6 +78,12 @@ public class EServiceTemplateInstanceCreateSteps {
         checkEServiceCreated(EServiceDescriptorState.DRAFT);
     }
 
+    @Given("l'utente effettua la creazione di un nuovo e-service a partire dal template con successo indicando tutte le specifiche")
+    public void createEServiceFromTemplateFullSpecSuccessfully() {
+        createEServiceFromTemplateFullSpec();
+        checkEServiceCreated(EServiceDescriptorState.DRAFT);
+    }
+
     // TODO il passo precedente è un sottoinsieme di questo, accorpare per ridurre ambiguità
     // TODO aggiungere una virgola: "[...] a partire dal template con successo, indicando [...]"
     @Given("l'utente effettua la creazione di un nuovo e-service in stato {eServiceDescriptorState} a partire dal template con successo indicando solo le specifiche strettamente necessarie")
