@@ -53,7 +53,7 @@ public class Compress {
     }
 
 
-
+    // TODO: Riempire il metodo sulle parti commentate. E' ancora utile?
     public static void main(String[] args) {
 
         // These are the files to include in the ZIP file

@@ -301,7 +301,6 @@ public class RicezioneNotificheWebSteps {
 
     @Then("l'allegato {string} può essere correttamente recuperato da {string}")
     public void attachmentCanBeCorrectlyRetrievedBy(String attachmentName, String recipient) {
-        //TODO Modificare
         sharedSteps.selectUser(recipient);
         NotificationAttachmentDownloadMetadataResponse downloadResponse = getReceivedNotificationAttachment(attachmentName);
 

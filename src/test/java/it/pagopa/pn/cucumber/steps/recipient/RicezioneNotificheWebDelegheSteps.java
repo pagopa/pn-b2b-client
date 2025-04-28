@@ -321,7 +321,6 @@ public class RicezioneNotificheWebDelegheSteps {
     public void comeAmministratoreDaVoglioModificareUnaDelegaPerAssociarlaAdUnGruppo(String recipient, String delegato) {
         sharedSteps.selectUser(delegato);
 
-        //TODO Recuperare i gruppi della PG come Admin....
         List<HashMap<String, String>> resp = sharedSteps.getPnExternalServiceClient().pgGroupInfo(webRecipientClient.getBearerTokenSetted());
         String gruppoAttivo = null;
         if (resp != null && !resp.isEmpty()) {
@@ -335,7 +334,6 @@ public class RicezioneNotificheWebDelegheSteps {
 
 
         String xPagopaPnCxRole = "ADMIN";
-        //TODO capire dove recuperare il dato
         //Questo è l’identificativo della PG, e come gli altri header viene recuperato dal token JWT di autorizzazione
         String xPagopaPnCxId = switch (webRecipientClient.getBearerTokenSetted()) {
             case PG_1 -> sharedSteps.getIdOrganizationGherkinSrl();
@@ -404,7 +402,6 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @Then("l'allegato {string} può essere correttamente recuperato da {string} con delega")
     public void attachmentCanBeCorrectlyRetrievedFromWithMandate(String attachmentName, String recipient) {
-        //TODO Modificare attachmentIdx al momento è 0...............
         sharedSteps.selectUser(recipient);
         NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
                 sharedSteps.getNotificationIun(),
@@ -687,11 +684,7 @@ public class RicezioneNotificheWebDelegheSteps {
         setBearerToken(delegate);
         try {
             List<MandateDto> mandateList;
-            if (status.trim().equals("")) {
-                mandateList = webMandateClient.searchMandatesByDelegate(getTaxIdByUser(delegator), null);
-            } else if (delegator.trim().equals("")) {
-                mandateList = webMandateClient.searchMandatesByDelegateStatusFilter("", List.of(status), null);
-            } else {
+            if (!status.trim().isEmpty() && !delegator.trim().isEmpty()) {
                 mandateList = webMandateClient.searchMandatesByDelegateStatusFilter(getTaxIdByUser(delegator), List.of(status), null);
                 Assertions.assertNotNull(mandateList, "La lista mandateList è null");
                 Assertions.assertFalse(mandateList.isEmpty(), "La lista mandateList è vuota");

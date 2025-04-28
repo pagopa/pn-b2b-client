@@ -9,6 +9,7 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26;
 import it.pagopa.pn.client.b2b.pa.mapper.impl.PnTimelineAndLegalFactV26;
 import it.pagopa.pn.client.b2b.pa.mapper.model.PnTimelineLegalFactV26;
+import it.pagopa.pn.client.b2b.pa.exception.IllegalConfigurationException;
 import it.pagopa.pn.client.b2b.pa.parsing.dto.IPnParserResponse;
 import it.pagopa.pn.client.b2b.pa.parsing.dto.PnParserParameter;
 import it.pagopa.pn.client.b2b.pa.parsing.dto.impLegalFact.PnLegalFactNotificaPresaInCaricoMultiDestinatario;
@@ -16,7 +17,6 @@ import it.pagopa.pn.client.b2b.pa.parsing.dto.implDestinatario.PnDestinatarioAna
 import it.pagopa.pn.client.b2b.pa.parsing.dto.implResponse.PnParserLegalFactResponse;
 import it.pagopa.pn.client.b2b.pa.parsing.parser.IPnParserLegalFact;
 import it.pagopa.pn.client.b2b.pa.parsing.service.impl.PnParserService;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactDownloadMetadataResponse;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactListElementV20;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
@@ -286,13 +286,11 @@ public class LegalFactContentVerifySteps {
         Assertions.assertNotNull(this.legalFactUrl);
         Assertions.assertEquals(legalFactCategory, this.legalFactType);
         switch (version) {
-            case 1 -> {
-                LegalFactDownloadMetadataResponse response = sharedSteps.getWebRecipientClient().getLegalFact(iun, null, this.legalFactUrl);
-                sharedSteps.getWebRecipientClient().downloadLegalFactById(iun, this.legalFactUrl, null);
-            }
+            case 1 -> sharedSteps.getWebRecipientClient().downloadLegalFactById(iun, this.legalFactUrl, null);
             case 20 -> {
                 List<LegalFactListElementV20> legalFactV20list = sharedSteps.getWebRecipientClient().getLegalFactsV20(iun, null);
-                Assertions.assertNotNull(legalFactV20list);
+                assertThat(legalFactV20list).asList().isNotEmpty();
+
                 LegalFactListElementV20 target = legalFactV20list.stream().filter(
                         x -> x.getLegalFactsId().getCategory().getValue().equals(legalFactCategory)).findFirst().orElse(null);
                 if (isPresent) {
@@ -301,7 +299,7 @@ public class LegalFactContentVerifySteps {
                     Assertions.assertNull(target);
                 }
             }
-            default -> throw new IllegalArgumentException("Valore di versione non riconosciuto: " + version);
+            default -> throw new IllegalConfigurationException("Unsupported API version: " + version);
         }
     }
 

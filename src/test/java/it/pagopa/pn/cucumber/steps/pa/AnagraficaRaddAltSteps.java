@@ -37,7 +37,6 @@ public class AnagraficaRaddAltSteps {
 
     private static final int WAITING_ACCEPTED_STATE = 20000;
     private static final String ACCEPTED = "accepted";
-
     private final PnRaddAlternativeClientImpl raddAltClient;
     private final SharedSteps sharedSteps;
     private final DataTableTypeRaddAlt dataTableTypeRaddAlt;
@@ -49,14 +48,11 @@ public class AnagraficaRaddAltSteps {
     private CreateRegistryRequest sportelloRaddCrud;
     private RegistriesResponse sportelliRaddista;
     private it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCsv.RequestResponse sportelliCsvRaddista;
-
-    private String uid = getDefaultValue(RADD_UID.key);
-
+    private final String uid = getDefaultValue(RADD_UID.key);
     private static final Integer NUM_CHECK_STATE_CSV = 100;
     private static final Integer WAITING_STATE_CSV = 15000;
-
     private String pageIndex = null;
-    private List<Address> addresses = new ArrayList<>();
+    private final List<Address> addresses = new ArrayList<>();
 
     @Autowired
     public AnagraficaRaddAltSteps(PnRaddAlternativeClientImpl raddAltClient, SharedSteps sharedSteps, DataTableTypeRaddAlt dataTableTypeRaddAlt) {
@@ -228,13 +224,11 @@ public class AnagraficaRaddAltSteps {
     @When("viene richiesta la lista degli sportelli caricati dal csv con dati errati:")
     public void vieneRichiestolaListaDeiSportelliRaddDelCsvDatiErrati(Map<String, String> dataSportello) {
         try {
-            it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCsv.RequestResponse sportello = raddAltClient.retrieveRequestItems(
-                    getValue(dataSportello, RADD_UID.key)
-                    , getValue(dataSportello, RADD_REQUESTID.key) == null ? null : getValue(dataSportello, RADD_REQUESTID.key)
-                    , getValue(dataSportello, RADD_FILTER_LIMIT.key) == null ? null : Integer.parseInt(getValue(dataSportello, RADD_FILTER_LIMIT.key))
-                    , getValue(dataSportello, RADD_FILTER_LASTKEY.key) == null ? null : getValue(dataSportello, RADD_FILTER_LASTKEY.key));
-
-            this.sportelliCsvRaddista = sportello;
+            this.sportelliCsvRaddista = raddAltClient.retrieveRequestItems(
+                    getValue(dataSportello, RADD_UID.key),
+                    getValue(dataSportello, RADD_REQUESTID.key) == null ? null : getValue(dataSportello, RADD_REQUESTID.key),
+                    getValue(dataSportello, RADD_FILTER_LIMIT.key) == null ? null : Integer.parseInt(getValue(dataSportello, RADD_FILTER_LIMIT.key)),
+                    getValue(dataSportello, RADD_FILTER_LASTKEY.key) == null ? null : getValue(dataSportello, RADD_FILTER_LASTKEY.key));
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
         }
@@ -243,9 +237,7 @@ public class AnagraficaRaddAltSteps {
     @When("si controlla che il sportello sia in stato {string}")
     public void vieneCercatoloSportelloEControlloStato(String status) {
         RegistryRequestResponse dato = IntStream.range(0, NUM_CHECK_STATE_CSV)
-                .mapToObj(numCheck -> {
-                    return getRequestResponse(status);
-                })
+                .mapToObj(numCheck -> getRequestResponse(status))
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElse(null);
@@ -493,12 +485,10 @@ public class AnagraficaRaddAltSteps {
                 , getValue(dataSportello, RADD_EXTERNAL_CODE.key) == null ? null : getValue(dataSportello, RADD_EXTERNAL_CODE.key));
         try {
 
-            if (sportello.getRegistries().isEmpty() || sportello.getRegistries().size() == 0) {
-                this.sportelliRaddista = sportello;
-            } else {
+            if (!sportello.getRegistries().isEmpty() && sportello.getRegistries().size() != 0) {
                 this.registryId = sportello.getRegistries().get(0).getRegistryId();
-                this.sportelliRaddista = sportello;
             }
+                this.sportelliRaddista = sportello;
 
             log.info("lista sportelli: {}", sportello);
 

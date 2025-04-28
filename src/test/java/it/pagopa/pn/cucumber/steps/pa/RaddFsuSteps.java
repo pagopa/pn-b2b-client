@@ -207,7 +207,6 @@ public class RaddFsuSteps {
                         .operationId(operationid)
                         .recipientTaxId(this.currentUserCf)
                         .recipientType(ActStartTransactionRequest.RecipientTypeEnum.PF)
-                        //.operationDate(OffsetDateTime.now()) TODO: controllare
                         .checksum(this.documentUploadResponse.getValue2());
         System.out.println("actStartTransactionRequest: " + actStartTransactionRequest);
         this.startTransactionResponse = raddFsuClient.startActTransaction(uid, actStartTransactionRequest);
@@ -234,7 +233,6 @@ public class RaddFsuSteps {
     }
 
     private StartTransactionResponseStatus.CodeEnum getErrorCodeStartTransaction(int errorCode) {
-        //return StartTransactionResponseStatus.CodeEnum.valueOf("NUMBER_"+errorCode);
         switch (errorCode) {
             case 0 -> {
                 return StartTransactionResponseStatus.CodeEnum.NUMBER_0;

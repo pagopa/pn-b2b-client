@@ -15,11 +15,13 @@ public class PnPollingServiceStatusExtraRapidV25 extends PnPollingServiceStatusR
         super(timingForPolling, pnPaB2bClient);
     }
 
+    @Override
     protected Integer getPollInterval(String value) {
         TimingForPolling.TimingResult timingResult = timingForPolling.getTimingForElement(value, true, true);
         return timingResult.waiting();
     }
 
+    @Override
     protected Integer getAtMost(String value) {
         TimingForPolling.TimingResult timingResult = timingForPolling.getTimingForElement(value, true, true);
         return timingResult.waiting() * timingResult.numCheck();

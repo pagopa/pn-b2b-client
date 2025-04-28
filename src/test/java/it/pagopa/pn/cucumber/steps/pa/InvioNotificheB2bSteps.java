@@ -7,6 +7,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.pn.client.b2b.pa.exception.IllegalConfigurationException;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.payment.*;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.PaperEngageRequest;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.PaperEngageRequestAttachments;
@@ -1072,7 +1073,7 @@ public class InvioNotificheB2bSteps {
             contoDocumento += attachmentUrl.contains(tipologia) ? 1 : 0;
         }
         try {
-            Assertions.assertSame(numeroDocumenti, contoDocumento);
+            assertThat(numeroDocumenti).as("Il numero di documenti non coincide col valore atteso").isEqualTo(contoDocumento);
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() + "Verifica Allegati pec in errore ";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
@@ -1242,6 +1243,7 @@ public class InvioNotificheB2bSteps {
             }
             case "digitale" ->
                     attachmentNotification = documentiPec.get(0).getDigitalNotificationRequest().getAttachmentUrls();
+            default -> throw new IllegalConfigurationException("Invalid request type: " + type.toLowerCase());
         }
         return attachmentNotification;
     }
@@ -1259,7 +1261,7 @@ public class InvioNotificheB2bSteps {
 
         for (TimelineElementV26 element : sharedSteps.getSentNotificationLastVersion().getTimeline()) {
 
-            if (Objects.requireNonNull(element.getCategory()).equals(timelineElementInternalCategory)) {
+            if (Objects.requireNonNull(element.getCategory().getValue()).equals(timelineElementInternalCategory.getValue())) {
                 timelineElement = element;
                 break;
             }

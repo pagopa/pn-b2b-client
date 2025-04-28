@@ -145,7 +145,6 @@ Feature: Api Service Cruscotto Assitenza
       | CucumberSpa | PG             |
 
   #CE02.4 Come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche
-    #TODO simile CE02.2............
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.4_24] Invocazione del servizio con taxId vuoto
     Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"

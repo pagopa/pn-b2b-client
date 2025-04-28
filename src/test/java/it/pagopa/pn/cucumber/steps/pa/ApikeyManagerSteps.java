@@ -4,6 +4,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.pn.client.b2b.pa.exception.IllegalConfigurationException;
 import it.pagopa.pn.client.b2b.pa.service.IPnApiKeyManagerClient;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model.*;
@@ -41,7 +42,7 @@ public class ApikeyManagerSteps {
     }
 
     @Then("la lettura è avvenuta correttamente")
-    public void laLetturaÈAvvenutaCorrettamente() {
+    public void letturaAvvenutaCorrettamente() {
         Assertions.assertNotNull(apiKeys);
     }
 
@@ -55,19 +56,19 @@ public class ApikeyManagerSteps {
 
 
     @And("l'apiKey creata è presente tra quelle lette")
-    public void lApiKeyCreataÈPresenteTraQuelleLette() {
+    public void apiKeyCreataPresenteTraQuelleLette() {
         Assertions.assertNotNull(
                 apiKeys.getItems().stream()
                         .filter(elem -> elem.getId().equals(responseNewApiKey.getId())).findAny().orElse(null));
     }
 
     @When("l'apiKey viene cancellata")
-    public void lApiKeyVieneCancellata() {
+    public void apiKeyGetsDeleted() {
         Assertions.assertDoesNotThrow(() -> apiKeyManagerClient.deleteApiKeys(responseNewApiKey.getId()));
     }
 
     @Then("l'apiKey non è più presente")
-    public void lApiKeyNonÈPiùPresente() {
+    public void apiKeyIsNotPresentAnymore() {
         Assertions.assertNull(
                 apiKeys.getItems().stream()
                         .filter(elem -> elem.getId().equals(responseNewApiKey.getId())).findAny().orElse(null));
@@ -95,7 +96,7 @@ public class ApikeyManagerSteps {
         }
     }
 
-    @Then("si verifica lo stato dell'apikey {string}")
+    @Then("si verifica lo stato dell'apiKey {string}")
     public void siVerificaLoStatoDellApikey(String state) {
         ApiKeyStatus apiKeyStatus = switch (state) {
             case "BLOCKED" -> ApiKeyStatus.BLOCKED;
@@ -105,9 +106,9 @@ public class ApikeyManagerSteps {
             default -> throw new IllegalArgumentException("Invalid status for ApiKey:" + state);
         };
         Assertions.assertNotNull(
-                apiKeys.getItems().stream()
-                        .filter(elem -> (elem.getId().equals(responseNewApiKey.getId()))
-                                && (elem.getStatus().equals(apiKeyStatus))).findAny().orElse(null));
+                apiKeys.getItems().stream().filter(elem -> (
+                        elem.getId().equals(responseNewApiKey.getId()))
+                        && (elem.getStatus().equals(apiKeyStatus))).findAny().orElse(null));
     }
 
     private RequestApiKeyStatus getRequestApiKeyStatus(String state) {
