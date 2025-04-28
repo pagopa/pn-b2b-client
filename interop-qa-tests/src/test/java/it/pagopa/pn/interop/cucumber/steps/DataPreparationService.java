@@ -67,6 +67,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
@@ -636,7 +637,7 @@ public class DataPreparationService {
         if (purposeState == PurposeVersionState.DRAFT) {
             sharedStepsContext.getPurposeCommonContext().setPurposeId(String.valueOf(purposeId));
             sharedStepsContext.getPurposeCommonContext().setVersionId(String.valueOf(currentVersion));
-            return;
+            return ;
         }
         // 2. Activate the purpose version
         httpCallExecutor.performCall(() -> purposeApiClient.activatePurposeVersion(purposeId, currentVersion.get()));
@@ -789,7 +790,85 @@ public class DataPreparationService {
         pollingService.makePolling(
                 () -> tenantsApi.getCertifiedAttributes(tenantId),
                 res -> res.getAttributes().stream().anyMatch(attr -> attr.getId().equals(attributeId) && attr.getRevocationTimestamp() != null),
-                "There was an error while revoking the certified atrtibute!"
+                "There was an error while revoking the certified attribute!"
+        );
+    }
+
+    public void revokeVerifiedAttributeToTenant(UUID tenantId, UUID attributeId, UUID agreementId, UUID revokerId) {
+        httpCallExecutor.performCall(() -> tenantsApi.revokeVerifiedAttribute(tenantId, attributeId, agreementId));
+        assertValidResponse();
+        pollingService.makePolling(
+            () -> tenantsApi.getVerifiedAttributes(tenantId),
+            res -> res.getAttributes().stream().anyMatch(
+                attr -> attr.getId().equals(attributeId) &&
+                                    attr.getRevokedBy().stream().anyMatch(tenantRevoker -> tenantRevoker.getId().equals(revokerId))),
+            "There was an error while revoking the certified attribute!"
+        );
+    }
+
+    public void revokeDeclaredAttributeToTenant(UUID tenantId, UUID attributeId) {
+        httpCallExecutor.performCall(() -> tenantsApi.revokeDeclaredAttribute(attributeId));
+        assertValidResponse();
+        pollingService.makePolling(
+            () -> tenantsApi.getDeclaredAttributes(tenantId),
+            res -> res.getAttributes().stream().anyMatch(attr -> attr.getId().equals(attributeId) && attr.getRevocationTimestamp() != null),
+            "There was an error while revoking the certified attribute!"
+        );
+    }
+
+    public UUID upgradeAgreement(UUID agreementId) {
+        httpCallExecutor.performCall(() -> agreementClient.upgradeAgreement(agreementId));
+        assertValidResponse();
+        Agreement response = (Agreement) httpCallExecutor.getResponse();
+        UUID newAgreementId = response.getId();
+
+        pollingService.makePolling(
+            () -> agreementClient.getAgreementById(newAgreementId),
+            Objects::nonNull,
+            ERROR_RETRIEVING_AGREEMENT
+        );
+
+        return newAgreementId;
+    }
+
+    public void deleteClientKeyById(UUID clientId, String keyId) {
+        httpCallExecutor.performCall(() -> authorizationClient.deleteClientKeyById(clientId, keyId));
+        assertValidResponse();
+        pollingService.makePolling(
+                () -> httpCallExecutor.performCall(() -> authorizationClient.getClientKeyById(clientId, keyId)),
+                res -> res == HttpStatus.NOT_FOUND,
+                "There was an error while deleting the client key!"
+        );
+    }
+
+    public void deletePurposeFromClient(UUID clientId, UUID purposeId) {
+        httpCallExecutor.performCall(() -> authorizationClient.removeClientPurpose(clientId, purposeId));
+        assertValidResponse();
+
+        pollingService.makePolling(
+                () -> authorizationClient.getClient(clientId),
+                res -> !res.getPurposes().stream().anyMatch(p -> p.getPurposeId().equals(purposeId)),
+                "There was an error while deleting the client purpose!"
+        );
+    }
+
+    public void deleteClient(UUID clientId) {
+        httpCallExecutor.performCall(() -> authorizationClient.deleteClient(clientId));
+        assertValidResponse();
+        pollingService.makePolling(
+                () -> httpCallExecutor.performCall(() -> authorizationClient.getClient(clientId)),
+                res -> res == HttpStatus.NOT_FOUND,
+                "There was an error while deleting the client!"
+        );
+    }
+
+    public void activateDescriptor(UUID eServiceId, UUID descriptorId) {
+        httpCallExecutor.performCall(() -> eServiceClient.activateDescriptor(eServiceId, descriptorId));
+        assertValidResponse();
+        pollingService.makePolling(
+                () -> producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId),
+                res -> res.getState() == EServiceDescriptorState.PUBLISHED || res.getState() == EServiceDescriptorState.DEPRECATED,
+                ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
     }
 

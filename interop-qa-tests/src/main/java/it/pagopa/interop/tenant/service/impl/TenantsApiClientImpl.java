@@ -7,6 +7,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedAttributes
 import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedTenantAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredAttributesResponse;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredTenantAttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject2;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Tenant;
 import it.pagopa.interop.generated.openapi.clients.bff.model.TenantDelegatedFeaturesFlagsUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.VerifiedAttributesResponse;
@@ -85,6 +86,16 @@ public class TenantsApiClientImpl implements ITenantsApi {
     @Override
     public void revokeCertifiedAttribute(UUID tenantId, UUID attributeId) {
         tenantsApi.revokeCertifiedAttribute(tenantId, attributeId);
+    }
+
+    @Override
+    public void revokeVerifiedAttribute(UUID tenantId, UUID attributeId, UUID agreementId) {
+        tenantsApi.revokeVerifiedAttribute(tenantId, attributeId, new InlineObject2().agreementId(agreementId));
+    }
+
+    @Override
+    public void revokeDeclaredAttribute(UUID attributeId) {
+        tenantsApi.revokeDeclaredAttribute(attributeId);
     }
 
     @Override

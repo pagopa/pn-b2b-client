@@ -18,10 +18,16 @@ import java.util.UUID;
 public class ClientCommonContext {
     private List<UUID> clients = new ArrayList<>();
     private List<UUID> users = new ArrayList<>();
+
     //Represents the public key uploaded to the client
     private String clientPublicKey;
+
+    private String clientPrivateKey;
+
     //Represents the publicKey ID returned when the public key is associated with a client.
     private String keyId;
+
+    private String newKeyId;
 
     public UUID getFirstUser() {
         Assertions.assertFalse(users == null || users.isEmpty());
@@ -31,5 +37,17 @@ public class ClientCommonContext {
     public UUID getFirstClient() {
         Assertions.assertFalse(clients == null || clients.isEmpty());
         return clients.get(0);
+    }
+
+    public UUID getLastClient() {
+        Assertions.assertFalse(clients == null || clients.isEmpty());
+        return clients.get(clients.size() - 1);
+    }
+
+    public void addClient(UUID clientId) {
+        if (clients == null) {
+            clients = new ArrayList<>();
+        }
+        clients.add(clientId);
     }
 }

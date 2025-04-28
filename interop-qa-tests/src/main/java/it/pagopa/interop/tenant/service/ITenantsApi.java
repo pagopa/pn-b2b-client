@@ -29,4 +29,8 @@ public interface ITenantsApi extends SettableBearerToken {
     VerifiedAttributesResponse getVerifiedAttributes(UUID tenantId);
 
     void revokeCertifiedAttribute(UUID tenantId, UUID attributeId);
+
+    void revokeVerifiedAttribute(UUID tenantId, UUID attributeId, UUID agreementId);
+
+    void revokeDeclaredAttribute(UUID attributeId);
 }
