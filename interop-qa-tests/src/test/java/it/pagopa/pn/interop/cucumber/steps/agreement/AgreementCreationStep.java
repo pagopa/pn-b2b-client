@@ -2,16 +2,24 @@ package it.pagopa.pn.interop.cucumber.steps.agreement;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
+import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
+
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,6 +39,26 @@ public class AgreementCreationStep {
         this.sharedStepsContext = sharedStepsContext;
         this.identityService = sharedStepsContext.getIdentityService();
         this.dataPreparationService = dataPreparationService;
+    }
+
+    @Given("{string} ha già creato un e-service in stato {string} che richiede quell'attributo certificato con approvazione {agreementApprovalPolicy}")
+    public void createEServiceWithCertifiedAttribute(String tenantType, String descriptorState, AgreementApprovalPolicy agreementApprovalPolicy) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(
+                new EServiceSeed(),
+                new UpdateEServiceDescriptorSeed()
+                        .agreementApprovalPolicy(agreementApprovalPolicy)
+                        .attributes(new DescriptorAttributesSeed()
+                                .certified(List.of(List.of(new DescriptorAttributeSeed()
+                                        .id(sharedStepsContext.getAttributeCommonContext().getAttributeId())
+                                        .explicitAttributeVerification(true)
+                                )))
+                        )
+        );
+        dataPreparationService.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(), eServiceDescriptor.getDescriptorId(),
+                EServiceDescriptorState.fromValue(descriptorState), false);
+        sharedStepsContext.getEServicesCommonContext().setEserviceId(eServiceDescriptor.getEServiceId());
+        sharedStepsContext.getEServicesCommonContext().setDescriptorId(eServiceDescriptor.getDescriptorId());
     }
 
     @Given("{string} ha già rifiutato quella richiesta di fruizione")

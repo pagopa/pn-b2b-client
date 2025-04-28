@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.purpose;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.interop.authorization.domain.Role;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Purpose;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
@@ -35,6 +36,14 @@ public class PurposeReadSteps {
     public void verifyStatusCodeWithoutRiskAnalysis() {
         Assertions.assertEquals(200, httpCallExecutor.getClientResponse().value());
         Assertions.assertNull(((Purpose) httpCallExecutor.getResponse()).getRiskAnalysisForm());
+    }
+
+    @Then("si ottiene status code 200 ma l'analisi del rischio solo per admin")
+    public void verifyStatusCodeAndRiskAnalysis() {
+        Assertions.assertEquals(200, httpCallExecutor.getClientResponse().value());
+        if (sharedStepsContext.getRole() != Role.ADMIN) {
+            Assertions.assertNull(((Purpose)httpCallExecutor.getResponse()).getRiskAnalysisForm());
+        }
     }
 
 }

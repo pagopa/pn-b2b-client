@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.authorization;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
+import it.pagopa.interop.authorization.domain.Role;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
@@ -36,6 +37,7 @@ public class ClientCreateStep {
         String token = identityService.getToken(tenantType, role);
         clientTokenConfigurator.setBearerToken(token);
         sharedStepsContext.setUserToken(token);
+        sharedStepsContext.setRole(Role.valueOf(role.toLowerCase()));
         sharedStepsContext.setTenantType(tenantType);
     }
 

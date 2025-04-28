@@ -193,6 +193,30 @@ public class DataPreparationService {
         );
     }
 
+    public void suspendPurpose(UUID purposeId, UUID versionId, ClientType checkSuspendedBy) {
+        httpCallExecutor.performCall(() ->
+                purposeApiClient.suspendPurposeVersion(purposeId, versionId)
+        );
+        assertValidResponse();
+        pollingService.makePolling(
+                () -> httpCallExecutor.performCall(
+                        () -> purposeApiClient.getPurpose(purposeId)),
+                res -> {
+                    Purpose purpose = ((Purpose) httpCallExecutor.getResponse());
+                    boolean isSuspended = purpose.getCurrentVersion().getState() == PurposeVersionState.SUSPENDED;
+                    if (checkSuspendedBy == null) return isSuspended;
+                    else if (checkSuspendedBy == ClientType.CONSUMER) {
+                        isSuspended = purpose.getSuspendedByConsumer();
+                    }
+                    else {
+                        isSuspended = purpose.getSuspendedByProducer();
+                    }
+                    return isSuspended;
+                },
+                ERROR_RETRIEVING_PURPOSE
+        );
+    }
+
     public String addPublicKeyToClient(UUID clientId, KeySeed keySeed) {
         pollingService.makePolling(
                 () -> httpCallExecutor.performCall(

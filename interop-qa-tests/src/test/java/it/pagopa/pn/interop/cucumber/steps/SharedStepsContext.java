@@ -16,6 +16,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import it.pagopa.interop.authorization.domain.Role;
 import org.springframework.context.annotation.Scope;
 
 import java.util.UUID;
@@ -32,6 +33,7 @@ public class SharedStepsContext {
 
     private int testSeed;
     private String tenantType;
+    private Role role;
     private String userToken;
     private UUID agreementId;
     private ClientCommonContext clientCommonContext;
