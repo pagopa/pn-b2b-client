@@ -42,6 +42,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.awaitility.Awaitility.await;
 
 
@@ -871,7 +872,7 @@ public class ApiServiceDeskSteps {
     @Given("come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN {string} e taxId {string}  recipientType  {string}")
     public void comeOperatoreDevoEffettuareUnCheckSullaDisponibilitaValiditaEDimensioneDegliAllegatiConIUNRecipientType(String iun, String taxId, String recipientType) {
         try {
-            FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+            FullSentNotificationV26 fullSentNotification = sharedSteps.getNotificationIun() != null ? sharedSteps.getSentNotificationLastVersion() : null;
             documentsRequest = new DocumentsRequest();
             if (fullSentNotification != null) {
                 setRecipientType(fullSentNotification.getRecipients().get(0).getRecipientType().getValue());
@@ -1146,7 +1147,9 @@ public class ApiServiceDeskSteps {
 
     private void operationProducedAnErrorSteps(String statusCode) {
         notificationError.getStatusCode();
-        Assertions.assertEquals(notificationError.getStatusCode().toString().substring(0, 3), statusCode);
+        assertThat(notificationError.getStatusCode().toString().substring(0, 3))
+                .as("Il codice di errore non coincide con quanto atteso: " + notificationError)
+                .isEqualTo(statusCode);
     }
 
     private void createOperationResponseWithErrorSteps() {
