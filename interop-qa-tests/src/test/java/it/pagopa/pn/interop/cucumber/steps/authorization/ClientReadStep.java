@@ -24,7 +24,7 @@ public class ClientReadStep {
     @When("l'utente richiede una operazione di lettura di quel client")
     public void getClient() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-        httpCallExecutor.performCall(() -> authorizationClient.getClient(sharedStepsContext.getXCorrelationId(), sharedStepsContext.getClientCommonContext().getFirstClient()));
+        httpCallExecutor.performCall(() -> authorizationClient.getClient(sharedStepsContext.getClientCommonContext().getFirstClient()));
     }
 
 }

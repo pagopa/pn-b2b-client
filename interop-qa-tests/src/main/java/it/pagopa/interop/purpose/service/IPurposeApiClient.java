@@ -6,13 +6,13 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import java.util.UUID;
 
 public interface IPurposeApiClient extends SettableBearerToken {
-    RiskAnalysisFormConfig retrieveLatestRiskAnalysisConfiguration(String xCorrelationId);
-    CreatedResource createPurpose(String xCorrelationId, PurposeSeed purposeSeed);
-    CreatedResource createPurposeForReceiveEservice(String xCorrelationId, PurposeEServiceSeed purposeEServiceSeed);
-    Purpose getPurpose(String xCorrelationId, UUID purposeId);
-    PurposeVersionResource activatePurposeVersion(String xCorrelationId, UUID purposeId, UUID versionId);
-    PurposeVersionResource suspendPurposeVersion(String xCorrelationId, UUID purposeId, UUID versionId);
-    PurposeVersionResource archivePurposeVersion(String xCorrelationId, UUID purposeId, UUID versionId);
-    void rejectPurposeVersion(String xCorrelationId, UUID purposeId, UUID versionId, RejectPurposeVersionPayload rejectPurposeVersionPayload);
+    RiskAnalysisFormConfig retrieveLatestRiskAnalysisConfiguration();
+    CreatedResource createPurpose(PurposeSeed purposeSeed);
+    CreatedResource createPurposeForReceiveEservice(PurposeEServiceSeed purposeEServiceSeed);
+    Purpose getPurpose(UUID purposeId);
+    PurposeVersionResource activatePurposeVersion(UUID purposeId, UUID versionId);
+    PurposeVersionResource suspendPurposeVersion(UUID purposeId, UUID versionId);
+    PurposeVersionResource archivePurposeVersion(UUID purposeId, UUID versionId);
+    void rejectPurposeVersion(UUID purposeId, UUID versionId, RejectPurposeVersionPayload rejectPurposeVersionPayload);
 
 }

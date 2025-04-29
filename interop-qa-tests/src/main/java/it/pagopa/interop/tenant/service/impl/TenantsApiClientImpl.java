@@ -16,8 +16,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.UUID;
-
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class TenantsApiClientImpl implements ITenantsApi {
@@ -54,8 +52,8 @@ public class TenantsApiClientImpl implements ITenantsApi {
     }
 
     @Override
-    public DeclaredAttributesResponse getDeclaredAttributes(String xCorrelationId, UUID tenantId) {
-        return tenantsApi.getDeclaredAttributes(xCorrelationId, tenantId);
+    public DeclaredAttributesResponse getDeclaredAttributes(UUID tenantId) {
+        return tenantsApi.getDeclaredAttributes(tenantId);
     }
 
     @Override
@@ -68,8 +66,8 @@ public class TenantsApiClientImpl implements ITenantsApi {
     }
 
     @Override
-    public Tenant getTenant(String xCorrelationId, UUID tenantId) {
-        return tenantsApi.getTenant(xCorrelationId, tenantId);
+    public Tenant getTenant(UUID tenantId) {
+        return tenantsApi.getTenant(tenantId);
     }
 
     @Override

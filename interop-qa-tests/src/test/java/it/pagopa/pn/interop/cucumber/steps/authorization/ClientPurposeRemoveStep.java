@@ -51,7 +51,7 @@ public class ClientPurposeRemoveStep {
     @When("l'utente richiede la disassociazione della finalità dal client")
     public void getClientUsers() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-        httpCallExecutor.performCall(() -> authorizationClient.removeClientPurpose(sharedStepsContext.getXCorrelationId(),
+        httpCallExecutor.performCall(() -> authorizationClient.removeClientPurpose(
                 sharedStepsContext.getClientCommonContext().getFirstClient(), UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId())));
     }
 
