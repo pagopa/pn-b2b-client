@@ -185,10 +185,9 @@ Feature: Api Service Cruscotto Assistenza
   2) taxId valorizzato, IUN inesistente
   3) taxId vuoto, IUN corretto
   4) taxId null, IUN corretto
-  5) IUN corretto, taxId null
-  6) IUN corretto, taxId errato
-  7) IUN corretto, taxId non corrispondente al destinatario della notifica (PF)
-  8) IUN corretto, taxId non corrispondente al destinatario della notifica (PG)
+  5) IUN corretto, taxId errato
+  6) IUN corretto, taxId non corrispondente al destinatario della notifica (PF)
+  7) IUN corretto, taxId non corrispondente al destinatario della notifica (PG)
     Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con taxId "<TAX_ID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then Il servizio risponde correttamente
     And invocazione servizio per recupero dettaglio timeline notifica con taxId "<taxIdRecupero>" e iun "<IUN>"
@@ -412,7 +411,7 @@ Feature: Api Service Cruscotto Assistenza
       | DESTINATARIO   | IUN    | TAX_ID         | RECIPIENT_TYPE |
       | CucumberSpa    | NO_SET | Mario Cucumber | PF             |
       | Mario Cucumber | NO_SET | CucumberSpa    | PG             |
-      | Mario Cucumber | NO_SET | Mario Cucumber | PG             |
+      | Mario Cucumber | NO_SET | Mario Gherkin  | PG             |
       #Response 404 NOT_FOUND
 
 

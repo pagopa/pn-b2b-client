@@ -545,10 +545,9 @@ public class NotificationUtilsV24 extends B2bUtils {
     /**
      * Metodi per createAndSendNotificationRequestWithError
      */
-    //credo che il file di cui fare il preload dovrebbe essere un pdf, non un xml
+    //TODO credo che il file di cui fare il preload dovrebbe essere un pdf, non un xml
     private NotificationDocument preloadDocumentWithoutUpload(NotificationDocument document) throws IOException {
-//        String resourceName = "classpath:/test.xml";
-        String resourceName = "classpath:/multa.pdf";//TODO MATTEO TEST
+        String resourceName = "classpath:/test.xml";
         Pair<String, String> preloadDocument = preloadGeneric(context, b2bClient, resourceName, APPLICATION_PDF);
         documentSetKey(document, preloadDocument.getValue1());
         documentSetVersionToken(document, "v1");
@@ -590,29 +589,28 @@ public class NotificationUtilsV24 extends B2bUtils {
     }
 
     public NewNotificationRequestV24 buildNotificationNotFoundAllegato(NewNotificationRequestV24 request, boolean isWithoutUpload) throws IOException {
-//        if (!request.getDocuments().isEmpty() && !isWithoutUpload) {
-//            NotificationDocument notificationDocument = request.getDocuments().get(0);
-//            notificationDocument.getRef().setKey(PN_NOTIFICATION_ATTACHMENTS_ZBEDA_19_F_8997469_BB_75_D_28_FF_12_BDF_321_PDF);
-//        }
+        if (!request.getDocuments().isEmpty() && !isWithoutUpload) {
+            NotificationDocument notificationDocument = request.getDocuments().get(0);
+            notificationDocument.getRef().setKey(PN_NOTIFICATION_ATTACHMENTS_ZBEDA_19_F_8997469_BB_75_D_28_FF_12_BDF_321_PDF);
+        }
+        List<NotificationDocument> newDocs = new ArrayList<>();
+        for (NotificationDocument doc : request.getDocuments()) {
+            if (isWithoutUpload) {
+                newDocs.add(preloadDocumentWithoutUpload(doc));
+            } else {
+                newDocs.add(preloadDocument(doc));
+            }
+        }
+        request.setDocuments(newDocs);
+        setAttachmentAndMetadata(request, isWithoutUpload);
+
+        //TODO MATTEO PROVA
 //        List<NotificationDocument> newDocs = new ArrayList<>();
 //        for (NotificationDocument doc : request.getDocuments()) {
-//            if (isWithoutUpload) {
-//                newDocs.add(preloadDocumentWithoutUpload(doc));
-//            } else {
-//            newDocs.add(preloadDocument(doc));
-//            }
+//            newDocs.add(preloadDocumentWithoutUpload(doc));
 //        }
 //        request.setDocuments(newDocs);
 //        setAttachmentAndMetadata(request, isWithoutUpload);
-
-        //TODO MATTEO PROVA
-        List<NotificationDocument> newDocs = new ArrayList<>();
-        for (NotificationDocument doc : request.getDocuments()) {
-            newDocs.add(preloadDocumentWithoutUpload(doc));
-        }
-        request.setDocuments(newDocs);
-//        setAttachmentAndMetadata(request, isWithoutUpload);
-        setAttachmentAndMetadata(request, false);//TODO MATTEO PROVA
         return request;
     }
 

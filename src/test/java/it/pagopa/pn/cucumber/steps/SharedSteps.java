@@ -526,14 +526,7 @@ public class SharedSteps {
         Assertions.assertNotNull(this.notificationError);
         Assertions.assertEquals(400, this.notificationError.getStatusCode().value());
     }
-
-    @When("la notifica viene inviata tramite api b2b senza preload allegato dal {string}")
-    public void laNotificaVieneInviataTramiteApiB2bSenzaPreloadAllegato(String pa) {
-        setPaAndSenderTaxId(pa);
-        sendNotificationRefusedDueToError("NOT_FOUND_ALLEGATO", false);
-    }
-
-    //TODO: è identico al metodo sopra...perché? Editare i feature che richiamano lo step e procedere con la cancellazione?
+    
     @When("la notifica viene inviata tramite api b2b senza preload allegato dal {string} e si attende che lo stato diventi REFUSED")
     public void laNotificaVieneInviataSenzaPreloadAllegato(String paName) {
         setPaAndSenderTaxId(paName);

@@ -173,8 +173,12 @@ public class ApiServiceDeskSteps {
 
     @Then("il servizio risponde con errore {string}")
     public void operationProducedAnError(String statusCode) {
-        operationProducedAnErrorSteps(statusCode);
-        log.info("Errore: " + notificationError.getStatusCode() + " " + notificationError.getMessage() + " " + notificationError.getCause());
+        try {
+            operationProducedAnErrorSteps(statusCode);
+            log.info("Errore: " + notificationError.getStatusCode() + " " + notificationError.getMessage() + " " + notificationError.getCause());
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        }
     }
 
     @Given("viene comunicato il nuovo indirizzo con {string} {string} {string} {string} {string} {string} {string} {string} {string}")
