@@ -6,9 +6,9 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import java.util.List;
 
 public interface IAttributeApiClient extends SettableBearerToken {
-    Attribute createCertifiedAttribute(String xCorrelationId, CertifiedAttributeSeed certifiedAttributeSeed);
-    Attribute createVerifiedAttribute(String xCorrelationId, AttributeSeed attributeSeed);
-    Attribute createDeclaredAttribute(String xCorrelationId, AttributeSeed attributeSeed);
-    Attributes getAttributes(String xCorrelationId, Integer limit, Integer offset, List<AttributeKind> kinds, String q, String origin);
+    Attribute createCertifiedAttribute(CertifiedAttributeSeed certifiedAttributeSeed);
+    Attribute createVerifiedAttribute(AttributeSeed attributeSeed);
+    Attribute createDeclaredAttribute(AttributeSeed attributeSeed);
+    Attributes getAttributes(Integer limit, Integer offset, List<AttributeKind> kinds, String q, String origin);
 
 }

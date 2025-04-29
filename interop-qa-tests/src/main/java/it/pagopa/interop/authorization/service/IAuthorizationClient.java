@@ -8,20 +8,20 @@ import java.util.UUID;
 
 public interface IAuthorizationClient extends SettableBearerToken {
 
-    CreatedResource createConsumerClient(String xCorrelationId, ClientSeed clientSeed);
-    CreatedResource createApiClient(String xCorrelationId, ClientSeed clientSeed);
-    void deleteClient(String xCorrelationId, UUID clientId);
-    void getEncodedClientKeyById(String xCorrelationId, UUID clientId, String keyId);
-    void deleteClientKeyById(String xCorrelationId, UUID clientId, String keyId);
-    void removeUserFromClient(String xCorrelationId, UUID clientId, UUID userId);
-    List<CompactUser> getClientUsers(String xCorrelationId, UUID clientId);
-    PublicKey getClientKeyById(String xCorrelationId, UUID clientId, String keyId);
-    void createKeys(String xCorrelationId, UUID clientId, List<KeySeed> keySeed);
-    PublicKeys getClientKeys(String xCorrelationId, UUID clientId, List<UUID> userIds);
-    void addClientPurpose(String xCorrelationId, UUID clientId, PurposeAdditionDetailsSeed purposeAdditionDetailsSeed);
-    CompactClients getClients(String xCorrelationId, Integer offset, Integer limit, String q, List<UUID> userIds, ClientKind kind);
-    Client getClient(String xCorrelationId, UUID clientId);
-    void removeClientPurpose(String xCorrelationId, UUID clientId, UUID purposeId);
-    CreatedResource addUsersToClient(String xCorrelationId, UUID clientId, InlineObject3 inlineObject3);
+    CreatedResource createConsumerClient(ClientSeed clientSeed);
+    CreatedResource createApiClient(ClientSeed clientSeed);
+    void deleteClient(UUID clientId);
+    void getEncodedClientKeyById(UUID clientId, String keyId);
+    void deleteClientKeyById(UUID clientId, String keyId);
+    void removeUserFromClient(UUID clientId, UUID userId);
+    List<CompactUser> getClientUsers(UUID clientId);
+    PublicKey getClientKeyById(UUID clientId, String keyId);
+    void createKeys(UUID clientId, List<KeySeed> keySeed);
+    PublicKeys getClientKeys(UUID clientId, Integer offset, Integer limit, List<UUID> userIds);
+    void addClientPurpose(UUID clientId, PurposeAdditionDetailsSeed purposeAdditionDetailsSeed);
+    CompactClients getClients(Integer offset, Integer limit, String q, List<UUID> userIds, ClientKind kind);
+    Client getClient(UUID clientId);
+    void removeClientPurpose(UUID clientId, UUID purposeId);
+    CreatedResource addUsersToClient(UUID clientId, InlineObject3 inlineObject3);
 
 }
