@@ -8,7 +8,15 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.service.IPnSafeStoragePrivateClient;
-import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.model.*;
+import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.model.AdditionalFileTagsMassiveUpdateRequest;
+import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.model.AdditionalFileTagsMassiveUpdateResponse;
+import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.model.AdditionalFileTagsSearchResponse;
+import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.model.AdditionalFileTagsSearchResponseFileKeysInner;
+import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.model.AdditionalFileTagsUpdateRequest;
+import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.model.ErrorDetail;
+import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.model.FileCreationRequest;
+import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.model.FileCreationResponse;
+import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.model.Tags;
 import it.pagopa.pn.cucumber.utils.IndicizzazioneStepsPojo;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -629,7 +637,7 @@ public class SafeStorageSteps {
     @Then("Il risultato della search contiene le fileKey relative ai seguenti documenti")
     public void checkSearchResult(DataTable dataTable) {
         List<String> searchResult = this.indicizzazioneStepsPojo.getAdditionalFileTagsSearchResponseResponseEntity().getBody().getFileKeys()
-                .stream().map(AdditionalFileTagsSearchResponseFileKeys::getFileKey).toList();
+                .stream().map(AdditionalFileTagsSearchResponseFileKeysInner::getFileKey).toList();
         List<String> documentIndexes = dataTable.asList();
         if (documentIndexes.contains("null")) {
             Assertions.assertTrue(searchResult.isEmpty());
