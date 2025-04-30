@@ -14,7 +14,6 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffConsent;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffTosPrivacyActionBody;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.ConsentType;
-import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV27;
 import it.pagopa.pn.client.b2b.pa.service.*;
@@ -27,6 +26,7 @@ import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.*;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.DocumentCategory;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
+import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.utils.DataTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -55,7 +55,6 @@ public class RicezioneNotificheWebSteps {
     private final ApplicationContext context;
     private IPnWebRecipientClient webRecipientClient;
     private IPnWebUserAttributesClient iPnWebUserAttributesClient;
-    private final PnPaB2bUtils b2bUtils;
     private final PnExternalServiceClientImpl externalClient;
     private final SharedSteps sharedSteps;
     private final IPnWebPaClient webPaClient;
@@ -98,7 +97,6 @@ public class RicezioneNotificheWebSteps {
         this.context = context;
         this.sharedSteps = sharedSteps;
         this.webRecipientClient = sharedSteps.getWebRecipientClient();
-        this.b2bUtils = sharedSteps.getB2bUtils();
         this.iPnWebUserAttributesClient = iPnWebUserAttributesClient;
         this.webPaClient = sharedSteps.getWebPaClient();
         this.externalClient = sharedSteps.getPnExternalServiceClient();
@@ -257,8 +255,8 @@ public class RicezioneNotificheWebSteps {
         AtomicReference<String> sha256 = new AtomicReference<>("");
         Assertions.assertDoesNotThrow(() -> {
             byte[] bytes = Assertions.assertDoesNotThrow(() ->
-                    b2bUtils.downloadFile(downloadResponse.getUrl()));
-            sha256.set(b2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
+                    B2bUtils.downloadFile(downloadResponse.getUrl()));
+            sha256.set(B2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
         });
         Assertions.assertEquals(sha256.get(), downloadResponse.getSha256());
     }
@@ -303,7 +301,6 @@ public class RicezioneNotificheWebSteps {
 
     @Then("l'allegato {string} può essere correttamente recuperato da {string}")
     public void attachmentCanBeCorrectlyRetrievedBy(String attachmentName, String recipient) {
-        //TODO Modificare
         sharedSteps.selectUser(recipient);
         NotificationAttachmentDownloadMetadataResponse downloadResponse = getReceivedNotificationAttachment(attachmentName);
 
@@ -322,14 +319,14 @@ public class RicezioneNotificheWebSteps {
             NotificationAttachmentDownloadMetadataResponse finalDownloadResponse = downloadResponse;
             Assertions.assertDoesNotThrow(() -> {
                 byte[] bytes = Assertions.assertDoesNotThrow(() ->
-                        b2bUtils.downloadFile(Objects.requireNonNull(finalDownloadResponse).getUrl()));
-                sha256.set(b2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
+                        B2bUtils.downloadFile(Objects.requireNonNull(finalDownloadResponse).getUrl()));
+                sha256.set(B2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
             });
             Assertions.assertEquals(sha256.get(), Objects.requireNonNull(downloadResponse).getSha256());
         } else {
             NotificationAttachmentDownloadMetadataResponse finalDownloadResponse = downloadResponse;
             Assertions.assertDoesNotThrow(() ->
-                    b2bUtils.downloadFile(Objects.requireNonNull(finalDownloadResponse).getUrl()));
+                    B2bUtils.downloadFile(Objects.requireNonNull(finalDownloadResponse).getUrl()));
         }
     }
 
@@ -476,7 +473,7 @@ public class RicezioneNotificheWebSteps {
     public NotificationSearchParam convertNotificationSearchParam(Map<String, String> data) {
         NotificationSearchParam searchParam = new NotificationSearchParam();
 
-        PnPaB2bUtils.Pair<OffsetDateTime, OffsetDateTime> dates = getStartDateAndEndDate(data);
+        B2bUtils.Pair<OffsetDateTime, OffsetDateTime> dates = getStartDateAndEndDate(data);
 
         searchParam.startDate = dates.getValue1();
         searchParam.endDate = dates.getValue2();
@@ -495,7 +492,7 @@ public class RicezioneNotificheWebSteps {
     public NotificationSearchParamWebPA convertNotificationSearchParamWebPA(Map<String, String> data) {
         NotificationSearchParamWebPA searchParam = new NotificationSearchParamWebPA();
 
-        PnPaB2bUtils.Pair<OffsetDateTime, OffsetDateTime> dates = getStartDateAndEndDate(data);
+        B2bUtils.Pair<OffsetDateTime, OffsetDateTime> dates = getStartDateAndEndDate(data);
 
         searchParam.startDate = dates.getValue1();
         searchParam.endDate = dates.getValue2();
@@ -506,7 +503,7 @@ public class RicezioneNotificheWebSteps {
         return searchParam;
     }
 
-    private PnPaB2bUtils.Pair<OffsetDateTime, OffsetDateTime> getStartDateAndEndDate(Map<String, String> data) {
+    private B2bUtils.Pair<OffsetDateTime, OffsetDateTime> getStartDateAndEndDate(Map<String, String> data) {
 
         Calendar now = Calendar.getInstance();
         int month = now.get(Calendar.MONTH);
@@ -529,7 +526,7 @@ public class RicezioneNotificheWebSteps {
             endDate = sentAt;
         }
 
-        return new PnPaB2bUtils.Pair<>(startDate, endDate);
+        return new B2bUtils.Pair<>(startDate, endDate);
     }
 
     private boolean searchNotification(NotificationSearchParam searchParam) {

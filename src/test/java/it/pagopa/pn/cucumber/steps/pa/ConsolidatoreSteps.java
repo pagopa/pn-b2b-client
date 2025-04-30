@@ -2,6 +2,7 @@ package it.pagopa.pn.cucumber.steps.pa;
 
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
+import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,7 +31,7 @@ public class ConsolidatoreSteps {
     @Then("viene invocato il consolidatore con clientRequestTimeStamp e statusDateTime nel {string}")
     public void vieneInvocatoIlConsolidatore(String statusDate) {
         Instant now = statusDate.equalsIgnoreCase("Futuro") ?
-                Instant.now().plusSeconds(sharedSteps.getB2bUtils().convertToSeconds(pnEcConsAllowedFutureOffsetDuration)).plusSeconds(60)
+                Instant.now().plusSeconds(B2bUtils.convertToSeconds(pnEcConsAllowedFutureOffsetDuration)).plusSeconds(60)
                 : Instant.now();
         Map<String, String> mapInfo = populateConsolidatoreMap(now);
         try {
@@ -45,14 +46,14 @@ public class ConsolidatoreSteps {
         Map<String, String> mapInfo = new HashMap<>();
         mapInfo.put("requestId", requestIdConsolidator);
         mapInfo.put("attachments", null);
-        mapInfo.put("clientRequestTimeStamp", sharedSteps.getB2bUtils().getOffsetDateTimeFromDate(date));
+        mapInfo.put("clientRequestTimeStamp", B2bUtils.getOffsetDateTimeFromDate(date));
         mapInfo.put("deliveryFailureCause", null);
         mapInfo.put("discoveredAddress", null);
         mapInfo.put("iun", iun);
         mapInfo.put("productType", "890");
         mapInfo.put("registeredLetterCode", null);
         mapInfo.put("statusCode", "CON020");
-        mapInfo.put("statusDateTime", sharedSteps.getB2bUtils().getOffsetDateTimeFromDate(date));
+        mapInfo.put("statusDateTime", B2bUtils.getOffsetDateTimeFromDate(date));
         mapInfo.put("statusDescription", "Affido conservato");
         return mapInfo;
     }

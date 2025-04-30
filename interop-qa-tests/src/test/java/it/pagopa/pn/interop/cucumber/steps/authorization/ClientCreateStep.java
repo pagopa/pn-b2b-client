@@ -48,9 +48,9 @@ public class ClientCreateStep {
     @When("l'utente richiede la creazione di un client {string}")
     public void createClient(String clientKind) {
         if ("CONSUMER".equals(clientKind)) {
-            httpCallExecutor.performCall(() -> authorizationClientCreate.createConsumerClient(sharedStepsContext.getXCorrelationId(), createClientSeed()));
+            httpCallExecutor.performCall(() -> authorizationClientCreate.createConsumerClient(createClientSeed()));
         } else {
-            httpCallExecutor.performCall(() -> authorizationClientCreate.createApiClient(sharedStepsContext.getXCorrelationId(), createClientSeed()));
+            httpCallExecutor.performCall(() -> authorizationClientCreate.createApiClient(createClientSeed()));
         }
     }
 

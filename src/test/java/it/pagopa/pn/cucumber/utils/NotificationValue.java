@@ -93,7 +93,6 @@ public enum NotificationValue {
     REGISTRY("registry", null, false);//Todo v28 ???
 
     private static final String NULL_VALUE = "NULL";
-    public static final String EXCLUDE_VALUE = "NO";
     private static final Integer NOTICE_CODE_LENGTH = 18;
 
     public final String key;
@@ -112,20 +111,15 @@ public enum NotificationValue {
         NotificationValue notificationValue =
                 Arrays.stream(NotificationValue.values()).filter(value -> value.key.equals(key)).findFirst().orElse(null);
         return (notificationValue == null ? null : (notificationValue.addCurrentTime ? (notificationValue.defaultValue + generateRandomNumber()) : notificationValue.defaultValue));
-        /*
-        String number = threadNumber.length() < 2 ? "0"+threadNumber: threadNumber.substring(0, 2);
-        return (notificationValue == null ? null : (notificationValue.addCurrentTime? (notificationValue.defaultValue + (""+String.format("302"+number+"%13d",System.currentTimeMillis()))) : notificationValue.defaultValue));
-         */
     }
 
     public static String generateRandomNumber() {
-        String threadNumber = (Thread.currentThread().getId() + "");
+        String threadNumber = (String.valueOf(Thread.currentThread().getId()));
         String numberOfThread = threadNumber.length() < 2 ? "0" + threadNumber : threadNumber.substring(0, 2);
-        String timeNano = System.nanoTime() + "";
-        String randomClassePagamento = new Random().nextInt(14) + "";
+        String timeNano = String.valueOf(System.nanoTime());
+        String randomClassePagamento = String.valueOf(new Random().nextInt(14));
         randomClassePagamento = randomClassePagamento.length() < 2 ? "0" + randomClassePagamento : randomClassePagamento;
-        String finalNumber = "" + String.format("302%s%s%s", randomClassePagamento, numberOfThread, timeNano.substring(0, timeNano.length() - 4));
-        // String finalNumber = "" + String.format("30210" +randomClassePagamento + numberOfThread + timeNano.substring(0, timeNano.length()-6));
+        String finalNumber = "302" + randomClassePagamento + numberOfThread + timeNano.substring(0, timeNano.length() - 4);
         if (finalNumber.length() > NOTICE_CODE_LENGTH) {
             finalNumber = finalNumber.substring(0, NOTICE_CODE_LENGTH);
         } else {
@@ -138,11 +132,6 @@ public enum NotificationValue {
 
     public static String getValue(Map<String, String> data, String key) {
         if (data.containsKey(key)) {
-            /* TEST
-            if(data.get(key).equals(EXCLUDE_VALUE)){
-                return EXCLUDE_VALUE;
-            }
-             */
             return data.get(key).equals(NULL_VALUE) ? null : (data.get(key).contains("_CHAR") ? getCharSeq(data.get(key)) : data.get(key));
         } else {
             return getDefaultValue(key);
@@ -157,8 +146,8 @@ public enum NotificationValue {
     }
 
     public static <T> T getCastedDefaultValue(String key) {
-        NotificationValue notificationValue =
-                Arrays.stream(NotificationValue.values()).filter(value -> value.key.equals(key)).findFirst().orElse(null);
+        NotificationValue notificationValue = Arrays.stream(NotificationValue.values()).filter(
+                value -> value.key.equals(key)).findFirst().orElse(null);
         return notificationValue == null ? null : (T) notificationValue.defaultValue;
     }
 

@@ -35,18 +35,18 @@ public class DelegationApiClientImpl implements IDelegationApiClient {
     }
 
     @Override
-    public CompactDelegations getDelegation(String xCorrelationId, Integer offset, Integer limit, List<DelegationState> states, List<UUID> delegatorIds, List<UUID> delegateIds, DelegationKind kind, List<UUID> eserviceIds) {
-        return delegationsApi.getDelegations(xCorrelationId, offset, limit, states, delegatorIds, delegateIds, kind, eserviceIds);
+    public CompactDelegations getDelegation(Integer offset, Integer limit, List<DelegationState> states, List<UUID> delegatorIds, List<UUID> delegateIds, DelegationKind kind, List<UUID> eserviceIds) {
+        return delegationsApi.getDelegations(offset, limit, states, delegatorIds, delegateIds, kind, eserviceIds);
     }
 
     @Override
-    public Delegation getDelegation(String xCorrelationId, String delegationId) {
-        return delegationsApi.getDelegation(xCorrelationId, delegationId);
+    public Delegation getDelegation(String delegationId) {
+        return delegationsApi.getDelegation(delegationId);
     }
 
     @Override
-    public File getDelegationContract(String xCorrelationId, UUID delegationId, UUID contractId) {
-        return delegationsApi.getDelegationContract(xCorrelationId, delegationId, contractId);
+    public File getDelegationContract(UUID delegationId, UUID contractId) {
+        return delegationsApi.getDelegationContract(delegationId, contractId);
     }
 
     @Override

@@ -9,11 +9,13 @@ import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingPredicate;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV21;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v21.PnPollingServiceTimelineRapidV21;
+import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationHistoryResponse;
+import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheB2bSteps;
-import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationStepsV21;
 import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion;
+import it.pagopa.pn.cucumber.steps.pa.utilityVersions.NotificationUtilsV21;
 import it.pagopa.pn.cucumber.steps.utilitySteps.PollingType;
 import it.pagopa.pn.cucumber.steps.utilitySteps.WaitForEventPredicateFilters;
 import it.pagopa.pn.cucumber.steps.utilitySteps.checkTimelineElement.TimelineElementCheck;
@@ -40,7 +42,7 @@ import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.PollingType.STATUS;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.PollingType.TIMELINE;
 import static java.time.OffsetDateTime.now;
-import static java.time.temporal.ChronoUnit.MINUTES;
+import static java.time.temporal.ChronoUnit.*;
 import static java.util.Objects.nonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -55,17 +57,20 @@ public class B2bStepsV21 implements B2bStepsInterface {
     private TimelineElementV20 timelineElement;
     private NotificationStatusHistoryElement notificationStatusHistoryElement;
     private PnPollingResponseV21 pollingResponse;
-    private final NotificationVersion version;
     private final AvanzamentoNotificheB2bSteps b2bSteps;
+    private final SharedSteps sharedSteps;
+    private final IPnPaB2bClient b2bClient;
+    private final NotificationVersion version = NotificationVersion.V21;
 
     public B2bStepsV21(AvanzamentoNotificheB2bSteps b2bSteps) {
-        version = NotificationVersion.V21;
         this.b2bSteps = b2bSteps;
+        sharedSteps = b2bSteps.getSharedSteps();
+        b2bClient = sharedSteps.getB2bClient();
     }
 
     @Override
     public Object getFullSentNotification() {
-        return b2bSteps.getB2bClient().getSentNotificationV21(b2bSteps.getSharedSteps().getNotificationIun());
+        return b2bClient.getSentNotificationV21(sharedSteps.getNotificationIun());
     }
 
     private FullSentNotificationV21 getFullSentNotificationVersioned() {
@@ -125,8 +130,7 @@ public class B2bStepsV21 implements B2bStepsInterface {
     public void checkNotificationCost(String cost) {
         Long notificationCost = timelineElement.getDetails().getNotificationCost();
         if (cost.equalsIgnoreCase("null")) {
-            //TODO: ignorare Sonar che dice che il risultato di questo assetNull fallirà sempre
-            // in quanto il campo è annotato con @NotNull (non è vero)
+            //ignorare Sonar che dice che il risultato di questo assetNull fallirà sempre in quanto il campo è annotato con @NotNull (non è vero)
             Assertions.assertNull(notificationCost);
         } else {
             Assertions.assertEquals(Long.parseLong(cost), notificationCost);
@@ -139,34 +143,36 @@ public class B2bStepsV21 implements B2bStepsInterface {
         log.info("indirizzo Normalizzato: {}", timelineElement.getDetails().getNormalizedAddress());
         try {
             assertSoftly(softly -> {
+                PhysicalAddress normalizedAddress = timelineElement.getDetails().getNormalizedAddress();
                 String testCase = "NormalizedAddress " + b2bSteps.mapValueFromTable(table, "testCase") + ": ";
+
                 assertThat(b2bSteps.mapValueFromTable(table, "physicalAddress_address"))
                         .as(testCase + " il physical address non coincide col valore atteso")
-                        .isEqualTo(timelineElement.getDetails().getNormalizedAddress().getAddress());
+                        .isEqualTo(normalizedAddress.getAddress());
                 assertThat(b2bSteps.mapValueFromTable(table, "at"))
                         .as(testCase + " il campo at(presso) non coincide col valore atteso")
-                        .isEqualTo(timelineElement.getDetails().getNormalizedAddress().getAt());
+                        .isEqualTo(normalizedAddress.getAt());
                 assertThat(b2bSteps.mapValueFromTable(table, "physicalAddress_addressDetails"))
                         .as(testCase + " addressDetails non coincide col valore atteso")
-                        .isEqualTo(timelineElement.getDetails().getNormalizedAddress().getAddressDetails());
+                        .isEqualTo(normalizedAddress.getAddressDetails());
                 assertThat(b2bSteps.mapValueFromTable(table, "physicalAddress_zip"))
                         .as(testCase + " lo zipCode non coincide col valore atteso")
-                        .isEqualTo(timelineElement.getDetails().getNormalizedAddress().getZip());
+                        .isEqualTo(normalizedAddress.getZip());
                 assertThat(b2bSteps.mapValueFromTable(table, "physicalAddress_municipality"))
                         .as(testCase + " la municipality non coincide col valore atteso")
-                        .isEqualTo(timelineElement.getDetails().getNormalizedAddress().getMunicipality());
+                        .isEqualTo(normalizedAddress.getMunicipality());
                 assertThat(b2bSteps.mapValueFromTable(table, "physicalAddress_municipalityDetails"))
                         .as(testCase + " i municipalityDetails non coincidono col valore atteso")
-                        .isEqualTo(timelineElement.getDetails().getNormalizedAddress().getMunicipalityDetails());
+                        .isEqualTo(normalizedAddress.getMunicipalityDetails());
                 assertThat(b2bSteps.mapValueFromTable(table, "physicalAddress_province"))
                         .as(testCase + " la provincia non coincide col valore atteso")
-                        .isEqualTo(timelineElement.getDetails().getNormalizedAddress().getProvince());
+                        .isEqualTo(normalizedAddress.getProvince());
                 assertThat(b2bSteps.mapValueFromTable(table, "physicalAddress_State"))
                         .as(testCase + " il physical address non coincide col valore atteso")
-                        .isEqualTo(timelineElement.getDetails().getNormalizedAddress().getForeignState());
+                        .isEqualTo(normalizedAddress.getForeignState());
             });
         } catch (AssertionFailedError assertionFailedError) {
-            b2bSteps.getSharedSteps().throwAssertionErrorWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -182,18 +188,18 @@ public class B2bStepsV21 implements B2bStepsInterface {
                     .as("I relatedTimelineElements del notificationStatusHistoryElement non contengono l'evento " + evento + " per il recipient " + recipientIndex)
                     .isNotNull();
         } catch (AssertionFailedError assertionFailedError) {
-            b2bSteps.getSharedSteps().throwAssertionErrorWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
     @Override
     public void checkPriceForRecipient(int recipientIndex, String price) {
-        String iun = b2bSteps.getSharedSteps().getNotificationIun();
+        String iun = sharedSteps.getNotificationIun();
         FullSentNotificationV21 fullSentNotification = getFullSentNotificationVersioned();
         List<NotificationPaymentItem> listNotificationPaymentItem = fullSentNotification.getRecipients().get(recipientIndex).getPayments();
         if (listNotificationPaymentItem != null) {
             for (NotificationPaymentItem notificationPaymentItem : listNotificationPaymentItem) {
-                NotificationPriceResponse notificationPrice = b2bSteps.getB2bClient().getNotificationPrice(
+                NotificationPriceResponse notificationPrice = b2bClient.getNotificationPrice(
                         notificationPaymentItem.getPagoPa().getCreditorTaxId(), notificationPaymentItem.getPagoPa().getNoticeCode());
                 try {
                     Assertions.assertEquals(notificationPrice.getIun(), iun);
@@ -205,7 +211,7 @@ public class B2bStepsV21 implements B2bStepsInterface {
                         Assertions.assertEquals(OffsetDateTime.now().toLocalDate(), notificationPrice.getRefinementDate().toLocalDate());
                     }
                 } catch (AssertionFailedError assertionFailedError) {
-                    b2bSteps.getSharedSteps().throwAssertionErrorWithIUN(assertionFailedError);
+                    sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
                 }
             }
         }
@@ -221,7 +227,7 @@ public class B2bStepsV21 implements B2bStepsInterface {
         } else {
             String creditorTaxId = fullSentNotification.getRecipients().get(recipientIndex).getPayments().get(paymentIndex).getPagoPa().getCreditorTaxId();
             String noticeCode = fullSentNotification.getRecipients().get(recipientIndex).getPayments().get(paymentIndex).getPagoPa().getNoticeCode();
-            NotificationPriceResponseV23 notificationPrice = b2bSteps.getB2bClient().getNotificationPriceV23(creditorTaxId, noticeCode);
+            NotificationPriceResponseV23 notificationPrice = b2bClient.getNotificationPriceV23(creditorTaxId, noticeCode);
 
             it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PaymentEventsRequestPagoPa eventsRequestPagoPa = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PaymentEventsRequestPagoPa();
 
@@ -235,7 +241,7 @@ public class B2bStepsV21 implements B2bStepsInterface {
             paymentEventPagoPaList.add(paymentEventPagoPa);
             eventsRequestPagoPa.setEvents(paymentEventPagoPaList);
 
-            b2bSteps.getB2bClient().paymentEventsRequestPagoPa(eventsRequestPagoPa);
+            b2bClient.paymentEventsRequestPagoPa(eventsRequestPagoPa);
         }
     }
 
@@ -250,7 +256,7 @@ public class B2bStepsV21 implements B2bStepsInterface {
                     .as("L'elemento di timeline " + timelineEventCategory + " dovrebbe comparire al massimo una volta")
                     .isLessThanOrEqualTo(1);
         } catch (AssertionFailedError assertionFailedError) {
-            b2bSteps.getSharedSteps().throwAssertionErrorWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -259,7 +265,7 @@ public class B2bStepsV21 implements B2bStepsInterface {
         try {
             List<TimelineElementV20> actualTimelineElements = getFullSentNotificationVersioned().getTimeline().stream()
                     .filter(elem -> nonNull(elem.getDetails()))
-                    //TODO: ignorare Sonar che dice che questo nonNull è inutile in quanto sempre true, non è vero
+                    //ignorare Sonar che dice che questo nonNull è inutile in quanto sempre true, non è vero
                     .filter(elem -> nonNull(elem.getDetails().getSentAttemptMade()))
                     .filter(elem -> elem.getDetails().getSentAttemptMade() <= index)
                     .toList();
@@ -278,7 +284,7 @@ public class B2bStepsV21 implements B2bStepsInterface {
                     .as("I tentativi effettuati non corrispondono a quelli attesi.")
                     .hasSameElementsAs(expectedAttemptsMade);
         } catch (AssertionError assertionFailedError) {
-            b2bSteps.getSharedSteps().throwAssertionErrorWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -296,17 +302,17 @@ public class B2bStepsV21 implements B2bStepsInterface {
                         .isEqualTo(weight);
             }
         } catch (AssertionFailedError assertionFailedError) {
-            b2bSteps.getSharedSteps().throwAssertionErrorWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
     @Override
     public void waitForEventOrStatus(String pollingStrategy, PollingType pollingType, String timelineEventCategory, WaitForEventPredicateFilters filters) {
-        String strategy = NotificationStepsV21.getPollingStrategy(pollingStrategy);
-        IPnPollingService<?> pollingService = b2bSteps.getSharedSteps().getB2bUtils().getPollingFactory().getPollingService(strategy);
+        String strategy = NotificationUtilsV21.getPollingStrategy(pollingStrategy);
+        IPnPollingService<?> pollingService = sharedSteps.getPollingFactory().getPollingService(strategy);
         PnPollingPredicate pollingPredicate = getPnPollingPredicateForTimeline(timelineEventCategory, filters);
         pollingResponse = (PnPollingResponseV21) pollingService.waitForEvent(
-                b2bSteps.getSharedSteps().getNotificationIun(),
+                sharedSteps.getNotificationIun(),
                 PnPollingParameter.builder()
                         .value(timelineEventCategory)
                         .pnPollingPredicate(pollingPredicate)
@@ -331,7 +337,7 @@ public class B2bStepsV21 implements B2bStepsInterface {
                     .as("Timeline element with category " + timelineEventCategory + " should be null")
                     .isNull();
         } catch (AssertionFailedError assertionFailedError) {
-            b2bSteps.getSharedSteps().throwAssertionErrorWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -364,7 +370,7 @@ public class B2bStepsV21 implements B2bStepsInterface {
                 log.info("NOTIFICATION_TIMELINE: {}", pollingResponse.getNotification().getTimeline());
             }
         } catch (AssertionFailedError assertionFailedError) {
-            b2bSteps.getSharedSteps().throwAssertionErrorWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -381,7 +387,7 @@ public class B2bStepsV21 implements B2bStepsInterface {
             }
             List<TimelineElementV20> timelineElements = getTimelineElementsByEventId(timelineEventCategory, dataTest);
             assertThat(timelineElements)
-                    .withFailMessage("Not found a time element '%s'. IUN: %s".formatted(timelineEventCategory, b2bSteps.getSharedSteps().getNotificationIun()))
+                    .withFailMessage("Not found a time element '%s'. IUN: %s".formatted(timelineEventCategory, sharedSteps.getNotificationIun()))
                     .isNotEmpty();
             if (dataTest != null && dataTest.getTimelineElement() != null) {
                 boolean atLeastOneSuccessful = false;
@@ -401,14 +407,14 @@ public class B2bStepsV21 implements B2bStepsInterface {
                 }
             }
         } catch (AssertionFailedError assertionFailedError) {
-            b2bSteps.getSharedSteps().throwAssertionErrorWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
     private void loadTimeline(String timelineEventCategory, boolean existCheck, DataTestV21 dataTest) {
         if (!timelineEventCategory.equals(REQUEST_REFUSED)) {
             timelineElement = getAndStoreTimelineByB2b(timelineEventCategory, dataTest);
-            String iun = b2bSteps.getSharedSteps().getNotificationIun();
+            String iun = sharedSteps.getNotificationIun();
             List<TimelineElementV20> timelineElementList = getFullSentNotificationVersioned().getTimeline();
             log.info("NOTIFICATION_TIMELINE: " + timelineElementList);
             Assertions.assertNotNull(timelineElementList, "timelineElementList is null. IUN: " + iun);
@@ -461,21 +467,21 @@ public class B2bStepsV21 implements B2bStepsInterface {
     }
 
     private TimelineElementV20 getTimelineByDeliveryPush(String timelineEventCategory, DataTestV21 dataTest) {
-        String iun = b2bSteps.getSharedSteps().getNotificationIun();
+        String iun = sharedSteps.getNotificationIun();
         // get timeline from delivery-push
         NotificationHistoryResponse notificationHistory = b2bSteps.getPnPrivateDeliveryPushExternalClient().getNotificationHistory(
                 iun,
-                b2bSteps.getSharedSteps().getRecipientsSize(),
-                b2bSteps.getSharedSteps().getNotificationCreationDate());
+                sharedSteps.getRecipientsSize(),
+                sharedSteps.getNotificationCreationDate());
         List<TimelineElementV20> timelineElementList = notificationHistory.getTimeline().stream().map(x ->
-                b2bSteps.getSharedSteps().deepCopy(x, TimelineElementV20.class)).toList();
+                sharedSteps.deepCopy(x, TimelineElementV20.class)).toList();
         return getTimelineElementByIdOrCategory(timelineEventCategory, dataTest, iun, timelineElementList);
     }
 
     private TimelineElementV20 getAndStoreTimelineByB2b(String timelineEventCategory, DataTestV21 dataFromTest) {
         // proceed with default flux
         PnPollingServiceTimelineRapidV21 timelineRapid = (PnPollingServiceTimelineRapidV21) b2bSteps.getPnPollingFactory().getPollingService(PnPollingStrategy.TIMELINE_RAPID_V21);
-        String iun = b2bSteps.getSharedSteps().getNotificationIun();
+        String iun = sharedSteps.getNotificationIun();
         PnPollingResponseV21 pnPollingResponse = timelineRapid.waitForEvent(iun, PnPollingParameter.builder().value(timelineEventCategory).build());
         return getTimelineElementByIdOrCategory(timelineEventCategory, dataFromTest, iun, pnPollingResponse.getNotification().getTimeline());
     }
@@ -504,7 +510,7 @@ public class B2bStepsV21 implements B2bStepsInterface {
 
         if (dataFromTest != null && dataFromTest.getTimelineElement() != null) {
             // get timeline event id
-            String iun = b2bSteps.getSharedSteps().getNotificationIun();
+            String iun = sharedSteps.getNotificationIun();
             String timelineEventId = dataFromTest.getTimelineEventId(timelineEventCategory, iun);
             if (timelineEventCategory.equals(SEND_ANALOG_PROGRESS)
                     || timelineEventCategory.equals(SEND_SIMPLE_REGISTERED_LETTER_PROGRESS)) {
@@ -548,7 +554,7 @@ public class B2bStepsV21 implements B2bStepsInterface {
             notificationStatusHistoryElement = pollingResponse.getNotificationStatusHistoryElement();
             log.info("NOTIFICATION_STATUS_HISTORY_ELEMENT: " + notificationStatusHistoryElement);
         } catch (AssertionFailedError assertionFailedError) {
-            b2bSteps.getSharedSteps().throwAssertionErrorWithIUN(assertionFailedError);
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 
@@ -736,24 +742,24 @@ public class B2bStepsV21 implements B2bStepsInterface {
                             && Objects.requireNonNull(element.getDetails()).getRecIndex().equals(filterParams.getRecipientIndex())
                             && filterParams.getOtherEventCategory().equalsIgnoreCase("DIGITAL_DELIVERY_CREATION_REQUEST")) {
                         digitalDeliveryCreationRequestDate = element.getTimestamp();
-                        delayMillis = b2bSteps.getSharedSteps().getSchedulingDaysFailureDigitalRefinement().toMillis();
+                        delayMillis = sharedSteps.getSchedulingDaysFailureDigitalRefinement().toMillis();
                         break;
                     } else if (element.getCategory().getValue().equals("SEND_DIGITAL_FEEDBACK")
                             && Objects.requireNonNull(element.getDetails()).getRecIndex().equals(filterParams.getRecipientIndex())
                             && filterParams.getOtherEventCategory().equalsIgnoreCase("SEND_DIGITAL_FEEDBACK")) {
                         digitalDeliveryCreationRequestDate = element.getDetails().getNotificationDate();
                         delayMillis = "OK".equalsIgnoreCase(element.getDetails().getResponseStatus().getValue()) ?
-                                b2bSteps.getSharedSteps().getSchedulingDaysSuccessDigitalRefinement().toMillis() :
-                                b2bSteps.getSharedSteps().getSchedulingDaysFailureDigitalRefinement().toMillis();
+                                sharedSteps.getSchedulingDaysSuccessDigitalRefinement().toMillis() :
+                                sharedSteps.getSchedulingDaysFailureDigitalRefinement().toMillis();
                         break;
                     }
                 }
                 Long schedulingDateMillis = timelineElement.getDetails().getSchedulingDate().toInstant().toEpochMilli();
                 Long digitalDeliveryCreationMillis = Objects.requireNonNull(digitalDeliveryCreationRequestDate).toInstant().toEpochMilli();
                 long diff = schedulingDateMillis - digitalDeliveryCreationMillis;
-                long delta = Long.valueOf(b2bSteps.getSharedSteps().getSchedulingDelta());
+                long delta = Long.valueOf(sharedSteps.getSchedulingDelta());
                 log.info("PRE-ASSERTION: iun={} schedulingDateMillis={}, digitalDeliveryCreationMillis={}, diff={}, delayMillis={}, delta={}",
-                        b2bSteps.getSharedSteps().getNotificationIun(), schedulingDateMillis, digitalDeliveryCreationMillis, diff, delayMillis, delta);
+                        sharedSteps.getNotificationIun(), schedulingDateMillis, digitalDeliveryCreationMillis, diff, delayMillis, delta);
                 assertThat(diff)
                         .as("le tempistiche di arrivo tra gli elementi cercati non sono corrette")
                         .isLessThanOrEqualTo(delayMillis + delta)
@@ -800,7 +806,7 @@ public class B2bStepsV21 implements B2bStepsInterface {
                                 .matches(filterParams.getFieldRegex());
                     });
                 } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                    b2bSteps.getSharedSteps().throwAssertionErrorWithIUN(
+                    sharedSteps.throwAssertionErrorWithIUN(
                             new AssertionFailedError("Error accessing field %s".formatted(filterParams.getFieldPath())));
                 }
             }
@@ -895,7 +901,7 @@ public class B2bStepsV21 implements B2bStepsInterface {
     public void checkNumberOfTimelineElementsFromData(String timelineEventCategory, Integer size, Map<String, String> dataMap) {
 
         DataTestV21 dataTest = DataTestV21.convertMap(dataMap);
-        String iun = b2bSteps.getSharedSteps().getNotificationIun();
+        String iun = sharedSteps.getNotificationIun();
         FullSentNotificationV21 fullSentNotification = getFullSentNotificationVersioned();
         List<TimelineElementV20> timelineElementList = fullSentNotification.getTimeline();
         String timelineEventId = dataTest.getTimelineEventId(timelineEventCategory, iun);
@@ -931,7 +937,7 @@ public class B2bStepsV21 implements B2bStepsInterface {
         DataTestV21 dataTest = DataTestV21.convertMap(dataMap);
         timelineElement = getTimelineElementsByEventId(timelineEventCategory, dataTest).stream().findAny().orElse(null);
         OffsetDateTime firstSend = timelineElement.getTimestamp();
-        Duration secondNotificationWorkflowWaitingTime = b2bSteps.getSharedSteps().getSecondNotificationWorkflowWaitingTime();
+        Duration secondNotificationWorkflowWaitingTime = sharedSteps.getSecondNotificationWorkflowWaitingTime();
         OffsetDateTime nextSend = firstSend.plus(secondNotificationWorkflowWaitingTime);
         OffsetDateTime currentDate = now().atZoneSameInstant(ZoneId.of("UTC")).toOffsetDateTime();
         long remainingTime = ChronoUnit.MILLIS.between(currentDate, nextSend);
@@ -950,7 +956,7 @@ public class B2bStepsV21 implements B2bStepsInterface {
         OffsetDateTime timestamp1 = t1.getTimestamp().truncatedTo(MINUTES);
         OffsetDateTime timestamp2 = t2.getTimestamp().truncatedTo(MINUTES);
 
-        OffsetDateTime expectedDate = !category2.equals(SEND_COURTESY_MESSAGE) ? timestamp2 : timestamp2.plus(b2bSteps.getSharedSteps().getWaitingForReadCourtesyMessage());
+        OffsetDateTime expectedDate = !category2.equals(SEND_COURTESY_MESSAGE) ? timestamp2 : timestamp2.plus(sharedSteps.getWaitingForReadCourtesyMessage());
 
         if (isSuccessivo == null) {
             assertThat(timestamp1).as("Il timestamp dell'evento " + category1 + " dev'essere uguale a quello dell'evento " + category2).isEqualTo(expectedDate);
@@ -991,23 +997,23 @@ public class B2bStepsV21 implements B2bStepsInterface {
 
         if (timelineEventCategory.equals(DIGITAL_SUCCESS_WORKFLOW)) {
             notificationDate = timelineElementForDateCalculation.getDetails().getNotificationDate();
-            schedulingDaysRefinement = b2bSteps.getSharedSteps().getSchedulingDaysSuccessDigitalRefinement();
+            schedulingDaysRefinement = sharedSteps.getSchedulingDaysSuccessDigitalRefinement();
         } else if (timelineEventCategory.equals(DIGITAL_FAILURE_WORKFLOW)) {
             notificationDate = timelineElementForDateCalculation.getTimestamp();
-            schedulingDaysRefinement = b2bSteps.getSharedSteps().getSchedulingDaysFailureDigitalRefinement();
+            schedulingDaysRefinement = sharedSteps.getSchedulingDaysFailureDigitalRefinement();
         } else if (timelineEventCategory.equals(ANALOG_SUCCESS_WORKFLOW)) {
             notificationDate = timelineElementForDateCalculation.getTimestamp();
-            schedulingDaysRefinement = b2bSteps.getSharedSteps().getSchedulingDaysSuccessAnalogRefinement();
+            schedulingDaysRefinement = sharedSteps.getSchedulingDaysSuccessAnalogRefinement();
         } else if (timelineEventCategory.equals(ANALOG_FAILURE_WORKFLOW)) {
             notificationDate = timelineElementForDateCalculation.getDetails().getNotificationDate();
-            schedulingDaysRefinement = b2bSteps.getSharedSteps().getSchedulingDaysFailureAnalogRefinement();
+            schedulingDaysRefinement = sharedSteps.getSchedulingDaysFailureAnalogRefinement();
         }
 
         OffsetDateTime schedulingDate = notificationDate.plus(schedulingDaysRefinement);
         int hour = schedulingDate.getHour();
         int minutes = schedulingDate.getMinute();
         if ((hour == 21 && minutes > 0) || hour > 21) {
-            Duration timeToAddInNonVisibilityTimeCase = b2bSteps.getSharedSteps().getTimeToAddInNonVisibilityTimeCase();
+            Duration timeToAddInNonVisibilityTimeCase = sharedSteps.getTimeToAddInNonVisibilityTimeCase();
             schedulingDate = schedulingDate.plus(timeToAddInNonVisibilityTimeCase);
         }
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
@@ -1018,6 +1024,47 @@ public class B2bStepsV21 implements B2bStepsInterface {
         assertThat(schedulingDate)
                 .as("La schedulingDate dev'essere distante massimo 5 minuti dall'expected")
                 .isCloseTo(expectedDate, within(5, MINUTES));
+    }
+
+    @Override
+    public void checkScartoTemporaleTraDueDeliveryDetailCode(String code1, String code2, Boolean isSuperiore, int timeQuantity, ChronoUnit unitaTemporale) {
+        FullSentNotificationV21 fullSentNotification = getFullSentNotificationVersioned();
+        TimelineElementV20 t1 = fullSentNotification.getTimeline().stream().filter(t ->
+                        t.getDetails() != null
+                                && t.getDetails().getDeliveryDetailCode() != null
+                                && t.getDetails().getDeliveryDetailCode().equals(code1))
+                .findFirst()
+                .orElse(null);
+        TimelineElementV20 t2 = fullSentNotification.getTimeline().stream().filter(t ->
+                        t.getDetails() != null
+                                && t.getDetails().getDeliveryDetailCode() != null
+                                && t.getDetails().getDeliveryDetailCode().equals(code2))
+                .findFirst()
+                .orElse(null);
+
+        OffsetDateTime date1 = t1.getTimestamp();
+        OffsetDateTime date2 = t2.getTimestamp();
+
+        OffsetDateTime expectedDate =
+                unitaTemporale == DAYS ? date1.plusDays(timeQuantity) :
+                        unitaTemporale == HOURS ? date1.plusHours(timeQuantity) :
+                                unitaTemporale == MINUTES ? date1.plusMinutes(timeQuantity) :
+                                        date1.plusSeconds(timeQuantity);
+        if (isSuperiore == null) {
+            assertThat(date2)
+                    .as("La data di " + code2 + " non è pari a quella di " + code1)
+                    .isEqualTo(expectedDate);
+        } else {
+            if (isSuperiore) {
+                assertThat(date2)
+                        .as("La data di " + code2 + " non è successiva a quella di " + code1)
+                        .isAfterOrEqualTo(expectedDate);
+            } else {
+                assertThat(date2)
+                        .as("La data di " + code2 + " non è antecedente a quella di " + code1)
+                        .isBefore(expectedDate);
+            }
+        }
     }
 
     private String getProperty(String fieldPath, TimelineElementV20 lastTimelineElement) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {

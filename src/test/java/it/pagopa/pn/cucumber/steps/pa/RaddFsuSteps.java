@@ -4,12 +4,12 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV27;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV26;
 import it.pagopa.pn.client.b2b.pa.service.IPnRaddFsuClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.*;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
+import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +24,7 @@ import java.util.HashMap;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 import static it.pagopa.pn.cucumber.utils.FiscalCodeGenerator.generateCF;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.generateRandomNumber;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 
 @Slf4j
@@ -31,29 +32,26 @@ public class RaddFsuSteps {
     private final IPnRaddFsuClient raddFsuClient;
     private final PnExternalServiceClientImpl externalServiceClient;
     private final SharedSteps sharedSteps;
-    private final PnPaB2bUtils pnPaB2bUtils;
     private ActInquiryResponse actInquiryResponse;
     private String qrCode;
     private String currentUserCf;
-    private String operationid;
+    private String operationId;
     private StartTransactionResponse startTransactionResponse;
     private StartTransactionResponse aorStartTransactionResponse;
     private final String uid = "1234556";
     private AORInquiryResponse aorInquiryResponse;
     private CompleteTransactionResponse completeTransactionResponse;
-    private PnPaB2bUtils.Pair<String, String> documentUploadResponse;
+    private B2bUtils.Pair<String, String> documentUploadResponse;
     private AbortTransactionResponse abortActTransaction;
     private HttpStatusCodeException documentUploadError;
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
 
     @Autowired
-    public RaddFsuSteps(IPnRaddFsuClient raddFsuClient, PnExternalServiceClientImpl externalServiceClient,
-                        PnPaB2bUtils pnPaB2bUtils, SharedSteps sharedSteps) {
+    public RaddFsuSteps(IPnRaddFsuClient raddFsuClient, PnExternalServiceClientImpl externalServiceClient, SharedSteps sharedSteps) {
         this.raddFsuClient = raddFsuClient;
         this.externalServiceClient = externalServiceClient;
         this.sharedSteps = sharedSteps;
-        this.pnPaB2bUtils = pnPaB2bUtils;
     }
 
     @Given("viene verificata la presenza di atti e\\/o attestazioni per l'utente {string}")
@@ -87,6 +85,7 @@ public class RaddFsuSteps {
         }
     }
 
+    //TODO c'è un metodo ad hoc per il taxId in SharedSteps
     private String getRecipientZeroTaxId() {
         FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         return fullSentNotification.getRecipients().get(0).getTaxId();
@@ -180,7 +179,7 @@ public class RaddFsuSteps {
 
     private void uploadDocument(boolean usePresignedUrl) {
         try {
-            PnPaB2bUtils.Pair<String, String> uploadResponse = pnPaB2bUtils.preloadRaddFsuDocument("classpath:/sample.pdf", usePresignedUrl);
+            B2bUtils.Pair<String, String> uploadResponse = B2bUtils.preloadRaddFsuDocument(sharedSteps.getContext(), raddFsuClient, "classpath:/sample.pdf", usePresignedUrl);
             Assertions.assertNotNull(uploadResponse);
             this.documentUploadResponse = uploadResponse;
             log.info("documentUploadResponse: {}", documentUploadResponse);
@@ -191,13 +190,13 @@ public class RaddFsuSteps {
 
     @Then("Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR")
     public void vengonoVisualizzatiSiaGliAttiSiaLeAttestazioniOpponibiliRiferitiAllaNotificaAssociataAllAAR() {
-        this.operationid = generateRandomNumber();
-        startTransactionAct(this.operationid);
+        this.operationId = generateRandomNumber();
+        startTransactionAct(this.operationId);
     }
 
     @And("Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR utilizzando il precedente operationId")
     public void vengonoVisualizzatiSiaGliAttiSiaLeAttestazioniOpponibiliRiferitiAllaNotificaAssociataAllAARUtilizzandoIlPrecedenteOperationId() {
-        startTransactionAct(this.operationid);
+        startTransactionAct(this.operationId);
     }
 
     private void startTransactionAct(String operationid) {
@@ -209,7 +208,6 @@ public class RaddFsuSteps {
                         .operationId(operationid)
                         .recipientTaxId(this.currentUserCf)
                         .recipientType(ActStartTransactionRequest.RecipientTypeEnum.PF)
-                        //.operationDate(OffsetDateTime.now()) TODO: controllare
                         .checksum(this.documentUploadResponse.getValue2());
         System.out.println("actStartTransactionRequest: " + actStartTransactionRequest);
         this.startTransactionResponse = raddFsuClient.startActTransaction(uid, actStartTransactionRequest);
@@ -236,7 +234,6 @@ public class RaddFsuSteps {
     }
 
     private StartTransactionResponseStatus.CodeEnum getErrorCodeStartTransaction(int errorCode) {
-        //return StartTransactionResponseStatus.CodeEnum.valueOf("NUMBER_"+errorCode);
         switch (errorCode) {
             case 0 -> {
                 return StartTransactionResponseStatus.CodeEnum.NUMBER_0;
@@ -255,7 +252,7 @@ public class RaddFsuSteps {
     public void vieneConclusaLaVisualizzatiDiAttiEdAttestazioniDellaNotifica() {
         CompleteTransactionRequest completeTransactionRequest =
                 new CompleteTransactionRequest()
-                        .operationId(this.operationid)
+                        .operationId(this.operationId)
                         .operationDate(dateTimeFormatter.format(OffsetDateTime.now()));
         this.completeTransactionResponse = raddFsuClient.completeActTransaction(this.uid, completeTransactionRequest);
         System.out.println(completeTransactionResponse);
@@ -286,12 +283,12 @@ public class RaddFsuSteps {
 
     @Then("Vengono recuperati gli aar delle notifiche in stato irreperibile")
     public void vengonoRecuperatiGliAttiDelleNotificheInStatoIrreperibile() {
-        this.operationid = generateRandomNumber();
+        this.operationId = generateRandomNumber();
         AorStartTransactionRequest aorStartTransactionRequest =
                 new AorStartTransactionRequest()
                         .versionToken("string")
                         .fileKey(this.documentUploadResponse.getValue1())
-                        .operationId(this.operationid)
+                        .operationId(this.operationId)
                         .recipientTaxId(this.currentUserCf)
                         .recipientType(AorStartTransactionRequest.RecipientTypeEnum.PF)
                         .operationDate(dateTimeFormatter.format(OffsetDateTime.now()))
@@ -366,7 +363,7 @@ public class RaddFsuSteps {
     public void vieneDichiarataCompletataLaTransazionePerIlRecuperoDegliAar() {
         CompleteTransactionRequest completeTransactionRequest =
                 new CompleteTransactionRequest()
-                        .operationId(this.operationid)
+                        .operationId(this.operationId)
                         .operationDate(dateTimeFormatter.format(OffsetDateTime.now()));
         this.completeTransactionResponse = raddFsuClient.completeAorTransaction(this.uid, completeTransactionRequest);
         log.info("completeTransactionResponse: {}", completeTransactionResponse);
@@ -392,7 +389,7 @@ public class RaddFsuSteps {
     public void vengonoCaricatiIDocumentoDiIdentitàDelCittadinoSenza(String without) {
         String sha256;
         try {
-            sha256 = pnPaB2bUtils.computeSha256("classpath:/sample.pdf");
+            sha256 = B2bUtils.computeSha256(sharedSteps.getContext(), "classpath:/sample.pdf");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -407,32 +404,36 @@ public class RaddFsuSteps {
             log.debug("DocumentUploadResponse: {}", documentUploadResponse);
         } catch (HttpStatusCodeException httpStatusCodeException) {
             log.debug("HttpStatusCodeException {}", httpStatusCodeException);
-            this.documentUploadError = httpStatusCodeException;
+            documentUploadError = httpStatusCodeException;
         }
     }
 
     @Then("il caricamento ha prodotto une errore http {int}")
-    public void ilCaricamenteHaProdottoUneErroreHttp(int httpError) {
-        Assertions.assertNotNull(this.documentUploadError);
-        Assertions.assertEquals(this.documentUploadError.getStatusCode().value(), httpError);
+    public void ilCaricamentoHaProdottoUnErroreHttp(int httpError) {
+        assertThat(documentUploadError).as("Il caricamento non ha prodotto l'errore atteso").isNotNull();
+        assertThat(documentUploadError.getStatusCode().value()).as("Il codice d'errore non coincide col valore atteso").isEqualTo(httpError);
     }
 
     @Then("la transazione viene abortita")
     public void laTransazioneVieneAbortita() {
-        this.abortActTransaction = this.raddFsuClient.abortActTransaction(this.uid,
+        abortActTransaction = raddFsuClient.abortActTransaction(uid,
                 new AbortTransactionRequest()
-                        .operationId(this.operationid)
+                        .operationId(operationId)
                         .operationDate(dateTimeFormatter.format(OffsetDateTime.now()))
                         .reason("TEST"));
     }
 
     @And("l'operazione di abort genera un errore {string} con codice {int}")
     public void lOperazioneDiAbortGeneraUnErroreConCodice(String error, int statusCode) {
-        Assertions.assertNotNull(this.abortActTransaction);
-        Assertions.assertNotNull(this.abortActTransaction.getStatus());
-        Assertions.assertNotNull(this.abortActTransaction.getStatus().getCode());
-        Assertions.assertEquals(new BigDecimal(statusCode), this.abortActTransaction.getStatus().getCode().getValue());
-        Assertions.assertEquals(error, this.abortActTransaction.getStatus().getMessage());
+        assertThat(abortActTransaction).as("La response dell'operazione di abort non dev'essere null").isNotNull();
+        assertThat(abortActTransaction.getStatus()).as("Lo stato della response dell'operazione di abort non dev'essere null").isNotNull();
+        assertThat(abortActTransaction.getStatus().getCode()).as("Il codice della response dell'operazione di abort non dev'essere null").isNotNull();
+        assertThat(abortActTransaction.getStatus().getCode().getValue())
+                .as("Il codice di errore della response dell'operazione di abort non coincide con quanto atteso")
+                .isEqualTo(new BigDecimal(statusCode));
+        assertThat(abortActTransaction.getStatus().getMessage())
+                .as("Il messaggio di errore della response dell'operazione di abort non coincide con quanto atteso")
+                .isEqualTo(error);
     }
 
 }

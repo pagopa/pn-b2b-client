@@ -35,7 +35,7 @@ public class AsyncSteps {
     private final PnPaymentInfoClientImpl pnPaymentInfoClientImpl;
     private final List<PaymentPositionModel> paymentPositionModel;
     private List<BffPaymentInfoItem> paymentInfoResponse;
-    private String deleteGdpResponse;
+    private String deleteGpdResponse;
     private Integer amountGPD;
     private final List<Integer> amountNotifica;
     private static final Integer NUM_CHECK_PAYMENT_INFO = 32;
@@ -70,12 +70,13 @@ public class AsyncSteps {
     @And("viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore {string} e amount {string} per {string} con (CF)(Piva) {string}")
     public void vieneCreataUnaPosizioneDebitoria(String organizationCode, String amount, String name, String taxId) {
         String iuv = generateRandomIuv();
-        log.info("IUPD generate: " + organizationCode + "-64c8e41bfec846e04" + iuv, System.currentTimeMillis());
+        log.info("IUPD generate: {}-64c8e41bfec846e04{}{}", organizationCode, iuv,
+            System.currentTimeMillis());
         sharedSteps.addIuvGPD(iuv);
 
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         PaymentPositionModel paymentPositionModelSend = new PaymentPositionModel()
-                .iupd(String.format("%s-64c8e41bfec846e04%s-%d", organizationCode, iuv, System.currentTimeMillis()))
+                .iupd(String.format("%s-64c8e41bfec846e04%s%s", organizationCode, iuv, System.currentTimeMillis()))
                 .type(PaymentPositionModel.TypeEnum.F)
                 .companyName("Automation")
                 .fullName(name)
@@ -187,17 +188,17 @@ public class AsyncSteps {
             for (PaymentPositionModel position : paymentPositionModel) {
                 if (position.getFullName().equalsIgnoreCase(user)) {
                     Assertions.assertDoesNotThrow(() -> {
-                        deleteGdpResponse = pnGPDClientImpl.deletePosition(Objects.requireNonNull(Objects.requireNonNull(position.getPaymentOption()).get(0).getTransfer()).get(0).getOrganizationFiscalCode(), position.getIupd(), null);
+                        deleteGpdResponse = pnGPDClientImpl.deletePosition(Objects.requireNonNull(Objects.requireNonNull(position.getPaymentOption()).get(0).getTransfer()).get(0).getOrganizationFiscalCode(), position.getIupd(), null);
                     });
                 }
             }
 
-            Assertions.assertNotNull(deleteGdpResponse);
-            log.info("Risposta evento cancellazione: " + deleteGdpResponse);
+            Assertions.assertNotNull(deleteGpdResponse);
+            log.info("Risposta evento cancellazione: " + deleteGpdResponse);
 
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
-                    "{la posizione debitoria " + (deleteGdpResponse == null ? "NULL" : deleteGdpResponse) + " }";
+                    "{la posizione debitoria " + (deleteGpdResponse == null ? "NULL" : deleteGpdResponse) + " }";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
     }
@@ -207,14 +208,14 @@ public class AsyncSteps {
     public void vieneCancellataLaPosizioneDebitoriaDelPagamento(Integer pagamento) {
         try {
             Assertions.assertDoesNotThrow(() -> {
-                deleteGdpResponse = pnGPDClientImpl.deletePosition(Objects.requireNonNull(Objects.requireNonNull(paymentPositionModel.get(pagamento).getPaymentOption()).get(0).getTransfer()).get(0).getOrganizationFiscalCode(), paymentPositionModel.get(pagamento).getIupd(), null);
+                deleteGpdResponse = pnGPDClientImpl.deletePosition(Objects.requireNonNull(Objects.requireNonNull(paymentPositionModel.get(pagamento).getPaymentOption()).get(0).getTransfer()).get(0).getOrganizationFiscalCode(), paymentPositionModel.get(pagamento).getIupd(), null);
             });
-            Assertions.assertNotNull(deleteGdpResponse);
-            log.info("Risposta evento cancellazione: " + deleteGdpResponse);
+            Assertions.assertNotNull(deleteGpdResponse);
+            log.info("Risposta evento cancellazione: " + deleteGpdResponse);
 
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
-                    "{la posizione debitoria " + (deleteGdpResponse == null ? "NULL" : deleteGdpResponse) + " }";
+                    "{la posizione debitoria " + (deleteGpdResponse == null ? "NULL" : deleteGpdResponse) + " }";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
     }
@@ -224,14 +225,14 @@ public class AsyncSteps {
         try {
             for (PaymentPositionModel paymentPositionModelUser : paymentPositionModel) {
                 Assertions.assertDoesNotThrow(() -> {
-                    deleteGdpResponse = pnGPDClientImpl.deletePosition(Objects.requireNonNull(Objects.requireNonNull(paymentPositionModelUser.getPaymentOption()).get(0).getTransfer()).get(0).getOrganizationFiscalCode(), paymentPositionModelUser.getIupd(), null);
+                    deleteGpdResponse = pnGPDClientImpl.deletePosition(Objects.requireNonNull(Objects.requireNonNull(paymentPositionModelUser.getPaymentOption()).get(0).getTransfer()).get(0).getOrganizationFiscalCode(), paymentPositionModelUser.getIupd(), null);
                 });
             }
-            Assertions.assertNotNull(deleteGdpResponse);
-            log.info("Risposta evento cancellazione: " + deleteGdpResponse);
+            Assertions.assertNotNull(deleteGpdResponse);
+            log.info("Risposta evento cancellazione: " + deleteGpdResponse);
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
-                    "{la posizione debitoria " + (deleteGdpResponse == null ? "NULL" : deleteGdpResponse) + " }";
+                    "{la posizione debitoria " + (deleteGpdResponse == null ? "NULL" : deleteGpdResponse) + " }";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
     }
@@ -242,7 +243,7 @@ public class AsyncSteps {
             log.info("Amount GPD: " + amountGPD);
             Assertions.assertEquals(amountGPD, Integer.parseInt(amount));
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionFailedErrorWithAmountGDPAndIUN(assertionFailedError, amountGPD);
+            sharedSteps.throwAssertionFailedErrorWithAmountGPDAndIUN(assertionFailedError, amountGPD);
         }
     }
 
@@ -251,7 +252,7 @@ public class AsyncSteps {
         try {
             Assertions.assertEquals(amountGPD, amountNotifica.get(user));
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionFailedErrorWithAmountGDPAndIUN(assertionFailedError, amountGPD);
+            sharedSteps.throwAssertionFailedErrorWithAmountGPDAndIUN(assertionFailedError, amountGPD);
         }
     }
 
@@ -276,7 +277,8 @@ public class AsyncSteps {
         Assertions.assertEquals(amountGPD, amountNotifica.get(user));
     }
 
-    // Dopo accettato amount_gpd + 100 (costo base) + pafee
+
+    //Dopo accettato amount_gpd + 100 (costo base) + paFee
     // Ogni elemento di timeline analogico ha un analog cost per ogni elemento va verificato che aumenti di + analog_cost.
     // Se rifiutata amount_gpd
     @Then("viene verificato il costo finale della notifica amount_gpd + costo_base + pafee + analog_cost per ogni elemento di timeline")
@@ -344,7 +346,7 @@ public class AsyncSteps {
             amountGPD = amountGPD - Integer.parseInt(String.valueOf(Objects.requireNonNull(paymentPositionModel.get(0).getPaymentOption()).get(0).getAmount()));
             priceVerificationSteps.priceVerificationV23(amountGPD, null, 0, tipoCosto);
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionFailedErrorWithAmountGDPAndIUN(assertionFailedError, amountGPD);
+            sharedSteps.throwAssertionFailedErrorWithAmountGPDAndIUN(assertionFailedError, amountGPD);
         }
     }
 

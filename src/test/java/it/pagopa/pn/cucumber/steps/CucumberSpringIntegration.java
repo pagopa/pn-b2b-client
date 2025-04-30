@@ -1,7 +1,6 @@
 package it.pagopa.pn.cucumber.steps;
 
 import io.cucumber.spring.CucumberContextConfiguration;
-import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.*;
 import it.pagopa.pn.client.b2b.pa.parsing.config.PnLegalFactTokenProperty;
@@ -35,7 +34,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         BearerTokenConfiguration.class,
         TimingConfiguration.class,
         RestTemplateConfiguration.class,
-        PnPaB2bUtils.class,
         PnPaB2bExternalClientImpl.class,
         PnWebRecipientExternalClientImpl.class,
         PnWebhookB2bExternalClientImpl.class,

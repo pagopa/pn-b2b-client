@@ -3,13 +3,13 @@ package it.pagopa.pn.cucumber.steps.pa;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
-import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactCategory;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactsIdV20;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV27;
 import it.pagopa.pn.client.b2b.pa.mapper.impl.PnTimelineAndLegalFactV27;
 import it.pagopa.pn.client.b2b.pa.mapper.model.PnTimelineLegalFactV27;
+import it.pagopa.pn.client.b2b.pa.exception.IllegalConfigurationException;
 import it.pagopa.pn.client.b2b.pa.parsing.dto.IPnParserResponse;
 import it.pagopa.pn.client.b2b.pa.parsing.dto.PnParserParameter;
 import it.pagopa.pn.client.b2b.pa.parsing.dto.impLegalFact.PnLegalFactNotificaPresaInCaricoMultiDestinatario;
@@ -17,9 +17,9 @@ import it.pagopa.pn.client.b2b.pa.parsing.dto.implDestinatario.PnDestinatarioAna
 import it.pagopa.pn.client.b2b.pa.parsing.dto.implResponse.PnParserLegalFactResponse;
 import it.pagopa.pn.client.b2b.pa.parsing.parser.IPnParserLegalFact;
 import it.pagopa.pn.client.b2b.pa.parsing.service.impl.PnParserService;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactDownloadMetadataResponse;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactListElementV20;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
+import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.Loader;
@@ -47,7 +47,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @Slf4j
 public class LegalFactContentVerifySteps {
-    private final PnPaB2bUtils b2bUtils;
     private final PnParserService pnParserService;
     private final SharedSteps sharedSteps;
     private final PnTimelineAndLegalFactV27 pnTimelineAndLegalFactV27;
@@ -57,8 +56,7 @@ public class LegalFactContentVerifySteps {
     private String legalFactType;
 
     @Autowired
-    public LegalFactContentVerifySteps(PnPaB2bUtils b2bUtils, PnParserService pnParserService, SharedSteps sharedSteps) {
-        this.b2bUtils = b2bUtils;
+    public LegalFactContentVerifySteps(PnParserService pnParserService, SharedSteps sharedSteps) {
         this.pnParserService = pnParserService;
         this.sharedSteps = sharedSteps;
         /*TODO al rilascio di una nuova versione di timelineElement e LegalFactCategory, creare nuova classe sul modello di quelle esistenti
@@ -69,19 +67,19 @@ public class LegalFactContentVerifySteps {
     @Then("si verifica se il legalFact è di tipo {string}")
     public void siVerificaSeIlLegalFactEDiTipo(String legalFactType) {
         this.legalFactType = legalFactType;
-        byte[] source = b2bUtils.downloadFile(legalFactUrl);
+        byte[] source = B2bUtils.downloadFile(legalFactUrl);
         checkLegalFactType(source, legalFactType);
     }
 
     @Then("si verifica se il legalFact contiene il campo {string} con value {string}")
     public void siVerificaSeIlLegalFactContieneIlCampoConValue(String legalFactField, String legalFactValue) {
-        byte[] source = b2bUtils.downloadFile(legalFactUrl);
+        byte[] source = B2bUtils.downloadFile(legalFactUrl);
         checkLegalFactFieldValue(source, legalFactField, legalFactValue);
     }
 
     @Then("si verifica se il legalFact contiene i campi per il destinatario")
     public void siVerificaSeIlLegalFactContieneICampiPerIlDestinatario(DataTable dataTable) {
-        byte[] source = b2bUtils.downloadFile(legalFactUrl);
+        byte[] source = B2bUtils.downloadFile(legalFactUrl);
 
         //Creation of a list of map for each dataTable pair
         List<Map<String, String>> listOfMap = dataTable
@@ -114,7 +112,7 @@ public class LegalFactContentVerifySteps {
 
     @Then("si verifica se il legalFact contiene i campi")
     public void siVerificaSeIlLegalFactContieneICampi(DataTable dataTable) {
-        byte[] source = b2bUtils.downloadFile(legalFactUrl);
+        byte[] source = B2bUtils.downloadFile(legalFactUrl);
 
         if (IPnParserLegalFact.LegalFactType.valueOf(legalFactType).equals(IPnParserLegalFact.LegalFactType.LEGALFACT_NOTIFICA_PRESA_IN_CARICO_MULTIDESTINATARIO)) {
             //Creation of a list of map for each dataTable pair
@@ -140,7 +138,7 @@ public class LegalFactContentVerifySteps {
     @Then("si verifica se il legalFact è di tipo {string} e contiene il campo {string} con value {string}")
     public void siVerificaSeIlLegalFactEDiTipoEContieneIlCampoConValue(String legalFactType, String legalFactField, String legalFactValue) {
         this.legalFactType = legalFactType;
-        byte[] source = b2bUtils.downloadFile(legalFactUrl);
+        byte[] source = B2bUtils.downloadFile(legalFactUrl);
         checkLegalFactType(source, legalFactType);
         checkLegalFactFieldValue(source, legalFactField, legalFactValue);
     }
@@ -152,7 +150,7 @@ public class LegalFactContentVerifySteps {
 
 
     public void checkPdfPagesFromBytes(int numPage) {
-        byte[] source = b2bUtils.downloadFile(legalFactUrl);
+        byte[] source = B2bUtils.downloadFile(legalFactUrl);
 
         PDDocument document = null;
 
@@ -290,13 +288,11 @@ public class LegalFactContentVerifySteps {
         Assertions.assertNotNull(this.legalFactUrl);
         Assertions.assertEquals(legalFactCategory, this.legalFactType);
         switch (version) {
-            case 1 -> {
-                LegalFactDownloadMetadataResponse response = sharedSteps.getWebRecipientClient().getLegalFact(iun, null, this.legalFactUrl);
-                sharedSteps.getWebRecipientClient().downloadLegalFactById(iun, this.legalFactUrl, null);
-            }
+            case 1 -> sharedSteps.getWebRecipientClient().downloadLegalFactById(iun, this.legalFactUrl, null);
             case 20 -> {
                 List<LegalFactListElementV20> legalFactV20list = sharedSteps.getWebRecipientClient().getLegalFactsV20(iun, null);
-                Assertions.assertNotNull(legalFactV20list);
+                assertThat(legalFactV20list).asList().isNotEmpty();
+
                 LegalFactListElementV20 target = legalFactV20list.stream().filter(
                         x -> x.getLegalFactsId().getCategory().getValue().equals(legalFactCategory)).findFirst().orElse(null);
                 if (isPresent) {
@@ -305,7 +301,7 @@ public class LegalFactContentVerifySteps {
                     Assertions.assertNull(target);
                 }
             }
-            default -> throw new IllegalArgumentException("Valore di versione non riconosciuto: " + version);
+            default -> throw new IllegalConfigurationException("Unsupported API version: " + version);
         }
     }
 
@@ -435,7 +431,7 @@ public class LegalFactContentVerifySteps {
     @Then("download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è {string}")
     public void downloadAttestazioneOpponibileAAREControlloDelContenutoDelFilePerVerificareSeIlTipoE(String aarType) {
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse = getLegalFactIdAAR("PN_AAR");
-        byte[] source = sharedSteps.getB2bUtils().downloadFile(legalFactDownloadMetadataResponse.getUrl());
+        byte[] source = B2bUtils.downloadFile(legalFactDownloadMetadataResponse.getUrl());
         Assertions.assertNotNull(source);
         Assertions.assertTrue(checkTypeAAR(source, aarType));
     }

@@ -8,15 +8,6 @@ import java.util.Map;
 
 public interface NotificationStepsInterface {
 
-    default void throwUnsupportedMethodException(String methodName) {
-        methodName = methodName == null ? "" : methodName + " ";
-        throw new RuntimeException("Metodo " + methodName + "non previsto per la versione " + getVersionString());
-    }
-
-
-
-    String getVersionString();
-
     void prepareNotificationRequest(Map<String, String> data);
 
     void prepareNotificationRequestSimileAllaPrecedente(boolean isCreditorTaxIdUguale, boolean isCodiceAvvisoUguale, boolean isPaProtocolNumberUguale, String idempotenceToken);
@@ -25,6 +16,9 @@ public interface NotificationStepsInterface {
 
     void addRecipientToNotification(Destinatario destinatario, Map<String, String> data);
 
+    /**
+     * Metodo che lascia spazio di manovra per poter creare recipient customizzati a seconda delle esigenze
+     */
     void addRecipientToNotificationSpecialCondition(Destinatario destinatario, Map<String, String> data, String condition, Integer otherRecipientIndex);
 
     void setSenderTaxId(String senderTaxId);
@@ -38,8 +32,12 @@ public interface NotificationStepsInterface {
     /**
      * Metodo chiave, in quanto è qui che viene valorizzato lo IUN della notifica generata che viene poi salvato in SharedSteps
      * su cui poggia la quasi totalità delle logiche dell'applicativo
+     *
+     * @param errorType da passare sempre a null, tranne quando viene richiamato dal metodo
+     * @see #createAndSendNotificationRequestWithError, (che deve portare al REFUSED in fase di validazione asincrona)
+     * in modo da modificare la request in accordo al tipo di errore che si intende generare
      */
-    Object uploadNotification() throws IOException;
+    Object uploadNotification(String errorType) throws IOException;
 
     void setIuvToRecipient(Integer posizione, String iuvGPD);
 
@@ -49,7 +47,7 @@ public interface NotificationStepsInterface {
 
     void uploadNotificationAllegatiUgualiPagamento() throws IOException;
 
-    void addIuvGdpToDestinatario(String denominazione, String iuvGdp, Integer paymentIndex);
+    void addIuvGpdToDestinatario(String denominazione, String iuvGpd, Integer paymentIndex);
 
     List<String> getDatiPagamento(String iun, Integer destinatario, Integer pagamento);
 
@@ -70,4 +68,12 @@ public interface NotificationStepsInterface {
     void verifyCorrectAcquisition();
 
     void verifyStatus(boolean withNotificationRequestId, boolean withPaProtocolNumber, boolean withIdempotenceToken);
+
+    void verifyNotification(String notificationIun);
+
+    void createAndSendNotificationRequestWithError(String errorType);
+
+    String getCreditorTaxId(int recipientIndex);
+
+    String getNoticeCode(int recipientIndex);
 }

@@ -753,7 +753,6 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
   @perfezionamentoAR @workflowAnalogico
-  #il valore di 10gg per poter replicare i test nei vari ambienti è stato impostato a 6 minuti
   Scenario Outline: [B2B_PERFEZIONAMENTO_AR_1] Verifica che il deliveryDetailCode del feedback sia PNRN012 con timestamp pari a RECRN010+10gg quando lo scarto tra RECRN010 e il secondo evento è superiore a 10 giorni
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -766,36 +765,37 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN010"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "<expectedDeliveryDetailCode>"
-    And lo scarto temporale tra "RECRN010" e "<expectedDeliveryDetailCode>" è superiore a 6 minuti
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "PNRN012"
-    And lo scarto temporale tra "RECRN010" e "PNRN012" è pari a 6 minuti
+    And lo scarto temporale tra "RECRN010" e "<expectedDeliveryDetailCode>" è superiore a <intervallo>
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "PNRN012"
+    #i 10 giorni (per ovvie ragioni di tempistiche) in fase di test diventano 1 minuto
+    And lo scarto temporale tra "RECRN010" e "PNRN012" è pari a 1 minuti
     Examples:
-      | sequenceName                      | expectedDeliveryDetailCode |
-      | Via@OK-Giacenza_AR_Slow           | RECRN003A                  |
-      | Via@FAIL-Giacenza_AR_Slow         | RECRN004A                  |
-      | Via@FAIL-CompiutaGiacenza_AR_Slow | RECRN005A                  |
+      | sequenceName                 | expectedDeliveryDetailCode | intervallo |
+      #per i seguenti due casi, i 10 giorni diventano 1 minuto (parametro: RefinementDuration)
+      | Via@OK-Giacenza-gt10_AR      | RECRN003A                  | 1 minuti   |
+      | Via@FAIL-Giacenza-gt10_AR    | RECRN004A                  | 1 minuti   |
+      #in questo caso, i 30 giorni diventano 80 secondi (parametro: CompiutaGiacenzaArDuration)
+      | Via@FAIL-CompiutaGiacenza_AR | RECRN005A                  | 80 secondi |
 
-
-  Scenario Outline: Al fine di poter testare lo scenario di sopra in tempi rapidissimi (a scopo di debugging), si possono usare le seguenti notifiche create con run precedenti
-    Given imposto lo iun di SharedSteps a "<iun>" e la pa a "Comune_Multi"
-    And lo scarto temporale tra "RECRN010" e "<expectedDeliveryDetailCode>" è superiore a 6 minuti
-    And lo scarto temporale tra "RECRN010" e "PNRN012" è pari a 6 minuti
+  @perfezionamentoAR @workflowAnalogico
+  Scenario Outline: [B2B_PERFEZIONAMENTO_AR_2] Verifica che quando l'intervallo tra RECRN010 e l'expectedDeliveryDetailCode è inferiore a 10gg, venga generato un SEND_ANALOG_FEEDBACK con deliveryDetailCode = expectedFeedbackDeliveryDetailCode
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario
+      | denomination            | userTest         |
+      | taxId                   | CLMCST42R12D969Z |
+      | digitalDomicile         | NULL             |
+      | physicalAddress_address | <sequenceName>   |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN010"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "<expectedDeliveryDetailCode>"
+    And lo scarto temporale tra "RECRN010" e "<expectedDeliveryDetailCode>" è inferiore a 1 minuti
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "<expectedFeedbackDeliveryDetailCode>"
     Examples:
-      | iun                       | expectedDeliveryDetailCode |
-      # AMBIENTE DEV
-      | KRAV-HALK-QXGZ-202504-J-1 | RECRN003A                  |
-      | UXMX-MQRE-HKHY-202504-K-1 | RECRN004A                  |
-      | KQHQ-MJTX-NTEP-202504-U-1 | RECRN005A                  |
-
-
-  Scenario: [MATTEO_TEST]
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-#      |  |  |
-#      | NULL | NULL |
-#      | details                    | NOT_NULL |
-#      | details_recIndex           | 0        |
-#      | details_deliveryDetailCode | CON080   |
-#      | details_sentAttemptMade    | 0        |
-#      | loadTimeline               | true     |
+      | sequenceName         | expectedDeliveryDetailCode | expectedFeedbackDeliveryDetailCode |
+      #per i seguenti due casi, i 10 giorni diventano 1 minuto (parametro: RefinementDuration)
+      | Via@OK-Giacenza_AR   | RECRN003A                  | RECRN003C                          |
+      | Via@FAIL-Giacenza_AR | RECRN004A                  | RECRN004C                          |
 
 

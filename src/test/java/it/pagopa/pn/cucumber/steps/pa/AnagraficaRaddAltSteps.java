@@ -5,7 +5,6 @@ import io.cucumber.java.After;
 import io.cucumber.java.Transpose;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddAlternativeClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.RaddOperator;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD.Address;
@@ -13,6 +12,7 @@ import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCsv.*;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.dataTable.DataTableTypeRaddAlt;
+import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
@@ -37,10 +37,8 @@ public class AnagraficaRaddAltSteps {
 
     private static final int WAITING_ACCEPTED_STATE = 20000;
     private static final String ACCEPTED = "accepted";
-
     private final PnRaddAlternativeClientImpl raddAltClient;
     private final SharedSteps sharedSteps;
-    private final PnPaB2bUtils pnPaB2bUtils;
     private final DataTableTypeRaddAlt dataTableTypeRaddAlt;
 
     private String fileCsvName;
@@ -50,21 +48,16 @@ public class AnagraficaRaddAltSteps {
     private CreateRegistryRequest sportelloRaddCrud;
     private RegistriesResponse sportelliRaddista;
     private it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCsv.RequestResponse sportelliCsvRaddista;
-
-    private String uid = getDefaultValue(RADD_UID.key);
-
+    private final String uid = getDefaultValue(RADD_UID.key);
     private static final Integer NUM_CHECK_STATE_CSV = 100;
     private static final Integer WAITING_STATE_CSV = 15000;
-
     private String pageIndex = null;
-    private List<Address> addresses = new ArrayList<>();
+    private final List<Address> addresses = new ArrayList<>();
 
     @Autowired
-    public AnagraficaRaddAltSteps(PnRaddAlternativeClientImpl raddAltClient, PnPaB2bUtils pnPaB2bUtils, SharedSteps sharedSteps,
-                                  DataTableTypeRaddAlt dataTableTypeRaddAlt) {
+    public AnagraficaRaddAltSteps(PnRaddAlternativeClientImpl raddAltClient, SharedSteps sharedSteps, DataTableTypeRaddAlt dataTableTypeRaddAlt) {
         this.raddAltClient = raddAltClient;
         this.sharedSteps = sharedSteps;
-        this.pnPaB2bUtils = pnPaB2bUtils;
         this.dataTableTypeRaddAlt = dataTableTypeRaddAlt;
     }
 
@@ -82,7 +75,7 @@ public class AnagraficaRaddAltSteps {
             Assertions.assertNotNull(responseUploadCsv.getUrl());
             Assertions.assertNotNull(responseUploadCsv.getFileKey());
             this.requestid = responseUploadCsv.getRequestId();
-            pnPaB2bUtils.preloadRaddCsvDocument("classpath:/" + this.fileCsvName, this.shaCSV, responseUploadCsv, true);
+            B2bUtils.preloadRaddCsvDocument(sharedSteps.getContext(), "classpath:/" + this.fileCsvName, this.shaCSV, responseUploadCsv, true);
 
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
@@ -101,7 +94,7 @@ public class AnagraficaRaddAltSteps {
             RegistryUploadResponse responseUploadCsv = raddAltClient.uploadRegistryRequests(this.uid, registryUploadRequest);
             if (responseUploadCsv != null) {
                 this.requestid = responseUploadCsv.getRequestId();
-                pnPaB2bUtils.preloadRaddCsvDocument("classpath:/" + this.fileCsvName, this.shaCSV, responseUploadCsv, true);
+                B2bUtils.preloadRaddCsvDocument(sharedSteps.getContext(), "classpath:/" + this.fileCsvName, this.shaCSV, responseUploadCsv, true);
             }
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
@@ -121,7 +114,7 @@ public class AnagraficaRaddAltSteps {
 
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
-            pnPaB2bUtils.preloadRaddCsvDocument("classpath:/" + this.fileCsvName, this.shaCSV, responseUploadCsv, true);
+            B2bUtils.preloadRaddCsvDocument(sharedSteps.getContext(), "classpath:/" + this.fileCsvName, this.shaCSV, responseUploadCsv, true);
         }
     }
 
@@ -231,13 +224,11 @@ public class AnagraficaRaddAltSteps {
     @When("viene richiesta la lista degli sportelli caricati dal csv con dati errati:")
     public void vieneRichiestolaListaDeiSportelliRaddDelCsvDatiErrati(Map<String, String> dataSportello) {
         try {
-            it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCsv.RequestResponse sportello = raddAltClient.retrieveRequestItems(
-                    getValue(dataSportello, RADD_UID.key)
-                    , getValue(dataSportello, RADD_REQUESTID.key) == null ? null : getValue(dataSportello, RADD_REQUESTID.key)
-                    , getValue(dataSportello, RADD_FILTER_LIMIT.key) == null ? null : Integer.parseInt(getValue(dataSportello, RADD_FILTER_LIMIT.key))
-                    , getValue(dataSportello, RADD_FILTER_LASTKEY.key) == null ? null : getValue(dataSportello, RADD_FILTER_LASTKEY.key));
-
-            this.sportelliCsvRaddista = sportello;
+            this.sportelliCsvRaddista = raddAltClient.retrieveRequestItems(
+                    getValue(dataSportello, RADD_UID.key),
+                    getValue(dataSportello, RADD_REQUESTID.key) == null ? null : getValue(dataSportello, RADD_REQUESTID.key),
+                    getValue(dataSportello, RADD_FILTER_LIMIT.key) == null ? null : Integer.parseInt(getValue(dataSportello, RADD_FILTER_LIMIT.key)),
+                    getValue(dataSportello, RADD_FILTER_LASTKEY.key) == null ? null : getValue(dataSportello, RADD_FILTER_LASTKEY.key));
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
         }
@@ -246,9 +237,7 @@ public class AnagraficaRaddAltSteps {
     @When("si controlla che il sportello sia in stato {string}")
     public void vieneCercatoloSportelloEControlloStato(String status) {
         RegistryRequestResponse dato = IntStream.range(0, NUM_CHECK_STATE_CSV)
-                .mapToObj(numCheck -> {
-                    return getRequestResponse(status);
-                })
+                .mapToObj(numCheck -> getRequestResponse(status))
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElse(null);
@@ -496,12 +485,10 @@ public class AnagraficaRaddAltSteps {
                 , getValue(dataSportello, RADD_EXTERNAL_CODE.key) == null ? null : getValue(dataSportello, RADD_EXTERNAL_CODE.key));
         try {
 
-            if (sportello.getRegistries().isEmpty() || sportello.getRegistries().size() == 0) {
-                this.sportelliRaddista = sportello;
-            } else {
+            if (!sportello.getRegistries().isEmpty() && sportello.getRegistries().size() != 0) {
                 this.registryId = sportello.getRegistries().get(0).getRegistryId();
-                this.sportelliRaddista = sportello;
             }
+                this.sportelliRaddista = sportello;
 
             log.info("lista sportelli: {}", sportello);
 
@@ -616,7 +603,7 @@ public class AnagraficaRaddAltSteps {
             }
         }
 
-        this.shaCSV = pnPaB2bUtils.computeSha256("classpath:/" + this.fileCsvName);
+        this.shaCSV = B2bUtils.computeSha256(sharedSteps.getContext(), "classpath:/" + this.fileCsvName);
     }
 
     @Then("viene cambiato raddista con {string}")

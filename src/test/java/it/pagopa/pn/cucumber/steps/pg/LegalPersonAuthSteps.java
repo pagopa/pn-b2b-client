@@ -9,6 +9,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pg.BffPublicKeysResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pg.PublicKeyRow;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.generate.model.externalregistry.privateapi.PgUser;
+import it.pagopa.pn.client.b2b.pa.exception.IllegalConfigurationException;
 import it.pagopa.pn.client.b2b.pa.service.IPnExternalRegistryPrivateUserApi;
 import it.pagopa.pn.client.b2b.pa.service.IPnLegalPersonAuthClient;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
@@ -61,13 +62,10 @@ public class LegalPersonAuthSteps {
     public void selectAdmin(String utente) {
         switch (utente.toUpperCase()) {
             case "AMMINISTRATORE" -> pnLegalPersonAuthClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_3);
-            case "AMMINISTRATORE CON GRUPPO ASSOCIATO" ->
-                    pnLegalPersonAuthClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_4);
-            case "NON AMMINISTRATORE" ->
-                    pnLegalPersonAuthClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_5);
-            case "DI UNA PG DIVERSA" ->
-                    pnLegalPersonAuthClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
-            default -> throw new IllegalArgumentException("Utente non supportato: " + utente);
+            case "AMMINISTRATORE CON GRUPPO ASSOCIATO" -> pnLegalPersonAuthClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_4);
+            case "NON AMMINISTRATORE" -> pnLegalPersonAuthClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_5);
+            case "DI UNA PG DIVERSA" -> pnLegalPersonAuthClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+            default -> throw new IllegalConfigurationException("Invalid input role: " + utente);
         }
     }
 
@@ -77,7 +75,7 @@ public class LegalPersonAuthSteps {
             case "AMMINISTRATORE CON GRUPPO ASSOCIATO" ->
                     privateUserApi.setBearerToken(SettableBearerToken.BearerTokenType.PG_4);
             case "NON AMMINISTRATORE" -> privateUserApi.setBearerToken(SettableBearerToken.BearerTokenType.PG_5);
-            default -> throw new IllegalArgumentException("Utente non supportato: " + utente);
+            default -> throw new IllegalConfigurationException("Invalid input role: " + utente);
         }
     }
 
@@ -119,7 +117,7 @@ public class LegalPersonAuthSteps {
                 bloccaChiavePubblica(kid);
                 cancellaChiavePubblica(kid);
             }
-            default -> throw new IllegalArgumentException("Status non supportato: " + status);
+            default -> throw new IllegalConfigurationException("Invalid status: " + status);
         }
     }
 
@@ -142,7 +140,7 @@ public class LegalPersonAuthSteps {
                 case "RUOTA" -> ruotaChiavePubblica(kid);
                 case "RIATTIVA" -> riattivaChiavePubblica(kid);
                 case "CANCELLA" -> cancellaChiavePubblica(kid);
-                default -> throw new IllegalArgumentException("Operazione non supportata: " + operation);
+                default -> throw new IllegalConfigurationException("Unexpected operation: " + operation);
             }
         }
     }
@@ -162,7 +160,7 @@ public class LegalPersonAuthSteps {
             case "RUOTA" -> ruotaChiavePubblica(kid);
             case "RIATTIVA" -> riattivaChiavePubblica(kid);
             case "CANCELLA" -> cancellaChiavePubblica(kid);
-            default -> throw new IllegalArgumentException("Operazione non supportata: " + operation);
+            default -> throw new IllegalConfigurationException("Unexpected operation: " + operation);
         }
     }
 

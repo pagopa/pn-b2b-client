@@ -5,9 +5,6 @@ import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV27;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV27;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebMandateClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
@@ -19,6 +16,7 @@ import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.mo
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationAttachmentDownloadMetadataResponse;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationSearchResponse;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
+import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.jupiter.api.Assertions;
@@ -45,7 +43,6 @@ public class RicezioneNotificheWebDelegheSteps {
     private IPnWebMandateClient webMandateClient;
     private IPnWebRecipientClient webRecipientClient;
     private final SharedSteps sharedSteps;
-    private final PnPaB2bUtils b2bUtils;
     private MandateDto mandateToSearch;
     private final SettableBearerToken.BearerTokenType baseUser = SettableBearerToken.BearerTokenType.USER_2;
     private final String verificationCode = "24411";
@@ -78,7 +75,6 @@ public class RicezioneNotificheWebDelegheSteps {
         this.webMandateClient = webMandateClient;
         this.sharedSteps = sharedSteps;
         this.webRecipientClient = sharedSteps.getWebRecipientClient();
-        this.b2bUtils = sharedSteps.getB2bUtils();
     }
 
     private String getTaxIdByUser(String user) {
@@ -322,7 +318,6 @@ public class RicezioneNotificheWebDelegheSteps {
     public void comeAmministratoreDaVoglioModificareUnaDelegaPerAssociarlaAdUnGruppo(String recipient, String delegato) {
         sharedSteps.selectUser(delegato);
 
-        //TODO Recuperare i gruppi della PG come Admin....
         List<HashMap<String, String>> resp = sharedSteps.getPnExternalServiceClient().pgGroupInfo(webRecipientClient.getBearerTokenSetted());
         String gruppoAttivo = null;
         if (resp != null && !resp.isEmpty()) {
@@ -336,7 +331,6 @@ public class RicezioneNotificheWebDelegheSteps {
 
 
         String xPagopaPnCxRole = "ADMIN";
-        //TODO capire dove recuperare il dato
         //Questo è l’identificativo della PG, e come gli altri header viene recuperato dal token JWT di autorizzazione
         String xPagopaPnCxId = switch (webRecipientClient.getBearerTokenSetted()) {
             case PG_1 -> sharedSteps.getIdOrganizationGherkinSrl();
@@ -405,7 +399,6 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @Then("l'allegato {string} può essere correttamente recuperato da {string} con delega")
     public void attachmentCanBeCorrectlyRetrievedFromWithMandate(String attachmentName, String recipient) {
-        //TODO Modificare attachmentIdx al momento è 0...............
         sharedSteps.selectUser(recipient);
         NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
                 sharedSteps.getNotificationIun(),
@@ -433,8 +426,8 @@ public class RicezioneNotificheWebDelegheSteps {
         AtomicReference<String> sha256 = new AtomicReference<>("");
         Assertions.assertDoesNotThrow(() -> {
             byte[] bytes = Assertions.assertDoesNotThrow(() ->
-                    b2bUtils.downloadFile(Objects.requireNonNull(downloadResponse).getUrl()));
-            sha256.set(b2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
+                    B2bUtils.downloadFile(Objects.requireNonNull(downloadResponse).getUrl()));
+            sha256.set(B2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
         });
         Assertions.assertEquals(sha256.get(), Objects.requireNonNull(downloadResponse).getSha256());
     }
@@ -689,11 +682,7 @@ public class RicezioneNotificheWebDelegheSteps {
         setBearerToken(delegate);
         try {
             List<MandateDto> mandateList;
-            if (status.trim().equals("")) {
-                mandateList = webMandateClient.searchMandatesByDelegate(getTaxIdByUser(delegator), null);
-            } else if (delegator.trim().equals("")) {
-                mandateList = webMandateClient.searchMandatesByDelegateStatusFilter("", List.of(status), null);
-            } else {
+            if (!status.trim().isEmpty() && !delegator.trim().isEmpty()) {
                 mandateList = webMandateClient.searchMandatesByDelegateStatusFilter(getTaxIdByUser(delegator), List.of(status), null);
                 Assertions.assertNotNull(mandateList, "La lista mandateList è null");
                 Assertions.assertFalse(mandateList.isEmpty(), "La lista mandateList è vuota");

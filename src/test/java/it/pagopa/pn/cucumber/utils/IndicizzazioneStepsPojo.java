@@ -1,22 +1,15 @@
 package it.pagopa.pn.cucumber.utils;
 
 import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.model.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.LinkedList;
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 public class IndicizzazioneStepsPojo {
-
-    public IndicizzazioneStepsPojo() {
-        this.createdFiles = new LinkedList<>();
-        this.fileKeyInesistenti = new LinkedList<>();
-    }
 
     private String sha256;
     private List<FileCreationResponse> createdFiles;
@@ -35,4 +28,9 @@ public class IndicizzazioneStepsPojo {
     private int maxTagsPerDocument;
     private int maxValuesPerTagDocument;
     private int maxValuesPerTagPerRequest;
+
+    public IndicizzazioneStepsPojo() {
+        this.createdFiles = new LinkedList<>();
+        this.fileKeyInesistenti = new LinkedList<>();
+    }
 }

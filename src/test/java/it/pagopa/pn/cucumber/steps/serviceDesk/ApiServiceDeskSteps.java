@@ -4,7 +4,6 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV27;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationAttachmentBodyRef;
@@ -15,6 +14,7 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDesk.model.*;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDeskIntegration.model.*;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
+import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
@@ -29,7 +29,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
 import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -43,6 +42,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.awaitility.Awaitility.await;
 
 
@@ -58,7 +58,6 @@ public class ApiServiceDeskSteps {
     private String iunWithoutPayment;
 
     public static final String IUN_ERRATO = "JRDT-XAPH-JQYW-202312-J-1";
-    private final PnPaB2bUtils b2bUtils;
     private final SharedSteps sharedSteps;
     private final IPServiceDeskClientImpl ipServiceDeskClient;
     private final PnExternalServiceClientImpl safeStorageClient;
@@ -112,7 +111,6 @@ public class ApiServiceDeskSteps {
         this.ctx = ctx;
         this.safeStorageClient = safeStorageClient;
         this.workFlowWait = timingConfigs.getWorkflowWaitMillis();
-        this.b2bUtils = sharedSteps.getB2bUtils();
         this.ipServiceDeskClient = sharedSteps.getServiceDeskClient();
         this.notificationRequest = new NotificationRequest();
         this.analogAddress = new AnalogAddress();
@@ -175,8 +173,12 @@ public class ApiServiceDeskSteps {
 
     @Then("il servizio risponde con errore {string}")
     public void operationProducedAnError(String statusCode) {
-        operationProducedAnErrorSteps(statusCode);
-        log.info("Errore: " + notificationError.getStatusCode() + " " + notificationError.getMessage() + " " + notificationError.getCause());
+        try {
+            operationProducedAnErrorSteps(statusCode);
+            log.info("Errore: " + notificationError.getStatusCode() + " " + notificationError.getMessage() + " " + notificationError.getCause());
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        }
     }
 
     @Given("viene comunicato il nuovo indirizzo con {string} {string} {string} {string} {string} {string} {string} {string} {string}")
@@ -335,7 +337,7 @@ public class ApiServiceDeskSteps {
     @Given("viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO con preloadIdx errato")
     public void createPreUploadVideoRequestpreloadIdxNotValid() throws Exception {
         String resourceName = "classpath:/test.xml";
-        String sha256 = computeSha256(resourceName);
+        String sha256 = B2bUtils.computeSha256(ctx, resourceName);
         videoUploadRequest.setPreloadIdx("@@||!!");
         videoUploadRequest.setSha256(sha256);
         videoUploadRequest.setContentType("application/octet-stream");
@@ -874,7 +876,7 @@ public class ApiServiceDeskSteps {
     @Given("come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN {string} e taxId {string}  recipientType  {string}")
     public void comeOperatoreDevoEffettuareUnCheckSullaDisponibilitaValiditaEDimensioneDegliAllegatiConIUNRecipientType(String iun, String taxId, String recipientType) {
         try {
-            FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+            FullSentNotificationV27 fullSentNotification = sharedSteps.getNotificationIun() != null ? sharedSteps.getSentNotificationLastVersion() : null;
             documentsRequest = new DocumentsRequest();
             if (fullSentNotification != null) {
                 setRecipientType(fullSentNotification.getRecipients().get(0).getRecipientType().getValue());
@@ -1130,7 +1132,7 @@ public class ApiServiceDeskSteps {
         notificationDocument = newDocument("classpath:/video.mp4");
         String resourceName = notificationDocument.getRef().getKey();
         log.info("Resource name:" + resourceName);
-        String sha256 = computeSha256(resourceName);
+        String sha256 = B2bUtils.computeSha256(ctx, resourceName);
         log.info("sha:" + sha256);
         videoUploadRequest.setPreloadIdx(getPrefixedRandomAlphaNumeric(5));
         videoUploadRequest.setSha256(sha256);
@@ -1149,7 +1151,9 @@ public class ApiServiceDeskSteps {
 
     private void operationProducedAnErrorSteps(String statusCode) {
         notificationError.getStatusCode();
-        Assertions.assertEquals(notificationError.getStatusCode().toString().substring(0, 3), statusCode);
+        assertThat(notificationError.getStatusCode().toString().substring(0, 3))
+                .as("Il codice di errore non coincide con quanto atteso: " + notificationError)
+                .isEqualTo(statusCode);
     }
 
     private void createOperationResponseWithErrorSteps() {
@@ -1289,7 +1293,7 @@ public class ApiServiceDeskSteps {
     private String getSha256ByVideoDocument() throws Exception {
         notificationDocument = newDocument("classpath:/video.mp4");
         String resourceName = notificationDocument.getRef().getKey();
-        return computeSha256(resourceName);
+        return B2bUtils.computeSha256(ctx, resourceName);
     }
 
     private void loadToPresigned(String url, String secret, String sha256, String resource) {
@@ -1319,15 +1323,6 @@ public class ApiServiceDeskSteps {
         return new NotificationDocument()
                 .contentType("application/mp4")
                 .ref(new NotificationAttachmentBodyRef().key(resourcePath));
-    }
-
-    private String computeSha256(String resName) throws IOException {
-        Resource res = ctx.getResource(resName);
-        return computeSha256(res);
-    }
-
-    private String computeSha256(Resource res) throws IOException {
-        return b2bUtils.computeSha256(res.getInputStream());
     }
 
     private boolean checkRetetion(String fileKey, Integer retentionTime) {

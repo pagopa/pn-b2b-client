@@ -12,7 +12,6 @@ import java.util.UUID;
 
 public class PurposeRejectStep {
     private final ClientTokenConfigurator clientTokenConfigurator;
-    private final IdentityService identityService;
     private final SharedStepsContext sharedStepsContext;
     private final HttpCallExecutor httpCallExecutor;
     private final IPurposeApiClient purposeApiClient;
@@ -21,7 +20,6 @@ public class PurposeRejectStep {
                              SharedStepsContext sharedStepsContext) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
-        this.identityService = sharedStepsContext.getIdentityService();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
     }
@@ -33,7 +31,7 @@ public class PurposeRejectStep {
                 ? sharedStepsContext.getPurposeCommonContext().getWaitingForApprovalVersionId()
                 : sharedStepsContext.getPurposeCommonContext().getVersionId();
 
-        httpCallExecutor.performCall(() -> purposeApiClient.rejectPurposeVersion(sharedStepsContext.getXCorrelationId(),
+        httpCallExecutor.performCall(() -> purposeApiClient.rejectPurposeVersion(
                 UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId()),
                 UUID.fromString(versionId),
                 new RejectPurposeVersionPayload().rejectionReason("Motivazione di rifiuto")));

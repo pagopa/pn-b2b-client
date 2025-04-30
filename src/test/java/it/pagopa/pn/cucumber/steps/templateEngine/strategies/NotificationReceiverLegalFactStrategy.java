@@ -15,11 +15,6 @@ import java.util.Optional;
 @Component
 public class NotificationReceiverLegalFactStrategy implements ITemplateEngineStrategy {
 
-    private String ITA_TEXT;
-    private String DE_TEXT;
-    private String SL_TEXT;
-    private String FR_TEXT;
-
     private ITemplateEngineClient templateEngineClient;
 
     public NotificationReceiverLegalFactStrategy(ITemplateEngineClient templateEngineClient) {

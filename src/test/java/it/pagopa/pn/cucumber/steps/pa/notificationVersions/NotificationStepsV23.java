@@ -1,11 +1,8 @@
 package it.pagopa.pn.cucumber.steps.pa.notificationVersions;
 
-import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
-import it.pagopa.pn.client.b2b.pa.polling.IPnPollingService;
-import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
-import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV23;
+import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.NotificationUtilsV23;
 import it.pagopa.pn.cucumber.steps.utilitySteps.Costanti;
@@ -22,8 +19,9 @@ import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.*;
 
-import static it.pagopa.pn.client.b2b.pa.PnPaB2bUtils.*;
 import static it.pagopa.pn.cucumber.steps.SharedSteps.threadWait;
+import static it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils.APPLICATION_PDF;
+import static it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils.NEW_NOTIFICATION_IUN;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario.DESTINATARIO_NESSUNO;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario.DESTINATARIO_SIGNOR_CASUALE;
@@ -38,18 +36,15 @@ public class NotificationStepsV23 implements NotificationStepsInterface {
     private NewNotificationRequestV23 notificationRequest;
     private NewNotificationResponse notificationResponse;
     private final SharedSteps sharedSteps;
+    private final IPnPaB2bClient b2bClient;
     private final NotificationVersion version;
     private final NotificationUtilsV23 utils;
 
     public NotificationStepsV23(SharedSteps sharedSteps) {
         this.sharedSteps = sharedSteps;
+        b2bClient = sharedSteps.getB2bClient();
         version = NotificationVersion.V23;
-        utils = new NotificationUtilsV23(this);
-    }
-
-    @Override
-    public String getVersionString() {
-        return version.toString();
+        utils = new NotificationUtilsV23(sharedSteps.getContext(), b2bClient, sharedSteps.getPollingFactory());
     }
 
     @Override
@@ -121,7 +116,7 @@ public class NotificationStepsV23 implements NotificationStepsInterface {
             notificationRecipient.setTaxId(destinatario.equals(DESTINATARIO_SIGNOR_CASUALE) ?
                     FiscalCodeGenerator.generateCF(System.nanoTime()) : destinatario.getTaxId());
             notificationRecipient.setRecipientType(NotificationRecipientV23.RecipientTypeEnum.valueOf(destinatario.getRecipientType()));
-            /** Nei vecchi metodi @And("Destinatario xxx") denomination e taxId venivano sempre settati
+            /* Nei vecchi metodi @And("Destinatario xxx") denomination e taxId venivano sempre settati
              * (recipientType veniva spesso passato null, ma in quei casi subentrava il valore di default PG)
              * e data veniva passata sempre come mappa vuota.
              * Al contrario nei vecchi metodi @And("Destinatario xxx e:"), data veniva passata come mappa con valori
@@ -170,26 +165,44 @@ public class NotificationStepsV23 implements NotificationStepsInterface {
     public String sendNotification(int wait, String status, String pollingStrategy) {
         try {
             Assertions.assertDoesNotThrow(() -> {
-                notificationResponse = (NewNotificationResponse) uploadNotification();
+                uploadNotification(null);
                 if (status.equalsIgnoreCase(NOTIFICATION_STATUS_ACCEPTED)) {
                     threadWait(wait);
-                    FullSentNotificationV23 fullSentNotification = waitForRequestAccepted(notificationResponse, pollingStrategy);
+                    PnPollingResponseV23 pollingResponse = utils.waitForEvent(notificationResponse, pollingStrategy, NOTIFICATION_STATUS_ACCEPTED);
                     threadWait(wait);
-                    assertThat(fullSentNotification).as("La fullSentNotification della notifica appena creata non dev'essere null").isNotNull();
+                    assertThat(pollingResponse.getNotification())
+                            .as("La fullSentNotification della notifica appena creata non dev'essere null")
+                            .isNotNull();
                 } else if (status.equalsIgnoreCase(NOTIFICATION_STATUS_REFUSED)) {
-                    String errorCode = waitForRequestRefused(notificationResponse, pollingStrategy);
+                    log.info("Request status for " + sharedSteps.getNotificationIun());
+                    long startTime = System.currentTimeMillis();
+                    PnPollingResponseV23 pollingResponse = utils.waitForEvent(notificationResponse, pollingStrategy, NOTIFICATION_STATUS_REFUSED);
+                    long endTime = System.currentTimeMillis();
+                    log.info("Execution time {}ms", (endTime - startTime));
+                    StringBuilder error = new StringBuilder();
+                    if (pollingResponse.getStatusResponse() != null
+                            && pollingResponse.getStatusResponse().getErrors() != null
+                            && !pollingResponse.getStatusResponse().getErrors().isEmpty()) {
+                        for (ProblemError err : pollingResponse.getStatusResponse().getErrors()) {
+                            error.append(" ").append(err.getDetail());
+                        }
+                    }
+                    log.info("Detail status {}", error);
+                    String errorCode = error.toString();
                     sharedSteps.setErrorCode(errorCode);
                     threadWait(wait);
                     assertThat(errorCode).as("Il codice di errore non dev'essere vuoto").isNotEmpty();
                 } else if (status.equalsIgnoreCase(NOTIFICATION_STATUS_CANCELLED)) {
-                    RequestStatus response = sharedSteps.getB2bClient().notificationCancellation(sharedSteps.getNotificationIun());
+                    RequestStatus response = b2bClient.notificationCancellation(sharedSteps.getNotificationIun());
                     assertThat(response).as("La response della chiamata di cancellazione non dev'essere null").isNotNull();
                     assertThat(response.getDetails()).as("I details della response della chiamata di cancellazione non devono essere null").isNotNull();
                     assertThat(response.getDetails()).as("I details della response della chiamata di cancellazione non devono essere vuoti").isNotEmpty();
                     assertThat(response.getDetails().get(0).getCode()).isEqualToIgnoringCase("NOTIFICATION_CANCELLATION_ACCEPTED");
-                    boolean refused = waitForRequestNotRefused(notificationResponse, pollingStrategy);
+                    PnPollingResponseV23 pollingResponse = utils.waitForEvent(notificationResponse, pollingStrategy, NOTIFICATION_STATUS_REFUSED);
                     threadWait(wait);
-                    Assertions.assertFalse(refused);
+                    assertThat(pollingResponse.getResult())
+                            .as("La notifica dovrebbe essere stata annullata prima di andare in REFUSED")
+                            .isFalse();
                 }
             });
             return sharedSteps.getNotificationIun();
@@ -201,25 +214,14 @@ public class NotificationStepsV23 implements NotificationStepsInterface {
     }
 
     @Override
-    public Object uploadNotification() throws IOException {
+    public Object uploadNotification(String errorType) throws IOException {
         sharedSteps.setNotificationCreationDate(OffsetDateTime.now());
-        //PRELOAD DOCUMENTI NOTIFICA
-        List<NotificationDocument> documents = new ArrayList<>();
-        for (NotificationDocument doc : notificationRequest.getDocuments()) {
-            try {
-                Thread.sleep(sharedSteps.getB2bUtils().getRandom().nextInt(350));
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new PnB2bException(e.getMessage());
-            }
-            if (doc != null) {
-                documents.add(utils.preloadDocument(doc));
-            }
-        }
-        notificationRequest.setDocuments(documents);
-        //PRELOAD DOCUMENTI DI PAGAMENTO
-        utils.preloadPayDocument(notificationRequest);
-        return getAndCheckSendNewNotification(notificationRequest);
+        notificationResponse = utils.uploadNotification(notificationRequest, errorType);
+        String iun = new String(Base64Utils.decodeFromString(notificationResponse.getNotificationRequestId()));
+        assertThat(iun).as("Lo IUN generato in fase di invio notifica non può essere null").isNotNull();
+        log.info(NEW_NOTIFICATION_IUN, iun);
+        sharedSteps.setNotificationIun(iun);
+        return notificationResponse;
     }
 
     @Override
@@ -239,72 +241,6 @@ public class NotificationStepsV23 implements NotificationStepsInterface {
     @Override
     public void performPriceVerification(String price, String date, Integer destinatario) {
         //TODO MATTEO IMPLEMENTARE?
-    }
-
-
-    private FullSentNotificationV23 waitForRequestAccepted(NewNotificationResponse response, String pollingStrategy) {
-        IPnPollingService pollingService = sharedSteps.getB2bUtils().getPollingFactory().getPollingService(getPollingStrategy(pollingStrategy));
-        PnPollingResponseV23 pollingResponse = (PnPollingResponseV23) pollingService.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(ACCEPTED).build());
-        return pollingResponse.getNotification() == null ? null : pollingResponse.getNotification();
-    }
-
-    private String waitForRequestRefused(NewNotificationResponse response, String pollingStrategy) {
-        log.info("Request status for " + response.getNotificationRequestId());
-        long startTime = System.currentTimeMillis();
-
-        IPnPollingService pollingService = sharedSteps.getB2bUtils().getPollingFactory().getPollingService(getPollingStrategy(pollingStrategy));
-        PnPollingResponseV23 pollingResponse = (PnPollingResponseV23) pollingService.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(REFUSED).build());
-
-        long endTime = System.currentTimeMillis();
-        log.info("Execution time {}ms", (endTime - startTime));
-
-        StringBuilder error = new StringBuilder();
-        if (pollingResponse.getStatusResponse() != null
-                && pollingResponse.getStatusResponse().getErrors() != null
-                && !pollingResponse.getStatusResponse().getErrors().isEmpty()) {
-            for (ProblemError err : pollingResponse.getStatusResponse().getErrors()) {
-                error.append(" ").append(err.getDetail());
-            }
-        }
-        log.info("Detail status {}", error);
-        return error.toString();
-    }
-
-    private boolean waitForRequestNotRefused(NewNotificationResponse response, String pollingStrategy) {
-        IPnPollingService pollingService = sharedSteps.getB2bUtils().getPollingFactory().getPollingService(getPollingStrategy(pollingStrategy));
-        PnPollingResponseV23 pollingResponse = (PnPollingResponseV23) pollingService.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(REFUSED).build());
-        return pollingResponse.getResult();
-    }
-
-    public static String getPollingStrategy(String pollingStrategy) {
-        return switch (pollingStrategy) {
-            case TIMELINE_RAPID -> PnPollingStrategy.TIMELINE_RAPID_V23;
-            case TIMELINE_SLOW -> PnPollingStrategy.TIMELINE_SLOW_V23;
-            case STATUS_RAPID -> PnPollingStrategy.STATUS_RAPID_V23;
-            case STATUS_SLOW -> PnPollingStrategy.STATUS_SLOW_V23;
-            case TIMELINE_SLOW_E2E -> PnPollingStrategy.TIMELINE_SLOW_E2E_V23;
-            case TIMELINE_EXTRA_RAPID -> PnPollingStrategy.TIMELINE_EXTRA_RAPID_V23;
-            case STATUS_EXTRA_RAPID -> PnPollingStrategy.STATUS_EXTRA_RAPID_V23;
-            case VALIDATION_STATUS -> PnPollingStrategy.VALIDATION_STATUS_V23;
-            case VALIDATION_STATUS_ACCEPTATION_SHORT -> PnPollingStrategy.VALIDATION_STATUS_ACCEPTATION_SHORT_V23;
-            case VALIDATION_STATUS_EXTRA_RAPID -> PnPollingStrategy.VALIDATION_STATUS_ACCEPTATION_EXTRA_RAPID_V23;
-            case VALIDATION_STATUS_NO_ACCEPTATION -> PnPollingStrategy.VALIDATION_STATUS_NO_ACCEPTATION_V23;
-            case WEBHOOK -> PnPollingStrategy.WEBHOOK_V23;
-            default ->
-                    throw new RuntimeException("PnPollingStrategy non riconosciuta per la versione 23: " + pollingStrategy);
-        };
-    }
-
-    private NewNotificationResponse getAndCheckSendNewNotification(NewNotificationRequestV23 request) {
-        log.info(NEW_NOTIFICATION_REQUEST, request);
-        NewNotificationResponse response = sharedSteps.getB2bClient().sendNewNotificationV23(request);
-        log.info(NEW_NOTIFICATION_REQUEST_RESPONSE, response);
-        String iun = new String(Base64Utils.decodeFromString(response.getNotificationRequestId()));
-        assertThat(iun).as("Lo IUN generato in fase di invio notifica non può essere nullo").isNotNull();
-        log.info(NEW_NOTIFICATION_IUN, iun);
-        sharedSteps.setNotificationIun(iun);
-        notificationResponse = response;
-        return response;
     }
 
     @Override
@@ -332,21 +268,21 @@ public class NotificationStepsV23 implements NotificationStepsInterface {
 
             }
         }
-        notificationResponse = getAndCheckSendNewNotification(notificationRequest);
+        uploadNotification(null);
     }
 
     @Override
-    public void addIuvGdpToDestinatario(String denominazione, String iuvGdp, Integer paymentIndex) {
-        for (NotificationRecipientV23 recipient : this.notificationRequest.getRecipients()) {
+    public void addIuvGpdToDestinatario(String denominazione, String iuvGpd, Integer paymentIndex) {
+        for (NotificationRecipientV23 recipient : notificationRequest.getRecipients()) {
             if (recipient.getDenomination().equalsIgnoreCase(denominazione)) {
-                Objects.requireNonNull(Objects.requireNonNull(recipient.getPayments()).get(paymentIndex).getPagoPa()).setNoticeCode(iuvGdp);
+                Objects.requireNonNull(Objects.requireNonNull(recipient.getPayments()).get(paymentIndex).getPagoPa()).setNoticeCode(iuvGpd);
             }
         }
     }
 
     @Override
     public List<String> getDatiPagamento(String iun, Integer destinatario, Integer pagamento) {
-        FullSentNotificationV23 fullSentNotification = sharedSteps.getB2bClient().getSentNotificationV23(iun);
+        FullSentNotificationV23 fullSentNotification = b2bClient.getSentNotificationV23(iun);
         return Arrays.asList(
                 Objects.requireNonNull(Objects.requireNonNull(fullSentNotification.getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getCreditorTaxId(),
                 Objects.requireNonNull(Objects.requireNonNull(fullSentNotification.getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getNoticeCode());
@@ -357,7 +293,7 @@ public class NotificationStepsV23 implements NotificationStepsInterface {
         TimelineElementV23 timelineElement = null;
         for (int i = 0; i < attempts; i++) {
             threadWait(sharedSteps.getWorkFlowWait());
-            FullSentNotificationV23 fsn = sharedSteps.getB2bClient().getSentNotificationV23(iun);
+            FullSentNotificationV23 fsn = b2bClient.getSentNotificationV23(iun);
             log.info("NOTIFICATION_TIMELINE: " + fsn.getTimeline());
             timelineElement = fsn.getTimeline()
                     .stream().filter(elem -> Objects.requireNonNull(elem.getCategory().getValue())
@@ -373,7 +309,7 @@ public class NotificationStepsV23 implements NotificationStepsInterface {
     @Override
     public void getNotificationRequestStatus(String requestId) {
         try {
-            Assertions.assertDoesNotThrow(() -> sharedSteps.getB2bClient().getNotificationRequestStatusV23(requestId));
+            Assertions.assertDoesNotThrow(() -> b2bClient.getNotificationRequestStatusV23(requestId));
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
                     "{RequestID: " + (notificationResponse == null ? "NULL" : notificationResponse.getNotificationRequestId()) + " }";
@@ -384,7 +320,7 @@ public class NotificationStepsV23 implements NotificationStepsInterface {
     @Override
     public void checkTaxonomyCode() {
         String iun = sharedSteps.getNotificationIun();
-        FullSentNotificationV23 fullSentNotification = sharedSteps.getB2bClient().getSentNotificationV23(iun);
+        FullSentNotificationV23 fullSentNotification = b2bClient.getSentNotificationV23(iun);
         assertThat(fullSentNotification.getTaxonomyCode())
                 .as("Il taxonomyCode nella notifica inviata non dovrebbe essere nullo")
                 .isNotNull();
@@ -431,7 +367,7 @@ public class NotificationStepsV23 implements NotificationStepsInterface {
                     .as("L'ID della richiesta di notifica non dovrebbe essere nullo")
                     .isNotNull();
 
-            softly.assertThat(sharedSteps.getB2bClient().getNotificationRequestStatusV23(notificationResponse.getNotificationRequestId()))
+            softly.assertThat(b2bClient.getNotificationRequestStatusV23(notificationResponse.getNotificationRequestId()))
                     .as("Lo stato della richiesta di notifica non dovrebbe essere nullo.",
                             notificationResponse.getNotificationRequestId())
                     .isNotNull();
@@ -445,11 +381,71 @@ public class NotificationStepsV23 implements NotificationStepsInterface {
         String idempotenceToken = withIdempotenceToken ? notificationResponse.getIdempotenceToken() : null;
 
         NewNotificationRequestStatusResponseV23 newNotificationRequestStatusResponse = Assertions.assertDoesNotThrow(() ->
-                sharedSteps.getB2bClient().getNotificationRequestStatusAllParamV23(notificationRequestId, paProtocolNumber, idempotenceToken));
+                b2bClient.getNotificationRequestStatusAllParamV23(notificationRequestId, paProtocolNumber, idempotenceToken));
         assertThat(newNotificationRequestStatusResponse.getNotificationRequestStatus())
                 .as("Lo stato della richiesta di notifica non dovrebbe essere nullo")
                 .isNotNull();
         log.debug(newNotificationRequestStatusResponse.getNotificationRequestStatus());
+    }
+
+    @Override
+    public void verifyNotification(String notificationIun) {
+        utils.verifyNotification(notificationIun);
+    }
+
+    @Override
+    public void createAndSendNotificationRequestWithError(String errorType) {
+        try {
+            switch (errorType) {
+                case WRONG_EXTENSION -> {
+                    NotificationDocument notificationDocument = notificationRequest.getDocuments().get(0);
+                    notificationDocument.getRef().setKey("classpath:/sample.txt");
+                }
+                case OVERSIZE_ALLEGATO -> {
+                    NotificationDocument notificationDocument = notificationRequest.getDocuments().get(0);
+                    notificationDocument.getRef().setKey("classpath:/200MB_PDF.pdf");
+                }
+                case NOTIFICATION_INJECTION_ALLEGATO -> {
+                    NotificationDocument injectionDocument = utils.newDocument("classpath:/sample_injection.xml.pdf");
+                    notificationRequest.setDocuments(List.of(injectionDocument));
+                }
+                case OVER_15_ALLEGATO -> {
+                    NotificationDocument notificationDocument = utils.newDocument("classpath:/sample.pdf");
+                    List<NotificationDocument> newDocs = new ArrayList<>();
+                    for (int i = 0; i < 20; i++) {
+                        newDocs.add(notificationDocument);
+                    }
+                    notificationRequest.setDocuments(newDocs);
+                }
+            }
+            uploadNotification(errorType);
+        } catch (IOException ioException) {
+            throw new RuntimeException(errorType + " - Errore imprevisto in fase di creazione request: " + ioException.getMessage());
+        }
+
+        long startTime = System.currentTimeMillis();
+        PnPollingResponseV23 pollingResponse = utils.waitForEvent(notificationResponse, VALIDATION_STATUS, NOTIFICATION_STATUS_REFUSED);
+        long endTime = System.currentTimeMillis();
+        log.info("Execution time {}ms", (endTime - startTime));
+
+        StringBuilder error = new StringBuilder();
+        if (pollingResponse.getStatusResponse() != null && pollingResponse.getStatusResponse().getErrors() != null && !pollingResponse.getStatusResponse().getErrors().isEmpty()) {
+            for (ProblemError err : pollingResponse.getStatusResponse().getErrors()) {
+                error.append(" ").append(err.getDetail());
+            }
+        }
+        log.info("Detail status {}", error);
+        sharedSteps.setErrorCode(error.toString());
+    }
+
+    @Override
+    public String getCreditorTaxId(int recipientIndex) {
+        return notificationRequest.getRecipients().get(recipientIndex).getPayments().get(0).getPagoPa().getCreditorTaxId();
+    }
+
+    @Override
+    public String getNoticeCode(int recipientIndex) {
+        return notificationRequest.getRecipients().get(recipientIndex).getPayments().get(0).getPagoPa().getNoticeCode();
     }
 }
 

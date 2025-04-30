@@ -42,8 +42,7 @@ public class Costanti {
     public static final String COMUNE_ROOT = "Comune_Root";
     public static final String DEFAULT_PA = COMUNE_1;
 
-    //TODO MATTEO: capire come riuscire a prendere i valori annotati con value
-    // (non so perchè me li dà null quando commento il valore e scommento il @Value)
+    //TODO MATTEO: capire come riuscire a prendere i valori annotati con value (non so perchè me li dà null quando commento il valore e scommento il @Value)
 
     @Value("${pn.external.utilized.pec:testpagopa3@pec.pagopa.it}")
     public static String DIGITAL_ADDRESS;
@@ -134,8 +133,19 @@ public class Costanti {
     public static final String NOTIFICATION_STATUS_REFUSED = "REFUSED";
     public static final String NOTIFICATION_STATUS_CANCELLED = "CANCELLED";
     public static final String NOTIFICATION_STATUS_VIEWED = "VIEWED";
+    // Async Validation Errors
+    public static final String WRONG_EXTENSION = "WRONG_EXTENSION";
+    public static final String OVERSIZE_ALLEGATO = "OVERSIZE_ALLEGATO";
+    public static final String NOTIFICATION_INJECTION_ALLEGATO = "NOTIFICATION_INJECTION_ALLEGATO";
+    public static final String OVER_15_ALLEGATO = "OVER_15_ALLEGATO";
+    public static final String NOT_FOUND_NO_PRELOAD = "NOT_FOUND_NO_PRELOAD";
+    public static final String NOT_FOUND_ON_SAFE_STORAGE = "NOT_FOUND_ON_SAFE_STORAGE";
+    public static final String NOT_FOUND_ALLEGATO_JSON = "NOT_FOUND_ALLEGATO_JSON";
+    public static final String NOT_EQUAL_SHA = "NOT_EQUAL_SHA";
+    public static final String NOT_EQUAL_SHA_JSON = "NOT_EQUAL_SHA_JSON";
     // Error causes
     public static final String ALLEGATO = "ALLEGATO";
+
     public static final String EXTENSION = "EXTENSION";
     public static final String SHA_256 = "SHA_256";
     public static final String TAX_ID = "TAX_ID";

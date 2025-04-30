@@ -10,10 +10,10 @@ import java.util.UUID;
 
 public interface IEServiceClient extends SettableBearerToken {
 
-    CreatedEServiceDescriptor createEService(String xCorrelationId, EServiceSeed eserviceSeed);
-    CreatedResource updateDraftDescriptor(String xCorrelationId, UUID eServiceId, UUID descriptorId, UpdateEServiceDescriptorSeed updateEServiceDescriptorSeed);
-    CreatedResource createEServiceDocument(String xCorrelationId, UUID eServiceId, UUID descriptorId, String kind, String prettyName, org.springframework.core.io.Resource doc);
-    void publishDescriptor(String xCorrelationId, UUID eServiceId, UUID descriptorId);
-    void suspendDescriptor(String xCorrelationId, UUID eServiceId, UUID descriptorId);
-    CreatedResource createDescriptor(String xCorrelationId, UUID eServiceId);
+    CreatedEServiceDescriptor createEService(EServiceSeed eserviceSeed);
+    CreatedResource updateDraftDescriptor(UUID eServiceId, UUID descriptorId, UpdateEServiceDescriptorSeed updateEServiceDescriptorSeed);
+    CreatedResource createEServiceDocument(UUID eServiceId, UUID descriptorId, String kind, String prettyName, org.springframework.core.io.Resource doc);
+    void publishDescriptor(UUID eServiceId, UUID descriptorId);
+    void suspendDescriptor(UUID eServiceId, UUID descriptorId);
+    CreatedResource createDescriptor(UUID eServiceId);
 }

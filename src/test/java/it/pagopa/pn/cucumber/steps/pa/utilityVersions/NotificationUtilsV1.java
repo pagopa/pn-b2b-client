@@ -1,28 +1,38 @@
 package it.pagopa.pn.cucumber.steps.pa.utilityVersions;
 
-import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.*;
-import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationStepsV1;
+import it.pagopa.pn.client.b2b.pa.polling.IPnPollingService;
+import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
+import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV1;
+import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.cucumber.utils.NotificationValue;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
-import static it.pagopa.pn.client.b2b.pa.PnPaB2bUtils.APPLICATION_PDF;
-import static it.pagopa.pn.client.b2b.pa.PnPaB2bUtils.LOAD_TO_PRESIGNED;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static it.pagopa.pn.cucumber.utils.NotificationValue.TAX_ID;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
 
-public class NotificationUtilsV1 extends AbstractNotificationUtils {
+@Slf4j
+@Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+public class NotificationUtilsV1 extends B2bUtils {
 
-    private NotificationStepsV1 notificationStep;
-
-    public NotificationUtilsV1(NotificationStepsV1 notificationStep) {
-        this.notificationStep = notificationStep;
-    }
-
-    @Override
-    public PnPaB2bUtils getB2bUtils() {
-        return notificationStep.getSharedSteps().getB2bUtils();
+    @Autowired
+    public NotificationUtilsV1(ApplicationContext context, IPnPaB2bClient b2bClient, PnPollingFactory pollingFactory) {
+        super(context, b2bClient, pollingFactory);
     }
 
     public synchronized NewNotificationRequest convertNotificationRequest(Map<String, String> data) {
@@ -122,7 +132,7 @@ public class NotificationUtilsV1 extends AbstractNotificationUtils {
     }
 
     public NotificationDocument preloadDocument(NotificationDocument document) throws IOException {
-        PnPaB2bUtils.Pair<String, String> preloadDocument = getB2bUtils().preloadGeneric(document.getRef().getKey(), LOAD_TO_PRESIGNED);
+        Pair<String, String> preloadDocument = preloadGeneric(context, b2bClient, document.getRef().getKey(), APPLICATION_PDF);
         documentSetKey(document, preloadDocument.getValue1());
         documentSetVersionToken(document, "v1");
         documentSetDigests(document, preloadDocument.getValue2());
@@ -148,7 +158,7 @@ public class NotificationUtilsV1 extends AbstractNotificationUtils {
 
     public NotificationPaymentAttachment preloadAttachment(NotificationPaymentAttachment attachment) throws IOException {
         if (attachment != null) {
-            PnPaB2bUtils.Pair<String, String> preloadAttachment = getB2bUtils().preloadGeneric(attachment.getRef().getKey(), LOAD_TO_PRESIGNED);
+            Pair<String, String> preloadAttachment = preloadGeneric(context, b2bClient, attachment.getRef().getKey(), APPLICATION_PDF);
             attachmentSetKey(attachment, preloadAttachment.getValue1());
             attachmentSetVersionToken(attachment, "v1");
             attachmentSetDigests(attachment, preloadAttachment.getValue2());
@@ -167,5 +177,65 @@ public class NotificationUtilsV1 extends AbstractNotificationUtils {
 
     private void attachmentSetDigests(NotificationPaymentAttachment notificationPaymentAttachment, String sha256) {
         notificationPaymentAttachment.digests(new NotificationAttachmentDigests().sha256(sha256));
+    }
+
+    public void verifyNotification(String iun) {
+        FullSentNotification fsn = b2bClient.getSentNotificationV1(iun);
+        //Verify Sha
+        for (NotificationDocument doc : fsn.getDocuments()) {
+            int docIdx = Integer.parseInt(Objects.requireNonNull(doc.getDocIdx()));
+            NotificationAttachmentDownloadMetadataResponse response = b2bClient.getSentNotificationDocumentV1(iun, docIdx);
+            checkSha256(response.getUrl(), response.getSha256(), docIdx);
+        }
+        //Verify Attachments
+        fsn.getRecipients().stream().filter(recipient -> recipient.getPayment() != null && recipient.getPayment().getPagoPaForm() != null)
+                .forEach(recipient -> {
+                    int i = fsn.getRecipients().indexOf(recipient);
+                    NotificationAttachmentDownloadMetadataResponse resp = b2bClient.getSentNotificationAttachmentV1(fsn.getIun(), i, PAGOPA);
+                    checkAttachment(resp.getFilename(), resp.getUrl(), resp.getSha256());
+                });
+        //Verify LegalFacts format
+        List<LegalFactsId> legalFactsIdList = fsn.getTimeline().get(0).getLegalFactsIds();
+        for (LegalFactsId legalFactsId : legalFactsIdList) {
+            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactDownloadMetadataResponse resp;
+            resp = getLegalFact(b2bClient, fsn.getIun(), legalFactsId.getKey());
+            checkLegalFactFormat(resp.getUrl(), legalFactsId);
+        }
+        //Verify Status
+        if (fsn.getNotificationStatus().getValue().equals(NOTIFICATION_STATUS_REFUSED)) {
+            throw new IllegalStateException(WRONG_STATUS + fsn.getNotificationStatus());
+        }
+    }
+
+    public NewNotificationResponse uploadNotification(NewNotificationRequest request) throws IOException {
+        List<NotificationDocument> documents = new ArrayList<>();
+        for (NotificationDocument doc : request.getDocuments()) {
+            documents.add(preloadDocument(doc));
+        }
+        request.setDocuments(documents);
+        for (NotificationRecipient recipient : request.getRecipients()) {
+            NotificationPaymentInfo paymentInfo = recipient.getPayment();
+            if (paymentInfo != null) {
+                paymentInfo.setPagoPaForm(preloadAttachment(paymentInfo.getPagoPaForm()));
+            }
+        }
+        return b2bClient.sendNewNotificationV1(request);
+    }
+
+    public PnPollingResponseV1 waitForEvent(NewNotificationResponse response, String pollingStrategy, String notificationStatus) {
+        IPnPollingService pollingService = pollingFactory.getPollingService(getPollingStrategy(pollingStrategy));
+        return (PnPollingResponseV1) pollingService.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(notificationStatus).build());
+    }
+
+    public static String getPollingStrategy(String pollingStrategy) {
+        return switch (pollingStrategy) {
+            case TIMELINE_RAPID -> PnPollingStrategy.TIMELINE_RAPID_V1;
+            case STATUS_RAPID -> PnPollingStrategy.STATUS_RAPID_V1;
+            case TIMELINE_SLOW -> PnPollingStrategy.TIMELINE_SLOW_V1;
+            case STATUS_SLOW -> PnPollingStrategy.STATUS_SLOW_V1;
+            case VALIDATION_STATUS -> PnPollingStrategy.VALIDATION_STATUS_V1;
+            default ->
+                    throw new RuntimeException("PnPollingStrategy non riconosciuta per la versione 1: " + pollingStrategy);
+        };
     }
 }
