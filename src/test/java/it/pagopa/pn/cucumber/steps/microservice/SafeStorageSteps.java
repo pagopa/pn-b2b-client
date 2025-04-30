@@ -629,7 +629,7 @@ public class SafeStorageSteps {
     @Then("Il risultato della search contiene le fileKey relative ai seguenti documenti")
     public void checkSearchResult(DataTable dataTable) {
         List<String> searchResult = this.indicizzazioneStepsPojo.getAdditionalFileTagsSearchResponseResponseEntity().getBody().getFileKeys()
-                .stream().map(AdditionalFileTagsSearchResponseFileKeys::getFileKey).toList();
+                .stream().map(AdditionalFileTagsSearchResponseFileKeysInner::getFileKey).toList();
         List<String> documentIndexes = dataTable.asList();
         if (documentIndexes.contains("null")) {
             Assertions.assertTrue(searchResult.isEmpty());
