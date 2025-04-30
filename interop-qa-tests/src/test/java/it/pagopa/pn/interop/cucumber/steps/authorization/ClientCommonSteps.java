@@ -79,8 +79,10 @@ public class ClientCommonSteps {
     @Given("un {string} di {string} ha caricato una chiave pubblica in quel client")
     public void roleOfTenantHasAlreadyUploadClientPublicKey(String role, String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, role));
-        String userPublicKey = KeyPairGeneratorUtil.createBase64PublicKey("RSA", 2048);
+        String keyType = "RSA";
+        String userPublicKey = KeyPairGeneratorUtil.createBase64PublicKey(keyType, 2048);
         sharedStepsContext.getClientCommonContext().setClientPublicKey(userPublicKey);
+        sharedStepsContext.getClientCommonContext().setKeyType(keyType);
         String keyId = dataPreparationService.addPublicKeyToClient(sharedStepsContext.getClientCommonContext().getFirstClient(), KeyPairGeneratorUtil.createKeySeed(
             userPublicKey).get(0));
         sharedStepsContext.getClientCommonContext().setKeyId(keyId);

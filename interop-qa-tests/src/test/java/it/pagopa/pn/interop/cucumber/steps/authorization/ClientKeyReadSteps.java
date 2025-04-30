@@ -35,9 +35,11 @@ public class ClientKeyReadSteps {
     @Given("un {string} di {string} ha caricato una chiave pubblica nel client")
     public void clientPublicKeyUpload(String role, String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, role));
-        KeyPairPEM keyPairPEM = KeyPairGeneratorUtil.createKeyPairPEM("RSA", 2048);
+        String keyType = "RSA";
+        KeyPairPEM keyPairPEM = KeyPairGeneratorUtil.createKeyPairPEM(keyType, 2048);
         String key = KeyPairGeneratorUtil.keyToBase64(keyPairPEM.getPublicKey(), true);
         sharedStepsContext.getClientCommonContext().setClientPublicKey(key);
+        sharedStepsContext.getClientCommonContext().setKeyType(keyType);
         String keyId = dataPreparationService.addPublicKeyToClient(sharedStepsContext.getClientCommonContext().getFirstClient(), KeyPairGeneratorUtil.createKeySeed(
             key).get(0));
         sharedStepsContext.getClientCommonContext().setKeyId(keyId);
