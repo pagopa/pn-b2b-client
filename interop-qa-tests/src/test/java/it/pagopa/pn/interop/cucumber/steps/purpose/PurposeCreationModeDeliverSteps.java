@@ -77,23 +77,6 @@ public class PurposeCreationModeDeliverSteps {
                         new PurposeSeed()
                                 .eserviceId(sharedStepsContext.getEServicesCommonContext().getEserviceId())
                                 .consumerId(consumerId)
-                                .title(sharedStepsContext.getPurposeCommonContext().getPurposeId())
-                                .description("description of the purpose - QA")
-                                .isFreeOfCharge(true)
-                                .freeOfChargeReason("free of charge - QA")
-                                .dailyCalls(49)
-                )
-        );
-    }
-
-    @When("l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati, in modalità gratuita senza specificare una ragione")
-    public void userCreatePurposeWithAllRequiredFieldsAndSameName() {
-        UUID consumerId = identityService.getOrganizationId(sharedStepsContext.getTenantType());
-        sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getPurposeApiClient().createPurpose(
-                        new PurposeSeed()
-                                .eserviceId(sharedStepsContext.getEServicesCommonContext().getEserviceId())
-                                .consumerId(consumerId)
                                 .title(purposeTitle)
                                 .description("description of the purpose - QA")
                                 .isFreeOfCharge(true)

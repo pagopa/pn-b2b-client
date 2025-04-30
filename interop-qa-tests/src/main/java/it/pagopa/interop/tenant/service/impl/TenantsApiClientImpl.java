@@ -5,6 +5,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.TenantsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedAttributesResponse;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedTenantAttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganizations;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredAttributesResponse;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredTenantAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject2;
@@ -96,6 +97,16 @@ public class TenantsApiClientImpl implements ITenantsApi {
     @Override
     public void revokeDeclaredAttribute(UUID attributeId) {
         tenantsApi.revokeDeclaredAttribute(attributeId);
+    }
+
+    @Override
+    public CompactOrganizations getConsumers(Integer offset, Integer limit, String q) {
+        return tenantsApi.getConsumers(offset, limit, q);
+    }
+
+    @Override
+    public CompactOrganizations getProducers(Integer offset, Integer limit, String q) {
+        return tenantsApi.getProducers(offset, limit, q);
     }
 
     @Override

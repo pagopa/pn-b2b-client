@@ -98,7 +98,7 @@ public class AgreementActivateSteps {
                         .activateAgreement(sharedStepsContext.getAgreementId()));
     }
 
-    @Given("{string} ha già sospeso quella richiesta di fruizione come {clientType}")
+    @Given("{string} ha già sospeso quella richiesta di fruizione come {userType}")
     public void tenantHasAlreadySuspendAgreement(String tenantType, ClientType suspendedBy) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         dataPreparationService.suspendAgreement(sharedStepsContext.getAgreementId(), suspendedBy);
@@ -106,12 +106,12 @@ public class AgreementActivateSteps {
     }
 
     @ParameterType("PRODUCER|CONSUMER")
-    public ClientType clientType(String clientType) {
-        return switch (clientType) {
+    public ClientType userType(String userType) {
+        return switch (userType) {
             case "PRODUCER" -> ClientType.PRODUCER;
             case "CONSUMER" -> ClientType.CONSUMER;
             default ->
-                    throw new IllegalArgumentException("Invalid client type: " + clientType);
+                    throw new IllegalArgumentException("Invalid client type: " + userType);
         };
     }
 
