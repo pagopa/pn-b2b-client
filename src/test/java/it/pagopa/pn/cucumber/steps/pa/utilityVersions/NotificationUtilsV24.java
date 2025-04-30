@@ -8,6 +8,7 @@ import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV26;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -22,6 +23,7 @@ import static it.pagopa.pn.cucumber.utils.NotificationValue.PAYMENT;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.TAX_ID;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
 
+@Slf4j
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class NotificationUtilsV24 extends B2bUtils {
@@ -496,25 +498,27 @@ public class NotificationUtilsV24 extends B2bUtils {
         }
     }
 
-    public NewNotificationResponse uploadNotification(NewNotificationRequestV24 request, boolean isRegularUpload) throws IOException {
-        if (isRegularUpload) {
-            //PRELOAD DOCUMENTI NOTIFICA
-            List<NotificationDocument> documents = new ArrayList<>();
-            for (NotificationDocument doc : request.getDocuments()) {
-                try {
-                    Thread.sleep(new Random().nextInt(350));
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    throw new PnB2bException(e.getMessage());
-                }
-                if (doc != null) {
-                    documents.add(preloadDocument(doc));
-                }
+    public NewNotificationResponse uploadNotification(NewNotificationRequestV24 request, String errorType) throws IOException {
+        //PRELOAD DOCUMENTI NOTIFICA
+        List<NotificationDocument> documents = new ArrayList<>();
+        for (NotificationDocument doc : request.getDocuments()) {
+            try {
+                Thread.sleep(new Random().nextInt(350));
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new PnB2bException(e.getMessage());
             }
-            request.setDocuments(documents);
-            //PRELOAD DOCUMENTI DI PAGAMENTO
-            preloadPayDocument(request);
+            if (doc != null) {
+                documents.add(preloadDocument(doc));
+            }
         }
+        request.setDocuments(documents);
+        //PRELOAD DOCUMENTI DI PAGAMENTO
+        preloadPayDocument(request);
+        //GENERAZIONE DI ERRORI CREATI INTENZIONALMENTE
+        addErrorsOnPurpose(request, errorType);
+
+        log.info(NEW_NOTIFICATION_REQUEST, request);
         return b2bClient.sendNewNotificationV24(request);
     }
 
@@ -542,192 +546,36 @@ public class NotificationUtilsV24 extends B2bUtils {
         };
     }
 
-    /**
-     * Metodi per createAndSendNotificationRequestWithError
-     */
-    //TODO credo che il file di cui fare il preload dovrebbe essere un pdf, non un xml
-    private NotificationDocument preloadDocumentWithoutUpload(NotificationDocument document) throws IOException {
-        String resourceName = "classpath:/test.xml";
-        Pair<String, String> preloadDocument = preloadGeneric(context, b2bClient, resourceName, APPLICATION_PDF);
-        documentSetKey(document, preloadDocument.getValue1());
-        documentSetVersionToken(document, "v1");
-        documentSetDigests(document, preloadDocument.getValue2());
-        return document;
-    }
-
-//    public NotificationDocument preloadDocument(NotificationDocument document) throws IOException {
-//        Pair<String, String> preloadDocument = preloadGeneric(context, b2bClient, document.getRef().getKey(), APPLICATION_PDF);
-//        documentSetKey(document, preloadDocument.getValue1());
-//        documentSetVersionToken(document, "v1");
-//        documentSetDigests(document, preloadDocument.getValue2());
-//        return document;
-//    }
-
-    //TODO MATTEO TEST IMPORTANTE
-    //credo che il file di cui fare il preload dovrebbe essere un pdf, non un xml
-    private NotificationPaymentAttachment preloadAttachmentWithoutUpload(NotificationPaymentAttachment attachment) throws IOException {
-        String resourceName = "classpath:/test.xml";
-        Pair<String, String> preloadAttachment = preloadGeneric(context, b2bClient, resourceName, APPLICATION_PDF);
-        attachmentSetKey(attachment, preloadAttachment.getValue1());
-        attachmentSetVersionToken(attachment, "v1");
-        attachmentSetDigests(attachment, preloadAttachment.getValue2());
-        return attachment;
-    }
-
-    //credo che il file di cui fare il preload dovrebbe essere un json, non un xml
-    //PN_F24_META_AB_2_ACAB_392_D_042_A_1_A_FD_66_F_59732791_F_2_JSON ???
-    private NotificationMetadataAttachment preloadMetadataAttachmentWithoutUpload(NotificationMetadataAttachment attachment) throws IOException {
-        if (attachment != null) {
-            String resourceName = "classpath:/test.xml";
-            Pair<String, String> preloadAttachment = preloadGeneric(context, b2bClient, resourceName, APPLICATION_JSON);
-            metadataAttachmentSetKey(attachment, preloadAttachment.getValue1());
-            metadataAttachmentSetVersionToken(attachment, "v1");
-            metadataAttachmentSetDigests(attachment, preloadAttachment.getValue2());
-            return attachment;
-        }
-        return null;
-    }
-
-    public NewNotificationRequestV24 buildNotificationNotFoundAllegato(NewNotificationRequestV24 request, boolean isWithoutUpload) throws IOException {
-        if (!request.getDocuments().isEmpty() && !isWithoutUpload) {
-            NotificationDocument notificationDocument = request.getDocuments().get(0);
-            notificationDocument.getRef().setKey(PN_NOTIFICATION_ATTACHMENTS_ZBEDA_19_F_8997469_BB_75_D_28_FF_12_BDF_321_PDF);
-        }
-        List<NotificationDocument> newDocs = new ArrayList<>();
-        for (NotificationDocument doc : request.getDocuments()) {
-            if (isWithoutUpload) {
-                newDocs.add(preloadDocumentWithoutUpload(doc));
-            } else {
-                newDocs.add(preloadDocument(doc));
-            }
-        }
-        request.setDocuments(newDocs);
-        setAttachmentAndMetadata(request, isWithoutUpload);
-
-        //TODO MATTEO PROVA
-//        List<NotificationDocument> newDocs = new ArrayList<>();
-//        for (NotificationDocument doc : request.getDocuments()) {
-//            newDocs.add(preloadDocumentWithoutUpload(doc));
-//        }
-//        request.setDocuments(newDocs);
-//        setAttachmentAndMetadata(request, isWithoutUpload);
-        return request;
-    }
-
-    public NewNotificationRequestV24 buildNotificationNotFoundAllegatoJson(NewNotificationRequestV24 request, boolean isWithoutUpload) throws IOException {
-        List<NotificationDocument> newDocs = new ArrayList<>();
-        for (NotificationDocument doc : request.getDocuments()) {
-            newDocs.add(preloadDocument(doc));
-        }
-        request.setDocuments(newDocs);
-        setAttachmentAndMetadata(request, isWithoutUpload);
-        return request;
-    }
-
-    public NewNotificationRequestV24 buildNotificationNotEqualSha(NewNotificationRequestV24 request) throws IOException {
-        List<NotificationDocument> newDocs = new ArrayList<>();
-        for (NotificationDocument doc : request.getDocuments()) {
-            newDocs.add(preloadDocument(doc));
-        }
-        request.setDocuments(newDocs);
-        setAttachmentAndMetadata(request, false);
-
-        //TODO MATTEO TEST, dovrebbe funzionare anche così
-        String sha256 = computeSha256(context, "classpath:/multa.pdf");
-        request.getDocuments().get(0).setDigests(new NotificationAttachmentDigests().sha256(sha256));
-//        if (!request.getDocuments().isEmpty()) {
-//            NotificationDocument notificationDocument = request.getDocuments().get(0);
-//            // the document uploaded to safe storage is multa.pdf...I compute a different sha256 and I replace the old one
-//            String sha256 = computeSha256(context, "classpath:/multa.pdf");
-//            notificationDocument.setDigests(new NotificationAttachmentDigests().sha256(sha256));
-//        }
-        return request;
-    }
-
-    public NewNotificationRequestV24 buildNotificationNotEqualShaJson(NewNotificationRequestV24 request) throws IOException {
-        List<NotificationDocument> newDocs = new ArrayList<>();
-        for (NotificationDocument doc : request.getDocuments()) {
-            newDocs.add(preloadDocument(doc));
-        }
-        request.setDocuments(newDocs);
-        setAttachmentAndMetadata(request, false);
-
-        //TODO MATTEO TEST, dovrebbe funzionare anche così
-        String sha256 = computeSha256(context, "classpath:/multa.pdf");
-        request.getRecipients().get(0).getPayments().get(0).getF24().getMetadataAttachment().getDigests().setSha256(sha256);
-//        String sha256 = null;
-//        if (!request.getRecipients().isEmpty()) {
-//            // the document uploaded to safe storage is multa.pdf...I compute a different sha256 and I replace the old one
-//            sha256 = computeSha256(context, "classpath:/multa.pdf");
-//        }
-//        Objects.requireNonNull(Objects.requireNonNull(request.getRecipients().get(0).getPayments()).get(0).getF24()).getMetadataAttachment().getDigests().setSha256(sha256);
-        return request;
-    }
-
-    public NewNotificationRequestV24 buildNotificationWrongExtension(NewNotificationRequestV24 request) throws IOException {
-        if (!request.getDocuments().isEmpty()) {
-            NotificationDocument notificationDocument = request.getDocuments().get(0);
-            notificationDocument.getRef().setKey("classpath:/sample.txt");
-        }
-        List<NotificationDocument> newDocs = new ArrayList<>();
-        for (NotificationDocument doc : request.getDocuments()) {
-            newDocs.add(preloadDocument(doc));
-        }
-        request.setDocuments(newDocs);
-        setAttachmentAndMetadata(request, false);
-        return request;
-    }
-
-    public NewNotificationRequestV24 buildNotificationOverSizeAllegato(NewNotificationRequestV24 request) throws IOException {
-        NotificationDocument notificationDocument = newDocument("classpath:/200MB_PDF.pdf");
-        List<NotificationDocument> newDocs = new ArrayList<>();
-        newDocs.add(preloadDocument(notificationDocument));
-        request.setDocuments(newDocs);
-        setAttachmentAndMetadata(request, false);
-        return request;
-    }
-
-    public NewNotificationRequestV24 buildNotificationInjectionAllegato(NewNotificationRequestV24 request) throws IOException {
-        NotificationDocument notificationDocument = newDocument("classpath:/sample_injection.xml.pdf");
-        List<NotificationDocument> newDocs = new ArrayList<>();
-        newDocs.add(preloadDocument(notificationDocument));
-        request.setDocuments(newDocs);
-        setAttachmentAndMetadata(request, false);
-        return request;
-    }
-
-    public NewNotificationRequestV24 buildNotificationOver15Allegato(NewNotificationRequestV24 request) throws IOException {
-        NotificationDocument notificationDocument = newDocument("classpath:/sample.pdf");
-        List<NotificationDocument> newDocs = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
-            newDocs.add(preloadDocument(notificationDocument));
-        }
-        request.setDocuments(newDocs);
-        setAttachmentAndMetadata(request, false);
-        return request;
-    }
-
-    private void setAttachmentAndMetadata(NewNotificationRequestV24 newNotificationRequest, boolean isWithoutUpload) throws IOException {
-        for (NotificationRecipientV23 recipient : newNotificationRequest.getRecipients()) {
-            List<NotificationPaymentItem> paymentList = recipient.getPayments();
-            if (paymentList != null) {
-                for (NotificationPaymentItem paymentInfo : paymentList) {
-                    if (paymentInfo.getPagoPa() != null) {
-                        if (isWithoutUpload) {
-                            paymentInfo.getPagoPa().setAttachment(preloadAttachmentWithoutUpload(paymentInfo.getPagoPa().getAttachment()));
-                        } else {
-                            paymentInfo.getPagoPa().setAttachment(preloadAttachment(paymentInfo.getPagoPa().getAttachment()));
-                        }
-                    }
-                    if (paymentInfo.getF24() != null) {
-                        if (isWithoutUpload) {
-                            paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachmentWithoutUpload(paymentInfo.getF24().getMetadataAttachment()));
-                        } else {
-                            paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
-                        }
-                    }
+    private NewNotificationRequestV24 addErrorsOnPurpose(NewNotificationRequestV24 request, String errorType) throws IOException {
+        if (errorType != null) {
+            switch (errorType) {
+                case NOT_FOUND_NO_PRELOAD -> {
+                    NotificationDocument notPreloadedDocument = newDocument("");
+                    documentSetKey(notPreloadedDocument, PN_NOTIFICATION_ATTACHMENTS_ZBEDA_19_F_8997469_BB_75_D_28_FF_12_BDF_321_PDF);
+                    documentSetVersionToken(notPreloadedDocument, "v1");
+                    documentSetDigests(notPreloadedDocument, computeSha256(context, "classpath:/sample.pdf"));
+                    request.getDocuments().add(notPreloadedDocument);
+                }
+                case NOT_FOUND_ON_SAFE_STORAGE -> {
+                    NotificationPaymentAttachment attachment = request.getRecipients().get(0).getPayments().get(0).getPagoPa().getAttachment();
+                    attachment.getRef().setKey(PN_NOTIFICATION_ATTACHMENTS_ZBEDA_19_F_8997469_BB_75_D_28_FF_12_BDF_321_PDF);
+                }
+                case NOT_FOUND_ALLEGATO_JSON -> {
+                    NotificationMetadataAttachment metadataAttachment = request.getRecipients().get(0).getPayments().get(0).getF24().getMetadataAttachment();
+                    metadataAttachment.getRef().setKey(PN_F24_META_AB_2_ACAB_392_D_042_A_1_A_FD_66_F_59732791_F_2_JSON);
+                }
+                case NOT_EQUAL_SHA -> {
+                    String sha256 = computeSha256(context, "classpath:/multa.pdf");
+                    NotificationPaymentAttachment attachment = request.getRecipients().get(0).getPayments().get(0).getPagoPa().getAttachment();
+                    attachment.getDigests().setSha256(sha256);
+                }
+                case NOT_EQUAL_SHA_JSON -> {
+                    String sha256 = computeSha256(context, "classpath:/multa.pdf");
+                    NotificationMetadataAttachment metadataAttachment = request.getRecipients().get(0).getPayments().get(0).getF24().getMetadataAttachment();
+                    metadataAttachment.getDigests().setSha256(sha256);
                 }
             }
         }
+        return request;
     }
 }

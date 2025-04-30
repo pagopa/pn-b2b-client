@@ -116,7 +116,7 @@ public class NotificationStepsV21 implements NotificationStepsInterface {
             notificationRecipient.setTaxId(destinatario.equals(DESTINATARIO_SIGNOR_CASUALE) ?
                     FiscalCodeGenerator.generateCF(System.nanoTime()) : destinatario.getTaxId());
             notificationRecipient.setRecipientType(NotificationRecipientV21.RecipientTypeEnum.valueOf(destinatario.getRecipientType()));
-            /** Nei vecchi metodi @And("Destinatario xxx") denomination e taxId venivano sempre settati
+            /* Nei vecchi metodi @And("Destinatario xxx") denomination e taxId venivano sempre settati
              * (recipientType veniva spesso passato null, ma in quei casi subentrava il valore di default PG)
              * e data veniva passata sempre come mappa vuota.
              * Al contrario nei vecchi metodi @And("Destinatario xxx e:"), data veniva passata come mappa con valori
@@ -166,7 +166,7 @@ public class NotificationStepsV21 implements NotificationStepsInterface {
     public String sendNotification(int wait, String status, String pollingStrategy) {
         try {
             Assertions.assertDoesNotThrow(() -> {
-                uploadNotification(true);
+                uploadNotification(null);
                 if (status.equalsIgnoreCase(NOTIFICATION_STATUS_ACCEPTED)) {
                     threadWait(wait);
                     PnPollingResponseV21 pollingResponse = utils.waitForEvent(notificationResponse, pollingStrategy, NOTIFICATION_STATUS_ACCEPTED);
@@ -215,10 +215,10 @@ public class NotificationStepsV21 implements NotificationStepsInterface {
     }
 
     @Override
-    public Object uploadNotification(boolean isRegularUpload) throws IOException {
+    public Object uploadNotification(String errorType) throws IOException {
         sharedSteps.setNotificationCreationDate(OffsetDateTime.now());
         log.info(NEW_NOTIFICATION_REQUEST, notificationRequest);
-        notificationResponse = utils.uploadNotification(notificationRequest);
+        notificationResponse = utils.uploadNotification(notificationRequest, errorType);
         log.info(NEW_NOTIFICATION_RESPONSE, notificationResponse);
         String iun = new String(Base64Utils.decodeFromString(notificationResponse.getNotificationRequestId()));
         assertThat(iun).as("Lo IUN generato in fase di invio notifica non può essere null").isNotNull();
@@ -271,7 +271,7 @@ public class NotificationStepsV21 implements NotificationStepsInterface {
 
             }
         }
-        uploadNotification(true);
+        uploadNotification(null);
     }
 
     @Override
@@ -397,22 +397,31 @@ public class NotificationStepsV21 implements NotificationStepsInterface {
     }
 
     @Override
-    public void createAndSendNotificationRequestWithError(String errorType, Boolean isWithoutUpload) {
+    public void createAndSendNotificationRequestWithError(String errorType) {
         try {
-            notificationRequest = switch (errorType) {
-                case "NOT_FOUND_ALLEGATO" ->
-                        utils.buildNotificationNotFoundAllegato(notificationRequest, isWithoutUpload);
-                case "NOT_FOUND_ALLEGATO_JSON" ->
-                        utils.buildNotificationNotFoundAllegatoJson(notificationRequest, isWithoutUpload);
-                case "NOT_EQUAL_SHA" -> utils.buildNotificationNotEqualSha(notificationRequest);
-                case "NOT_EQUAL_SHA_JSON" -> utils.buildNotificationNotEqualShaJson(notificationRequest);
-                case "WRONG_EXTENSION" -> utils.buildNotificationWrongExtension(notificationRequest);
-                case "OVERSIZE_ALLEGATO" -> utils.buildNotificationOverSizeAllegato(notificationRequest);
-                case "NOTIFICATION_INJECTION_ALLEGATO" -> utils.buildNotificationInjectionAllegato(notificationRequest);
-                case "OVER_15_ALLEGATO" -> utils.buildNotificationOver15Allegato(notificationRequest);
-                default -> throw new IllegalArgumentException("Tipologia di errore non riconosciuta: " + errorType);
-            };
-            uploadNotification(false);
+            switch (errorType) {
+                case WRONG_EXTENSION -> {
+                    NotificationDocument notificationDocument = notificationRequest.getDocuments().get(0);
+                    notificationDocument.getRef().setKey("classpath:/sample.txt");
+                }
+                case OVERSIZE_ALLEGATO -> {
+                    NotificationDocument notificationDocument = notificationRequest.getDocuments().get(0);
+                    notificationDocument.getRef().setKey("classpath:/200MB_PDF.pdf");
+                }
+                case NOTIFICATION_INJECTION_ALLEGATO -> {
+                    NotificationDocument injectionDocument = utils.newDocument("classpath:/sample_injection.xml.pdf");
+                    notificationRequest.setDocuments(List.of(injectionDocument));
+                }
+                case OVER_15_ALLEGATO -> {
+                    NotificationDocument notificationDocument = utils.newDocument("classpath:/sample.pdf");
+                    List<NotificationDocument> newDocs = new ArrayList<>();
+                    for (int i = 0; i < 20; i++) {
+                        newDocs.add(notificationDocument);
+                    }
+                    notificationRequest.setDocuments(newDocs);
+                }
+            }
+            uploadNotification(errorType);
         } catch (IOException ioException) {
             throw new RuntimeException(errorType + " - Errore imprevisto in fase di creazione request: " + ioException.getMessage());
         }

@@ -41,6 +41,8 @@ Feature: Validazione notifica e2e
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
     And destinatario Cristoforo Colombo
+    #TODO MATTEO: sarebbe da riscrivere come nella riga commentata per una più facile comprensione
+#    When la notifica viene inviata dal "Comune_Multi" senza effettuare il preload dell'allegato e si attende che lo stato diventi REFUSED
     When la notifica viene inviata tramite api b2b effettuando la preload ma senza caricare nessun allegato dal "Comune_Multi" e si attende che lo stato diventi REFUSED
        #Then si verifica che la notifica non viene accettata causa "ALLEGATO"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista

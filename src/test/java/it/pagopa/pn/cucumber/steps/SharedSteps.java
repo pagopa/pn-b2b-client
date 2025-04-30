@@ -526,62 +526,62 @@ public class SharedSteps {
         Assertions.assertNotNull(this.notificationError);
         Assertions.assertEquals(400, this.notificationError.getStatusCode().value());
     }
-    
+
     @When("la notifica viene inviata tramite api b2b senza preload allegato dal {string} e si attende che lo stato diventi REFUSED")
     public void laNotificaVieneInviataSenzaPreloadAllegato(String paName) {
         setPaAndSenderTaxId(paName);
-        sendNotificationRefusedDueToError("NOT_FOUND_ALLEGATO", false);
+        sendNotificationRefusedDueToError(NOT_FOUND_NO_PRELOAD);
     }
 
     @When("la notifica viene inviata tramite api b2b effettuando la preload ma senza caricare nessun allegato dal {string} e si attende che lo stato diventi REFUSED")
     public void laNotificaVieneInviataTramiteApiBBEffettuandoLaPreloadMaSenzaCaricareNessunAllegatoDalESiAttendeCheLoStatoDiventiREFUSED(String paName) {
         setPaAndSenderTaxId(paName);
-        sendNotificationRefusedDueToError("NOT_FOUND_ALLEGATO", true);
+        sendNotificationRefusedDueToError(NOT_FOUND_ON_SAFE_STORAGE);
     }
 
     @When("la notifica viene inviata tramite api b2b effettuando la preload ma senza caricare nessun allegato json dal {string} e si attende che lo stato diventi REFUSED")
     public void laNotificaVieneInviataTramiteApiBBEffettuandoLaPreloadMaSenzaCaricareNessunAllegatoJsonDalESiAttendeCheLoStatoDiventiREFUSED(String paName) {
         setPaAndSenderTaxId(paName);
-        sendNotificationRefusedDueToError("NOT_FOUND_ALLEGATO_JSON", true);
+        sendNotificationRefusedDueToError(NOT_FOUND_ALLEGATO_JSON);
     }
 
     @When("la notifica viene inviata tramite api b2b con sha256 differente dal {string} e si attende che lo stato diventi REFUSED")
     public void laNotificaVieneInviataConShaDifferente(String paName) {
         setPaAndSenderTaxId(paName);
-        sendNotificationRefusedDueToError("NOT_EQUAL_SHA", null);
+        sendNotificationRefusedDueToError(NOT_EQUAL_SHA);
     }
 
     @When("la notifica viene inviata tramite api b2b con sha256 Json differente dal {string} e si attende che lo stato diventi REFUSED")
     public void laNotificaVieneInviataConShaJsonDifferente(String paName) {
         setPaAndSenderTaxId(paName);
-        sendNotificationRefusedDueToError("NOT_EQUAL_SHA_JSON", null);
+        sendNotificationRefusedDueToError(NOT_EQUAL_SHA_JSON);
     }
 
     @When("la notifica viene inviata tramite api b2b con estensione errata dal {string} e si attende che lo stato diventi REFUSED")
     public void laNotificaVieneInviataConEstensioneErrata(String paName) {
         setPaAndSenderTaxId(paName);
-        sendNotificationRefusedDueToError("WRONG_EXTENSION", null);
+        sendNotificationRefusedDueToError(WRONG_EXTENSION);
     }
 
     //Non viene richiamato da nessuno step: rimuovere?
     @When("la notifica viene inviata tramite api b2b oversize preload allegato dal {string} e si attende che lo stato diventi REFUSED")
     public void laNotificaVieneInviataPreloadAllegatoOverSize(String paName) {
         setPaAndSenderTaxId(paName);
-        sendNotificationRefusedDueToError("OVERSIZE_ALLEGATO", null);
+        sendNotificationRefusedDueToError(OVERSIZE_ALLEGATO);
     }
 
     //Non viene richiamato da nessuno step: rimuovere?
     @When("la notifica viene inviata tramite api b2b injection preload allegato dal {string} e si attende che lo stato diventi REFUSED")
     public void laNotificaVieneInviataPreloadAllegatoInjection(String paName) {
         setPaAndSenderTaxId(paName);
-        sendNotificationRefusedDueToError("NOTIFICATION_INJECTION_ALLEGATO", null);
+        sendNotificationRefusedDueToError(NOTIFICATION_INJECTION_ALLEGATO);
     }
 
     //Non viene richiamato da nessuno step: rimuovere?
     @When("la notifica viene inviata tramite api b2b over 15 preload allegato dal {string} e si attende che lo stato diventi REFUSED")
     public void laNotificaVieneInviataPreloadAllegatoOver15(String paName) {
         setPaAndSenderTaxId(paName);
-        sendNotificationRefusedDueToError("OVER_15_ALLEGATO", null);
+        sendNotificationRefusedDueToError(OVER_15_ALLEGATO);
     }
 
     @When("la notifica viene inviata dal {string}")
@@ -597,7 +597,7 @@ public class SharedSteps {
 
     private void sendNotificationWithError() {
         try {
-            getNotificationStepInterface().uploadNotification(true);
+            getNotificationStepInterface().uploadNotification(null);
         } catch (HttpStatusCodeException | IOException e) {
             if (e instanceof HttpStatusCodeException httpError) {
                 this.notificationError = httpError;
@@ -757,16 +757,17 @@ public class SharedSteps {
         Assertions.assertTrue(expectedErrorCode.equalsIgnoreCase(errorCode));
     }
 
-    // TODO MATTEO TEST: 8 vecchi metodi sono stati unificati in questo (alcuni di questi non vengono nemmeno mai richiamati da nessun file feature).
-    //  E' stato refattorizzato tutto quanto, in modo che possa runnare con qualsiasi versione (dalla 21 in su, in quanto i metadati prima non sono presenti)
-    //  Altra possibile miglioria: sostituire le stringhe delle tipologie d'errore con costanti all'interno della classe Costanti
-    private void sendNotificationRefusedDueToError(String errorType, Boolean noUpload) {
+    /* 8 vecchi metodi sono stati unificati in questo (alcuni di questi non vengono nemmeno mai richiamati da nessun file feature).
+      E' stato refattorizzato tutto quanto, in modo che possa runnare con qualsiasi versione
+      (dalla 21 in su, in quanto i metadati non sono presenti in versioni precedenti)
+     */
+    private void sendNotificationRefusedDueToError(String errorType) {
         assumeThat(versionUsed.getValue())
                 .as("Test skipped: metodo pensato per funzionare con versioni dalla 21 in poi")
                 .isGreaterThanOrEqualTo(NotificationVersion.V21.getValue());
 
         try {
-            getNotificationStepInterface().createAndSendNotificationRequestWithError(errorType, noUpload);
+            getNotificationStepInterface().createAndSendNotificationRequestWithError(errorType);
             threadWait(getWorkFlowWait());
             assertThat(errorCode).as("Il messaggio di errore non dev'essere null").isNotNull();
         } catch (AssertionFailedError assertionFailedError) {

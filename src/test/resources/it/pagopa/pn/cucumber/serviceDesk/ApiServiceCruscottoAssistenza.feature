@@ -194,7 +194,7 @@ Feature: Api Service Cruscotto Assistenza
     And il servizio risponde con errore "<ERROR>"
     Examples:
       | TAX_ID        | taxIdRecupero  | IUN                       | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   | ERROR |
-      | Mario Gherkin | Mario Gherkin  | VUOTO                     | PF             | 1                | NULL                 | 2023-01-01 | 2023-12-01 | 405   |
+      | Mario Gherkin | Mario Gherkin  | VUOTO                     | PF             | 1                | NULL                 | 2023-01-01 | 2023-12-01 | 400   |
       | Mario Gherkin | Mario Gherkin  | JRDT-ZAPH-JQYW-202312-J-1 | PF             | 1                | NULL                 | 2023-01-01 | 2023-12-01 | 404   |
       | Mario Gherkin | VUOTO          |                           | PF             | 1                | NULL                 | 2023-01-01 | 2023-12-01 | 400   |
       | Mario Gherkin | NULL           |                           | PF             | 1                | NULL                 | 2023-01-01 | 2023-12-01 | 400   |
@@ -229,8 +229,7 @@ Feature: Api Service Cruscotto Assistenza
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
     Then invocazione servizio per recupero dettaglio timeline notifica multidestinatario con taxId "Mario Gherkin" e iun "VUOTO" per il  destinatario 0
-    And il servizio risponde con errore "405"
-    #Errore: 405 METHOD_NOT_ALLOWED 405 Method Not Allowed
+    And il servizio risponde con errore "400"
 
   @cruscottoAssistenza
   Scenario: [API-SERVICE-CA_CE02.7_50_1] Invocazione del servizio con IUN null
@@ -333,7 +332,7 @@ Feature: Api Service Cruscotto Assistenza
     Then il servizio risponde con errore "<ERROR>"
     Examples:
       | IUN                       | TAX_ID        | RECIPIENT_TYPE | ERROR |
-      | VUOTO                     | Mario Gherkin | PF             | 405   |
+      | VUOTO                     | Mario Gherkin | PF             | 400   |
       | NULL                      | Mario Gherkin | PF             | 400   |
       | JZTK-MGAH-TVKL-202311-X-1 | Mario Gherkin | PF             | 404   |
 

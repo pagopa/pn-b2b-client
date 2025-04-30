@@ -33,11 +33,11 @@ public interface NotificationStepsInterface {
      * Metodo chiave, in quanto è qui che viene valorizzato lo IUN della notifica generata che viene poi salvato in SharedSteps
      * su cui poggia la quasi totalità delle logiche dell'applicativo
      *
-     * @param isRegularUpload da passare sempre a true: il solo caso in cui viene passato false, è quando viene richiamato dal metodo
+     * @param errorType da passare sempre a null, tranne quando viene richiamato dal metodo
      * @see #createAndSendNotificationRequestWithError, (che deve portare al REFUSED in fase di validazione asincrona)
-     * in modo che salti il preload di documenti e altre operazioni che vengono invece regolarmente effettuate quando il parametro è true
+     * in modo da modificare la request in accordo al tipo di errore che si intende generare
      */
-    Object uploadNotification(boolean isRegularUpload) throws IOException;
+    Object uploadNotification(String errorType) throws IOException;
 
     void setIuvToRecipient(Integer posizione, String iuvGPD);
 
@@ -71,7 +71,7 @@ public interface NotificationStepsInterface {
 
     void verifyNotification(String notificationIun);
 
-    void createAndSendNotificationRequestWithError(String errorType, Boolean isWithoutUpload);
+    void createAndSendNotificationRequestWithError(String errorType);
 
     String getCreditorTaxId(int recipientIndex);
 

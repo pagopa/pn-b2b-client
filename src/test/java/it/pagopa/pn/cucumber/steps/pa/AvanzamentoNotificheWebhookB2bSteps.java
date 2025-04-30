@@ -438,7 +438,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         updateApiKeyForStream();
         StreamVersion streamVersion = getStreamVersion(version);
         WebhookStepsInterface webhookStepsInterface = getWebhookStep(streamVersion);
-        //TODO: qua lo stream risulta inesistente perchè è stato cancellato in precedenza in un altro step
+        //TODO: qua lo stream risulta inesistente perché è stato cancellato in precedenza in un altro step
         // Per una maggiore consistenza sarebbe meglio -> UUID notExistingStreamId = UUID.randomUUID();
         UUID notExistingStreamId = webhookStepsInterface.getStreamId();
         try {

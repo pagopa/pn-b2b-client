@@ -6,6 +6,7 @@ import it.pagopa.pn.cucumber.steps.utilitySteps.WaitForEventPredicateFilters;
 import it.pagopa.pn.cucumber.steps.utilitySteps.checkTimelineElement.TimelineElementCheck;
 import it.pagopa.pn.cucumber.steps.utilitySteps.checkTimelineElement.TimelineElementCheckFilters;
 
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
 
 public interface B2bStepsInterface {
@@ -84,4 +85,6 @@ public interface B2bStepsInterface {
     void checkOrdineEventiUnivoci(String category1, Boolean isSuccessivo, String category2);
 
     void vieneSchedulatoIlPerfezionamento(String timelineEventCategory, Map<String, String> dataMap);
+
+    void checkScartoTemporaleTraDueDeliveryDetailCode(String code1, String code2, Boolean isSuperiore, int timeQuantity, ChronoUnit unitaTemporale);
 }

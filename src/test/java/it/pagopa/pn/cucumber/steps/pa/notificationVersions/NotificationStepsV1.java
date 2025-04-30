@@ -106,7 +106,7 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
             notificationRecipient.setTaxId(destinatario.equals(DESTINATARIO_SIGNOR_CASUALE) ?
                     FiscalCodeGenerator.generateCF(System.nanoTime()) : destinatario.getTaxId());
             notificationRecipient.setRecipientType(NotificationRecipient.RecipientTypeEnum.valueOf(destinatario.getRecipientType()));
-            /** Nei vecchi metodi @And("Destinatario xxx") denomination e taxId venivano sempre settati
+            /* Nei vecchi metodi @And("Destinatario xxx") denomination e taxId venivano sempre settati
              * (recipientType veniva spesso passato null, ma in quei casi subentrava il valore di default PG)
              * e data veniva passata sempre come mappa vuota.
              * Al contrario nei vecchi metodi @And("Destinatario xxx e:"), data veniva passata come mappa con valori
@@ -155,7 +155,7 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
     public String sendNotification(int wait, String status, String pollingStrategy) {
         try {
             Assertions.assertDoesNotThrow(() -> {
-                uploadNotification(true);
+                uploadNotification(null);
                 if (status.equalsIgnoreCase(NOTIFICATION_STATUS_ACCEPTED)) {
                     threadWait(wait);
                     PnPollingResponseV1 pollingResponse = utils.waitForEvent(notificationResponse, pollingStrategy, NOTIFICATION_STATUS_ACCEPTED);
@@ -204,7 +204,7 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
     }
 
     @Override
-    public Object uploadNotification(boolean isRegularUpload) throws IOException {
+    public Object uploadNotification(String errorType) throws IOException {
         sharedSteps.setNotificationCreationDate(OffsetDateTime.now());
         log.info(NEW_NOTIFICATION_REQUEST, notificationRequest);
         notificationResponse = utils.uploadNotification(notificationRequest);
@@ -376,7 +376,7 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
     }
 
     @Override
-    public void createAndSendNotificationRequestWithError(String errorType, Boolean isWithoutUpload) {
+    public void createAndSendNotificationRequestWithError(String errorType) {
         //metodo non previsto per la versione 1
     }
 

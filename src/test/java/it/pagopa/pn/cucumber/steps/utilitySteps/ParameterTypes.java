@@ -10,8 +10,7 @@ import java.time.temporal.ChronoUnit;
  * la scrittura di due metodi distinti per dei controlli per il quale basterebbe un singolo metodo con l'aggiunta
  * di un parametro booleano.
  */
-//TODO: altri possibili candidati sono:
-// i nomi delle PA, le versioni di webhook e notifica, le operazioni che si possono svolgere su un'apiKey (rotate, block, create...)
+//TODO: altri possibili candidati sono: i nomi delle PA, le versioni di webhook e notifica, le operazioni che si possono svolgere su un'apiKey (rotate, block, create...)
 public class ParameterTypes {
 
     @ParameterType("esista|non esista")

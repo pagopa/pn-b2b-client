@@ -261,7 +261,7 @@ public class NewNotificationTest {
 
     private NewNotificationResponse sendAndLogNewNotification(NewNotificationRequestV24 request) throws IOException {
         log.info(NEW_NOTIFICATION_REQUEST, request);
-        NewNotificationResponse response = utils.uploadNotification(request, true);
+        NewNotificationResponse response = utils.uploadNotification(request, null);
         log.info(NEW_NOTIFICATION_RESPONSE, response);
         if (response != null) {
             try {

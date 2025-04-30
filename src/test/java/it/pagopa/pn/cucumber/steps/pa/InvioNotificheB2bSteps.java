@@ -7,11 +7,11 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.pn.client.b2b.pa.exception.IllegalConfigurationException;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.payment.*;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.PaperEngageRequest;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.PaperEngageRequestAttachments;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.ReceivedMessage;
+import it.pagopa.pn.client.b2b.pa.exception.IllegalConfigurationException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
@@ -179,7 +179,7 @@ public class InvioNotificheB2bSteps {
         }
     }
 
-    //TODO MATTEO TEST: ho aggiunto il parametro PA e il successivo setting della pa in sharedSteps, senza andava in errore
+    //TODO MATTEO: ho aggiunto il parametro PA e il successivo setting della pa in sharedSteps, senza andava in errore
     @And("{string} recupera notifica vecchia di 120 giorni da lato web PA e verifica presenza pagamento")
     public void retrieveNotification120DaysOldByIunWebPaSide(String paName) {
         sharedSteps.setPA(paName);
@@ -636,7 +636,7 @@ public class InvioNotificheB2bSteps {
                 .isNull();
     }
 
-    //TODO MATTEO: inutilizzato, che richiede un sacco di metodi di utility per nulla
+    //TODO: inutilizzato, richiede un sacco di metodi di utility per nulla. Gli step che lo richiamavano sono commentati, valutare cancellazione
 //    @Then("si verifica la corretta acquisizione della notifica con verifica sha256 dell'allegato di pagamento {string}")
 //    public void correctAcquisitionNotificationVerifySha256AllegatiPagamento(String attachment) {
 //        assertThatCode(() -> b2bUtils.verifyNotificationAndSha256AllegatiPagamento(sharedSteps.getSentNotificationLastVersion(), attachment))

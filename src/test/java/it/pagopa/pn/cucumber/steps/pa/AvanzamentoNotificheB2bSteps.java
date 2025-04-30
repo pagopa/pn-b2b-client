@@ -40,7 +40,7 @@ import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.PollingType.TIMELINE;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.checkTimelineElement.TimelineElementCheck.*;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
-import static java.time.temporal.ChronoUnit.*;
+import static java.time.temporal.ChronoUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -514,8 +514,7 @@ public class AvanzamentoNotificheB2bSteps {
         b2bStepsInterface.checkIfTimelineElementExists(true, null, null);
     }
 
-    //TODO: FA LA STESSA IDENTICA COSA DEL METODO DI SOPRA, SOLO CON LA FRASE DELLO STEP ESPOSTA IN MANIERA DIVERSA
-    // E LA POLLING STRATEGY E' RAPID ANZICHE' SLOW
+    //TODO: FA LA STESSA IDENTICA COSA DEL METODO DI SOPRA, SOLO CON LA FRASE DELLO STEP ESPOSTA IN MANIERA DIVERSA E CON LA POLLING STRATEGY RAPID ANZICHE' SLOW
     @Then("esiste l'elemento di timeline della notifica {string} per l'utente {int}")
     public void verifyEventUpToTheTimelineElementOfNotificationPerUtente(String timelineEventCategory, Integer recipientIndex) {
         WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder()
@@ -1028,7 +1027,6 @@ public class AvanzamentoNotificheB2bSteps {
         getB2bStepsInterface().checkIfLastAttemptMatchesIndex(index);
     }
 
-    //TODO MATTEO: IMPORTANTISSIMO, sostituisce vieneVerificatoElementoTimeline
     @Then("viene verificato che l'elemento di timeline {string} esista")
     public void checkIfTimelineElementExists(String timelineEventCategory, Map<String, String> data) {
         B2bStepsInterface b2bStepsInterface = getB2bStepsInterface();
@@ -1095,7 +1093,7 @@ public class AvanzamentoNotificheB2bSteps {
         getB2bStepsInterface().verifyTimelineElementDoesNotExists(true, timelineEventCategory, dataMap);
     }
 
-    // TODO 12/02/2025 Accorpare con vieneVerificatoCheElementoTimelineNonEsista(String timelineEventCategory, parametrizzando il load della timeline
+    //TODO 12/02/2025 Accorpare con vieneVerificatoCheElementoTimelineNonEsista(String timelineEventCategory, parametrizzando il load della timeline
     @And("viene verificato che l'elemento di timeline {string} non esista nella timeline caricata")
     public void vieneVerificatoCheElementoTimelineNonEsistaNotLoadTimeline(String timelineEventCategory, Map<String, String> dataMap) {
         getB2bStepsInterface().verifyTimelineElementDoesNotExists(false, timelineEventCategory, dataMap);
@@ -1556,42 +1554,10 @@ public class AvanzamentoNotificheB2bSteps {
      */
     @And("lo scarto temporale tra {string} e {string} è {isSuperiore} a {int} {unitaTemporale}")
     public void checkScartoTemporaleTraDueDeliveryDetailCode(String code1, String code2, Boolean isSuperiore, int timeQuantity, ChronoUnit unitaTemporale) {
-        FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
-        TimelineElementV26 t1 = fullSentNotification.getTimeline().stream().filter(t ->
-                        t.getDetails() != null
-                                && t.getDetails().getDeliveryDetailCode() != null
-                                && t.getDetails().getDeliveryDetailCode().equals(code1))
-                .findFirst()
-                .orElse(null);
-        TimelineElementV26 t2 = fullSentNotification.getTimeline().stream().filter(t ->
-                        t.getDetails() != null
-                                && t.getDetails().getDeliveryDetailCode() != null
-                                && t.getDetails().getDeliveryDetailCode().equals(code2))
-                .findFirst()
-                .orElse(null);
-
-        OffsetDateTime date1 = t1.getEventTimestamp();
-        OffsetDateTime date2 = t2.getEventTimestamp();
-
-        OffsetDateTime expectedDate =
-                unitaTemporale == DAYS ? date1.plusDays(timeQuantity) :
-                        unitaTemporale == HOURS ? date1.plusHours(timeQuantity) :
-                                unitaTemporale == MINUTES ? date1.plusMinutes(timeQuantity) :
-                                        date1.plusSeconds(timeQuantity);
-        if (isSuperiore == null) {
-            assertThat(date2)
-                    .as("La data di " + code2 + " non è pari a quella di " + code1)
-                    .isEqualTo(expectedDate);
-        } else {
-            if (isSuperiore) {
-                assertThat(date2)
-                        .as("La data di " + code2 + " non è successiva a quella di " + code1)
-                        .isAfterOrEqualTo(expectedDate);
-            } else {
-                assertThat(date2)
-                        .as("La data di " + code2 + " non è antecedente a quella di " + code1)
-                        .isBefore(expectedDate);
-            }
+        try {
+            getB2bStepsInterface().checkScartoTemporaleTraDueDeliveryDetailCode(code1, code2, isSuperiore, timeQuantity, unitaTemporale);
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
     }
 

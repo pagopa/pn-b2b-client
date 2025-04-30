@@ -42,7 +42,7 @@ import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.PollingType.STATUS;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.PollingType.TIMELINE;
 import static java.time.OffsetDateTime.now;
-import static java.time.temporal.ChronoUnit.MINUTES;
+import static java.time.temporal.ChronoUnit.*;
 import static java.util.Objects.nonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -130,7 +130,7 @@ public class B2bStepsV1 implements B2bStepsInterface {
     public void checkNotificationCost(String cost) {
         Long notificationCost = timelineElement.getDetails().getNotificationCost();
         if (cost.equalsIgnoreCase("null")) {
-            //TODO: ignorare Sonar che dice che il risultato di questo assetNull fallirà sempre in quanto il campo è annotato con @NotNull (non è vero)
+            //ignorare Sonar che dice che il risultato di questo assetNull fallirà sempre in quanto il campo è annotato con @NotNull (non è vero)
             Assertions.assertNull(notificationCost);
         } else {
             Assertions.assertEquals(Long.parseLong(cost), notificationCost);
@@ -258,7 +258,7 @@ public class B2bStepsV1 implements B2bStepsInterface {
         try {
             List<TimelineElement> actualTimelineElements = getFullSentNotificationVersioned().getTimeline().stream()
                     .filter(elem -> nonNull(elem.getDetails()))
-                    //TODO: ignorare Sonar che dice che questo nonNull è inutile in quanto sempre true, non è vero
+                    //ignorare Sonar che dice che questo nonNull è inutile in quanto sempre true, non è vero
                     .filter(elem -> nonNull(elem.getDetails().getSentAttemptMade()))
                     .filter(elem -> elem.getDetails().getSentAttemptMade() <= index)
                     .toList();
@@ -1005,6 +1005,47 @@ public class B2bStepsV1 implements B2bStepsInterface {
         assertThat(schedulingDate)
                 .as("La schedulingDate dev'essere distante massimo 5 minuti dall'expected")
                 .isCloseTo(expectedDate, within(5, MINUTES));
+    }
+
+    @Override
+    public void checkScartoTemporaleTraDueDeliveryDetailCode(String code1, String code2, Boolean isSuperiore, int timeQuantity, ChronoUnit unitaTemporale) {
+        FullSentNotification fullSentNotification = getFullSentNotificationVersioned();
+        TimelineElement t1 = fullSentNotification.getTimeline().stream().filter(t ->
+                        t.getDetails() != null
+                                && t.getDetails().getDeliveryDetailCode() != null
+                                && t.getDetails().getDeliveryDetailCode().equals(code1))
+                .findFirst()
+                .orElse(null);
+        TimelineElement t2 = fullSentNotification.getTimeline().stream().filter(t ->
+                        t.getDetails() != null
+                                && t.getDetails().getDeliveryDetailCode() != null
+                                && t.getDetails().getDeliveryDetailCode().equals(code2))
+                .findFirst()
+                .orElse(null);
+
+        OffsetDateTime date1 = t1.getTimestamp();
+        OffsetDateTime date2 = t2.getTimestamp();
+
+        OffsetDateTime expectedDate =
+                unitaTemporale == DAYS ? date1.plusDays(timeQuantity) :
+                        unitaTemporale == HOURS ? date1.plusHours(timeQuantity) :
+                                unitaTemporale == MINUTES ? date1.plusMinutes(timeQuantity) :
+                                        date1.plusSeconds(timeQuantity);
+        if (isSuperiore == null) {
+            assertThat(date2)
+                    .as("La data di " + code2 + " non è pari a quella di " + code1)
+                    .isEqualTo(expectedDate);
+        } else {
+            if (isSuperiore) {
+                assertThat(date2)
+                        .as("La data di " + code2 + " non è successiva a quella di " + code1)
+                        .isAfterOrEqualTo(expectedDate);
+            } else {
+                assertThat(date2)
+                        .as("La data di " + code2 + " non è antecedente a quella di " + code1)
+                        .isBefore(expectedDate);
+            }
+        }
     }
 
     private String getProperty(String fieldPath, TimelineElement lastTimelineElement) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
