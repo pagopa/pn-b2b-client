@@ -229,9 +229,7 @@
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-emd-integration/refs/heads/develop/docs/openapi/api-private.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -264,9 +262,7 @@
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-radd-fsu/${open.api.version.radd.fsu}/docs/openapi/pn-radd-fsu-v1.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -299,9 +295,7 @@
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-radd-alt/${open.api.version.radd.alt}/docs/openapi/pn-radd-alt-private.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -335,9 +329,7 @@
                                 <typeMapping>Object=byte[]</typeMapping>
                             </typeMappings>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-radd-alt/${open.api.version.radd.alt}/docs/openapi/pn-radd-alt-external.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -367,9 +359,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery}/docs/openapi/api-internal-b2b-pa.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -399,9 +389,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery_v23}/docs/openapi/api-internal-b2b-pa.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -431,9 +419,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery_v1}/docs/openapi/api-internal-b2b-pa.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -463,9 +449,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery_v2}/docs/openapi/api-internal-b2b-pa.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -495,9 +479,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery_v21}/docs/openapi/api-internal-b2b-pa.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -527,9 +509,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version.delivery.push}/docs/openapi/api-internal-pn-delivery-push.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -559,9 +539,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version.delivery.push_v1}/docs/openapi/api-internal-pn-delivery-push.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -591,9 +569,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version.delivery.push_v2}/docs/openapi/api-internal-pn-delivery-push.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -623,9 +599,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery}/docs/openapi/api-external-b2b-pa-bundle.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -655,9 +629,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery_v1}/docs/openapi/api-external-b2b-pa-bundle.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -687,9 +659,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery_v2}/docs/openapi/api-external-b2b-pa-bundle.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -719,9 +689,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/feature/PN-9569-api-21/docs/openapi/api-external-b2b-pa-merged.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -751,9 +719,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/refs/tags/v2.11.0/docs/openapi/api-external-b2b-pa-bundle.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -788,9 +754,7 @@
                             <inputSpec>
                                 https://raw.githubusercontent.com/pagopa/pn-ss/develop/docs/openapi/pn-safestorage-v1.1-api.yaml
                             </inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -820,9 +784,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery}/docs/openapi/api-external-web-recipient.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -852,9 +814,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version.delivery.push}/docs/openapi/api-external-pn-delivery-push.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -884,9 +844,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery_v1}/docs/openapi/api-external-web-recipient.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -916,9 +874,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery_v2}/docs/openapi/api-external-web-recipient.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -948,9 +904,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version.delivery.push_v21}/docs/openapi/api-external-b2b-webhook.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -980,9 +934,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version.delivery.push_v23}/docs/openapi/api-external-b2b-webhook-bundle.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1012,9 +964,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/a6aa030f9055080736723a5935e593b80adfedf3/docs/openapi/api-external-b2b-webhook-bundle.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1046,9 +996,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/refs/heads/feature/PN-13954/docs/openapi/api-external-b2b-webhook-bundle.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1079,9 +1027,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-mandate/${open.api.version.mandate}/docs/openapi/pn-mandate-external-web.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1111,9 +1057,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery}/docs/openapi/api-external-b2b-appio.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1143,9 +1087,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery_v1}/docs/openapi/api-external-b2b-appio.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1175,9 +1117,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery_v2}/docs/openapi/api-external-b2b-appio.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1207,9 +1147,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-user-attributes/${open.api.version.user.attributes}/docs/openapi/pn-user-consents-api-external.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1239,9 +1177,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery}/docs/openapi/api-external-web-pa.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1271,9 +1207,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery_v1}/docs/openapi/api-external-web-pa.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1303,9 +1237,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery_v2}/docs/openapi/api-external-web-pa.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1335,9 +1267,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-user-attributes/${open.api.version.user.attributes}/docs/openapi/pn-address-book-api-external.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1367,9 +1297,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-user-attributes/${open.api.version.user.attributes}/docs/openapi/pn-address-book-b2b-external-io.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1399,9 +1327,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-apikey-manager/${open.api.version.apikey.manager}/docs/openapi/pn-apikey-manager-external-web.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1431,9 +1357,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-downtime-logs/refs/heads/${open.api.version.downtime.logs}/docs/openapi/api-internal-v1.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1463,9 +1387,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version.delivery.push}/docs/openapi/api-private.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1498,9 +1420,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version.delivery.push_v1}/docs/openapi/api-private.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1533,9 +1453,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version.delivery.push_v2}/docs/openapi/api-private.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1568,9 +1486,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-service-desk/${open.api.version}/docs/openapi/api-internal-pn-service-desk-v1.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1600,9 +1516,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pagopa-api/0b70603c14c463ad9b40d8c4dbcbdb0a1b8dc3f2/openapi/gpd.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1636,9 +1550,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-service-desk/v1.7.0-RC.1/docs/openapi/api-cruscotto-assistenza-pn-service-desk-v1.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1668,9 +1580,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-radd-alt/${open.api.version.radd.alt}/docs/openapi/pn-radd-alt-import-registry-external.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1700,9 +1610,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-radd-alt/${open.api.version.radd.alt}/docs/openapi/pn-radd-alt-registry-external.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1732,9 +1640,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-external-channels/${open.api.version.external.channels}/docs/openapi/api-mock-received-message-v1.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1764,9 +1670,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-bff/${open.api.version.external.bff}/docs/openapi/api-external-pn-bff-recipient-notifications.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1796,9 +1700,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-bff/develop/docs/openapi/api-external-pn-bff-pa-notifications.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1831,9 +1733,7 @@
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-paper-channel/${open.api.version.paper.channel}/docs/openapi/api-internal-v1.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1866,9 +1766,7 @@
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-mandate/${open.api.version.mandate}/docs/openapi/pn-mandate-b2b-pg-external.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1901,9 +1799,7 @@
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery}/docs/openapi/pn-delivery-b2b-pg-external.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1936,9 +1832,7 @@
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-bff/${open.api.version.external.bff}/docs/openapi/api-external-pn-bff-recipient-mandate.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1971,9 +1865,7 @@
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-external-registries/refs/heads/develop/docs/openapi/api-private-v1.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -2003,9 +1895,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-bff/refs/heads/develop/docs/openapi/api-external-pn-bff-payments.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -2037,9 +1927,7 @@
                             <inputSpec>
                                 https://raw.githubusercontent.com/pagopa/pn-bff/${open.api.version.external.bff}/docs/openapi/api-external-pn-bff-pg-apikeys.yaml
                             </inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -2079,9 +1967,7 @@
                             <inputSpec>
                                 https://raw.githubusercontent.com/pagopa/pn-bff/${open.api.version.external.bff}/docs/openapi/api-external-pn-bff-tos-privacy.yaml
                             </inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -2123,9 +2009,7 @@
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-user-attributes/${open.api.version.user.attributes}/docs/openapi/pn-address-book-b2b-pg-external.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -2158,9 +2042,7 @@
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version.delivery.push}/docs/openapi/api-external-pn-delivery-push-b2b-pg.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -2195,9 +2077,7 @@
                                 <typeMapping>file=org.springframework.core.io.Resource</typeMapping>
                             </typeMappings>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-templates-engine/refs/heads/develop/docs/openapi/pn-internal-templates-v1.yaml</inputSpec>
-                            <globalProperties>
-                                <property>auth=Authorization:Bearer ${github.token}</property>
-                            </globalProperties>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
