@@ -23,14 +23,14 @@ public class ParameterTypes {
         return value.equals("abbia");
     }
 
+    @ParameterType("è|non è")
+    public static boolean is(String value) {
+        return value.equals("è");
+    }
+
     @ParameterType("uguale|differente")
     public static boolean isUguale(String condition) {
         return condition.equals("uguale");
-    }
-
-    @ParameterType("è presente|non è presente")
-    public static boolean isPresent(String condition) {
-        return condition.equals("è presente");
     }
 
     @ParameterType("contiene|non contiene")
