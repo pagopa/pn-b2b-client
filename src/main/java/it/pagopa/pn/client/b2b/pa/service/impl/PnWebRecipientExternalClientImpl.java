@@ -209,7 +209,7 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
     }
 
     public NotificationAttachmentDownloadMetadataResponse getReceivedNotificationAttachment(String iun, String attachmentName, UUID mandateId, Integer attachmentIdx) throws RestClientException {
-        it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffDocumentDownloadMetadataResponse bffDocumentDownloadMetadataResponse = notificationReceivedApiV2.getReceivedNotificationDocumentV1(iun, it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffDocumentType.ATTACHMENT, mandateId, null, attachmentName);
+        it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffDocumentDownloadMetadataResponse bffDocumentDownloadMetadataResponse = notificationReceivedApiV2.getReceivedNotificationDocumentV1(iun, it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffDocumentType.ATTACHMENT, mandateId, 0, attachmentName);
         return deepCopy(bffDocumentDownloadMetadataResponse, NotificationAttachmentDownloadMetadataResponse.class);
     }
 

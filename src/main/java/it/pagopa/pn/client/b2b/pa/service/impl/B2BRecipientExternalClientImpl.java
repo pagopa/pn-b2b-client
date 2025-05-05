@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.ApiClient;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.api.RecipientReadB2BApi;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.api.LegalFactsApi;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v1.BffDocumentDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffFullNotificationV1;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffLegalFactId;
@@ -43,7 +44,7 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
     private final String webBasePath;
     private final String b2bBasePath;
     private final RecipientReadB2BApi recipientReadB2BApi;
-//    private final LegalFactsApi legalFactsApi;
+    private final LegalFactsApi legalFactsApi;
     private BearerTokenType bearerTokenSetted;
 
     public B2BRecipientExternalClientImpl(RestTemplate restTemplate,
@@ -64,7 +65,7 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
         this.b2bBasePath = b2bBasePath;
         this.bearerTokenSetted = BearerTokenType.PG_1;
         this.recipientReadB2BApi = new RecipientReadB2BApi(newApiClient(restTemplate, webBasePath, gherkinSrlBearerToken));
-//        this.legalFactsApi = new LegalFactsApi(newLegalFactApiClient(restTemplate, webBasePath, gherkinSrlBearerToken));
+        this.legalFactsApi = new LegalFactsApi(newLegalFactApiClient(restTemplate, b2bBasePath, gherkinSrlBearerToken));
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken) {
@@ -74,12 +75,12 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
         return newApiClient;
     }
 
-//    private static it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.ApiClient newLegalFactApiClient(RestTemplate restTemplate, String basePath, String bearerToken) {
-//        it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.ApiClient newApiClient = new it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.ApiClient(restTemplate);
-//        newApiClient.setBasePath(basePath);
-//        newApiClient.setBearerToken(bearerToken);
-//        return newApiClient;
-//    }
+    private static it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.ApiClient newLegalFactApiClient(RestTemplate restTemplate, String basePath, String bearerToken) {
+        it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.ApiClient newApiClient = new it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.ApiClient(restTemplate);
+        newApiClient.setBasePath(basePath);
+        newApiClient.setBearerToken(bearerToken);
+        return newApiClient;
+    }
 
     @Override
     public FullReceivedNotificationV25 getReceivedNotification(String iun, String mandateId) throws RestClientException {
@@ -127,8 +128,7 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
 
     @Override
     public LegalFactDownloadMetadataResponse getLegalFact(String iun, LegalFactCategory legalFactType, String legalFactId) throws RestClientException {
-//        return deepCopy(legalFactsApi.deliveryPushIunDownloadLegalFactsLegalFactIdGet(iun, legalFactId), LegalFactDownloadMetadataResponse.class);
-        throw new UnsupportedOperationException();
+        return deepCopy(legalFactsApi.deliveryPushIunDownloadLegalFactsLegalFactIdGet(iun, legalFactId), LegalFactDownloadMetadataResponse.class);
     }
 
     @Override
