@@ -3,6 +3,7 @@ package it.pagopa.pn.cucumber.steps.pa;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffLegalFactId;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.parsing.dto.IPnParserResponse;
 import it.pagopa.pn.client.b2b.pa.parsing.dto.PnParserParameter;
@@ -257,10 +258,10 @@ public class LegalFactContentVerifySteps {
                 sharedSteps.getWebRecipientClient().downloadLegalFactById(iun, this.legalFactUrl, null);
             }
             case 20 -> {
-                List<LegalFactListElementV20> legalFactV20list = sharedSteps.getWebRecipientClient().getLegalFactsV20(iun, null);
+                List<BffLegalFactId> legalFactV20list = sharedSteps.getWebRecipientClient().getLegalFactsV20(iun, null);
                 Assertions.assertNotNull(legalFactV20list);
-                LegalFactListElementV20 target = legalFactV20list.stream().filter(
-                        x -> x.getLegalFactsId().getCategory().getValue().equals(legalFactCategory)).findFirst().orElse(null);
+                BffLegalFactId target = legalFactV20list.stream().filter(
+                        x -> x.getCategory().getValue().equals(legalFactCategory)).findFirst().orElse(null);
                 if (isPresent) {
                     Assertions.assertNotNull(target);
                 } else {

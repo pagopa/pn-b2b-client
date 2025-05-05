@@ -44,7 +44,8 @@
         <open.api.version.external.channels>develop</open.api.version.external.channels>
         <open.api.version.external.registries>v2.4.1</open.api.version.external.registries>
         <open.api.version.paper.channel>develop</open.api.version.paper.channel>
-        <open.api.version.external.bff>v1.8.0</open.api.version.external.bff>
+        <open.api.version.external.bff_v1>v1.0.0</open.api.version.external.bff_v1>
+        <open.api.version.external.bff_v2>v1.9.0</open.api.version.external.bff_v2>
     </properties>
 
     <dependencies>
@@ -1662,22 +1663,23 @@
                             <modelPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec</modelPackage>
                         </configuration>
                     </execution>
+
                     <execution>
-                        <id>generate-external-bff-recipient</id>
+                        <id>generate-external-bff-recipient-v1</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-bff/${open.api.version.external.bff}/docs/openapi/api-external-pn-bff-recipient-notifications.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-bff/${open.api.version.external.bff_v1}/docs/openapi/api-external-pn-bff-recipient-notifications.yaml</inputSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
                             <generateModelTests>false</generateModelTests>
                             <configOptions>
-                                <apiPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient</apiPackage>
-                                <modelPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient</modelPackage>
+                                <apiPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient.v1</apiPackage>
+                                <modelPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v1</modelPackage>
                                 <dateLibrary>java8</dateLibrary>
                                 <annotationLibrary>none</annotationLibrary>
                                 <documentationProvider>source</documentationProvider>
@@ -1688,10 +1690,41 @@
                                     @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
                                 </additionalModelTypeAnnotations>
                             </configOptions>
-                            <apiPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient</apiPackage>
-                            <modelPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient</modelPackage>
+                            <apiPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient.v1</apiPackage>
+                            <modelPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v1</modelPackage>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>generate-external-bff-recipient-v2</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-bff/${open.api.version.external.bff_v2}/docs/openapi/api-external-pn-bff-recipient-notifications.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <configOptions>
+                                <apiPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient.v2</apiPackage>
+                                <modelPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+                            <apiPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient.v2</apiPackage>
+                            <modelPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2</modelPackage>
+                        </configuration>
+                    </execution>
+
                     <execution>
                         <id>generate-external-bff-pa-recipient</id>
                         <goals>
@@ -1831,7 +1864,7 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-bff/${open.api.version.external.bff}/docs/openapi/api-external-pn-bff-recipient-mandate.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-bff/${open.api.version.external.bff_v2}/docs/openapi/api-external-pn-bff-recipient-mandate.yaml</inputSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
@@ -1925,7 +1958,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>
-                                https://raw.githubusercontent.com/pagopa/pn-bff/${open.api.version.external.bff}/docs/openapi/api-external-pn-bff-pg-apikeys.yaml
+                                https://raw.githubusercontent.com/pagopa/pn-bff/${open.api.version.external.bff_v2}/docs/openapi/api-external-pn-bff-pg-apikeys.yaml
                             </inputSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
@@ -1965,7 +1998,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>
-                                https://raw.githubusercontent.com/pagopa/pn-bff/${open.api.version.external.bff}/docs/openapi/api-external-pn-bff-tos-privacy.yaml
+                                https://raw.githubusercontent.com/pagopa/pn-bff/${open.api.version.external.bff_v2}/docs/openapi/api-external-pn-bff-tos-privacy.yaml
                             </inputSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
