@@ -1237,8 +1237,8 @@ public class InvioNotificheB2bSteps {
         List<String> attachmentNotification = new ArrayList<>();
         switch (type.toLowerCase()) {
             case "analogico" -> {
-                for (PaperEngageRequestAttachmentsInner attahment : documentiPec.get(0).getPaperEngageRequest().getAttachments()) {
-                    attchmentNotification.add(attahment.getUri());
+                for (PaperEngageRequestAttachmentsInner attachment : documentiPec.get(0).getPaperEngageRequest().getAttachments()) {
+                    attachmentNotification.add(attachment.getUri());
                 }
             }
             case "digitale" ->
