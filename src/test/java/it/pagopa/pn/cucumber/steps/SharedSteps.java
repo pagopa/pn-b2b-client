@@ -12,6 +12,8 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pa.BffRequestNewApiKey;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pa.BffResponseNewApiKey;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
@@ -110,11 +112,11 @@ public class SharedSteps {
 
     @Getter
     @Setter
-    private RequestNewApiKey requestNewApiKey;
+    private BffRequestNewApiKey requestNewApiKey;
 
     @Getter
     @Setter
-    private ResponseNewApiKey responseNewApiKey;
+    private BffResponseNewApiKey responseNewApiKey;
 
     @Getter
     @Setter
