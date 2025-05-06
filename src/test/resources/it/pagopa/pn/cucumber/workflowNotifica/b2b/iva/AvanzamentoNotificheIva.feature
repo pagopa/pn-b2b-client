@@ -115,6 +115,28 @@ Feature: controllo costo notifiche con IVA
     And viene effettuato il controllo del amount di GPD con il costo "totale" della notifica con iva inclusa
     Then viene cancellata la posizione debitoria di "Mario Gherkin"
 
+  @validation_pn_14837
+  Scenario: [HOTFIX_PN-14837] Rifiuto notifica con pagamento: verifica cancellazione IUV da tabella pn-NotificationsCost
+    Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di milano            |
+      | feePolicy             | DELIVERY_MODE               |
+      | physicalCommunication | REGISTERED_LETTER_890       |
+      | pagoPaIntMode         | ASYNC                       |
+      | vat                   | 10                          |
+      | paFee                 | 10                          |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL        |
+      | physicalAddress_address | via@ok_890  |
+      | payment_creditorTaxId   | 77777777777 |
+      | payment_pagoPaForm      | SI          |
+      | payment_f24             | NULL        |
+      | apply_cost_pagopa       | SI          |
+      | payment_multy_number    | 1           |
+    And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
+    When la notifica viene inviata tramite api b2b con sha256 differente dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+
   @calcoloIva
   Scenario: [CALCOLO-IVA_CONTROLLO-COSTO_7] Invio notifica RS ASYNC con iva inclusa controllo costo
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
