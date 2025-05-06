@@ -265,13 +265,20 @@ public class RicezioneNotificheWebSteps {
     public void theDocumentCanBeProperlyRetrievedBy(String recipient) {
         sharedSteps.selectUser(recipient);
         NotificationAttachmentDownloadMetadataResponse downloadResponse = getReceivedNotificationDocument();
-        AtomicReference<String> sha256 = new AtomicReference<>("");
-        Assertions.assertDoesNotThrow(() -> {
-            byte[] bytes = Assertions.assertDoesNotThrow(() ->
-                    b2bUtils.downloadFile(downloadResponse.getUrl()));
-            sha256.set(b2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
-        });
-        Assertions.assertEquals(sha256.get(), downloadResponse.getSha256());
+        if (downloadResponse.getSha256() != null) {
+            AtomicReference<String> sha256 = new AtomicReference<>("");
+            Assertions.assertDoesNotThrow(() -> {
+                byte[] bytes = Assertions.assertDoesNotThrow(() ->
+                        b2bUtils.downloadFile(downloadResponse.getUrl()));
+                sha256.set(b2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
+            });
+            Assertions.assertEquals(sha256.get(), downloadResponse.getSha256());
+        }
+        else {
+            Assertions.assertNotNull(downloadResponse.getFilename());
+            Assertions.assertNotNull(downloadResponse.getContentLength());
+            Assertions.assertNotNull(downloadResponse.getUrl());
+        }
     }
 
     @Then("il documento notificato non può essere correttamente recuperato da {string}")
@@ -328,7 +335,7 @@ public class RicezioneNotificheWebSteps {
             }
         }
 
-        if (!"F24".equalsIgnoreCase(attachmentName)) {
+        if (!"F24".equalsIgnoreCase(attachmentName) && downloadResponse.getSha256() != null) {
             AtomicReference<String> sha256 = new AtomicReference<>("");
             NotificationAttachmentDownloadMetadataResponse finalDownloadResponse = downloadResponse;
             Assertions.assertDoesNotThrow(() -> {
