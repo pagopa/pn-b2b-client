@@ -4,13 +4,13 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pa.BffApiKeyStatus;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pa.BffApiKeysResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pa.BffRequestApiKeyStatus;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pa.BffRequestNewApiKey;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pa.BffResponseNewApiKey;
 import it.pagopa.pn.client.b2b.pa.service.IPnApiKeyManagerClient;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model.*;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.utils.GroupPosition;
 import org.junit.jupiter.api.Assertions;
@@ -103,11 +103,11 @@ public class ApikeyManagerSteps {
 
     @Then("si verifica lo stato dell'apikey {string}")
     public void siVerificaLoStatoDellApikey(String state) {
-        ApiKeyStatus apiKeyStatus = switch (state) {
-            case "BLOCKED" -> ApiKeyStatus.BLOCKED;
-            case "ENABLED" -> ApiKeyStatus.ENABLED;
-            case "ROTATED" -> ApiKeyStatus.ROTATED;
-            case "CREATED" -> ApiKeyStatus.CREATED;
+        BffApiKeyStatus apiKeyStatus = switch (state) {
+            case "BLOCKED" -> BffApiKeyStatus.BLOCKED;
+            case "ENABLED" -> BffApiKeyStatus.ENABLED;
+            case "ROTATED" -> BffApiKeyStatus.ROTATED;
+            case "CREATED" -> BffApiKeyStatus.CREATED;
             default -> throw new IllegalArgumentException("Invalid status for ApiKey:" + state);
         };
         Assertions.assertNotNull(

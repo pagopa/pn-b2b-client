@@ -1455,7 +1455,7 @@ public class AvanzamentoNotificheB2bSteps {
 //                  sharedSteps.getSentNotification().getRecipients().get(0).getTaxId()));
 //            }
             if (webRecipient) {
-                it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse =
+                it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.model.LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse =
                         Assertions.assertDoesNotThrow(() ->
                                 sharedSteps.getWebRecipientClient().getLegalFact(sharedSteps.getNotificationIun(),
                                         sharedSteps.deepCopy(categorySearch,
@@ -1529,7 +1529,7 @@ public class AvanzamentoNotificheB2bSteps {
 
             if (webRecipient) {
 
-                it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse =
+                it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.model.LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse =
                         sharedSteps.getWebRecipientClient().getLegalFact(sharedSteps.getNotificationIun(),
                                 sharedSteps.deepCopy(categorySearch,
                                         it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactCategory.class),
