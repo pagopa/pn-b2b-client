@@ -55,8 +55,7 @@ import static it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliv
 import static it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationFeePolicy.FLAT_RATE;
 import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.*;
 import static java.time.OffsetDateTime.now;
-import static java.time.temporal.ChronoUnit.MINUTES;
-import static java.time.temporal.ChronoUnit.SECONDS;
+import static java.time.temporal.ChronoUnit.*;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
@@ -3778,5 +3777,51 @@ public class AvanzamentoNotificheB2bSteps {
                 .findFirst().orElse(null);
 
         Assertions.assertNotNull(element, "the element to check is not found iun: " + fullSentNotification.getIun());
+    }
+
+    /**
+     * Verifica lo scarto temporale tra due eventi con deliveryDetailCode specifico.
+     * Da usare solo dopo aver appurato la presenza di tali elementi
+     * (e in scenari che non prevedono multi-destinatario o invii multipli, che potrebbero portare alla NON univocità del deliveryDetailCode)
+     */
+    @And("lo scarto temporale tra {string} e {string} è {isSuperiore} a {int} {unitaTemporale}")
+    public void checkScartoTemporaleTraDueDeliveryDetailCode(String code1, String code2, Boolean isSuperiore, int timeQuantity, ChronoUnit unitaTemporale) {
+        FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        TimelineElementV26 t1 = fullSentNotification.getTimeline().stream().filter(t ->
+                        t.getDetails() != null
+                                && t.getDetails().getDeliveryDetailCode() != null
+                                && t.getDetails().getDeliveryDetailCode().equals(code1))
+                .findFirst()
+                .orElse(null);
+        TimelineElementV26 t2 = fullSentNotification.getTimeline().stream().filter(t ->
+                        t.getDetails() != null
+                                && t.getDetails().getDeliveryDetailCode() != null
+                                && t.getDetails().getDeliveryDetailCode().equals(code2))
+                .findFirst()
+                .orElse(null);
+
+        OffsetDateTime date1 = t1.getEventTimestamp();
+        OffsetDateTime date2 = t2.getEventTimestamp();
+
+        OffsetDateTime expectedDate =
+                unitaTemporale == DAYS ? date1.plusDays(timeQuantity) :
+                        unitaTemporale == HOURS ? date1.plusHours(timeQuantity) :
+                                unitaTemporale == MINUTES ? date1.plusMinutes(timeQuantity) :
+                                        date1.plusSeconds(timeQuantity);
+        if (isSuperiore == null) {
+            assertThat(date2)
+                    .as("La data di " + code2 + " non è pari a quella di " + code1)
+                    .isEqualTo(expectedDate);
+        } else {
+            if (isSuperiore) {
+                assertThat(date2)
+                        .as("La data di " + code2 + " non è successiva a quella di " + code1)
+                        .isAfterOrEqualTo(expectedDate);
+            } else {
+                assertThat(date2)
+                        .as("La data di " + code2 + " non è antecedente a quella di " + code1)
+                        .isBefore(expectedDate);
+            }
+        }
     }
 }
