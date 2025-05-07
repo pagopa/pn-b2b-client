@@ -34,6 +34,29 @@ Feature: Sperimentazione Radd wave 1
     And si verifica il contenuto della pec abbia 1 attachment di tipo "F24"
     Then download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è "AAR RADD"
 
+  @raddWave
+  Scenario: [RADD_WITH_CAP_REMOVED] - Invio notifica digitale (1° tentativo OK) a destinatario con CAP rimosso tra quelli abilitati ai servizi RADD
+    Given viene generata una nuova notifica
+      | subject            | notifica digitale |
+      | senderDenomination | Comune di palermo |
+      | feePolicy          | DELIVERY_MODE     |
+      | document           | DOC_1_PG;         |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile_address      | test@pecOk.it        |
+      | physicalAddress_municipality | VENEZIA              |
+      | physicalAddress_province     | VE                   |
+      | physicalAddress_zip          | 30123                |
+      | payment_f24                  | PAYMENT_F24_STANDARD |
+      | title_payment                | F24_STANDARD_GHERKIN |
+      | apply_cost_f24               | SI                   |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
+    Then si verifica il contenuto degli attacchment da inviare nella pec del destinatario 0 con 4 allegati
+    And si verifica il contenuto della pec abbia 1 attachment di tipo "AAR"
+    And si verifica il contenuto della pec abbia 2 attachment di tipo "NOTIFICATION_ATTACHMENTS"
+    And si verifica il contenuto della pec abbia 1 attachment di tipo "F24"
+    Then download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è "AAR"
+
 
   @raddWave
   Scenario: [RADD_WAVE_1_1] - Invio notifica digitale (1° tentativo OK) a destinatario con CAP in fase di sperimentazione - test per verifica manuale (con pec reale)
