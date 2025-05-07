@@ -1,9 +1,14 @@
 package it.pagopa.pn.interop.cucumber.steps.agreement;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.agreement.service.IAgreementClient;
+import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
@@ -12,6 +17,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
+import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -30,7 +36,9 @@ public class AgreementCommonSteps {
     private IdentityService identityService;
     private SharedStepsContext sharedStepsContext;
     private IAgreementClient agreementClient;
+    private IEServiceClient eserviceClient;
     private PollingService pollingService;
+    private HttpCallExecutor httpCallExecutor;
 
     public AgreementCommonSteps(ClientTokenConfigurator clientTokenConfigurator,
                                 DataPreparationService dataPreparationService,
@@ -40,7 +48,9 @@ public class AgreementCommonSteps {
         this.sharedStepsContext = sharedStepsContext;
         this.identityService = sharedStepsContext.getIdentityService();
         this.agreementClient = clientTokenConfigurator.getAgreementClient();
+        this.eserviceClient = clientTokenConfigurator.getEServiceClient();
         this.pollingService = sharedStepsContext.getPollingService();
+        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
     }
 
     @Data
@@ -171,4 +181,45 @@ public class AgreementCommonSteps {
                 "The agreement was not archived"
         );
     }
+
+    @When("l'utente tenta la modifica di agreementApprovalPolicy in {string}")
+    public void editAgreementApprovalPolicy(String agreementApprovalPolicy) {
+        UUID eserviceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+        editAgreementApprovalPolicy(agreementApprovalPolicy, eserviceId, descriptorId);
+    }
+
+    @When("l'utente tenta la modifica di agreementApprovalPolicy specificando un valore vuoto")
+    public void editAgreementApprovalPolicyWithEmptyValue(String agreementApprovalPolicy) {
+        editAgreementApprovalPolicy(agreementApprovalPolicy, null, null);
+    }
+
+
+    @When("l'utente tenta la modifica di agreementApprovalPolicy di un e-service inesistente")
+    public void editAgreementApprovalPolicyOfNonExistentEService() {
+        UUID eserviceId = UUID.randomUUID();
+        UUID descriptorId = UUID.randomUUID();
+        editAgreementApprovalPolicy("AUTOMATIC", eserviceId, descriptorId);
+    }
+
+    private void editAgreementApprovalPolicy(String agreementApprovalPolicy, UUID eserviceId, UUID descriptorId) {
+        httpCallExecutor.performCall(() -> eserviceClient.editAgreementApprovalPolicy(
+            eserviceId,
+            descriptorId,
+            AgreementApprovalPolicy.fromValue(agreementApprovalPolicy)));
+    }
+
+
+    @Then("il valore di agreementApprovalPolicy dell'e-service è adesso {string}")
+    public void checkAgreementApprovalPolicy(String agreementApprovalPolicy) {
+        AgreementApprovalPolicy actualPolicy = eserviceClient.getEServiceDescriptor(
+                sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                sharedStepsContext.getEServicesCommonContext().getDescriptorId())
+            .getAgreementApprovalPolicy();
+        AgreementApprovalPolicy expectedPolicy = AgreementApprovalPolicy.fromValue(agreementApprovalPolicy);
+        assertThat(actualPolicy)
+            .as("Verifica il valore finale di agreementApprovalPolicy")
+            .isEqualTo(expectedPolicy);
+    }
+
 }

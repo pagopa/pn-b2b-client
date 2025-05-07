@@ -4,6 +4,8 @@ import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EservicesApi;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -63,6 +65,17 @@ public class EServiceApiClientImpl implements IEServiceClient {
     @Override
     public CreatedResource createDescriptor(UUID eServiceId) {
         return eservicesApi.createDescriptor(eServiceId);
+    }
+
+    @Override
+    public void editAgreementApprovalPolicy(UUID eServiceId, UUID descriptorId,
+        AgreementApprovalPolicy policy) {
+        // TODO 06/05/2025: implementazione da formulare non appena l'API sarà disponibile
+    }
+
+    @Override
+    public ProducerEServiceDescriptor getEServiceDescriptor(UUID eServiceId, UUID descriptorId) {
+        return eservicesApi.getProducerEServiceDescriptor(eServiceId, descriptorId);
     }
 
     @Override
