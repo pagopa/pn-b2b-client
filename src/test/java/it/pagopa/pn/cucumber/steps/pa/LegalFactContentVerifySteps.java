@@ -18,7 +18,6 @@ import it.pagopa.pn.client.b2b.pa.parsing.dto.implDestinatario.PnDestinatarioAna
 import it.pagopa.pn.client.b2b.pa.parsing.dto.implResponse.PnParserLegalFactResponse;
 import it.pagopa.pn.client.b2b.pa.parsing.parser.IPnParserLegalFact;
 import it.pagopa.pn.client.b2b.pa.parsing.service.impl.PnParserService;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactListElementV20;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import lombok.Setter;
@@ -579,7 +578,7 @@ public class LegalFactContentVerifySteps {
 //                  sharedSteps.getSentNotification().getRecipients().get(0).getTaxId()));
 //            }
             if (webRecipient) {
-                it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse =
+                LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse =
                         Assertions.assertDoesNotThrow(() ->
                                 sharedSteps.getWebRecipientClient().getLegalFact(sharedSteps.getNotificationIun(),
                                         sharedSteps.deepCopy(categorySearch,
@@ -704,7 +703,7 @@ public class LegalFactContentVerifySteps {
             }
 
             if (webRecipient) {
-                it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse =
+                LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse =
                         sharedSteps.getWebRecipientClient().getLegalFact(sharedSteps.getNotificationIun(),
                                 sharedSteps.deepCopy(categorySearch,
                                         it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactCategory.class),

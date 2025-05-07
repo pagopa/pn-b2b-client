@@ -5,6 +5,7 @@ import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.*;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV26;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebMandateClient;
@@ -13,17 +14,7 @@ import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2bMandateServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebMandateExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.AcceptRequestDto;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.CxTypeAuthFleet;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.MandateDto;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.OrganizationIdDto;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.UpdateRequestDto;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.UserDto;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.TimelineElementCategoryV26;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.TimelineElementV26;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullReceivedNotificationV25;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationAttachmentDownloadMetadataResponse;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchResponse;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.*;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -36,19 +27,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 import java.io.ByteArrayInputStream;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
@@ -441,6 +423,7 @@ public class RicezioneNotificheWebDelegheSteps {
 //        }
     }
 
+    //TODO: inutilizzato in seguito a fix bff, rimuovere ?
     private void verifySha256(NotificationAttachmentDownloadMetadataResponse downloadResponse) {
         AtomicReference<String> sha256 = new AtomicReference<>("");
         Assertions.assertDoesNotThrow(() -> {
