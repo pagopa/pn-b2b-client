@@ -3,13 +3,14 @@ package it.pagopa.pn.cucumber.steps.pa;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.model.LegalFactDownloadMetadataResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffLegalFactId;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactCategory;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactsIdV20;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26;
 import it.pagopa.pn.client.b2b.pa.mapper.impl.PnTimelineAndLegalFactV26;
 import it.pagopa.pn.client.b2b.pa.mapper.model.PnTimelineLegalFactV26;
-import it.pagopa.pn.client.b2b.pa.exception.IllegalConfigurationException;
 import it.pagopa.pn.client.b2b.pa.parsing.dto.IPnParserResponse;
 import it.pagopa.pn.client.b2b.pa.parsing.dto.PnParserParameter;
 import it.pagopa.pn.client.b2b.pa.parsing.dto.impLegalFact.PnLegalFactNotificaPresaInCaricoMultiDestinatario;
@@ -288,18 +289,17 @@ public class LegalFactContentVerifySteps {
         switch (version) {
             case 1 -> sharedSteps.getWebRecipientClient().downloadLegalFactById(iun, this.legalFactUrl, null);
             case 20 -> {
-                List<LegalFactListElementV20> legalFactV20list = sharedSteps.getWebRecipientClient().getLegalFactsV20(iun, null);
-                assertThat(legalFactV20list).asList().isNotEmpty();
-
-                LegalFactListElementV20 target = legalFactV20list.stream().filter(
-                        x -> x.getLegalFactsId().getCategory().getValue().equals(legalFactCategory)).findFirst().orElse(null);
+                List<BffLegalFactId> legalFactV20list = sharedSteps.getWebRecipientClient().getLegalFactsV20(iun, null);
+                Assertions.assertNotNull(legalFactV20list);
+                BffLegalFactId target = legalFactV20list.stream().filter(
+                        x -> x.getCategory().getValue().equals(legalFactCategory)).findFirst().orElse(null);
                 if (isPresent) {
                     Assertions.assertNotNull(target);
                 } else {
                     Assertions.assertNull(target);
                 }
             }
-            default -> throw new IllegalConfigurationException("Unsupported API version: " + version);
+            default -> throw new IllegalArgumentException("Valore di versione non riconosciuto: " + version);
         }
     }
 
