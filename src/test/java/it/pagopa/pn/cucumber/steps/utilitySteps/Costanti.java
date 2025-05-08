@@ -55,13 +55,13 @@ public class Costanti {
 
     // Tax ID
     public static final String CUCUMBER_SRL_TAX_ID = "20517490320";
-    public static final String GHERKIN_SRL_TAX_ID = "12666810299";
     public static final String CUCUMBER_SPA_TAX_ID = "20517490320";
+    public static final String GHERKIN_SRL_TAX_ID = "12666810299";
     public static final String GHERKIN_SPA_TAX_ID = "12666810299";
     public static final String CUCUMBER_ANALOGIC_TAX_ID = "LBPHLS94A56C826R";
-    public static final String GHERKIN_ANALOGIC_TAX_ID = "05722930657";
+    public static final String GHERKIN_ANALOGIC_TAX_ID = "80048790176";
     public static final String CUCUMBER_SOCIETY_TAX_ID = "20517490320";
-    public static final String GHERKIN_IRREPERIBILE_TAX_ID = "00749900049";
+    public static final String GHERKIN_IRREPERIBILE_TAX_ID = "02455090981";
     public static final String LEONARDO_DA_VINCI_TAX_ID = "DVNLRD52D15M059P";
     public static final String GALILEO_GALILEI_TAX_ID = "GLLGLL64B15G702I";
     public static final String COMUNE_1_TAX_ID = "01199250158";
@@ -69,6 +69,18 @@ public class Costanti {
     public static final String COMUNE_MULTI_TAX_ID = "80016350821";
     public static final String COMUNE_SON_TAX_ID = "03509990788";
     public static final String COMUNE_ROOT_TAX_ID = "03509990788";
+
+    /**
+     * 07/05/2025
+     * I seguenti taxID per PG sono ora i soli validi per intraprendere il flusso analogico senza che recuperi indirizzi digitali dai registri nazionali
+     * 80048790176 ---> GHERKIN_ANALOGIC
+     * 02455090981 ---> GHERKIN_IRREPERIBILE
+     * 12666810299 - Vita Nova Sas
+     * 27957814470 - Convivio Spa
+     * 70412331207 - DivinaCommedia Srl
+     * 20517490320 - LuAnSe SpA
+     */
+
     // TimelineElementCategory
     public static final String AAR_GENERATION = "AAR_GENERATION";
     public static final String ANALOG_FAILURE_WORKFLOW = "ANALOG_FAILURE_WORKFLOW";

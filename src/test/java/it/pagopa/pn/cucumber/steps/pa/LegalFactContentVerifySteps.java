@@ -3,13 +3,14 @@ package it.pagopa.pn.cucumber.steps.pa;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.model.LegalFactDownloadMetadataResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffLegalFactId;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactCategory;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactsIdV20;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV26;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV27;
 import it.pagopa.pn.client.b2b.pa.mapper.impl.PnTimelineAndLegalFactV27;
 import it.pagopa.pn.client.b2b.pa.mapper.model.PnTimelineLegalFactV27;
-import it.pagopa.pn.client.b2b.pa.exception.IllegalConfigurationException;
 import it.pagopa.pn.client.b2b.pa.parsing.dto.IPnParserResponse;
 import it.pagopa.pn.client.b2b.pa.parsing.dto.PnParserParameter;
 import it.pagopa.pn.client.b2b.pa.parsing.dto.impLegalFact.PnLegalFactNotificaPresaInCaricoMultiDestinatario;
@@ -17,7 +18,6 @@ import it.pagopa.pn.client.b2b.pa.parsing.dto.implDestinatario.PnDestinatarioAna
 import it.pagopa.pn.client.b2b.pa.parsing.dto.implResponse.PnParserLegalFactResponse;
 import it.pagopa.pn.client.b2b.pa.parsing.parser.IPnParserLegalFact;
 import it.pagopa.pn.client.b2b.pa.parsing.service.impl.PnParserService;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactListElementV20;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import lombok.Setter;
@@ -290,18 +290,17 @@ public class LegalFactContentVerifySteps {
         switch (version) {
             case 1 -> sharedSteps.getWebRecipientClient().downloadLegalFactById(iun, this.legalFactUrl, null);
             case 20 -> {
-                List<LegalFactListElementV20> legalFactV20list = sharedSteps.getWebRecipientClient().getLegalFactsV20(iun, null);
-                assertThat(legalFactV20list).asList().isNotEmpty();
-
-                LegalFactListElementV20 target = legalFactV20list.stream().filter(
-                        x -> x.getLegalFactsId().getCategory().getValue().equals(legalFactCategory)).findFirst().orElse(null);
+                List<BffLegalFactId> legalFactV20list = sharedSteps.getWebRecipientClient().getLegalFactsV20(iun, null);
+                Assertions.assertNotNull(legalFactV20list);
+                BffLegalFactId target = legalFactV20list.stream().filter(
+                        x -> x.getCategory().getValue().equals(legalFactCategory)).findFirst().orElse(null);
                 if (isPresent) {
                     Assertions.assertNotNull(target);
                 } else {
                     Assertions.assertNull(target);
                 }
             }
-            default -> throw new IllegalConfigurationException("Unsupported API version: " + version);
+            default -> throw new IllegalArgumentException("Valore di versione non riconosciuto: " + version);
         }
     }
 
@@ -580,7 +579,7 @@ public class LegalFactContentVerifySteps {
 //                  sharedSteps.getSentNotification().getRecipients().get(0).getTaxId()));
 //            }
             if (webRecipient) {
-                it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse =
+                LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse =
                         Assertions.assertDoesNotThrow(() ->
                                 sharedSteps.getWebRecipientClient().getLegalFact(sharedSteps.getNotificationIun(),
                                         sharedSteps.deepCopy(categorySearch,
@@ -702,7 +701,7 @@ public class LegalFactContentVerifySteps {
             }
 
             if (webRecipient) {
-                it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse =
+                LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse =
                         sharedSteps.getWebRecipientClient().getLegalFact(sharedSteps.getNotificationIun(),
                                 sharedSteps.deepCopy(categorySearch,
                                         it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactCategory.class),

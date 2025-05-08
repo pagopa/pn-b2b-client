@@ -256,11 +256,7 @@ public class NotificationStepsV2 implements NotificationStepsInterface {
 
     @Override
     public void addIuvGpdToDestinatario(String denominazione, String iuvGpd, Integer paymentIndex) {
-        for (NotificationRecipient recipient : notificationRequest.getRecipients()) {
-            if (recipient.getDenomination().equalsIgnoreCase(denominazione)) {
-                Objects.requireNonNull(Objects.requireNonNull(recipient.getPayment())).setNoticeCode(iuvGpd);
-            }
-        }
+        notificationRequest.getRecipients().get(0).denomination(denominazione).getPayment().setNoticeCode(iuvGpd);
     }
 
     @Override

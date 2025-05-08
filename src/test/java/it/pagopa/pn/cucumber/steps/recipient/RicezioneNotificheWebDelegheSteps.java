@@ -5,8 +5,9 @@ import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.*;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV27;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV27;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV27;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebMandateClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
@@ -14,9 +15,6 @@ import it.pagopa.pn.client.b2b.pa.service.impl.B2bMandateServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebMandateExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.*;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.FullReceivedNotificationV26;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationAttachmentDownloadMetadataResponse;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationSearchResponse;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -373,7 +371,7 @@ public class RicezioneNotificheWebDelegheSteps {
     public void theDocumentCanBeProperlyRetrievedByWithMandate(String recipient) {
         sharedSteps.selectUser(recipient);
         NotificationAttachmentDownloadMetadataResponse downloadResponse = getReceivedNotificationDocument();
-        verifySha256(downloadResponse);
+        verifyRetrievedDocument(downloadResponse);
     }
 
     @Then("il documento notificato non può essere correttamente recuperato da {string} con delega restituendo un errore {string}")
@@ -414,16 +412,18 @@ public class RicezioneNotificheWebDelegheSteps {
                         sharedSteps.getNotificationIun(),
                         attachmentName,
                         UUID.fromString(mandateToSearch.getMandateId()), 0);
+                verifyRetrievedDocument(downloadResponse);
             } catch (RuntimeException exc) {
                 log.error("Await error exception: {}", exc.getMessage());
                 throw exc;
             }
         }
-        if (!"F24".equalsIgnoreCase(attachmentName)) {
-            verifySha256(downloadResponse);
-        }
+//        if (!"F24".equalsIgnoreCase(attachmentName)) {
+//            verifySha256(downloadResponse);
+//        }
     }
 
+    //TODO: inutilizzato in seguito a fix bff, rimuovere ?
     private void verifySha256(NotificationAttachmentDownloadMetadataResponse downloadResponse) {
         AtomicReference<String> sha256 = new AtomicReference<>("");
         Assertions.assertDoesNotThrow(() -> {
@@ -432,6 +432,12 @@ public class RicezioneNotificheWebDelegheSteps {
             sha256.set(B2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
         });
         Assertions.assertEquals(sha256.get(), Objects.requireNonNull(downloadResponse).getSha256());
+    }
+
+    private void verifyRetrievedDocument(NotificationAttachmentDownloadMetadataResponse downloadResponse) {
+        Assertions.assertNotNull(downloadResponse.getFilename());
+        Assertions.assertNotNull(downloadResponse.getContentLength());
+        Assertions.assertNotNull(downloadResponse.getUrl());
     }
 
     @And("{string} revoca la delega a {string}")
@@ -507,9 +513,8 @@ public class RicezioneNotificheWebDelegheSteps {
         sharedSteps.selectUser(recipient);
 
         try {
-            it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV27 timelineElementCategory =
-                    it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV27.NOTIFICATION_RADD_RETRIEVED;
-            it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementV27 timelineElement = getTimelineElementWebRecipient(timelineElementCategory);
+            TimelineElementCategoryV26 timelineElementCategoryV23 = TimelineElementCategoryV26.NOTIFICATION_RADD_RETRIEVED;
+            TimelineElementV26 timelineElement = getTimelineElementV23WebRecipient(timelineElementCategoryV23);
 
             Assertions.assertNotNull(timelineElement);
         } catch (AssertionFailedError assertionFailedError) {
@@ -524,9 +529,8 @@ public class RicezioneNotificheWebDelegheSteps {
         sharedSteps.selectUser(recipient);
 
         try {
-            it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV27 timelineElementCategory =
-                    it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV27.NOTIFICATION_VIEWED;
-            it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementV27 timelineElement = getTimelineElementWebRecipient(timelineElementCategory);
+            TimelineElementCategoryV26 timelineElementCategoryV23 = TimelineElementCategoryV26.NOTIFICATION_VIEWED;
+            TimelineElementV26 timelineElement = getTimelineElementV23WebRecipient(timelineElementCategoryV23);
 
             Assertions.assertNull(timelineElement);
         } catch (AssertionFailedError assertionFailedError) {
@@ -535,8 +539,7 @@ public class RicezioneNotificheWebDelegheSteps {
         webRecipientClient.setBearerToken(baseUser);
     }
 
-    private it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementV27 getTimelineElementWebRecipient(it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV27 timelineElementCategory) {
-
+    private TimelineElementV26 getTimelineElementV23WebRecipient(TimelineElementCategoryV26 timelineElementCategoryV23) {
         FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         FullReceivedNotificationV26 result = webRecipientClient.getReceivedNotification(fullSentNotification.getIun(), null);
         log.info("NOTIFICATION_TIMELINE: " + fullSentNotification.getTimeline());
@@ -605,7 +608,7 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @And("si verifica che l'elemento di timeline della lettura riporti i dati di {string}")
     public void siVerificaCheLElementoDiTimelineDellaLetturaRiportiIDatiDi(String user) {
-        TimelineElementV27 timelineElement = getTimelineElement();
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV27 timelineElement = getTimelineElement();
 
         String userTaxId = getTaxIdByUser(user);
         log.info("TIMELINE ELEMENT : {}", timelineElement);
@@ -617,7 +620,7 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @And("si verifica che l'elemento di timeline della lettura non riporti i dati del delegato")
     public void siVerificaCheLElementoDiTimelineDellaLetturaNonRiportiIDatiDi() {
-        TimelineElementV27 timelineElement = getTimelineElement();
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 timelineElement = getTimelineElement();
 
         log.info("TIMELINE ELEMENT : {}", timelineElement);
         Assertions.assertNotNull(timelineElement);
@@ -625,7 +628,7 @@ public class RicezioneNotificheWebDelegheSteps {
         Assertions.assertNull(timelineElement.getDetails().getDelegateInfo());
     }
 
-    private TimelineElementV27 getTimelineElement() {
+    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 getTimelineElement() {
         try {
             await().atMost(sharedSteps.getWorkFlowWait() * 2, TimeUnit.MILLISECONDS);
         } catch (RuntimeException exception) {

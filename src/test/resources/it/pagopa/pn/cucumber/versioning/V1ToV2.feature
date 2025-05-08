@@ -48,7 +48,7 @@ Feature: verifica compatibilità tra v1 a v2
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V1
-    And vengono letti gli eventi della timeline e si controlla che l'evento di timeline "NOTIFICATION_CANCELLED" non esista con la V1
+    And vengono letti gli eventi della timeline e si controlla che l'evento di timeline "NOTIFICATION_CANCELLED" non esista con la versione "V1"
 
   @version @authFleet
   Scenario: [B2B-PA-SEND_VERSION_V1_V2_6] Controlle se presente lo stato ACCEPTED nella versione V1

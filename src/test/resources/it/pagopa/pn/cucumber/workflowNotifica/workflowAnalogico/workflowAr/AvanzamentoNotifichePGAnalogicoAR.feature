@@ -101,10 +101,7 @@ Feature: avanzamento notifiche analogico AR persona giuridica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario
-      | denomination            | Test AR Fail 2              |
-      | recipientType           | PG                          |
-      | taxId                   | 00749900049                 |
+    And destinatario Gherkin Irreperibile e:
       | digitalDomicile         | NULL                        |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR 16 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -118,10 +115,7 @@ Feature: avanzamento notifiche analogico AR persona giuridica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario
-      | denomination            | Test AR Fail 2               |
-      | recipientType           | PG                           |
-      | taxId                   | 00749900049                  |
+    And destinatario Gherkin Irreperibile e:
       | digitalDomicile         | NULL                         |
       | physicalAddress_address | via @FAIL-Irreperibile_AR 16 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -135,10 +129,7 @@ Feature: avanzamento notifiche analogico AR persona giuridica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario
-      | denomination                        | Test AR Fail               |
-      | recipientType                       | PG                         |
-      | taxId                               | 00749900049                |
+    And destinatario Gherkin Irreperibile e:
       | digitalDomicile                     | NULL                       |
       | physicalAddress_address             | Via @FAIL-Irreperibile_890 |
       | physicalAddress_zip                 | 40121                      |
@@ -174,7 +165,7 @@ Feature: avanzamento notifiche analogico AR persona giuridica
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
-      | details                    | NOT_NULL  |
-      | details_recIndex           | 0         |
-      | details_sentAttemptMade    | 0         |
-      | details_responseStatus     | KO        |
+      | details                 | NOT_NULL |
+      | details_recIndex        | 0        |
+      | details_sentAttemptMade | 0        |
+      | details_responseStatus  | KO       |
