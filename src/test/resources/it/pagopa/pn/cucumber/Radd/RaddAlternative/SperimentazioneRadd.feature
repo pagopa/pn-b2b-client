@@ -34,7 +34,7 @@ Feature: Sperimentazione Radd wave 1
     And si verifica il contenuto della pec abbia 1 attachment di tipo "F24"
     Then download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è "AAR RADD"
 
-  @raddWave
+  @raddWave2
   Scenario: [RADD_WITH_CAP_REMOVED] - Invio notifica digitale (1° tentativo OK) a destinatario con CAP rimosso tra quelli abilitati ai servizi RADD
     Given viene generata una nuova notifica
       | subject            | notifica digitale |
