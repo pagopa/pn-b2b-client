@@ -9,7 +9,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.payment.*;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.PaperEngageRequest;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.PaperEngageRequestAttachments;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.PaperEngageRequestAttachmentsInner;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.ReceivedMessage;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
@@ -1288,7 +1288,7 @@ public class InvioNotificheB2bSteps {
                 .map(PaperEngageRequest::getAttachments)
                 .orElse(List.of())
                 .stream()
-                .map(PaperEngageRequestAttachments::getUri)
+                .map(PaperEngageRequestAttachmentsInner::getUri)
                 .filter(uri -> uri.contains(tipologia))
                 .toList();
         try {
@@ -1417,7 +1417,7 @@ public class InvioNotificheB2bSteps {
         List<String> attchmentNotification = new ArrayList<>();
         switch (type.toLowerCase()) {
             case "analogico" -> {
-                for (PaperEngageRequestAttachments attahment : documentiPec.get(0).getPaperEngageRequest().getAttachments()) {
+                for (PaperEngageRequestAttachmentsInner attahment : documentiPec.get(0).getPaperEngageRequest().getAttachments()) {
                     attchmentNotification.add(attahment.getUri());
                 }
             }
