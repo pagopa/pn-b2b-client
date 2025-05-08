@@ -6,10 +6,16 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedTenantAttr
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganizations;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredAttributesResponse;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredTenantAttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.MailSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RequesterCertifiedAttributes;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Tenant;
+import it.pagopa.interop.generated.openapi.clients.bff.model.TenantFeatureType;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Tenants;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateVerifiedTenantAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.VerifiedAttributesResponse;
 import it.pagopa.interop.generated.openapi.clients.bff.model.VerifiedTenantAttributeSeed;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface ITenantsApi extends SettableBearerToken {
@@ -23,11 +29,17 @@ public interface ITenantsApi extends SettableBearerToken {
 
     void updateTenantDelegatedFeatures(boolean isProducerFeatureEnabled, boolean isConsumerFeatureEnabled);
 
+    void updateVerifiedAttribute(UUID tenantId, UUID attributeId, UpdateVerifiedTenantAttributeSeed updateVerifiedTenantAttributeSeed);
+
     Tenant getTenant(UUID tenantId);
+
+    Tenants getTenants(Integer limit, String name, List<TenantFeatureType> features);
 
     void verifyVerifiedAttribute(UUID tenantId, VerifiedTenantAttributeSeed verifiedTenantAttributeSeed);
 
     VerifiedAttributesResponse getVerifiedAttributes(UUID tenantId);
+
+    RequesterCertifiedAttributes getRequesterCertifiedAttributes(Integer offset, Integer limit);
 
     void revokeCertifiedAttribute(UUID tenantId, UUID attributeId);
 
@@ -38,6 +50,8 @@ public interface ITenantsApi extends SettableBearerToken {
     CompactOrganizations getConsumers(Integer offset, Integer limit, String q);
 
     CompactOrganizations getProducers(Integer offset, Integer limit, String q);
+
+    void addTenantMail(UUID tenantId, MailSeed mailSeed);
 
 
 }

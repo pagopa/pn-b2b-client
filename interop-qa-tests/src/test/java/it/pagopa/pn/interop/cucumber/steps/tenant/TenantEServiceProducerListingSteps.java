@@ -14,17 +14,14 @@ import java.util.UUID;
 public class TenantEServiceProducerListingSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
-    private final IdentityService identityService;
     private final CommonUtils commonUtils;
     private int offset;
 
     public TenantEServiceProducerListingSteps(ClientTokenConfigurator clientTokenConfigurator,
                                               SharedStepsContext sharedStepsContext,
-                                              IdentityService identityService,
                                               CommonUtils commonUtils) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
-        this.identityService = identityService;
         this.commonUtils = commonUtils;
     }
 
@@ -42,18 +39,25 @@ public class TenantEServiceProducerListingSteps {
         );
     }
 
-    @When("l'utente richiede una operazione di listing dei fruitori con offset {int}")
+    @When("l'utente richiede una operazione di listing degli erogatori con offset {int}")
     public void requireListingOperationWithOffset(int offset) {
         sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getTenantsApi().getConsumers(offset, 20, null)
+                () -> clientTokenConfigurator.getTenantsApi().getProducers(offset, 20, null)
         );
         this.offset = offset;
     }
 
-    @Then("si ottiene status code 200 e il giusto numero di fruitori in base all'offset richiesto")
+    @When("l'utente richiede una operazione di listing degli erogatori filtrando per nome aderente {string}")
+    public void requireConsumerOperationListingByKeyword(String producerName) {
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getTenantsApi().getProducers(0, 20, producerName)
+        );
+    }
+
+    @Then("si ottiene status code 200 e il giusto numero di erogatori in base all'offset richiesto")
     public void verifyStatusCodeAndConsumerNumberBasedOnOffset() {
         sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getTenantsApi().getConsumers(0, 20, null)
+                () -> clientTokenConfigurator.getTenantsApi().getProducers(0, 20, null)
         );
         commonUtils.assertValidResponse();
         CompactOrganizations compactOrganizations = (CompactOrganizations) sharedStepsContext.getHttpCallExecutor().getResponse();
@@ -61,12 +65,5 @@ public class TenantEServiceProducerListingSteps {
         int totalCount = compactOrganizations.getPagination().getTotalCount();
         Assertions.assertEquals(20, sharedStepsContext.getHttpCallExecutor().getClientResponse().value());
         Assertions.assertEquals(totalCount - offset, compactOrganizations.getResults().size());
-    }
-
-    @When("l'utente richiede una operazione di listing dei fruitori filtrando per nome aderente {string}")
-    public void requireConsumerOperationListingByKeyword(String consumerName) {
-        sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getTenantsApi().getConsumers(0, 20, consumerName)
-        );
     }
 }

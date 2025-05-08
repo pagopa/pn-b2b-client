@@ -9,11 +9,18 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganization
 import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredAttributesResponse;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredTenantAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject2;
+import it.pagopa.interop.generated.openapi.clients.bff.model.MailSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RequesterCertifiedAttributes;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Tenant;
 import it.pagopa.interop.generated.openapi.clients.bff.model.TenantDelegatedFeaturesFlagsUpdateSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.TenantFeatureType;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Tenants;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateVerifiedTenantAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.VerifiedAttributesResponse;
 import it.pagopa.interop.generated.openapi.clients.bff.model.VerifiedTenantAttributeSeed;
 import it.pagopa.interop.tenant.service.ITenantsApi;
+
+import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -70,8 +77,18 @@ public class TenantsApiClientImpl implements ITenantsApi {
     }
 
     @Override
+    public void updateVerifiedAttribute(UUID tenantId, UUID attributeId, UpdateVerifiedTenantAttributeSeed updateVerifiedTenantAttributeSeed) {
+        tenantsApi.updateVerifiedAttribute(tenantId, attributeId, updateVerifiedTenantAttributeSeed);
+    }
+
+    @Override
     public Tenant getTenant(UUID tenantId) {
         return tenantsApi.getTenant(tenantId);
+    }
+
+    @Override
+    public Tenants getTenants(Integer limit, String name, List<TenantFeatureType> features) {
+        return tenantsApi.getTenants(limit, name, features);
     }
 
     @Override
@@ -107,6 +124,16 @@ public class TenantsApiClientImpl implements ITenantsApi {
     @Override
     public CompactOrganizations getProducers(Integer offset, Integer limit, String q) {
         return tenantsApi.getProducers(offset, limit, q);
+    }
+
+    @Override
+    public void addTenantMail(UUID tenantId, MailSeed mailSeed) {
+        tenantsApi.addTenantMail(tenantId, mailSeed);
+    }
+
+    @Override
+    public RequesterCertifiedAttributes getRequesterCertifiedAttributes(Integer offset, Integer limit) {
+        return tenantsApi.getRequesterCertifiedAttributes(offset, limit);
     }
 
     @Override

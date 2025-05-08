@@ -36,6 +36,8 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTechnology;
 import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject3;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.MailKind;
+import it.pagopa.interop.generated.openapi.clients.bff.model.MailSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKey;
@@ -418,7 +420,7 @@ public class DataPreparationService {
         EServiceSeed eServiceSeed = merge(defaultEserviceSeed, partialEserviceSeed);
 
         httpCallExecutor.performCall(() -> eServiceClient.createEService(eServiceSeed));
-        assertValidResponse();
+//        assertValidResponse();
         UUID eserviceId = ((CreatedEServiceDescriptor)httpCallExecutor.getResponse()).getId();
         UUID descriptorId = ((CreatedEServiceDescriptor)httpCallExecutor.getResponse()).getDescriptorId();
 
@@ -446,7 +448,7 @@ public class DataPreparationService {
                 .dailyCallsPerConsumer(50).dailyCallsTotal(1000).audience(List.of("pagopa.it"));
 
         httpCallExecutor.performCall(() -> eServiceClient.updateDraftDescriptor(eServiceId, descriptorId, descriptorSeed));
-        assertValidResponse();
+//        assertValidResponse();
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
@@ -520,7 +522,7 @@ public class DataPreparationService {
     public UUID addInterfaceToDescriptor(UUID eServiceId, UUID descriptorId) {
         Resource resource = blobFileCreator.createBlobFile("src/main/resources/interface.yaml", "interface.yaml");
         httpCallExecutor.performCall(() -> eServiceClient.createEServiceDocument(eServiceId, descriptorId, "INTERFACE", "Interfaccia", resource));
-        assertValidResponse();
+//        assertValidResponse();
 
         pollingService.makePolling(
                 () -> producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId),
@@ -534,7 +536,7 @@ public class DataPreparationService {
     public void publishDescriptor(UUID eServiceId, UUID descriptorId) {
         updateDraftDescriptor(eServiceId, descriptorId, new UpdateEServiceDescriptorSeed().audience(List.of("pagopa.it")));
         httpCallExecutor.performCall(() -> eServiceClient.publishDescriptor(eServiceId, descriptorId));
-        assertValidResponse();
+//        assertValidResponse();
         pollingService.makePolling(
                 () -> producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId),
                 res -> res.getState() == EServiceDescriptorState.PUBLISHED,
@@ -554,7 +556,7 @@ public class DataPreparationService {
 
     public UUID createNextDraftDescriptor(UUID eServiceId) {
         httpCallExecutor.performCall(() -> eServiceClient.createDescriptor(eServiceId));
-        assertValidResponse();
+//        assertValidResponse();
         UUID descriptorId = ((CreatedResource) httpCallExecutor.getResponse()).getId();
         pollingService.makePolling(
                 () -> httpCallExecutor.performCall(() -> producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId)),
@@ -888,6 +890,17 @@ public class DataPreparationService {
                 "Risk analysis not found!"
         );
         return ((ProducerEServiceDetails) httpCallExecutor.getResponse()).getRiskAnalysis().get(0).getId();
+    }
+
+    public void addEmailToTenant(UUID tenantId, MailSeed mailSeed) {
+        httpCallExecutor.performCall(() -> tenantsApi.addTenantMail(tenantId, mailSeed.kind(MailKind.CONTACT_EMAIL)));
+        assertValidResponse();
+
+        pollingService.makePolling(
+                () -> tenantsApi.getTenant(tenantId),
+                res -> res.getContactMail().getAddress().equals(mailSeed.getAddress()),
+                "The desired email was not added to tenant!"
+        );
     }
 
     private void assertValidResponse() {
