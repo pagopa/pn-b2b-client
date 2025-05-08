@@ -5,17 +5,17 @@ import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EservicesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceDescriptor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorAgreementApprovalPolicySeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
+import java.util.UUID;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceDescriptor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
-import java.util.UUID;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -70,7 +70,12 @@ public class EServiceApiClientImpl implements IEServiceClient {
     @Override
     public void editAgreementApprovalPolicy(UUID eServiceId, UUID descriptorId,
         AgreementApprovalPolicy policy) {
-        // TODO 06/05/2025: implementazione da formulare non appena l'API sarà disponibile
+        eservicesApi.updateAgreementApprovalPolicy(
+            eServiceId,
+            descriptorId,
+            new UpdateEServiceDescriptorAgreementApprovalPolicySeed()
+                .agreementApprovalPolicy(policy)
+        );
     }
 
     @Override
