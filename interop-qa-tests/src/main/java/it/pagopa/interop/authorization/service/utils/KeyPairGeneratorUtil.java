@@ -3,7 +3,6 @@ package it.pagopa.interop.authorization.service.utils;
 import it.pagopa.interop.authorization.domain.KeyPairPEM;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeyUse;
-
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -29,6 +28,15 @@ public class KeyPairGeneratorUtil {
 
     public static KeyPairPEM createKeyPairPEM(String keyType, int modulusLength) {
         try {
+            KeyPair keyPair = createKeyPair(keyType, modulusLength);
+            return new KeyPairPEM(keyToPEM(keyPair.getPrivate()), keyToPEM(keyPair.getPublic()));
+        } catch (Exception e) {
+            throw new IllegalArgumentException("There was an error while crating the KeyPairPEM: " + e.getMessage(), e);
+        }
+    }
+
+    public static KeyPair createKeyPair(String keyType, int modulusLength) {
+        try {
             KeyPairGenerator keyPairGenerator;
             if ("RSA".equals(keyType)) {
                 keyPairGenerator = KeyPairGenerator.getInstance("RSA");
@@ -36,12 +44,10 @@ public class KeyPairGeneratorUtil {
             } else {
                 keyPairGenerator = KeyPairGenerator.getInstance("Ed25519");
             }
-            KeyPair keyPair = keyPairGenerator.generateKeyPair();
-
-            return new KeyPairPEM(keyToPEM(keyPair.getPrivate()), keyToPEM(keyPair.getPublic()));
-
+            return keyPairGenerator.generateKeyPair();
         } catch (Exception e) {
-            throw new IllegalArgumentException("There was an error while crating the KeyPairPEM: " + e.getMessage(), e);
+            throw new IllegalArgumentException("There was an error while crating the %s".formatted(KeyPair.class.getName()), e);
+
         }
     }
 

@@ -95,9 +95,11 @@ public class VoucherGenerationClientAndKeysSteps {
     public void createNewPublicKeyWithoutClientAssociation(String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
 
-        KeyPairPEM keyPair = KeyPairGeneratorUtil.createKeyPairPEM("RSA", 2048);
+        String keyType = "RSA";
+        KeyPairPEM keyPair = KeyPairGeneratorUtil.createKeyPairPEM(keyType, 2048);
         sharedStepsContext.getClientCommonContext().setClientPublicKey(keyPair.getPublicKey());
         sharedStepsContext.getClientCommonContext().setClientPrivateKey(keyPair.getPrivateKey());
+        sharedStepsContext.getClientCommonContext().setKeyType(keyType);
         sharedStepsContext.getClientCommonContext().setKeyId(UUID.randomUUID().toString());
     }
 
@@ -166,9 +168,11 @@ public class VoucherGenerationClientAndKeysSteps {
     public void addPublicKeyToNewClient(String role, String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, role));
         UUID newClientId = sharedStepsContext.getClientCommonContext().getLastClient();
-        KeyPairPEM keyPair = KeyPairGeneratorUtil.createKeyPairPEM("RSA", 2048);
+        String keyType = "RSA";
+        KeyPairPEM keyPair = KeyPairGeneratorUtil.createKeyPairPEM(keyType, 2048);
         sharedStepsContext.getClientCommonContext().setClientPublicKey(keyPair.getPublicKey());
         sharedStepsContext.getClientCommonContext().setClientPrivateKey(keyPair.getPrivateKey());
+        sharedStepsContext.getClientCommonContext().setKeyType(keyType);
 
         String keyId = dataPreparationService.addPublicKeyToClient(
             newClientId,
