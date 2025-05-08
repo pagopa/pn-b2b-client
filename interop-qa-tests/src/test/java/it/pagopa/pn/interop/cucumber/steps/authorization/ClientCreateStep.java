@@ -37,7 +37,7 @@ public class ClientCreateStep {
         String token = identityService.getToken(tenantType, role);
         clientTokenConfigurator.setBearerToken(token);
         sharedStepsContext.setUserToken(token);
-        sharedStepsContext.setRole(Role.valueOf(role.toUpperCase()));
+        sharedStepsContext.setRole(Role.fromValue(role.toUpperCase()));
         sharedStepsContext.setTenantType(tenantType);
     }
 

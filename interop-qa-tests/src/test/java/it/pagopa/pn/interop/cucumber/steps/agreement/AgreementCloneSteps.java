@@ -15,6 +15,7 @@ public class AgreementCloneSteps {
 
     @When("l'utente clona quella richiesta di fruizione")
     public void userCloneAgreement() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient()
                         .cloneAgreement(sharedStepsContext.getAgreementId()));
