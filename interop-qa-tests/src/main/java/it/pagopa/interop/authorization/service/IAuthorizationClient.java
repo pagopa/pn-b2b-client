@@ -24,4 +24,10 @@ public interface IAuthorizationClient extends SettableBearerToken {
     void removeClientPurpose(UUID clientId, UUID purposeId);
     CreatedResource addUsersToClient(UUID clientId, InlineObject3 inlineObject3);
 
+    // QA-7236 TODO 07/05/2025: da adeguare una volta che sarà stata rilasciata l'API in oggetto
+    //  nel nome, nel parametro passato e nel risultato restituito
+    void editClientAdmin(UUID clientId, Object body);
+
+    // QA-7236 TODO 08/05/2025: da adeguare una volta che sarà stata rilasciata l'API in oggetto
+    void deleteClientAdmin(UUID clientId, UUID adminId);
 }

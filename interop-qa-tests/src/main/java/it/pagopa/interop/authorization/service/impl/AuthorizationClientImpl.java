@@ -120,6 +120,16 @@ public class AuthorizationClientImpl implements IAuthorizationClient {
     }
 
     @Override
+    public void editClientAdmin(UUID clientId, Object body) {
+        // clientsApi.editClientAdmin(body);
+    }
+
+    @Override
+    public void deleteClientAdmin(UUID clientId, UUID adminId) {
+        // clientsApi.deleteClientAdmin(clientId, adminId);
+    }
+
+    @Override
     public void setBearerToken(String bearerToken) {
         this.clientsApi.setApiClient(createApiClient(bearerToken));
     }
