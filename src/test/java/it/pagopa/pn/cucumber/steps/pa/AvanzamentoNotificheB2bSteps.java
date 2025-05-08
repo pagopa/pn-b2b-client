@@ -334,10 +334,10 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
 
-    @Then("vengono letti gli eventi della timeline e si controlla che l'evento di timeline {string} non esista con la V1")
-    public void readingEventsOfTimelineElementOfNotificationV1(String timelineEventCategory) {
+    @Then("vengono letti gli eventi della timeline e si controlla che l'evento di timeline {string} non esista con la versione {string}")
+    public void readingEventsOfTimelineElementOfNotificationV1(String timelineEventCategory, String version) {
         WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder().build();
-        B2bStepsInterface b2bStepsInterface = getB2bStepsInterface(NotificationVersion.V1);
+        B2bStepsInterface b2bStepsInterface = getB2bStepsInterface(sharedSteps.getNotificationVersion(version));
         b2bStepsInterface.waitForEventOrStatus(TIMELINE_SLOW, TIMELINE, timelineEventCategory, filters);
         b2bStepsInterface.checkIfTimelineElementExists(false, null, null);
     }

@@ -40,10 +40,7 @@ Feature: avanzamento b2b notifica PG analogico con chiamata a National Registry 
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario
-      | denomination            | Test digitale ok          |
-      | recipientType           | PG                        |
-      | taxId                   | 00749900049               |
+    And destinatario Gherkin Irreperibile e:
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | Via@FAIL-Irreperibile_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"

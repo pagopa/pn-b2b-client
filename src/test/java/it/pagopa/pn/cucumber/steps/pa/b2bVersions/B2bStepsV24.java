@@ -30,10 +30,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.IntStream;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
@@ -78,13 +75,15 @@ public class B2bStepsV24 implements B2bStepsInterface {
     @Override
     public void verifyTestCompatibilityWithVersion(String eventCategoryOrStatus, boolean isEventCategory) {
         if (isEventCategory) {
-            assumeThat(TimelineElementCategoryV26.valueOf(eventCategoryOrStatus))
+            List<String> categoriesForVersion = Arrays.stream(TimelineElementCategoryV26.values()).map(x -> x.getValue()).toList();
+            assumeThat(categoriesForVersion)
                     .as("Test skipped: TimelineElementCategory " + eventCategoryOrStatus + " non esiste per la versione " + TimelineElementCategoryV26.class)
-                    .isNotNull();
+                    .contains(eventCategoryOrStatus);
         } else {
-            assumeThat(NotificationStatusV26.valueOf(eventCategoryOrStatus))
+            List<String> statusForVersion = Arrays.stream(NotificationStatusV26.values()).map(x -> x.getValue()).toList();
+            assumeThat(statusForVersion)
                     .as("Test skipped: NotificationStatus " + eventCategoryOrStatus + " non esiste per la versione " + NotificationStatusV26.class)
-                    .isNotNull();
+                    .contains(eventCategoryOrStatus);
         }
     }
 
