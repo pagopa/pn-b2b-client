@@ -10,7 +10,7 @@ import org.apache.commons.lang.math.RandomUtils;
 
 public class CertifiedAttributeCreationSteps {
     private final SharedStepsContext sharedStepsContext;
-    private final IAttributeApiClient attributeApiClient;
+    private final ClientTokenConfigurator clientTokenConfigurator;
     private final HttpCallExecutor httpCallExecutor;
 
     public CertifiedAttributeCreationSteps(
@@ -18,13 +18,14 @@ public class CertifiedAttributeCreationSteps {
         SharedStepsContext sharedStepsContext)
     {
         this.sharedStepsContext = sharedStepsContext;
-        this.attributeApiClient = clientTokenConfigurator.getAttributeApiClient();
+        this.clientTokenConfigurator = clientTokenConfigurator;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
     }
 
     @When("l'utente crea un attributo certificato")
     public void createCertifiedAttribute() {
-        httpCallExecutor.performCall(() -> attributeApiClient.createCertifiedAttributeRE(
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        httpCallExecutor.performCall(() -> clientTokenConfigurator.getAttributeApiClient().createCertifiedAttributeRE(
             new CertifiedAttributeSeed()
                 .name("new certified attribute %d".formatted(RandomUtils.nextInt()))
                 .description("description test")));

@@ -11,7 +11,7 @@ import org.apache.commons.lang.math.RandomUtils;
 
 public class DeclaredAttributeCreationSteps {
     private final SharedStepsContext sharedStepsContext;
-    private final IAttributeApiClient attributeApiClient;
+    private final ClientTokenConfigurator clientTokenConfigurator;
     private final HttpCallExecutor httpCallExecutor;
 
     public DeclaredAttributeCreationSteps(
@@ -19,13 +19,14 @@ public class DeclaredAttributeCreationSteps {
         SharedStepsContext sharedStepsContext)
     {
         this.sharedStepsContext = sharedStepsContext;
-        this.attributeApiClient = clientTokenConfigurator.getAttributeApiClient();
+        this.clientTokenConfigurator = clientTokenConfigurator;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
     }
 
     @When("l'utente crea un attributo dichiarato")
     public void createDeclaredAttribute() {
-        httpCallExecutor.performCall(() -> attributeApiClient.createDeclaredAttributeRE(
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        httpCallExecutor.performCall(() -> clientTokenConfigurator.getAttributeApiClient().createDeclaredAttributeRE(
             new AttributeSeed()
                 .name("new declared attribute %d".formatted(RandomUtils.nextInt()))
                 .description("description test")));

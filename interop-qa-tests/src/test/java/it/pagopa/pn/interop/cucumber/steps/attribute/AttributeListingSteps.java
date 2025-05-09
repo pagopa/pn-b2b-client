@@ -30,7 +30,7 @@ public class AttributeListingSteps {
 
     private final SharedStepsContext sharedStepsContext;
     private final HttpCallExecutor httpCallExecutor;
-    private final IAttributeApiClient attributeApiClient;
+    private final ClientTokenConfigurator clientTokenConfigurator;
 
     public AttributeListingSteps(
         SharedStepsContext sharedStepsContext,
@@ -38,11 +38,12 @@ public class AttributeListingSteps {
     {
         this.sharedStepsContext = sharedStepsContext;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
-        this.attributeApiClient = clientTokenConfigurator.getAttributeApiClient();
+        this.clientTokenConfigurator = clientTokenConfigurator;
     }
 
     @When("l'utente richiede una operazione di listing degli attributi")
     public void listAttributes() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         AttributeListRequest attributeListRequest = getAttributeListRequestPrototype()
             .build();
         listAttributes(attributeListRequest);
@@ -50,6 +51,7 @@ public class AttributeListingSteps {
 
     @When("l'utente richiede una operazione di listing degli attributi limitata ai primi {int} attributi")
     public void listFirstAttributes(int limit) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         AttributeListRequest attributeListRequest = getAttributeListRequestPrototype()
             .limit(limit)
             .build();
@@ -58,6 +60,7 @@ public class AttributeListingSteps {
 
     @When("l'utente richiede una operazione di listing degli attributi con offset {int}")
     public void listAttributesWithOffset(int offset) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         AttributeListRequest attributeListRequest = getAttributeListRequestPrototype()
             .offset(offset)
             .build();
@@ -66,6 +69,7 @@ public class AttributeListingSteps {
 
     @When("l'utente richiede una operatione di listing degli attributi filtrando per tipo \"certificato\" e \"verificato\"")
     public void listAttributesByType() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         AttributeListRequest attributeListRequest = getAttributeListRequestPrototype()
             .kinds(List.of(CERTIFIED, VERIFIED))
             .build();
@@ -91,7 +95,7 @@ public class AttributeListingSteps {
 
     private void listAttributes(AttributeListRequest attributeListRequest) {
         httpCallExecutor.performCall(() ->
-            attributeApiClient.getAttributes(
+            clientTokenConfigurator.getAttributeApiClient().getAttributes(
                 attributeListRequest.getLimit(),
                 attributeListRequest.getOffset(),
                 attributeListRequest.getKinds(),
