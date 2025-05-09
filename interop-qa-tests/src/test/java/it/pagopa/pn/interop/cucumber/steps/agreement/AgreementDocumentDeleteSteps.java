@@ -15,6 +15,7 @@ public class AgreementDocumentDeleteSteps {
 
     @When("l'utente cancella il documento allegato a quella richiesta di fruizione")
     public void removeAgreementDocumentAttachments() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient()
                         .removeAgreementConsumerDocument(

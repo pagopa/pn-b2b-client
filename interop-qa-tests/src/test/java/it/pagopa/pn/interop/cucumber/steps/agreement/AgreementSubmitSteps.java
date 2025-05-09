@@ -31,6 +31,7 @@ public class AgreementSubmitSteps {
 
     @When("l'utente inoltra quella richiesta di fruizione")
     public void tenantSubmitAgreement() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient().submitAgreement(this.sharedStepsContext.getAgreementId(),
                         new AgreementSubmissionPayload())

@@ -20,9 +20,11 @@ public class AgreementDocumentUploadSteps {
 
     @When("l'utente carica un documento allegato a quella richiesta di fruizione")
     public void uploadAgreementAttachment() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         Resource doc = blobFileCreator.createBlobFile("src/main/resources/dummy.pdf", "documento-test-qa.pdf");
-        clientTokenConfigurator.getAgreementClient().addAgreementConsumerDocument(sharedStepsContext.getAgreementId(),
-                "documento-test-qa.pdf", "documento-test-qa", doc);
-
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getAgreementClient().addAgreementConsumerDocument(sharedStepsContext.getAgreementId(),
+                        "documento-test-qa.pdf", "documento-test-qa", doc)
+        );
     }
 }

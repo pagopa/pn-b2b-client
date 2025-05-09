@@ -38,9 +38,12 @@ public class AgreementUpgradeSteps {
 
     @When("l'utente richiede un'operazione di upgrade di quella richiesta di fruizione")
     public void requireAgreementUpgrade() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient().upgradeAgreement(sharedStepsContext.getAgreementId())
         );
+        Agreement agreement = ((Agreement) sharedStepsContext.getHttpCallExecutor().getResponse());
+        sharedStepsContext.getAgreementCommonContext().setResponseAgreementId(agreement.getId());
     }
 
     @Given("{string} ha già pubblicato una nuova versione per quell'e-service richiedendo gli stessi attributi certificati")

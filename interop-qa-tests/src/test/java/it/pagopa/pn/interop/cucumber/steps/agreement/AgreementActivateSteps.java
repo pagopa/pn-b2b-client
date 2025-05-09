@@ -40,7 +40,7 @@ public class AgreementActivateSteps {
 
     @Given("{string} ha già creato un e-service in stato {string} che richiede quegli attributi con approvazione {string}")
     public void tenantHasAlreadyCreateEservice(String tenantType, String descriptorState, String approvalAgreementPolicy) {
-
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         List<List<UUID>> requiredCertifiedAttributes = sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes();
         List<List<UUID>> requiredDeclaredAttributes = sharedStepsContext.getAttributeCommonContext().getRequiredDeclaredAttributes();
         List<List<UUID>> requiredVerifiedAttributes = sharedStepsContext.getAttributeCommonContext().getRequiredVerifiedAttributes();
@@ -93,6 +93,7 @@ public class AgreementActivateSteps {
 
     @When("l'utente richiede una operazione di attivazione di quella richiesta di fruizione")
     public void userRequiresAgreementActivation() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient()
                         .activateAgreement(sharedStepsContext.getAgreementId()));

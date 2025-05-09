@@ -7,6 +7,7 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 public class AgreementConsumersListingSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
@@ -19,6 +20,7 @@ public class AgreementConsumersListingSteps {
 
     @When("l'utente richiede una operazione di listing dei fruitori dei propri e-service limitata ai primi {int}")
     public void listFirstConsumersOfOwnEServices(int limit) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient()
                         .getAgreementConsumers(0, limit, null)
@@ -47,8 +49,9 @@ public class AgreementConsumersListingSteps {
 
     @Then("si ottiene status code {int} e la lista di {int} fruitor(i)(e)")
     public void verifyStatusCodeAndConsumerList(int statusCode, int consumerNumber) {
-        Assertions.assertEquals(HttpStatus.valueOf(statusCode), sharedStepsContext.getHttpCallExecutor().getClientResponse());
-        Assertions.assertEquals(consumerNumber, ((CompactOrganizations) sharedStepsContext.getHttpCallExecutor().getResponse()).getResults().size());
+        ResponseEntity<CompactOrganizations> compactOrganizationsResponseEntity = (ResponseEntity<CompactOrganizations>) sharedStepsContext.getHttpCallExecutor().getResponse();
+        Assertions.assertEquals(HttpStatus.valueOf(statusCode), compactOrganizationsResponseEntity.getStatusCode());
+        Assertions.assertEquals(consumerNumber, compactOrganizationsResponseEntity.getBody().getResults().size());
 
     }
 }

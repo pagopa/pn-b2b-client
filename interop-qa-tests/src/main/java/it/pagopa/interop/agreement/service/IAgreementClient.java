@@ -16,7 +16,7 @@ import org.springframework.http.ResponseEntity;
 public interface IAgreementClient extends SettableBearerToken {
     CreatedResource createAgreement(AgreementPayload agreementPayload);
     Agreement getAgreementById(UUID agreementId);
-    ResponseEntity<File> getAgreementContract(UUID agreementId);
+    ResponseEntity<Void> getAgreementContract(UUID agreementId);
     Agreement activateAgreement(UUID agreementId);
     Agreement submitAgreement(UUID agreementId, AgreementSubmissionPayload agreementSubmissionPayload);
     Agreement suspendAgreement(UUID agreementId);
@@ -24,11 +24,11 @@ public interface IAgreementClient extends SettableBearerToken {
     Agreement upgradeAgreement(UUID agreementId);
     void archiveAgreement(UUID agreementId);
     Agreement rejectAgreement(UUID agreementId, AgreementRejectionPayload agreementRejectionPayload);
-    File addAgreementConsumerDocument(UUID agreementId, String name, String prettyName, org.springframework.core.io.Resource doc);
+    ResponseEntity<Void> addAgreementConsumerDocument(UUID agreementId, String name, String prettyName, org.springframework.core.io.Resource doc);
     CreatedResource cloneAgreement(UUID agreementId);
     ResponseEntity<CompactOrganizations> getAgreementConsumers(Integer offset, Integer limit, String q);
     ResponseEntity<CompactOrganizations> getAgreementProducers(Integer offset, Integer limit, String q);
-    File getAgreementConsumerDocument(UUID agreementId, UUID documentId);
+    ResponseEntity<Void> getAgreementConsumerDocument(UUID agreementId, UUID documentId);
     void deleteAgreement(UUID agreementId);
     void removeAgreementConsumerDocument(UUID agreementId, UUID documentId);
     ResponseEntity<CompactEServicesLight> getAgreementEServiceConsumers(Integer offset, Integer limit, String q);

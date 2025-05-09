@@ -27,6 +27,7 @@ public class AgreementDownloadSteps {
 
     @When("l'utente richiede una operazione di download dell'attestazione della richiesta di fruizione")
     public void getAgreementContract() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient()
                         .getAgreementContract(sharedStepsContext.getAgreementId())

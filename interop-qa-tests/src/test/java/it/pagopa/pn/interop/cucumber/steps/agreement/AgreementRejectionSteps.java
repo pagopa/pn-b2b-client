@@ -16,6 +16,7 @@ public class AgreementRejectionSteps {
 
     @When("l'utente richiede una operazione di rifiuto di quella richiesta di fruizione con messaggio")
     public void rejectAgreementWithMessage() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient().rejectAgreement(sharedStepsContext.getAgreementId(),
                         new AgreementRejectionPayload().reason("rejection reason: qa-testing"))

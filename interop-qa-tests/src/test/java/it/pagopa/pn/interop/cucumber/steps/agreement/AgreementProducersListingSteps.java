@@ -20,6 +20,7 @@ public class AgreementProducersListingSteps {
 
     @When("l'utente richiede una operazione di listing degli erogatori degli e-service per cui ha una richiesta di fruizione limitata ai primi {int}")
     public void requireProducerListingOperationWithLimit(int limit) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient().getAgreementProducers(0, limit, null)
         );

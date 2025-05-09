@@ -15,6 +15,7 @@ public class AgreementDocumentReadSteps {
 
     @When("l'utente richiede una operazione di lettura del documento allegato a quella richiesta di fruizione")
     public void tenantReadsAgreementAttachment() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient()
                         .getAgreementConsumerDocument(

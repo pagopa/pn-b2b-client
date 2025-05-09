@@ -15,6 +15,7 @@ public class AgreementDeleteSteps {
 
     @When("l'utente richiede una operazione di cancellazione della richiesta di fruizione")
     public void tenantRequiresAgreementCancellation() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient()
                         .deleteAgreement(sharedStepsContext.getAgreementId()));

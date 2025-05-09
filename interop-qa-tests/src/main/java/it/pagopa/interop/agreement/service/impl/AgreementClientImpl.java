@@ -13,14 +13,18 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementUpdatePayl
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactEServicesLight;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganizations;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import java.io.File;
-import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @Component
@@ -29,6 +33,11 @@ public class AgreementClientImpl implements IAgreementClient {
     private final AgreementsApi agreementsApi;
     private final RestTemplate restTemplate;
     private final String basePath;
+    Map<HttpStatus, Runnable> statusActionMap = Map.of(
+            HttpStatus.BAD_REQUEST, () -> { throw new HttpClientErrorException(HttpStatus.BAD_REQUEST); },
+            HttpStatus.FORBIDDEN, () -> { throw new HttpClientErrorException(HttpStatus.FORBIDDEN); },
+            HttpStatus.INTERNAL_SERVER_ERROR, () -> { throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR); },
+            HttpStatus.NOT_FOUND, () -> { throw new HttpClientErrorException(HttpStatus.NOT_FOUND); });
 
     public AgreementClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
@@ -54,8 +63,22 @@ public class AgreementClientImpl implements IAgreementClient {
     }
 
     @Override
-    public ResponseEntity<File> getAgreementContract(UUID agreementId) {
-        return agreementsApi.getAgreementContractWithHttpInfo(agreementId);
+    public  ResponseEntity<Void> getAgreementContract(UUID agreementId) {
+        AtomicReference<HttpStatus> statusRef = new AtomicReference<>();
+        ClientHttpRequestInterceptor interceptor = (request, body, execution) -> {
+            ClientHttpResponse response = execution.execute(request, body);
+            statusRef.set(response.getStatusCode());
+            return response;
+        };
+        restTemplate.getInterceptors().add(interceptor);
+
+        try {
+            agreementsApi.getAgreementContractWithHttpInfo(agreementId);
+        } catch (Exception ignored) {}
+
+        Runnable action = statusActionMap.get(statusRef.get());
+        if (action != null) action.run();
+        return new ResponseEntity<>(statusRef.get());
     }
 
     @Override
@@ -94,8 +117,22 @@ public class AgreementClientImpl implements IAgreementClient {
     }
 
     @Override
-    public File addAgreementConsumerDocument(UUID agreementId, String name, String prettyName, org.springframework.core.io.Resource doc) {
-        return agreementsApi.addAgreementConsumerDocument(agreementId, name, prettyName, doc);
+    public ResponseEntity<Void> addAgreementConsumerDocument(UUID agreementId, String name, String prettyName, org.springframework.core.io.Resource doc) {
+        AtomicReference<HttpStatus> statusRef = new AtomicReference<>();
+        ClientHttpRequestInterceptor interceptor = (request, body, execution) -> {
+            ClientHttpResponse response = execution.execute(request, body);
+            statusRef.set(response.getStatusCode());
+            return response;
+        };
+        restTemplate.getInterceptors().add(interceptor);
+
+        try {
+            agreementsApi.addAgreementConsumerDocument(agreementId, name, prettyName, doc);
+        } catch (Exception ignored) {}
+
+        Runnable action = statusActionMap.get(statusRef.get());
+        if (action != null) action.run();
+        return new ResponseEntity<>(statusRef.get());
     }
 
     @Override
@@ -114,8 +151,23 @@ public class AgreementClientImpl implements IAgreementClient {
     }
 
     @Override
-    public File getAgreementConsumerDocument(UUID agreementId, UUID documentId) {
-        return agreementsApi.getAgreementConsumerDocument(agreementId, documentId);
+    public ResponseEntity<Void> getAgreementConsumerDocument(UUID agreementId, UUID documentId) {
+        AtomicReference<HttpStatus> statusRef = new AtomicReference<>();
+        ClientHttpRequestInterceptor interceptor = (request, body, execution) -> {
+            ClientHttpResponse response = execution.execute(request, body);
+            statusRef.set(response.getStatusCode());
+            return response;
+        };
+        restTemplate.getInterceptors().add(interceptor);
+
+        try {
+            agreementsApi.getAgreementConsumerDocument(agreementId, documentId);
+        } catch (Exception ignored) {}
+
+        restTemplate.getInterceptors().remove(interceptor);
+        Runnable action = statusActionMap.get(statusRef.get());
+        if (action != null) action.run();
+        return new ResponseEntity<>(statusRef.get());
     }
 
     @Override

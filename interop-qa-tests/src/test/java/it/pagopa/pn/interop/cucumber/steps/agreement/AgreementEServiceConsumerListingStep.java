@@ -18,6 +18,7 @@ public class AgreementEServiceConsumerListingStep {
 
     @When("l'utente richiede una operazione di listing degli e-services per cui ha una richiesta di fruizione")
     public void requireEserviceListingOperation() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient().getAgreementEServiceConsumers(0, 50, null)
         );

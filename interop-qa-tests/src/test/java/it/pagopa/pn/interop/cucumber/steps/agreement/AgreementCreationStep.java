@@ -156,6 +156,7 @@ public class AgreementCreationStep {
 
     @Given("la richiesta di fruizione è passata in stato {string}")
     public void verifyAgreementState(String agreementState) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getPollingService().makePolling(
                 () -> clientTokenConfigurator.getAgreementClient().getAgreementById(sharedStepsContext.getAgreementId()),
                 res -> res.getState().getValue().equals(agreementState),
@@ -165,6 +166,7 @@ public class AgreementCreationStep {
 
     @When("l'utente crea una richiesta di fruizione in bozza per (la penultima)(l'ultima) versione di quell'e-service")
     public void createDraftAgreementRequestForLatestVersion() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient().createAgreement(
                         new AgreementPayload()

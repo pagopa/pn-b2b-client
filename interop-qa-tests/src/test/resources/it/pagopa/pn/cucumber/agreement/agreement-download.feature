@@ -40,7 +40,7 @@ Feature: Download attestazione richiesta di fruizione sigillata
     Given "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "<tipoApprovazione>"
     Given "PA1" ha una richiesta di fruizione in stato "<statoAgreement>" per quell'e-service
     When l'utente richiede una operazione di download dell'attestazione della richiesta di fruizione
-    Then si ottiene status code 400
+    Then si ottiene status code 404
 
     Examples: 
       | statoAgreement | tipoApprovazione |
@@ -54,7 +54,7 @@ Feature: Download attestazione richiesta di fruizione sigillata
     Given "PA1" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
     Given "PA2" ha già rifiutato quella richiesta di fruizione
     When l'utente richiede una operazione di download dell'attestazione della richiesta di fruizione
-    Then si ottiene status code 400
+    Then si ottiene status code 404
 
   @agreement_download2c @wait_for_fix @IMN-305
   Scenario Outline: Per una richiesta di fruizione precedentemente creata dall’ente, la quale è in stato MISSING_CERTIFIED_ATTRIBUTES, alla richiesta di download dell'attestazione  della richiesta di fruizione sigillata da parte di un utente con sufficienti permessi, ottiene un errore.
@@ -65,7 +65,7 @@ Feature: Download attestazione richiesta di fruizione sigillata
     Given "<enteCertificatore>" ha già revocato quell'attributo a "<enteFruitore>"
     Given la richiesta di fruizione è passata in stato "MISSING_CERTIFIED_ATTRIBUTES"
     When l'utente richiede una operazione di download dell'attestazione della richiesta di fruizione
-    Then si ottiene status code 400
+    Then si ottiene status code 404
 
     Examples: 
       | enteFruitore | enteCertificatore | enteErogatore |

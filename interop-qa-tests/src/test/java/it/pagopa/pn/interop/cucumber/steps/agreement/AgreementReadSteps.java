@@ -15,6 +15,7 @@ public class AgreementReadSteps {
 
     @When("l'utente richiede una operazione di lettura di quell'agreement")
     public void readAgreement() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient().getAgreementById(sharedStepsContext.getAgreementId())
         );

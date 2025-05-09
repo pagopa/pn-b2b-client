@@ -74,6 +74,48 @@ public class AgreementListingSteps {
         throw new NotImplementedException();
     }
 
+    //TODO il metodo getAgreements (/agreements) in GET sembra non essere più disponibile
+    @When("l'utente richiede una operazione di listing con offset {int}")
+    public void requireListingOperationWithOffset(int offset) {
+        throw new NotImplementedException();
+    }
+
+    //TODO il metodo getAgreements (/agreements) in GET sembra non essere più disponibile
+    @When("l'utente richiede una operazione di listing delle richieste di fruizione ai propri e-service")
+    public void requireAgreementListingOperationToThierEService() {
+        throw new NotImplementedException();
+    }
+
+    //TODO il metodo getAgreements (/agreements) in GET sembra non essere più disponibile
+    @When("l'utente richiede una operazione di listing delle richieste di fruizione che ha creato")
+    public void requireListingOperationForEServiceCreated() {
+        throw new NotImplementedException();
+    }
+
+    //TODO il metodo getAgreements (/agreements) in GET sembra non essere più disponibile
+    @When("l'utente richiede una operazione di listing delle richieste di fruizione per {int} specifici e-service")
+    public void requireListingOperationForNSpecificEService(int numberEServices) {
+        throw new NotImplementedException();
+    }
+
+    //TODO il metodo getAgreements (/agreements) in GET sembra non essere più disponibile
+    @When("l'utente richiede una operazione di listing delle richieste di fruizione di {string} che sono in stato {string} e {string}")
+    public void requireListingOperationForAgreementWithStates(String consumer, String agreementState1, String agreementState2) {
+        throw new NotImplementedException();
+    }
+
+    //TODO il metodo getAgreements (/agreements) in GET sembra non essere più disponibile
+    @When("l'utente richiede una operazione di listing delle richieste di fruizione aggiornabili")
+    public void requireListingOperationForUpdatableAgreement() {
+        throw new NotImplementedException();
+    }
+
+    //TODO il metodo getAgreements (/agreements) in GET sembra non essere più disponibile
+    @When("l'utente richiede una operazione di listing delle richieste di fruizione")
+    public void userRequireAgreementListingOperation() {
+        throw new NotImplementedException();
+    }
+
     @Then("si ottiene status code {int} e la lista di {int} richiest(e)(a) di fruizione")
     public void verifyStatusCodeAndAgreementRequest(int statusCode, int count) {
         HttpCallExecutor httpCallExecutor = sharedStepsContext.getHttpCallExecutor();

@@ -81,9 +81,10 @@ public class AgreementCommonSteps {
 
     @Given("{string} ha creato un attributo certificato e lo ha assegnato a {string}")
     public void tenantHasCreatedCertifiedAttribute(String certifier, String tenantType) {
-        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        clientTokenConfigurator.setBearerToken(identityService.getToken(certifier, null));
         UUID tenantId = identityService.getOrganizationId(tenantType);
         UUID attributeId = dataPreparationService.createAttribute(AttributeKind.CERTIFIED, null);
+        sharedStepsContext.getAttributeCommonContext().setAttributeId(attributeId);
         dataPreparationService.assignCertifiedAttributeToTenant(tenantId, attributeId);
     }
 
@@ -192,7 +193,7 @@ public class AgreementCommonSteps {
                 AgreementState.fromValue(agreementState), sharedStepsContext.getEServicesCommonContext().getEserviceId(),
                 sharedStepsContext.getEServicesCommonContext().getDescriptorId());
         sharedStepsContext.setAgreementId(result.get("agreementId"));
-        sharedStepsContext.getAgreementCommonContext().setDocumentId(result.get("descriptorId"));
+        sharedStepsContext.getAgreementCommonContext().setDocumentId(result.get("documentId"));
     }
 
     @Given("{string} ha una richiesta di fruizione in stato {string} per ognuno di quegli e-services")
