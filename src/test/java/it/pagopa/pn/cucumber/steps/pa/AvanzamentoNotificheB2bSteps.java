@@ -7,10 +7,6 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
-import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
-import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
-import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV28;
-import it.pagopa.pn.client.b2b.pa.polling.impl.v28.PnPollingServiceTimelineRapidV28;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnPrivateDeliveryPushExternalClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
@@ -1097,7 +1093,6 @@ public class AvanzamentoNotificheB2bSteps {
         getB2bStepsInterface().verifyTimelineElementDoesNotExists(true, timelineEventCategory, dataMap);
     }
 
-    //TODO 12/02/2025 Accorpare con vieneVerificatoCheElementoTimelineNonEsista(String timelineEventCategory, parametrizzando il load della timeline
     @And("viene verificato che l'elemento di timeline {string} non esista nella timeline caricata")
     public void vieneVerificatoCheElementoTimelineNonEsistaNotLoadTimeline(String timelineEventCategory, Map<String, String> dataMap) {
         getB2bStepsInterface().verifyTimelineElementDoesNotExists(false, timelineEventCategory, dataMap);
@@ -1532,7 +1527,6 @@ public class AvanzamentoNotificheB2bSteps {
     public void vieneVerificatoCheLElementoDiTimelineConResponseStatusPerLa(String timelineElement, String responseStatus, String type, String address) {
 
         try {
-            //TODO V28 MATTEO
             FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
             assertSoftly(softly -> {
                 assertThat(fullSentNotification).as("La fullSentNotification non dev'essere null").isNotNull();

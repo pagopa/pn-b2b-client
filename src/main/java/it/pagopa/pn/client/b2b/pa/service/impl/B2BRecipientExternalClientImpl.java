@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.ApiClient;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.api.RecipientReadB2BApi;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullReceivedNotificationV25;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullReceivedNotificationV26;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationAttachmentDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.api.LegalFactsApi;
@@ -39,7 +39,6 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
     private final String leonardoBearerToken;
     private final String gherkinSrlBearerToken;
     private final String cucumberSpaBearerToken;
-
     private final RestTemplate restTemplate;
     private final String webBasePath;
     private final String b2bBasePath;
@@ -83,8 +82,8 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
     }
 
     @Override
-    public FullReceivedNotificationV25 getReceivedNotification(String iun, String mandateId) throws RestClientException {
-        return recipientReadB2BApi.getReceivedNotificationV25(iun, mandateId);
+    public FullReceivedNotificationV26 getReceivedNotification(String iun, String mandateId) throws RestClientException {
+        return recipientReadB2BApi.getReceivedNotificationV26(iun, mandateId);
     }
 
     @Override

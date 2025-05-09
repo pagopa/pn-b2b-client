@@ -30,8 +30,8 @@ Feature: Radd Alternative
     And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED" non esista
       | details          | NOT_NULL |
       | details_recIndex | 0        |
-    And lato destinatario la notifica può essere correttamente recuperata da "<CITIZEN>" e verifica presenza dell'evento di timeline NOTIFICATION_RADD_RETRIEVED
-    And lato desinatario "<CITIZEN>" viene verificato che l'elemento di timeline NOTIFICATION_VIEWED non esista
+    And lato destinatario la notifica può essere correttamente recuperata da "<CITIZEN>" e verifica presenza dell'evento di timeline "NOTIFICATION_RADD_RETRIEVED"
+    And lato destinatario "<CITIZEN>" viene verificato che l'elemento di timeline NOTIFICATION_VIEWED non esista
     Examples:
       | CITIZEN        | CF               |
       | Mario Cucumber | FRMTTR76M06B715E |
@@ -296,8 +296,8 @@ Feature: Radd Alternative
     And viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_RADD_RETRIEVED"
-    Then lato destinatario la notifica può essere correttamente recuperata da "CucumberSpa" e verifica presenza dell'evento di timeline NOTIFICATION_RADD_RETRIEVED
-    And lato desinatario "CucumberSpa" viene verificato che l'elemento di timeline NOTIFICATION_VIEWED non esista
+    Then lato destinatario la notifica può essere correttamente recuperata da "CucumberSpa" e verifica presenza dell'evento di timeline "NOTIFICATION_RADD_RETRIEVED"
+    And lato destinatario "CucumberSpa" viene verificato che l'elemento di timeline NOTIFICATION_VIEWED non esista
 
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-60] PG - Scansione QR code esistente, associato al CF corretto, per una notifica con allegati di pagamento (Avviso PagoPA e F24)
@@ -657,8 +657,8 @@ Feature: Radd Alternative
     And viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
     When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_RADD_RETRIEVED"
-    Then lato destinatario la notifica può essere correttamente recuperata da "CucumberSpa" e verifica presenza dell'evento di timeline NOTIFICATION_RADD_RETRIEVED
-    And lato desinatario "CucumberSpa" viene verificato che l'elemento di timeline NOTIFICATION_VIEWED non esista
+    Then lato destinatario la notifica può essere correttamente recuperata da "CucumberSpa" e verifica presenza dell'evento di timeline "NOTIFICATION_RADD_RETRIEVED"
+    And lato destinatario "CucumberSpa" viene verificato che l'elemento di timeline NOTIFICATION_VIEWED non esista
 
   @raddAlt
   Scenario: [RADD-ALT_ACT-62] PG -  Recupero notifica con allegato di pagamento (solo Avviso PagoPA)  con codice IUN esistente associato a CF corretto
@@ -1389,8 +1389,8 @@ Feature: Radd Alternative
     And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED" non esista
       | details          | NOT_NULL |
       | details_recIndex | 0        |
-    And lato destinatario la notifica può essere correttamente recuperata da "<CITIZEN>" e verifica presenza dell'evento di timeline NOTIFICATION_RADD_RETRIEVED
-    And lato desinatario "<CITIZEN>" viene verificato che l'elemento di timeline NOTIFICATION_VIEWED non esista
+    And lato destinatario la notifica può essere correttamente recuperata da "<CITIZEN>" e verifica presenza dell'evento di timeline "NOTIFICATION_RADD_RETRIEVED"
+    And lato destinatario "<CITIZEN>" viene verificato che l'elemento di timeline NOTIFICATION_VIEWED non esista
     And invocazione servizio per recupero timeline notifica con iun
     And Il servizio risponde correttamente
     Examples:

@@ -1,6 +1,6 @@
 package it.pagopa.pn.client.b2b.pa.service;
 
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullReceivedNotificationV25;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullReceivedNotificationV26;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationAttachmentDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.model.LegalFactDownloadMetadataResponse;
@@ -20,8 +20,6 @@ import java.util.UUID;
 public interface IPnWebRecipientClient extends SettableBearerToken {
 
     FullReceivedNotificationV26 getReceivedNotification(String iun, String mandateId) throws RestClientException;
-
-    FullReceivedNotificationV25 getReceivedNotificationV25(String iun, String mandateId) throws RestClientException;
 
     BffDocumentDownloadMetadataResponse getReceivedNotificationAttachment(String iun, String attachmentName, UUID mandateId) throws RestClientException;
 

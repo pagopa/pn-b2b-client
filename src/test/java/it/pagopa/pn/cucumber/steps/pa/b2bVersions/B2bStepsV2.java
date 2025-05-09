@@ -76,12 +76,12 @@ public class B2bStepsV2 implements B2bStepsInterface {
     @Override
     public void verifyTestCompatibilityWithVersion(String eventCategoryOrStatus, boolean isEventCategory) {
         if (isEventCategory) {
-            List<String> categoriesForVersion = Arrays.stream(TimelineElementCategoryV20.values()).map(x -> x.getValue()).toList();
+            List<String> categoriesForVersion = Arrays.stream(TimelineElementCategoryV20.values()).map(TimelineElementCategoryV20::getValue).toList();
             assumeThat(categoriesForVersion)
                     .as("Test skipped: TimelineElementCategory " + eventCategoryOrStatus + " non esiste per la versione " + TimelineElementCategoryV20.class)
                     .contains(eventCategoryOrStatus);
         } else {
-            List<String> statusForVersion = Arrays.stream(NotificationStatus.values()).map(x -> x.getValue()).toList();
+            List<String> statusForVersion = Arrays.stream(NotificationStatus.values()).map(NotificationStatus::getValue).toList();
             assumeThat(statusForVersion)
                     .as("Test skipped: NotificationStatus " + eventCategoryOrStatus + " non esiste per la versione " + NotificationStatus.class)
                     .contains(eventCategoryOrStatus);

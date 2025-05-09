@@ -38,7 +38,6 @@ public class InvioNotificheB2bMultiPaSteps {
             assertThatCode(() -> fullSentNotification.set(sharedSteps.getSentNotificationLastVersion()))
                     .as("L'invocazione del metodo per il recupero della fullSentNotification non deve lanciare eccezioni")
                     .doesNotThrowAnyException();
-            //TODO V28 MATTEO
             assertThat(fullSentNotification.get()).as("La fullSentNotification recuperata non dev'essere null").isNotNull();
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);

@@ -7,11 +7,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullReceivedNotificationV25;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationAttachmentDownloadMetadataResponse;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchResponse;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchRow;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.TimelineElementV26;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.*;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffDocumentType;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffFullNotificationV1;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffNotificationDetailDocument;
@@ -21,23 +17,15 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.ConsentType;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV27;
-import it.pagopa.pn.client.b2b.pa.service.IPnBFFRecipientNotificationClient;
-import it.pagopa.pn.client.b2b.pa.service.IPnTosPrivacyClient;
-import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
-import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
-import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
+import it.pagopa.pn.client.b2b.pa.service.*;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.AddressVerification;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.CourtesyChannelType;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.CourtesyDigitalAddress;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalAndUnverifiedDigitalAddress;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.*;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationStatusV26;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV26;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV27;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.utils.DataTest;
@@ -75,9 +63,8 @@ public class RicezioneNotificheWebSteps {
     private final IPnTosPrivacyClient iPnTosPrivacyClient;
     private final PnB2bClientTimingConfigs timingConfigs;
     private static final Integer WAIT_DEFAULT = 10000;
-
     private HttpStatusCodeException notificationError;
-    private FullReceivedNotificationV26 fullNotification;
+    private FullReceivedNotificationV26 fullReceivedNotification;
     private BffFullNotificationV1 bffFullNotificationV1Recipient;
     private it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffFullNotificationV1 bffFullNotificationV1Sender;
 
@@ -119,12 +106,22 @@ public class RicezioneNotificheWebSteps {
     }
 
     @Then("la notifica può essere correttamente recuperata da {string}")
-    public void notificationCanBeCorrectlyReadby(String recipient) {
+    public void recipientReadNotification(String recipient) {
         sharedSteps.selectUser(recipient);
         Assertions.assertDoesNotThrow(() -> {
-            this.fullNotification = webRecipientClient.getReceivedNotification(sharedSteps.getNotificationIun(), null);
-            log.info("timeline received: " + fullNotification.getTimeline());
+            fullReceivedNotification = webRecipientClient.getReceivedNotification(sharedSteps.getNotificationIun(), null);
+            log.info("timeline received: " + fullReceivedNotification.getTimeline());
         });
+    }
+
+    @And("{string} tenta il recupero della notifica")
+    public void notificationCanBeCorrectlyReadBy(String recipient) {
+        sharedSteps.selectUser(recipient);
+        try {
+            webRecipientClient.getReceivedNotification(sharedSteps.getNotificationIun(), null);
+        } catch (HttpStatusCodeException e) {
+            this.notificationError = e;
+        }
     }
 
     @And("lato destinatario vengono letti i dettagli della notifica lato web dal destinatario {string}")
@@ -162,7 +159,6 @@ public class RicezioneNotificheWebSteps {
 
     @And("lato api l'elemento di timeline della notifica {string} con deliveryDetailCode {string} non è visibile")
     public void timelineEventWithCategoryAndDeliveryDetailCodeNotPresent(String category, String deliveryDetailCode) {
-
         Assertions.assertNull(getTimelineElement(category, deliveryDetailCode));
     }
 
@@ -172,12 +168,22 @@ public class RicezioneNotificheWebSteps {
     }
 
     private TimelineElementV27 getTimelineElement(String category, String deliveryDetailCode) {
-        fullNotification.getTimeline().forEach(x -> log.info(x.toString()));
-        return fullNotification.getTimeline().stream()
-                .filter(x -> x.getCategory().toString().equals(category) &&
+        fullReceivedNotification.getTimeline().forEach(x -> log.info(x.toString()));
+        return fullReceivedNotification.getTimeline().stream()
+                .filter(x -> x.getCategory().getValue().equals(category) &&
                         x.getDetails() != null &&
                         x.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode))
                 .findFirst().orElse(null);
+    }
+
+    @And("lato api l'elemento di timeline della notifica {string} {is} visibile")
+    public void timelineEventWithCategoryAndDeliveryDetailCodeNotPresent(String category, boolean isVisibile) {
+        TimelineElementV27 timelineElement = getTimelineElement(category, null);
+        if (isVisibile) {
+            assertThat(timelineElement).as("Il timeline element " + category + " dovrebbe risultare visibile al destinatario").isNotNull();
+        } else {
+            assertThat(timelineElement).as("Il timeline element " + category + " non dovrebbe risultare visibile al destinatario").isNull();
+        }
     }
 
     @And("lato destinatario dal web l'elemento di timeline della notifica {string} con deliveryDetailCode {string} è visibile")
@@ -257,8 +263,8 @@ public class RicezioneNotificheWebSteps {
     @Then("la notifica non può essere correttamente recuperata da {string}")
     public void notificationCanNotBeCorrectlyReadby(String recipient) {
         sharedSteps.selectUser(recipient);
-        this.fullNotification = webRecipientClient.getReceivedNotification(sharedSteps.getNotificationIun(), null);
-        Assertions.assertNull(fullNotification);
+        fullReceivedNotification = webRecipientClient.getReceivedNotification(sharedSteps.getNotificationIun(), null);
+        Assertions.assertNull(fullReceivedNotification);
     }
 
     @Then("il documento notificato può essere correttamente recuperato da {string}")
@@ -269,12 +275,11 @@ public class RicezioneNotificheWebSteps {
             AtomicReference<String> sha256 = new AtomicReference<>("");
             Assertions.assertDoesNotThrow(() -> {
                 byte[] bytes = Assertions.assertDoesNotThrow(() ->
-                    B2bUtils.downloadFile(downloadResponse.getUrl()));
-            sha256.set(B2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
+                        B2bUtils.downloadFile(downloadResponse.getUrl()));
+                sha256.set(B2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
             });
             Assertions.assertEquals(sha256.get(), downloadResponse.getSha256());
-        }
-        else {
+        } else {
             Assertions.assertNotNull(downloadResponse.getFilename());
             Assertions.assertNotNull(downloadResponse.getContentLength());
             Assertions.assertNotNull(downloadResponse.getUrl());
@@ -307,8 +312,8 @@ public class RicezioneNotificheWebSteps {
         String iun = sharedSteps.getNotificationIun();
 
         try {
-            String scheduleDate = Objects.requireNonNull(webRecipientClient.getReceivedNotification(iun, null).getTimeline().stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(TimelineElementCategoryV26.SCHEDULE_REFINEMENT)).findAny().get().getDetails()).getSchedulingDate();
-            String refinementDate = webRecipientClient.getReceivedNotification(iun, null).getTimeline().stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(TimelineElementCategoryV26.REFINEMENT)).findAny().get().getTimestamp();
+            String scheduleDate = Objects.requireNonNull(webRecipientClient.getReceivedNotification(iun, null).getTimeline().stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(TimelineElementCategoryV27.SCHEDULE_REFINEMENT)).findAny().get().getDetails()).getSchedulingDate();
+            String refinementDate = webRecipientClient.getReceivedNotification(iun, null).getTimeline().stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(TimelineElementCategoryV27.REFINEMENT)).findAny().get().getTimestamp();
             log.info("scheduleDate : {}", scheduleDate);
             log.info("refinementDate : {}", refinementDate);
 
@@ -456,17 +461,6 @@ public class RicezioneNotificheWebSteps {
             } catch (HttpStatusCodeException e) {
                 this.notificationError = e;
             }
-        }
-    }
-
-
-    @And("{string} tenta il recupero della notifica")
-    public void notificationCanBeCorrectlyReadBy(String recipient) {
-        sharedSteps.selectUser(recipient);
-        try {
-            webRecipientClient.getReceivedNotification(sharedSteps.getNotificationIun(), null);
-        } catch (HttpStatusCodeException e) {
-            this.notificationError = e;
         }
     }
 

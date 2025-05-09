@@ -5,7 +5,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullReceivedNotificationV25;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullReceivedNotificationV26;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationAttachmentDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.model.LegalFactDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient.ApiClient;
@@ -17,7 +18,6 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffNotificationsResponse;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationAttachmentDownloadMetadataResponse;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationStatusV26;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.api.DocumentsWebApi;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.api.LegalFactsApi;
@@ -89,7 +89,7 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
         ApiClient newApiClient = new ApiClient(restTemplate);
         newApiClient.setBasePath(basePath);
         newApiClient.addDefaultHeader("user-agent", userAgent);
-        newApiClient.addDefaultHeader("Authorization","Bearer " + bearerToken);
+        newApiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
         return newApiClient;
     }
 
@@ -97,7 +97,7 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
         it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient.ApiClient newApiClient = new it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient.ApiClient(restTemplate);
         newApiClient.setBasePath(basePath);
         newApiClient.addDefaultHeader("user-agent", userAgent);
-        newApiClient.addDefaultHeader("Authorization","Bearer " + bearerToken);
+        newApiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
         return newApiClient;
     }
 
@@ -112,62 +112,62 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
     public boolean setBearerToken(BearerTokenType bearerToken) {
         boolean beenSet = false;
         switch (bearerToken) {
-            case USER_1:
+            case USER_1 -> {
                 this.notificationReceivedApiV1.setApiClient(newNotificationReceivedApiClient(restTemplate, basePath, marioCucumberBearerToken, userAgent));
                 this.notificationReceivedApiV2.setApiClient(newNotificationReceivedApiClient(restTemplate, basePath, marioCucumberBearerToken, userAgent));
                 this.legalFactsApi.setApiClient(newApiClientV25(restTemplate, basePath, marioCucumberBearerToken));
                 this.documentsWebApi.setApiClient(newApiClientV25(restTemplate, basePath, marioCucumberBearerToken));
                 this.bearerTokenSetted = BearerTokenType.USER_1;
                 beenSet = true;
-                break;
-            case USER_2:
+            }
+            case USER_2 -> {
                 this.notificationReceivedApiV1.setApiClient(newNotificationReceivedApiClient(restTemplate, basePath, marioGherkinBearerToken, userAgent));
                 this.notificationReceivedApiV2.setApiClient(newNotificationReceivedApiClient(restTemplate, basePath, marioGherkinBearerToken, userAgent));
                 this.legalFactsApi.setApiClient(newApiClientV25(restTemplate, basePath, marioGherkinBearerToken));
                 this.documentsWebApi.setApiClient(newApiClientV25(restTemplate, basePath, marioGherkinBearerToken));
                 this.bearerTokenSetted = BearerTokenType.USER_2;
                 beenSet = true;
-                break;
-            case USER_3:
+            }
+            case USER_3 -> {
                 this.notificationReceivedApiV1.setApiClient(newNotificationReceivedApiClient(restTemplate, basePath, leonardoBearerToken, userAgent));
                 this.notificationReceivedApiV2.setApiClient(newNotificationReceivedApiClient(restTemplate, basePath, leonardoBearerToken, userAgent));
                 this.legalFactsApi.setApiClient(newApiClientV25(restTemplate, basePath, leonardoBearerToken));
                 this.documentsWebApi.setApiClient(newApiClientV25(restTemplate, basePath, leonardoBearerToken));
                 this.bearerTokenSetted = BearerTokenType.USER_3;
                 beenSet = true;
-                break;
-            case USER_5:
+            }
+            case USER_5 -> {
                 this.notificationReceivedApiV1.setApiClient(newNotificationReceivedApiClient(restTemplate, basePath, dinoBearerToken, userAgent));
                 this.notificationReceivedApiV2.setApiClient(newNotificationReceivedApiClient(restTemplate, basePath, dinoBearerToken, userAgent));
                 this.legalFactsApi.setApiClient(newApiClientV25(restTemplate, basePath, dinoBearerToken));
                 this.documentsWebApi.setApiClient(newApiClientV25(restTemplate, basePath, dinoBearerToken));
                 this.bearerTokenSetted = BearerTokenType.USER_5;
                 beenSet = true;
-                break;
-            case PG_1:
+            }
+            case PG_1 -> {
                 this.notificationReceivedApiV1.setApiClient(newNotificationReceivedApiClient(restTemplate, basePath, gherkinSrlBearerToken, userAgent));
                 this.notificationReceivedApiV2.setApiClient(newNotificationReceivedApiClient(restTemplate, basePath, gherkinSrlBearerToken, userAgent));
                 this.legalFactsApi.setApiClient(newApiClientV25(restTemplate, basePath, gherkinSrlBearerToken));
                 this.documentsWebApi.setApiClient(newApiClientV25(restTemplate, basePath, gherkinSrlBearerToken));
                 this.bearerTokenSetted = BearerTokenType.PG_1;
                 beenSet = true;
-                break;
-            case PG_2:
+            }
+            case PG_2 -> {
                 this.notificationReceivedApiV1.setApiClient(newNotificationReceivedApiClient(restTemplate, basePath, cucumberSpaBearerToken, userAgent));
                 this.notificationReceivedApiV2.setApiClient(newNotificationReceivedApiClient(restTemplate, basePath, cucumberSpaBearerToken, userAgent));
                 this.legalFactsApi.setApiClient(newApiClientV25(restTemplate, basePath, cucumberSpaBearerToken));
                 this.documentsWebApi.setApiClient(newApiClientV25(restTemplate, basePath, cucumberSpaBearerToken));
                 this.bearerTokenSetted = BearerTokenType.PG_2;
                 beenSet = true;
-                break;
-            case USER_SCADUTO:
+            }
+            case USER_SCADUTO -> {
                 this.notificationReceivedApiV1.setApiClient(newNotificationReceivedApiClient(restTemplate, basePath, userBearerTokenScaduto, userAgent));
                 this.notificationReceivedApiV2.setApiClient(newNotificationReceivedApiClient(restTemplate, basePath, userBearerTokenScaduto, userAgent));
                 this.legalFactsApi.setApiClient(newApiClientV25(restTemplate, basePath, userBearerTokenScaduto));
                 this.documentsWebApi.setApiClient(newApiClientV25(restTemplate, basePath, userBearerTokenScaduto));
                 this.bearerTokenSetted = BearerTokenType.USER_SCADUTO;
                 beenSet = true;
-                break;
+            }
         }
         return beenSet;
     }

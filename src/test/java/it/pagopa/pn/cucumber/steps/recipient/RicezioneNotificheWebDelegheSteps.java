@@ -5,7 +5,10 @@ import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.*;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullReceivedNotificationV26;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationAttachmentDownloadMetadataResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.TimelineElementV27;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV27;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV27;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebMandateClient;
@@ -508,29 +511,28 @@ public class RicezioneNotificheWebDelegheSteps {
         webRecipientClient.setBearerToken(baseUser);
     }
 
-    @And("lato destinatario la notifica può essere correttamente recuperata da {string} e verifica presenza dell'evento di timeline NOTIFICATION_RADD_RETRIEVED")
-    public void notificationCanBeCorrectlyReadFromBytimeline(String recipient) {
+    @And("lato destinatario la notifica può essere correttamente recuperata da {string} e verifica presenza dell'evento di timeline {string}")
+    public void notificationCanBeCorrectlyReadFromBytimeline(String recipient, String timelineEventString) {
         sharedSteps.selectUser(recipient);
-
         try {
-            TimelineElementCategoryV26 timelineElementCategoryV23 = TimelineElementCategoryV26.NOTIFICATION_RADD_RETRIEVED;
-            TimelineElementV26 timelineElement = getTimelineElementV23WebRecipient(timelineElementCategoryV23);
-
+            TimelineElementCategoryV27 timelineElementCategory = TimelineElementCategoryV27.valueOf(timelineEventString);
+            TimelineElementV27 timelineElement = getTimelineElementWebRecipient(timelineElementCategory);
             Assertions.assertNotNull(timelineElement);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Valore non valido per TimelineElementCategoryV27: " + timelineEventString, e);
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
         }
-
         webRecipientClient.setBearerToken(baseUser);
     }
 
-    @And("lato desinatario {string} viene verificato che l'elemento di timeline NOTIFICATION_VIEWED non esista")
+    @And("lato destinatario {string} viene verificato che l'elemento di timeline NOTIFICATION_VIEWED non esista")
     public void notificationCanBeCorrectlyReadFromBytimelineNotExist(String recipient) {
         sharedSteps.selectUser(recipient);
 
         try {
-            TimelineElementCategoryV26 timelineElementCategoryV23 = TimelineElementCategoryV26.NOTIFICATION_VIEWED;
-            TimelineElementV26 timelineElement = getTimelineElementV23WebRecipient(timelineElementCategoryV23);
+            TimelineElementCategoryV27 timelineElementCategory = TimelineElementCategoryV27.NOTIFICATION_VIEWED;
+            TimelineElementV27 timelineElement = getTimelineElementWebRecipient(timelineElementCategory);
 
             Assertions.assertNull(timelineElement);
         } catch (AssertionFailedError assertionFailedError) {
@@ -539,14 +541,13 @@ public class RicezioneNotificheWebDelegheSteps {
         webRecipientClient.setBearerToken(baseUser);
     }
 
-    private TimelineElementV26 getTimelineElementV23WebRecipient(TimelineElementCategoryV26 timelineElementCategoryV23) {
-        FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
-        FullReceivedNotificationV26 result = webRecipientClient.getReceivedNotification(fullSentNotification.getIun(), null);
-        log.info("NOTIFICATION_TIMELINE: " + fullSentNotification.getTimeline());
+    private TimelineElementV27 getTimelineElementWebRecipient(TimelineElementCategoryV27 timelineElementCategory) {
+        FullReceivedNotificationV26 result = webRecipientClient.getReceivedNotification(sharedSteps.getNotificationIun(), null);
+        log.info("NOTIFICATION_TIMELINE: " + result.getTimeline());
         return result
                 .getTimeline()
                 .stream()
-                .filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(timelineElementCategory))
+                .filter(elem -> Objects.requireNonNull(elem.getCategory().getValue()).equals(timelineElementCategory.getValue()))
                 .findAny()
                 .orElse(null);
     }
@@ -620,7 +621,7 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @And("si verifica che l'elemento di timeline della lettura non riporti i dati del delegato")
     public void siVerificaCheLElementoDiTimelineDellaLetturaNonRiportiIDatiDi() {
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 timelineElement = getTimelineElement();
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV27 timelineElement = getTimelineElement();
 
         log.info("TIMELINE ELEMENT : {}", timelineElement);
         Assertions.assertNotNull(timelineElement);
@@ -628,7 +629,7 @@ public class RicezioneNotificheWebDelegheSteps {
         Assertions.assertNull(timelineElement.getDetails().getDelegateInfo());
     }
 
-    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 getTimelineElement() {
+    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV27 getTimelineElement() {
         try {
             await().atMost(sharedSteps.getWorkFlowWait() * 2, TimeUnit.MILLISECONDS);
         } catch (RuntimeException exception) {
@@ -638,8 +639,8 @@ public class RicezioneNotificheWebDelegheSteps {
         return fullSentNotification
                 .getTimeline()
                 .stream()
-                .filter(elem -> Objects.requireNonNull(elem.getCategory()).getValue()
-                        .equals(NOTIFICATION_VIEWED))
+                .filter(elem ->
+                        Objects.requireNonNull(elem.getCategory()).getValue().equals(NOTIFICATION_VIEWED))
                 .findAny()
                 .orElse(null);
     }
