@@ -439,9 +439,13 @@ public class B2bStepsV2 implements B2bStepsInterface {
      * @return a list of timeline elements that match the given event category and data from test
      */
     private List<TimelineElementV20> getTimelineElementsByEventId(String timelineEventCategory, DataTestV20 dataFromTest) {
-        FullSentNotificationV20 fullSentNotification = getFullSentNotificationVersioned();
-        List<TimelineElementV20> timelineElementList = fullSentNotification.getTimeline();
-
+        if (timelineElementList == null) {
+            timelineElementList = getFullSentNotificationVersioned().getTimeline();
+        }
+        assertSoftly(softly -> {
+            assertThat(timelineElementList).as("La timeline non dev'essere null").isNotNull();
+            assertThat(timelineElementList).as("La timeline deve contenere almeno un elemento").isNotEmpty();
+        });
         if (dataFromTest != null && dataFromTest.getTimelineElement() != null) {
             // get timeline event id
             String iun = sharedSteps.getNotificationIun();
