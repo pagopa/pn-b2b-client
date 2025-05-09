@@ -215,7 +215,7 @@ public class NotificationStepsV23 implements NotificationStepsInterface {
 
     @Override
     public Object uploadNotification(String errorType) throws IOException {
-        sharedSteps.setNotificationCreationDate(OffsetDateTime.now());
+        sharedSteps.setNotificationCreationDate(OffsetDateTime.now(java.time.ZoneOffset.UTC));
         notificationResponse = utils.uploadNotification(notificationRequest, errorType);
         String iun = new String(Base64Utils.decodeFromString(notificationResponse.getNotificationRequestId()));
         assertThat(iun).as("Lo IUN generato in fase di invio notifica non può essere null").isNotNull();

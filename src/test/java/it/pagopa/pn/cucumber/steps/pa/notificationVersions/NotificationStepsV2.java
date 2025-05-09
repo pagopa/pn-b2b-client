@@ -205,7 +205,7 @@ public class NotificationStepsV2 implements NotificationStepsInterface {
 
     @Override
     public Object uploadNotification(String errorType) throws IOException {
-        sharedSteps.setNotificationCreationDate(OffsetDateTime.now());
+        sharedSteps.setNotificationCreationDate(OffsetDateTime.now(java.time.ZoneOffset.UTC));
         log.info(NEW_NOTIFICATION_REQUEST, notificationRequest);
         notificationResponse = utils.uploadNotification(notificationRequest);
         log.info(NEW_NOTIFICATION_RESPONSE, notificationResponse);

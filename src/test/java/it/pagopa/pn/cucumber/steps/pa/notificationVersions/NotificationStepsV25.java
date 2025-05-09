@@ -213,7 +213,7 @@ public class NotificationStepsV25 implements NotificationStepsInterface {
     }
 
     public Object uploadNotification(String errorType) throws IOException {
-        sharedSteps.setNotificationCreationDate(OffsetDateTime.now());
+        sharedSteps.setNotificationCreationDate(OffsetDateTime.now(java.time.ZoneOffset.UTC));
         notificationResponse = utils.uploadNotification(notificationRequest, errorType);
         log.info(NEW_NOTIFICATION_RESPONSE, notificationResponse);
         String iun = new String(Base64Utils.decodeFromString(notificationResponse.getNotificationRequestId()));
