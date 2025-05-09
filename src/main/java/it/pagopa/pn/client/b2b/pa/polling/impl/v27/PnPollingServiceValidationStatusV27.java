@@ -23,7 +23,7 @@ import java.util.function.Predicate;
 @Slf4j
 public class PnPollingServiceValidationStatusV27 extends PnPollingTemplate<PnPollingResponseV27> {
     private final IPnPaB2bClient b2bClient;
-    private NewNotificationRequestStatusResponseV24 requestStatusResponseV24;
+    private NewNotificationRequestStatusResponseV24 requestStatusResponse;
     private FullSentNotificationV26 fullSentNotification;
     private final TimingForPolling timingForPolling;
 
@@ -37,12 +37,11 @@ public class PnPollingServiceValidationStatusV27 extends PnPollingTemplate<PnPol
     protected Callable<PnPollingResponseV27> getPollingResponse(String id, PnPollingParameter pnPollingParameter) {
         return () -> {
             PnPollingResponseV27 pnPollingResponse = new PnPollingResponseV27();
-            NewNotificationRequestStatusResponseV24 statusResponseV24 = b2bClient.getNotificationRequestStatusV24(id);
-            pnPollingResponse.setStatusResponse(statusResponseV24);
-            this.requestStatusResponseV24 = statusResponseV24;
+            NewNotificationRequestStatusResponseV24 statusResponse = b2bClient.getNotificationRequestStatusV24(id);
+            pnPollingResponse.setStatusResponse(statusResponse);
+            requestStatusResponse = statusResponse;
 
             if (pnPollingResponse.getStatusResponse().getIun() != null) {
-                FullSentNotificationV26 fullSentNotification;
                 try {
                     fullSentNotification = b2bClient.getSentNotificationV26(pnPollingResponse.getStatusResponse().getIun());
                 } catch (Exception exception) {
@@ -50,7 +49,6 @@ public class PnPollingServiceValidationStatusV27 extends PnPollingTemplate<PnPol
                     throw new PnPollingException(exception.getMessage());
                 }
                 pnPollingResponse.setNotification(fullSentNotification);
-                this.fullSentNotification = fullSentNotification;
             }
             return pnPollingResponse;
         };
@@ -82,8 +80,8 @@ public class PnPollingServiceValidationStatusV27 extends PnPollingTemplate<PnPol
     @Override
     protected PnPollingResponseV27 getException(Exception exception) {
         PnPollingResponseV27 pollingResponse = new PnPollingResponseV27();
-        pollingResponse.setStatusResponse(this.requestStatusResponseV24);
-        pollingResponse.setNotification(this.fullSentNotification);
+        pollingResponse.setStatusResponse(requestStatusResponse);
+        pollingResponse.setNotification(fullSentNotification);
         pollingResponse.setResult(false);
         return pollingResponse;
     }

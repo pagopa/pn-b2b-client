@@ -38,7 +38,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 import java.util.UUID;
 
-import static it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton.ENEBLED_INTEROP;
+import static it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton.INTEROP_ENABLED;
 
 
 @Component
@@ -84,7 +84,7 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
         this.apiKeyMvp2 = apiKeyMvp2;
         this.apiKeyGa = apiKeyGa;
         this.enableInterop = enableInterop;
-        if (ENEBLED_INTEROP.equalsIgnoreCase(enableInterop)) {
+        if (INTEROP_ENABLED.equalsIgnoreCase(enableInterop)) {
             this.bearerTokenInterop = interopTokenSingleton.getTokenInterop();
         }
         this.interopTokenSingleton = interopTokenSingleton;
@@ -106,7 +106,7 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
 
     //@Scheduled(cron = "* * * * * ?")
     public void refreshAndSetTokenInteropClient() {
-        if (ENEBLED_INTEROP.equalsIgnoreCase(enableInterop)) {
+        if (INTEROP_ENABLED.equalsIgnoreCase(enableInterop)) {
             String tokenInterop = interopTokenSingleton.getTokenInterop();
             if (!tokenInterop.equals(this.bearerTokenInterop)) {
                 log.info("webhookClient call interopTokenSingleton");
@@ -123,7 +123,7 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
         ApiClient newApiClient = new ApiClient(restTemplate);
         newApiClient.setBasePath(basePath);
         newApiClient.addDefaultHeader("x-api-key", apikey);
-        if (ENEBLED_INTEROP.equalsIgnoreCase(enableInterop)) {
+        if (INTEROP_ENABLED.equalsIgnoreCase(enableInterop)) {
             newApiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
         }
         return newApiClient;
@@ -134,7 +134,7 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.ApiClient newApiClient = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.ApiClient(restTemplate);
         newApiClient.setBasePath(basePath);
         newApiClient.addDefaultHeader("x-api-key", apikey);
-        if (ENEBLED_INTEROP.equalsIgnoreCase(enableInterop)) {
+        if (INTEROP_ENABLED.equalsIgnoreCase(enableInterop)) {
             newApiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
         }
         return newApiClient;

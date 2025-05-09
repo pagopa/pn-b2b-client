@@ -11,7 +11,7 @@ import java.util.List;
 @Setter
 public class PnPollingResponseV25 extends PnPollingResponse {
     private FullSentNotificationV25 notification;
-    private NewNotificationRequestStatusResponseV23 statusResponse;
+    private NewNotificationRequestStatusResponseV25 statusResponse;
     private TimelineElementV25 timelineElement;
     private NotificationStatusHistoryElement notificationStatusHistoryElement;
     private List<ProgressResponseElementV25> progressResponseElementList;

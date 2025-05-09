@@ -1,6 +1,5 @@
 package it.pagopa.pn.cucumber.steps.pa.notificationVersions;
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NewNotificationRequestStatusResponseV23;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.*;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV20;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
@@ -359,8 +358,8 @@ public class NotificationStepsV2 implements NotificationStepsInterface {
         String paProtocolNumber = withPaProtocolNumber ? notificationResponse.getPaProtocolNumber() : null;
         String idempotenceToken = withIdempotenceToken ? notificationResponse.getIdempotenceToken() : null;
 
-        NewNotificationRequestStatusResponseV23 newNotificationRequestStatusResponse = Assertions.assertDoesNotThrow(() ->
-                b2bClient.getNotificationRequestStatusAllParamV23(notificationRequestId, paProtocolNumber, idempotenceToken));
+        NewNotificationRequestStatusResponse newNotificationRequestStatusResponse = Assertions.assertDoesNotThrow(() ->
+                b2bClient.getNotificationRequestStatusAllParamV2(notificationRequestId, paProtocolNumber, idempotenceToken));
         assertThat(newNotificationRequestStatusResponse.getNotificationRequestStatus())
                 .as("Lo stato della richiesta di notifica non dovrebbe essere nullo")
                 .isNotNull();

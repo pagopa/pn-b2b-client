@@ -97,7 +97,7 @@ Feature: verifica compatibilità tra v1 a v2
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
-    And "Mario Cucumber" legge la notifica ricevuta "V2"
+    And "Mario Gherkin" legge la notifica ricevuta "V2"
     Then l'operazione ha prodotto un errore con status code "403"
 
 
@@ -110,7 +110,7 @@ Feature: verifica compatibilità tra v1 a v2
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
-    And "Mario Cucumber" legge la notifica ricevuta "V1"
+    And "Mario Gherkin" legge la notifica ricevuta "V1"
     Then l'operazione ha prodotto un errore con status code "403"
 
   @version

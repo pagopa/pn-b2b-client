@@ -75,12 +75,12 @@ public class B2bStepsV24 implements B2bStepsInterface {
     @Override
     public void verifyTestCompatibilityWithVersion(String eventCategoryOrStatus, boolean isEventCategory) {
         if (isEventCategory) {
-            List<String> categoriesForVersion = Arrays.stream(TimelineElementCategoryV26.values()).map(x -> x.getValue()).toList();
+            List<String> categoriesForVersion = Arrays.stream(TimelineElementCategoryV26.values()).map(TimelineElementCategoryV26::getValue).toList();
             assumeThat(categoriesForVersion)
                     .as("Test skipped: TimelineElementCategory " + eventCategoryOrStatus + " non esiste per la versione " + TimelineElementCategoryV26.class)
                     .contains(eventCategoryOrStatus);
         } else {
-            List<String> statusForVersion = Arrays.stream(NotificationStatusV26.values()).map(x -> x.getValue()).toList();
+            List<String> statusForVersion = Arrays.stream(NotificationStatusV26.values()).map(NotificationStatusV26::getValue).toList();
             assumeThat(statusForVersion)
                     .as("Test skipped: NotificationStatus " + eventCategoryOrStatus + " non esiste per la versione " + NotificationStatusV26.class)
                     .contains(eventCategoryOrStatus);
@@ -516,9 +516,13 @@ public class B2bStepsV24 implements B2bStepsInterface {
      * @return a list of timeline elements that match the given event category and data from test
      */
     private List<TimelineElementV26> getTimelineElementsByEventId(String timelineEventCategory, DataTestV24 dataFromTest) {
-        FullSentNotificationV26 fullSentNotification = getFullSentNotificationVersioned();
-        List<TimelineElementV26> timelineElementList = fullSentNotification.getTimeline();
-
+        if (timelineElementList == null) {
+            timelineElementList = getFullSentNotificationVersioned().getTimeline();
+        }
+        assertSoftly(softly -> {
+            assertThat(timelineElementList).as("La timeline non dev'essere null").isNotNull();
+            assertThat(timelineElementList).as("La timeline deve contenere almeno un elemento").isNotEmpty();
+        });
         if (dataFromTest != null && dataFromTest.getTimelineElement() != null) {
             // get timeline event id
             String iun = sharedSteps.getNotificationIun();

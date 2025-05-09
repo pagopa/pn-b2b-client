@@ -23,12 +23,12 @@ import java.util.function.Predicate;
 @Slf4j
 public class PnPollingServiceTimelineSlowE2eV28 extends PnPollingServiceTimelineRapidV28 {
 
-    private final IPnPaB2bClient pnPaB2bClient;
+    private final IPnPaB2bClient b2bClient;
     private FullSentNotificationV27 fullSentNotification;
 
-    public PnPollingServiceTimelineSlowE2eV28(TimingForPolling timingForPolling, IPnPaB2bClient pnPaB2bClient) {
-        super(timingForPolling, pnPaB2bClient);
-        this.pnPaB2bClient = pnPaB2bClient;
+    public PnPollingServiceTimelineSlowE2eV28(TimingForPolling timingForPolling, IPnPaB2bClient b2bClient) {
+        super(timingForPolling, b2bClient);
+        this.b2bClient = b2bClient;
 
     }
 
@@ -36,15 +36,13 @@ public class PnPollingServiceTimelineSlowE2eV28 extends PnPollingServiceTimeline
     public Callable<PnPollingResponseV28> getPollingResponse(String iun, PnPollingParameter pnPollingParameter) {
         return () -> {
             PnPollingResponseV28 pnPollingResponse = new PnPollingResponseV28();
-            FullSentNotificationV27 fullSentNotification;
             try {
-                fullSentNotification = pnPaB2bClient.getSentNotificationV27(iun);
+                fullSentNotification = b2bClient.getSentNotificationV27(iun);
             } catch (Exception exception) {
-                log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", iun, pnPaB2bClient.getApiKeySetted().name(), exception.getMessage());
+                log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", iun, b2bClient.getApiKeySetted().name(), exception.getMessage());
                 throw new PnPollingException(exception.getMessage());
             }
             pnPollingResponse.setNotification(fullSentNotification);
-            this.fullSentNotification = fullSentNotification;
             return pnPollingResponse;
         };
     }
@@ -68,7 +66,7 @@ public class PnPollingServiceTimelineSlowE2eV28 extends PnPollingServiceTimeline
     @Override
     protected PnPollingResponseV28 getException(Exception exception) {
         PnPollingResponseV28 pollingResponse = new PnPollingResponseV28();
-        pollingResponse.setNotification(this.fullSentNotification);
+        pollingResponse.setNotification(fullSentNotification);
         pollingResponse.setResult(false);
         return pollingResponse;
     }

@@ -23,8 +23,8 @@ import java.util.function.Predicate;
 @Slf4j
 public class PnPollingServiceValidationStatusV23 extends PnPollingTemplate<PnPollingResponseV23> {
     private final IPnPaB2bClient b2bClient;
-    private NewNotificationRequestStatusResponseV23 requestStatusResponseV23;
-    private FullSentNotificationV23 notificationV23;
+    private NewNotificationRequestStatusResponseV23 requestStatusResponse;
+    private FullSentNotificationV23 fullSentNotification;
     private final TimingForPolling timingForPolling;
 
     public PnPollingServiceValidationStatusV23(IPnPaB2bClient b2bClient, TimingForPolling timingForPolling) {
@@ -37,20 +37,18 @@ public class PnPollingServiceValidationStatusV23 extends PnPollingTemplate<PnPol
     protected Callable<PnPollingResponseV23> getPollingResponse(String id, PnPollingParameter pnPollingParameter) {
         return () -> {
             PnPollingResponseV23 pnPollingResponse = new PnPollingResponseV23();
-            NewNotificationRequestStatusResponseV23 statusResponseV23 = b2bClient.getNotificationRequestStatusV23(id);
-            pnPollingResponse.setStatusResponse(statusResponseV23);
-            this.requestStatusResponseV23 = statusResponseV23;
+            NewNotificationRequestStatusResponseV23 statusResponse = b2bClient.getNotificationRequestStatusV23(id);
+            pnPollingResponse.setStatusResponse(statusResponse);
+            requestStatusResponse = statusResponse;
 
             if (pnPollingResponse.getStatusResponse().getIun() != null) {
-                FullSentNotificationV23 fullSentNotificationV23;
                 try {
-                    fullSentNotificationV23 = b2bClient.getSentNotificationV23(pnPollingResponse.getStatusResponse().getIun());
+                    fullSentNotification = b2bClient.getSentNotificationV23(pnPollingResponse.getStatusResponse().getIun());
                 } catch (Exception exception) {
                     log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", pnPollingResponse.getStatusResponse().getIun(), b2bClient.getApiKeySetted().name(), exception.getMessage());
                     throw new PnPollingException(exception.getMessage());
                 }
-                pnPollingResponse.setNotification(fullSentNotificationV23);
-                this.notificationV23 = fullSentNotificationV23;
+                pnPollingResponse.setNotification(fullSentNotification);
             }
             return pnPollingResponse;
         };
@@ -82,8 +80,8 @@ public class PnPollingServiceValidationStatusV23 extends PnPollingTemplate<PnPol
     @Override
     protected PnPollingResponseV23 getException(Exception exception) {
         PnPollingResponseV23 pollingResponse = new PnPollingResponseV23();
-        pollingResponse.setStatusResponse(this.requestStatusResponseV23);
-        pollingResponse.setNotification(this.notificationV23);
+        pollingResponse.setStatusResponse(requestStatusResponse);
+        pollingResponse.setNotification(fullSentNotification);
         pollingResponse.setResult(false);
         return pollingResponse;
     }

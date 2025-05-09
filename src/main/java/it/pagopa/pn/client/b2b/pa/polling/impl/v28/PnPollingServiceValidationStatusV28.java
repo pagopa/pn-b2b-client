@@ -39,10 +39,9 @@ public class PnPollingServiceValidationStatusV28 extends PnPollingTemplate<PnPol
             PnPollingResponseV28 pnPollingResponse = new PnPollingResponseV28();
             NewNotificationRequestStatusResponseV25 statusResponse = b2bClient.getNotificationRequestStatusV25(id);
             pnPollingResponse.setStatusResponse(statusResponse);
-            this.requestStatusResponse = statusResponse;
+            requestStatusResponse = statusResponse;
 
             if (pnPollingResponse.getStatusResponse().getIun() != null) {
-                FullSentNotificationV27 fullSentNotification;
                 try {
                     fullSentNotification = b2bClient.getSentNotificationV27(pnPollingResponse.getStatusResponse().getIun());
                 } catch (Exception exception) {
@@ -50,7 +49,6 @@ public class PnPollingServiceValidationStatusV28 extends PnPollingTemplate<PnPol
                     throw new PnPollingException(exception.getMessage());
                 }
                 pnPollingResponse.setNotification(fullSentNotification);
-                this.fullSentNotification = fullSentNotification;
             }
             return pnPollingResponse;
         };
@@ -82,8 +80,8 @@ public class PnPollingServiceValidationStatusV28 extends PnPollingTemplate<PnPol
     @Override
     protected PnPollingResponseV28 getException(Exception exception) {
         PnPollingResponseV28 pollingResponse = new PnPollingResponseV28();
-        pollingResponse.setStatusResponse(this.requestStatusResponse);
-        pollingResponse.setNotification(this.fullSentNotification);
+        pollingResponse.setStatusResponse(requestStatusResponse);
+        pollingResponse.setNotification(fullSentNotification);
         pollingResponse.setResult(false);
         return pollingResponse;
     }

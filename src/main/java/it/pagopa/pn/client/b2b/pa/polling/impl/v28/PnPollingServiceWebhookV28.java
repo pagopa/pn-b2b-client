@@ -26,7 +26,7 @@ import java.util.function.Predicate;
 public class PnPollingServiceWebhookV28 extends PnPollingTemplate<PnPollingResponseV28> {
     private final IPnWebhookB2bClient webhookB2bClient;
     private final TimingForPolling timingForPolling;
-    private List<ProgressResponseElementV28> progressResponseElementListV28;
+    private List<ProgressResponseElementV28> progressResponseElementList;
     private String iun;
 
 
@@ -47,16 +47,16 @@ public class PnPollingServiceWebhookV28 extends PnPollingTemplate<PnPollingRespo
                 ++deepCount;
                 pnPollingParameter.setDeepCount(deepCount);
                 listResponseEntity = webhookB2bClient.consumeEventStreamHttpV28(pnPollingParameter.getStreamId(), pnPollingParameter.getLastEventId());
-                progressResponseElementListV28 = listResponseEntity.getBody();
+                progressResponseElementList = listResponseEntity.getBody();
                 pnPollingResponse.setProgressResponseElementList(listResponseEntity.getBody());
-                log.info("ELEMENTI NEL WEBHOOK: " + Objects.requireNonNull(progressResponseElementListV28));
+                log.info("ELEMENTI NEL WEBHOOK: " + Objects.requireNonNull(progressResponseElementList));
                 if (deepCount >= 250) {
-                    throw new PnPollingException("LOP: PROGRESS-ELEMENTS: " + progressResponseElementListV28
+                    throw new PnPollingException("LOP: PROGRESS-ELEMENTS: " + progressResponseElementList
                             + " WEBHOOK: " + pnPollingParameter.getStreamId() + " IUN: " + iun + " DEEP: " + deepCount);
                 }
             } catch (IllegalStateException illegalStateException) {
                 if (deepCount == 249 || deepCount == 248 || deepCount == 247) {
-                    throw new PnPollingException((illegalStateException.getMessage() + ("LOP: PROGRESS-ELEMENTS: " + progressResponseElementListV28
+                    throw new PnPollingException((illegalStateException.getMessage() + ("LOP: PROGRESS-ELEMENTS: " + progressResponseElementList
                             + " WEBHOOK: " + pnPollingParameter.getStreamId() + " IUN: " + iun + " DEEP: " + deepCount)));
                 } else {
                     throw illegalStateException;

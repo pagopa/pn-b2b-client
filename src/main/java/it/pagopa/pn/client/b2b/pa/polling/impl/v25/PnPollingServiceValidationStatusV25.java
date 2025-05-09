@@ -1,7 +1,7 @@
 package it.pagopa.pn.client.b2b.pa.polling.impl.v25;
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV25;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NewNotificationRequestStatusResponseV23;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NewNotificationRequestStatusResponseV25;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingTemplate;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
@@ -23,7 +23,7 @@ import java.util.function.Predicate;
 @Slf4j
 public class PnPollingServiceValidationStatusV25 extends PnPollingTemplate<PnPollingResponseV25> {
     private final IPnPaB2bClient b2bClient;
-    private NewNotificationRequestStatusResponseV23 requestStatusResponseV23;
+    private NewNotificationRequestStatusResponseV25 requestStatusResponse;
     private FullSentNotificationV25 fullSentNotification;
     private final TimingForPolling timingForPolling;
 
@@ -37,12 +37,11 @@ public class PnPollingServiceValidationStatusV25 extends PnPollingTemplate<PnPol
     protected Callable<PnPollingResponseV25> getPollingResponse(String id, PnPollingParameter pnPollingParameter) {
         return () -> {
             PnPollingResponseV25 pnPollingResponse = new PnPollingResponseV25();
-            NewNotificationRequestStatusResponseV23 statusResponseV23 = b2bClient.getNotificationRequestStatusV23(id);
-            pnPollingResponse.setStatusResponse(statusResponseV23);
-            this.requestStatusResponseV23 = statusResponseV23;
+            NewNotificationRequestStatusResponseV25 statusResponse = b2bClient.getNotificationRequestStatusV25(id);
+            pnPollingResponse.setStatusResponse(statusResponse);
+            requestStatusResponse = statusResponse;
 
             if (pnPollingResponse.getStatusResponse().getIun() != null) {
-                FullSentNotificationV25 fullSentNotification;
                 try {
                     fullSentNotification = b2bClient.getSentNotificationV25(pnPollingResponse.getStatusResponse().getIun());
                 } catch (Exception exception) {
@@ -50,7 +49,6 @@ public class PnPollingServiceValidationStatusV25 extends PnPollingTemplate<PnPol
                     throw new PnPollingException(exception.getMessage());
                 }
                 pnPollingResponse.setNotification(fullSentNotification);
-                this.fullSentNotification = fullSentNotification;
             }
             return pnPollingResponse;
         };
@@ -87,8 +85,8 @@ public class PnPollingServiceValidationStatusV25 extends PnPollingTemplate<PnPol
     @Override
     protected PnPollingResponseV25 getException(Exception exception) {
         PnPollingResponseV25 pollingResponse = new PnPollingResponseV25();
-        pollingResponse.setStatusResponse(this.requestStatusResponseV23);
-        pollingResponse.setNotification(this.fullSentNotification);
+        pollingResponse.setStatusResponse(requestStatusResponse);
+        pollingResponse.setNotification(fullSentNotification);
         pollingResponse.setResult(false);
         return pollingResponse;
     }

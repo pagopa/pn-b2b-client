@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PnPollingServiceValidationStatusAcceptedShortV28 extends PnPollingServiceValidationStatusV28 {
 
-
     public PnPollingServiceValidationStatusAcceptedShortV28(IPnPaB2bClient b2bClient, TimingForPolling timingForPolling) {
         super(b2bClient, timingForPolling);
     }

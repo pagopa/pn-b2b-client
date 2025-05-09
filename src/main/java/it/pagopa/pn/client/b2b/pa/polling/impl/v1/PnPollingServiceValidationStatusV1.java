@@ -23,8 +23,8 @@ import java.util.function.Predicate;
 @Slf4j
 public class PnPollingServiceValidationStatusV1 extends PnPollingTemplate<PnPollingResponseV1> {
     private final IPnPaB2bClient b2bClient;
-    private NewNotificationRequestStatusResponse requestStatusResponseV1;
-    private FullSentNotification notification;
+    private NewNotificationRequestStatusResponse requestStatusResponse;
+    private FullSentNotification notificationV1;
     private final TimingForPolling timingForPolling;
 
 
@@ -37,20 +37,18 @@ public class PnPollingServiceValidationStatusV1 extends PnPollingTemplate<PnPoll
     protected Callable<PnPollingResponseV1> getPollingResponse(String id, PnPollingParameter pnPollingParameter) {
         return () -> {
             PnPollingResponseV1 pnPollingResponse = new PnPollingResponseV1();
-            NewNotificationRequestStatusResponse statusResponseV1 = b2bClient.getNotificationRequestStatusV1(id);
-            pnPollingResponse.setStatusResponse(statusResponseV1);
-            this.requestStatusResponseV1 = statusResponseV1;
+            NewNotificationRequestStatusResponse statusResponse = b2bClient.getNotificationRequestStatusV1(id);
+            pnPollingResponse.setStatusResponse(statusResponse);
+            requestStatusResponse = statusResponse;
 
             if (pnPollingResponse.getStatusResponse().getIun() != null) {
-                FullSentNotification fullSentNotificationV1;
                 try {
-                    fullSentNotificationV1 = b2bClient.getSentNotificationV1(pnPollingResponse.getStatusResponse().getIun());
+                    notificationV1 = b2bClient.getSentNotificationV1(pnPollingResponse.getStatusResponse().getIun());
                 } catch (Exception exception) {
                     log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", pnPollingResponse.getStatusResponse().getIun(), b2bClient.getApiKeySetted().name(), exception.getMessage());
                     throw new PnPollingException(exception.getMessage());
                 }
-                pnPollingResponse.setNotification(fullSentNotificationV1);
-                this.notification = fullSentNotificationV1;
+                pnPollingResponse.setNotification(notificationV1);
             }
             return pnPollingResponse;
         };
@@ -82,8 +80,8 @@ public class PnPollingServiceValidationStatusV1 extends PnPollingTemplate<PnPoll
     @Override
     protected PnPollingResponseV1 getException(Exception exception) {
         PnPollingResponseV1 pollingResponse = new PnPollingResponseV1();
-        pollingResponse.setStatusResponse(this.requestStatusResponseV1);
-        pollingResponse.setNotification(this.notification);
+        pollingResponse.setStatusResponse(requestStatusResponse);
+        pollingResponse.setNotification(notificationV1);
         pollingResponse.setResult(false);
         return pollingResponse;
     }

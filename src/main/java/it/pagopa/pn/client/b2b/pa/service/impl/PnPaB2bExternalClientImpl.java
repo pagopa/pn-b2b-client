@@ -23,7 +23,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
-import static it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton.ENEBLED_INTEROP;
+import static it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton.INTEROP_ENABLED;
 
 @Slf4j
 @Component()
@@ -81,7 +81,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         this.apiKeySon = apiKeySon;
         this.apiKeyRoot = apiKeyRoot;
         this.enableInterop = enableInterop;
-        if (ENEBLED_INTEROP.equalsIgnoreCase(enableInterop)) {
+        if (INTEROP_ENABLED.equalsIgnoreCase(enableInterop)) {
             this.bearerTokenInterop = interopTokenSingleton.getTokenInterop();
         }
         this.newNotificationApi = new NewNotificationApi(newApiClient(restTemplate, basePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
@@ -107,7 +107,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
 
     //@Scheduled(cron = "* * * * * ?")
     private void refreshAndSetTokenInteropClient() {
-        if (ENEBLED_INTEROP.equalsIgnoreCase(enableInterop)) {
+        if (INTEROP_ENABLED.equalsIgnoreCase(enableInterop)) {
             String tokenInterop = interopTokenSingleton.getTokenInterop();
             if (!tokenInterop.equals(this.bearerTokenInterop)) {
                 log.info("b2bClient call interopTokenSingleton");
@@ -137,7 +137,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         ApiClient newApiClient = new ApiClient(restTemplate);
         newApiClient.setBasePath(basePath);
         newApiClient.addDefaultHeader("x-api-key", apikey);
-        if (ENEBLED_INTEROP.equalsIgnoreCase(enableInterop)) {
+        if (INTEROP_ENABLED.equalsIgnoreCase(enableInterop)) {
             newApiClient.addDefaultHeader(AUTHORIZATION, BEARER + bearerToken);
         }
         return newApiClient;
@@ -147,7 +147,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.ApiClient newApiClient = new it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.ApiClient(restTemplate);
         newApiClient.setBasePath(basePath);
         newApiClient.addDefaultHeader("x-api-key", apikey);
-        if (ENEBLED_INTEROP.equalsIgnoreCase(enableInterop)) {
+        if (INTEROP_ENABLED.equalsIgnoreCase(enableInterop)) {
             newApiClient.addDefaultHeader(AUTHORIZATION, BEARER + bearerToken);
         }
         return newApiClient;
@@ -377,12 +377,14 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
 
     @Override
     public NewNotificationRequestStatusResponseV24 getNotificationRequestStatusV24(String notificationRequestId) {
-        return getNotificationRequestStatusAllParamV24(notificationRequestId, null, null);
+        refreshAndSetTokenInteropClient();
+        return senderReadB2BApi.retrieveNotificationRequestStatusV24(notificationRequestId, null, null);
     }
 
     @Override
     public NewNotificationRequestStatusResponseV24 getNotificationRequestStatusAllParamV24(String notificationRequestId, String paProtocolNumber, String idempotenceToken) {
-        return getNotificationRequestStatusAllParamV24(notificationRequestId, paProtocolNumber, idempotenceToken);
+        refreshAndSetTokenInteropClient();
+        return senderReadB2BApi.retrieveNotificationRequestStatusV24(notificationRequestId, paProtocolNumber, idempotenceToken);
     }
 
     //V25
@@ -436,8 +438,10 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
 
     @Override
     public FullSentNotificationV25 getSentNotificationV25(String iun) {
-        refreshAndSetTokenInteropClient();
-        return deepCopy(senderReadB2BApiV25.retrieveSentNotificationV25(iun), FullSentNotificationV25.class);
+        return senderReadB2BApi.retrieveSentNotificationV25(iun);
+        //TODO INUTILE?
+//        refreshAndSetTokenInteropClient();
+//        return deepCopy(senderReadB2BApiV25.retrieveSentNotificationV25(iun), FullSentNotificationV25.class);
     }
 
     @Override

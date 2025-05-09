@@ -4,11 +4,9 @@ import io.cucumber.datatable.DataTable;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPriceResponse;
 import it.pagopa.pn.client.b2b.pa.polling.IPnPollingService;
-import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingPredicate;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV28;
-import it.pagopa.pn.client.b2b.pa.polling.impl.v28.PnPollingServiceTimelineRapidV28;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationHistoryResponse;
@@ -32,10 +30,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.IntStream;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
@@ -54,6 +49,7 @@ import static org.awaitility.Awaitility.await;
 @Slf4j
 public class B2bStepsV25 implements B2bStepsInterface {
 
+    private List<TimelineElementV27> timelineElementList;
     private TimelineElementV27 timelineElement;
     private NotificationStatusHistoryElementV26 notificationStatusHistoryElement;
     private PnPollingResponseV28 pollingResponse;
@@ -80,13 +76,15 @@ public class B2bStepsV25 implements B2bStepsInterface {
     @Override
     public void verifyTestCompatibilityWithVersion(String eventCategoryOrStatus, boolean isEventCategory) {
         if (isEventCategory) {
-            assumeThat(TimelineElementCategoryV27.valueOf(eventCategoryOrStatus))
+            List<String> categoriesForVersion = Arrays.stream(TimelineElementCategoryV26.values()).map(x -> x.getValue()).toList();
+            assumeThat(categoriesForVersion)
                     .as("Test skipped: TimelineElementCategory " + eventCategoryOrStatus + " non esiste per la versione " + TimelineElementCategoryV27.class)
-                    .isNotNull();
+                    .contains(eventCategoryOrStatus);
         } else {
-            assumeThat(NotificationStatusV26.valueOf(eventCategoryOrStatus))
+            List<String> statusForVersion = Arrays.stream(NotificationStatusV26.values()).map(x -> x.getValue()).toList();
+            assumeThat(statusForVersion)
                     .as("Test skipped: NotificationStatus " + eventCategoryOrStatus + " non esiste per la versione " + NotificationStatusV26.class)
-                    .isNotNull();
+                    .contains(eventCategoryOrStatus);
         }
     }
 
@@ -318,7 +316,10 @@ public class B2bStepsV25 implements B2bStepsInterface {
                         .pnPollingPredicate(pollingPredicate)
                         .build());
         switch (pollingType) {
-            case TIMELINE -> log.info("NOTIFICATION_TIMELINE: " + pollingResponse.getNotification().getTimeline());
+            case TIMELINE -> {
+                timelineElementList = pollingResponse.getNotification().getTimeline();
+                log.info("NOTIFICATION_TIMELINE: " + timelineElementList);
+            }
             case STATUS ->
                     log.info("NOTIFICATION_STATUS_HISTORY: " + pollingResponse.getNotification().getNotificationStatusHistory());
         }
@@ -412,21 +413,26 @@ public class B2bStepsV25 implements B2bStepsInterface {
     }
 
     private void loadTimeline(String timelineEventCategory, boolean existCheck, DataTestV25 dataTest) {
-        if (!timelineEventCategory.equals(REQUEST_REFUSED)) {
-            timelineElement = getAndStoreTimelineByB2b(timelineEventCategory, dataTest);
-            String iun = sharedSteps.getNotificationIun();
-            List<TimelineElementV27> timelineElementList = getFullSentNotificationVersioned().getTimeline();
-            log.info("NOTIFICATION_TIMELINE: " + timelineElementList);
-            Assertions.assertNotNull(timelineElementList, "timelineElementList is null. IUN: " + iun);
-            Assertions.assertNotEquals(0, timelineElementList.size(), "timelineElementList is empty. IUN: " + iun);
-            if (existCheck) {
-                Assertions.assertNotNull(timelineElement, "timelineElement is null. IUN: " + iun);
-            } else {
-                Assertions.assertNull(timelineElement, "timelineElement is not null. IUN: " + iun);
-            }
-        } else {
+        if (timelineEventCategory.equals(REQUEST_REFUSED)) {
             //GESTIONE LOAD TIMELINE E RECUPERO NOTIFICA CON CLIENT DI DELIVERY PUSH
             loadTimelineByDeliveryPush(timelineEventCategory, dataTest, existCheck);
+        } else {
+            //FLUSSO NORMALE, CON CARICAMENTO DELLA TIMELINE DA B2B
+            waitForEventOrStatus(TIMELINE_RAPID, TIMELINE, timelineEventCategory, WaitForEventPredicateFilters.builder().build());
+            timelineElementList = pollingResponse.getNotification().getTimeline();
+            assertThat(timelineElementList).as("La timeline caricata da B2B non dev'essere null").isNotNull();
+            assertThat(timelineElementList).as("La timeline caricata da B2B non dev'essere vuota").isNotEmpty();
+            timelineElement = getTimelineElementByIdOrCategory(timelineEventCategory, dataTest, timelineElementList);
+            String expectedTimelineElement = getExpectedTimelineElement(dataTest, timelineEventCategory);
+            if (existCheck) {
+                assertThat(timelineElement)
+                        .as("La timeline caricata da B2B dovrebbe contenere un timelineElement di questo tipo \n " + expectedTimelineElement)
+                        .isNotNull();
+            } else {
+                assertThat(timelineElement)
+                        .as("La timeline caricata da B2B NON dovrebbe contenere un timelineElement di questo tipo \n " + expectedTimelineElement)
+                        .isNull();
+            }
         }
     }
 
@@ -453,43 +459,49 @@ public class B2bStepsV25 implements B2bStepsInterface {
                 .pollDelay(0, MILLISECONDS)
                 .ignoreExceptions()
                 .untilAsserted(() -> {
-                    TimelineElementV27 timelineElement = getTimelineByDeliveryPush(timelineEventCategory, dataTest);
-                    List<TimelineElementV27> timelineElementList = getFullSentNotificationVersioned().getTimeline();
+                    timelineElementList = getTimelineByDeliveryPush();
                     log.info("NOTIFICATION_TIMELINE: " + timelineElementList);
-                    Assertions.assertNotNull(timelineElementList);
-                    Assertions.assertNotEquals(0, timelineElementList.size());
+                    assertThat(timelineElementList).as("La timeline caricata da DeliveryPush non dev'essere null").isNotNull();
+                    assertThat(timelineElementList).as("La timeline caricata da DeliveryPush non dev'essere vuota").isNotEmpty();
+                    timelineElement = getTimelineElementByIdOrCategory(timelineEventCategory, dataTest, timelineElementList);
+                    String expectedTimelineElement = getExpectedTimelineElement(dataTest, timelineEventCategory);
                     if (existCheck) {
-                        Assertions.assertNotNull(timelineElement);
+                        assertThat(timelineElement)
+                                .as("La timeline caricata da DeliveryPush dovrebbe contenere un timelineElement di questo tipo \n " + expectedTimelineElement)
+                                .isNotNull();
                     } else {
-                        Assertions.assertNull(timelineElement);
+                        assertThat(timelineElement)
+                                .as("La timeline caricata da DeliveryPush NON dovrebbe contenere un timelineElement di questo tipo \n " + expectedTimelineElement)
+                                .isNull();
                     }
                 });
     }
 
-    private TimelineElementV27 getTimelineByDeliveryPush(String timelineEventCategory, DataTestV25 dataTest) {
+    /**
+     * Usato solo a fini di logging per stampare il TimelineElement atteso
+     */
+    private String getExpectedTimelineElement(DataTestV25 dataTest, String timelineElementCategory) {
+        TimelineElementV27 example = dataTest.getTimelineElement() != null ?
+                dataTest.getTimelineElement() : new TimelineElementV27().category(TimelineElementCategoryV27.valueOf(timelineElementCategory));
+        return example.toString();
+    }
+
+    private List<TimelineElementV27> getTimelineByDeliveryPush() {
         String iun = sharedSteps.getNotificationIun();
+        int recipientsSize = sharedSteps.getRecipientsSize();
+        OffsetDateTime creationDate = sharedSteps.getNotificationCreationDate();
         // get timeline from delivery-push
         NotificationHistoryResponse notificationHistory = b2bSteps.getPnPrivateDeliveryPushExternalClient().getNotificationHistory(
                 iun,
-                sharedSteps.getRecipientsSize(),
-                sharedSteps.getNotificationCreationDate());
-        List<TimelineElementV27> timelineElementList = notificationHistory.getTimeline().stream().map(x ->
-                sharedSteps.deepCopy(x, TimelineElementV27.class)).toList();
-        return getTimelineElementByIdOrCategory(timelineEventCategory, dataTest, iun, timelineElementList);
+                recipientsSize,
+                creationDate);
+        return notificationHistory.getTimeline().stream().map(x -> sharedSteps.deepCopy(x, TimelineElementV27.class)).toList();
     }
 
-    private TimelineElementV27 getAndStoreTimelineByB2b(String timelineEventCategory, DataTestV25 dataFromTest) {
-        // proceed with default flux
-        PnPollingServiceTimelineRapidV28 timelineRapid = (PnPollingServiceTimelineRapidV28) b2bSteps.getPnPollingFactory().getPollingService(PnPollingStrategy.TIMELINE_RAPID_V28);
-        String iun = sharedSteps.getNotificationIun();
-        PnPollingResponseV28 pnPollingResponse = timelineRapid.waitForEvent(iun, PnPollingParameter.builder().value(timelineEventCategory).build());
-        return getTimelineElementByIdOrCategory(timelineEventCategory, dataFromTest, iun, pnPollingResponse.getNotification().getTimeline());
-    }
-
-    private TimelineElementV27 getTimelineElementByIdOrCategory(String timelineEventCategory, DataTestV25 dataFromTest, String iun, List<TimelineElementV27> timelineElementList) {
+    private TimelineElementV27 getTimelineElementByIdOrCategory(String timelineEventCategory, DataTestV25 dataFromTest, List<TimelineElementV27> timelineElementList) {
         // get timeline event id
         if (dataFromTest != null && dataFromTest.getTimelineElement() != null) {
-            String timelineEventId = dataFromTest.getTimelineEventId(timelineEventCategory, iun);
+            String timelineEventId = dataFromTest.getTimelineEventId(timelineEventCategory, sharedSteps.getNotificationIun());
             timelineElement = timelineElementList.stream().filter(elem -> elem.getElementId().startsWith(timelineEventId)).findAny().orElse(null);
         } else {
             timelineElement = timelineElementList.stream().filter(elem -> elem.getCategory().getValue().equals(timelineEventCategory)).findAny().orElse(null);
@@ -505,9 +517,13 @@ public class B2bStepsV25 implements B2bStepsInterface {
      * @return a list of timeline elements that match the given event category and data from test
      */
     private List<TimelineElementV27> getTimelineElementsByEventId(String timelineEventCategory, DataTestV25 dataFromTest) {
-        FullSentNotificationV27 fullSentNotification = getFullSentNotificationVersioned();
-        List<TimelineElementV27> timelineElementList = fullSentNotification.getTimeline();
-
+        if (timelineElementList == null) {
+            timelineElementList = getFullSentNotificationVersioned().getTimeline();
+        }
+        assertSoftly(softly -> {
+            assertThat(timelineElementList).as("La timeline non dev'essere null").isNotNull();
+            assertThat(timelineElementList).as("La timeline deve contenere almeno un elemento").isNotEmpty();
+        });
         if (dataFromTest != null && dataFromTest.getTimelineElement() != null) {
             // get timeline event id
             String iun = sharedSteps.getNotificationIun();

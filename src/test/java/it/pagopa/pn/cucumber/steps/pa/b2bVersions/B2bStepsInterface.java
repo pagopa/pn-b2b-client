@@ -59,7 +59,7 @@ public interface B2bStepsInterface {
      * @param exists        se true, il codice assume che l'elemento di timeline atteso sia stato trovato, e viceversa
      * @param furtherChecks se != null, il codice procede con ulteriori assert, tramite uno switch a seconda del TimelineElementCheck
      * @param filterParams  oggetto contenente tutti i campi necessari per effettuare i controlli aggiuntivi (può essere null, se il
-     *                      TimelineElementCheck passato come parametro non necessita di parametri specifici).
+     *                      TimelineElementCheck passato come parametro è null o non necessita di parametri specifici).
      */
     void checkIfTimelineElementExists(boolean exists, TimelineElementCheck furtherChecks, TimelineElementCheckFilters filterParams);
 
