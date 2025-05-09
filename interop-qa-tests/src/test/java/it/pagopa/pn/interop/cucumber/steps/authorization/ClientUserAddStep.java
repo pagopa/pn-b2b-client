@@ -51,8 +51,14 @@ public class ClientUserAddStep {
     public void editClientAdmin() {
         UUID userId = identityService.getUserId(sharedStepsContext.getTenantType(), "admin");
         var adminEditRequest = buildClientAdminEditBody(userId);
-        // QA-7236 TODO sharedStepsContext.getClientCommonContext().setAdminId(adminEditRequest.getAdminId());
+        UUID clientId = sharedStepsContext.getClientCommonContext().getFirstClient();
+        editClientAdmin(clientId, adminEditRequest);
+    }
 
+    @When("l'utente tenta la modifica dell'amministratore del client indicando l'admin numero {int} del suo ente")
+    public void editClientAdminWithOtherAdmin(int adminIndex) {
+        UUID userId = identityService.getUserId(sharedStepsContext.getTenantType(), "admin", --adminIndex);
+        var adminEditRequest = buildClientAdminEditBody(userId);
         UUID clientId = sharedStepsContext.getClientCommonContext().getFirstClient();
         editClientAdmin(clientId, adminEditRequest);
     }
@@ -74,8 +80,6 @@ public class ClientUserAddStep {
     public void editClientAdminWithUser(String tenantType, String role) {
         UUID userId = identityService.getUserId(tenantType, role);
         var adminEditRequest = buildClientAdminEditBody(userId);
-        // QA-7236 TODO sharedStepsContext.getClientCommonContext().setAdminId(adminEditRequest.getAdminId());
-
         UUID clientId = sharedStepsContext.getClientCommonContext().getFirstClient();
         editClientAdmin(clientId, adminEditRequest);
     }
@@ -86,6 +90,9 @@ public class ClientUserAddStep {
                 () -> authorizationClient.editClientAdmin(
                     clientId,
                     adminEditRequest));
+        if(httpCallExecutor.getClientResponse().is2xxSuccessful()){
+            // QA-7236 TODO sharedStepsContext.getClientCommonContext().setAdminId(adminEditRequest.getAdminId());
+        }
     }
 
     @Then("l'amministratore del client è stato modificato correttamente")

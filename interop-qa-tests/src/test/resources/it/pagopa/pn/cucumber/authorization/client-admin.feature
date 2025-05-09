@@ -56,12 +56,12 @@ Feature: Associazione di un admin ad un client
     When l'utente tenta la modifica dell'amministratore del client indicando se stesso
     Then si ottiene status code 409
 
-  # QA-7236 FIXME 07/05/2025: al momento non implementabile in quando si ha a disposizione un solo utente amministratore per ente
+  # NOTA 09/05/2025: si usa PA2 perché al momento è l'unico ente avente 2 utenti con ruolo admin
   @client_admin_update
   Scenario: [ADMIN_CLIENT_8] Un utente admin può sostituire un amministratore di un client API indicando un altro utente amministratore
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è il numero 1 ad avere ruolo "admin" di "PA2"
     And "PA1" ha già creato 1 client "API"
-    When l'utente tenta la modifica dell'amministratore del client indicando un altro utente amministratore del suo stesso ente
+    When l'utente tenta la modifica dell'amministratore del client indicando l'admin numero 2 del suo ente
     Then si ottiene status code 200
     And l'amministratore del client è stato modificato correttamente
 
