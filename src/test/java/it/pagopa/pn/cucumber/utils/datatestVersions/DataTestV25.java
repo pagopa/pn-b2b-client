@@ -42,6 +42,7 @@ public class DataTestV25 extends AbstractDataTest {
 
         try {
             DataTestV25 dataTest = new DataTestV25();
+            dataTest.setInputData(data);
             TimelineElementV27 timelineElement = new TimelineElementV27()
                     .legalFactsIds(getListValue(LegalFactsIdV20.class, data, LEGAL_FACT_IDS.key))
                     .details(getValue(data, DETAILS.key) == null ? null : new TimelineElementDetailsV27()

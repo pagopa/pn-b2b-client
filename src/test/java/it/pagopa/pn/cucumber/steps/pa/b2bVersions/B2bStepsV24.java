@@ -480,9 +480,15 @@ public class B2bStepsV24 implements B2bStepsInterface {
      * Usato solo a fini di logging per stampare il TimelineElement atteso
      */
     private String getExpectedTimelineElement(DataTestV24 dataTest, String timelineElementCategory) {
-        TimelineElementV26 example = dataTest.getTimelineElement() != null ?
-                dataTest.getTimelineElement() : new TimelineElementV26().category(TimelineElementCategoryV26.valueOf(timelineElementCategory));
-        return example.toString();
+        dataTest.getInputData().put("timelineElementCategory", timelineElementCategory);
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<String, String> entry : dataTest.getInputData().entrySet()) {
+            sb.append(entry.getKey())
+                    .append(": ")
+                    .append(entry.getValue())
+                    .append("\n");
+        }
+        return sb.toString();
     }
 
     private List<TimelineElementV26> getTimelineByDeliveryPush() {
