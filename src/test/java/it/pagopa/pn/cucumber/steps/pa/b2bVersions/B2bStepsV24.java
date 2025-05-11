@@ -9,7 +9,7 @@ import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingPredicate;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV26;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationHistoryResponse;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v24.NotificationHistoryResponse;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheB2bSteps;
 import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion;
@@ -75,12 +75,12 @@ public class B2bStepsV24 implements B2bStepsInterface {
     @Override
     public void verifyTestCompatibilityWithVersion(String eventCategoryOrStatus, boolean isEventCategory) {
         if (isEventCategory) {
-            List<String> categoriesForVersion = Arrays.stream(TimelineElementCategoryV26.values()).map(x -> x.getValue()).toList();
+            List<String> categoriesForVersion = Arrays.stream(TimelineElementCategoryV26.values()).map(TimelineElementCategoryV26::getValue).toList();
             assumeThat(categoriesForVersion)
                     .as("Test skipped: TimelineElementCategory " + eventCategoryOrStatus + " non esiste per la versione " + TimelineElementCategoryV26.class)
                     .contains(eventCategoryOrStatus);
         } else {
-            List<String> statusForVersion = Arrays.stream(NotificationStatusV26.values()).map(x -> x.getValue()).toList();
+            List<String> statusForVersion = Arrays.stream(NotificationStatusV26.values()).map(NotificationStatusV26::getValue).toList();
             assumeThat(statusForVersion)
                     .as("Test skipped: NotificationStatus " + eventCategoryOrStatus + " non esiste per la versione " + NotificationStatusV26.class)
                     .contains(eventCategoryOrStatus);
@@ -498,7 +498,7 @@ public class B2bStepsV24 implements B2bStepsInterface {
         int recipientsSize = sharedSteps.getRecipientsSize();
         OffsetDateTime creationDate = sharedSteps.getNotificationCreationDate();
         // get timeline from delivery-push
-        NotificationHistoryResponse notificationHistory = b2bSteps.getPnPrivateDeliveryPushExternalClient().getNotificationHistory(
+        NotificationHistoryResponse notificationHistory = b2bSteps.getPnPrivateDeliveryPushExternalClient().getNotificationHistoryV24(
                 iun,
                 recipientsSize,
                 creationDate);
