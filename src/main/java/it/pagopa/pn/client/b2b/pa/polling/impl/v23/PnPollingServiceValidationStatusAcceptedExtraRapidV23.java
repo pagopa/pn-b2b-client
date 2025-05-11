@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PnPollingServiceValidationStatusAcceptedExtraRapidV23 extends PnPollingServiceValidationStatusV23 {
 
-
     public PnPollingServiceValidationStatusAcceptedExtraRapidV23(IPnPaB2bClient b2bClient, TimingForPolling timingForPolling) {
         super(b2bClient, timingForPolling);
     }

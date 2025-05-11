@@ -23,29 +23,28 @@ import java.util.function.Predicate;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
 public class PnPollingServiceTimelineRapidV1 extends PnPollingTemplate<PnPollingResponseV1> {
+
     protected final TimingForPolling timingForPolling;
-    private final IPnPaB2bClient pnPaB2bClient;
-    private FullSentNotification notificationV1;
+    private final IPnPaB2bClient b2bClient;
+    private FullSentNotification fullSentNotification;
 
 
-    public PnPollingServiceTimelineRapidV1(TimingForPolling timingForPolling, IPnPaB2bClient pnPaB2bClient) {
+    public PnPollingServiceTimelineRapidV1(TimingForPolling timingForPolling, IPnPaB2bClient b2bClient) {
         this.timingForPolling = timingForPolling;
-        this.pnPaB2bClient = pnPaB2bClient;
+        this.b2bClient = b2bClient;
     }
 
     @Override
     protected Callable<PnPollingResponseV1> getPollingResponse(String iun, PnPollingParameter pnPollingParameter) {
         return () -> {
             PnPollingResponseV1 pnPollingResponse = new PnPollingResponseV1();
-            FullSentNotification fullSentNotificationV1;
             try {
-                fullSentNotificationV1 = pnPaB2bClient.getSentNotificationV1(iun);
+                fullSentNotification = b2bClient.getSentNotificationV1(iun);
             } catch (Exception exception) {
-                log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", iun, pnPaB2bClient.getApiKeySetted().name(), exception.getMessage());
+                log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", iun, b2bClient.getApiKeySetted().name(), exception.getMessage());
                 throw new PnPollingException(exception.getMessage());
             }
-            pnPollingResponse.setNotification(fullSentNotificationV1);
-            this.notificationV1 = fullSentNotificationV1;
+            pnPollingResponse.setNotification(fullSentNotification);
             return pnPollingResponse;
         };
     }
@@ -57,13 +56,11 @@ public class PnPollingServiceTimelineRapidV1 extends PnPollingTemplate<PnPolling
                 pnPollingResponse.setResult(false);
                 return false;
             }
-
             if (pnPollingResponse.getNotification().getTimeline().isEmpty() ||
                     !isPresentCategory(pnPollingResponse, pnPollingParameter)) {
                 pnPollingResponse.setResult(false);
                 return false;
             }
-
             return true;
         };
     }
@@ -71,7 +68,7 @@ public class PnPollingServiceTimelineRapidV1 extends PnPollingTemplate<PnPolling
     @Override
     protected PnPollingResponseV1 getException(Exception exception) {
         PnPollingResponseV1 pollingResponse = new PnPollingResponseV1();
-        pollingResponse.setNotification(this.notificationV1);
+        pollingResponse.setNotification(fullSentNotification);
         pollingResponse.setResult(false);
         return pollingResponse;
     }
@@ -90,37 +87,33 @@ public class PnPollingServiceTimelineRapidV1 extends PnPollingTemplate<PnPolling
 
     @Override
     public boolean setApiKeys(ApiKeyType apiKey) {
-        return this.pnPaB2bClient.setApiKeys(apiKey);
+        return this.b2bClient.setApiKeys(apiKey);
     }
 
     @Override
     public void setApiKey(String apiKeyString) {
-        this.pnPaB2bClient.setApiKey(apiKeyString);
+        this.b2bClient.setApiKey(apiKeyString);
     }
 
     @Override
     public ApiKeyType getApiKeySetted() {
-        return this.pnPaB2bClient.getApiKeySetted();
+        return this.b2bClient.getApiKeySetted();
     }
 
 
     private boolean isPresentCategory(PnPollingResponseV1 pnPollingResponse, PnPollingParameter pnPollingParameter) {
-        TimelineElement timelineElementV1 = pnPollingResponse
+        TimelineElement timelineElement = pnPollingResponse
                 .getNotification()
                 .getTimeline()
                 .stream()
-                .filter(pnPollingParameter.getPnPollingPredicate() == null
-                        ?
-                        timelineElement ->
-                                timelineElement.getCategory() != null
-                                        && Objects.requireNonNull(timelineElement.getCategory().getValue()).equals(pnPollingParameter.getValue())
-                        :
-                        pnPollingParameter.getPnPollingPredicate().getTimelineElementPredicateV1())
+                .filter(pnPollingParameter.getPnPollingPredicate() == null ? te ->
+                        te.getCategory() != null && Objects.requireNonNull(te.getCategory().getValue()).equals(pnPollingParameter.getValue())
+                        : pnPollingParameter.getPnPollingPredicate().getTimelineElementPredicateV1())
                 .findAny()
                 .orElse(null);
 
-        if (timelineElementV1 != null) {
-            pnPollingResponse.setTimelineElement(timelineElementV1);
+        if (timelineElement != null) {
+            pnPollingResponse.setTimelineElement(timelineElement);
             pnPollingResponse.setResult(true);
             return true;
         }

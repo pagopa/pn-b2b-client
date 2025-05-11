@@ -25,28 +25,26 @@ import java.util.function.Predicate;
 public class PnPollingServiceTimelineRapidV21 extends PnPollingTemplate<PnPollingResponseV21> {
 
     protected final TimingForPolling timingForPolling;
-    private final IPnPaB2bClient pnPaB2bClient;
-    private FullSentNotificationV21 notificationV21;
+    private final IPnPaB2bClient b2bClient;
+    private FullSentNotificationV21 fullSentNotification;
 
 
-    public PnPollingServiceTimelineRapidV21(TimingForPolling timingForPolling, IPnPaB2bClient pnPaB2bClient) {
+    public PnPollingServiceTimelineRapidV21(TimingForPolling timingForPolling, IPnPaB2bClient b2bClient) {
         this.timingForPolling = timingForPolling;
-        this.pnPaB2bClient = pnPaB2bClient;
+        this.b2bClient = b2bClient;
     }
 
     @Override
     protected Callable<PnPollingResponseV21> getPollingResponse(String iun, PnPollingParameter pnPollingParameter) {
         return () -> {
             PnPollingResponseV21 pnPollingResponse = new PnPollingResponseV21();
-            FullSentNotificationV21 fullSentNotificationV21;
             try {
-                fullSentNotificationV21 = pnPaB2bClient.getSentNotificationV21(iun);
+                fullSentNotification = b2bClient.getSentNotificationV21(iun);
             } catch (Exception exception) {
-                log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", iun, pnPaB2bClient.getApiKeySetted().name(), exception.getMessage());
+                log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", iun, b2bClient.getApiKeySetted().name(), exception.getMessage());
                 throw new PnPollingException(exception.getMessage());
             }
-            pnPollingResponse.setNotification(fullSentNotificationV21);
-            this.notificationV21 = fullSentNotificationV21;
+            pnPollingResponse.setNotification(fullSentNotification);
             return pnPollingResponse;
         };
     }
@@ -58,13 +56,11 @@ public class PnPollingServiceTimelineRapidV21 extends PnPollingTemplate<PnPollin
                 pnPollingResponse.setResult(false);
                 return false;
             }
-
             if (pnPollingResponse.getNotification().getTimeline().isEmpty() ||
                     !isPresentCategory(pnPollingResponse, pnPollingParameter)) {
                 pnPollingResponse.setResult(false);
                 return false;
             }
-
             return true;
         };
     }
@@ -72,7 +68,7 @@ public class PnPollingServiceTimelineRapidV21 extends PnPollingTemplate<PnPollin
     @Override
     protected PnPollingResponseV21 getException(Exception exception) {
         PnPollingResponseV21 pollingResponse = new PnPollingResponseV21();
-        pollingResponse.setNotification(this.notificationV21);
+        pollingResponse.setNotification(fullSentNotification);
         pollingResponse.setResult(false);
         return pollingResponse;
     }
@@ -91,36 +87,32 @@ public class PnPollingServiceTimelineRapidV21 extends PnPollingTemplate<PnPollin
 
     @Override
     public boolean setApiKeys(ApiKeyType apiKey) {
-        return this.pnPaB2bClient.setApiKeys(apiKey);
+        return b2bClient.setApiKeys(apiKey);
     }
 
     @Override
     public void setApiKey(String apiKeyString) {
-        this.pnPaB2bClient.setApiKey(apiKeyString);
+        b2bClient.setApiKey(apiKeyString);
     }
 
     @Override
     public ApiKeyType getApiKeySetted() {
-        return this.pnPaB2bClient.getApiKeySetted();
+        return b2bClient.getApiKeySetted();
     }
 
     private boolean isPresentCategory(PnPollingResponseV21 pnPollingResponse, PnPollingParameter pnPollingParameter) {
-        TimelineElementV20 timelineElementV20 = pnPollingResponse
+        TimelineElementV20 timelineElement = pnPollingResponse
                 .getNotification()
                 .getTimeline()
                 .stream()
-                .filter(pnPollingParameter.getPnPollingPredicate() == null
-                        ?
-                        timelineElement ->
-                                timelineElement.getCategory() != null
-                                        && Objects.requireNonNull(timelineElement.getCategory().getValue()).equals(pnPollingParameter.getValue())
-                        :
-                        pnPollingParameter.getPnPollingPredicate().getTimelineElementPredicateV21())
+                .filter(pnPollingParameter.getPnPollingPredicate() == null ? te ->
+                        te.getCategory() != null && Objects.requireNonNull(te.getCategory().getValue()).equals(pnPollingParameter.getValue())
+                        : pnPollingParameter.getPnPollingPredicate().getTimelineElementPredicateV21())
                 .findAny()
                 .orElse(null);
 
-        if (timelineElementV20 != null) {
-            pnPollingResponse.setTimelineElement(timelineElementV20);
+        if (timelineElement != null) {
+            pnPollingResponse.setTimelineElement(timelineElement);
             pnPollingResponse.setResult(true);
             return true;
         }

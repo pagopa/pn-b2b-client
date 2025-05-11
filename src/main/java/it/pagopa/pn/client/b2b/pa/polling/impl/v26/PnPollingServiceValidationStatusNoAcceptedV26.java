@@ -10,8 +10,6 @@ import org.springframework.stereotype.Service;
 @Service(PnPollingStrategy.VALIDATION_STATUS_NO_ACCEPTATION_V26)
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PnPollingServiceValidationStatusNoAcceptedV26 extends PnPollingServiceValidationStatusV26 {
-
-
     public PnPollingServiceValidationStatusNoAcceptedV26(IPnPaB2bClient b2bClient, TimingForPolling timingForPolling) {
         super(b2bClient, timingForPolling);
     }

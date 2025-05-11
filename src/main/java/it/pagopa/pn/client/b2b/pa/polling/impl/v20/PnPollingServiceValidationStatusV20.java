@@ -23,10 +23,9 @@ import java.util.function.Predicate;
 @Slf4j
 public class PnPollingServiceValidationStatusV20 extends PnPollingTemplate<PnPollingResponseV20> {
     private final IPnPaB2bClient b2bClient;
-    private NewNotificationRequestStatusResponse requestStatusResponseV20;
-    private FullSentNotificationV20 notificationV20;
+    private NewNotificationRequestStatusResponse requestStatusResponse;
+    private FullSentNotificationV20 fullSentNotification;
     private final TimingForPolling timingForPolling;
-
 
     public PnPollingServiceValidationStatusV20(IPnPaB2bClient b2bClient, TimingForPolling timingForPolling) {
         this.b2bClient = b2bClient;
@@ -37,20 +36,17 @@ public class PnPollingServiceValidationStatusV20 extends PnPollingTemplate<PnPol
     protected Callable<PnPollingResponseV20> getPollingResponse(String id, PnPollingParameter pnPollingParameter) {
         return () -> {
             PnPollingResponseV20 pnPollingResponse = new PnPollingResponseV20();
-            NewNotificationRequestStatusResponse statusResponseV20 = b2bClient.getNotificationRequestStatusV2(id);
-            pnPollingResponse.setStatusResponse(statusResponseV20);
-            this.requestStatusResponseV20 = statusResponseV20;
+            requestStatusResponse = b2bClient.getNotificationRequestStatusV2(id);
+            pnPollingResponse.setStatusResponse(requestStatusResponse);
 
             if (pnPollingResponse.getStatusResponse().getIun() != null) {
-                FullSentNotificationV20 fullSentNotificationV20;
                 try {
-                    fullSentNotificationV20 = b2bClient.getSentNotificationV2(pnPollingResponse.getStatusResponse().getIun());
+                    fullSentNotification = b2bClient.getSentNotificationV2(pnPollingResponse.getStatusResponse().getIun());
                 } catch (Exception exception) {
                     log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", pnPollingResponse.getStatusResponse().getIun(), b2bClient.getApiKeySetted().name(), exception.getMessage());
                     throw new PnPollingException(exception.getMessage());
                 }
-                pnPollingResponse.setNotification(fullSentNotificationV20);
-                this.notificationV20 = fullSentNotificationV20;
+                pnPollingResponse.setNotification(fullSentNotification);
             }
             return pnPollingResponse;
         };
@@ -63,17 +59,14 @@ public class PnPollingServiceValidationStatusV20 extends PnPollingTemplate<PnPol
                 pnPollingResponse.setResult(false);
                 return false;
             }
-
             if (!pnPollingResponse.getStatusResponse().getNotificationRequestStatus().equalsIgnoreCase(pnPollingParameter.getValue().trim())) {
                 pnPollingResponse.setResult(false);
                 return false;
             }
-
             if (pnPollingResponse.getNotification() == null) {
                 pnPollingResponse.setResult(false);
                 return false;
             }
-
             pnPollingResponse.setResult(true);
             return true;
         };
@@ -82,8 +75,8 @@ public class PnPollingServiceValidationStatusV20 extends PnPollingTemplate<PnPol
     @Override
     protected PnPollingResponseV20 getException(Exception exception) {
         PnPollingResponseV20 pollingResponse = new PnPollingResponseV20();
-        pollingResponse.setStatusResponse(this.requestStatusResponseV20);
-        pollingResponse.setNotification(this.notificationV20);
+        pollingResponse.setStatusResponse(requestStatusResponse);
+        pollingResponse.setNotification(fullSentNotification);
         pollingResponse.setResult(false);
         return pollingResponse;
     }
@@ -104,16 +97,16 @@ public class PnPollingServiceValidationStatusV20 extends PnPollingTemplate<PnPol
 
     @Override
     public boolean setApiKeys(ApiKeyType apiKey) {
-        return this.b2bClient.setApiKeys(apiKey);
+        return b2bClient.setApiKeys(apiKey);
     }
 
     @Override
     public void setApiKey(String apiKeyString) {
-        this.b2bClient.setApiKey(apiKeyString);
+        b2bClient.setApiKey(apiKeyString);
     }
 
     @Override
     public ApiKeyType getApiKeySetted() {
-        return this.b2bClient.getApiKeySetted();
+        return b2bClient.getApiKeySetted();
     }
 }

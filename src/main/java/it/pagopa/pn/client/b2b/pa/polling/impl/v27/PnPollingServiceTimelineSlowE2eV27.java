@@ -23,28 +23,25 @@ import java.util.function.Predicate;
 @Slf4j
 public class PnPollingServiceTimelineSlowE2eV27 extends PnPollingServiceTimelineRapidV27 {
 
-    private final IPnPaB2bClient pnPaB2bClient;
+    private final IPnPaB2bClient b2bClient;
     private FullSentNotificationV26 fullSentNotification;
 
-    public PnPollingServiceTimelineSlowE2eV27(TimingForPolling timingForPolling, IPnPaB2bClient pnPaB2bClient) {
-        super(timingForPolling, pnPaB2bClient);
-        this.pnPaB2bClient = pnPaB2bClient;
-
+    public PnPollingServiceTimelineSlowE2eV27(TimingForPolling timingForPolling, IPnPaB2bClient b2bClient) {
+        super(timingForPolling, b2bClient);
+        this.b2bClient = b2bClient;
     }
 
     @Override
     public Callable<PnPollingResponseV27> getPollingResponse(String iun, PnPollingParameter pnPollingParameter) {
         return () -> {
             PnPollingResponseV27 pnPollingResponse = new PnPollingResponseV27();
-            FullSentNotificationV26 fullSentNotification;
             try {
-                fullSentNotification = pnPaB2bClient.getSentNotificationV26(iun);
+                fullSentNotification = b2bClient.getSentNotificationV26(iun);
             } catch (Exception exception) {
-                log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", iun, pnPaB2bClient.getApiKeySetted().name(), exception.getMessage());
+                log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", iun, b2bClient.getApiKeySetted().name(), exception.getMessage());
                 throw new PnPollingException(exception.getMessage());
             }
             pnPollingResponse.setNotification(fullSentNotification);
-            this.fullSentNotification = fullSentNotification;
             return pnPollingResponse;
         };
     }
@@ -68,11 +65,10 @@ public class PnPollingServiceTimelineSlowE2eV27 extends PnPollingServiceTimeline
     @Override
     protected PnPollingResponseV27 getException(Exception exception) {
         PnPollingResponseV27 pollingResponse = new PnPollingResponseV27();
-        pollingResponse.setNotification(this.fullSentNotification);
+        pollingResponse.setNotification(fullSentNotification);
         pollingResponse.setResult(false);
         return pollingResponse;
     }
-
 
     @Override
     protected Integer getPollInterval(String value) {

@@ -23,26 +23,23 @@ import java.util.function.Predicate;
 @Slf4j
 public class PnPollingServiceValidationStatusV27 extends PnPollingTemplate<PnPollingResponseV27> {
     private final IPnPaB2bClient b2bClient;
-    private NewNotificationRequestStatusResponseV24 requestStatusResponseV24;
+    private NewNotificationRequestStatusResponseV24 requestStatusResponse;
     private FullSentNotificationV26 fullSentNotification;
     private final TimingForPolling timingForPolling;
 
     public PnPollingServiceValidationStatusV27(IPnPaB2bClient b2bClient, TimingForPolling timingForPolling) {
         this.b2bClient = b2bClient;
         this.timingForPolling = timingForPolling;
-
     }
 
     @Override
     protected Callable<PnPollingResponseV27> getPollingResponse(String id, PnPollingParameter pnPollingParameter) {
         return () -> {
             PnPollingResponseV27 pnPollingResponse = new PnPollingResponseV27();
-            NewNotificationRequestStatusResponseV24 statusResponseV24 = b2bClient.getNotificationRequestStatusV24(id);
-            pnPollingResponse.setStatusResponse(statusResponseV24);
-            this.requestStatusResponseV24 = statusResponseV24;
+            requestStatusResponse = b2bClient.getNotificationRequestStatusV24(id);
+            pnPollingResponse.setStatusResponse(requestStatusResponse);
 
             if (pnPollingResponse.getStatusResponse().getIun() != null) {
-                FullSentNotificationV26 fullSentNotification;
                 try {
                     fullSentNotification = b2bClient.getSentNotificationV26(pnPollingResponse.getStatusResponse().getIun());
                 } catch (Exception exception) {
@@ -50,7 +47,6 @@ public class PnPollingServiceValidationStatusV27 extends PnPollingTemplate<PnPol
                     throw new PnPollingException(exception.getMessage());
                 }
                 pnPollingResponse.setNotification(fullSentNotification);
-                this.fullSentNotification = fullSentNotification;
             }
             return pnPollingResponse;
         };
@@ -63,17 +59,14 @@ public class PnPollingServiceValidationStatusV27 extends PnPollingTemplate<PnPol
                 pnPollingResponse.setResult(false);
                 return false;
             }
-
             if (!pnPollingResponse.getStatusResponse().getNotificationRequestStatus().equalsIgnoreCase(pnPollingParameter.getValue().trim())) {
                 pnPollingResponse.setResult(false);
                 return false;
             }
-
             if (pnPollingResponse.getNotification() == null) {
                 pnPollingResponse.setResult(false);
                 return false;
             }
-
             pnPollingResponse.setResult(true);
             return true;
         };
@@ -82,8 +75,8 @@ public class PnPollingServiceValidationStatusV27 extends PnPollingTemplate<PnPol
     @Override
     protected PnPollingResponseV27 getException(Exception exception) {
         PnPollingResponseV27 pollingResponse = new PnPollingResponseV27();
-        pollingResponse.setStatusResponse(this.requestStatusResponseV24);
-        pollingResponse.setNotification(this.fullSentNotification);
+        pollingResponse.setStatusResponse(requestStatusResponse);
+        pollingResponse.setNotification(fullSentNotification);
         pollingResponse.setResult(false);
         return pollingResponse;
     }
@@ -104,21 +97,21 @@ public class PnPollingServiceValidationStatusV27 extends PnPollingTemplate<PnPol
 
     @Override
     public boolean setApiKeys(ApiKeyType apiKey) {
-        return this.b2bClient.setApiKeys(apiKey);
+        return b2bClient.setApiKeys(apiKey);
     }
 
     @Override
     public void setApiKey(String apiKeyString) {
-        this.b2bClient.setApiKey(apiKeyString);
+        b2bClient.setApiKey(apiKeyString);
     }
 
     @Override
     public ApiKeyType getApiKeySetted() {
-        return this.b2bClient.getApiKeySetted();
+        return b2bClient.getApiKeySetted();
     }
 
     protected TimingForPolling getTimingForTimeline() {
-        return this.timingForPolling;
+        return timingForPolling;
     }
 
 }

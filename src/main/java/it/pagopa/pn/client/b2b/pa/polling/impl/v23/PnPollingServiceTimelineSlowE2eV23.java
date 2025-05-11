@@ -23,28 +23,25 @@ import java.util.function.Predicate;
 @Slf4j
 public class PnPollingServiceTimelineSlowE2eV23 extends PnPollingServiceTimelineRapidV23 {
 
-    private final IPnPaB2bClient pnPaB2bClient;
-    private FullSentNotificationV23 notificationV23;
+    private final IPnPaB2bClient b2bClient;
+    private FullSentNotificationV23 fullSentNotification;
 
-    public PnPollingServiceTimelineSlowE2eV23(TimingForPolling timingForPolling, IPnPaB2bClient pnPaB2bClient) {
-        super(timingForPolling, pnPaB2bClient);
-        this.pnPaB2bClient = pnPaB2bClient;
-
+    public PnPollingServiceTimelineSlowE2eV23(TimingForPolling timingForPolling, IPnPaB2bClient b2bClient) {
+        super(timingForPolling, b2bClient);
+        this.b2bClient = b2bClient;
     }
 
     @Override
     public Callable<PnPollingResponseV23> getPollingResponse(String iun, PnPollingParameter pnPollingParameter) {
         return () -> {
             PnPollingResponseV23 pnPollingResponse = new PnPollingResponseV23();
-            FullSentNotificationV23 fullSentNotificationV23;
             try {
-                fullSentNotificationV23 = pnPaB2bClient.getSentNotificationV23(iun);
+                fullSentNotification = b2bClient.getSentNotificationV23(iun);
             } catch (Exception exception) {
-                log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", iun, pnPaB2bClient.getApiKeySetted().name(), exception.getMessage());
+                log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", iun, b2bClient.getApiKeySetted().name(), exception.getMessage());
                 throw new PnPollingException(exception.getMessage());
             }
-            pnPollingResponse.setNotification(fullSentNotificationV23);
-            this.notificationV23 = fullSentNotificationV23;
+            pnPollingResponse.setNotification(fullSentNotification);
             return pnPollingResponse;
         };
     }
@@ -72,7 +69,7 @@ public class PnPollingServiceTimelineSlowE2eV23 extends PnPollingServiceTimeline
     @Override
     protected PnPollingResponseV23 getException(Exception exception) {
         PnPollingResponseV23 pollingResponse = new PnPollingResponseV23();
-        pollingResponse.setNotification(this.notificationV23);
+        pollingResponse.setNotification(fullSentNotification);
         pollingResponse.setResult(false);
         return pollingResponse;
     }
@@ -91,22 +88,18 @@ public class PnPollingServiceTimelineSlowE2eV23 extends PnPollingServiceTimeline
     }
 
     private boolean isPresentCategory(PnPollingResponseV23 pnPollingResponse, PnPollingParameter pnPollingParameter) {
-        TimelineElementV23 timelineElementV23 = pnPollingResponse
+        TimelineElementV23 timelineElement = pnPollingResponse
                 .getNotification()
                 .getTimeline()
                 .stream()
-                .filter(pnPollingParameter.getPnPollingPredicate() == null
-                        ?
-                        timelineElement ->
-                                timelineElement.getCategory() != null
-                                        && Objects.requireNonNull(timelineElement.getCategory().getValue()).equals(pnPollingParameter.getValue())
-                        :
-                        pnPollingParameter.getPnPollingPredicate().getTimelineElementPredicateV23())
+                .filter(pnPollingParameter.getPnPollingPredicate() == null ? te ->
+                        te.getCategory() != null && Objects.requireNonNull(te.getCategory().getValue()).equals(pnPollingParameter.getValue())
+                        : pnPollingParameter.getPnPollingPredicate().getTimelineElementPredicateV23())
                 .findAny()
                 .orElse(null);
 
-        if (timelineElementV23 != null) {
-            pnPollingResponse.setTimelineElement(timelineElementV23);
+        if (timelineElement != null) {
+            pnPollingResponse.setTimelineElement(timelineElement);
             pnPollingResponse.setResult(true);
             return true;
         }

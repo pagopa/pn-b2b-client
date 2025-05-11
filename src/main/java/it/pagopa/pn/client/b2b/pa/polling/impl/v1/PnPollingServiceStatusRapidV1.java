@@ -24,28 +24,25 @@ import java.util.function.Predicate;
 public class PnPollingServiceStatusRapidV1 extends PnPollingTemplate<PnPollingResponseV1> {
 
     protected final TimingForPolling timingForPolling;
-    private final IPnPaB2bClient pnPaB2bClient;
-    private FullSentNotification notificationV1;
+    private final IPnPaB2bClient b2bClient;
+    private FullSentNotification fullSentNotification;
 
-
-    public PnPollingServiceStatusRapidV1(TimingForPolling timingForPolling, IPnPaB2bClient pnPaB2bClient) {
+    public PnPollingServiceStatusRapidV1(TimingForPolling timingForPolling, IPnPaB2bClient b2bClient) {
         this.timingForPolling = timingForPolling;
-        this.pnPaB2bClient = pnPaB2bClient;
+        this.b2bClient = b2bClient;
     }
 
     @Override
     protected Callable<PnPollingResponseV1> getPollingResponse(String iun, PnPollingParameter pnPollingParameter) {
         return () -> {
             PnPollingResponseV1 pnPollingResponse = new PnPollingResponseV1();
-            FullSentNotification fullSentNotificationV1;
             try {
-                fullSentNotificationV1 = pnPaB2bClient.getSentNotificationV1(iun);
+                fullSentNotification = b2bClient.getSentNotificationV1(iun);
             } catch (Exception exception) {
-                log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", iun, pnPaB2bClient.getApiKeySetted().name(), exception.getMessage());
+                log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", iun, b2bClient.getApiKeySetted().name(), exception.getMessage());
                 throw new PnPollingException(exception.getMessage());
             }
-            pnPollingResponse.setNotification(fullSentNotificationV1);
-            this.notificationV1 = fullSentNotificationV1;
+            pnPollingResponse.setNotification(fullSentNotification);
             return pnPollingResponse;
         };
     }
@@ -57,12 +54,10 @@ public class PnPollingServiceStatusRapidV1 extends PnPollingTemplate<PnPollingRe
                 pnPollingResponse.setResult(false);
                 return false;
             }
-
             if (!isEqualStatus(pnPollingResponse, pnPollingParameter)) {
                 pnPollingResponse.setResult(false);
                 return false;
             }
-
             return true;
         };
     }
@@ -70,7 +65,7 @@ public class PnPollingServiceStatusRapidV1 extends PnPollingTemplate<PnPollingRe
     @Override
     protected PnPollingResponseV1 getException(Exception exception) {
         PnPollingResponseV1 pollingResponse = new PnPollingResponseV1();
-        pollingResponse.setNotification(this.notificationV1);
+        pollingResponse.setNotification(fullSentNotification);
         pollingResponse.setResult(false);
         return pollingResponse;
     }
@@ -89,17 +84,17 @@ public class PnPollingServiceStatusRapidV1 extends PnPollingTemplate<PnPollingRe
 
     @Override
     public boolean setApiKeys(ApiKeyType apiKey) {
-        return this.pnPaB2bClient.setApiKeys(apiKey);
+        return b2bClient.setApiKeys(apiKey);
     }
 
     @Override
     public void setApiKey(String apiKeyString) {
-        this.pnPaB2bClient.setApiKey(apiKeyString);
+        b2bClient.setApiKey(apiKeyString);
     }
 
     @Override
     public ApiKeyType getApiKeySetted() {
-        return this.pnPaB2bClient.getApiKeySetted();
+        return b2bClient.getApiKeySetted();
     }
 
     private boolean isEqualStatus(PnPollingResponseV1 pnPollingResponse, PnPollingParameter pnPollingParameter) {

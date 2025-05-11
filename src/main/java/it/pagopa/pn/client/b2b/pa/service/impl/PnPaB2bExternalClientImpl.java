@@ -10,8 +10,8 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api.*;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.api.NotificationProcessCostApi;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationProcessCostResponse;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.api_v24.NotificationProcessCostApi;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v24.NotificationProcessCostResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -157,41 +157,41 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     public boolean setApiKeys(ApiKeyType apiKey) {
         boolean beenSet = false;
         switch (apiKey) {
-            case MVP_1:
+            case MVP_1 -> {
                 if (this.apiKeySetted != ApiKeyType.MVP_1) {
                     setApiKey(apiKeyMvp1);
                     this.apiKeySetted = ApiKeyType.MVP_1;
                 }
                 beenSet = true;
-                break;
-            case MVP_2:
+            }
+            case MVP_2 -> {
                 if (this.apiKeySetted != ApiKeyType.MVP_2) {
                     setApiKey(apiKeyMvp2);
                     this.apiKeySetted = ApiKeyType.MVP_2;
                 }
                 beenSet = true;
-                break;
-            case GA:
+            }
+            case GA -> {
                 if (this.apiKeySetted != ApiKeyType.GA) {
                     setApiKey(apiKeyGa);
                     this.apiKeySetted = ApiKeyType.GA;
                 }
                 beenSet = true;
-                break;
-            case SON:
+            }
+            case SON -> {
                 if (this.apiKeySetted != ApiKeyType.SON) {
                     setApiKey(apiKeySon);
                     this.apiKeySetted = ApiKeyType.SON;
                 }
                 beenSet = true;
-                break;
-            case ROOT:
+            }
+            case ROOT -> {
                 if (this.apiKeySetted != ApiKeyType.ROOT) {
                     setApiKey(apiKeyRoot);
                     this.apiKeySetted = ApiKeyType.ROOT;
                 }
                 beenSet = true;
-                break;
+            }
         }
         return beenSet;
     }
@@ -283,7 +283,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         return this.notificationPriceV23Api.retrieveNotificationPriceV23(paTaxId, noticeCode);
     }
 
-    public NotificationProcessCostResponse getNotificationProcessCost(String iun, Integer recipientIndex, it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationFeePolicy notificationFeePolicy, Boolean applyCost, Integer paFee, Integer vat) throws RestClientException {
+    public NotificationProcessCostResponse getNotificationProcessCost(String iun, Integer recipientIndex, it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v24.NotificationFeePolicy notificationFeePolicy, Boolean applyCost, Integer paFee, Integer vat) throws RestClientException {
         refreshAndSetTokenInteropClient();
         return this.notificationProcessCostApi.notificationProcessCost(iun, recipientIndex, notificationFeePolicy, applyCost, paFee, vat);
     }
