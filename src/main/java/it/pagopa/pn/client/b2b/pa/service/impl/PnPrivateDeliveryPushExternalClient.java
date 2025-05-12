@@ -21,8 +21,7 @@ public class PnPrivateDeliveryPushExternalClient implements IPnPrivateDeliveryPu
     private final it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.api_v21.TimelineAndStatusApi timelineAndStatusApiV21;
     private final it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.api_v23.TimelineAndStatusApi timelineAndStatusApiV23;
     private final it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.api_v24.TimelineAndStatusApi timelineAndStatusApiV24;
-    //TODO V28
-//    private final it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.api_v25.TimelineAndStatusApi timelineAndStatusApiV25;
+    private final it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.api_v25.TimelineAndStatusApi timelineAndStatusApiV25;
     private final PaperNotificationFailedApi paperNotificationFailedApi;
 
 
@@ -32,8 +31,7 @@ public class PnPrivateDeliveryPushExternalClient implements IPnPrivateDeliveryPu
         this.timelineAndStatusApiV21 = new it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.api_v21.TimelineAndStatusApi(newApiClient(restTemplate, deliveryPushBasePath));
         this.timelineAndStatusApiV23 = new it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.api_v23.TimelineAndStatusApi(newApiClient(restTemplate, deliveryPushBasePath));
         this.timelineAndStatusApiV24 = new it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.api_v24.TimelineAndStatusApi(newApiClient(restTemplate, deliveryPushBasePath));
-        //TODO V28
-//        this.timelineAndStatusApiV25 = new it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.api_v25.TimelineAndStatusApi(newApiClient(restTemplate, deliveryPushBasePath));
+        this.timelineAndStatusApiV25 = new it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.api_v25.TimelineAndStatusApi(newApiClient(restTemplate, deliveryPushBasePath));
 
         this.paperNotificationFailedApi = new PaperNotificationFailedApi(newApiClient(restTemplate, deliveryPushBasePath));
     }
@@ -64,10 +62,9 @@ public class PnPrivateDeliveryPushExternalClient implements IPnPrivateDeliveryPu
         return this.timelineAndStatusApiV24.getNotificationHistory(iun, numberOfRecipients, createdAt);
     }
 
-    //TODO V28
-//    public it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v25.NotificationHistoryResponse getNotificationHistoryV25(String iun, Integer numberOfRecipients, OffsetDateTime createdAt) throws RestClientException {
-//        return this.timelineAndStatusApiV25.getNotificationHistory(iun, numberOfRecipients, createdAt);
-//    }
+    public it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v25.NotificationHistoryResponse getNotificationHistoryV25(String iun, Integer numberOfRecipients, OffsetDateTime createdAt) throws RestClientException {
+        return this.timelineAndStatusApiV25.getNotificationHistory(iun, numberOfRecipients, createdAt);
+    }
 
     public List<ResponsePaperNotificationFailedDto> getPaperNotificationFailed(String recipientInternalId, Boolean getAAR) throws RestClientException {
         return this.paperNotificationFailedApi.paperNotificationFailed(recipientInternalId, getAAR);

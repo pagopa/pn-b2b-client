@@ -11,8 +11,9 @@ import org.springframework.stereotype.Service;
 @Service(PnPollingStrategy.STATUS_EXTRA_RAPID_V28)
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PnPollingServiceStatusExtraRapidV28 extends PnPollingServiceStatusRapidV28 {
-    public PnPollingServiceStatusExtraRapidV28(TimingForPolling timingForPolling, IPnPaB2bClient pnPaB2bClient) {
-        super(timingForPolling, pnPaB2bClient);
+
+    public PnPollingServiceStatusExtraRapidV28(TimingForPolling timingForPolling, IPnPaB2bClient b2bClient) {
+        super(timingForPolling, b2bClient);
     }
 
     protected Integer getPollInterval(String value) {

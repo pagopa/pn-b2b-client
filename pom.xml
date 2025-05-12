@@ -25,22 +25,27 @@
         <spring.boot-version>2.5.2</spring.boot-version>
         <cucumber.version>7.8.1</cucumber.version>
         <open.api.version>develop</open.api.version>
-        <!--V1 -->
+        <!--V1-->
         <open.api.version.delivery_v1>v2.0.2</open.api.version.delivery_v1>
         <open.api.version.delivery.push_v1>v2.0.3</open.api.version.delivery.push_v1>
-        <!--V2 -->
+        <!--V2-->
         <open.api.version.delivery_v2>v2.1.0</open.api.version.delivery_v2>
         <open.api.version.delivery.push_v2>v2.1.0</open.api.version.delivery.push_v2>
-        <!--V21 -->
+        <!--V21-->
         <open.api.version.delivery_v21>v2.3.0</open.api.version.delivery_v21>
         <open.api.version.delivery.push_v21>v2.3.2</open.api.version.delivery.push_v21>
-        <!--V23 -->
+        <!--V23-->
         <open.api.version.delivery_v23>v2.10.0</open.api.version.delivery_v23>
         <open.api.version.delivery.push_v23>v2.5.0</open.api.version.delivery.push_v23>
-        <!--V24 -->
+        <!--V24-->
         <open.api.version.delivery_v24>v2.15.1</open.api.version.delivery_v24>
         <open.api.version.delivery.push_v24>v2.16.1</open.api.version.delivery.push_v24>
-        <!--V25 -->
+        <!--V25-->
+        <open.api.version.delivery_v25>d120971effba9a36803d66d52714ba62364e5fa4</open.api.version.delivery_v25>
+        <open.api.version.delivery.push_v25>46d77ed647a54aa52dffc0a296eb6fd2c4824b04</open.api.version.delivery.push_v25>
+        <!-- Le due property sottostanti (relative all'ultima versione) coincidono con le due di sopra.
+        Questa duplicità è dovuta al fatto che al rilascio di una nuova versione, alcune execution dovranno usare le versioni più
+         recenti di delivery e deliveryPush, altre dovranno continuare a usare specificamente la versione v25 -->
         <open.api.version.delivery>d120971effba9a36803d66d52714ba62364e5fa4</open.api.version.delivery>
         <open.api.version.delivery.push>46d77ed647a54aa52dffc0a296eb6fd2c4824b04</open.api.version.delivery.push>
 
@@ -1638,7 +1643,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version.delivery.push}/docs/openapi/api-private.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version.delivery.push_v24}/docs/openapi/api-private.yaml</inputSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
@@ -1662,6 +1667,40 @@
                             </configOptions>
                             <apiPackage>it.pagopa.pn.client.web.generated.openapi.clients.privateDeliveryPush.api_v24</apiPackage>
                             <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.privateDeliveryPush.model_v24</modelPackage>
+                        </configuration>
+                    </execution>
+                    <!--private delivery push V25 -->
+                    <execution>
+                        <id>generate-private-delivery-push_v25</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version.delivery.push_v25}/docs/openapi/api-private.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <importMappings>
+                                FullSentNotificationV25=it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV25
+                            </importMappings>
+                            <configOptions>
+                                <apiPackage>it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.api_v25</apiPackage>
+                                <modelPackage>it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v25</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+                            <apiPackage>it.pagopa.pn.client.web.generated.openapi.clients.privateDeliveryPush.api_v25</apiPackage>
+                            <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.privateDeliveryPush.model_v25</modelPackage>
                         </configuration>
                     </execution>
 

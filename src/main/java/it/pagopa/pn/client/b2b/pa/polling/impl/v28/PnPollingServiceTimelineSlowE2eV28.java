@@ -29,7 +29,6 @@ public class PnPollingServiceTimelineSlowE2eV28 extends PnPollingServiceTimeline
     public PnPollingServiceTimelineSlowE2eV28(TimingForPolling timingForPolling, IPnPaB2bClient b2bClient) {
         super(timingForPolling, b2bClient);
         this.b2bClient = b2bClient;
-
     }
 
     @Override

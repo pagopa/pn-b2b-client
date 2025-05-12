@@ -30,16 +30,14 @@ public class PnPollingServiceValidationStatusV28 extends PnPollingTemplate<PnPol
     public PnPollingServiceValidationStatusV28(IPnPaB2bClient b2bClient, TimingForPolling timingForPolling) {
         this.b2bClient = b2bClient;
         this.timingForPolling = timingForPolling;
-
     }
 
     @Override
     protected Callable<PnPollingResponseV28> getPollingResponse(String id, PnPollingParameter pnPollingParameter) {
         return () -> {
             PnPollingResponseV28 pnPollingResponse = new PnPollingResponseV28();
-            NewNotificationRequestStatusResponseV25 statusResponse = b2bClient.getNotificationRequestStatusV25(id);
-            pnPollingResponse.setStatusResponse(statusResponse);
-            requestStatusResponse = statusResponse;
+            requestStatusResponse = b2bClient.getNotificationRequestStatusV25(id);
+            pnPollingResponse.setStatusResponse(requestStatusResponse);
 
             if (pnPollingResponse.getStatusResponse().getIun() != null) {
                 try {
@@ -61,17 +59,14 @@ public class PnPollingServiceValidationStatusV28 extends PnPollingTemplate<PnPol
                 pnPollingResponse.setResult(false);
                 return false;
             }
-
             if (!pnPollingResponse.getStatusResponse().getNotificationRequestStatus().equalsIgnoreCase(pnPollingParameter.getValue().trim())) {
                 pnPollingResponse.setResult(false);
                 return false;
             }
-
             if (pnPollingResponse.getNotification() == null) {
                 pnPollingResponse.setResult(false);
                 return false;
             }
-
             pnPollingResponse.setResult(true);
             return true;
         };
@@ -102,21 +97,21 @@ public class PnPollingServiceValidationStatusV28 extends PnPollingTemplate<PnPol
 
     @Override
     public boolean setApiKeys(ApiKeyType apiKey) {
-        return this.b2bClient.setApiKeys(apiKey);
+        return b2bClient.setApiKeys(apiKey);
     }
 
     @Override
     public void setApiKey(String apiKeyString) {
-        this.b2bClient.setApiKey(apiKeyString);
+        b2bClient.setApiKey(apiKeyString);
     }
 
     @Override
     public ApiKeyType getApiKeySetted() {
-        return this.b2bClient.getApiKeySetted();
+        return b2bClient.getApiKeySetted();
     }
 
     protected TimingForPolling getTimingForTimeline() {
-        return this.timingForPolling;
+        return timingForPolling;
     }
 
 }
