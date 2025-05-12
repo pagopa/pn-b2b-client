@@ -237,6 +237,28 @@ public class DataTestV25 extends AbstractDataTest {
                     Assertions.assertEquals(detailsFromNotification.getRecIndex(), detailsFromTest.getRecIndex());
                 }
             }
+            //TODO VAS
+            /*
+            case PUBLIC_REGISTRY_VALIDATION_RESPONSE -> {
+                if (detailsFromTest != null) {
+                    Assertions.assertEquals(detailsFromNotification.getRecIndex(), detailsFromTest.getRecIndex());
+                    Assertions.assertEquals(detailsFromNotification.getPhysicalAddress(), detailsFromTest.getPhysicalAddress(),
+                            "Physical address mismatch in PUBLIC_REGISTRY_VALIDATION_RESPONSE");
+                    Assertions.assertEquals(detailsFromNotification.getRegistry(), detailsFromTest.getRegistry(),
+                            "Registry mismatch in PUBLIC_REGISTRY_VALIDATION_RESPONSE");
+                }
+            }
+            case PUBLIC_REGISTRY_VALIDATION_CALL -> {
+                if (detailsFromTest != null) {
+                    Assertions.assertEquals(detailsFromNotification.getRecIndex(), detailsFromTest.getRecIndex());
+                    //TODO VAS Esempio per una lista di utenze
+//                    Assertions.assertNotNull(detailsFromNotification.getUtilityList());
+//                    Assertions.assertEquals(detailsFromNotification.getUtilityList().size(), detailsFromTest.getUtilityList().size());
+//                    for (int i = 0; i < detailsFromNotification.getUtilityList().size(); i++) {
+//                        Assertions.assertEquals(detailsFromNotification.getUtilityList().get(i), detailsFromTest.getUtilityList().get(i));
+//                    }
+            }
+            */
             default ->
                     throw new IllegalArgumentException("Valore non valido per timelineEventCategory: " + timelineEventCategory);
         }
@@ -274,6 +296,10 @@ public class DataTestV25 extends AbstractDataTest {
                     TimelineEventId.DIGITAL_DELIVERY_CREATION_REQUEST.buildEventId(event);
             case ANALOG_WORKFLOW_RECIPIENT_DECEASED ->
                     TimelineEventId.ANALOG_WORKFLOW_RECIPIENT_DECEASED.buildEventId(event);
+            //TODO VAS
+            case PUBLIC_REGISTRY_VALIDATION_CALL -> TimelineEventId.PUBLIC_REGISTRY_VALIDATION_CALL.buildEventId(event);
+            case PUBLIC_REGISTRY_VALIDATION_RESPONSE ->
+                    TimelineEventId.PUBLIC_REGISTRY_VALIDATION_RESPONSE.buildEventId(event);
             default -> null;
         };
     }

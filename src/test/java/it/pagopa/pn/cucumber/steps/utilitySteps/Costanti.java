@@ -111,6 +111,8 @@ public class Costanti {
     public static final String PAYMENT = "PAYMENT";
     public static final String COMPLETELY_UNREACHABLE_CREATION_REQUEST = "COMPLETELY_UNREACHABLE_CREATION_REQUEST";
     public static final String PREPARE_ANALOG_DOMICILE_FAILURE = "PREPARE_ANALOG_DOMICILE_FAILURE";
+    public static final String PUBLIC_REGISTRY_VALIDATION_CALL = "PUBLIC_REGISTRY_VALIDATION_CALL";
+    public static final String PUBLIC_REGISTRY_VALIDATION_RESPONSE = "PUBLIC_REGISTRY_VALIDATION_RESPONSE";
     // PollingStrategy (generiche)
     public static final String TIMELINE_RAPID = "TIMELINE_RAPID";
     public static final String TIMELINE_SLOW = "TIMELINE_SLOW";
