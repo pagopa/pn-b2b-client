@@ -25,10 +25,16 @@ public class PurposeCommonContext {
 
     private String versionId;
     private String waitingForApprovalVersionId;
+    private String currentVersionId;
 
     /* TODO 23/04/2025: sarebbe il caso di cambiare il tipo String -> UUID e uniformare quindi
     *   questo metodo con getPurposeId */
     public UUID getPurposeIdAsUUID() {
         return UUID.fromString(purposeId);
+    }
+
+    // TODO 12/05/2025: sarebbe il caso di cambiare il tipo String -> UUID e uniformare quindi i getters
+    public UUID getWaitingForApprovalVersionIdAsUUID() {
+        return UUID.fromString(waitingForApprovalVersionId);
     }
 }

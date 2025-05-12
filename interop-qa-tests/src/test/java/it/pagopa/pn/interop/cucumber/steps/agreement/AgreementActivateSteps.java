@@ -73,6 +73,12 @@ public class AgreementActivateSteps {
         sharedStepsContext.getEServicesCommonContext().setDescriptorId(descriptorId);
     }
 
+    @Given("{string} ha già sospeso quella richiesta di fruizione come {clientType}")
+    public void tenantHasAlreadySuspendedAgreement(String tenantType, ClientType suspendedBy) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        dataPreparationService.suspendAgreement(sharedStepsContext.getAgreementId(), suspendedBy);
+    }
+
     @Given("{string} ha già creato un attributo verificato")
     public void tenantHasAlreadyCreatedVerifiedAttribute(String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
