@@ -29,7 +29,6 @@ public class PnPollingServiceTimelineSlowE2eV23 extends PnPollingServiceTimeline
     public PnPollingServiceTimelineSlowE2eV23(TimingForPolling timingForPolling, IPnPaB2bClient b2bClient) {
         super(timingForPolling, b2bClient);
         this.b2bClient = b2bClient;
-
     }
 
     @Override
@@ -50,19 +49,15 @@ public class PnPollingServiceTimelineSlowE2eV23 extends PnPollingServiceTimeline
     @Override
     protected Predicate<PnPollingResponseV23> checkCondition(String iun, PnPollingParameter pnPollingParameter) {
         return pnPollingResponse -> {
-
-
             if (pnPollingResponse.getNotification() == null) {
                 pnPollingResponse.setResult(false);
                 return false;
             }
-
             if (pnPollingResponse.getNotification().getTimeline().isEmpty() ||
                     !isPresentCategory(pnPollingResponse, pnPollingParameter)) {
                 pnPollingResponse.setResult(false);
                 return false;
             }
-
             return true;
         };
     }
@@ -89,22 +84,18 @@ public class PnPollingServiceTimelineSlowE2eV23 extends PnPollingServiceTimeline
     }
 
     private boolean isPresentCategory(PnPollingResponseV23 pnPollingResponse, PnPollingParameter pnPollingParameter) {
-        TimelineElementV23 timelineElementV23 = pnPollingResponse
+        TimelineElementV23 timelineElement = pnPollingResponse
                 .getNotification()
                 .getTimeline()
                 .stream()
-                .filter(pnPollingParameter.getPnPollingPredicate() == null
-                        ?
-                        timelineElement ->
-                                timelineElement.getCategory() != null
-                                        && Objects.requireNonNull(timelineElement.getCategory().getValue()).equals(pnPollingParameter.getValue())
-                        :
-                        pnPollingParameter.getPnPollingPredicate().getTimelineElementPredicateV23())
+                .filter(pnPollingParameter.getPnPollingPredicate() == null ? te ->
+                        te.getCategory() != null && Objects.requireNonNull(te.getCategory().getValue()).equals(pnPollingParameter.getValue())
+                        : pnPollingParameter.getPnPollingPredicate().getTimelineElementPredicateV23())
                 .findAny()
                 .orElse(null);
 
-        if (timelineElementV23 != null) {
-            pnPollingResponse.setTimelineElement(timelineElementV23);
+        if (timelineElement != null) {
+            pnPollingResponse.setTimelineElement(timelineElement);
             pnPollingResponse.setResult(true);
             return true;
         }

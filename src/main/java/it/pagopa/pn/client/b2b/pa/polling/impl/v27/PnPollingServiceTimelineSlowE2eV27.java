@@ -29,7 +29,6 @@ public class PnPollingServiceTimelineSlowE2eV27 extends PnPollingServiceTimeline
     public PnPollingServiceTimelineSlowE2eV27(TimingForPolling timingForPolling, IPnPaB2bClient b2bClient) {
         super(timingForPolling, b2bClient);
         this.b2bClient = b2bClient;
-
     }
 
     @Override
@@ -70,7 +69,6 @@ public class PnPollingServiceTimelineSlowE2eV27 extends PnPollingServiceTimeline
         pollingResponse.setResult(false);
         return pollingResponse;
     }
-
 
     @Override
     protected Integer getPollInterval(String value) {

@@ -9,7 +9,7 @@ import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingPredicate;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV21;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationHistoryResponse;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v21.NotificationHistoryResponse;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheB2bSteps;
 import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion;
@@ -481,14 +481,15 @@ public class B2bStepsV21 implements B2bStepsInterface {
      * Usato solo a fini di logging per stampare il TimelineElement atteso
      */
     private String getExpectedTimelineElement(DataTestV21 dataTest, String timelineElementCategory) {
-        if (dataTest.getInputData() == null) dataTest.setInputData(new HashMap<>());
-        dataTest.getInputData().put("timelineElementCategory", timelineElementCategory);
         StringBuilder sb = new StringBuilder();
-        for (Map.Entry<String, String> entry : dataTest.getInputData().entrySet()) {
-            sb.append(entry.getKey())
-                    .append(": ")
-                    .append(entry.getValue())
-                    .append("\n");
+        sb.append("category: ").append(timelineElementCategory).append("\n");
+        if (dataTest != null && dataTest.getInputData() != null) {
+            for (Map.Entry<String, String> entry : dataTest.getInputData().entrySet()) {
+                sb.append(entry.getKey())
+                        .append(": ")
+                        .append(entry.getValue())
+                        .append("\n");
+            }
         }
         return sb.toString();
     }
@@ -498,7 +499,7 @@ public class B2bStepsV21 implements B2bStepsInterface {
         int recipientsSize = sharedSteps.getRecipientsSize();
         OffsetDateTime creationDate = sharedSteps.getNotificationCreationDate();
         // get timeline from delivery-push
-        NotificationHistoryResponse notificationHistory = b2bSteps.getPnPrivateDeliveryPushExternalClient().getNotificationHistory(
+        NotificationHistoryResponse notificationHistory = b2bSteps.getPnPrivateDeliveryPushExternalClient().getNotificationHistoryV21(
                 iun,
                 recipientsSize,
                 creationDate);

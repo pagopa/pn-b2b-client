@@ -107,33 +107,33 @@ public class PnPollingServiceWebhookV25 extends PnPollingTemplate<PnPollingRespo
 
     @Override
     public boolean setApiKeys(ApiKeyType apiKey) {
-        return this.webhookB2bClient.setApiKeys(apiKey);
+        return webhookB2bClient.setApiKeys(apiKey);
     }
 
     @Override
     public void setApiKey(String apiKeyString) {
-        this.webhookB2bClient.setApiKey(apiKeyString);
+        webhookB2bClient.setApiKey(apiKeyString);
     }
 
     @Override
     public ApiKeyType getApiKeySetted() {
-        return this.webhookB2bClient.getApiKeySetted();
+        return webhookB2bClient.getApiKeySetted();
     }
 
 
     private boolean isWaitTerminated(PnPollingResponseV25 pnPollingResponse, PnPollingParameter pnPollingParameter) {
-        ProgressResponseElementV25 progressResponseElementV25 = pnPollingResponse.getProgressResponseElementList()
+        ProgressResponseElementV25 progressResponseElement = pnPollingResponse.getProgressResponseElementList()
                 .stream()
-                .peek(progressResponseElement -> {
-                    if (!pnPollingParameter.getPnPollingWebhook().getProgressResponseElementListV25().contains(progressResponseElement)) {
-                        pnPollingParameter.getPnPollingWebhook().getProgressResponseElementListV25().add(progressResponseElement);
+                .peek(pre -> {
+                    if (!pnPollingParameter.getPnPollingWebhook().getProgressResponseElementListV25().contains(pre)) {
+                        pnPollingParameter.getPnPollingWebhook().getProgressResponseElementListV25().add(pre);
                     }
                 })
                 .filter(toCheckCondition(pnPollingParameter))
                 .findAny()
                 .orElse(null);
-        if (progressResponseElementV25 != null) {
-            pnPollingResponse.setProgressResponseElement(progressResponseElementV25);
+        if (progressResponseElement != null) {
+            pnPollingResponse.setProgressResponseElement(progressResponseElement);
             return true;
         }
         return false;
@@ -149,15 +149,15 @@ public class PnPollingServiceWebhookV25 extends PnPollingTemplate<PnPollingRespo
     }
 
     private Predicate<ProgressResponseElementV25> toCheckCondition(PnPollingParameter pnPollingParameter) {
-        return progressResponseElementV25 ->
-                progressResponseElementV25.getIun() != null
-                        && progressResponseElementV25.getIun().equals(iun)
-                        && progressResponseElementV25.getElement().getCategory() != null
-                        && progressResponseElementV25.getElement().getCategory().equals(
+        return progressResponseElement ->
+                progressResponseElement.getIun() != null
+                        && progressResponseElement.getIun().equals(iun)
+                        && progressResponseElement.getElement().getCategory() != null
+                        && progressResponseElement.getElement().getCategory().equals(
                         pnPollingParameter.getPnPollingWebhook().getTimelineElementCategoryV25())
-                        || progressResponseElementV25.getIun() != null
-                        && progressResponseElementV25.getIun().equals(iun)
-                        && (progressResponseElementV25.getNewStatus() != null
-                        && (progressResponseElementV25.getNewStatus().equals(pnPollingParameter.getPnPollingWebhook().getNotificationStatusV25())));
+                        || progressResponseElement.getIun() != null
+                        && progressResponseElement.getIun().equals(iun)
+                        && (progressResponseElement.getNewStatus() != null
+                        && (progressResponseElement.getNewStatus().equals(pnPollingParameter.getPnPollingWebhook().getNotificationStatusV25())));
     }
 }

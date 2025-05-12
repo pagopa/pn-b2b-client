@@ -10,7 +10,6 @@ import lombok.Setter;
 
 import java.util.List;
 
-
 @Getter
 @Setter
 public class PnPollingResponseV23 extends PnPollingResponse {

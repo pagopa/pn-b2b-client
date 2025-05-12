@@ -27,7 +27,6 @@ public class PnPollingServiceStatusRapidV25 extends PnPollingTemplate<PnPollingR
     private final IPnPaB2bClient b2bClient;
     private FullSentNotificationV25 fullSentNotification;
 
-
     public PnPollingServiceStatusRapidV25(TimingForPolling timingForPolling, IPnPaB2bClient b2bClient) {
         this.timingForPolling = timingForPolling;
         this.b2bClient = b2bClient;
@@ -55,12 +54,10 @@ public class PnPollingServiceStatusRapidV25 extends PnPollingTemplate<PnPollingR
                 pnPollingResponse.setResult(false);
                 return false;
             }
-
             if (!isEqualStatus(pnPollingResponse, pnPollingParameter)) {
                 pnPollingResponse.setResult(false);
                 return false;
             }
-
             return true;
         };
     }
@@ -87,17 +84,17 @@ public class PnPollingServiceStatusRapidV25 extends PnPollingTemplate<PnPollingR
 
     @Override
     public boolean setApiKeys(ApiKeyType apiKey) {
-        return this.b2bClient.setApiKeys(apiKey);
+        return b2bClient.setApiKeys(apiKey);
     }
 
     @Override
     public void setApiKey(String apiKeyString) {
-        this.b2bClient.setApiKey(apiKeyString);
+        b2bClient.setApiKey(apiKeyString);
     }
 
     @Override
     public ApiKeyType getApiKeySetted() {
-        return this.b2bClient.getApiKeySetted();
+        return b2bClient.getApiKeySetted();
     }
 
     private boolean isEqualStatus(PnPollingResponseV25 pnPollingResponse, PnPollingParameter pnPollingParameter) {

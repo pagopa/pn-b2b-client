@@ -37,9 +37,8 @@ public class PnPollingServiceValidationStatusV23 extends PnPollingTemplate<PnPol
     protected Callable<PnPollingResponseV23> getPollingResponse(String id, PnPollingParameter pnPollingParameter) {
         return () -> {
             PnPollingResponseV23 pnPollingResponse = new PnPollingResponseV23();
-            NewNotificationRequestStatusResponseV23 statusResponse = b2bClient.getNotificationRequestStatusV23(id);
-            pnPollingResponse.setStatusResponse(statusResponse);
-            requestStatusResponse = statusResponse;
+            requestStatusResponse = b2bClient.getNotificationRequestStatusV23(id);
+            pnPollingResponse.setStatusResponse(requestStatusResponse);
 
             if (pnPollingResponse.getStatusResponse().getIun() != null) {
                 try {
@@ -61,17 +60,14 @@ public class PnPollingServiceValidationStatusV23 extends PnPollingTemplate<PnPol
                 pnPollingResponse.setResult(false);
                 return false;
             }
-
             if (!pnPollingResponse.getStatusResponse().getNotificationRequestStatus().equalsIgnoreCase(pnPollingParameter.getValue().trim())) {
                 pnPollingResponse.setResult(false);
                 return false;
             }
-
             if (pnPollingResponse.getNotification() == null) {
                 pnPollingResponse.setResult(false);
                 return false;
             }
-
             pnPollingResponse.setResult(true);
             return true;
         };
@@ -102,21 +98,21 @@ public class PnPollingServiceValidationStatusV23 extends PnPollingTemplate<PnPol
 
     @Override
     public boolean setApiKeys(ApiKeyType apiKey) {
-        return this.b2bClient.setApiKeys(apiKey);
+        return b2bClient.setApiKeys(apiKey);
     }
 
     @Override
     public void setApiKey(String apiKeyString) {
-        this.b2bClient.setApiKey(apiKeyString);
+        b2bClient.setApiKey(apiKeyString);
     }
 
     @Override
     public ApiKeyType getApiKeySetted() {
-        return this.b2bClient.getApiKeySetted();
+        return b2bClient.getApiKeySetted();
     }
 
     protected TimingForPolling getTimingForTimeline() {
-        return this.timingForPolling;
+        return timingForPolling;
     }
 
 }

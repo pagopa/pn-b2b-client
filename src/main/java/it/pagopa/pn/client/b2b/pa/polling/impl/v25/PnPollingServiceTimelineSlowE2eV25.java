@@ -50,19 +50,15 @@ public class PnPollingServiceTimelineSlowE2eV25 extends PnPollingServiceTimeline
     @Override
     protected Predicate<PnPollingResponseV25> checkCondition(String iun, PnPollingParameter pnPollingParameter) {
         return pnPollingResponse -> {
-
-
             if (pnPollingResponse.getNotification() == null) {
                 pnPollingResponse.setResult(false);
                 return false;
             }
-
             if (pnPollingResponse.getNotification().getTimeline().isEmpty() ||
                     !isPresentCategory(pnPollingResponse, pnPollingParameter)) {
                 pnPollingResponse.setResult(false);
                 return false;
             }
-
             return true;
         };
     }
@@ -74,7 +70,6 @@ public class PnPollingServiceTimelineSlowE2eV25 extends PnPollingServiceTimeline
         pollingResponse.setResult(false);
         return pollingResponse;
     }
-
 
     @Override
     protected Integer getPollInterval(String value) {
@@ -93,13 +88,9 @@ public class PnPollingServiceTimelineSlowE2eV25 extends PnPollingServiceTimeline
                 .getNotification()
                 .getTimeline()
                 .stream()
-                .filter(pnPollingParameter.getPnPollingPredicate() == null
-                        ?
-                        te ->
-                                te.getCategory() != null
-                                        && Objects.requireNonNull(te.getCategory().getValue()).equals(pnPollingParameter.getValue())
-                        :
-                        pnPollingParameter.getPnPollingPredicate().getTimelineElementPredicateV25())
+                .filter(pnPollingParameter.getPnPollingPredicate() == null ? te ->
+                        te.getCategory() != null && Objects.requireNonNull(te.getCategory().getValue()).equals(pnPollingParameter.getValue())
+                        : pnPollingParameter.getPnPollingPredicate().getTimelineElementPredicateV25())
                 .findAny()
                 .orElse(null);
 

@@ -29,7 +29,6 @@ public class PnPollingServiceWebhookV20 extends PnPollingTemplate<PnPollingRespo
     private List<ProgressResponseElement> progressResponseElementList;
     private String iun;
 
-
     public PnPollingServiceWebhookV20(TimingForPolling timingForPolling, IPnWebhookB2bClient webhookB2bClient) {
         this.timingForPolling = timingForPolling;
         this.webhookB2bClient = webhookB2bClient;
@@ -107,32 +106,32 @@ public class PnPollingServiceWebhookV20 extends PnPollingTemplate<PnPollingRespo
 
     @Override
     public boolean setApiKeys(ApiKeyType apiKey) {
-        return this.webhookB2bClient.setApiKeys(apiKey);
+        return webhookB2bClient.setApiKeys(apiKey);
     }
 
     @Override
     public void setApiKey(String apiKeyString) {
-        this.webhookB2bClient.setApiKey(apiKeyString);
+        webhookB2bClient.setApiKey(apiKeyString);
     }
 
     @Override
     public ApiKeyType getApiKeySetted() {
-        return this.webhookB2bClient.getApiKeySetted();
+        return webhookB2bClient.getApiKeySetted();
     }
 
     private boolean isWaitTerminated(PnPollingResponseV20 pnPollingResponse, PnPollingParameter pnPollingParameter) {
-        ProgressResponseElement progressResponseElementV20 = pnPollingResponse.getProgressResponseElementList()
+        ProgressResponseElement progressResponseElement = pnPollingResponse.getProgressResponseElementList()
                 .stream()
-                .peek(progressResponseElement -> {
-                    if (!pnPollingParameter.getPnPollingWebhook().getProgressResponseElementListV20().contains(progressResponseElement)) {
-                        pnPollingParameter.getPnPollingWebhook().getProgressResponseElementListV20().add(progressResponseElement);
+                .peek(pre -> {
+                    if (!pnPollingParameter.getPnPollingWebhook().getProgressResponseElementListV20().contains(pre)) {
+                        pnPollingParameter.getPnPollingWebhook().getProgressResponseElementListV20().add(pre);
                     }
                 })
                 .filter(toCheckCondition(pnPollingParameter))
                 .findAny()
                 .orElse(null);
-        if (progressResponseElementV20 != null) {
-            pnPollingResponse.setProgressResponseElement(progressResponseElementV20);
+        if (progressResponseElement != null) {
+            pnPollingResponse.setProgressResponseElement(progressResponseElement);
             return true;
         }
         return false;
@@ -148,15 +147,15 @@ public class PnPollingServiceWebhookV20 extends PnPollingTemplate<PnPollingRespo
     }
 
     private Predicate<ProgressResponseElement> toCheckCondition(PnPollingParameter pnPollingParameter) {
-        return progressResponseElementV20 ->
-                progressResponseElementV20.getIun() != null
-                        && progressResponseElementV20.getIun().equals(iun)
-                        && progressResponseElementV20.getTimelineEventCategory() != null
-                        && progressResponseElementV20.getTimelineEventCategory().equals(
+        return progressResponseElement ->
+                progressResponseElement.getIun() != null
+                        && progressResponseElement.getIun().equals(iun)
+                        && progressResponseElement.getTimelineEventCategory() != null
+                        && progressResponseElement.getTimelineEventCategory().equals(
                         pnPollingParameter.getPnPollingWebhook().getTimelineElementCategoryV20())
-                        || progressResponseElementV20.getIun() != null
-                        && progressResponseElementV20.getIun().equals(iun)
-                        && (progressResponseElementV20.getNewStatus() != null
-                        && (progressResponseElementV20.getNewStatus().equals(pnPollingParameter.getPnPollingWebhook().getNotificationStatusV20())));
+                        || progressResponseElement.getIun() != null
+                        && progressResponseElement.getIun().equals(iun)
+                        && (progressResponseElement.getNewStatus() != null
+                        && (progressResponseElement.getNewStatus().equals(pnPollingParameter.getPnPollingWebhook().getNotificationStatusV20())));
     }
 }

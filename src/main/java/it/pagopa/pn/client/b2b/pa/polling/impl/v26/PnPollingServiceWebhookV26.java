@@ -29,7 +29,6 @@ public class PnPollingServiceWebhookV26 extends PnPollingTemplate<PnPollingRespo
     private List<ProgressResponseElementV26> progressResponseElementList;
     private String iun;
 
-
     public PnPollingServiceWebhookV26(TimingForPolling timingForPolling, IPnWebhookB2bClient webhookB2bClient) {
         this.timingForPolling = timingForPolling;
         this.webhookB2bClient = webhookB2bClient;
@@ -74,13 +73,11 @@ public class PnPollingServiceWebhookV26 extends PnPollingTemplate<PnPollingRespo
                 pnPollingResponse.setResult(false);
                 return false;
             }
-
             selectLastEventId(pnPollingResponse, pnPollingParameter);
             if (!isWaitTerminated(pnPollingResponse, pnPollingParameter)) {
                 pnPollingResponse.setResult(false);
                 return false;
             }
-
             pnPollingResponse.setResult(true);
             return true;
         };
@@ -107,33 +104,33 @@ public class PnPollingServiceWebhookV26 extends PnPollingTemplate<PnPollingRespo
 
     @Override
     public boolean setApiKeys(ApiKeyType apiKey) {
-        return this.webhookB2bClient.setApiKeys(apiKey);
+        return webhookB2bClient.setApiKeys(apiKey);
     }
 
     @Override
     public void setApiKey(String apiKeyString) {
-        this.webhookB2bClient.setApiKey(apiKeyString);
+        webhookB2bClient.setApiKey(apiKeyString);
     }
 
     @Override
     public ApiKeyType getApiKeySetted() {
-        return this.webhookB2bClient.getApiKeySetted();
+        return webhookB2bClient.getApiKeySetted();
     }
 
 
     private boolean isWaitTerminated(PnPollingResponseV26 pnPollingResponse, PnPollingParameter pnPollingParameter) {
-        ProgressResponseElementV26 progressResponseElementV26 = pnPollingResponse.getProgressResponseElementList()
+        ProgressResponseElementV26 progressResponseElement = pnPollingResponse.getProgressResponseElementList()
                 .stream()
-                .peek(progressResponseElement -> {
-                    if (!pnPollingParameter.getPnPollingWebhook().getProgressResponseElementListV26().contains(progressResponseElement)) {
-                        pnPollingParameter.getPnPollingWebhook().getProgressResponseElementListV26().add(progressResponseElement);
+                .peek(pre -> {
+                    if (!pnPollingParameter.getPnPollingWebhook().getProgressResponseElementListV26().contains(pre)) {
+                        pnPollingParameter.getPnPollingWebhook().getProgressResponseElementListV26().add(pre);
                     }
                 })
                 .filter(toCheckCondition(pnPollingParameter))
                 .findAny()
                 .orElse(null);
-        if (progressResponseElementV26 != null) {
-            pnPollingResponse.setProgressResponseElement(progressResponseElementV26);
+        if (progressResponseElement != null) {
+            pnPollingResponse.setProgressResponseElement(progressResponseElement);
             return true;
         }
         return false;
@@ -149,15 +146,15 @@ public class PnPollingServiceWebhookV26 extends PnPollingTemplate<PnPollingRespo
     }
 
     private Predicate<ProgressResponseElementV26> toCheckCondition(PnPollingParameter pnPollingParameter) {
-        return progressResponseElementV26 ->
-                progressResponseElementV26.getIun() != null
-                        && progressResponseElementV26.getIun().equals(iun)
-                        && progressResponseElementV26.getElement().getCategory() != null
-                        && progressResponseElementV26.getElement().getCategory().equals(
+        return progressResponseElement ->
+                progressResponseElement.getIun() != null
+                        && progressResponseElement.getIun().equals(iun)
+                        && progressResponseElement.getElement().getCategory() != null
+                        && progressResponseElement.getElement().getCategory().equals(
                         pnPollingParameter.getPnPollingWebhook().getTimelineElementCategoryV26())
-                        || progressResponseElementV26.getIun() != null
-                        && progressResponseElementV26.getIun().equals(iun)
-                        && (progressResponseElementV26.getNewStatus() != null
-                        && (progressResponseElementV26.getNewStatus().equals(pnPollingParameter.getPnPollingWebhook().getNotificationStatusV26())));
+                        || progressResponseElement.getIun() != null
+                        && progressResponseElement.getIun().equals(iun)
+                        && (progressResponseElement.getNewStatus() != null
+                        && (progressResponseElement.getNewStatus().equals(pnPollingParameter.getPnPollingWebhook().getNotificationStatusV26())));
     }
 }

@@ -11,8 +11,9 @@ import org.springframework.stereotype.Service;
 @Service(PnPollingStrategy.TIMELINE_SLOW_V20)
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PnPollingServiceTimelineSlowV20 extends PnPollingServiceTimelineRapidV20 {
-    public PnPollingServiceTimelineSlowV20(TimingForPolling timingForPolling, IPnPaB2bClient pnPaB2bClient) {
-        super(timingForPolling, pnPaB2bClient);
+
+    public PnPollingServiceTimelineSlowV20(TimingForPolling timingForPolling, IPnPaB2bClient b2bClient) {
+        super(timingForPolling, b2bClient);
     }
 
     @Override

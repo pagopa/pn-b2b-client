@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 @Service(PnPollingStrategy.STATUS_SLOW_V1)
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PnPollingServiceStatusSlowV1 extends PnPollingServiceStatusRapidV1 {
-    public PnPollingServiceStatusSlowV1(TimingForPolling timingForPolling, IPnPaB2bClient pnPaB2bClient) {
-        super(timingForPolling, pnPaB2bClient);
+    public PnPollingServiceStatusSlowV1(TimingForPolling timingForPolling, IPnPaB2bClient b2bClient) {
+        super(timingForPolling, b2bClient);
     }
 
     @Override
