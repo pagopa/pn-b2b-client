@@ -30,10 +30,10 @@ public class NotificationAARStrategy implements ITemplateEngineStrategy {
     public String getTextToCheckLanguage(String language) {
         return switch (language.toUpperCase()) {
             case  "ITALIANA" -> {
-                yield "Hai ricevuto una comunicazione a valore legale da string con oggetto: string Prendi visione della copia dei documenti allegati o accedi ai documenti originali online seguendo le istruzioni. Tieni presente che il contenuto della comunicazione produrrà effetti giuridici nei tuoi confronti anche senza la tua presa visione dei documenti.";
+                yield "Hai ricevuto una comunicazione a valore legale da con oggetto: string string Prendi visione della copia dei documenti allegati o accedi ai documenti originali online seguendo le istruzioni. Tieni presente che il contenuto della comunicazione produrrà effetti giuridici nei tuoi confronti anche senza la tua presa visione dei documenti.";
             }
             case "TEDESCA" -> {
-                yield "AVVISO DI AVVENUTA RICEZIONE Empfangsbestätigung Feststellungs • Avviso di Avvenuta Ricezione (AAR): string Du hast eine rechtsgültige Mitteilung von string: . Wenn sie nicht in diesem siehe die zugestellten Dokumente Bescheid enthalten sind,";
+                yield "AVVISO DI AVVENUTA RICEZIONE Benachrichtigung über den erfolgten Empfang • Avviso di Avvenuta Ricezione (AAR): string Du hast eine rechtsgültige Mitteilung von der Körperschaft string erhalten:";
             }
             case "SLOVENA" -> {
                 yield "AVVISO DI AVVENUTA RICEZIONE Obvestilo o prejemu: • Avviso di Avvenuta Ricezione (AAR): string Prejeli ste uradno sporočilo od string: . Če niso vključeni v to obvestilo, Prejeli ste uradno sporočilo od do dokumentov .";
