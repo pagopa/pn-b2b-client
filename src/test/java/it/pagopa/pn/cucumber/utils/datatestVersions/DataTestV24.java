@@ -90,87 +90,86 @@ public class DataTestV24 extends AbstractDataTest {
         DelegateInfo delegateInfoActual = actual != null ? actual.getDelegateInfo() : null;
         DelegateInfo delegateInfoExpected = expected != null ? expected.getDelegateInfo() : null;
 
-
         String error = EQUALITY_CHECK_FAILED + ": ";
         switch (timelineEventCategory) {
             case SEND_COURTESY_MESSAGE -> {
                 if (expected != null) {
-                    assertThat(actual.getDigitalAddress()).as(error + "digitalAddress").isEqualTo(expected.getDigitalAddress());
-                    assertThat(actual.getRecIndex()).as(error + "recIndex").isEqualTo(expected.getRecIndex());
+                    assertThat(actual.getDigitalAddress()).as(error + EQUALITY_DIGITAL_ADDRESS).isEqualTo(expected.getDigitalAddress());
+                    assertThat(actual.getRecIndex()).as(error + EQUALITY_REC_INDEX).isEqualTo(expected.getRecIndex());
                 }
             }
             case REQUEST_REFUSED -> {
                 if (expected != null) {
                     Assertions.assertNotNull(actual.getRefusalReasons());
-                    assertThat(actual.getRefusalReasons().size()).as(error + "refusalReason size").isEqualTo(expected.getRefusalReasons().size());
+                    assertThat(actual.getRefusalReasons().size()).as(error + EQUALITY_REFUSAL_REASON_SIZE).isEqualTo(expected.getRefusalReasons().size());
                     for (int i = 0; i < actual.getRefusalReasons().size(); i++) {
                         assertThat(actual.getRefusalReasons().get(i).getErrorCode())
-                                .as(error + "reason number " + (i + 1) + " errorCode")
+                                .as(error + EQUALITY_ERROR_CODE)
                                 .isEqualTo(expected.getRefusalReasons().get(i).getErrorCode());
                     }
                 }
             }
             case AAR_GENERATION -> {
                 if (expected != null) {
-                    assertThat(actual.getGeneratedAarUrl()).as(error + "generated AAR url").isNotNull();
+                    assertThat(actual.getGeneratedAarUrl()).as(error + EQUALITY_GENERATED_AAR_URL).isNotNull();
                 }
             }
             case SEND_DIGITAL_FEEDBACK -> {
                 if (expected != null) {
-                    assertThat(actual.getResponseStatus()).as(error + "responseStatus").isNotNull();
-                    assertThat(actual.getResponseStatus().getValue()).as(error + "responseStatus value").isEqualTo(expected.getResponseStatus().getValue());
-                    assertThat(actual.getDigitalAddress()).as(error + "digitalAddress").isEqualTo(expected.getDigitalAddress());
-                    assertThat(actual.getSendingReceipts().size()).as(error + "sendingReceipts size").isEqualTo(expected.getSendingReceipts().size());
+                    assertThat(actual.getResponseStatus()).as(error + EQUALITY_RESPONSE_STATUS).isNotNull();
+                    assertThat(actual.getResponseStatus().getValue()).as(error + EQUALITY_RESPONSE_STATUS_VALUE).isEqualTo(expected.getResponseStatus().getValue());
+                    assertThat(actual.getDigitalAddress()).as(error + EQUALITY_DIGITAL_ADDRESS).isEqualTo(expected.getDigitalAddress());
+                    assertThat(actual.getSendingReceipts().size()).as(error + EQUALITY_SENDING_RECEIPTS_SIZE).isEqualTo(expected.getSendingReceipts().size());
                     for (int i = 0; i < actual.getSendingReceipts().size(); i++) {
                         assertThat(actual.getSendingReceipts().get(i))
-                                .as(error + "sendingReceipt number " + (i + 1))
+                                .as(error + EQUALITY_SENDING_RECEIPT_NUMBER + " " + (i + 1))
                                 .isEqualTo(expected.getSendingReceipts().get(i));
                     }
                 }
             }
             case REQUEST_ACCEPTED, DIGITAL_SUCCESS_WORKFLOW, DIGITAL_FAILURE_WORKFLOW -> {
-                assertThat(elementFromNotification.getLegalFactsIds()).as(error + "legalFactsIds").isNotNull();
-                assertThat(elementFromNotification.getLegalFactsIds().size()).as(error + "legalFactsIds size").isEqualTo(elementFromTest.getLegalFactsIds().size());
+                assertThat(elementFromNotification.getLegalFactsIds()).as(error + EQUALITY_LEGAL_FACTS_IDS).isNotNull();
+                assertThat(elementFromNotification.getLegalFactsIds().size()).as(error + EQUALITY_LEGAL_FACTS_IDS_SIZE).isEqualTo(elementFromTest.getLegalFactsIds().size());
                 for (int i = 0; i < elementFromNotification.getLegalFactsIds().size(); i++) {
                     assertThat(elementFromNotification.getLegalFactsIds().get(i).getCategory())
-                            .as(error + "legalFactId number " + (i + 1) + " category")
+                            .as(error + EQUALITY_LEGAL_FACT_ID_NUMBER + " " + (i + 1) + " " + EQUALITY_CATEGORY)
                             .isEqualTo(elementFromTest.getLegalFactsIds().get(i).getCategory());
                     assertThat(elementFromNotification.getLegalFactsIds().get(i).getKey())
-                            .as(error + "legalFactId number + " + (i + 1) + " key")
+                            .as(error + EQUALITY_LEGAL_FACT_ID_NUMBER + " " + (i + 1) + " " + EQUALITY_KEY)
                             .isNotNull();
                 }
                 if ((timelineEventCategory.equals(DIGITAL_SUCCESS_WORKFLOW) || timelineEventCategory.equals(DIGITAL_FAILURE_WORKFLOW)) && expected != null) {
-                    assertThat(actual.getDigitalAddress()).as(error + "digitalAddress").isEqualTo(expected.getDigitalAddress());
+                    assertThat(actual.getDigitalAddress()).as(error + EQUALITY_DIGITAL_ADDRESS).isEqualTo(expected.getDigitalAddress());
                 }
             }
             case SEND_DIGITAL_DOMICILE -> {
                 if (expected != null) {
-                    assertThat(actual.getDigitalAddress()).as(error + "digitalAddress").isEqualTo(expected.getDigitalAddress());
+                    assertThat(actual.getDigitalAddress()).as(error + EQUALITY_DIGITAL_ADDRESS).isEqualTo(expected.getDigitalAddress());
                 }
             }
             case GET_ADDRESS -> {
                 if (expected != null) {
-                    assertThat(actual.getDigitalAddressSource()).as(error + "digitalAddressSource").isEqualTo(expected.getDigitalAddressSource());
-                    assertThat(actual.getIsAvailable()).as(error + "isAvailable").isEqualTo(expected.getIsAvailable());
+                    assertThat(actual.getDigitalAddressSource()).as(error + EQUALITY_DIGITAL_ADDRESS_SOURCE).isEqualTo(expected.getDigitalAddressSource());
+                    assertThat(actual.getIsAvailable()).as(error + EQUALITY_IS_AVAILABLE).isEqualTo(expected.getIsAvailable());
                 }
             }
             case SEND_ANALOG_FEEDBACK -> {
                 if (expected != null) {
                     if (expected.getDeliveryDetailCode() != null) {
-                        assertThat(actual.getDeliveryDetailCode()).as(error + "deliveryDetailCode").isEqualTo(expected.getDeliveryDetailCode());
+                        assertThat(actual.getDeliveryDetailCode()).as(error + EQUALITY_DELIVERY_DETAIL_CODE).isEqualTo(expected.getDeliveryDetailCode());
                     }
                     //ignorare Sonar che dice che questa condizione è sempre true (in quanto il campo è annotato con @NotNull), non è vero
                     if (expected.getPhysicalAddress() != null) {
-                        assertThat(actual.getPhysicalAddress()).as(error + "physicalAddress").isEqualTo(expected.getPhysicalAddress());
+                        assertThat(actual.getPhysicalAddress()).as(error + EQUALITY_PHYSICAL_ADDRESS).isEqualTo(expected.getPhysicalAddress());
                     }
                     //ignorare Sonar che dice che questa condizione è sempre true (in quanto il campo è annotato con @NotNull), non è vero
                     if (expected.getResponseStatus() != null && expected.getResponseStatus().getValue() != null) {
-                        assertThat(expected.getResponseStatus().getValue()).as(error + "responseStatus value").isEqualTo(actual.getResponseStatus().getValue());
+                        assertThat(expected.getResponseStatus().getValue()).as(error + EQUALITY_RESPONSE_STATUS_VALUE).isEqualTo(actual.getResponseStatus().getValue());
                     }
                     if (expected.getDeliveryFailureCause() != null) {
                         List<String> failureCauses = Arrays.asList(expected.getDeliveryFailureCause().split(" "));
                         assertThat(failureCauses).asList()
-                                .as(error + "failureCauses")
+                                .as(error + EQUALITY_FAILURE_CAUSES)
                                 .contains(elementFromNotification.getDetails().getDeliveryFailureCause());
                     }
                 }
@@ -178,26 +177,26 @@ public class DataTestV24 extends AbstractDataTest {
             case SEND_ANALOG_PROGRESS, SEND_SIMPLE_REGISTERED_LETTER_PROGRESS -> {
                 if (expected != null) {
                     if (Objects.nonNull(elementFromTest.getLegalFactsIds())) {
-                        assertThat(elementFromNotification.getLegalFactsIds().size()).as(error + "legalFactsIds size").isEqualTo(elementFromTest.getLegalFactsIds().size());
+                        assertThat(elementFromNotification.getLegalFactsIds().size()).as(error + EQUALITY_LEGAL_FACTS_IDS_SIZE).isEqualTo(elementFromTest.getLegalFactsIds().size());
                         for (int i = 0; i < elementFromNotification.getLegalFactsIds().size(); i++) {
                             assertThat(elementFromNotification.getLegalFactsIds().get(i).getCategory())
-                                    .as(error + "legalFactId number " + (i + 1) + " category")
+                                    .as(error + EQUALITY_LEGAL_FACT_ID_NUMBER + " " + (i + 1) + " " + EQUALITY_CATEGORY)
                                     .isEqualTo(elementFromTest.getLegalFactsIds().get(i).getCategory());
                             assertThat(elementFromNotification.getLegalFactsIds().get(i).getKey())
-                                    .as(error + "legalFactId number + " + (i + 1) + " key")
+                                    .as(error + EQUALITY_LEGAL_FACT_ID_NUMBER + " " + (i + 1) + " " + EQUALITY_KEY)
                                     .isNotNull();
                         }
                     }
                     if (Objects.nonNull(expected.getDeliveryDetailCode())) {
-                        assertThat(actual.getDeliveryDetailCode()).as(error + "deliveryDetailCode").isEqualTo(expected.getDeliveryDetailCode());
+                        assertThat(actual.getDeliveryDetailCode()).as(error + EQUALITY_DELIVERY_DETAIL_CODE).isEqualTo(expected.getDeliveryDetailCode());
                     }
                     if (Objects.nonNull(expected.getAttachments())) {
-                        assertThat(actual.getAttachments()).as(error + "attachments null").isNotNull();
-                        assertThat(actual.getAttachments().size()).as(error + "attachments size").isEqualTo(expected.getAttachments().size());
+                        assertThat(actual.getAttachments()).as(error + EQUALITY_ATTACHMENTS_NULL).isNotNull();
+                        assertThat(actual.getAttachments().size()).as(error + EQUALITY_ATTACHMENTS_SIZE).isEqualTo(expected.getAttachments().size());
                         for (int i = 0; i < actual.getAttachments().size(); i++) {
                             List<String> documentTypes = Arrays.asList(expected.getAttachments().get(i).getDocumentType().split(" "));
                             assertThat(documentTypes).asList()
-                                    .as(error + "documentType")
+                                    .as(error + EQUALITY_DOCUMENT_TYPE)
                                     .contains(actual.getAttachments().get(i).getDocumentType());
                         }
                     }
@@ -205,7 +204,7 @@ public class DataTestV24 extends AbstractDataTest {
                     if (Objects.nonNull(expected.getDeliveryFailureCause())) {
                         List<String> failureCauses = Arrays.asList(expected.getDeliveryFailureCause().split(" "));
                         assertThat(failureCauses).asList()
-                                .as(error + "deliveryFailureCause")
+                                .as(error + EQUALITY_DELIVERY_FAILURE_CAUSE)
                                 .contains(elementFromNotification.getDetails().getDeliveryFailureCause());
                     }
                 }
@@ -213,52 +212,51 @@ public class DataTestV24 extends AbstractDataTest {
             case ANALOG_SUCCESS_WORKFLOW, PREPARE_SIMPLE_REGISTERED_LETTER -> {
                 //ignorare Sonar che dice che questa condizione è sempre true (in quanto il campo è annotato con @NotNull), non è vero
                 if (expected != null && expected.getPhysicalAddress() != null) {
-                    assertThat(actual.getPhysicalAddress()).as(error + "physicalAddress").isEqualTo(expected.getPhysicalAddress());
+                    assertThat(actual.getPhysicalAddress()).as(error + EQUALITY_PHYSICAL_ADDRESS).isEqualTo(expected.getPhysicalAddress());
                 }
             }
             case SEND_SIMPLE_REGISTERED_LETTER -> {
                 if (expected != null) {
-                    assertThat(actual.getPhysicalAddress()).as(error + "physicalAddress").isEqualTo(expected.getPhysicalAddress());
-                    assertThat(actual.getAnalogCost()).as(error + "analogCost").isEqualTo(expected.getAnalogCost());
+                    assertThat(actual.getPhysicalAddress()).as(error + EQUALITY_PHYSICAL_ADDRESS).isEqualTo(expected.getPhysicalAddress());
+                    assertThat(actual.getAnalogCost()).as(error + EQUALITY_ANALOG_COST).isEqualTo(expected.getAnalogCost());
                 }
             }
             case NOTIFICATION_VIEWED -> {
-                assertThat(elementFromNotification.getLegalFactsIds()).as(error + "legalFactsId").isNotNull();
-                assertThat(elementFromNotification.getLegalFactsIds().size()).as(error + "legalFactsIds size").isEqualTo(elementFromTest.getLegalFactsIds().size());
+                assertThat(elementFromNotification.getLegalFactsIds()).as(error + EQUALITY_LEGAL_FACT_ID).isNotNull();
+                assertThat(elementFromNotification.getLegalFactsIds().size()).as(error + EQUALITY_LEGAL_FACTS_IDS_SIZE).isEqualTo(elementFromTest.getLegalFactsIds().size());
                 for (int i = 0; i < elementFromNotification.getLegalFactsIds().size(); i++) {
                     assertThat(elementFromNotification.getLegalFactsIds().get(i).getCategory())
-                            .as(error + "legalFactId number " + (i + 1) + " category")
+                            .as(error + EQUALITY_LEGAL_FACT_ID_NUMBER + " " + (i + 1) + " " + EQUALITY_CATEGORY)
                             .isEqualTo(elementFromTest.getLegalFactsIds().get(i).getCategory());
                     assertThat(elementFromNotification.getLegalFactsIds().get(i).getKey())
-                            .as(error + "legalFactId number + " + (i + 1) + " key")
+                            .as(error + EQUALITY_LEGAL_FACT_ID_NUMBER + " + " + (i + 1) + " " + EQUALITY_KEY)
                             .isNotNull();
                 }
                 if (delegateInfoExpected != null) {
-                    assertThat(delegateInfoActual.getTaxId()).as(error + "delegate taxId").isEqualTo(delegateInfoExpected.getTaxId());
-                    assertThat(delegateInfoActual.getDelegateType()).as(error + "delegate type").isEqualTo(delegateInfoExpected.getDelegateType());
-                    assertThat(delegateInfoActual.getDenomination()).as(error + "delegate denomination").isEqualTo(delegateInfoExpected.getDenomination());
+                    assertThat(delegateInfoActual.getTaxId()).as(error + EQUALITY_DELEGATE_TAX_ID).isEqualTo(delegateInfoExpected.getTaxId());
+                    assertThat(delegateInfoActual.getDelegateType()).as(error + EQUALITY_DELEGATE_TYPE).isEqualTo(delegateInfoExpected.getDelegateType());
+                    assertThat(delegateInfoActual.getDenomination()).as(error + EQUALITY_DELEGATE_DENOMINATION).isEqualTo(delegateInfoExpected.getDenomination());
                 }
             }
             case COMPLETELY_UNREACHABLE -> {
                 if (Objects.nonNull(elementFromTest.getLegalFactsIds())) {
-                    assertThat(elementFromNotification.getLegalFactsIds().size()).as(error + "legalFactsIds size").isEqualTo(elementFromTest.getLegalFactsIds().size());
+                    assertThat(elementFromNotification.getLegalFactsIds().size()).as(error + EQUALITY_LEGAL_FACTS_IDS_SIZE).isEqualTo(elementFromTest.getLegalFactsIds().size());
                     for (int i = 0; i < elementFromNotification.getLegalFactsIds().size(); i++) {
                         assertThat(elementFromNotification.getLegalFactsIds().get(i).getCategory())
-                                .as(error + "legalFactId number " + (i + 1) + " category")
+                                .as(error + EQUALITY_LEGAL_FACT_ID_NUMBER + " " + (i + 1) + " " + EQUALITY_CATEGORY)
                                 .isEqualTo(elementFromTest.getLegalFactsIds().get(i).getCategory());
                         assertThat(elementFromNotification.getLegalFactsIds().get(i).getKey())
-                                .as(error + "legalFactId number + " + (i + 1) + " key")
+                                .as(error + EQUALITY_LEGAL_FACT_ID_NUMBER + " + " + (i + 1) + " " + EQUALITY_KEY)
                                 .isNotNull();
                     }
                 }
             }
             case REFINEMENT -> {
                 if (expected != null) {
-                    assertThat(actual.getRecIndex()).as(error + "recIndex").isEqualTo(expected.getRecIndex());
+                    assertThat(actual.getRecIndex()).as(error + EQUALITY_REC_INDEX).isEqualTo(expected.getRecIndex());
                 }
             }
-            default ->
-                    throw new IllegalArgumentException("Valore non valido per timelineEventCategory: " + timelineEventCategory);
+            default -> throw new IllegalArgumentException(INVALID_TIMELINE_CATEGORY + timelineEventCategory);
         }
     }
 

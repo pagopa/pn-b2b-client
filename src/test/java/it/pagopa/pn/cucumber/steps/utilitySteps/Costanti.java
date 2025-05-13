@@ -113,6 +113,36 @@ public class Costanti {
     public static final String PREPARE_ANALOG_DOMICILE_FAILURE = "PREPARE_ANALOG_DOMICILE_FAILURE";
     public static final String PUBLIC_REGISTRY_VALIDATION_CALL = "PUBLIC_REGISTRY_VALIDATION_CALL";
     public static final String PUBLIC_REGISTRY_VALIDATION_RESPONSE = "PUBLIC_REGISTRY_VALIDATION_RESPONSE";
+    //TimelineEquality errors
+    public static final String EQUALITY_DIGITAL_ADDRESS = "digitalAddress";
+    public static final String EQUALITY_REC_INDEX = "recIndex";
+    public static final String EQUALITY_REFUSAL_REASON_SIZE = "refusalReason_size";
+    public static final String EQUALITY_ERROR_CODE = "errorCode";
+    public static final String EQUALITY_GENERATED_AAR_URL = "generated_AAR_url";
+    public static final String EQUALITY_RESPONSE_STATUS = "responseStatus";
+    public static final String EQUALITY_RESPONSE_STATUS_VALUE = "responseStatus_value";
+    public static final String EQUALITY_SENDING_RECEIPTS_SIZE = "sendingReceipts_size";
+    public static final String EQUALITY_SENDING_RECEIPT_NUMBER = "sendingReceipt_number";
+    public static final String EQUALITY_LEGAL_FACTS_IDS = "legalFactsIds";
+    public static final String EQUALITY_LEGAL_FACTS_IDS_SIZE = "legalFactsIds_size";
+    public static final String EQUALITY_LEGAL_FACT_ID_NUMBER = "legalFactId_number";
+    public static final String EQUALITY_CATEGORY = "category";
+    public static final String EQUALITY_KEY = "key";
+    public static final String EQUALITY_DIGITAL_ADDRESS_SOURCE = "digitalAddressSource";
+    public static final String EQUALITY_IS_AVAILABLE = "isAvailable";
+    public static final String EQUALITY_DELIVERY_DETAIL_CODE = "deliveryDetailCode";
+    public static final String EQUALITY_PHYSICAL_ADDRESS = "physicalAddress";
+    public static final String EQUALITY_FAILURE_CAUSES = "failureCauses";
+    public static final String EQUALITY_ATTACHMENTS_NULL = "attachments_null";
+    public static final String EQUALITY_ATTACHMENTS_SIZE = "attachments_size";
+    public static final String EQUALITY_DOCUMENT_TYPE = "documentType";
+    public static final String EQUALITY_DELIVERY_FAILURE_CAUSE = "deliveryFailureCause";
+    public static final String EQUALITY_ANALOG_COST = "analogCost";
+    public static final String EQUALITY_LEGAL_FACT_ID = "legalFactId";
+    public static final String EQUALITY_DELEGATE_TAX_ID = "delegate_taxId";
+    public static final String EQUALITY_DELEGATE_TYPE = "delegate_type";
+    public static final String EQUALITY_DELEGATE_DENOMINATION = "delegate_denomination";
+    public static final String INVALID_TIMELINE_CATEGORY = "Valore non valido per timelineEventCategory: ";
     // PollingStrategy (generiche)
     public static final String TIMELINE_RAPID = "TIMELINE_RAPID";
     public static final String TIMELINE_SLOW = "TIMELINE_SLOW";

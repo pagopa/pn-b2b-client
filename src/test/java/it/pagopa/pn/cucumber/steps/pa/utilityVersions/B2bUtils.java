@@ -372,11 +372,7 @@ public abstract class B2bUtils {
         sb.append("Sono stati trovati " + assertionFailedErrorList.size() + " elementi con category " + timelineElementCategory + ", ma nessuno combacia con\n" + expectedTimelineElement);
         for (int i = 0; i < assertionFailedErrorList.size(); i++) {
             AssertionFailedError error = assertionFailedErrorList.get(i);
-            sb.append("\n")
-                    .append(i).append(") -> ")
-                    .append(error.getMessage()).append(" ")
-                    .append(error.getExpected()).append(" ")
-                    .append(error.getActual());
+            sb.append("\n").append(i + 1).append(") -> ").append(error.getMessage());
         }
         throw new AssertionFailedError(sb.toString());
     }
