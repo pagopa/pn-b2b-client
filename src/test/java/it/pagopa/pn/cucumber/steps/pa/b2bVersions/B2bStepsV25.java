@@ -398,6 +398,7 @@ public class B2bStepsV25 implements B2bStepsInterface {
                         log.info("TIMELINE_ELEMENT: " + te);
                         DataTestV25.checkTimelineElementEquality(timelineEventCategory, te, dataTest);
                         atLeastOneSuccessful = true;// se si arriva a questo punto, allora l'ultimo check ha avuto successo e non è necessario continuare
+                        break;
                     } catch (AssertionFailedError e) {
                         assertionFailedErrorList.add(e);// se si arriva a questo punto allora l'ultimo check ha fallito e ci si prepara al prossimo
                     }

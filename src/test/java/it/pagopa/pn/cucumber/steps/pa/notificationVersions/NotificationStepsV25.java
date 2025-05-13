@@ -292,7 +292,11 @@ public class NotificationStepsV25 implements NotificationStepsInterface {
 
     @Override
     public void addIuvGpdToDestinatario(String denominazione, String iuvGpd, Integer paymentIndex) {
-        notificationRequest.getRecipients().get(0).denomination(denominazione).getPayments().get(paymentIndex).getPagoPa().setNoticeCode(iuvGpd);
+        for (NotificationRecipientV24 recipient : notificationRequest.getRecipients()) {
+            if (recipient.getDenomination().equalsIgnoreCase(denominazione)) {
+                Objects.requireNonNull(Objects.requireNonNull(recipient.getPayments()).get(paymentIndex).getPagoPa()).setNoticeCode(iuvGpd);
+            }
+        }
     }
 
     @Override
