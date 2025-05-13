@@ -65,7 +65,7 @@ Feature: Creazione di una delega in erogazione
       # Esito: si ottiene 403 "Unauthorized"
       | support      | delegante | 403         |
 
-  Scenario Outline: [TC_CAPOFILA_RIFIUTO_DELEGA_ACCETTATA] Il rifiuto di una delega già accettata non possa essere compiuto da nessun utente indipentendemente dal ruolo
+  Scenario Outline: [TC_CAPOFILA_RIFIUTO_DELEGA_ACCETTATA] Il rifiuto di una delega già accettata non possa essere compiuto da nessun utente indipendentemente dal ruolo
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
     And un utente dell'ente <funzione> con ruolo "<ruolo>"

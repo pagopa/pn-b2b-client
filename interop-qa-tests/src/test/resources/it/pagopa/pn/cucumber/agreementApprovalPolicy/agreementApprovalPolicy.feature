@@ -1,5 +1,5 @@
 @agreementApprovalPolicy-edit
-Feature: Test modificabilità campo "agreementApprovalPolicy" con relativo feature flag acceso
+Feature: Test modificabilità campo "agreementApprovalPolicy"
 
   @app-edit-ff-on
   Scenario Outline: [MOD_APP_ON_1] Il campo "agreementApprovalPolicy" di un e-service in stato PUBLISHED, SUSPENDED, DEPRECATED o WAITING FOR APPROVAL può essere modificato da un utente con ruolo ADMIN o API
@@ -34,20 +34,29 @@ Feature: Test modificabilità campo "agreementApprovalPolicy" con relativo featu
       | DEPRECATED            | api   | MANUAL          | AUTOMATIC     |
       | DEPRECATED            | api   | AUTOMATIC       | AUTOMATIC     |
       | DEPRECATED            | api   | AUTOMATIC       | MANUAL        |
-      | WAITING FOR APPROVAL  | admin | MANUAL          | MANUAL        |
-      | WAITING FOR APPROVAL  | admin | MANUAL          | AUTOMATIC     |
-      | WAITING FOR APPROVAL  | admin | AUTOMATIC       | AUTOMATIC     |
-      | WAITING FOR APPROVAL  | admin | AUTOMATIC       | MANUAL        |
-      | WAITING FOR APPROVAL  | api   | MANUAL          | MANUAL        |
-      | WAITING FOR APPROVAL  | api   | MANUAL          | AUTOMATIC     |
-      | WAITING FOR APPROVAL  | api   | AUTOMATIC       | AUTOMATIC     |
-      | WAITING FOR APPROVAL  | api   | AUTOMATIC       | MANUAL        |
 
   @app-edit-ff-on
-  Scenario: [MOD_APP_ON_2] Il campo "agreementApprovalPolicy" di un e-service in stato ARCHIVED non può essere modificato
-    Given "PA1" ha già creato un e-service in stato "ARCHIVED" con approvazione "AUTOMATIC"
+  Scenario Outline: [MOD_APP_ON_2_A] Il campo "agreementApprovalPolicy" di un e-service in stato ARCHIVED o DRAFT non può essere modificato
+    Given "PA1" ha già creato un e-service in stato "<stato>" con approvazione "AUTOMATIC"
     When l'utente è un "admin" di "PA1"
     And l'utente tenta la modifica di agreementApprovalPolicy in "MANUAL"
+    Then si ottiene lo status code 400
+    Examples:
+      | stato     |
+      | ARCHIVED  |
+      | DRAFT     |
+
+  @app-edit-ff-on
+  Scenario: [MOD_APP_ON_2_B] Il campo "agreementApprovalPolicy" di un e-service in stato WAITING_FOR_APPROVAL non può essere modificato
+    Given l'ente "PA2" concede la disponibilità a ricevere deleghe
+    And l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
+    And l'utente richiede la creazione di una delega per l'ente "PA2"
+    And l'ente "PA2" accetta la delega
+    And l'utente è un "admin" di "PA2"
+    And l'utente crea una nuova versione dell'e-service
+    And l'utente delegato pubblica la versione dell'e-service
+    When l'utente tenta la modifica di agreementApprovalPolicy in "AUTOMATIC"
     Then si ottiene lo status code 400
 
   @app-edit-ff-on
@@ -82,8 +91,8 @@ Feature: Test modificabilità campo "agreementApprovalPolicy" con relativo featu
       | support   |
 
   @app-edit-ff-off
-  Scenario Outline: [MOD_APP_OFF_1] Il campo "agreementApprovalPolicy" di un e-service in stato PUBLISHED, SUSPENDED, DEPRECATED o WAITING FOR APPROVAL non può essere modificato
-    Given "PA1" ha già creato un e-service in stato "<stato>" con approvazione "MANUAL>"
+  Scenario Outline: [MOD_APP_OFF_1] Il campo "agreementApprovalPolicy" di un e-service in stato PUBLISHED, SUSPENDED, DEPRECATED o WAITING_FOR_APPROVAL non può essere modificato
+    Given "PA1" ha già creato un e-service in stato "<stato>" con approvazione "MANUAL"
     When l'utente è un "admin" di "PA1"
     And l'utente tenta la modifica di agreementApprovalPolicy in "AUTOMATIC"
     Then si ottiene lo status code 404
@@ -92,4 +101,4 @@ Feature: Test modificabilità campo "agreementApprovalPolicy" con relativo featu
       | PUBLISHED             |
       | SUSPENDED             |
       | DEPRECATED            |
-      | WAITING FOR APPROVAL  |
+      | WAITING_FOR_APPROVAL  |

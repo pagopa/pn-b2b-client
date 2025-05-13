@@ -188,8 +188,8 @@ public class AgreementCommonSteps {
     }
 
     @When("l'utente tenta la modifica di agreementApprovalPolicy specificando un valore vuoto")
-    public void editAgreementApprovalPolicyWithEmptyValue(String agreementApprovalPolicy) {
-        editAgreementApprovalPolicy(agreementApprovalPolicy, null, null);
+    public void editAgreementApprovalPolicyWithEmptyValue() {
+        editAgreementApprovalPolicy(AgreementApprovalPolicy.AUTOMATIC.toString(), null, null);
     }
 
 
@@ -215,5 +215,26 @@ public class AgreementCommonSteps {
             .getAgreementApprovalPolicy(),
             res -> res.equals(AgreementApprovalPolicy.fromValue(agreementApprovalPolicy)),
             "The agreementApprovalPolicy was not updated");
+    }
+
+    @And("l'utente crea una nuova versione dell'e-service")
+    public void createNewVersionOfEService() {
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID newVersion = dataPreparationService.createNextDraftDescriptor(eServiceId);
+        sharedStepsContext.getEServicesCommonContext().setDescriptorId(newVersion);
+    }
+
+    @And("l'utente delegato pubblica la versione dell'e-service")
+    public void publishNewVersionOfEService() {
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+        dataPreparationService.bringDescriptorToGivenState(eServiceId, descriptorId, EServiceDescriptorState.WAITING_FOR_APPROVAL, false);
+    }
+
+    @And("l'utente delegante approva la versione dell'e-service")
+    public void approveNewVersionOfEService() {
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+        dataPreparationService.approveDelegatedEServiceDescriptor(eServiceId, descriptorId);
     }
 }

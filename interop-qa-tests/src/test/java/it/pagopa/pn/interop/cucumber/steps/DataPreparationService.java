@@ -1,5 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps;
 
+import static it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState.PUBLISHED;
+import static it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState.WAITING_FOR_APPROVAL;
 import static it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode.RECEIVE;
 import static org.apache.commons.lang3.BooleanUtils.isNotTrue;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
@@ -377,6 +379,7 @@ public class DataPreparationService {
         }
     }
 
+    // NOTE 13/05/2025: descriptor state "WAITING_FOR_APPROVAL" is supported only for delegated e-services
     public Map<String, Object> bringDescriptorToGivenState(UUID eServiceId, UUID descriptorId, EServiceDescriptorState descriptorState, boolean withDocument) {
         // 1 add document to descriptor
         UUID documentId = null;
@@ -391,8 +394,8 @@ public class DataPreparationService {
         addInterfaceToDescriptor(eServiceId, descriptorId);
 
         // 3. Publish Descriptor
-        publishDescriptor(eServiceId, descriptorId);
-        if (descriptorState == EServiceDescriptorState.PUBLISHED) return result;
+        publishDescriptor(eServiceId, descriptorId, descriptorState == WAITING_FOR_APPROVAL ? WAITING_FOR_APPROVAL : PUBLISHED);
+        if (descriptorState == PUBLISHED || descriptorState == WAITING_FOR_APPROVAL) return result;
 
         // 4. Suspend Descriptor
         if (descriptorState == EServiceDescriptorState.SUSPENDED) {
@@ -454,14 +457,31 @@ public class DataPreparationService {
     }
 
     public void publishDescriptor(UUID eServiceId, UUID descriptorId) {
+        publishDescriptor(eServiceId, descriptorId, PUBLISHED);
+    }
+
+    private void publishDescriptor(UUID eServiceId, UUID descriptorId,
+        EServiceDescriptorState expectedState) {
         updateDraftDescriptor(eServiceId, descriptorId, new UpdateEServiceDescriptorSeed().audience(List.of("pagopa.it")));
-        httpCallExecutor.performCall(() -> eServiceClient.publishDescriptor(eServiceId, descriptorId));
+        httpCallExecutor.performCall(() -> eServiceClient.publishDescriptor(eServiceId,
+            descriptorId));
         assertValidResponse();
         pollingService.makePolling(
                 () -> producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId),
-                res -> res.getState() == EServiceDescriptorState.PUBLISHED,
+                res -> res.getState() == expectedState,
                 ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
+    }
+
+    public CreatedResource approveDelegatedEServiceDescriptor(UUID eServiceId, UUID descriptorId) {
+        httpCallExecutor.performCall(() -> eServiceClient.approveDelegatedEServiceDescriptor(eServiceId, descriptorId));
+        assertValidResponse();
+        pollingService.makePolling(
+                () -> producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId),
+                res -> res.getState() == PUBLISHED,
+                ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
+        );
+        return (CreatedResource) httpCallExecutor.getResponse();
     }
 
     public void suspendDescriptor(UUID eServiceId, UUID descriptorId) {
