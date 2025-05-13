@@ -292,7 +292,22 @@ public class NotificationStepsV24 implements NotificationStepsInterface {
 
     @Override
     public void addIuvGpdToDestinatario(String denominazione, String iuvGpd, Integer paymentIndex) {
-        notificationRequest.getRecipients().get(0).denomination(denominazione).getPayments().get(paymentIndex).getPagoPa().setNoticeCode(iuvGpd);
+        for (NotificationRecipientV23 recipient : notificationRequest.getRecipients()) {
+            if (recipient.getDenomination().equalsIgnoreCase(denominazione)) {
+                Objects.requireNonNull(Objects.requireNonNull(recipient.getPayments()).get(paymentIndex).getPagoPa()).setNoticeCode(iuvGpd);
+            }
+        }
+        //TODO MATTEO: prima quando veniva richiamato dallo step
+//      @And("al destinatario viene associato lo iuv creato mediante partita debitoria per {string} alla posizione {int}")
+//      eseguiva questo:
+//      notificationRequest.getRecipients().get(0).denomination(denominazione).getPayments().get(paymentIndex).getPagoPa().setNoticeCode(iuvGpd);
+//      mentre quando veniva richiamato dallo step eseguiva il metodo attualmente in uso. Verificare eventuali problemi
+//      @And("al destinatario viene associato lo iuv creato mediante partita debitoria per {string} per la posizione debitoria {int} del pagamento {int}")
+//      for (NotificationRecipientV23 recipient : notificationRequest.getRecipients()) {
+//          if (recipient.getDenomination().equalsIgnoreCase(denominazione)) {
+//             Objects.requireNonNull(Objects.requireNonNull(recipient.getPayments()).get(paymentIndex).getPagoPa()).setNoticeCode(iuvGpd);
+//          }
+//      }
     }
 
     @Override
