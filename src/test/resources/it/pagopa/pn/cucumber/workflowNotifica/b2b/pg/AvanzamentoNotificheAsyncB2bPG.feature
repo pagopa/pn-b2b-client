@@ -113,7 +113,7 @@ Feature: avanzamento notifiche asincrone b2b PG - controllo costi
 
   @Async @mockNR
   Scenario: [B2B_ASYNC_5_PG] Notifica mono PG-Verifica amount GPD per notifica ASYNC fino a "SEND_ANALOG_DOMICILE" al secondo tentativo
-    Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Gherkin Analogic" con Piva "05722930657"
+    Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Gherkin Analogic" con Piva "80048790176"
     Given viene generata una nuova notifica
       | subject       | invio notifica con cucumber |
       | feePolicy     | DELIVERY_MODE               |
@@ -127,7 +127,7 @@ Feature: avanzamento notifiche asincrone b2b PG - controllo costi
       | payment_f24             | NULL                          |
       | apply_cost_pagopa       | SI                            |
       | payment_multy_number    | 1                             |
-    And al destinatario viene associato lo iuv creato mediante partita debitoria per "Cucumber Analogic" alla posizione 0
+    And al destinatario viene associato lo iuv creato mediante partita debitoria per "Gherkin Analogic" alla posizione 0
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED per controllo GPD
     And viene aggiunto il costo della notifica totale
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_0"
