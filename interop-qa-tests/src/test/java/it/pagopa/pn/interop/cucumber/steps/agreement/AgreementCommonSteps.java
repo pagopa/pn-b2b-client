@@ -1,7 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.agreement;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -209,17 +207,13 @@ public class AgreementCommonSteps {
             AgreementApprovalPolicy.fromValue(agreementApprovalPolicy)));
     }
 
-
     @Then("il valore di agreementApprovalPolicy dell'e-service è adesso {string}")
     public void checkAgreementApprovalPolicy(String agreementApprovalPolicy) {
-        AgreementApprovalPolicy actualPolicy = eserviceClient.getEServiceDescriptor(
+        pollingService.makePolling(() -> eserviceClient.getEServiceDescriptor(
                 sharedStepsContext.getEServicesCommonContext().getEserviceId(),
                 sharedStepsContext.getEServicesCommonContext().getDescriptorId())
-            .getAgreementApprovalPolicy();
-        AgreementApprovalPolicy expectedPolicy = AgreementApprovalPolicy.fromValue(agreementApprovalPolicy);
-        assertThat(actualPolicy)
-            .as("Verifica il valore finale di agreementApprovalPolicy")
-            .isEqualTo(expectedPolicy);
+            .getAgreementApprovalPolicy(),
+            res -> res.equals(AgreementApprovalPolicy.fromValue(agreementApprovalPolicy)),
+            "The agreementApprovalPolicy was not updated");
     }
-
 }
