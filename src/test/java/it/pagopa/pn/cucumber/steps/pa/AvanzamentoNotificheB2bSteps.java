@@ -1030,7 +1030,7 @@ public class AvanzamentoNotificheB2bSteps {
     @Then("viene verificato che l'elemento di timeline {string} esista")
     public void checkIfTimelineElementExists(String timelineEventCategory, Map<String, String> data) {
         B2bStepsInterface b2bStepsInterface = getB2bStepsInterface();
-        b2bStepsInterface.checkIfTimelineElementExistsFromData(true, timelineEventCategory, data);
+        b2bStepsInterface.checkIfTimelineElementExistsFromData(timelineEventCategory, data);
     }
 
     /**

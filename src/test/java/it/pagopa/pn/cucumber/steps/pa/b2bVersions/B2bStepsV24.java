@@ -13,6 +13,7 @@ import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheB2bSteps;
 import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion;
+import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.NotificationUtilsV24;
 import it.pagopa.pn.cucumber.steps.utilitySteps.PollingType;
 import it.pagopa.pn.cucumber.steps.utilitySteps.WaitForEventPredicateFilters;
@@ -375,15 +376,13 @@ public class B2bStepsV24 implements B2bStepsInterface {
     }
 
     @Override
-    public void checkIfTimelineElementExistsFromData(boolean exists, String timelineEventCategory, Map<String, String> dataMap) {
-        if (exists) {
-            verifyTestCompatibilityWithVersion(timelineEventCategory, true);
-        }
+    public void checkIfTimelineElementExistsFromData(String timelineEventCategory, Map<String, String> dataMap) {
+        verifyTestCompatibilityWithVersion(timelineEventCategory, true);
         try {
             DataTestV24 dataTest = DataTestV24.convertMap(dataMap);
             boolean mustLoadTimeline = dataTest != null && dataTest.isLoadTimeline();
             if (mustLoadTimeline) {
-                loadTimeline(timelineEventCategory, exists, dataTest);
+                loadTimeline(timelineEventCategory, true, dataTest);
             }
             List<TimelineElementV26> timelineElements = getTimelineElementsByEventId(timelineEventCategory, dataTest);
             assertThat(timelineElements)
@@ -391,19 +390,20 @@ public class B2bStepsV24 implements B2bStepsInterface {
                     .isNotEmpty();
             if (dataTest != null && dataTest.getTimelineElement() != null) {
                 boolean atLeastOneSuccessful = false;
-                AssertionFailedError assertionFailedError = null;
+                List<AssertionFailedError> assertionFailedErrorList = new LinkedList<>();
                 for (TimelineElementV26 te : timelineElements) {
                     try {
                         timelineElement = te;
                         log.info("TIMELINE_ELEMENT: " + te);
                         DataTestV24.checkTimelineElementEquality(timelineEventCategory, te, dataTest);
                         atLeastOneSuccessful = true;// se si arriva a questo punto, allora l'ultimo check ha avuto successo e non è necessario continuare
+                        break;
                     } catch (AssertionFailedError e) {
-                        assertionFailedError = e;// se si arriva a questo punto allora l'ultimo check ha fallito e ci si prepara al prossimo
+                        assertionFailedErrorList.add(e);// se si arriva a questo punto allora l'ultimo check ha fallito e ci si prepara al prossimo
                     }
                 }
                 if (!atLeastOneSuccessful) {// se nessun confronto ha avuto successo allora di certo sarà stata lanciata un'eccezione
-                    throw assertionFailedError;// si rilancia l'ultima eccezione catturata
+                    B2bUtils.logTimelineElementsThatDoNotMatchExpected(assertionFailedErrorList, dataTest, timelineEventCategory);
                 }
             }
         } catch (AssertionFailedError assertionFailedError) {
@@ -422,14 +422,14 @@ public class B2bStepsV24 implements B2bStepsInterface {
             assertThat(timelineElementList).as("La timeline caricata da B2B non dev'essere null").isNotNull();
             assertThat(timelineElementList).as("La timeline caricata da B2B non dev'essere vuota").isNotEmpty();
             timelineElement = getTimelineElementByIdOrCategory(timelineEventCategory, dataTest, timelineElementList);
-            String expectedTimelineElement = getExpectedTimelineElement(dataTest, timelineEventCategory);
+            String expectedTimelineElement = B2bUtils.getExpectedTimelineElement(dataTest, timelineEventCategory);
             if (existCheck) {
                 assertThat(timelineElement)
-                        .as("La timeline caricata da B2B dovrebbe contenere un timelineElement di questo tipo \n " + expectedTimelineElement)
+                        .as("La timeline caricata da B2B dovrebbe contenere un timelineElement di questo tipo\n " + expectedTimelineElement)
                         .isNotNull();
             } else {
                 assertThat(timelineElement)
-                        .as("La timeline caricata da B2B NON dovrebbe contenere un timelineElement di questo tipo \n " + expectedTimelineElement)
+                        .as("La timeline caricata da B2B NON dovrebbe contenere un timelineElement di questo tipo\n " + expectedTimelineElement)
                         .isNull();
             }
         }
@@ -463,34 +463,17 @@ public class B2bStepsV24 implements B2bStepsInterface {
                     assertThat(timelineElementList).as("La timeline caricata da DeliveryPush non dev'essere null").isNotNull();
                     assertThat(timelineElementList).as("La timeline caricata da DeliveryPush non dev'essere vuota").isNotEmpty();
                     timelineElement = getTimelineElementByIdOrCategory(timelineEventCategory, dataTest, timelineElementList);
-                    String expectedTimelineElement = getExpectedTimelineElement(dataTest, timelineEventCategory);
+                    String expectedTimelineElement = B2bUtils.getExpectedTimelineElement(dataTest, timelineEventCategory);
                     if (existCheck) {
                         assertThat(timelineElement)
-                                .as("La timeline caricata da DeliveryPush dovrebbe contenere un timelineElement di questo tipo \n " + expectedTimelineElement)
+                                .as("La timeline caricata da DeliveryPush dovrebbe contenere un timelineElement di questo tipo\n" + expectedTimelineElement)
                                 .isNotNull();
                     } else {
                         assertThat(timelineElement)
-                                .as("La timeline caricata da DeliveryPush NON dovrebbe contenere un timelineElement di questo tipo \n " + expectedTimelineElement)
+                                .as("La timeline caricata da DeliveryPush NON dovrebbe contenere un timelineElement di questo tipo\n" + expectedTimelineElement)
                                 .isNull();
                     }
                 });
-    }
-
-    /**
-     * Usato solo a fini di logging per stampare il TimelineElement atteso
-     */
-    private String getExpectedTimelineElement(DataTestV24 dataTest, String timelineElementCategory) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("category: ").append(timelineElementCategory).append("\n");
-        if (dataTest != null && dataTest.getInputData() == null) {
-            for (Map.Entry<String, String> entry : dataTest.getInputData().entrySet()) {
-                sb.append(entry.getKey())
-                        .append(": ")
-                        .append(entry.getValue())
-                        .append("\n");
-            }
-        }
-        return sb.toString();
     }
 
     private List<TimelineElementV26> getTimelineByDeliveryPush() {

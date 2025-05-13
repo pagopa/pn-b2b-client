@@ -162,6 +162,7 @@ public class Costanti {
     public static final String TAX_ID = "TAX_ID";
     public static final String ADDRESS = "ADDRESS";
     // Error messages
+    public static final String EQUALITY_CHECK_FAILED = "Equality check failed";
     public static final String FILE_NOTFOUND = "FILE_NOTFOUND";
     public static final String FILE_SHA_ERROR = "FILE_SHA_ERROR";
     public static final String TAXID_NOT_VALID = "TAXID_NOT_VALID";
