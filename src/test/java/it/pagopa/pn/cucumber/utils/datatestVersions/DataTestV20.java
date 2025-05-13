@@ -2,8 +2,8 @@ package it.pagopa.pn.cucumber.utils.datatestVersions;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.*;
+import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.utils.EventId;
-import it.pagopa.pn.cucumber.utils.TimelineEventId;
 import lombok.Data;
 import org.junit.jupiter.api.Assertions;
 
@@ -14,6 +14,7 @@ import java.util.Objects;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @Data
 public class DataTestV20 extends AbstractDataTest {
@@ -88,6 +89,7 @@ public class DataTestV20 extends AbstractDataTest {
         DelegateInfo delegateInfoFromTest = detailsFromTest != null ? detailsFromTest.getDelegateInfo() : null;
         DelegateInfo delegateInfoFromNotification = detailsFromNotification != null ? detailsFromNotification.getDelegateInfo() : null;
 
+        String error = EQUALITY_CHECK_FAILED + ": " + timelineEventCategory;
         switch (timelineEventCategory) {
             case SEND_COURTESY_MESSAGE -> {
                 if (detailsFromTest != null) {
@@ -165,7 +167,7 @@ public class DataTestV20 extends AbstractDataTest {
                     }
                     if (detailsFromTest.getDeliveryFailureCause() != null) {
                         List<String> failureCauses = Arrays.asList(detailsFromTest.getDeliveryFailureCause().split(" "));
-                        Assertions.assertTrue(failureCauses.contains(elementFromNotification.getDetails().getDeliveryFailureCause()));
+                        assertThat(failureCauses).asList().contains(elementFromNotification.getDetails().getDeliveryFailureCause());
                     }
                 }
             }
@@ -244,38 +246,7 @@ public class DataTestV20 extends AbstractDataTest {
 
     public String getTimelineEventId(String timelineEventCategory, String iun) {
         EventId event = getEventId(iun, this);
-        return switch (timelineEventCategory) {
-            case SEND_COURTESY_MESSAGE -> TimelineEventId.SEND_COURTESY_MESSAGE.buildEventId(event);
-            case REQUEST_REFUSED -> TimelineEventId.REQUEST_REFUSED.buildEventId(event);
-            case AAR_GENERATION -> TimelineEventId.AAR_GENERATION.buildEventId(event);
-            case REQUEST_ACCEPTED -> TimelineEventId.REQUEST_ACCEPTED.buildEventId(event);
-            case SEND_DIGITAL_DOMICILE -> TimelineEventId.SEND_DIGITAL_DOMICILE.buildEventId(event);
-            case SEND_DIGITAL_FEEDBACK -> TimelineEventId.SEND_DIGITAL_FEEDBACK.buildEventId(event);
-            case GET_ADDRESS -> TimelineEventId.GET_ADDRESS.buildEventId(event);
-            case DIGITAL_SUCCESS_WORKFLOW -> TimelineEventId.DIGITAL_SUCCESS_WORKFLOW.buildEventId(event);
-            case SCHEDULE_REFINEMENT -> TimelineEventId.SCHEDULE_REFINEMENT_WORKFLOW.buildEventId(event);
-            case REFINEMENT -> TimelineEventId.REFINEMENT.buildEventId(event);
-            case ANALOG_SUCCESS_WORKFLOW -> TimelineEventId.ANALOG_SUCCESS_WORKFLOW.buildEventId(event);
-            case DIGITAL_FAILURE_WORKFLOW -> TimelineEventId.DIGITAL_FAILURE_WORKFLOW.buildEventId(event);
-            case SEND_ANALOG_FEEDBACK -> TimelineEventId.SEND_ANALOG_FEEDBACK.buildEventId(event);
-            case SEND_SIMPLE_REGISTERED_LETTER_PROGRESS ->
-                    TimelineEventId.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS.buildEventId(event);
-            case SEND_ANALOG_PROGRESS -> TimelineEventId.SEND_ANALOG_PROGRESS.buildEventId(event);
-            case ANALOG_FAILURE_WORKFLOW -> TimelineEventId.ANALOG_FAILURE_WORKFLOW.buildEventId(event);
-            case PREPARE_ANALOG_DOMICILE -> TimelineEventId.PREPARE_ANALOG_DOMICILE.buildEventId(event);
-            case SCHEDULE_ANALOG_WORKFLOW -> TimelineEventId.SCHEDULE_ANALOG_WORKFLOW.buildEventId(event);
-            case SEND_ANALOG_DOMICILE -> TimelineEventId.SEND_ANALOG_DOMICILE.buildEventId(event);
-            case SEND_SIMPLE_REGISTERED_LETTER -> TimelineEventId.SEND_SIMPLE_REGISTERED_LETTER.buildEventId(event);
-            case PREPARE_SIMPLE_REGISTERED_LETTER ->
-                    TimelineEventId.PREPARE_SIMPLE_REGISTERED_LETTER.buildEventId(event);
-            case NOTIFICATION_VIEWED -> TimelineEventId.NOTIFICATION_VIEWED.buildEventId(event);
-            case COMPLETELY_UNREACHABLE -> TimelineEventId.COMPLETELY_UNREACHABLE.buildEventId(event);
-            case DIGITAL_DELIVERY_CREATION_REQUEST ->
-                    TimelineEventId.DIGITAL_DELIVERY_CREATION_REQUEST.buildEventId(event);
-            case ANALOG_WORKFLOW_RECIPIENT_DECEASED ->
-                    TimelineEventId.ANALOG_WORKFLOW_RECIPIENT_DECEASED.buildEventId(event);
-            default -> null;
-        };
+        return B2bUtils.getTimelineEventId(event, timelineEventCategory);
     }
 
     private static EventId getEventId(String iun, DataTestV20 dataFromTest) {

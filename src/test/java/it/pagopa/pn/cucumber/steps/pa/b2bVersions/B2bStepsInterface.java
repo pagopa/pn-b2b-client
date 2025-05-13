@@ -63,7 +63,7 @@ public interface B2bStepsInterface {
      */
     void checkIfTimelineElementExists(boolean exists, TimelineElementCheck furtherChecks, TimelineElementCheckFilters filterParams);
 
-    void checkIfTimelineElementExistsFromData(boolean exists, String timelineEventCategory, Map<String, String> dataMap);
+    void checkIfTimelineElementExistsFromData(String timelineEventCategory, Map<String, String> dataMap);
 
     void checkIfStatusExists(boolean exists);
 

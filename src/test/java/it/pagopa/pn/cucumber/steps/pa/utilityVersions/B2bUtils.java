@@ -14,12 +14,16 @@ import it.pagopa.pn.client.b2b.pa.service.utils.RaddOperator;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCsv.RegistryUploadResponse;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.DocumentUploadRequest;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.DocumentUploadResponse;
+import it.pagopa.pn.cucumber.utils.EventId;
+import it.pagopa.pn.cucumber.utils.TimelineEventId;
+import it.pagopa.pn.cucumber.utils.datatestVersions.AbstractDataTest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
@@ -51,6 +55,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 
 @Data
 @Slf4j
@@ -337,5 +343,76 @@ public abstract class B2bUtils {
                 .operationId(operationId)
                 .checksum(sha256);
         return raddAltClient.documentUpload(uidRaddOperator, documentUploadRequest);
+    }
+
+    /**
+     * Usato a fini di logging per stampare le proprietà che deve avere il TimelineElement atteso
+     */
+    public static String getExpectedTimelineElement(AbstractDataTest dataTest, String timelineElementCategory) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("category: ").append(timelineElementCategory).append("\n");
+        if (dataTest != null && dataTest.getInputData() != null) {
+            for (Map.Entry<String, String> entry : dataTest.getInputData().entrySet()) {
+                sb.append(entry.getKey())
+                        .append(": ")
+                        .append(entry.getValue())
+                        .append("\n");
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Lancia un'AssertionFailedError con log estremamente dettagliato relativo agli elementi di timeline
+     * (rendendo molto più facile per i tester capire quale sia la causa del fail, in particolar modo se dovuto a sviste dei dati in input)
+     */
+    public static void logTimelineElementsThatDoNotMatchExpected(List<AssertionFailedError> assertionFailedErrorList, AbstractDataTest dataTest, String timelineElementCategory) {
+        String expectedTimelineElement = getExpectedTimelineElement(dataTest, timelineElementCategory);
+        StringBuilder sb = new StringBuilder();
+        sb.append("Sono stati trovati " + assertionFailedErrorList.size() + " elementi con category " + timelineElementCategory + ", ma nessuno combacia con\n" + expectedTimelineElement);
+        for (int i = 0; i < assertionFailedErrorList.size(); i++) {
+            AssertionFailedError error = assertionFailedErrorList.get(i);
+            sb.append("\n")
+                    .append(i).append(") -> ")
+                    .append(error.getMessage()).append(" ")
+                    .append(error.getExpected()).append(" ")
+                    .append(error.getActual());
+        }
+        throw new AssertionFailedError(sb.toString());
+    }
+
+    public static String getTimelineEventId(EventId event, String timelineEventCategory) {
+        return switch (timelineEventCategory) {
+            case SEND_COURTESY_MESSAGE -> TimelineEventId.SEND_COURTESY_MESSAGE.buildEventId(event);
+            case REQUEST_REFUSED -> TimelineEventId.REQUEST_REFUSED.buildEventId(event);
+            case AAR_GENERATION -> TimelineEventId.AAR_GENERATION.buildEventId(event);
+            case REQUEST_ACCEPTED -> TimelineEventId.REQUEST_ACCEPTED.buildEventId(event);
+            case SEND_DIGITAL_DOMICILE -> TimelineEventId.SEND_DIGITAL_DOMICILE.buildEventId(event);
+            case SEND_DIGITAL_FEEDBACK -> TimelineEventId.SEND_DIGITAL_FEEDBACK.buildEventId(event);
+            case GET_ADDRESS -> TimelineEventId.GET_ADDRESS.buildEventId(event);
+            case DIGITAL_SUCCESS_WORKFLOW -> TimelineEventId.DIGITAL_SUCCESS_WORKFLOW.buildEventId(event);
+            case SCHEDULE_REFINEMENT -> TimelineEventId.SCHEDULE_REFINEMENT_WORKFLOW.buildEventId(event);
+            case REFINEMENT -> TimelineEventId.REFINEMENT.buildEventId(event);
+            case ANALOG_SUCCESS_WORKFLOW -> TimelineEventId.ANALOG_SUCCESS_WORKFLOW.buildEventId(event);
+            case DIGITAL_FAILURE_WORKFLOW -> TimelineEventId.DIGITAL_FAILURE_WORKFLOW.buildEventId(event);
+            case SEND_ANALOG_FEEDBACK -> TimelineEventId.SEND_ANALOG_FEEDBACK.buildEventId(event);
+            case SEND_SIMPLE_REGISTERED_LETTER_PROGRESS ->
+                    TimelineEventId.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS.buildEventId(event);
+            case SEND_ANALOG_PROGRESS -> TimelineEventId.SEND_ANALOG_PROGRESS.buildEventId(event);
+            case ANALOG_FAILURE_WORKFLOW -> TimelineEventId.ANALOG_FAILURE_WORKFLOW.buildEventId(event);
+            case PREPARE_ANALOG_DOMICILE -> TimelineEventId.PREPARE_ANALOG_DOMICILE.buildEventId(event);
+            case SCHEDULE_ANALOG_WORKFLOW -> TimelineEventId.SCHEDULE_ANALOG_WORKFLOW.buildEventId(event);
+            case SEND_ANALOG_DOMICILE -> TimelineEventId.SEND_ANALOG_DOMICILE.buildEventId(event);
+            case SEND_SIMPLE_REGISTERED_LETTER -> TimelineEventId.SEND_SIMPLE_REGISTERED_LETTER.buildEventId(event);
+            case PREPARE_SIMPLE_REGISTERED_LETTER ->
+                    TimelineEventId.PREPARE_SIMPLE_REGISTERED_LETTER.buildEventId(event);
+            case NOTIFICATION_VIEWED -> TimelineEventId.NOTIFICATION_VIEWED.buildEventId(event);
+            case COMPLETELY_UNREACHABLE -> TimelineEventId.COMPLETELY_UNREACHABLE.buildEventId(event);
+            case DIGITAL_DELIVERY_CREATION_REQUEST ->
+                    TimelineEventId.DIGITAL_DELIVERY_CREATION_REQUEST.buildEventId(event);
+            case ANALOG_WORKFLOW_RECIPIENT_DECEASED ->
+                    TimelineEventId.ANALOG_WORKFLOW_RECIPIENT_DECEASED.buildEventId(event);
+            default -> null;
+        };
     }
 }

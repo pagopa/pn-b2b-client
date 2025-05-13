@@ -24,6 +24,8 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 @Slf4j
 public class AsyncSteps {
@@ -70,8 +72,7 @@ public class AsyncSteps {
     @And("viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore {string} e amount {string} per {string} con (CF)(Piva) {string}")
     public void vieneCreataUnaPosizioneDebitoria(String organizationCode, String amount, String name, String taxId) {
         String iuv = generateRandomIuv();
-        log.info("IUPD generate: {}-64c8e41bfec846e04{}{}", organizationCode, iuv,
-            System.currentTimeMillis());
+        log.info("IUPD generate: {}-64c8e41bfec846e04{}{}", organizationCode, iuv, System.currentTimeMillis());
         sharedSteps.addIuvGPD(iuv);
 
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -241,7 +242,7 @@ public class AsyncSteps {
     public void vieneEffettuatoIlControlloDelAmountDiGPD(String amount) {
         try {
             log.info("Amount GPD: " + amountGPD);
-            Assertions.assertEquals(amountGPD, Integer.parseInt(amount));
+            assertThat(amountGPD).as("L'amount GPD non coincide col valore atteso").isEqualTo(Integer.parseInt(amount));
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertionFailedErrorWithAmountGPDAndIUN(assertionFailedError, amountGPD);
         }
