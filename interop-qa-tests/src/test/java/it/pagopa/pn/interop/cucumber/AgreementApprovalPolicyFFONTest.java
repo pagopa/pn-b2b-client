@@ -1,4 +1,4 @@
-package it.pagopa.pn.interop.cucumber.aap_edit;
+package it.pagopa.pn.interop.cucumber;
 
 import org.junit.platform.suite.api.IncludeTags;
 

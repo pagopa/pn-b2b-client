@@ -1,4 +1,4 @@
-package it.pagopa.pn.interop.cucumber.aap_edit;
+package it.pagopa.pn.interop.cucumber;
 
 import static io.cucumber.junit.platform.engine.Constants.EXECUTION_MODE_FEATURE_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
