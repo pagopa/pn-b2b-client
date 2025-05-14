@@ -81,7 +81,7 @@ public class EServiceRiskAnalysisAdditionSteps {
     public void addRiskAnalysisWithWrongVersion() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         RiskAnalysis eServiceRiskAnalysisSeed = dataPreparationService.getRiskAnalysis(sharedStepsContext.getTenantType(), true);
-        String outdatedVersion = String.format("%.1f", Integer.parseInt(eServiceRiskAnalysisSeed.getRiskAnalysisForm().getVersion()) - 1);
+        String outdatedVersion = String.format("%d.1f", (int) Double.parseDouble(eServiceRiskAnalysisSeed.getRiskAnalysisForm().getVersion()) - 1);
         eServiceRiskAnalysisSeed.getRiskAnalysisForm().setVersion(outdatedVersion);
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getEServiceClient().addRiskAnalysisToEService(

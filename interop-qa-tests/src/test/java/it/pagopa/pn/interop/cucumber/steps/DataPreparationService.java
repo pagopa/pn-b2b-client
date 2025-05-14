@@ -72,6 +72,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
@@ -311,7 +312,12 @@ public class DataPreparationService {
     }
 
     public void submitAgreement(UUID agreementId, AgreementState expectedState) {
-        httpCallExecutor.performCall(() -> agreementClient.submitAgreement(agreementId, new AgreementSubmissionPayload()));
+        pollingService.makePolling(
+                () -> httpCallExecutor.performCall(() -> agreementClient.submitAgreement(agreementId, new AgreementSubmissionPayload())),
+                res -> res.is2xxSuccessful(),
+                "There was an error while submitting the agreement!"
+        );
+
         assertValidResponse();
         pollingService.makePolling(
                 () -> agreementClient.getAgreementById(agreementId),
@@ -575,7 +581,7 @@ public class DataPreparationService {
         httpCallExecutor.performCall(() -> purposeApiClient.retrieveLatestRiskAnalysisConfiguration());
         assertValidResponse();
         String version = ((RiskAnalysisFormConfig) httpCallExecutor.getResponse()).getVersion();
-        return new RiskAnalysis("finalità test", new RiskAnalysisFormSeed().version(version).answers(riskAnalysisAttributes.toMap()));
+        return new RiskAnalysis(String.format("finalità_test_%d", new Random().nextInt()), new RiskAnalysisFormSeed().version(version).answers(riskAnalysisAttributes.toMap()));
     }
 
     public void createPurposeWithGivenState(int testSeed, EServiceMode eServiceMode, PurposeVersionState purposeState, TEServiceMode teServiceMode) {

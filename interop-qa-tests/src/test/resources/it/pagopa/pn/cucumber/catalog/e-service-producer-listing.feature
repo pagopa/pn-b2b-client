@@ -8,7 +8,7 @@ Feature: Listing e-services lato erogatore
     Given "<ente>" ha già creato 5 e-services in catalogo in stato PUBLISHED o SUSPENDED e 1 in stato DRAFT
     Given "PA2" ha già creato 5 e-services in catalogo in stato PUBLISHED o SUSPENDED e 1 in stato DRAFT
     When l'utente richiede una operazione di listing sui propri e-services erogati
-    Then si ottiene status code 200 e la lista di <risultati> e-services
+    Then si ottiene status code 200 e la lista di <risultati> e-services come erogatore
 
     Examples: 
       | ente | ruolo        | risultati |
@@ -28,23 +28,23 @@ Feature: Listing e-services lato erogatore
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato 4 e-services in catalogo in stato PUBLISHED o SUSPENDED e 1 in stato DRAFT
     When l'utente richiede una operazione di listing sui propri e-services erogati limitata ai primi 3 e-services
-    Then si ottiene status code 200 e la lista di 3 e-services
+    Then si ottiene status code 200 e la lista di 3 e-services come erogatore
 
   @producer_listing3
   Scenario: A fronte di 5 e-service in db e una richiesta di offset 2, restituisce solo 3 risultati
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato 4 e-services in catalogo in stato PUBLISHED o SUSPENDED e 1 in stato DRAFT
     When l'utente richiede una operazione di listing sui propri e-services con offset 2
-    Then si ottiene status code 200 e la lista di 3 e-services
+    Then si ottiene status code 200 e la lista di 3 e-services come erogatore
 
-  @producer_listing4 @wait_for_fix @IMN-261
+  @producer_listing4 @to_fix @IMN-261
   Scenario: Restituisce gli e-service erogati dall’ente fruiti da almeno uno dei fruitori specifici
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato 2 e-services in catalogo in stato PUBLISHED o SUSPENDED e 1 in stato DRAFT
     Given "PA1" ha un agreement attivo con un e-service di "PA1"
     Given "PA2" ha un agreement attivo con un e-service di "PA1"
     When l'utente richiede una operazione di listing sui propri e-services fruiti da "PA2"
-    Then si ottiene status code 200 e la lista di 1 e-service
+    Then si ottiene status code 200 e la lista di 1 e-service come erogatore
 
   @producer_listing5
   Scenario: Restituisce gli e-service erogati dall’ente che contengono la keyword "test" all'interno del nome, con ricerca case insensitive
@@ -52,11 +52,11 @@ Feature: Listing e-services lato erogatore
     Given "PA1" ha già creato 2 e-services in catalogo in stato PUBLISHED o SUSPENDED e 1 in stato DRAFT
     Given "PA1" ha già creato e pubblicato un e-service contenente la keyword "test"
     When l'utente richiede una operazione di listing sui propri e-services filtrando per la keyword "test"
-    Then si ottiene status code 200 e la lista di 1 e-service
+    Then si ottiene status code 200 e la lista di 1 e-service come erogatore
 
   @producer_listing6
   Scenario: Restituisce un insieme vuoto di e-service a catalogo per una ricerca che non porta risultati
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato 10 e-services in catalogo in stato PUBLISHED o SUSPENDED e 1 in stato DRAFT
     When l'utente richiede una operazione di listing sui propri e-services filtrando per la keyword "unknown"
-    Then si ottiene status code 200 e la lista di 0 e-services
+    Then si ottiene status code 200 e la lista di 0 e-services come erogatore

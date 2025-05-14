@@ -9,6 +9,8 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 
+import java.util.UUID;
+
 public class EServiceRiskAnalysisUpdate {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
@@ -28,12 +30,13 @@ public class EServiceRiskAnalysisUpdate {
     public void tenantAddRiskAnalysisToEService(String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         RiskAnalysis riskAnalysis = dataPreparationService.getRiskAnalysis(tenantType, true);
-        dataPreparationService.addRiskAnalysisToEService(
+        UUID riskAnalysisId = dataPreparationService.addRiskAnalysisToEService(
                 sharedStepsContext.getEServicesCommonContext().getEserviceId(),
                 new EServiceRiskAnalysisSeed()
                         .name(riskAnalysis.getName())
                         .riskAnalysisForm(riskAnalysis.getRiskAnalysisForm())
         );
+        sharedStepsContext.getRiskAnalysisCommonContext().setRiskAnalysisId(riskAnalysisId);
     }
 
     @When("l'utente aggiorna l'analisi del rischio di quell'e-service")
