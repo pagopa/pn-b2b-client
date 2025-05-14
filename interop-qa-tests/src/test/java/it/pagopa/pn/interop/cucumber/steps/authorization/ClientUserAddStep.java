@@ -5,6 +5,7 @@ import static java.util.Objects.nonNull;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.interop.authorization.service.ClientAdminConfig;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
@@ -84,14 +85,14 @@ public class ClientUserAddStep {
         editClientAdmin(clientId, adminEditRequest);
     }
 
-    private void editClientAdmin(UUID clientId, Object adminEditRequest) {
+    private void editClientAdmin(UUID clientId, ClientAdminConfig adminEditRequest) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(
                 () -> authorizationClient.editClientAdmin(
                     clientId,
                     adminEditRequest));
         if(httpCallExecutor.getClientResponse().is2xxSuccessful()){
-            // QA-7236 TODO sharedStepsContext.getClientCommonContext().setAdminId(adminEditRequest.getAdminId());
+            sharedStepsContext.getClientCommonContext().setAdminId(adminEditRequest.getAdminId());
         }
     }
 
@@ -104,10 +105,9 @@ public class ClientUserAddStep {
             "L'amministratore del client non è stato modificato correttamente: adminId vuoto oppure difforme da quello indicato");
     }
 
-    // QA-7236 TODO 07/05/2025: da adeguare non appena sarà rilasciata l'API in oggetto nel body
-    // e nel tipo restituito, che dovrà essere coerente con IAuthorizationClient#editClientAdmin()
-    private Object buildClientAdminEditBody(UUID adminId) {
-        return new Object();
+    private ClientAdminConfig buildClientAdminEditBody(UUID adminId) {
+        return ClientAdminConfig.builder()
+            .adminId(adminId)
+            .build();
     }
-
 }

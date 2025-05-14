@@ -1,5 +1,6 @@
 package it.pagopa.interop.authorization.service.impl;
 
+import it.pagopa.interop.authorization.service.ClientAdminConfig;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
@@ -10,6 +11,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactClients;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactUser;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject3;
 import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject4;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKey;
@@ -120,13 +122,15 @@ public class AuthorizationClientImpl implements IAuthorizationClient {
     }
 
     @Override
-    public void editClientAdmin(UUID clientId, Object body) {
-        // clientsApi.editClientAdmin(body);
+    public Client editClientAdmin(UUID clientId, ClientAdminConfig adminConfig) {
+        InlineObject3 inlineObject3 = new InlineObject3()
+            .adminId(adminConfig.getAdminId());
+        return clientsApi.setAdminToClient(clientId, inlineObject3);
     }
 
     @Override
     public void deleteClientAdmin(UUID clientId, UUID adminId) {
-        // clientsApi.deleteClientAdmin(clientId, adminId);
+        clientsApi.removeClientAdmin(clientId, adminId);
     }
 
     @Override
