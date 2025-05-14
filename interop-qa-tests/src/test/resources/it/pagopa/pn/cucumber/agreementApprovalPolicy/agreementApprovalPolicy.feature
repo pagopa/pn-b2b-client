@@ -91,7 +91,7 @@ Feature: Test modificabilità campo "agreementApprovalPolicy"
       | support   |
 
   @app-edit-ff-off
-  Scenario Outline: [MOD_APP_OFF_1] Il campo "agreementApprovalPolicy" di un e-service in stato PUBLISHED, SUSPENDED, DEPRECATED o WAITING_FOR_APPROVAL non può essere modificato
+  Scenario Outline: [MOD_APP_OFF_1_A] Il campo "agreementApprovalPolicy" di un e-service in stato PUBLISHED, SUSPENDED, DEPRECATED non può essere modificato
     Given "PA1" ha già creato un e-service in stato "<stato>" con approvazione "MANUAL"
     When l'utente è un "admin" di "PA1"
     And l'utente tenta la modifica di agreementApprovalPolicy in "AUTOMATIC"
@@ -101,4 +101,16 @@ Feature: Test modificabilità campo "agreementApprovalPolicy"
       | PUBLISHED             |
       | SUSPENDED             |
       | DEPRECATED            |
-      | WAITING_FOR_APPROVAL  |
+
+  @app-edit-ff-off
+  Scenario: [MOD_APP_OFF_1_B] Il campo "agreementApprovalPolicy" di un e-service in stato WAITING_FOR_APPROVAL non può essere modificato
+    Given l'ente "PA2" concede la disponibilità a ricevere deleghe
+    And l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
+    And l'utente richiede la creazione di una delega per l'ente "PA2"
+    And l'ente "PA2" accetta la delega
+    And l'utente è un "admin" di "PA2"
+    And l'utente crea una nuova versione dell'e-service
+    And l'utente delegato pubblica la versione dell'e-service
+    When l'utente tenta la modifica di agreementApprovalPolicy in "AUTOMATIC"
+    Then si ottiene lo status code 404
