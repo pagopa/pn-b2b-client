@@ -29,7 +29,7 @@ public class KeyPairGeneratorUtil {
     public static KeyPairPEM createKeyPairPEM(String keyType, int modulusLength) {
         try {
             KeyPair keyPair = createKeyPair(keyType, modulusLength);
-            return new KeyPairPEM(keyToPEM(keyPair.getPrivate()), keyToPEM(keyPair.getPublic()));
+            return keyPairToPEM(keyPair);
         } catch (Exception e) {
             throw new IllegalArgumentException("There was an error while crating the KeyPairPEM: " + e.getMessage(), e);
         }
@@ -49,6 +49,10 @@ public class KeyPairGeneratorUtil {
             throw new IllegalArgumentException("There was an error while crating the %s".formatted(KeyPair.class.getName()), e);
 
         }
+    }
+
+    public static KeyPairPEM keyPairToPEM(KeyPair keyPair) {
+        return new KeyPairPEM(keyToPEM(keyPair.getPrivate()), keyToPEM(keyPair.getPublic()));
     }
 
     private static String keyToPEM(Key key) {

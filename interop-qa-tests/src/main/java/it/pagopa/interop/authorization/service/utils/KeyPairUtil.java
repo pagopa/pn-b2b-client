@@ -40,7 +40,7 @@ public class KeyPairUtil {
             return keyFactory.generatePrivate(keySpec);
         } catch (Exception e) {
             throw new KeyParsingException(
-                "Errore durante la conversione della public key da tipo %s a tipo %s".formatted(String.class.getName(), PublicKey.class.getName()),
+                "Errore durante la conversione della private key da tipo %s a tipo %s".formatted(String.class.getName(), PublicKey.class.getName()),
                 e);
         }
     }

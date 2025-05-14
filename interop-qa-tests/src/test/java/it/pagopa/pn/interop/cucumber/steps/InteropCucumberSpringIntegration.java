@@ -13,6 +13,7 @@ import it.pagopa.interop.authorization.service.impl.ProducerClientImpl;
 import it.pagopa.interop.authorization.service.utils.ConfigFileReader;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
+import it.pagopa.interop.authorization.service.utils.voucher.VoucherService;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.config.springconfig.springconfig.InteropRestTemplateConfiguration;
 import it.pagopa.interop.delegate.service.impl.ConsumerDelegationsApiClientImpl;
@@ -66,7 +67,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
     TracingClientConfigs.class,
     DevAbstractInteropTracingClient.class,
     QAAbstractInteropTracingClient.class,
-    CommonUtils.class
+    CommonUtils.class,
+    VoucherService.class
 })
 @EnableScheduling
 @EnableConfigurationProperties
