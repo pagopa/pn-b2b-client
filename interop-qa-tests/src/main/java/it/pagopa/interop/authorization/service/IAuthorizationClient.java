@@ -22,7 +22,7 @@ public interface IAuthorizationClient extends SettableBearerToken {
     CompactClients getClients(Integer offset, Integer limit, String q, List<UUID> userIds, ClientKind kind);
     Client getClient(UUID clientId);
     void removeClientPurpose(UUID clientId, UUID purposeId);
-    CreatedResource addUsersToClient(UUID clientId, InlineObject3 inlineObject3);
+    CreatedResource addUsersToClient(UUID clientId, InlineObject4 inlineObject);
 
     // QA-7236 TODO 07/05/2025: da adeguare una volta che sarà stata rilasciata l'API in oggetto
     //  nel nome, nel parametro passato e nel risultato restituito
