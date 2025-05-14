@@ -742,8 +742,8 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         if (isApiKeyUpdated) {
             updateApiKeyForStream();
         }
-        WebhookStepsInterface webhookStepsInterface = getWebhookStep(StreamVersion.valueOf(version));
-        StreamVersion streamVersion = StreamVersion.valueOf(version);
+        WebhookStepsInterface webhookStepsInterface = getWebhookStep(getStreamVersion(version));
+        StreamVersion streamVersion = getStreamVersion(version);
         setPaWebhook(pa);
         StatusElementSearchResult<?> statusEventForStream = getStatusEventForStream(streamVersion, status);
         boolean found = webhookStepsInterface.checkStatus(statusEventForStream);

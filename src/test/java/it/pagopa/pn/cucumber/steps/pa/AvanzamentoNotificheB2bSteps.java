@@ -114,7 +114,7 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("recuperando la fullSentNotification con la versione b2b {string} {is} presente l'elemento di timeline {string}")
     public void checkPresenceOfTimelineElement(String version, boolean isPresent, String timelineEventCategory) {
-        NotificationVersion notificationVersion = NotificationVersion.valueOf(version);
+        NotificationVersion notificationVersion = sharedSteps.getNotificationVersion(version);
         getB2bStepsInterface(notificationVersion).checkFullSentNotificationWithVersion(isPresent, timelineEventCategory);
     }
 
@@ -169,7 +169,7 @@ public class AvanzamentoNotificheB2bSteps {
         readEventsUpToTimelineElement(sharedSteps.getNotificationVersion(version), timelineEventCategory);
     }
 
-    @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} abbia notificationCost uguale a {string}")
+    @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} con notificationCost uguale a {string}")
     public void TimelineElementOfNotification(String timelineEventCategory, String cost) {
         readEventsUpToTimelineElement(sharedSteps.getVersionUsed(), timelineEventCategory);
         getB2bStepsInterface().checkNotificationCost(cost);
@@ -1428,7 +1428,7 @@ public class AvanzamentoNotificheB2bSteps {
         Assertions.assertTrue(diffMillis <= delta);
     }
 
-    @Then("esiste l'elemento di timeline della notifica {string} abbia notificationCost uguale a {string} per l'utente {int}")
+    @Then("esiste l'elemento di timeline della notifica {string} con notificationCost uguale a {string} per l'utente {int}")
     public void TimelineElementOfNotificationUserCost(String timelineEventCategory, String cost, Integer recipientIndex) {
         WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder()
                 .recipientIndex(recipientIndex)
