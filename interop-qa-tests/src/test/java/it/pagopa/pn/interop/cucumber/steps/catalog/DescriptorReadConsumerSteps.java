@@ -19,6 +19,7 @@ public class DescriptorReadConsumerSteps {
 
     @When("l'utente fruitore richiede la lettura di quel descrittore")
     public void requireDescriptorRead() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getEServiceClient().getCatalogEServiceDescriptor(
                         sharedStepsContext.getEServicesCommonContext().getEserviceId(),

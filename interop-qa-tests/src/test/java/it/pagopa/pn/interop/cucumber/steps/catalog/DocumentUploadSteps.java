@@ -27,12 +27,11 @@ public class DocumentUploadSteps {
 
     public DocumentUploadSteps(ClientTokenConfigurator clientTokenConfigurator,
                                SharedStepsContext sharedStepsContext,
-                               EServicesCommonContext eServicesCommonContext,
                                DataPreparationService dataPreparationService,
                                BlobFileCreator blobFileCreator) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
-        this.eServicesCommonContext = eServicesCommonContext;
+        this.eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
         this.dataPreparationService = dataPreparationService;
         this.identityService = sharedStepsContext.getIdentityService();
         this.blobFileCreator = blobFileCreator;
@@ -47,7 +46,7 @@ public class DocumentUploadSteps {
                 new UpdateEServiceDescriptorSeed()
         );
 
-        UUID documentId = dataPreparationService.bringDescriptorToGivenState(eServicesCommonContext.getEserviceId(), eServicesCommonContext.getDescriptorId(),
+        UUID documentId = dataPreparationService.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(), eServiceDescriptor.getDescriptorId(),
                 EServiceDescriptorState.fromValue(descriptorState), false).get("documentId");
         eServicesCommonContext.setEserviceId(eServiceDescriptor.getEServiceId());
         eServicesCommonContext.setDescriptorId(eServiceDescriptor.getDescriptorId());
@@ -56,8 +55,10 @@ public class DocumentUploadSteps {
 
     @When("l'utente carica un documento di interfaccia di tipo {string}")
     public void uploadInterfaceDocument(String fileType) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         String fileName = String.format("interface.%s", fileType);
-        Resource resource = blobFileCreator.createBlobFile("src/main/resources/dummy.pdf", fileName);
+        String filePath = String.format("src/main/resources/%s", fileName);
+        Resource resource = blobFileCreator.createBlobFile(filePath, fileName);
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getEServiceClient().createEServiceDocument(eServicesCommonContext.getEserviceId(),
                         eServicesCommonContext.getDescriptorId(), "INTERFACE", "Interfaccia", resource)
@@ -66,8 +67,10 @@ public class DocumentUploadSteps {
 
     @When("l'utente carica un documento di interfaccia di tipo {string} che contiene il termine localhost")
     public void uploadInterfaceWithLocalhostTerms(String fileType) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         String fileName = String.format("localhost-interface.%s", fileType);
-        Resource resource = blobFileCreator.createBlobFile("src/main/resources/dummy.pdf", fileName);
+        String filePath = String.format("src/main/resources/%s", fileName);
+        Resource resource = blobFileCreator.createBlobFile(filePath, fileName);
 
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getEServiceClient().createEServiceDocument(eServicesCommonContext.getEserviceId(),
@@ -83,6 +86,7 @@ public class DocumentUploadSteps {
 
     @When("l'utente carica un documento con nome {string} in quel descrittore")
     public void uploadDocument(String prettyName) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         Resource resource = blobFileCreator.createBlobFile("src/main/resources/dummy.pdf", "documento-test-qa.pdf");
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getEServiceClient().createEServiceDocument(eServicesCommonContext.getEserviceId(),

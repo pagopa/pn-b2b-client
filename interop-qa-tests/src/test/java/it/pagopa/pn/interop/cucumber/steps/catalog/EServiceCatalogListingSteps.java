@@ -85,6 +85,7 @@ public class EServiceCatalogListingSteps {
 
     @When("l'utente richiede la lista di e-services per i quali ha almeno un agreement attivo")
     public void requireEServiceListWithActiveAgreement() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getEServiceClient().getEServicesCatalog(
                         0, 12, String.valueOf(sharedStepsContext.getTestSeed()), List.of(), List.of(),
@@ -95,6 +96,7 @@ public class EServiceCatalogListingSteps {
 
     @When("l'utente richiede una operazione di listing sul catalogo")
     public void requireEServiceCatalogList() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getEServiceClient().getEServicesCatalog(
                         0, 12, String.valueOf(sharedStepsContext.getTestSeed()), List.of(), List.of(),
@@ -105,6 +107,7 @@ public class EServiceCatalogListingSteps {
 
     @When("l'utente richiede una operazione di listing sul catalogo limitata ai primi {int} e-services")
     public void requireEServiceCatalogListWithLimit(int limit) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getEServiceClient().getEServicesCatalog(
                         0, limit, String.valueOf(sharedStepsContext.getTestSeed()), List.of(), List.of(),
@@ -115,6 +118,7 @@ public class EServiceCatalogListingSteps {
 
     @When("l'utente richiede una operazione di listing sul catalogo con offset {int}")
     public void requireEServiceCatalogListWithOffset(int offset) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getEServiceClient().getEServicesCatalog(
                         offset, 12, String.valueOf(sharedStepsContext.getTestSeed()), List.of(), List.of(),
@@ -125,6 +129,7 @@ public class EServiceCatalogListingSteps {
 
     @When("l'utente richiede una operazione di listing degli e-services dell'erogatore {string}")
     public void requireEServiceCatalogListForProducer(String producer) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         UUID producerId = identityService.getOrganizationId(producer);
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getEServiceClient().getEServicesCatalog(
@@ -136,6 +141,7 @@ public class EServiceCatalogListingSteps {
 
     @When("l'utente richiede una operazione di listing sul catalogo filtrando per la keyword {string}")
     public void requireEServiceCatalogListByKeyword(String keyword) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getEServiceClient().getEServicesCatalog(
                         0, 12, String.format("%s-%s", sharedStepsContext.getTestSeed(), keyword), List.of(), List.of(),

@@ -75,6 +75,7 @@ public class DescriptorPublicationSteps {
 
     @When("l'utente pubblica quel descrittore")
     public void userPublishDescriptor() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getEServiceClient().publishDescriptor(
                         sharedStepsContext.getEServicesCommonContext().getEserviceId(),
@@ -85,6 +86,7 @@ public class DescriptorPublicationSteps {
 
     @Given("l'utente ha compilato parzialmente l'analisi del rischio")
     public void userPartiallyCompileRiskAnalysis() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         RiskAnalysis riskAnalysis = dataPreparationService.getRiskAnalysis(sharedStepsContext.getTenantType(), false);
         dataPreparationService.addRiskAnalysisToEService(
                 sharedStepsContext.getEServicesCommonContext().getEserviceId(),

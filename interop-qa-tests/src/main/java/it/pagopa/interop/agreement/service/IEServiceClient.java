@@ -16,6 +16,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.FileResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PresignedUrl;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorDocumentSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorQuotas;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceSeed;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,7 @@ public interface IEServiceClient extends SettableBearerToken {
     void deleteEServiceRiskAnalysis(UUID eServiceId, UUID riskAnalysisId);
     ResponseEntity<Void> activateDescriptor(UUID eServiceId, UUID descriptorId);
     CreatedResource updateDraftDescriptor(UUID eServiceId, UUID descriptorId, UpdateEServiceDescriptorSeed updateEServiceDescriptorSeed);
+    CreatedResource updateDescriptor(UUID eServiceId, UUID descriptorId, UpdateEServiceDescriptorQuotas updateEServiceDescriptorQuotas);
     CreatedResource createEServiceDocument(UUID eServiceId, UUID descriptorId, String kind, String prettyName, org.springframework.core.io.Resource doc);
     void publishDescriptor(UUID eServiceId, UUID descriptorId);
     void suspendDescriptor(UUID eServiceId, UUID descriptorId);

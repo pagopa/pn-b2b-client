@@ -39,6 +39,7 @@ public class EServiceConsumersDownloadSteps {
 
     @When("l'utente richiede una operazione di download dei fruitori di quell'e-service")
     public void userRequiresConsumerDownload() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getEServiceClient().getEServiceConsumers(eServicesCommonContext.getEserviceId())
         );

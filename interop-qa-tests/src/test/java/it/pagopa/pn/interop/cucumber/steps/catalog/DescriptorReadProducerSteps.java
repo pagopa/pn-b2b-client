@@ -19,6 +19,7 @@ public class DescriptorReadProducerSteps {
 
     @When("l'utente richiede la lettura di quel descrittore")
     public void producerRequiresDescriptorRead() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getProducerClient().getProducerEServiceDescriptor(
                         sharedStepsContext.getEServicesCommonContext().getEserviceId(),

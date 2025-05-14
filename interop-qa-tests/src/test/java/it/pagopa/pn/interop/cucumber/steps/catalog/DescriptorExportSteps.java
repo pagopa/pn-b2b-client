@@ -44,6 +44,7 @@ public class DescriptorExportSteps {
 
     @When("l'utente effettua una richiesta di export del descrittore")
     public void userExportsDescriptor() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getEServiceClient().exportEServiceDescriptor(
                         sharedStepsContext.getEServicesCommonContext().getEserviceId(),
@@ -97,6 +98,7 @@ public class DescriptorExportSteps {
 
     @Given("l'utente ha già aggiunto un documento al descrittore")
     public void userAddDocumentDescriptor() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         dataPreparationService.addDocumentToDescriptor(
                 sharedStepsContext.getEServicesCommonContext().getEserviceId(),
                 sharedStepsContext.getEServicesCommonContext().getDescriptorId(),
@@ -105,6 +107,7 @@ public class DescriptorExportSteps {
     }
 
     private byte[] downloadFile(String fileUrl) {
+//        fileUrl = fileUrl.replace("%2F", "/");
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<byte[]> response = restTemplate.getForEntity(fileUrl, byte[].class);
         if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {

@@ -19,6 +19,7 @@ public class DescriptorSuspensionSteps {
 
     @When("l'utente sospende quel descrittore")
     public void producerRequiresDescriptorRead() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getEServiceClient().suspendDescriptor(
                         sharedStepsContext.getEServicesCommonContext().getEserviceId(),

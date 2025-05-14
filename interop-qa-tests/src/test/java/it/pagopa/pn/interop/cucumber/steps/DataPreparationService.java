@@ -34,7 +34,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysi
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTechnology;
-import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject3;
+import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject4;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.MailKind;
 import it.pagopa.interop.generated.openapi.clients.bff.model.MailSeed;
@@ -151,7 +151,7 @@ public class DataPreparationService {
     }
 
     public void addMemberToClient(UUID clientId, UUID userId) {
-        InlineObject3 inlineObject = new InlineObject3().addUserIdsItem(userId);
+        InlineObject4 inlineObject = new InlineObject4().addUserIdsItem(userId);
         pollingService.makePolling(
                 () -> httpCallExecutor.performCall(() -> authorizationClient.addUsersToClient(clientId, inlineObject)),
                 res -> !res.is5xxServerError(),
@@ -159,7 +159,7 @@ public class DataPreparationService {
         );
         assertValidResponse();
         pollingService.makePolling(
-                () -> httpCallExecutor.performCall(() -> authorizationClient.getClientUsers(clientId)),
+                () -> httpCallExecutor.performCall(() -> authorizationClient.getClientUsers(clientId, null)),
                 res -> Optional.ofNullable(httpCallExecutor.getResponse())
                         .map(obj -> (List<CompactUser>) obj)
                         .orElse(List.of())
@@ -467,7 +467,8 @@ public class DataPreparationService {
         if (descriptorState == EServiceDescriptorState.DRAFT) return result;
 
         // 2. Add interface to descriptor
-        addInterfaceToDescriptor(eServiceId, descriptorId);
+        UUID interfaceId = addInterfaceToDescriptor(eServiceId, descriptorId);
+        result.put("interfaceId", interfaceId);
 
         // 3. Publish Descriptor
         publishDescriptor(eServiceId, descriptorId);
@@ -505,7 +506,7 @@ public class DataPreparationService {
 
     public UUID addDocumentToDescriptor(UUID eServiceId, UUID descriptorId, String name) {
         String prettyName = (name == null) ? String.format("Documento_test_qa-%d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)) : name;
-        Resource resource = blobFileCreator.createBlobFile("src/main/resources/interface.yaml", "documento-test-qa.pdf");
+        Resource resource = blobFileCreator.createBlobFile("src/main/resources/origin-interface.yaml", "documento-test-qa.pdf");
 
         httpCallExecutor.performCall(() -> eServiceClient.createEServiceDocument(eServiceId, descriptorId, "DOCUMENT", prettyName, resource));
         assertValidResponse();
@@ -520,7 +521,7 @@ public class DataPreparationService {
     }
 
     public UUID addInterfaceToDescriptor(UUID eServiceId, UUID descriptorId) {
-        Resource resource = blobFileCreator.createBlobFile("src/main/resources/interface.yaml", "interface.yaml");
+        Resource resource = blobFileCreator.createBlobFile("src/main/resources/origin-interface.yaml", "interface.yaml");
         httpCallExecutor.performCall(() -> eServiceClient.createEServiceDocument(eServiceId, descriptorId, "INTERFACE", "Interfaccia", resource));
         assertValidResponse();
 

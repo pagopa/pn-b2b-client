@@ -88,6 +88,7 @@ public class DescriptorImportSteps {
 
     @Given("l'utente ha già richiesto una presignedURL per il caricamento del pacchetto")
     public void userHasAlreadyRequiredPresignedURL() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getEServiceClient().getImportEservicePresignedUrl(String.format("%s.zip", folderName))
         );
@@ -102,6 +103,7 @@ public class DescriptorImportSteps {
 
     @When("l'utente effettua una richiesta di import del descrittore")
     public void performDescriptorImport() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getEServiceClient().importEService(
                         new FileResource().filename(String.format("%s.zip", folderName)).url(url)

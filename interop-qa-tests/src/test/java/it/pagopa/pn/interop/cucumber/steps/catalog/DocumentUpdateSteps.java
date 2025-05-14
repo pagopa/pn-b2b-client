@@ -32,6 +32,7 @@ public class DocumentUpdateSteps {
 
     @When("l'utente aggiorna il nome di quel documento")
     public void updateNameDocument() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(() -> clientTokenConfigurator.getEServiceClient().updateEServiceDocumentById(
                 eServicesCommonContext.getEserviceId(), eServicesCommonContext.getDescriptorId(), eServicesCommonContext.getDocumentId(),
                 new UpdateEServiceDescriptorDocumentSeed().prettyName("updatedPrettyName"))
@@ -49,6 +50,7 @@ public class DocumentUpdateSteps {
 
     @When("l'utente modifica il nome del secondo documento in {string}")
     public void updateSecondDocumentName(String prettyName) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(() -> clientTokenConfigurator.getEServiceClient().updateEServiceDocumentById(
                 eServicesCommonContext.getEserviceId(),
                 eServicesCommonContext.getDescriptorId(),

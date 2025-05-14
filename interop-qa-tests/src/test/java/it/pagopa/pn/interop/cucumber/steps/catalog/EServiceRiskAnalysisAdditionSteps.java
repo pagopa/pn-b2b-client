@@ -49,6 +49,7 @@ public class EServiceRiskAnalysisAdditionSteps {
 
     @When("l'utente aggiunge un'analisi del rischio")
     public void addRiskAnalysis() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         RiskAnalysis eServiceRiskAnalysisSeed = dataPreparationService.getRiskAnalysis(sharedStepsContext.getTenantType(), true);
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getEServiceClient().addRiskAnalysisToEService(
@@ -62,6 +63,7 @@ public class EServiceRiskAnalysisAdditionSteps {
 
     @When("l'utente aggiunge un'analisi del rischio non corretta per la tipologia di ente")
     public void addWrongRiskAnalysis() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         // We want to get the wrong risk analysis template, so we need to invert the tenantType
         String tenantType = (List.of("GSP", "Privato").contains(sharedStepsContext.getTenantType())) ? "PA1" : "Privato";
         RiskAnalysis eServiceRiskAnalysisSeed = dataPreparationService.getRiskAnalysis(tenantType, true);
@@ -77,6 +79,7 @@ public class EServiceRiskAnalysisAdditionSteps {
 
     @When("l'utente aggiunge un'analisi del rischio con versione template non aggiornata")
     public void addRiskAnalysisWithWrongVersion() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         RiskAnalysis eServiceRiskAnalysisSeed = dataPreparationService.getRiskAnalysis(sharedStepsContext.getTenantType(), true);
         String outdatedVersion = String.format("%.1f", Integer.parseInt(eServiceRiskAnalysisSeed.getRiskAnalysisForm().getVersion()) - 1);
         eServiceRiskAnalysisSeed.getRiskAnalysisForm().setVersion(outdatedVersion);

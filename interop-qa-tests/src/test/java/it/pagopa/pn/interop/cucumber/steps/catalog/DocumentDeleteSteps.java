@@ -13,6 +13,7 @@ import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 
+import java.util.Map;
 import java.util.UUID;
 
 public class DocumentDeleteSteps {
@@ -36,6 +37,7 @@ public class DocumentDeleteSteps {
 
     @When("l'utente cancella quel documento")
     public void userRemoveDocument() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getEServiceClient().deleteEServiceDocumentById(
                         eServicesCommonContext.getEserviceId(), eServicesCommonContext.getDescriptorId(), eServicesCommonContext.getDocumentId()
@@ -45,6 +47,7 @@ public class DocumentDeleteSteps {
 
     @When("l'utente cancella quell'interfaccia")
     public void userRemoveInterface() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getEServiceClient().deleteEServiceDocumentById(
                         eServicesCommonContext.getEserviceId(), eServicesCommonContext.getDescriptorId(), eServicesCommonContext.getInterfaceId()
@@ -52,14 +55,16 @@ public class DocumentDeleteSteps {
         );
     }
 
-    @Given("{string} ha già creato un e-service con un descrittore in stato DRAFT con un'interfaccia già caricata")
-    public void createEserviceWihtDraftDescriptorAndInterface(String tenantType) {
+    @Given("{string} ha già creato un e-service con un descrittore in stato {string} con un'interfaccia già caricata")
+    public void createEserviceWihtDraftDescriptorAndInterface(String tenantType, String descriptorState) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
 
         EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(new EServiceSeed(), new UpdateEServiceDescriptorSeed());
-        dataPreparationService.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(), eServiceDescriptor.getDescriptorId(), EServiceDescriptorState.DRAFT, false);
-
-        UUID interfaceId = dataPreparationService.addInterfaceToDescriptor(eServiceDescriptor.getEServiceId(), eServiceDescriptor.getDescriptorId());
+        Map<String, UUID> result = dataPreparationService.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(), eServiceDescriptor.getDescriptorId(), EServiceDescriptorState.fromValue(descriptorState), false);
+        UUID interfaceId = result.get("interfaceId");
+        if (descriptorState.equalsIgnoreCase("DRAFT")) {
+            interfaceId = dataPreparationService.addInterfaceToDescriptor(eServiceDescriptor.getEServiceId(), eServiceDescriptor.getDescriptorId());
+        }
         eServicesCommonContext.setEserviceId(eServiceDescriptor.getEServiceId());
         eServicesCommonContext.setDescriptorId(eServiceDescriptor.getDescriptorId());
         eServicesCommonContext.setInterfaceId(interfaceId);

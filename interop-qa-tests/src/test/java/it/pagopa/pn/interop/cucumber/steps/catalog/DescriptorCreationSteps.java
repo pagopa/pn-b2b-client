@@ -41,6 +41,7 @@ public class DescriptorCreationSteps {
 
     @When("l'utente crea una versione in bozza per quell'e-service")
     public void userCreatesDraftDescriptor() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getEServiceClient().createDescriptor(
                         sharedStepsContext.getEServicesCommonContext().getEserviceId()

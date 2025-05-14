@@ -10,7 +10,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactClients;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactUser;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject3;
+import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject4;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKey;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKeys;
@@ -73,8 +73,8 @@ public class AuthorizationClientImpl implements IAuthorizationClient {
     }
 
     @Override
-    public List<CompactUser> getClientUsers(UUID clientId) {
-        return clientsApi.getClientUsers(clientId);
+    public List<CompactUser> getClientUsers(UUID clientId, String name) {
+        return clientsApi.getClientUsers(clientId, name);
     }
 
     @Override
@@ -115,8 +115,8 @@ public class AuthorizationClientImpl implements IAuthorizationClient {
     }
 
     @Override
-    public CreatedResource addUsersToClient(UUID clientId, InlineObject3 inlineObject3) {
-        return clientsApi.addUsersToClient(clientId, inlineObject3);
+    public CreatedResource addUsersToClient(UUID clientId, InlineObject4 inlineObject4) {
+        return clientsApi.addUsersToClient(clientId, inlineObject4);
     }
 
     @Override

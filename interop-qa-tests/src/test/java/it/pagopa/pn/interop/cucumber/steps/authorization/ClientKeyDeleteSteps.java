@@ -45,7 +45,7 @@ public class ClientKeyDeleteSteps {
     public void removeMemberFromClient(UUID clientId, UUID userId) {
         authorizationClient.removeUserFromClient(clientId, userId);
         pollingService.makePolling(
-                () -> authorizationClient.getClientUsers(clientId),
+                () -> authorizationClient.getClientUsers(clientId, null),
                 res -> res.stream().noneMatch(user -> user.getUserId().equals(userId)),
                 "There was an error while retrieving the client user!"
         );

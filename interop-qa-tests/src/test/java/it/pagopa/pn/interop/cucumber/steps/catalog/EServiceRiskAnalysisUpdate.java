@@ -38,6 +38,7 @@ public class EServiceRiskAnalysisUpdate {
 
     @When("l'utente aggiorna l'analisi del rischio di quell'e-service")
     public void updateRiskAnanlysisToEService() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         RiskAnalysis riskAnalysis = dataPreparationService.getRiskAnalysis(
                 sharedStepsContext.getTenantType(), true);
         sharedStepsContext.getHttpCallExecutor().performCall(

@@ -28,6 +28,7 @@ public class EServiceCreationSteps {
 
     @When("l'utente crea un e-service con lo stesso nome")
     public void createEServiceWithSameName() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getEServiceClient().createEService(
                         new EServiceSeed().name(sharedStepsContext.getEServicesCommonContext().getName())
@@ -39,6 +40,7 @@ public class EServiceCreationSteps {
 
     @Given("l'utente ha già creato un e-service contenente anche il primo descrittore")
     public void userCreateEServiceWithDescriptor() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         String eserviceName = String.format("e-service-%s", sharedStepsContext.getTestSeed());
         EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(new EServiceSeed().name(eserviceName), new UpdateEServiceDescriptorSeed());
         EServicesCommonContext eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
@@ -49,6 +51,7 @@ public class EServiceCreationSteps {
 
     @When("l'utente crea un e-service")
     public void userCreatesEservice() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         String eserviceName = String.format("e-service-%s", sharedStepsContext.getTestSeed());
 
         sharedStepsContext.getHttpCallExecutor().performCall(

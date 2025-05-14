@@ -16,6 +16,7 @@ public class EServiceRiskAnalysisDeleteSteps {
 
     @When("l'utente cancella quell'analisi del rischio di quell'e-service")
     public void removeEServiceRiskAnalysis() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getEServiceClient().deleteEServiceRiskAnalysis(
                         sharedStepsContext.getEServicesCommonContext().getEserviceId(),

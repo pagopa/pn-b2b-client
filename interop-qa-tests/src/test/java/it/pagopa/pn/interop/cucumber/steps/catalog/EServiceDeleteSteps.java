@@ -40,6 +40,7 @@ public class EServiceDeleteSteps {
 
     @When("l'utente cancella quell'e-service")
     public void userRemoveEservice() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getEServiceClient().deleteEService(eServicesCommonContext.getEserviceId())
         );

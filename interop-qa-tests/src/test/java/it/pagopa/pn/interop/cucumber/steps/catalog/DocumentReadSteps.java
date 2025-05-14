@@ -18,6 +18,7 @@ public class DocumentReadSteps {
 
     @When("l'utente richiede il documento")
     public void requireDocument() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getEServiceClient().getEServiceDocumentById(
                         eServicesCommonContext.getEserviceId(), eServicesCommonContext.getDescriptorId(), eServicesCommonContext.getDocumentId()

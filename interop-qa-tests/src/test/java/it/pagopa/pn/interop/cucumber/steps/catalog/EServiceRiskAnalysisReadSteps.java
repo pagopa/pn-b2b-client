@@ -16,6 +16,7 @@ public class EServiceRiskAnalysisReadSteps {
 
     @When("l'utente legge un'analisi del rischio di quell'e-service")
     public void readRiskAnalysis() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getEServiceClient().getEServiceRiskAnalysis(
                         sharedStepsContext.getEServicesCommonContext().getEserviceId(),

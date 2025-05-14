@@ -15,6 +15,7 @@ public class EServiceReadSteps {
 
     @When("l'utente richiede la lettura di quell'e-service")
     public void requireEServiceRead() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getProducerClient().getProducerEServiceDetails(
                         sharedStepsContext.getEServicesCommonContext().getEserviceId())

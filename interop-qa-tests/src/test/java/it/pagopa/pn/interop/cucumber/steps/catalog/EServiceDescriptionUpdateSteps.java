@@ -20,6 +20,7 @@ public class EServiceDescriptionUpdateSteps {
 
     @When("l'utente aggiorna la descrizione di quell'e-service")
     public void userUpdateEServiceDescription() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getEServiceClient().updateEServiceDescription(
                         eServicesCommonContext.getEserviceId(),

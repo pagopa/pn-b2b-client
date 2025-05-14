@@ -41,6 +41,7 @@ public class EServiceCloneSteps {
 
     @When("l'utente clona quell'e-service")
     public void cloneEservice() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getEServiceClient().cloneEServiceByDescriptor(eServicesCommonContext.getEserviceId(), eServicesCommonContext.getDescriptorId())
         );

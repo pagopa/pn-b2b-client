@@ -22,6 +22,7 @@ public class DescriptorDeletionSteps {
 
     @When("l'utente cancella il descrittore di quell'e-service")
     public void userDeleteEserviceDescriptor() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(() -> clientTokenConfigurator.getEServiceClient()
                 .deleteDraft(sharedStepsContext.getEServicesCommonContext().getEserviceId(),
                         sharedStepsContext.getEServicesCommonContext().getDescriptorId()));

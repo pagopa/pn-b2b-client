@@ -15,6 +15,7 @@ public class DescriptorActivationSteps {
 
     @When("l'utente attiva il descrittore di quell'e-service")
     public void activeEServiceDescriptor() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getEServiceClient().activateDescriptor(
                         sharedStepsContext.getEServicesCommonContext().getEserviceId(), sharedStepsContext.getEServicesCommonContext().getDescriptorId())

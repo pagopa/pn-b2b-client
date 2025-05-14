@@ -19,6 +19,7 @@ public class EServiceUpdateSteps {
 
     @When("l'utente aggiorna quell'e-service")
     public void userUpdateEService() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getEServiceClient().updateEServiceById(
                         sharedStepsContext.getEServicesCommonContext().getEserviceId(),

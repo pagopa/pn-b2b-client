@@ -25,6 +25,7 @@ public class EServiceProducerListingSteps {
 
     @When("l'utente richiede una operazione di listing sui propri e-services erogati")
     public void requireOwnEServiceList() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getProducerClient().getProducerEServices(0, 50,
                         String.valueOf(sharedStepsContext.getTestSeed()), List.of(), null)
@@ -33,6 +34,7 @@ public class EServiceProducerListingSteps {
 
     @When("l'utente richiede una operazione di listing sui propri e-services erogati limitata ai primi {int} e-services")
     public void requireOwnEServiceListWithLimit(int limit) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getProducerClient().getProducerEServices(0, limit,
                         String.valueOf(sharedStepsContext.getTestSeed()), List.of(), null)
@@ -41,6 +43,7 @@ public class EServiceProducerListingSteps {
 
     @When("l'utente richiede una operazione di listing sui propri e-services con offset {int}")
     public void requireOwnEServiceListWithOffset(int offset) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getProducerClient().getProducerEServices(offset, 12,
                         String.valueOf(sharedStepsContext.getTestSeed()), List.of(), null)
@@ -49,6 +52,7 @@ public class EServiceProducerListingSteps {
 
     @When("l'utente richiede una operazione di listing sui propri e-services fruiti da {string}")
     public void requireOwnEServiceListForConsumer(String tenantType) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         UUID consumerId = identityService.getOrganizationId(tenantType);
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getProducerClient().getProducerEServices(0, 12,
@@ -58,6 +62,7 @@ public class EServiceProducerListingSteps {
 
     @When("l'utente richiede una operazione di listing sui propri e-services filtrando per la keyword {string}")
     public void requireOwnEServiceListWithKeyword(String keyword) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getProducerClient().getProducerEServices(0, 12,
                         String.format("%s-%s", sharedStepsContext.getTestSeed(), keyword), List.of(), null)
