@@ -307,22 +307,28 @@ public class B2bStepsV25 implements B2bStepsInterface {
 
     @Override
     public void waitForEventOrStatus(String pollingStrategy, PollingType pollingType, String timelineEventCategory, WaitForEventPredicateFilters filters) {
-        String strategy = NotificationUtilsV25.getPollingStrategy(pollingStrategy);
-        IPnPollingService<?> pollingService = sharedSteps.getPollingFactory().getPollingService(strategy);
-        PnPollingPredicate pollingPredicate = getPnPollingPredicateForTimeline(timelineEventCategory, filters);
-        pollingResponse = (PnPollingResponseV28) pollingService.waitForEvent(
-                sharedSteps.getNotificationIun(),
-                PnPollingParameter.builder()
-                        .value(timelineEventCategory)
-                        .pnPollingPredicate(pollingPredicate)
-                        .build());
-        switch (pollingType) {
-            case TIMELINE -> {
-                timelineElementList = pollingResponse.getNotification().getTimeline();
-                log.info("NOTIFICATION_TIMELINE: " + timelineElementList);
+        if (timelineEventCategory.equals(REQUEST_REFUSED)) {
+            //GESTIONE LOAD TIMELINE E RECUPERO NOTIFICA CON CLIENT DI DELIVERY PUSH
+            loadTimelineByDeliveryPush(timelineEventCategory, DataTestV25.convertMap(new HashMap<>()), true);
+        } else {
+            //FLUSSO NORMALE, CON CARICAMENTO DELLA TIMELINE DA B2B
+            String strategy = NotificationUtilsV25.getPollingStrategy(pollingStrategy);
+            IPnPollingService<?> pollingService = sharedSteps.getPollingFactory().getPollingService(strategy);
+            PnPollingPredicate pollingPredicate = getPnPollingPredicateForTimeline(timelineEventCategory, filters);
+            pollingResponse = (PnPollingResponseV28) pollingService.waitForEvent(
+                    sharedSteps.getNotificationIun(),
+                    PnPollingParameter.builder()
+                            .value(timelineEventCategory)
+                            .pnPollingPredicate(pollingPredicate)
+                            .build());
+            switch (pollingType) {
+                case TIMELINE -> {
+                    timelineElementList = pollingResponse.getNotification().getTimeline();
+                    log.info("NOTIFICATION_TIMELINE: " + timelineElementList);
+                }
+                case STATUS ->
+                        log.info("NOTIFICATION_STATUS_HISTORY: " + pollingResponse.getNotification().getNotificationStatusHistory());
             }
-            case STATUS ->
-                    log.info("NOTIFICATION_STATUS_HISTORY: " + pollingResponse.getNotification().getNotificationStatusHistory());
         }
     }
 
@@ -346,30 +352,40 @@ public class B2bStepsV25 implements B2bStepsInterface {
     @Override
     public void checkIfTimelineElementExists(boolean exists, TimelineElementCheck furtherChecks, TimelineElementCheckFilters filterParams) {
         try {
+            boolean result;
+            //se siamo giunti a questo metodo dopo aver recuperato la timeline da B2B andiamo a valorizzare timelineElement e timelineElementList col risultato del polling
+            if (pollingResponse != null) {
+                result = pollingResponse.getResult();
+                timelineElement = pollingResponse.getTimelineElement();
+                timelineElementList = pollingResponse.getNotification().getTimeline();
+            }
+            //se invece siamo giunti a questo metodo dopo aver recuperato la timeline da delivery-push, timelineElement e timelineElementList sono già valorizzati
+            else {
+                result = exists;
+            }
             if (exists) {
                 assertSoftly(softly -> {
-                    assertThat(pollingResponse.getResult())
+                    assertThat(result)
                             .as("Il risultato del polling dovrebbe essere valorizzato. Primo controllo: Verificare che l'elemento sia presente in timeline e le tempistiche con cui viene prodotto")
                             .isTrue();
-                    assertThat(pollingResponse.getTimelineElement())
+                    assertThat(timelineElement)
                             .as("L'elemento della timeline non dovrebbe essere null")
                             .isNotNull();
                 });
-                timelineElement = pollingResponse.getTimelineElement();
-                log.info("TIMELINE_ELEMENT: {}", pollingResponse.getTimelineElement());
+                log.info("TIMELINE_ELEMENT: {}", timelineElement);
                 if (furtherChecks != null) {
                     performFurtherChecks(furtherChecks, filterParams);
                 }
             } else {
                 assertSoftly(softly -> {
-                    assertThat(pollingResponse.getResult())
+                    assertThat(result)
                             .as("Il risultato del polling dovrebbe essere false. Verificare la correttezza dello scenario di test e i dati passati in input\"")
                             .isFalse();
-                    assertThat(pollingResponse.getTimelineElement())
+                    assertThat(timelineElement)
                             .as("L'elemento di timeline dovrebbe essere null")
                             .isNull();
                 });
-                log.info("NOTIFICATION_TIMELINE: {}", pollingResponse.getNotification().getTimeline());
+                log.info("NOTIFICATION_TIMELINE: {}", timelineElementList);
             }
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
