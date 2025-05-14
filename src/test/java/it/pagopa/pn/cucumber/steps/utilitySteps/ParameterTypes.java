@@ -4,6 +4,8 @@ import io.cucumber.java.ParameterType;
 
 import java.time.temporal.ChronoUnit;
 
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+
 /**
  * Classe pensata come contenitore per tutti i ParameterType del progetto.
  * Si tratta quasi esclusivamente di opposti (abbia-non abbia, contiene-non contiene, etc) in modo da evitare
@@ -58,6 +60,11 @@ public class ParameterTypes {
             default ->
                     throw new IllegalArgumentException("unità temporale non riconosciuta. Valutare se inserirla nei ParameterTypes");
         };
+    }
+
+    @ParameterType(COMUNE_1 + "|" + COMUNE_2 + "|" + COMUNE_MULTI + "|" + COMUNE_SON + "|" + COMUNE_ROOT)
+    public static String paName(String paName) {
+        return paName;
     }
 
 

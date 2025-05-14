@@ -74,7 +74,7 @@ Feature: avanzamento notifiche asincrone b2b PG - controllo costi
       | payment_f24             | NULL                  |
       | apply_cost_pagopa       | SI                    |
       | payment_multy_number    | 1                     |
-    And al destinatario viene associato lo iuv creato mediante partita debitoria per "Gherkin Analogicc" alla posizione 0
+    And al destinatario viene associato lo iuv creato mediante partita debitoria per "Gherkin Analogic" alla posizione 0
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED e successivamente annullata
     When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
     Then lettura amount posizione debitoria per la notifica corrente di "Gherkin Analogic"

@@ -262,7 +262,7 @@ public class SharedSteps {
      * anziché crearla da zero, aspettare che arrivi in ACCEPTED, etc si imposta lo IUN qua e la PA e
      * si può procedere con il resto dei metodi.
      */
-    @Given("imposto lo iun di SharedSteps a {string} e la pa a {string}")
+    @Given("imposto lo iun di SharedSteps a {string} e la pa a {paName}")
     public void impostoIunAndPaForTestPurposes(String iun, String paName) {
         this.notificationIun = iun;
         setPA(paName);
