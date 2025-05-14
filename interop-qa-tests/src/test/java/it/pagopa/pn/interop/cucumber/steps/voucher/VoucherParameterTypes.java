@@ -5,7 +5,7 @@ import it.pagopa.interop.agreement.domain.ClientType;
 import it.pagopa.interop.authorization.service.utils.voucher.domain.VoucherRequestParam;
 
 public class VoucherParameterTypes {
-    @ParameterType("CERTIFIED|DECLARED|VERIFIED")
+    @ParameterType("CONSUMER|PRODUCER")
     public ClientType clientType(String clientType) {
         return ClientType.fromValue(clientType);
     }

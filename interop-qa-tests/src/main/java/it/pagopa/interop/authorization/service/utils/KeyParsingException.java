@@ -1,4 +1,4 @@
-package it.pagopa.pn.interop.cucumber.steps.common;
+package it.pagopa.interop.authorization.service.utils;
 
 import lombok.experimental.StandardException;
 

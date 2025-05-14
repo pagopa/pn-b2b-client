@@ -170,8 +170,9 @@ public class VoucherGenerationClientAndKeysSteps {
         UUID newClientId = sharedStepsContext.getClientCommonContext().getLastClient();
         String keyType = "RSA";
         KeyPairPEM keyPair = KeyPairGeneratorUtil.createKeyPairPEM(keyType, 2048);
-        sharedStepsContext.getClientCommonContext().setClientPublicKey(keyPair.getPublicKey());
-        sharedStepsContext.getClientCommonContext().setClientPrivateKey(keyPair.getPrivateKey());
+        sharedStepsContext.getClientCommonContext().setNewClientPublicKey(keyPair.getPublicKey());
+        sharedStepsContext.getClientCommonContext().setNewClientPrivateKey(keyPair.getPrivateKey());
+
         sharedStepsContext.getClientCommonContext().setKeyType(keyType);
 
         String keyId = dataPreparationService.addPublicKeyToClient(

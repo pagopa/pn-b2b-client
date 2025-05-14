@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps;
 
 import static it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode.RECEIVE;
+import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.BooleanUtils.isNotTrue;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
@@ -939,5 +940,43 @@ public class DataPreparationService {
 
     private <T> T useOrDefault(T value, T defaultValue) {
         return value != null ? value : defaultValue;
+    }
+
+    public void deletePurposeVersion(UUID purposeId, UUID waitingForApprovalVersionId) {
+        httpCallExecutor.performCall(() -> this.purposeApiClient.deletePurposeVersion(purposeId, waitingForApprovalVersionId));
+        assertValidResponse();
+        pollingService.makePolling(
+                () -> purposeApiClient.getPurpose(purposeId),
+                res -> isNull(res) || res.getVersions().stream().noneMatch(v -> v.getId().equals(waitingForApprovalVersionId)),
+                "There was an error while deleting the purpose version!"
+        );
+    }
+
+    public void activatePurposeVersion(UUID purposeId, UUID waitingForApprovalVersionId) {
+        activatePurposeVersion(purposeId, waitingForApprovalVersionId, null);
+    }
+
+    public void activatePurposeVersion(UUID purposeId, UUID waitingForApprovalVersionId, ClientType checkNotSuspendedBy) {
+        httpCallExecutor.performCall(() -> this.purposeApiClient.activatePurposeVersion(purposeId, waitingForApprovalVersionId));
+        assertValidResponse();
+        pollingService.makePolling(
+                () -> purposeApiClient.getPurpose(purposeId),
+                res -> {
+                    Optional<PurposeVersion> oVersionId = res.getVersions().stream()
+                        .filter(v -> v.getId().equals(waitingForApprovalVersionId)).findAny();
+                    boolean isActive = oVersionId.map(purposeVersion -> purposeVersion.getState()
+                        .equals(PurposeVersionState.ACTIVE)).orElse(false);
+                    if (isNull(checkNotSuspendedBy)) {
+                        return isActive;
+                    }
+                    return switch (checkNotSuspendedBy) {
+                        case CONSUMER -> Boolean.FALSE.equals(res.getSuspendedByConsumer());
+                        case PRODUCER -> Boolean.FALSE.equals(res.getSuspendedByProducer());
+                        default -> throw new IllegalArgumentException(
+                            "Unexpected value: " + checkNotSuspendedBy);
+                    };
+                },
+                "There was an error while activating the purpose version!"
+        );
     }
 }
