@@ -114,7 +114,7 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("recuperando la fullSentNotification con la versione b2b {string} {is} presente l'elemento di timeline {string}")
     public void checkPresenceOfTimelineElement(String version, boolean isPresent, String timelineEventCategory) {
-        NotificationVersion notificationVersion = NotificationVersion.valueOf(version);
+        NotificationVersion notificationVersion = sharedSteps.getNotificationVersion(version);
         getB2bStepsInterface(notificationVersion).checkFullSentNotificationWithVersion(isPresent, timelineEventCategory);
     }
 
