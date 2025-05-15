@@ -60,7 +60,7 @@ Feature: Test modificabilità campo "agreementApprovalPolicy"
     Then si ottiene lo status code 400
 
   @app-edit-ff-on
-  @MOD_APP_ON_3
+  @aap-single-test
   Scenario: [MOD_APP_ON_3] Il campo "agreementApprovalPolicy" di un e-service inesistente non può essere modificato
     Given l'utente è un "admin" di "PA1"
     When l'utente tenta la modifica di agreementApprovalPolicy di un e-service inesistente
@@ -96,7 +96,7 @@ Feature: Test modificabilità campo "agreementApprovalPolicy"
     Given "PA1" ha già creato un e-service in stato "<stato>" con approvazione "MANUAL"
     When l'utente è un "admin" di "PA1"
     And l'utente tenta la modifica di agreementApprovalPolicy in "AUTOMATIC"
-    Then si ottiene lo status code 404
+    Then si ottiene lo status code 403
     Examples:
       | stato                 |
       | PUBLISHED             |
@@ -114,4 +114,4 @@ Feature: Test modificabilità campo "agreementApprovalPolicy"
     And l'utente crea una nuova versione dell'e-service
     And l'utente delegato pubblica la versione dell'e-service
     When l'utente tenta la modifica di agreementApprovalPolicy in "AUTOMATIC"
-    Then si ottiene lo status code 404
+    Then si ottiene lo status code 403
