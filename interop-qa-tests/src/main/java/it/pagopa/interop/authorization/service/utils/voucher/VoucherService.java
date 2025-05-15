@@ -1,5 +1,8 @@
 package it.pagopa.interop.authorization.service.utils.voucher;
 
+import static dev.turingcomplete.textcaseconverter.StandardTextCases.SNAKE_CASE;
+import static dev.turingcomplete.textcaseconverter.StandardTextCases.SOFT_CAMEL_CASE;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
@@ -11,6 +14,7 @@ import it.pagopa.interop.authorization.service.utils.voucher.domain.VoucherReque
 import it.pagopa.interop.authorization.service.utils.voucher.domain.VoucherResponse;
 import it.pagopa.interop.authorization.service.utils.voucher.exc.KidCalculationException;
 import it.pagopa.interop.utils.InteropAPIErrorResponse;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -18,10 +22,12 @@ import java.security.PublicKey;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -30,6 +36,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -112,18 +120,32 @@ public class VoucherService {
     }
 
     private <T> ResponseEntity<T> requestVoucher(VoucherRequest request, Class<T> clss) {
-        URI uri = UriComponentsBuilder
-            .fromPath(this.authorizationServerTokenCreationUrl)
-            .queryParam("client_id", request.getClientId())
-            .queryParam("client_assertion", request.getClientAssertion())
-            .queryParam("client_assertion_type", request.getClientAssertionType())
-            .queryParam("grant_type", request.getGrantType())
-            .build()
-            .toUri();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-        HttpEntity<VoucherRequest> requestEntity = new HttpEntity<>(request, headers);
-        return restTemplate.exchange(uri, HttpMethod.POST, requestEntity, clss);
+        try {
+            URI uri = UriComponentsBuilder
+                .fromHttpUrl(this.authorizationServerTokenCreationUrl)
+                .build()
+                .toUri();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+            Map<String, Object> voucherRequestProperties = PropertyUtils.describe(request);
+            MultiValueMap<String, Object> map = voucherRequestProperties.entrySet().stream()
+                    .map(e -> Map.entry(
+                        SNAKE_CASE.convertFrom(SOFT_CAMEL_CASE, e.getKey()),
+                        List.of(e.getValue())))
+                    .collect(Collectors.toMap(
+                        Entry::getKey,
+                        Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedMultiValueMap::new
+                    ));
+            HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(map, headers);
+            /*ResponseEntity<T> exchange = restTemplate.exchange(uri, HttpMethod.POST, requestEntity,
+                clss);*/
+            ResponseEntity<Object> exchange = restTemplate.exchange(uri, HttpMethod.POST, requestEntity,
+                Object.class);
+            return (ResponseEntity<T>) exchange;
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException("Ispezione dell'oggetto %s fallita".formatted(request.getClass().getName()), e);
+        }
     }
 }
