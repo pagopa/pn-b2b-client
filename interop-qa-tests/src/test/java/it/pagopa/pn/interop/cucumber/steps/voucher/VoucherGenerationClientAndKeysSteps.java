@@ -12,6 +12,7 @@ import it.pagopa.interop.purpose.domain.TEServiceMode;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import java.security.KeyPair;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -96,9 +97,12 @@ public class VoucherGenerationClientAndKeysSteps {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
 
         String keyType = "RSA";
-        KeyPairPEM keyPair = KeyPairGeneratorUtil.createKeyPairPEM(keyType, 2048);
-        sharedStepsContext.getClientCommonContext().setClientPublicKey(keyPair.getPublicKey());
-        sharedStepsContext.getClientCommonContext().setClientPrivateKey(keyPair.getPrivateKey());
+        KeyPair keyPair = KeyPairGeneratorUtil.createKeyPair(keyType, 2048);
+        KeyPairPEM keyPairPEM = KeyPairGeneratorUtil.keyPairToPEM(keyPair);
+        sharedStepsContext.getClientCommonContext().setClientPublicKey(keyPairPEM.getPublicKey());
+        sharedStepsContext.getClientCommonContext().setClientPublicKeyAsObj(keyPair.getPublic());
+        sharedStepsContext.getClientCommonContext().setClientPrivateKey(keyPairPEM.getPrivateKey());
+        sharedStepsContext.getClientCommonContext().setClientPrivateKeyAsObj(keyPair.getPrivate());
         sharedStepsContext.getClientCommonContext().setKeyType(keyType);
         sharedStepsContext.getClientCommonContext().setKeyId(UUID.randomUUID().toString());
     }

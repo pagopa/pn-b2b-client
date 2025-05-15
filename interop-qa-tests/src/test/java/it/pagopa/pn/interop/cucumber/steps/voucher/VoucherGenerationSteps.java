@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.voucher;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -51,7 +52,11 @@ public class VoucherGenerationSteps {
 
     @Then("si ottiene la corretta generazione del voucher")
     public void checkVoucherGeneration() {
-        VoucherResponse voucherResponse = (VoucherResponse) httpCallExecutor.getResponse();
+        if(httpCallExecutor.getClientResponse().isError()) {
+            fail("Voucher generation failed: " + httpCallExecutor.getClientResponse());
+        }
+        Object response = httpCallExecutor.getResponse();
+        VoucherResponse voucherResponse = (VoucherResponse) response;
         assertThat(voucherResponse.getTokenType()).isEqualTo("Bearer");
     }
 

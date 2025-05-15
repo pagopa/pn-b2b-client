@@ -26,7 +26,11 @@ public class ClientCommonContext {
     //Represents the public key uploaded to the client
     private String clientPublicKey;
 
+    private PublicKey clientPublicKeyAsObj;
+
     private String clientPrivateKey;
+
+    private PrivateKey clientPrivateKeyAsObj;
 
     //Represents the public key uploaded to the second client
     private String newClientPublicKey;
@@ -62,16 +66,8 @@ public class ClientCommonContext {
         clients.add(clientId);
     }
 
-    public PublicKey getClientPublicKeyAsObj() {
-        return stringToPublicKey(this.getClientPublicKey(), this.getKeyType());
-    }
-
     public PublicKey getNewClientPublicKeyAsObj() {
         return stringToPublicKey(this.getNewClientPublicKey(), this.getKeyType());
-    }
-
-    public PrivateKey getClientPrivateKeyAsObj() {
-        return stringToPrivateKey(this.getClientPrivateKey(), this.getKeyType());
     }
 
     public PrivateKey getNewClientPrivateKeyAsObj() {
