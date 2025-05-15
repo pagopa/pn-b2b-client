@@ -60,6 +60,7 @@ Feature: Test modificabilità campo "agreementApprovalPolicy"
     Then si ottiene lo status code 400
 
   @app-edit-ff-on
+  @MOD_APP_ON_3
   Scenario: [MOD_APP_ON_3] Il campo "agreementApprovalPolicy" di un e-service inesistente non può essere modificato
     Given l'utente è un "admin" di "PA1"
     When l'utente tenta la modifica di agreementApprovalPolicy di un e-service inesistente
