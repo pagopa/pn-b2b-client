@@ -274,8 +274,8 @@ public class LegalFactContentVerifySteps {
                         .as("La lista dei destinatari della response (actual) non contiene tutti i destinatari (expected)")
                         .containsAll(destinatarioAnalogicoList);
             }
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -402,8 +402,8 @@ public class LegalFactContentVerifySteps {
             Assertions.assertNotNull(timelineElement.getLegalFactsIds());
             Assertions.assertEquals(categoriesV26.getLegalFactCategory().getValue(), timelineElement.getLegalFactsIds().get(0).getCategory());
             Assertions.assertTrue(timelineElement.getLegalFactsIds().get(0).getKey().contains(key));
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -589,8 +589,8 @@ public class LegalFactContentVerifySteps {
                 System.out.println("NOME FILE PEC RECIPIENT DEST" + legalFactDownloadMetadataResponse.getFilename());
                 return legalFactDownloadMetadataResponse.getUrl();
             }
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
         return null;
     }
@@ -639,8 +639,8 @@ public class LegalFactContentVerifySteps {
                         finalKeySearch
                 ));
             }
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -710,8 +710,8 @@ public class LegalFactContentVerifySteps {
                 Assertions.assertNotNull(legalFactDownloadMetadataResponse.getFilename());
                 Assertions.assertTrue(legalFactDownloadMetadataResponse.getFilename().contains(".eml"));
             }
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 

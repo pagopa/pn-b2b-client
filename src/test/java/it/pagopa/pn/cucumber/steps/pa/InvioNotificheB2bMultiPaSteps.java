@@ -7,7 +7,6 @@ import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.Notificatio
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
-import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.HttpStatusCodeException;
 
@@ -39,8 +38,8 @@ public class InvioNotificheB2bMultiPaSteps {
                     .as("L'invocazione del metodo per il recupero della fullSentNotification non deve lanciare eccezioni")
                     .doesNotThrowAnyException();
             assertThat(fullSentNotification.get()).as("La fullSentNotification recuperata non dev'essere null").isNotNull();
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -53,8 +52,8 @@ public class InvioNotificheB2bMultiPaSteps {
                     notificationByIun.set(webPaClient.searchSentNotification(OffsetDateTime.now().minusDays(1), OffsetDateTime.now(), null, null, null, sharedSteps.getNotificationIun(), 1, null))
             );
             Assertions.assertNotNull(notificationByIun.get());
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 

@@ -169,8 +169,8 @@ public class B2bStepsV24 implements B2bStepsInterface {
                         .as(testCase + " il physical address non coincide col valore atteso")
                         .isEqualTo(normalizedAddress.getForeignState());
             });
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -185,8 +185,8 @@ public class B2bStepsV24 implements B2bStepsInterface {
             assertThat(event)
                     .as("I relatedTimelineElements del notificationStatusHistoryElement non contengono l'evento " + evento + " per il recipient " + recipientIndex)
                     .isNotNull();
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -253,8 +253,8 @@ public class B2bStepsV24 implements B2bStepsInterface {
             assertThat(counter)
                     .as("L'elemento di timeline " + timelineEventCategory + " dovrebbe comparire al massimo una volta")
                     .isLessThanOrEqualTo(1);
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -299,8 +299,8 @@ public class B2bStepsV24 implements B2bStepsInterface {
                         .as("Il peso differisce da quanto previsto")
                         .isEqualTo(weight);
             }
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -343,8 +343,8 @@ public class B2bStepsV24 implements B2bStepsInterface {
             assertThat(timelineElement)
                     .as("Timeline element with category " + timelineEventCategory + " should be null")
                     .isNull();
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -386,8 +386,8 @@ public class B2bStepsV24 implements B2bStepsInterface {
                 });
                 log.info("NOTIFICATION_TIMELINE: {}", timelineElementList);
             }
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -406,7 +406,7 @@ public class B2bStepsV24 implements B2bStepsInterface {
                     .isNotEmpty();
             if (dataTest != null && dataTest.getTimelineElement() != null) {
                 boolean atLeastOneSuccessful = false;
-                List<AssertionFailedError> assertionFailedErrorList = new LinkedList<>();
+                List<AssertionError> assertionErrorList = new LinkedList<>();
                 for (TimelineElementV26 te : timelineElements) {
                     try {
                         timelineElement = te;
@@ -414,16 +414,16 @@ public class B2bStepsV24 implements B2bStepsInterface {
                         DataTestV24.checkTimelineElementEquality(timelineEventCategory, te, dataTest);
                         atLeastOneSuccessful = true;// se si arriva a questo punto, allora l'ultimo check ha avuto successo e non è necessario continuare
                         break;
-                    } catch (AssertionFailedError e) {
-                        assertionFailedErrorList.add(e);// se si arriva a questo punto allora l'ultimo check ha fallito e ci si prepara al prossimo
+                    } catch (AssertionError e) {
+                        assertionErrorList.add(e);// se si arriva a questo punto allora l'ultimo check ha fallito e ci si prepara al prossimo
                     }
                 }
                 if (!atLeastOneSuccessful) {// se nessun confronto ha avuto successo allora di certo sarà stata lanciata un'eccezione
-                    B2bUtils.logTimelineElementsThatDoNotMatchExpected(assertionFailedErrorList, dataTest, timelineEventCategory);
+                    B2bUtils.logTimelineElementsThatDoNotMatchExpected(assertionErrorList, dataTest, timelineEventCategory);
                 }
             }
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -575,8 +575,8 @@ public class B2bStepsV24 implements B2bStepsInterface {
             });
             notificationStatusHistoryElement = pollingResponse.getNotificationStatusHistoryElement();
             log.info("NOTIFICATION_STATUS_HISTORY_ELEMENT: " + notificationStatusHistoryElement);
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 

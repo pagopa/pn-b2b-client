@@ -27,7 +27,7 @@ public interface NotificationStepsInterface {
 
     void setNotificationRequestGroup(String group);
 
-    String sendNotification(int wait, String status, String pollingStrategy);
+    void sendNotification(int wait, String status, String pollingStrategy);
 
     /**
      * Metodo chiave, in quanto è qui che viene valorizzato lo IUN della notifica generata che viene poi salvato in SharedSteps

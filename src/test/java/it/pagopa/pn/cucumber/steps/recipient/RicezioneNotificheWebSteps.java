@@ -316,11 +316,10 @@ public class RicezioneNotificheWebSteps {
             String refinementDate = webRecipientClient.getReceivedNotification(iun, null).getTimeline().stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(TimelineElementCategoryV27.REFINEMENT)).findAny().get().getTimestamp();
             log.info("scheduleDate : {}", scheduleDate);
             log.info("refinementDate : {}", refinementDate);
+            assertThat(refinementDate).as("La data di refinement non coincide con la scheduleDate").isEqualTo(scheduleDate);
 
-            Assertions.assertEquals(scheduleDate, refinementDate);
-
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 

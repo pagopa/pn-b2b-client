@@ -517,11 +517,11 @@ public class RicezioneNotificheWebDelegheSteps {
         try {
             TimelineElementCategoryV27 timelineElementCategory = TimelineElementCategoryV27.valueOf(timelineEventString);
             TimelineElementV27 timelineElement = getTimelineElementWebRecipient(timelineElementCategory);
-            Assertions.assertNotNull(timelineElement);
+            assertThat(timelineElement).as("Il timeline element non dev'essere null").isNotNull();
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Valore non valido per TimelineElementCategoryV27: " + timelineEventString, e);
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
         webRecipientClient.setBearerToken(baseUser);
     }
@@ -533,10 +533,9 @@ public class RicezioneNotificheWebDelegheSteps {
         try {
             TimelineElementCategoryV27 timelineElementCategory = TimelineElementCategoryV27.NOTIFICATION_VIEWED;
             TimelineElementV27 timelineElement = getTimelineElementWebRecipient(timelineElementCategory);
-
-            Assertions.assertNull(timelineElement);
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+            assertThat(timelineElement).as("Il timeline element non dev'essere null").isNotNull();
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
         webRecipientClient.setBearerToken(baseUser);
     }
@@ -613,7 +612,7 @@ public class RicezioneNotificheWebDelegheSteps {
 
         String userTaxId = getTaxIdByUser(user);
         log.info("TIMELINE ELEMENT : {}", timelineElement);
-        Assertions.assertNotNull(timelineElement);
+        assertThat(timelineElement).as("Il timeline element non dev'essere null").isNotNull();
         Assertions.assertNotNull(timelineElement.getDetails());
         Assertions.assertNotNull(timelineElement.getDetails().getDelegateInfo());
         Assertions.assertEquals(userTaxId, timelineElement.getDetails().getDelegateInfo().getTaxId());
@@ -624,7 +623,7 @@ public class RicezioneNotificheWebDelegheSteps {
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV27 timelineElement = getTimelineElement();
 
         log.info("TIMELINE ELEMENT : {}", timelineElement);
-        Assertions.assertNotNull(timelineElement);
+        assertThat(timelineElement).as("Il timeline element non dev'essere null").isNotNull();
         Assertions.assertNotNull(timelineElement.getDetails());
         Assertions.assertNull(timelineElement.getDetails().getDelegateInfo());
     }

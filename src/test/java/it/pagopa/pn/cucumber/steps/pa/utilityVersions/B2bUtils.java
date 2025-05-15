@@ -23,7 +23,6 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
@@ -366,15 +365,15 @@ public abstract class B2bUtils {
      * Lancia un'AssertionFailedError con log estremamente dettagliato relativo agli elementi di timeline
      * (rendendo molto più facile per i tester capire quale sia la causa del fail, in particolar modo se dovuto a sviste dei dati in input)
      */
-    public static void logTimelineElementsThatDoNotMatchExpected(List<AssertionFailedError> assertionFailedErrorList, AbstractDataTest dataTest, String timelineElementCategory) {
+    public static void logTimelineElementsThatDoNotMatchExpected(List<AssertionError> assertionFailedErrorList, AbstractDataTest dataTest, String timelineElementCategory) {
         String expectedTimelineElement = getExpectedTimelineElement(dataTest, timelineElementCategory);
         StringBuilder sb = new StringBuilder();
         sb.append("Sono stati trovati " + assertionFailedErrorList.size() + " elementi con category " + timelineElementCategory + ", ma nessuno combacia con\n" + expectedTimelineElement);
         for (int i = 0; i < assertionFailedErrorList.size(); i++) {
-            AssertionFailedError error = assertionFailedErrorList.get(i);
+            AssertionError error = assertionFailedErrorList.get(i);
             sb.append("\n").append(i + 1).append(") -> ").append(error.getMessage());
         }
-        throw new AssertionFailedError(sb.toString());
+        throw new AssertionError(sb.toString());
     }
 
     public static String getTimelineEventId(EventId event, String timelineEventCategory) {

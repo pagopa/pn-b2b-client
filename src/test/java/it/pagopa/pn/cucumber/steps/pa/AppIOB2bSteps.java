@@ -11,7 +11,6 @@ import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
-import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
@@ -46,8 +45,8 @@ public class AppIOB2bSteps {
             Assertions.assertDoesNotThrow(() ->
                     notificationByIun.set(this.iPnAppIOB2bClient.getReceivedNotification(fullSentNotification.getIun(), fullSentNotification.getRecipients().get(0).getTaxId())));
             Assertions.assertNotNull(notificationByIun.get());
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -63,8 +62,8 @@ public class AppIOB2bSteps {
             this.sha256DocumentDownload = B2bUtils.computeSha256(new ByteArrayInputStream(bytes));
 
             Assertions.assertEquals(this.sha256DocumentDownload, sentNotificationDocument.getSha256());
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -79,8 +78,8 @@ public class AppIOB2bSteps {
             this.sha256DocumentDownload = B2bUtils.computeSha256(new ByteArrayInputStream(bytes));
 
             Assertions.assertEquals(this.sha256DocumentDownload, sentNotificationDocument.getSha256());
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -130,8 +129,8 @@ public class AppIOB2bSteps {
             Assertions.assertDoesNotThrow(() ->
                     notificationByIun.set(this.iPnAppIOB2bClient.getReceivedNotification(fullSentNotification.getIun(), fullSentNotification.getRecipients().get(0).getTaxId())));
             Assertions.assertNotNull(notificationByIun.get());
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
         String url = null;
         for (ThirdPartyAttachment tmpAtt : notificationByIun.get().getAttachments()) {
@@ -225,8 +224,8 @@ public class AppIOB2bSteps {
             Assertions.assertDoesNotThrow(() ->
                     notificationByIun.set(this.iPnAppIOB2bClient.getReceivedNotification(sharedSteps.getNotificationIun(), selectTaxIdUser(recipient))));
             Assertions.assertNotNull(notificationByIun.get());
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -242,8 +241,8 @@ public class AppIOB2bSteps {
             this.sha256DocumentDownload = B2bUtils.computeSha256(new ByteArrayInputStream(bytes));
 
             Assertions.assertEquals(this.sha256DocumentDownload, sentNotificationDocument.getSha256());
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 }

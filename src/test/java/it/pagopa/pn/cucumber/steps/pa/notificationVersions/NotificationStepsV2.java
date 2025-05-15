@@ -152,7 +152,7 @@ public class NotificationStepsV2 implements NotificationStepsInterface {
     }
 
     @Override
-    public String sendNotification(int wait, String status, String pollingStrategy) {
+    public void sendNotification(int wait, String status, String pollingStrategy) {
         try {
             Assertions.assertDoesNotThrow(() -> {
                 uploadNotification(null);
@@ -195,11 +195,8 @@ public class NotificationStepsV2 implements NotificationStepsInterface {
                             .isFalse();
                 }
             });
-            return sharedSteps.getNotificationIun();
-        } catch (AssertionFailedError assertionFailedError) {
-            String message = assertionFailedError.getMessage() +
-                    "{RequestID: " + (notificationResponse == null ? "NULL" : notificationResponse.getNotificationRequestId()) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -243,8 +240,8 @@ public class NotificationStepsV2 implements NotificationStepsInterface {
             if (date != null) {
                 Assertions.assertNotNull(notificationPrice.getRefinementDate());
             }
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
