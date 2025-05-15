@@ -102,8 +102,8 @@ public class PriceVerificationSteps {
             if (date != null) {
                 Assertions.assertNotNull(notificationPrice.getRefinementDate());
             }
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -121,8 +121,8 @@ public class PriceVerificationSteps {
             if (date != null) {
                 Assertions.assertNotNull(notificationPrice.getRefinementDate());
             }
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 

@@ -140,8 +140,8 @@ public class AvanzamentoNotificheB2bSteps {
     public void checkNumberOfTimelineElementsWithCategory(String timelineEventCategory, Integer size) {
         try {
             getB2bStepsInterface().checkNumberOfTimelineElements(timelineEventCategory, size);
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -149,8 +149,8 @@ public class AvanzamentoNotificheB2bSteps {
     public void checkNumberOfTimelineElementsWithCategoryFromMap(String timelineEventCategory, Integer size, Map<String, String> dataMap) {
         try {
             getB2bStepsInterface().checkNumberOfTimelineElementsFromData(timelineEventCategory, size, dataMap);
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -198,8 +198,8 @@ public class AvanzamentoNotificheB2bSteps {
                 .toList();
         try {
             Assertions.assertFalse(expectedEvents.stream().anyMatch(Predicate.not(actualTimeline::contains)));
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -225,8 +225,8 @@ public class AvanzamentoNotificheB2bSteps {
 
             Assertions.assertEquals(ricezioneRaccomandata, refinementDate);
 
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -246,8 +246,8 @@ public class AvanzamentoNotificheB2bSteps {
 
             Assertions.assertTrue(checkOffsetDateTime(ricezioneRECAG012, refinementDate));
 
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -366,8 +366,8 @@ public class AvanzamentoNotificheB2bSteps {
         b2bStepsInterface.checkIfTimelineElementExists(true, null, null);
         try {
             Assertions.assertDoesNotThrow(() -> b2bClient.notificationCancellation(sharedSteps.getNotificationIun()));
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -607,8 +607,8 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertTrue(CollectionUtils.isEmpty(timelineElement.getLegalFactsIds()));
             Assertions.assertNotNull(timelineElement.getDetails().getLegalFactId());
 
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -969,8 +969,8 @@ public class AvanzamentoNotificheB2bSteps {
         try {
             b2bStepsInterface.waitForEventOrStatus(TIMELINE_RAPID, TIMELINE, PAYMENT, filters);
             b2bStepsInterface.verificaAssenzaPagamentiF24();
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -1083,8 +1083,8 @@ public class AvanzamentoNotificheB2bSteps {
             log.info("scheduleDate : {}", scheduleDate);
             log.info("refinementDate : {}", refinementDate);
             assertThat(scheduleDate).as("La data di refinement non coincide con quanto atteso").isEqualTo(refinementDate);
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -1103,8 +1103,8 @@ public class AvanzamentoNotificheB2bSteps {
     public void vieneSchedulatoIlPerfezionamento(String timelineEventCategory, Map<String, String> dataMap) {
         try {
             getB2bStepsInterface().vieneSchedulatoIlPerfezionamento(timelineEventCategory, dataMap);
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -1112,8 +1112,8 @@ public class AvanzamentoNotificheB2bSteps {
     public void siAttendePresenzaPerfezionamentoDecorrenzaTermini(Map<String, String> dataMap) throws InterruptedException {
         try {
             getB2bStepsInterface().waitForScheduleRefinement(dataMap);
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -1121,8 +1121,8 @@ public class AvanzamentoNotificheB2bSteps {
     public void siAttendeCheSiRitentiInvio(String timelineEventCategory, Map<String, String> dataMap) throws InterruptedException {
         try {
             getB2bStepsInterface().waitForSecondAttempt(timelineEventCategory, dataMap);
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -1201,8 +1201,8 @@ public class AvanzamentoNotificheB2bSteps {
     public void checkOrdineEventiUnivoci(String category1, Boolean isSuccessivo, String category2) {
         try {
             getB2bStepsInterface().checkOrdineEventiUnivoci(category1, isSuccessivo, category2);
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -1330,8 +1330,8 @@ public class AvanzamentoNotificheB2bSteps {
                 case "pafee" -> Assertions.assertEquals(valueToValidate, fullSentNotification.getPaFee());
                 default -> throw new IllegalArgumentException("Valore non valido per toValidate: " + toValidate);
             }
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -1542,8 +1542,8 @@ public class AvanzamentoNotificheB2bSteps {
                         .findFirst().orElse(null);
                 assertThat(te).as("Il timelineElement atteso non è stato trovato").isNotNull();
             });
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
@@ -1556,8 +1556,8 @@ public class AvanzamentoNotificheB2bSteps {
     public void checkScartoTemporaleTraDueDeliveryDetailCode(String code1, String code2, Boolean isSuperiore, int timeQuantity, ChronoUnit unitaTemporale) {
         try {
             getB2bStepsInterface().checkScartoTemporaleTraDueDeliveryDetailCode(code1, code2, isSuperiore, timeQuantity, unitaTemporale);
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 

@@ -351,8 +351,8 @@ public class SharedSteps {
         AtomicInteger notificationsCounter = new AtomicInteger();
         for (int i = 0; i < numberOfNotification; i++) {
             Thread t = new Thread(() -> {
-                String newNotificationIun = notificationStepsInterface.sendNotification(getWorkFlowWait(), NOTIFICATION_STATUS_ACCEPTED, VALIDATION_STATUS);
-                notificationStepsInterface.waitForTimelineElement(newNotificationIun, COMPLETELY_UNREACHABLE, 33);
+                notificationStepsInterface.sendNotification(getWorkFlowWait(), NOTIFICATION_STATUS_ACCEPTED, VALIDATION_STATUS);
+                notificationStepsInterface.waitForTimelineElement(notificationIun, COMPLETELY_UNREACHABLE, 33);
                 notificationsCounter.getAndIncrement();
             });
             threadList.add(t);

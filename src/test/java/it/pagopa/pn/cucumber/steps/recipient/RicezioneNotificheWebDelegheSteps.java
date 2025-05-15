@@ -517,8 +517,8 @@ public class RicezioneNotificheWebDelegheSteps {
             TimelineElementV26 timelineElement = getTimelineElementV23WebRecipient(timelineElementCategoryV23);
 
             Assertions.assertNotNull(timelineElement);
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
 
         webRecipientClient.setBearerToken(baseUser);
@@ -533,8 +533,8 @@ public class RicezioneNotificheWebDelegheSteps {
             TimelineElementV26 timelineElement = getTimelineElementV23WebRecipient(timelineElementCategoryV23);
 
             Assertions.assertNull(timelineElement);
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
         webRecipientClient.setBearerToken(baseUser);
     }

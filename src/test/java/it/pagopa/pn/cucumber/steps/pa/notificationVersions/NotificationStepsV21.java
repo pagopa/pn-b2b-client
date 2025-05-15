@@ -163,7 +163,7 @@ public class NotificationStepsV21 implements NotificationStepsInterface {
     }
 
     @Override
-    public String sendNotification(int wait, String status, String pollingStrategy) {
+    public void sendNotification(int wait, String status, String pollingStrategy) {
         try {
             Assertions.assertDoesNotThrow(() -> {
                 uploadNotification(null);
@@ -206,11 +206,8 @@ public class NotificationStepsV21 implements NotificationStepsInterface {
                             .isFalse();
                 }
             });
-            return sharedSteps.getNotificationIun();
-        } catch (AssertionFailedError assertionFailedError) {
-            String message = assertionFailedError.getMessage() +
-                    "{RequestID: " + (notificationResponse == null ? "NULL" : notificationResponse.getNotificationRequestId()) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 

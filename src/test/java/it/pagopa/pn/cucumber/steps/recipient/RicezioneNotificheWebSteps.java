@@ -7,11 +7,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullReceivedNotificationV25;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationAttachmentDownloadMetadataResponse;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchResponse;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchRow;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.TimelineElementV26;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.*;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffDocumentType;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffFullNotificationV1;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffNotificationDetailDocument;
@@ -21,21 +17,13 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.ConsentType;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV26;
-import it.pagopa.pn.client.b2b.pa.service.IPnBFFRecipientNotificationClient;
-import it.pagopa.pn.client.b2b.pa.service.IPnTosPrivacyClient;
-import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
-import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
-import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
+import it.pagopa.pn.client.b2b.pa.service.*;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.AddressVerification;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.CourtesyChannelType;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.CourtesyDigitalAddress;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalAndUnverifiedDigitalAddress;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.*;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationStatusV26;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV26;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
@@ -269,12 +257,11 @@ public class RicezioneNotificheWebSteps {
             AtomicReference<String> sha256 = new AtomicReference<>("");
             Assertions.assertDoesNotThrow(() -> {
                 byte[] bytes = Assertions.assertDoesNotThrow(() ->
-                    B2bUtils.downloadFile(downloadResponse.getUrl()));
-            sha256.set(B2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
+                        B2bUtils.downloadFile(downloadResponse.getUrl()));
+                sha256.set(B2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
             });
             Assertions.assertEquals(sha256.get(), downloadResponse.getSha256());
-        }
-        else {
+        } else {
             Assertions.assertNotNull(downloadResponse.getFilename());
             Assertions.assertNotNull(downloadResponse.getContentLength());
             Assertions.assertNotNull(downloadResponse.getUrl());
@@ -314,8 +301,8 @@ public class RicezioneNotificheWebSteps {
 
             Assertions.assertEquals(scheduleDate, refinementDate);
 
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
