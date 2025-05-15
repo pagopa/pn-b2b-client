@@ -22,6 +22,7 @@ public class PurposeUpdateDraftModeReceiveSteps {
 
     @When("l'utente aggiorna quella finalità per quell'e-service in erogazione inversa")
     public void userUpdateReversePurpose() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getPurposeApiClient().updateReversePurpose(
                         UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId()),

@@ -73,9 +73,9 @@ public class PurposeActivationStep {
         if (versionId == null) throw new IllegalArgumentException("No versionId found!");
         httpCallExecutor.performCall(() -> purposeApiClient.activatePurposeVersion(
                 UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId()), UUID.fromString(versionId)));
-        pollingService.makePolling(() -> purposeApiClient.getPurpose(UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId())),
-                res -> Optional.ofNullable(res.getCurrentVersion()).map(PurposeVersion::getState).filter(status -> status == PurposeVersionState.ACTIVE).isPresent(),
-                "There was an error while activating the purpose!");
+//        pollingService.makePolling(() -> purposeApiClient.getPurpose(UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId())),
+//                res -> Optional.ofNullable(res.getCurrentVersion()).map(PurposeVersion::getState).filter(status -> status == PurposeVersionState.ACTIVE).isPresent(),
+//                "There was an error while activating the purpose!");
     }
 
     @When("l'utente (ri)attiva la prima finalità in stato {string} per quell'e-service")

@@ -59,7 +59,7 @@ Feature: Lettura singola finalità
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     Given "PA1" ha già creato 1 finalità in stato "<statoFinalita>" per quell'eservice
     When l'utente richiede la lettura della finalità
-    Then si ottiene status code 200 ma non l'analisi del rischio
+    Then si ottiene status code 403
 
     Examples: 
       | statoFinalita        |

@@ -22,6 +22,7 @@ public class PurposeListingConsumerSteps {
 
     @When("l'utente fruitore richiede una operazione di listing delle finalità limitata ai primi {int} risultati")
     public void consumerRequireListingOperationWithLimit(int limit) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getPurposeApiClient().getConsumerPurposes(
                         0, limit, null, null, null, null
@@ -31,6 +32,7 @@ public class PurposeListingConsumerSteps {
 
     @When("l'utente fruitore richiede una operazione di listing delle finalità con offset {int}")
     public void consumerRequireListingOperationWithOffset(int offset) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getPurposeApiClient().getConsumerPurposes(
                         offset, 50, null, List.of(sharedStepsContext.getEServicesCommonContext().getEserviceId()), null, null
@@ -41,6 +43,7 @@ public class PurposeListingConsumerSteps {
 
     @When("l'utente fruitore richiede una operazione di listing delle sue finalità sugli e-services a cui è sottoscritto")
     public void consumerRequireSubscribedPurpose() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getPurposeApiClient().getConsumerPurposes(
                         0, 50, null, List.of(sharedStepsContext.getEServicesCommonContext().getEserviceId()), null, null
@@ -55,6 +58,7 @@ public class PurposeListingConsumerSteps {
 
     @When("l'utente fruitore richiede una operazione di listing delle finalità in stato {string}")
     public void consumerRequireListingOperationForPurposeWithState(String state) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getPurposeApiClient().getConsumerPurposes(
                         0, 50, null, List.of(sharedStepsContext.getEServicesCommonContext().getEserviceId()), null,
@@ -65,6 +69,7 @@ public class PurposeListingConsumerSteps {
 
     @When("l'utente fruitore richiede una operazione di listing delle finalità filtrando per la keyword {string}")
     public void consumerRequireListingOperationPurporposeWithKeyword(String keyword) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getPurposeApiClient().getConsumerPurposes(
                         0, 50, keyword, List.of(sharedStepsContext.getEServicesCommonContext().getEserviceId()), null, null

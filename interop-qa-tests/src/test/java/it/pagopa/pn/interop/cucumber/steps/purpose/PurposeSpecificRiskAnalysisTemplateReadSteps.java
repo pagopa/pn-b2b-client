@@ -19,6 +19,7 @@ public class PurposeSpecificRiskAnalysisTemplateReadSteps {
 
     @When("l'utente richiede la versione {string} del template dell'analisi del rischio")
     public void userRequireTemplateVersion(String version) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getPurposeApiClient().retrieveRiskAnalysisConfigurationByVersion(
                         version, sharedStepsContext.getEServicesCommonContext().getEserviceId()

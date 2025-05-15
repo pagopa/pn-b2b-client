@@ -18,10 +18,11 @@ public class PurposeCloneSteps {
 
     @When("l'utente richiede una operazione di clonazione della finalità")
     public void requireClonePurpose() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getPurposeApiClient().clonePurpose(
                         UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId()),
-                        new PurposeCloneSeed()
+                        new PurposeCloneSeed().eserviceId(sharedStepsContext.getEServicesCommonContext().getEserviceId())
                 )
         );
     }

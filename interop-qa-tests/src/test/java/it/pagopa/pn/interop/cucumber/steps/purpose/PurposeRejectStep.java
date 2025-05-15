@@ -42,6 +42,7 @@ public class PurposeRejectStep {
 
     @When("l'utente rifiuta la finalità senza una motivazione")
     public void userRejectsPurposeWithoutReason() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         String versionId = sharedStepsContext.getPurposeCommonContext().getWaitingForApprovalVersionId() != null
                 ? sharedStepsContext.getPurposeCommonContext().getWaitingForApprovalVersionId()
                 : sharedStepsContext.getPurposeCommonContext().getVersionId();

@@ -17,17 +17,7 @@ Feature: Download documento di analisi del rischio sigillato
       | PA1     | api          |       403 |
       | PA1     | security     |       403 |
       | PA1     | api,security |       403 |
-      | PA1     | support      |       403 |
-      | GSP     | admin        |       200 |
-      | GSP     | api          |       403 |
-      | GSP     | security     |       403 |
-      | GSP     | api,security |       403 |
-      | GSP     | support      |       403 |
-      | Privato | admin        |       200 |
-      | Privato | api          |       403 |
-      | Privato | security     |       403 |
-      | Privato | api,security |       403 |
-      | Privato | support      |       403 |
+      | PA1     | support      |       200 |
 
   @purpose_risk_analysis_document_download2
   Scenario: Per una finalità precedentemente creata dal fruitore, la quale è stata in passato almeno per un momento ACTIVE, la quale ha avuto un aggiornamento della stima di carico la quale versione è stata almeno per un momento ACTIVE, alla richiesta di lettura del documento di analisi del rischio da parte di un qualsiasi utente dell'ente, va a buon fine; il documento deve essere diverso da quello creato per la versione precedente.

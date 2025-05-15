@@ -35,6 +35,7 @@ public class PurposeCreationModeDeliverSteps {
 
     @When("l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati")
     public void createPurposeWithAllRequiredFields() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         UUID consumerId = identityService.getOrganizationId(sharedStepsContext.getTenantType());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getPurposeApiClient().createPurpose(
@@ -51,9 +52,9 @@ public class PurposeCreationModeDeliverSteps {
     }
 
     @Given("{string} ha già creato una finalità per quell'e-service con tutti i campi richiesti correttamente formattati")
-    public void tenantHasAlreadyCreatedPurposeWithAllRequiredFields() {
-        clientTokenConfigurator.setBearerToken(identityService.getToken(sharedStepsContext.getTenantType(), null));
-        UUID consumerId = identityService.getOrganizationId(sharedStepsContext.getTenantType());
+    public void tenantHasAlreadyCreatedPurposeWithAllRequiredFields(String tenantType) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        UUID consumerId = identityService.getOrganizationId(tenantType);
 
         String title = String.format("purpose title - QA - %d - %d", sharedStepsContext.getTestSeed(), new Random().nextInt());
         dataPreparationService.createPurposeWithGivenState(
@@ -71,6 +72,7 @@ public class PurposeCreationModeDeliverSteps {
 
     @When("l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e lo stesso nome della precedente")
     public void userCreatePurposeWithCorrectFieldsAndSameName() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         UUID consumerId = identityService.getOrganizationId(sharedStepsContext.getTenantType());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getPurposeApiClient().createPurpose(
@@ -88,6 +90,7 @@ public class PurposeCreationModeDeliverSteps {
 
     @When("l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati, in modalità gratuita senza specificare una ragione")
     public void userCreatePurposeInFreeModeWithoutReason() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         UUID consumerId = identityService.getOrganizationId(sharedStepsContext.getTenantType());
         String title = String.format("purpose title - QA - %d - %d", sharedStepsContext.getTestSeed(), new Random().nextInt());
 
@@ -107,6 +110,7 @@ public class PurposeCreationModeDeliverSteps {
 
     @When("l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati, con un'analisi del rischio parzialmente compilata ma formattata correttamente")
     public void userCreatePurposeWithPartialRiskAnalysis() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         UUID consumerId = identityService.getOrganizationId(sharedStepsContext.getTenantType());
         RiskAnalysis riskAnalysis = dataPreparationService.getRiskAnalysis("PA1", false);
         String title = String.format("purpose title - QA - %d - %d", sharedStepsContext.getTestSeed(), new Random().nextInt());
@@ -131,11 +135,12 @@ public class PurposeCreationModeDeliverSteps {
 
     @When("l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati, con un'analisi del rischio parzialmente compilata, formattata correttamente, ma con un template datato")
     public void userCreatePurposeWihtPartialRiskAnalysisAndOutdatedTemplate() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         String tenantType = sharedStepsContext.getTenantType();
         UUID consumerId = identityService.getOrganizationId(tenantType);
         RiskAnalysis riskAnalysis = dataPreparationService.getRiskAnalysis(tenantType, false);
 
-        int outdatedVersion = Integer.parseInt(riskAnalysis.getRiskAnalysisForm().getVersion()) - 1;
+        int outdatedVersion = (int) Double.parseDouble(riskAnalysis.getRiskAnalysisForm().getVersion()) - 1;
         String title = String.format("purpose title - QA - %d - %d", sharedStepsContext.getTestSeed(), new Random().nextInt());
 
         sharedStepsContext.getHttpCallExecutor().performCall(

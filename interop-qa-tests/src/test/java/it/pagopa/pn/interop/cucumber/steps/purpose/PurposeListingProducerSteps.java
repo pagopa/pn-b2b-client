@@ -26,6 +26,7 @@ public class PurposeListingProducerSteps {
 
     @When("l'utente erogatore richiede una operazione di listing delle finalità limitata alle prime {int} finalità")
     public void requireListingOperationWithLimit(int limit) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getPurposeApiClient().getProducerPurposes(
                         0, limit, null, null, null, null)
@@ -34,6 +35,7 @@ public class PurposeListingProducerSteps {
 
     @When("l'utente erogatore richiede una operazione di listing delle finalità con offset {int}")
     public void requireListingOperationWithOffset(int offset) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getPurposeApiClient().getProducerPurposes(
                         offset, 50, null, List.of(sharedStepsContext.getEServicesCommonContext().getEserviceId()), null, null)
@@ -43,6 +45,7 @@ public class PurposeListingProducerSteps {
 
     @When("l'utente erogatore richiede una operazione di listing delle finalità sui propri e-service")
     public void requireListingOperationPurposeOwned() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getPurposeApiClient().getProducerPurposes(
                         0, 50, null, List.of(sharedStepsContext.getEServicesCommonContext().getEserviceId()), null, null)
@@ -52,6 +55,7 @@ public class PurposeListingProducerSteps {
 
     @When("l'utente erogatore richiede una operazione di listing delle finalità filtrata per fruitore {string}")
     public void requireFilteredListingOperationByConsumer(String consumer) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         UUID consumerId = identityService.getOrganizationId(consumer);
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getPurposeApiClient().getProducerPurposes(
@@ -66,6 +70,7 @@ public class PurposeListingProducerSteps {
 
     @When("l'utente erogatore richiede una operazione di listing delle finalità in stato {string}")
     public void requireListingOperationForPurposeWithState(String state) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getPurposeApiClient().getProducerPurposes(
                         0, 50, null, List.of(sharedStepsContext.getEServicesCommonContext().getEserviceId()), null,
@@ -75,6 +80,7 @@ public class PurposeListingProducerSteps {
 
     @When("l'utente erogatore richiede una operazione di listing delle finalità filtrando per la keyword {string}")
     public void requireListingOperationByKeyword(String keyword) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getPurposeApiClient().getProducerPurposes(
                         0, 50, keyword, List.of(sharedStepsContext.getEServicesCommonContext().getEserviceId()), null, null)

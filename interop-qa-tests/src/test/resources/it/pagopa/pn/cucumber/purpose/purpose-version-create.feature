@@ -18,7 +18,7 @@ Feature: Creazione di una nuova versione di finalità
       | Privato | ACTIVE                 | ACTIVE             |
 
     Examples:
-      | ente | statoFinalità | statoNuovaFinalità |
+      | ente | statoFinalitàEsistente | statoNuovaFinalità |
       | PA1  | SUSPENDED     | ACTIVE             |
 
   @purpose_version_create1b

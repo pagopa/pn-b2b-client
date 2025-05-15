@@ -21,6 +21,7 @@ public class PurposeArchiveSteps {
 
     @When("l'utente archivia quella finalità in stato {string}")
     public void userArchivePurpose(String state) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         String versionId = List.of("WAITING_FOR_APPROVAL", "REJECTED").contains(state)
                 ? purposeCommonContext.getWaitingForApprovalVersionId()
                 : purposeCommonContext.getVersionId();

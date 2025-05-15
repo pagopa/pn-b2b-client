@@ -36,6 +36,7 @@ public class PurposeCreationModeReceiveSteps {
 
     @When("l'utente crea una nuova finalità con tutti i campi richiesti correttamente formattati per quell'e-service associando quella analisi del rischio creata dall'erogatore")
     public void createPurposeWithRiskAnalysisCreatedFromProducer() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         UUID consumerId = identityService.getOrganizationId(sharedStepsContext.getTenantType());
         String title = String.format("purpose title - QA - %d - %d", sharedStepsContext.getTestSeed(), new Random().nextInt());
         sharedStepsContext.getHttpCallExecutor().performCall(
@@ -83,6 +84,7 @@ public class PurposeCreationModeReceiveSteps {
 
     @When("l'utente crea una nuova finalità per quell'e-service associando quella analisi del rischio creata dall'erogatore con tutti i campi richiesti correttamente formattati, in modalità gratuita senza specificare una ragione")
     public void userCreateNewPurposeWithRiskAnalysisCreatedByProducerWithoutFreeOfChargeReason() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         UUID consumerId = identityService.getOrganizationId(sharedStepsContext.getTenantType());
         String title = String.format("purpose title - QA - %d - %d", sharedStepsContext.getTestSeed(), new Random().nextInt());
         sharedStepsContext.getHttpCallExecutor().performCall(
@@ -102,6 +104,7 @@ public class PurposeCreationModeReceiveSteps {
 
     @When("l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati senza passare l'identificativo dell'analisi del rischio")
     public void userCreateNewPurposeWithRiskAnalysisCreatedByProducerWithoutRiskAnalysisId() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         UUID consumerId = identityService.getOrganizationId(sharedStepsContext.getTenantType());
         String title = String.format("purpose title - QA - %d - %d", sharedStepsContext.getTestSeed(), new Random().nextInt());
         sharedStepsContext.getHttpCallExecutor().performCall(
@@ -121,6 +124,7 @@ public class PurposeCreationModeReceiveSteps {
 
     @When("l'utente crea una nuova finalità per quell'e-service associando una analisi del rischio diversa da quelle create dall'erogatore")
     public void userCreateNewPurposeWithRiskAnalysisIdNotCreatedFromProducer() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         UUID consumerId = identityService.getOrganizationId(sharedStepsContext.getTenantType());
         String title = String.format("purpose title - QA - %d - %d", sharedStepsContext.getTestSeed(), new Random().nextInt());
         sharedStepsContext.getHttpCallExecutor().performCall(

@@ -15,7 +15,6 @@ import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public class EServiceCatalogListingSteps {

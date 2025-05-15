@@ -25,17 +25,12 @@ public class PurposeReadSteps {
 
     @When("l'utente richiede la lettura della finalità")
     public void userReadPurpose() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getPurposeApiClient().getPurpose(
                         UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId())
                 )
         );
-    }
-
-    @Then("si ottiene status code 200 ma non l'analisi del rischio")
-    public void verifyStatusCodeWithoutRiskAnalysis() {
-        Assertions.assertEquals(200, httpCallExecutor.getClientResponse().value());
-        Assertions.assertNull(((Purpose) httpCallExecutor.getResponse()).getRiskAnalysisForm());
     }
 
     @Then("si ottiene status code 200 ma l'analisi del rischio solo per admin")

@@ -44,7 +44,7 @@ public class PurposeRiskAnalysisDocumentDownloadSteps {
 
     @When("l'utente scarica il documento di analisi del rischio")
     public void userDownloadRiskAnalysis() {
-        clientTokenConfigurator.setBearerToken(identityService.getToken(sharedStepsContext.getTenantType(), null));
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
         Purpose getPurposeResponse = clientTokenConfigurator.getPurposeApiClient().getPurpose(
                 UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId())

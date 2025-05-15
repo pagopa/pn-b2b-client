@@ -611,7 +611,7 @@ public class DataPreparationService {
         else {
             // For modes other than RECEIVE, build a PurposeSeed
             PurposeSeed purposeSeed = new PurposeSeed();
-            purposeSeed.setTitle(title);
+            purposeSeed.setTitle(teServiceMode.getTitle() != null ? teServiceMode.getTitle() : title);
             purposeSeed.setDescription(description);
             purposeSeed.setIsFreeOfCharge(isFreeOfCharge);
             purposeSeed.setFreeOfChargeReason(freeOfChargeReason);
@@ -736,7 +736,7 @@ public class DataPreparationService {
                     currentVersionId.set(res.getCurrentVersion().getId());
                     if (shouldWaitForApproval) {
                         waitingForApprovalVersionId.set(res.getWaitingForApprovalVersion().getId());
-                        return res.getWaitingForApprovalVersion().getState().equals("WAITING_FOR_APPROVAL");
+                        return res.getWaitingForApprovalVersion().getState().getValue().equals("WAITING_FOR_APPROVAL");
                     }
                     return res.getCurrentVersion().getDailyCalls() == purposeVersionSeed.getDailyCalls();
                 },

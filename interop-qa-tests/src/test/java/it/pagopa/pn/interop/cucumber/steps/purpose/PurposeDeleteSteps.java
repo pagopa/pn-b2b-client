@@ -18,6 +18,7 @@ public class PurposeDeleteSteps {
 
     @When("l'utente richiede la cancellazione della finalità")
     public void userRequirePurposeCancellation() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getPurposeApiClient().deletePurpose(
                         UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId())

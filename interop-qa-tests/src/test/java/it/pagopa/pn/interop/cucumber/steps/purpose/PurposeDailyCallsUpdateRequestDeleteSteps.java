@@ -18,6 +18,7 @@ public class PurposeDailyCallsUpdateRequestDeleteSteps {
 
     @When("l'utente richiede la cancellazione della richiesta di aggiornamento della stima di carico")
     public void requireDeleteDailyCallsUpdate() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getPurposeApiClient().deletePurposeVersion(
                         UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId()),

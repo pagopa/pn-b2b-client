@@ -27,6 +27,7 @@ public class PurposeUpdateDraftModeDeliverSteps {
 
     @When("l'utente aggiorna quella finalità per quell'e-service in erogazione diretta")
     public void updatePurposeDirect() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getPurposeApiClient().updatePurpose(
                         UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId()),
@@ -42,8 +43,9 @@ public class PurposeUpdateDraftModeDeliverSteps {
 
     @When("l'utente aggiorna quella finalità per quell'e-service in erogazione diretta con una riskAnalysis in versione diversa da quella attualmente pubblicata")
     public void updatePurposeWithDifferentRiskAnalysis() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         RiskAnalysis riskAnalysis = dataPreparationService.getRiskAnalysis(sharedStepsContext.getTenantType(), true);
-        int currentVersion = Integer.parseInt(riskAnalysis.getRiskAnalysisForm().getVersion());
+        int currentVersion = (int) Double.parseDouble(riskAnalysis.getRiskAnalysisForm().getVersion());
         riskAnalysis.getRiskAnalysisForm().setVersion(String.valueOf(currentVersion + 1));
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getPurposeApiClient().updatePurpose(

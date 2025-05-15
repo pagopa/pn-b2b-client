@@ -21,6 +21,7 @@ public class PurposeSuspendSteps {
 
     @When("l'utente sospende quella finalità in stato {string}")
     public void userSuspendPurposeWithState(String state) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         String versionId = ("WAITING_FOR_APPROVAL".equals(state) || "REJECTED".equals(state))
                 ? sharedStepsContext.getPurposeCommonContext().getWaitingForApprovalVersionId()
                 : sharedStepsContext.getPurposeCommonContext().getVersionId();

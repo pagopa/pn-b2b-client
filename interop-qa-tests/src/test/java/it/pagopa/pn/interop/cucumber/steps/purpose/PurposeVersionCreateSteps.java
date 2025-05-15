@@ -34,6 +34,7 @@ public class PurposeVersionCreateSteps {
 
     @When("l'utente aggiorna la stima di carico per quella finalità restando entro la soglia")
     public void userUpdateCallsEstimateBelowThreshold() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         newDailyCalls = 50;
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getPurposeApiClient().createPurposeVersion(
@@ -45,6 +46,7 @@ public class PurposeVersionCreateSteps {
 
     @When("l'utente aggiorna la stima di carico per quella finalità superando la soglia")
     public void userUpdateCallsEstimateAboveThreshold() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         newDailyCalls = 51;
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getPurposeApiClient().createPurposeVersion(
