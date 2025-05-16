@@ -41,13 +41,13 @@
         <open.api.version.delivery_v24>v2.15.1</open.api.version.delivery_v24>
         <open.api.version.delivery.push_v24>v2.16.1</open.api.version.delivery.push_v24>
         <!--V25-->
-        <open.api.version.delivery_v25>d120971effba9a36803d66d52714ba62364e5fa4</open.api.version.delivery_v25>
-        <open.api.version.delivery.push_v25>46d77ed647a54aa52dffc0a296eb6fd2c4824b04</open.api.version.delivery.push_v25>
+        <open.api.version.delivery_v25>d68641784853959eb615fe073f012f1bad8047b1</open.api.version.delivery_v25>
+        <open.api.version.delivery.push_v25>56314229c57ea544dd0f7678ce61ba4e5de180f5</open.api.version.delivery.push_v25>
         <!-- Le due property sottostanti (relative all'ultima versione) coincidono con le due di sopra.
         Questa duplicità è dovuta al fatto che al rilascio di una nuova versione, alcune execution dovranno usare le versioni più
          recenti di delivery e deliveryPush, altre dovranno continuare a usare specificamente la versione v25 -->
-        <open.api.version.delivery>d120971effba9a36803d66d52714ba62364e5fa4</open.api.version.delivery>
-        <open.api.version.delivery.push>46d77ed647a54aa52dffc0a296eb6fd2c4824b04</open.api.version.delivery.push>
+        <open.api.version.delivery>d68641784853959eb615fe073f012f1bad8047b1</open.api.version.delivery>
+        <open.api.version.delivery.push>56314229c57ea544dd0f7678ce61ba4e5de180f5</open.api.version.delivery.push>
 
         <open.api.version.user.attributes>v2.8.0</open.api.version.user.attributes>
         <open.api.version.mandate>v2.5.0</open.api.version.mandate>
@@ -1109,7 +1109,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/5b0cd566818787b6bbf1800a19f686ce4bff1462/docs/openapi/api-external-b2b-webhook-bundle.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version.delivery.push_v25}/docs/openapi/api-external-b2b-webhook-bundle.yaml</inputSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>

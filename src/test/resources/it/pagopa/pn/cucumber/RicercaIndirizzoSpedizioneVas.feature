@@ -8,24 +8,15 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
-    And destinatario
-      | denomination                        | PF Censito       |
-      | taxId                               | FRMTTR76M06B715E |
-      | digitalDomicile_address             | NULL             |
-      | physicalAddress_address             | NULL             |
-      | physicalAddress_municipality        | NULL             |
-      | physicalAddress_municipalityDetails | NULL             |
-      | at                                  | NULL             |
-      | physicalAddress_addressDetails      | NULL             |
-      | physicalAddress_province            | NULL             |
-      | physicalAddress_State               | NULL             |
-      | physicalAddress_zip                 | NULL             |
+    And destinatario Mario Cucumber e:
+      | digitalDomicile | NULL |
+      | physicalAddress | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     #And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_VALIDATION_CALL"
     #And esiste l'elemento di timeline della notifica "PUBLIC_REGISTRY_VALIDATION_RESPONSE" abbia notificationCost uguale a "null" per l'utente 0
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       #| xxx lista utenze | xxx |
-      | loadTimeline            | true|
+      | loadTimeline | true |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
       | loadTimeline            | true                                                                                                                                                                      |
       | registry                | ANPR                                                                                                                                                                      |
@@ -47,9 +38,6 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details_notificationCost   | 100      |
 
 
-
-
-
   @ricercaIndirizzoVas
   Scenario: [4] Invio notifica 890 monodestinatario verso PG con campo address vuoto e recupero indirizzo da RI Vas attivo
     Given il test è effettuabile con API versione "V25" o superiore
@@ -57,17 +45,10 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
-      | denomination                        | PG Censito  |
-      | taxId                               | 01113570442 |
-      | digitalDomicile_address             | NULL        |
-      | physicalAddress_address             | NULL        |
-      | physicalAddress_municipality        | NULL        |
-      | physicalAddress_municipalityDetails | NULL        |
-      | at                                  | NULL        |
-      | physicalAddress_addressDetails      | NULL        |
-      | physicalAddress_province            | NULL        |
-      | physicalAddress_State               | NULL        |
-      | physicalAddress_zip                 | NULL        |
+      | denomination    | PG Censito  |
+      | taxId           | 01113570442 |
+      | digitalDomicile | NULL        |
+      | physicalAddress | NULL        |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     #And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_VALIDATION_CALL"
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
@@ -83,30 +64,14 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
+    And destinatario Mario Cucumber e:
+      | digitalDomicile | NULL |
+      | physicalAddress | NULL |
     And destinatario
-      | denomination                        | PF Censito       |
-      | taxId                               | FRMTTR76M06B715E |
-      | digitalDomicile_address             | NULL             |
-      | physicalAddress_address             | NULL             |
-      | physicalAddress_municipality        | NULL             |
-      | physicalAddress_municipalityDetails | NULL             |
-      | at                                  | NULL             |
-      | physicalAddress_addressDetails      | NULL             |
-      | physicalAddress_province            | NULL             |
-      | physicalAddress_State               | NULL             |
-      | physicalAddress_zip                 | NULL             |
-    And destinatario
-      | denomination                        | PG Censito  |
-      | taxId                               | 01113570442 |
-      | digitalDomicile_address             | NULL        |
-      | physicalAddress_address             | NULL        |
-      | physicalAddress_municipality        | NULL        |
-      | physicalAddress_municipalityDetails | NULL        |
-      | at                                  | NULL        |
-      | physicalAddress_addressDetails      | NULL        |
-      | physicalAddress_province            | NULL        |
-      | physicalAddress_State               | NULL        |
-      | physicalAddress_zip                 | NULL        |
+      | denomination    | PG Censito  |
+      | taxId           | 01113570442 |
+      | digitalDomicile | NULL        |
+      | physicalAddress | NULL        |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     #And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_VALIDATION_CALL"
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
@@ -135,29 +100,22 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
-      | denomination                        | PF Non Censito   |
-      | taxId                               | DVNLRD52D15M059P |
-      | digitalDomicile_address             | NULL             |
-      | physicalAddress_address             | NULL             |
-      | physicalAddress_municipality        | NULL             |
-      | physicalAddress_municipalityDetails | NULL             |
-      | at                                  | NULL             |
-      | physicalAddress_addressDetails      | NULL             |
-      | physicalAddress_province            | NULL             |
-      | physicalAddress_State               | NULL             |
-      | physicalAddress_zip                 | NULL             |
+      | denomination    | PF Non Censito   |
+      | taxId           | DVNLRD52D15M059P |
+      | digitalDomicile | NULL             |
+      | physicalAddress | NULL             |
     When la notifica viene inviata tramite api b2b dal "AB" e si attende che lo stato diventi "REFUSED"
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" non esista
       | details          | NOT_NULL |
       | details_recIndex | 0        |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
-      | xxx lista utenze |  |
+      | xxx lista utenze | xxx |
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
-      | loadTimeline           | true                                                                                     |
-      | details                | NOT_NULL                                                                                 |
+      | loadTimeline             | true                                                                                     |
+      | details                  | NOT_NULL                                                                                 |
       #| details_refusalReasons | [{"errorCode": "ADDRESS_NOT_FOUND"}] |
-      | details_refusalReasons | {"detail": "Address not found for recipient index: 0", "errorCode": "ADDRESS_NOT_FOUND"} |
-      | details_notificationCost   | 100      |
+      | details_refusalReasons   | {"detail": "Address not found for recipient index: 0", "errorCode": "ADDRESS_NOT_FOUND"} |
+      | details_notificationCost | 100                                                                                      |
 
 
   @ricercaIndirizzoVas
@@ -167,17 +125,10 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
-      | denomination                        | PG Non Censito |
-      | taxId                               | 15376371009    |
-      | digitalDomicile_address             | NULL           |
-      | physicalAddress_address             | NULL           |
-      | physicalAddress_municipality        | NULL           |
-      | physicalAddress_municipalityDetails | NULL           |
-      | at                                  | NULL           |
-      | physicalAddress_addressDetails      | NULL           |
-      | physicalAddress_province            | NULL           |
-      | physicalAddress_State               | NULL           |
-      | physicalAddress_zip                 | NULL           |
+      | denomination    | PG Non Censito |
+      | taxId           | 15376371009    |
+      | digitalDomicile | NULL           |
+      | physicalAddress | NULL           |
     When la notifica viene inviata tramite api b2b dal "AB" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
       | loadTimeline           | true                                                                                     |
@@ -188,7 +139,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details          | NOT_NULL |
       | details_recIndex | 0        |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
-      | xxx lista utenze |  |
+      | xxx lista utenze | xxx |
 
  #*** ADD _8. entrambi non censiti
   @ricercaIndirizzoVas
@@ -197,30 +148,14 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
+    And destinatario Leonardo da Vinci e:
+      | digitalDomicile | NULL |
+      | physicalAddress | NULL |
     And destinatario
-      | denomination                        | PF Non Censito   |
-      | taxId                               | DVNLRD52D15M059P |
-      | digitalDomicile_address             | NULL             |
-      | physicalAddress_address             | NULL             |
-      | physicalAddress_municipality        | NULL             |
-      | physicalAddress_municipalityDetails | NULL             |
-      | at                                  | NULL             |
-      | physicalAddress_addressDetails      | NULL             |
-      | physicalAddress_province            | NULL             |
-      | physicalAddress_State               | NULL             |
-      | physicalAddress_zip                 | NULL             |
-    And destinatario
-      | denomination                        | PG Non Censito |
-      | taxId                               | 15376371009    |
-      | digitalDomicile_address             | NULL           |
-      | physicalAddress_address             | NULL           |
-      | physicalAddress_municipality        | NULL           |
-      | physicalAddress_municipalityDetails | NULL           |
-      | at                                  | NULL           |
-      | physicalAddress_addressDetails      | NULL           |
-      | physicalAddress_province            | NULL           |
-      | physicalAddress_State               | NULL           |
-      | physicalAddress_zip                 | NULL           |
+      | denomination    | PG Non Censito |
+      | taxId           | 15376371009    |
+      | digitalDomicile | NULL           |
+      | physicalAddress | NULL           |
     When la notifica viene inviata tramite api b2b dal "AB" e si attende che lo stato diventi "REFUSED"
     #And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_VALIDATION_CALL"
     Then viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
@@ -245,31 +180,15 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
+    And destinatario Leonardo da Vinci e:
+      | digitalDomicile | NULL |
+      | physicalAddress | NULL |
     And destinatario
-      | denomination                        | PF Non Censito   |
-      | taxId                               | DVNLRD52D15M059P |
-      | digitalDomicile_address             | NULL             |
-      | physicalAddress_address             | NULL             |
-      | physicalAddress_municipality        | NULL             |
-      | physicalAddress_municipalityDetails | NULL             |
-      | at                                  | NULL             |
-      | physicalAddress_addressDetails      | NULL             |
-      | physicalAddress_province            | NULL             |
-      | physicalAddress_State               | NULL             |
-      | physicalAddress_zip                 | NULL             |
-    And destinatario
-      | denomination                        | PG Censito  |
-      | taxId                               | 01113570442 |
-      | digitalDomicile_address             | NULL        |
-      | physicalAddress_address             | NULL        |
-      | physicalAddress_municipality        | NULL        |
-      | physicalAddress_municipalityDetails | NULL        |
-      | at                                  | NULL        |
-      | physicalAddress_addressDetails      | NULL        |
-      | physicalAddress_province            | NULL        |
-      | physicalAddress_State               | NULL        |
-      | physicalAddress_zip                 | NULL        |
-    When la notifica viene inviata tramite api b2b dal "AB" e si attende che lo stato diventi "REFUSED"
+      | denomination    | PG Censito  |
+      | taxId           | 01113570442 |
+      | digitalDomicile | NULL        |
+      | physicalAddress | NULL        |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
       | loadTimeline | true     |
       | details      | NOT_NULL |
@@ -308,17 +227,10 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | physicalAddress_State               | ITALIA             |
       | physicalAddress_zip                 | 00187              |
     And destinatario
-      | denomination                        | PG Censito  |
-      | taxId                               | 01113570442 |
-      | digitalDomicile_address             | NULL        |
-      | physicalAddress_address             | NULL        |
-      | physicalAddress_municipality        | NULL        |
-      | physicalAddress_municipalityDetails | NULL        |
-      | at                                  | NULL        |
-      | physicalAddress_addressDetails      | NULL        |
-      | physicalAddress_province            | NULL        |
-      | physicalAddress_State               | NULL        |
-      | physicalAddress_zip                 | NULL        |
+      | denomination    | PG Censito  |
+      | taxId           | 01113570442 |
+      | digitalDomicile | NULL        |
+      | physicalAddress | NULL        |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_VALIDATION_CALL"
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
@@ -339,21 +251,14 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
-    And destinatario
-      | denomination                        | PF Censito       |
-      | taxId                               | FRMTTR76M06B715E |
-      | digitalDomicile_address             | NULL             |
-      | physicalAddress_address             | NULL             |
-      | physicalAddress_municipality        | NULL             |
-      | physicalAddress_municipalityDetails | NULL             |
-      | at                                  | NULL             |
-      | physicalAddress_addressDetails      | NULL             |
-      | physicalAddress_province            | NULL             |
-      | physicalAddress_State               | NULL             |
-      | physicalAddress_zip                 | NULL             |
+    And destinatario Mario Cucumber e:
+      | digitalDomicile | NULL |
+      | physicalAddress | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
-      | xxx lista utenze | xxx |
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_VALIDATION_CALL"
+    #TODO VAS: una volta che capiamo cosa cercare rimuovere lo step di sopra (per ora ci limitiamo a cercarlo, senza dataTest)
+#    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
+#      | xxx lista utenze | xxx |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
       | loadTimeline            | true                                                                                                                                                                      |
       | details_registry        | ANPR                                                                                                                                                                      |
@@ -365,7 +270,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details                 | NOT_NULL                                                                                                                                                                  |
       | details_recIndex        | 0                                                                                                                                                                         |
       | details_physicalAddress | {"address": "xxx", "municipality": "PADOVA", "municipalityDetails": "", "at": "Presso", "addressDetails": "", "province": "PD", "zip": "35127", "foreignState": "ITALIA"} |
-      | details_responseStatus  | ko
+      | details_responseStatus  | ko                                                                                                                                                                        |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
       #aggiungi step che verifichi nessu attempt 2 dell' elemento?
 
@@ -379,18 +284,9 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
-    And destinatario
-      | denomination                        | PF Censito       |
-      | taxId                               | FRMTTR76M06B715E |
-      | digitalDomicile_address             | NULL             |
-      | physicalAddress_address             | NULL             |
-      | physicalAddress_municipality        | NULL             |
-      | physicalAddress_municipalityDetails | NULL             |
-      | at                                  | NULL             |
-      | physicalAddress_addressDetails      | NULL             |
-      | physicalAddress_province            | NULL             |
-      | physicalAddress_State               | NULL             |
-      | physicalAddress_zip                 | NULL             |
+    And destinatario Mario Cucumber e:
+      | digitalDomicile | NULL |
+      | physicalAddress | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | xxx lista utenze | xxx |
@@ -406,7 +302,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details_recIndex           | 0                                                                                                                                                                         |
       | details_deliveryDetailCode | XXX                                                                                                                                                                       |
       | details_physicalAddress    | {"address": "xxx", "municipality": "PADOVA", "municipalityDetails": "", "at": "Presso", "addressDetails": "", "province": "PD", "zip": "35127", "foreignState": "ITALIA"} |
-      | details_responseStatus     | ok
+      | details_responseStatus     | ok                                                                                                                                                                        |
 
 
   #Abilitazione PA / FeatureFlag / WI-VAS-1.3 + WI-VAS-1.4 + client WI-VAS-1.5 ********************
@@ -418,17 +314,10 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
-      | denomination                        | PG Censito  |
-      | taxId                               | 01113570442 |
-      | digitalDomicile_address             | NULL        |
-      | physicalAddress_address             | NULL        |
-      | physicalAddress_municipality        | NULL        |
-      | physicalAddress_municipalityDetails | NULL        |
-      | at                                  | NULL        |
-      | physicalAddress_addressDetails      | NULL        |
-      | physicalAddress_province            | NULL        |
-      | physicalAddress_State               | NULL        |
-      | physicalAddress_zip                 | NULL        |
+      | denomination    | PG Censito  |
+      | taxId           | 01113570442 |
+      | digitalDomicile | NULL        |
+      | physicalAddress | NULL        |
     #When la notifica viene inviata tramite api b2b con la versione "V24" dal "AB" e si attende che lo stato diventi "REFUSED"
     When la notifica viene inviata tramite api b2b dal "AB" e si attende che lo stato diventi "REFUSED"
 
@@ -442,17 +331,10 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
-      | denomination                        | PG Censito  |
-      | taxId                               | 01113570442 |
-      | digitalDomicile_address             | NULL        |
-      | physicalAddress_address             | NULL        |
-      | physicalAddress_municipality        | NULL        |
-      | physicalAddress_municipalityDetails | NULL        |
-      | at                                  | NULL        |
-      | physicalAddress_addressDetails      | NULL        |
-      | physicalAddress_province            | NULL        |
-      | physicalAddress_State               | NULL        |
-      | physicalAddress_zip                 | NULL        |
+      | denomination    | PG Censito  |
+      | taxId           | 01113570442 |
+      | digitalDomicile | NULL        |
+      | physicalAddress | NULL        |
    # When la notifica viene inviata tramite api b2b con la versione "V24" dal "NON AB" e si attende che lo stato diventi "REFUSED"
     When la notifica viene inviata tramite api b2b dal "AB" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
@@ -470,17 +352,10 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
-      | denomination                        | PG Censito  |
-      | taxId                               | 01113570442 |
-      | digitalDomicile_address             | NULL        |
-      | physicalAddress_address             | NULL        |
-      | physicalAddress_municipality        | NULL        |
-      | physicalAddress_municipalityDetails | NULL        |
-      | at                                  | NULL        |
-      | physicalAddress_addressDetails      | NULL        |
-      | physicalAddress_province            | NULL        |
-      | physicalAddress_State               | NULL        |
-      | physicalAddress_zip                 | NULL        |
+      | denomination    | PG Censito  |
+      | taxId           | 01113570442 |
+      | digitalDomicile | NULL        |
+      | physicalAddress | NULL        |
     When la notifica viene inviata tramite api b2b dal "NON AB" e si attende che lo stato diventi "REFUSED"
 
 
@@ -496,17 +371,10 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
-      | denomination                        | PG Censito  |
-      | taxId                               | 01113570442 |
-      | digitalDomicile_address             | NULL        |
-      | physicalAddress_address             | NULL        |
-      | physicalAddress_municipality        | NULL        |
-      | physicalAddress_municipalityDetails | NULL        |
-      | at                                  | NULL        |
-      | physicalAddress_addressDetails      | NULL        |
-      | physicalAddress_province            | NULL        |
-      | physicalAddress_State               | NULL        |
-      | physicalAddress_zip                 | NULL        |
+      | denomination    | PG Censito  |
+      | taxId           | 01113570442 |
+      | digitalDomicile | NULL        |
+      | physicalAddress | NULL        |
     When la notifica viene inviata tramite api b2b dal "AB" e si attende che lo stato diventi "REFUSED"
 
 
@@ -516,17 +384,10 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
-      | denomination                        | PG Censito  |
-      | taxId                               | 01113570442 |
-      | digitalDomicile_address             | NULL        |
-      | physicalAddress_address             | NULL        |
-      | physicalAddress_municipality        | NULL        |
-      | physicalAddress_municipalityDetails | NULL        |
-      | at                                  | NULL        |
-      | physicalAddress_addressDetails      | NULL        |
-      | physicalAddress_province            | NULL        |
-      | physicalAddress_State               | NULL        |
-      | physicalAddress_zip                 | NULL        |
+      | denomination    | PG Censito  |
+      | taxId           | 01113570442 |
+      | digitalDomicile | NULL        |
+      | physicalAddress | NULL        |
     When la notifica viene inviata tramite api b2b dal "AB" e si attende che lo stato diventi "REFUSED"
 
 
@@ -537,17 +398,10 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
-      | denomination                        | PG Censito  |
-      | taxId                               | 01113570442 |
-      | digitalDomicile_address             | NULL        |
-      | physicalAddress_address             | NULL        |
-      | physicalAddress_municipality        | NULL        |
-      | physicalAddress_municipalityDetails | NULL        |
-      | at                                  | NULL        |
-      | physicalAddress_addressDetails      | NULL        |
-      | physicalAddress_province            | NULL        |
-      | physicalAddress_State               | NULL        |
-      | physicalAddress_zip                 | NULL        |
+      | denomination    | PG Censito  |
+      | taxId           | 01113570442 |
+      | digitalDomicile | NULL        |
+      | physicalAddress | NULL        |
     When la notifica viene inviata tramite api b2b dal "NON AB" e si attende che lo stato diventi "REFUSED"
 
 
@@ -557,17 +411,10 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
-      | denomination                        | PG Censito  |
-      | taxId                               | 01113570442 |
-      | digitalDomicile_address             | NULL        |
-      | physicalAddress_address             | NULL        |
-      | physicalAddress_municipality        | NULL        |
-      | physicalAddress_municipalityDetails | NULL        |
-      | at                                  | NULL        |
-      | physicalAddress_addressDetails      | NULL        |
-      | physicalAddress_province            | NULL        |
-      | physicalAddress_State               | NULL        |
-      | physicalAddress_zip                 | NULL        |
+      | denomination    | PG Censito  |
+      | taxId           | 01113570442 |
+      | digitalDomicile | NULL        |
+      | physicalAddress | NULL        |
     #When la notifica viene inviata tramite api b2b con la versione "V24" dal "NON AB" e si attende che lo stato diventi "REFUSED"
     When la notifica viene inviata tramite api b2b dal "NO AB" e si attende che lo stato diventi "REFUSED"
 
@@ -583,17 +430,10 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
-      | denomination                        | PG Censito  |
-      | taxId                               | 01113570442 |
-      | digitalDomicile_address             | NULL        |
-      | physicalAddress_address             | NULL        |
-      | physicalAddress_municipality        | NULL        |
-      | physicalAddress_municipalityDetails | NULL        |
-      | at                                  | NULL        |
-      | physicalAddress_addressDetails      | NULL        |
-      | physicalAddress_province            | NULL        |
-      | physicalAddress_State               | NULL        |
-      | physicalAddress_zip                 | NULL        |
+      | denomination    | PG Censito  |
+      | taxId           | 01113570442 |
+      | digitalDomicile | NULL        |
+      | physicalAddress | NULL        |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_VALIDATION_RESPONSE"
     Then recuperando la fullSentNotification con la versione b2b "V24" non è presente l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE"
@@ -616,17 +456,10 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario
-      | denomination                        | PG Censito    |
-      | taxId                               | 01113570442   |
-      | digitalDomicile_address             | test@pec.it   |
-      | physicalAddress_address             | via bologna 7 |
-      | physicalAddress_municipality        | Bologna       |
-      | physicalAddress_municipalityDetails | NULL          |
-      | at                                  | NULL          |
-      | physicalAddress_addressDetails      | NULL          |
-      | physicalAddress_province            | BO            |
-      | physicalAddress_State               | ITALIA        |
-      | physicalAddress_zip                 | 40069         |
+      | denomination    | PG Censito  |
+      | taxId           | 01113570442 |
+      | digitalDomicile | NULL        |
+      | physicalAddress | NULL        |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione ""
     And si crea il nuovo stream per il "Comune_Multi" con versione ""
@@ -641,17 +474,10 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario
-      | denomination                        | PG Censito    |
-      | taxId                               | 01113570442   |
-      | digitalDomicile_address             | test@pec.it   |
-      | physicalAddress_address             | via bologna 7 |
-      | physicalAddress_municipality        | Bologna       |
-      | physicalAddress_municipalityDetails | NULL          |
-      | at                                  | NULL          |
-      | physicalAddress_addressDetails      | NULL          |
-      | physicalAddress_province            | BO            |
-      | physicalAddress_State               | ITALIA        |
-      | physicalAddress_zip                 | 40069         |
+      | denomination    | PG Censito  |
+      | taxId           | 01113570442 |
+      | digitalDomicile | NULL        |
+      | physicalAddress | NULL        |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V28"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V28"
@@ -671,42 +497,19 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
+    And destinatario Leonardo da Vinci e:
+      | digitalDomicile | NULL |
+      | physicalAddress | NULL |
     And destinatario
-      | denomination                        | PF Non Censito   |
-      | taxId                               | DVNLRD52D15M059P |
-      | digitalDomicile_address             | NULL             |
-      | physicalAddress_address             | NULL             |
-      | physicalAddress_municipality        | NULL             |
-      | physicalAddress_municipalityDetails | NULL             |
-      | at                                  | NULL             |
-      | physicalAddress_addressDetails      | NULL             |
-      | physicalAddress_province            | BNULLO           |
-      | physicalAddress_State               | NULL             |
-      | physicalAddress_zip                 | NULL             |
+      | denomination    | PG Censito  |
+      | taxId           | 01113570442 |
+      | digitalDomicile | NULL        |
+      | physicalAddress | NULL        |
     And destinatario
-      | denomination                        | PG Censito  |
-      | taxId                               | 01113570442 |
-      | digitalDomicile_address             | NULL        |
-      | physicalAddress_address             | NULL        |
-      | physicalAddress_municipality        | NULL        |
-      | physicalAddress_municipalityDetails | NULL        |
-      | at                                  | NULL        |
-      | physicalAddress_addressDetails      | NULL        |
-      | physicalAddress_province            | NULL        |
-      | physicalAddress_State               | NULL        |
-      | physicalAddress_zip                 | NULL        |
-    And destinatario
-      | denomination                        | PF Errore 429 |
-      | taxId                               | GKRLGS31H68E907N          |
-      | digitalDomicile_address             | NULL          |
-      | physicalAddress_address             | NULL          |
-      | physicalAddress_municipality        | NULL          |
-      | physicalAddress_municipalityDetails | NULL          |
-      | at                                  | NULL          |
-      | physicalAddress_addressDetails      | NULL          |
-      | physicalAddress_province            | NULL          |
-      | physicalAddress_State               | NULL          |
-      | physicalAddress_zip                 | NULL          |
+      | denomination    | PF Errore 429    |
+      | taxId           | GKRLGS31H68E907N |
+      | digitalDomicile | NULL             |
+      | physicalAddress | NULL             |
     When la notifica viene inviata tramite api b2b dal "AB" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
       | loadTimeline               | true             |
@@ -721,17 +524,10 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
-      | denomination                        | PF Errore 429 |
-      | taxId                               | GKRLGS31H68E907N           |
-      | digitalDomicile_address             | NULL          |
-      | physicalAddress_address             | NULL          |
-      | physicalAddress_municipality        | NULL          |
-      | physicalAddress_municipalityDetails | NULL          |
-      | at                                  | NULL          |
-      | physicalAddress_addressDetails      | NULL          |
-      | physicalAddress_province            | NULL          |
-      | physicalAddress_State               | NULL          |
-      | physicalAddress_zip                 | NULL          |
+      | denomination    | PF Errore 429    |
+      | taxId           | GKRLGS31H68E907N |
+      | digitalDomicile | NULL             |
+      | physicalAddress | NULL             |
     When la notifica viene inviata tramite api b2b dal "AB" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
       | loadTimeline             | true             |
@@ -745,17 +541,10 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
-      | denomination                        | PF Errore 500 |
-      | taxId                               | SRFBRD80A01E256Z           |
-      | digitalDomicile_address             | NULL          |
-      | physicalAddress_address             | NULL          |
-      | physicalAddress_municipality        | NULL          |
-      | physicalAddress_municipalityDetails | NULL          |
-      | at                                  | NULL          |
-      | physicalAddress_addressDetails      | NULL          |
-      | physicalAddress_province            | NULL          |
-      | physicalAddress_State               | NULL          |
-      | physicalAddress_zip                 | NULL          |
+      | denomination    | PF Errore 500    |
+      | taxId           | SRFBRD80A01E256Z |
+      | digitalDomicile | NULL             |
+      | physicalAddress | NULL             |
     When la notifica viene inviata tramite api b2b dal "AB" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
       | loadTimeline             | true             |
@@ -770,29 +559,15 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
-      | denomination                        | PG / PF ERRORE 500 |
-      | taxId                               | SRFBRD80A01E256Z           |
-      | digitalDomicile_address             | NULL           |
-      | physicalAddress_address             | NULL           |
-      | physicalAddress_municipality        | NULL           |
-      | physicalAddress_municipalityDetails | NULL           |
-      | at                                  | NULL           |
-      | physicalAddress_addressDetails      | NULL           |
-      | physicalAddress_province            | NULL           |
-      | physicalAddress_State               | NULL           |
-      | physicalAddress_zip                 | NULL           |
+      | denomination    | PG / PF ERRORE 500 |
+      | taxId           | SRFBRD80A01E256Z   |
+      | digitalDomicile | NULL               |
+      | physicalAddress | NULL               |
     And destinatario
-      | denomination                        | PF Errore 429 |
-      | taxId                               | GKRLGS31H68E907N           |
-      | digitalDomicile_address             | NULL          |
-      | physicalAddress_address             | NULL          |
-      | physicalAddress_municipality        | NULL          |
-      | physicalAddress_municipalityDetails | NULL          |
-      | at                                  | NULL          |
-      | physicalAddress_addressDetails      | NULL          |
-      | physicalAddress_province            | NULL          |
-      | physicalAddress_State               | NULL          |
-      | physicalAddress_zip                 | NULL          |
+      | denomination    | PF Errore 429    |
+      | taxId           | GKRLGS31H68E907N |
+      | digitalDomicile | NULL             |
+      | physicalAddress | NULL             |
     When la notifica viene inviata tramite api b2b dal "AB" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
       | loadTimeline               | true             |
@@ -812,30 +587,14 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
+    And destinatario Leonardo da Vinci e:
+      | digitalDomicile | NULL |
+      | physicalAddress | NULL |
     And destinatario
-      | denomination                        | PF Non Censito   |
-      | taxId                               | DVNLRD52D15M059P |
-      | digitalDomicile_address             | NULL             |
-      | physicalAddress_address             | NULL             |
-      | physicalAddress_municipality        | NULL             |
-      | physicalAddress_municipalityDetails | NULL             |
-      | at                                  | NULL             |
-      | physicalAddress_addressDetails      | NULL             |
-      | physicalAddress_province            | NULL             |
-      | physicalAddress_State               | NULL             |
-      | physicalAddress_zip                 | NULL             |
-    And destinatario
-      | denomination                        | PG Censito  |
-      | taxId                               | 01113570442 |
-      | digitalDomicile_address             | NULL        |
-      | physicalAddress_address             | NULL        |
-      | physicalAddress_municipality        | NULL        |
-      | physicalAddress_municipalityDetails | NULL        |
-      | at                                  | NULL        |
-      | physicalAddress_addressDetails      | NULL        |
-      | physicalAddress_province            | NULL        |
-      | physicalAddress_State               | NULL        |
-      | physicalAddress_zip                 | NULL        |
+      | denomination    | PG Censito  |
+      | taxId           | 01113570442 |
+      | digitalDomicile | NULL        |
+      | physicalAddress | NULL        |
     When la notifica viene inviata tramite api b2b dal "AB" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
       | loadTimeline               | true                                 |
@@ -850,42 +609,19 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
+    And destinatario Leonardo da Vinci e:
+      | digitalDomicile | NULL |
+      | physicalAddress | NULL |
     And destinatario
-      | denomination                        | PF Non Censito   |
-      | taxId                               | DVNLRD52D15M059P |
-      | digitalDomicile_address             | NULL             |
-      | physicalAddress_address             | NULL             |
-      | physicalAddress_municipality        | NULL             |
-      | physicalAddress_municipalityDetails | NULL             |
-      | at                                  | NULL             |
-      | physicalAddress_addressDetails      | NULL             |
-      | physicalAddress_province            | BNULLO           |
-      | physicalAddress_State               | NULL             |
-      | physicalAddress_zip                 | NULL             |
+      | denomination    | PG Censito  |
+      | taxId           | 01113570442 |
+      | digitalDomicile | NULL        |
+      | physicalAddress | NULL        |
     And destinatario
-      | denomination                        | PG Censito  |
-      | taxId                               | 01113570442 |
-      | digitalDomicile_address             | NULL        |
-      | physicalAddress_address             | NULL        |
-      | physicalAddress_municipality        | NULL        |
-      | physicalAddress_municipalityDetails | NULL        |
-      | at                                  | NULL        |
-      | physicalAddress_addressDetails      | NULL        |
-      | physicalAddress_province            | NULL        |
-      | physicalAddress_State               | NULL        |
-      | physicalAddress_zip                 | NULL        |
-    And destinatario
-      | denomination                        | PF Errore 429 |
-      | taxId                               | GKRLGS31H68E907N           |
-      | digitalDomicile_address             | NULL          |
-      | physicalAddress_address             | NULL          |
-      | physicalAddress_municipality        | NULL          |
-      | physicalAddress_municipalityDetails | NULL          |
-      | at                                  | NULL          |
-      | physicalAddress_addressDetails      | NULL          |
-      | physicalAddress_province            | NULL          |
-      | physicalAddress_State               | NULL          |
-      | physicalAddress_zip                 | NULL          |
+      | denomination    | PF Errore 429    |
+      | taxId           | GKRLGS31H68E907N |
+      | digitalDomicile | NULL             |
+      | physicalAddress | NULL             |
     When la notifica viene inviata tramite api b2b dal "AB" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
       | loadTimeline               | true     |
@@ -901,29 +637,15 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
-      | denomination                        | PG / PF ERRORE 500 |
-      | taxId                               | SRFBRD80A01E256Z           |
-      | digitalDomicile_address             | NULL           |
-      | physicalAddress_address             | NULL           |
-      | physicalAddress_municipality        | NULL           |
-      | physicalAddress_municipalityDetails | NULL           |
-      | at                                  | NULL           |
-      | physicalAddress_addressDetails      | NULL           |
-      | physicalAddress_province            | NULL           |
-      | physicalAddress_State               | NULL           |
-      | physicalAddress_zip                 | NULL           |
+      | denomination    | PG / PF ERRORE 500 |
+      | taxId           | SRFBRD80A01E256Z   |
+      | digitalDomicile | NULL               |
+      | physicalAddress | NULL               |
     And destinatario
-      | denomination                        | PF Errore 429 |
-      | taxId                               | GKRLGS31H68E907N          |
-      | digitalDomicile_address             | NULL          |
-      | physicalAddress_address             | NULL          |
-      | physicalAddress_municipality        | NULL          |
-      | physicalAddress_municipalityDetails | NULL          |
-      | at                                  | NULL          |
-      | physicalAddress_addressDetails      | NULL          |
-      | physicalAddress_province            | NULL          |
-      | physicalAddress_State               | NULL          |
-      | physicalAddress_zip                 | NULL          |
+      | denomination    | PF Errore 429    |
+      | taxId           | GKRLGS31H68E907N |
+      | digitalDomicile | NULL             |
+      | physicalAddress | NULL             |
     When la notifica viene inviata tramite api b2b dal "AB" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
       | loadTimeline               | true      |
@@ -938,18 +660,9 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
-    And destinatario
-      | denomination                        | PF Non Censito   |
-      | taxId                               | DVNLRD52D15M059P |
-      | digitalDomicile_address             | NULL             |
-      | physicalAddress_address             | NULL             |
-      | physicalAddress_municipality        | NULL             |
-      | physicalAddress_municipalityDetails | NULL             |
-      | at                                  | NULL             |
-      | physicalAddress_addressDetails      | NULL             |
-      | physicalAddress_province            | NULL             |
-      | physicalAddress_State               | NULL             |
-      | physicalAddress_zip                 | NULL             |
+    And destinatario Leonardo da Vinci e:
+      | digitalDomicile | NULL |
+      | physicalAddress | NULL |
     When la notifica viene inviata tramite api b2b dal "AB" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
       | loadTimeline             | true             |
@@ -963,17 +676,10 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
-      | denomination                        | PF Errore 429 |
-      | taxId                               | GKRLGS31H68E907N           |
-      | digitalDomicile_address             | NULL          |
-      | physicalAddress_address             | NULL          |
-      | physicalAddress_municipality        | NULL          |
-      | physicalAddress_municipalityDetails | NULL          |
-      | at                                  | NULL          |
-      | physicalAddress_addressDetails      | NULL          |
-      | physicalAddress_province            | NULL          |
-      | physicalAddress_State               | NULL          |
-      | physicalAddress_zip                 | NULL          |
+      | denomination    | PF Errore 429    |
+      | taxId           | GKRLGS31H68E907N |
+      | digitalDomicile | NULL             |
+      | physicalAddress | NULL             |
     When la notifica viene inviata tramite api b2b dal "AB" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
       | loadTimeline             | true      |
@@ -987,17 +693,10 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
-      | denomination                        | PF Errore 400 |
-      | taxId                               | MTTBNN14A01A001N           |
-      | digitalDomicile_address             | NULL          |
-      | physicalAddress_address             | NULL          |
-      | physicalAddress_municipality        | NULL          |
-      | physicalAddress_municipalityDetails | NULL          |
-      | at                                  | NULL          |
-      | physicalAddress_addressDetails      | NULL          |
-      | physicalAddress_province            | NULL          |
-      | physicalAddress_State               | NULL          |
-      | physicalAddress_zip                 | NULL          |
+      | denomination    | PF Errore 400    |
+      | taxId           | MTTBNN14A01A001N |
+      | digitalDomicile | NULL             |
+      | physicalAddress | NULL             |
     When la notifica viene inviata tramite api b2b dal "AB" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
       | loadTimeline             | true      |
@@ -1011,17 +710,10 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
-      | denomination                        | PF Errore 500 |
-      | taxId                               | SRFBRD80A01E256Z           |
-      | digitalDomicile_address             | NULL          |
-      | physicalAddress_address             | NULL          |
-      | physicalAddress_municipality        | NULL          |
-      | physicalAddress_municipalityDetails | NULL          |
-      | at                                  | NULL          |
-      | physicalAddress_addressDetails      | NULL          |
-      | physicalAddress_province            | NULL          |
-      | physicalAddress_State               | NULL          |
-      | physicalAddress_zip                 | NULL          |
+      | denomination    | PF Errore 500    |
+      | taxId           | SRFBRD80A01E256Z |
+      | digitalDomicile | NULL             |
+      | physicalAddress | NULL             |
     When la notifica viene inviata tramite api b2b dal "AB" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
       | loadTimeline             | true      |
@@ -1040,18 +732,9 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
-    And destinatario
-      | denomination                        | PF Censito       |
-      | taxId                               | FRMTTR76M06B715E |
-      | digitalDomicile_address             | NULL             |
-      | physicalAddress_address             | NULL             |
-      | physicalAddress_municipality        | NULL             |
-      | physicalAddress_municipalityDetails | NULL             |
-      | at                                  | NULL             |
-      | physicalAddress_addressDetails      | NULL             |
-      | physicalAddress_province            | NULL             |
-      | physicalAddress_State               | NULL             |
-      | physicalAddress_zip                 | NULL             |
+    And destinatario Mario Cucumber e:
+      | digitalDomicile | NULL |
+      | physicalAddress | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then lato destinatario la notifica può essere correttamente recuperata da "ETTORE_FIERAMOSCA" e verifica presenza dell'evento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE"
     And lato destinatario la notifica può essere correttamente recuperata da "ETTORE_FIERAMOSCA" e verifica presenza dell'evento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL"
@@ -1064,18 +747,9 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
-    And destinatario
-      | denomination                        | PF Censito       |
-      | taxId                               | FRMTTR76M06B715E |
-      | digitalDomicile_address             | NULL             |
-      | physicalAddress_address             | NULL             |
-      | physicalAddress_municipality        | NULL             |
-      | physicalAddress_municipalityDetails | NULL             |
-      | at                                  | NULL             |
-      | physicalAddress_addressDetails      | NULL             |
-      | physicalAddress_province            | NULL             |
-      | physicalAddress_State               | NULL             |
-      | physicalAddress_zip                 | NULL             |
+    And destinatario Mario Cucumber e:
+      | digitalDomicile | NULL |
+      | physicalAddress | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente recuperata da "ETTORE_FIERAMOSCA"
     And lato api l'elemento di timeline della notifica "PUBLIC_REGISTRY_VALIDATION_RESPONSE" è visibile
@@ -1083,82 +757,3 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     #Then la notifica può essere correttamente recuperata da "ETTORE_FIERAMOSCA" V25
     #And lato api l'elemento di timeline della notifica "PUBLIC_REGISTRY_VALIDATION_RESPONSE" non è visibile
     #And lato api l'elemento di timeline della notifica "PUBLIC_REGISTRY_VALIDATION_CALL" non è visibile
-
-
-
-
-
-# ********************    3 destinatari
-
-
-
-
-  @ricercaIndirizzoVas
-  Scenario: [5_5] Invio notifica multidestinatario AR verso PF-PG con campo address vuoto e recupero indirizzo dai registri nazionali Vas attivo
-    Given il test è effettuabile con API versione "V25" o superiore
-    And viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-    And destinatario
-      | denomination                        | PF Censito       |
-      | taxId                               | FRMTTR76M06B715E |
-      | digitalDomicile_address             | test@pec.it      |
-      | physicalAddress_address             | NULL             |
-      | physicalAddress_municipality        | NULL             |
-      | physicalAddress_municipalityDetails | NULL             |
-      | at                                  | NULL             |
-      | physicalAddress_addressDetails      | NULL             |
-      | physicalAddress_province            | NULL             |
-      | physicalAddress_State               | NULL             |
-      | physicalAddress_zip                 | NULL             |
-    And destinatario
-      | denomination                        | PF ERRORE   |
-      | taxId                               | xxx         |
-      | digitalDomicile_address             | test@pec.it |
-      | physicalAddress_address             | NULL        |
-      | physicalAddress_municipality        | NULL        |
-      | physicalAddress_municipalityDetails | NULL        |
-      | at                                  | NULL        |
-      | physicalAddress_addressDetails      | NULL        |
-      | physicalAddress_province            | NULL        |
-      | physicalAddress_State               | NULL        |
-      | physicalAddress_zip                 | NULL        |
-    And destinatario
-      | denomination                        | PG NON Censito |
-      | taxId                               | 15376371009    |
-      | digitalDomicile_address             | test@pec.it    |
-      | physicalAddress_address             | NULL           |
-      | physicalAddress_municipality        | NULL           |
-      | physicalAddress_municipalityDetails | NULL           |
-      | at                                  | NULL           |
-      | physicalAddress_addressDetails      | NULL           |
-      | physicalAddress_province            | NULL           |
-      | physicalAddress_State               | NULL           |
-      | physicalAddress_zip                 | NULL           |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_VALIDATION_CALL"
-    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
-      | details          | NOT_NULL |
-      | details_recIndex | 0        |
-      | registry         | ANPR     |
-    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
-      | details          | NOT_NULL |
-      | details_recIndex | 1        |
-      | registry         | RI       |
-  #Call una sola volta
-  #Call lista corretta di utenze
-
-
-
-
-#Sperimentazione: 27-28
-
-
-  #23/24/24
-  #_23 dettaglio notifica mittente - GET /delivery/v2.5/notifications/sent/${IUN} -> nessun nuovo elemento : step con "esista"
-  #_24 dettaglio notifica mittente - GET /delivery/v2.6/notifications/sent/${IUN} -> nuovi elementi
-  #_25 dettaglio notifica destinatario - GET/delivery/v2.5/notifications/received/{iun}  -> nessun nuovo lemento -> token     getReceivedNotification
-  #_26 dettaglio notifica destinatario - GET/delivery/v2.6/notifications/received/{iun}  -> nuovi elementi
-
-  #"Gherkin Analogic" con Piva "05722930657"
-

@@ -142,6 +142,10 @@ public class Costanti {
     public static final String EQUALITY_DELEGATE_TAX_ID = "delegate_taxId";
     public static final String EQUALITY_DELEGATE_TYPE = "delegate_type";
     public static final String EQUALITY_DELEGATE_DENOMINATION = "delegate_denomination";
+    public static final String EQUALITY_MUNICIPALITY = "municipality";
+    public static final String EQUALITY_ADDRESS = "address";
+    public static final String EQUALITY_ZIP_CODE = "zipCode";
+    public static final String EQUALITY_REGISTRY = "registry";
     public static final String INVALID_TIMELINE_CATEGORY = "Valore non valido per timelineEventCategory: ";
     // PollingStrategy (generiche)
     public static final String TIMELINE_RAPID = "TIMELINE_RAPID";

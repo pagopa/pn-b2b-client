@@ -62,7 +62,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     private HttpStatusCodeException notificationError;
     private Integer requestNumber;
 
-    private final Map<StreamVersion, WebhookStepsInterface> mapOfWebhookVersionSteps = StreamVersion.getMapOfWebhookSteps(this);
+    private final Map<StreamVersion, WebhookStepsInterface> mapOfWebhookVersionSteps = new HashMap<>();
 
     private static final Map<String, SettableApiKey.ApiKeyType> paForStream = Map.of(
             COMUNE_1, SettableApiKey.ApiKeyType.MVP_1,
@@ -134,7 +134,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
     private StreamVersion getStreamVersion(String version) {
         if (version.trim().equalsIgnoreCase(MOST_RECENT)) {
-            return StreamVersion.V27;//TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente
+            return StreamVersion.V28;//TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente
         }
         return StreamVersion.valueOf(version.trim().toUpperCase());
     }
@@ -144,6 +144,9 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }
 
     private WebhookStepsInterface getWebhookStep(StreamVersion streamVersion) {
+        if (mapOfWebhookVersionSteps.get(streamVersion) == null) {
+            mapOfWebhookVersionSteps.put(streamVersion, StreamVersion.createWebhookStep(streamVersion, this));
+        }
         return mapOfWebhookVersionSteps.get(streamVersion);
     }
 
@@ -540,7 +543,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }
 
     private boolean searchSpecificTimelineEvent(String timelineEvent, String deliveryDetailCode) {
-        WebhookStepsV23 webhookStepsV23 = (WebhookStepsV23) mapOfWebhookVersionSteps.get(StreamVersion.V23);
+        WebhookStepsV23 webhookStepsV23 = (WebhookStepsV23) getWebhookStep(StreamVersion.V23);
         Assertions.assertNotNull(webhookStepsV23.getProgressResponseElementList());
         return webhookStepsV23.getProgressResponseElementList().stream()
                 .filter(Objects::nonNull)
@@ -857,7 +860,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     @Then("l'ultima creazione ha prodotto un errore con status code {string}")
     public void lastCreationProducedAnErrorWithStatusCode(String statusCode) {
         List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamListElement> streamListElements = webhookB2bClient.listEventStreams();
-        WebhookStepsV10 webhookStepsV10 = (WebhookStepsV10) mapOfWebhookVersionSteps.get(StreamVersion.V10);
+        WebhookStepsV10 webhookStepsV10 = (WebhookStepsV10) getWebhookStep(StreamVersion.V10);
         System.out.println("streamListElements: " + streamListElements.size());
         System.out.println("eventStreamList: " + webhookStepsV10.getEventStreamList().size());
         System.out.println("requestNumber: " + requestNumber);
@@ -1090,11 +1093,11 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     @Then("gli elementi di timeline restituiti dal Webhook contengono i campi attesi in accordo alla versione {string}")
     public void checkTimelineElementVersionWebhook(String version) {
         if (version.equalsIgnoreCase("V24")) {
-            WebhookStepsV24 webhookStepsV24 = (WebhookStepsV24) mapOfWebhookVersionSteps.get(StreamVersion.V24);
+            WebhookStepsV24 webhookStepsV24 = (WebhookStepsV24) getWebhookStep(StreamVersion.V24);
             Assertions.assertNotNull(webhookStepsV24.getProgressResponseElementList());
             webhookStepsV24.getProgressResponseElementList().forEach(pre -> checkTimelineElement(pre.getElement()));
         } else if (version.equalsIgnoreCase("V23")) {
-            WebhookStepsV23 webhookStepsV23 = (WebhookStepsV23) mapOfWebhookVersionSteps.get(StreamVersion.V23);
+            WebhookStepsV23 webhookStepsV23 = (WebhookStepsV23) getWebhookStep(StreamVersion.V23);
             Assertions.assertNotNull(webhookStepsV23.getProgressResponseElementList());
             webhookStepsV23.getProgressResponseElementList().forEach(pre -> checkTimelineElement(pre.getElement()));
         }

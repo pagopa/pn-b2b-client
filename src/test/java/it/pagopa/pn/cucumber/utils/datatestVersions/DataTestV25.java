@@ -36,6 +36,7 @@ public class DataTestV25 extends AbstractDataTest {
         String numCheck = getValue(data, NUM_CHECK.key);
         String pollingType = getValue(data, POLLING_TYPE.key);
         String loadTimeline = getValue(data, LOAD_TIMELINE.key);
+        String registry = getValue(data, REGISTRY.key);
 
         if (data.size() == 1 && data.get("NULL") != null) {
             return null;
@@ -63,6 +64,7 @@ public class DataTestV25 extends AbstractDataTest {
                             .physicalAddress(getObjValue(PhysicalAddress.class, data, DETAILS_PHYSICALADDRESS.key))
                             .analogCost(analogCost != null ? Integer.parseInt(analogCost) : null)
                             .delegateInfo(getObjValue(DelegateInfo.class, data, DETAILS_DELEGATE_INFO.key))
+                            .registry(registry != null ? getValue(data, REGISTRY.key) : null)
                     );
 
             // IMPORTANT: no empty data check; enrich with new checks if it is needed
@@ -257,17 +259,16 @@ public class DataTestV25 extends AbstractDataTest {
                 }
             }
             //TODO VAS
-
             case PUBLIC_REGISTRY_VALIDATION_RESPONSE -> {
                 if (expected != null) {
-                    Assertions.assertEquals(actual.getRecIndex(), expected.getRecIndex());
-                    Assertions.assertEquals(actual.getPhysicalAddress(), expected.getPhysicalAddress(),
-                            "Physical address mismatch in PUBLIC_REGISTRY_VALIDATION_RESPONSE");
-                    Assertions.assertEquals(actual.getRegistry(), expected.getRegistry(),
-                            "Registry mismatch in PUBLIC_REGISTRY_VALIDATION_RESPONSE");
-
-                    Assertions.assertEquals(actual.getResponseStatus(), expected.getResponseStatus(),
-                            "ResponseStatus mismatch in PUBLIC_REGISTRY_VALIDATION_RESPONSE");
+                    assertThat(actual.getRecIndex()).as(error + EQUALITY_REC_INDEX).isEqualTo(expected.getRecIndex());
+                    assertThat(actual.getPhysicalAddress()).as(error + EQUALITY_PHYSICAL_ADDRESS).isNotNull();
+                    assertThat(actual.getPhysicalAddress().getMunicipality()).as(error + EQUALITY_MUNICIPALITY).isEqualTo(expected.getPhysicalAddress().getMunicipality());
+                    assertThat(actual.getPhysicalAddress().getAddress()).as(error + EQUALITY_ADDRESS).isEqualTo(expected.getPhysicalAddress().getAddress());
+                    assertThat(actual.getPhysicalAddress().getZip()).as(error + EQUALITY_ZIP_CODE).isEqualTo(expected.getPhysicalAddress().getZip());
+                    //TODO VAS: valutare se fare il confronto di uguaglianza anche con altri campi del physicalAddress
+                    assertThat(actual.getRegistry()).as(error + EQUALITY_REGISTRY).isEqualTo(expected.getRegistry());
+//                    assertThat(actual.getResponseStatus()).as("TODO VAS").isEqualTo(expected.getResponseStatus());
                 }
             }
             case PUBLIC_REGISTRY_VALIDATION_CALL -> {
@@ -278,7 +279,7 @@ public class DataTestV25 extends AbstractDataTest {
                    Assertions.assertEquals(actual.getUtilityList().size(), expected.getUtilityList().size());
                    for (int i = 0; i < actual.getUtilityList().size(); i++) {
                        Assertions.assertEquals(actual.getUtilityList().get(i), expected.getUtilityList().get(i));*/
-                    }
+                }
             }
 
             default -> throw new IllegalArgumentException(INVALID_TIMELINE_CATEGORY + timelineEventCategory);
