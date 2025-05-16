@@ -345,6 +345,13 @@ public abstract class B2bUtils {
     }
 
     /**
+     * Restituisce il profilo in uso a partire dall'applicationContext
+     */
+    public static String getProfileInUse(ApplicationContext context) {
+        return context.getEnvironment().getActiveProfiles()[0];
+    }
+
+    /**
      * Usato a fini di logging per stampare le proprietà che deve avere il TimelineElement atteso
      */
     public static String getExpectedTimelineElement(AbstractDataTest dataTest, String timelineElementCategory) {
@@ -365,12 +372,12 @@ public abstract class B2bUtils {
      * Lancia un'AssertionFailedError con log estremamente dettagliato relativo agli elementi di timeline
      * (rendendo molto più facile per i tester capire quale sia la causa del fail, in particolar modo se dovuto a sviste dei dati in input)
      */
-    public static void logTimelineElementsThatDoNotMatchExpected(List<AssertionError> assertionFailedErrorList, AbstractDataTest dataTest, String timelineElementCategory) {
+    public static void logTimelineElementsThatDoNotMatchExpected(List<AssertionError> assertionErrorList, AbstractDataTest dataTest, String timelineElementCategory) {
         String expectedTimelineElement = getExpectedTimelineElement(dataTest, timelineElementCategory);
         StringBuilder sb = new StringBuilder();
-        sb.append("Sono stati trovati " + assertionFailedErrorList.size() + " elementi con category " + timelineElementCategory + ", ma nessuno combacia con\n" + expectedTimelineElement);
-        for (int i = 0; i < assertionFailedErrorList.size(); i++) {
-            AssertionError error = assertionFailedErrorList.get(i);
+        sb.append("Sono stati trovati " + assertionErrorList.size() + " elementi con category " + timelineElementCategory + ", ma nessuno combacia con\n" + expectedTimelineElement);
+        for (int i = 0; i < assertionErrorList.size(); i++) {
+            AssertionError error = assertionErrorList.get(i);
             sb.append("\n").append(i + 1).append(") -> ").append(error.getMessage());
         }
         throw new AssertionError(sb.toString());
