@@ -11,12 +11,6 @@ import it.pagopa.interop.authorization.domain.Tenant;
 import it.pagopa.interop.authorization.service.exception.UnsignedSTSGenerationException;
 import it.pagopa.interop.authorization.service.utils.ConfigFileReader;
 import it.pagopa.interop.conf.InteropClientConfigs;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
@@ -298,16 +292,14 @@ public abstract class SessionTokenFactory {
                 .signingAlgorithm(CONFIG.get("kms").get("alg"))
                 .build();
 
-        try(KmsClient kmsClient = KmsClient.create()) {
-            SignResponse response = kmsClient.sign(signRequest);
-            if (response == null) {
-                throw new IllegalArgumentException("JWT Signature failed. Empty signature returned");
-            }
-
-            String kmsSignature = Base64.getUrlEncoder().withoutPadding().encodeToString(response.signature().asByteArray());
-            return Map.of("signedToken", serializedToken + "." + kmsSignature,
-                    "signature", response);
+        SignResponse response = KmsClient.create().sign(signRequest);
+        if (response == null) {
+            throw new IllegalArgumentException("JWT Signature failed. Empty signature returned");
         }
+
+        String kmsSignature = Base64.getUrlEncoder().withoutPadding().encodeToString(response.signature().asByteArray());
+        return Map.of("signedToken", serializedToken + "." + kmsSignature,
+                "signature", response);
     }
 
     private boolean kmsVerify(String unsignedToken, SignResponse signature) {
@@ -323,13 +315,11 @@ public abstract class SessionTokenFactory {
                 .signature(signature.signature())
                 .build();
 
-        try(KmsClient kmsClient = KmsClient.create()) {
-            VerifyResponse response = kmsClient.verify(verifyRequest);
-            if (isNotTrue(response.signatureValid())) {
-                throw new IllegalArgumentException("JWT Verify Signature failed");
-            }
-            return response.signatureValid();
+        VerifyResponse response = KmsClient.create().verify(verifyRequest);
+        if (isNotTrue(response.signatureValid())) {
+            throw new IllegalArgumentException("JWT Verify Signature failed");
         }
+        return response.signatureValid();
     }
 
     public Map<String, Object> getSessionTokenPayloadTemplate() {
