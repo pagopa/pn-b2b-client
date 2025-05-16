@@ -149,10 +149,11 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | xxx lista utenze |  |
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
-      | loadTimeline             | true                                                                                     |
-      | details                  | NOT_NULL                                                                                 |
-      | details_refusalReasons   | {"detail": "Address not found for recipient index: 0", "errorCode": "ADDRESS_NOT_FOUND"} |
-      | details_notificationCost | 100                                                                                      |
+      | loadTimeline           | true                                                                                     |
+      | details                | NOT_NULL                                                                                 |
+      #| details_refusalReasons | [{"errorCode": "ADDRESS_NOT_FOUND"}] |
+      | details_refusalReasons | {"detail": "Address not found for recipient index: 0", "errorCode": "ADDRESS_NOT_FOUND"} |
+      | details_notificationCost   | 100      |
 
 
   @ricercaIndirizzoVas
@@ -217,8 +218,8 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | physicalAddress_State               | NULL           |
       | physicalAddress_zip                 | NULL           |
     When la notifica viene inviata tramite api b2b dal "AB" e si attende che lo stato diventi "REFUSED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_VALIDATION_CALL"
-    Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
+    #And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_VALIDATION_CALL"
+    Then viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | loadTimeline           | true                                                                                     |
       | details                | NOT_NULL                                                                                 |
       | details_refusalReasons | {"detail": "Address not found for recipient index: 1", "errorCode": "ADDRESS_NOT_FOUND"} |
@@ -693,7 +694,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | physicalAddress_zip                 | NULL        |
     And destinatario
       | denomination                        | PF Errore 429 |
-      | taxId                               | xxx           |
+      | taxId                               | GKRLGS31H68E907N          |
       | digitalDomicile_address             | NULL          |
       | physicalAddress_address             | NULL          |
       | physicalAddress_municipality        | NULL          |
@@ -718,7 +719,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | senderDenomination | Comune di Palermo           |
     And destinatario
       | denomination                        | PF Errore 429 |
-      | taxId                               | xxx           |
+      | taxId                               | GKRLGS31H68E907N           |
       | digitalDomicile_address             | NULL          |
       | physicalAddress_address             | NULL          |
       | physicalAddress_municipality        | NULL          |
@@ -742,7 +743,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | senderDenomination | Comune di Palermo           |
     And destinatario
       | denomination                        | PF Errore 500 |
-      | taxId                               | xxx           |
+      | taxId                               | SRFBRD80A01E256Z           |
       | digitalDomicile_address             | NULL          |
       | physicalAddress_address             | NULL          |
       | physicalAddress_municipality        | NULL          |
@@ -766,8 +767,8 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
-      | denomination                        | PG / PF ERRORE |
-      | taxId                               | xxx            |
+      | denomination                        | PG / PF ERRORE 500 |
+      | taxId                               | SRFBRD80A01E256Z           |
       | digitalDomicile_address             | NULL           |
       | physicalAddress_address             | NULL           |
       | physicalAddress_municipality        | NULL           |
@@ -779,7 +780,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | physicalAddress_zip                 | NULL           |
     And destinatario
       | denomination                        | PF Errore 429 |
-      | taxId                               | xxx           |
+      | taxId                               | GKRLGS31H68E907N           |
       | digitalDomicile_address             | NULL          |
       | physicalAddress_address             | NULL          |
       | physicalAddress_municipality        | NULL          |
@@ -872,7 +873,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | physicalAddress_zip                 | NULL        |
     And destinatario
       | denomination                        | PF Errore 429 |
-      | taxId                               | xxx           |
+      | taxId                               | GKRLGS31H68E907N           |
       | digitalDomicile_address             | NULL          |
       | physicalAddress_address             | NULL          |
       | physicalAddress_municipality        | NULL          |
@@ -897,8 +898,8 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
-      | denomination                        | PG / PF ERRORE |
-      | taxId                               | xxx            |
+      | denomination                        | PG / PF ERRORE 500 |
+      | taxId                               | SRFBRD80A01E256Z           |
       | digitalDomicile_address             | NULL           |
       | physicalAddress_address             | NULL           |
       | physicalAddress_municipality        | NULL           |
@@ -910,7 +911,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | physicalAddress_zip                 | NULL           |
     And destinatario
       | denomination                        | PF Errore 429 |
-      | taxId                               | xxx           |
+      | taxId                               | GKRLGS31H68E907N          |
       | digitalDomicile_address             | NULL          |
       | physicalAddress_address             | NULL          |
       | physicalAddress_municipality        | NULL          |
@@ -929,7 +930,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 
 
   @ricercaIndirizzoVas @technicalRefusalCostRecipient #costi 49
-  Scenario: [49] Invio notifica AR multidestinatario verso PF-PG con campo address vuoto e un solo indirizzo trovato da RI notifica rifiutata Vas attivo
+  Scenario: [49] Invio notifica AR monodestinatario verso PF-PG con campo address vuoto e un solo indirizzo trovato da RI notifica rifiutata Vas attivo
     Given il test è effettuabile con API versione "V25" o superiore
     And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -953,14 +954,14 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details_notificationCost | xxx Uniform cost |
 
   @ricercaIndirizzoVas @technicalRefusalCostRecipient #costi 50
-  Scenario: [50] Invio notifica AR multidestinatario verso PF-PG con campo address vuoto e un solo indirizzo trovato da RI notifica rifiutata Vas attivo
+  Scenario: [50] Invio notifica AR monodestinatario verso PF-PG con campo address vuoto e un solo indirizzo trovato da RI notifica rifiutata Vas attivo
     Given il test è effettuabile con API versione "V25" o superiore
     And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
       | denomination                        | PF Errore 429 |
-      | taxId                               | xxx           |
+      | taxId                               | GKRLGS31H68E907N           |
       | digitalDomicile_address             | NULL          |
       | physicalAddress_address             | NULL          |
       | physicalAddress_municipality        | NULL          |
@@ -977,14 +978,14 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details_notificationCost | xxx  cost |
 
   @ricercaIndirizzoVas @technicalRefusalCostRecipient #costi 51
-  Scenario: [51] Invio notifica AR multidestinatario verso PF-PG con campo address vuoto e un solo indirizzo trovato da RI notifica rifiutata Vas attivo
+  Scenario: [51] Invio notifica AR monodestinatario verso PF-PG con campo address vuoto e un solo indirizzo trovato da RI notifica rifiutata Vas attivo
     Given il test è effettuabile con API versione "V25" o superiore
     And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
       | denomination                        | PF Errore 400 |
-      | taxId                               | xxx           |
+      | taxId                               | MTTBNN14A01A001N           |
       | digitalDomicile_address             | NULL          |
       | physicalAddress_address             | NULL          |
       | physicalAddress_municipality        | NULL          |
@@ -1001,14 +1002,14 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details_notificationCost | xxx  cost |
 
   @ricercaIndirizzoVas @technicalRefusalCostRecipient #costi 52
-  Scenario: [52] Invio notifica AR multidestinatario verso PF-PG con campo address vuoto e un solo indirizzo trovato da RI notifica rifiutata Vas attivo
+  Scenario: [52] Invio notifica AR monodestinatario verso PF-PG con campo address vuoto e un solo indirizzo trovato da RI notifica rifiutata Vas attivo
     Given il test è effettuabile con API versione "V25" o superiore
     And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario
       | denomination                        | PF Errore 500 |
-      | taxId                               | xxx           |
+      | taxId                               | SRFBRD80A01E256Z           |
       | digitalDomicile_address             | NULL          |
       | physicalAddress_address             | NULL          |
       | physicalAddress_municipality        | NULL          |

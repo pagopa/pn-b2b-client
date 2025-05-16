@@ -257,27 +257,30 @@ public class DataTestV25 extends AbstractDataTest {
                 }
             }
             //TODO VAS
-            /*
+
             case PUBLIC_REGISTRY_VALIDATION_RESPONSE -> {
-                if (detailsFromTest != null) {
-                    Assertions.assertEquals(detailsFromNotification.getRecIndex(), detailsFromTest.getRecIndex());
-                    Assertions.assertEquals(detailsFromNotification.getPhysicalAddress(), detailsFromTest.getPhysicalAddress(),
+                if (expected != null) {
+                    Assertions.assertEquals(actual.getRecIndex(), expected.getRecIndex());
+                    Assertions.assertEquals(actual.getPhysicalAddress(), expected.getPhysicalAddress(),
                             "Physical address mismatch in PUBLIC_REGISTRY_VALIDATION_RESPONSE");
-                    Assertions.assertEquals(detailsFromNotification.getRegistry(), detailsFromTest.getRegistry(),
+                    Assertions.assertEquals(actual.getRegistry(), expected.getRegistry(),
                             "Registry mismatch in PUBLIC_REGISTRY_VALIDATION_RESPONSE");
+
+                    Assertions.assertEquals(actual.getResponseStatus(), expected.getResponseStatus(),
+                            "ResponseStatus mismatch in PUBLIC_REGISTRY_VALIDATION_RESPONSE");
                 }
             }
             case PUBLIC_REGISTRY_VALIDATION_CALL -> {
-                if (detailsFromTest != null) {
-                    Assertions.assertEquals(detailsFromNotification.getRecIndex(), detailsFromTest.getRecIndex());
+                if (expected != null) {
+                    Assertions.assertEquals(actual.getRecIndex(), expected.getRecIndex());
                     //TODO VAS Esempio per una lista di utenze
-//                    Assertions.assertNotNull(detailsFromNotification.getUtilityList());
-//                    Assertions.assertEquals(detailsFromNotification.getUtilityList().size(), detailsFromTest.getUtilityList().size());
-//                    for (int i = 0; i < detailsFromNotification.getUtilityList().size(); i++) {
-//                        Assertions.assertEquals(detailsFromNotification.getUtilityList().get(i), detailsFromTest.getUtilityList().get(i));
-//                    }
+                   /* Assertions.assertNotNull(actual.getUtilityList());
+                   Assertions.assertEquals(actual.getUtilityList().size(), expected.getUtilityList().size());
+                   for (int i = 0; i < actual.getUtilityList().size(); i++) {
+                       Assertions.assertEquals(actual.getUtilityList().get(i), expected.getUtilityList().get(i));*/
+                    }
             }
-            */
+
             default -> throw new IllegalArgumentException(INVALID_TIMELINE_CATEGORY + timelineEventCategory);
         }
     }
@@ -285,7 +288,7 @@ public class DataTestV25 extends AbstractDataTest {
     public String getTimelineEventId(String timelineEventCategory, String iun) {
         EventId event = getEventId(iun, this);
         return B2bUtils.getTimelineEventId(event, timelineEventCategory);
-        };
+
     }
 
     private static EventId getEventId(String iun, DataTestV25 dataFromTest) {
