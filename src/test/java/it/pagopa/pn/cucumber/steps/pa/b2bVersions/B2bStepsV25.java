@@ -403,7 +403,7 @@ public class B2bStepsV25 implements B2bStepsInterface {
             }
             List<TimelineElementV27> timelineElements = getTimelineElementsByEventId(timelineEventCategory, dataTest);
             assertThat(timelineElements)
-                    .withFailMessage("Not found a time element '%s'. IUN: %s".formatted(timelineEventCategory, sharedSteps.getNotificationIun()))
+                    .as(logTimeline(dataTest, timelineEventCategory))
                     .isNotEmpty();
             if (dataTest != null && dataTest.getTimelineElement() != null) {
                 boolean atLeastOneSuccessful = false;
@@ -426,6 +426,21 @@ public class B2bStepsV25 implements B2bStepsInterface {
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
+    }
+
+    private String logTimeline(DataTestV25 dataTest, String timelineEventCategory) {
+        boolean isWithEventId = dataTest != null && dataTest.getTimelineElement() != null;
+        StringBuilder sb = new StringBuilder();
+        sb.append("Non è stato trovato nessun elemento con ")
+                .append(isWithEventId ? "eventId " : "category ")
+                .append(isWithEventId ? dataTest.getTimelineEventId(timelineEventCategory, sharedSteps.getNotificationIun()) : timelineEventCategory)
+                .append(".\nDi seguito la timeline completa:\n");
+        timelineElementList.forEach(te ->
+                sb.append(te.getCategory())
+                        .append(" EventId: ")
+                        .append(te.getElementId())
+                        .append("\n"));
+        return sb.toString();
     }
 
     private void loadTimeline(String timelineEventCategory, boolean existCheck, DataTestV25 dataTest) {
