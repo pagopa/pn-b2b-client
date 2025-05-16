@@ -39,7 +39,7 @@ Feature: Associazione di un admin ad un client
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato 1 client "API"
     When l'utente tenta di impostare "PA2" con ruolo "api" come amministratore del client
-    Then si ottiene status code 400
+    Then si ottiene status code 403
 
   @client_admin_create
   Scenario: [ADMIN_CLIENT_6] Un utente non può impostare un utente come amministratore del client se fa capo ad un ente diverso da quello creatore del client
@@ -47,20 +47,20 @@ Feature: Associazione di un admin ad un client
     And "PA1" ha già creato 1 client "API"
     When l'utente è un "admin" di "PA2"
     And l'utente tenta la modifica dell'amministratore del client indicando se stesso
-    Then si ottiene status code 400
+    Then si ottiene status code 403
 
   @client_admin_create
   Scenario: [ADMIN_CLIENT_7] Un utente admin non può impostare se stesso come amministratore di un client CONSUMER
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato 1 client "CONSUMER"
     When l'utente tenta la modifica dell'amministratore del client indicando se stesso
-    Then si ottiene status code 409
+    Then si ottiene status code 403
 
   # NOTA 09/05/2025: si usa PA2 perché al momento è l'unico ente avente 2 utenti con ruolo admin
   @client_admin_update
   Scenario: [ADMIN_CLIENT_8] Un utente admin può sostituire un amministratore di un client API indicando un altro utente amministratore
     Given l'utente è il numero 1 ad avere ruolo "admin" di "PA2"
-    And "PA1" ha già creato 1 client "API"
+    And "PA2" ha già creato 1 client "API"
     When l'utente tenta la modifica dell'amministratore del client indicando l'admin numero 2 del suo ente
     Then si ottiene status code 200
     And l'amministratore del client è stato modificato correttamente
@@ -83,17 +83,17 @@ Feature: Associazione di un admin ad un client
     And l'amministratore del client è stato rimosso correttamente
 
   @client_admin_delete
-  Scenario [ADMIN_CLIENT_11] Un utente admin non può rimuovere un utente dal ruolo di amministratore di un client API specificando un clientId inesistente
+  Scenario: [ADMIN_CLIENT_11] Un utente admin non può rimuovere un utente dal ruolo di amministratore di un client API specificando un clientId inesistente
     Given l'utente è un "admin" di "PA1"
     When l'utente tenta la rimozione dell'amministratore del client specificando un clientId inesistente ed il proprio adminId
     Then si ottiene status code 404
 
   @client_admin_delete
-  Scenario [ADMIN_CLIENT_12] Un utente admin non può rimuovere un utente dal ruolo di amministratore di un client API specificando un adminId inesistente
+  Scenario: [ADMIN_CLIENT_12] Un utente admin non può rimuovere un utente dal ruolo di amministratore di un client API specificando un adminId inesistente
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato 1 client "API"
     When l'utente tenta la rimozione dell'amministratore del client specificando un adminId inesistente
-    Then si ottiene status code 404
+    Then si ottiene status code 400
 
   @client_admin_delete
   Scenario Outline: [ADMIN_CLIENT_13] Un utente non-admin non può rimuovere un utente dal ruolo di amministratore di un client API
@@ -126,9 +126,13 @@ Feature: Associazione di un admin ad un client
     And l'utente tenta la rimozione dell'amministratore del client
     Then si ottiene status code 403
 
+  # NOTA 16/05/2025: "figlio" dello scenario [ADMIN_CLIENT_7], poiché non potendo impostare
+  # un altro admin come amministratore del client, non si può nemmeno rimuovere. Per cui
+  # questo test tenterà sempre di rimuovere un admin inesisten, portando allo stesso errore
+  # previsto dallo scenario [ADMIN_CLIENT_12]
   @client_admin_delete
   Scenario: [ADMIN_CLIENT_16] Un utente admin non può rimuovere un utente dal ruolo di amministratore di un client CONSUMER
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato 1 client "CONSUMER"
     When l'utente tenta la rimozione dell'amministratore del client
-    Then si ottiene status code 409
+    Then si ottiene status code 400

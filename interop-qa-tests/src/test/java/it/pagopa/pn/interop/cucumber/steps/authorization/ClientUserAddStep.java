@@ -74,7 +74,7 @@ public class ClientUserAddStep {
 
     @When("l'utente tenta la modifica dell'amministratore indicando delle specifiche vuote")
     public void editClientAdminEmpty() {
-        editClientAdmin(null, null);
+        editClientAdmin(null, new ClientAdminConfig());
     }
 
     @When("l'utente tenta di impostare {string} con ruolo {string} come amministratore del client")

@@ -6,6 +6,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
+import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
@@ -18,6 +19,7 @@ public class ClientUserRemoveStep {
     private final SharedStepsContext sharedStepsContext;
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
+    private final IdentityService identityService;
 
     public ClientUserRemoveStep(ClientTokenConfigurator clientTokenConfigurator,
                                 SharedStepsContext sharedStepsContext) {
@@ -26,6 +28,7 @@ public class ClientUserRemoveStep {
         this.sharedStepsContext = sharedStepsContext;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
+        this.identityService = sharedStepsContext.getIdentityService();
     }
 
     @When("l'utente richiede la rimozione di quel membro dal client")
@@ -52,7 +55,7 @@ public class ClientUserRemoveStep {
     @When("l'utente tenta la rimozione dell'amministratore del client specificando un clientId inesistente ed il proprio adminId")
     public void removeClientAdminWithInvalidClientId() {
         UUID clientId = UUID.randomUUID();
-        UUID adminId = sharedStepsContext.getClientCommonContext().getAdminId();
+        UUID adminId = identityService.getUserId(sharedStepsContext.getTenantType(), "admin");
         removeClientAdmin(clientId, adminId);
     }
 
