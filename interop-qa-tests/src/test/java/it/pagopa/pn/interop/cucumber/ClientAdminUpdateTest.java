@@ -1,4 +1,4 @@
-package it.pagopa.pn.interop.cucumber.clientadmin;
+package it.pagopa.pn.interop.cucumber;
 
 import org.junit.platform.suite.api.IncludeTags;
 
