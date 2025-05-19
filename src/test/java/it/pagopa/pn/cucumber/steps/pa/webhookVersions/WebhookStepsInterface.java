@@ -31,6 +31,8 @@ public interface WebhookStepsInterface {
 
     void verifySpecificEventNotInStream(String elementType);
 
+    void checkConsumeStreamStatusValue(boolean isPresente, String status);
+
     void createStreamRequestWithGroupsPA(List<String> groupIdByPa);
 
     UUID getStreamId();
