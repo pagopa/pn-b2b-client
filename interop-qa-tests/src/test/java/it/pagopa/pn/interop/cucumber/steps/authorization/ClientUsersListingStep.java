@@ -29,7 +29,7 @@ public class ClientUsersListingStep {
     public void getClientUsers() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor
-                .performCall(() -> authorizationClient.getClientUsers(sharedStepsContext.getClientCommonContext().getFirstClient(), null));
+                .performCall(() -> authorizationClient.getClientUsers(sharedStepsContext.getClientCommonContext().getFirstClient()));
     }
 
     @Then("si ottiene status code 200 e la lista di {int} utenti")

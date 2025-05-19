@@ -14,7 +14,7 @@ public interface IAuthorizationClient extends SettableBearerToken {
     void getEncodedClientKeyById(UUID clientId, String keyId);
     void deleteClientKeyById(UUID clientId, String keyId);
     void removeUserFromClient(UUID clientId, UUID userId);
-    List<CompactUser> getClientUsers(UUID clientId, String name);
+    List<CompactUser> getClientUsers(UUID clientId);
     PublicKey getClientKeyById(UUID clientId, String keyId);
     void createKeys(UUID clientId, List<KeySeed> keySeed);
     PublicKeys getClientKeys(UUID clientId, Integer offset, Integer limit, List<UUID> userIds);

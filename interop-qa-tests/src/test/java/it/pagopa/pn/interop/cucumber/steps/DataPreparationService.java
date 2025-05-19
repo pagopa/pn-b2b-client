@@ -161,7 +161,7 @@ public class DataPreparationService {
         );
         assertValidResponse();
         pollingService.makePolling(
-                () -> httpCallExecutor.performCall(() -> authorizationClient.getClientUsers(clientId, null)),
+                () -> httpCallExecutor.performCall(() -> authorizationClient.getClientUsers(clientId)),
                 res -> Optional.ofNullable(httpCallExecutor.getResponse())
                         .map(obj -> (List<CompactUser>) obj)
                         .orElse(List.of())
