@@ -1,4 +1,4 @@
-@descriptor_publication
+@descriptor
 Feature: Pubblicazione di un descrittore
   Tutti gli utenti autorizzati di enti erogatori possono pubblicare i propri descrittori
 

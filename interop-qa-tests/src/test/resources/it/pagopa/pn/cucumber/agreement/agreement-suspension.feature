@@ -1,4 +1,4 @@
-@agreement_suspension
+@agreement
 Feature: Sospensione richiesta di fruizione
   Tutti gli utenti autorizzati possono sospendere una richiesta di fruizione
 

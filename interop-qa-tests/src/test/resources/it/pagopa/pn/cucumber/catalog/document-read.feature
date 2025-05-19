@@ -1,4 +1,4 @@
-@document_read
+@document
 Feature: Lettura di un documento
   Tutti gli utenti autenticati possono recuperare un'interfaccia o un documento dai propri descrittori
 

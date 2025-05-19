@@ -1,4 +1,4 @@
-@agreement_document_upload
+@agreement
 Feature: Caricamento di un documento allegato alla richiesta di fruizione
   Tutti gli utenti autorizzati possono caricare un documento allegato alla richiesta di fruizione in stato DRAFT
 

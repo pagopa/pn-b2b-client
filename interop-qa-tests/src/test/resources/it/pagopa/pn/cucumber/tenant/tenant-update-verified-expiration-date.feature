@@ -1,4 +1,4 @@
-@tenant_update_verified_expiration_date
+@tenant
 Feature: Aggiornamento della data di scadenza di un attributo verificato ad un aderente
   Tutti gli utenti autorizzati di enti che possono erogare eservice possono aggiornare la data di scadenza di un proprio attributo verificato
 

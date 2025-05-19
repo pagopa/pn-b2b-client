@@ -1,4 +1,4 @@
-@purpose_version_create
+@purpose
 Feature: Creazione di una nuova versione di finalità
   Tutti gli utenti autorizzati di un ente fruitore possono richiedere un cambio di piano aggiornando le dailyCalls
 

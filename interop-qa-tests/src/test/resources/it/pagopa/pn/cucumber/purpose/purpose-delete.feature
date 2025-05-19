@@ -1,4 +1,4 @@
-@purpose_delete
+@purpose
 Feature: Cancellazione finalità
   Tutti gli admin possono cancellare una propria finalità in stato DRAFT o WAITING_FOR_APPROVAL.
   

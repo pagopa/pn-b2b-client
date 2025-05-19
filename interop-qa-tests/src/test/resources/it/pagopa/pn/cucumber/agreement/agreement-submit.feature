@@ -1,4 +1,4 @@
-@agreement_submit
+@agreement
 Feature: Inoltro della richiesta di fruizione
 Tutti gli utenti autorizzati possono inoltrare una richiesta di fruizione
 

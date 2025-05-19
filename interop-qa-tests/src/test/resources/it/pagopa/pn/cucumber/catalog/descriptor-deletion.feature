@@ -1,4 +1,4 @@
-@descriptor_deletion
+@descriptor
 Feature: Cancellazione di un descrittore
   Tutti gli utenti autorizzati di enti erogatori possono cancellare i propri descrittori e, potenzialmente, gli e-services
 

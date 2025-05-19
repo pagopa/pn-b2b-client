@@ -1,4 +1,4 @@
-@document_upload
+@document
 Feature: Caricamento di un documento di interfaccia
   Tutti gli utenti autorizzati di enti erogatori possono caricare un documento di interfaccia ai propri descrittori
 

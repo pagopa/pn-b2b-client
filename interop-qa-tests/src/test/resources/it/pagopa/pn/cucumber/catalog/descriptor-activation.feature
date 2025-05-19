@@ -1,4 +1,4 @@
-@descriptor_activation
+@descriptor
 Feature: Attivazione di un descrittore
   Tutti gli utenti autorizzati di enti erogatori possono attivare un descrittore in stato SUSPENDED
 

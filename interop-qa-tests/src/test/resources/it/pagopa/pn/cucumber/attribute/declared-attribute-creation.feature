@@ -1,4 +1,4 @@
-@declared_attribute_creation
+@attribute
 Feature: Creazione attributo dichiarato
   Gli admin e gli operatori API di enti PA e GSP possono creare attributi dichiarati
 

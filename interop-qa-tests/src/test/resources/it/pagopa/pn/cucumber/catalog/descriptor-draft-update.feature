@@ -1,4 +1,4 @@
-@descriptor_draft_update
+@descriptor
 Feature: Aggiornamento di un descrittore in bozza
   Tutti gli utenti autorizzati di enti erogatori possono aggiornare tutti i parametri di un descrittore in bozza.
 

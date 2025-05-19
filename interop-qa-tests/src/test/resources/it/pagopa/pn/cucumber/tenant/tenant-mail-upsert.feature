@@ -1,4 +1,4 @@
-@tenant_mail_upsert
+@tenant
 Feature: Aggiunta o aggiornamento di una mail di contatto
   Tutti gli utenti autenticati possono aggiungere o aggiornare una mail di contatto
 

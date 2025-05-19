@@ -1,4 +1,4 @@
-@agreement_rejection
+@agreement
 Feature: Rifiuto di una richiesta di fruizione
   Tutti gli utenti autorizzati di enti PA e GSP possono rifiutare una richiesta di fruizione verso un proprio e-service
 

@@ -1,4 +1,4 @@
-@purpose_consumer_listing 
+@purpose
 Feature: Lista delle finalità lato fruitore
   Tutti gli utenti possono ottenere la lista delle finalità di cui sono fruitori
 

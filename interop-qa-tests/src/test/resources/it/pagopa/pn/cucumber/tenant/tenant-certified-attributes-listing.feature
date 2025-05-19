@@ -1,4 +1,4 @@
-@tenant_certified_attributes_listing
+@tenant
 Feature: Listing attributi certificati posseduti da uno specifico aderente
   Tutti gli utenti autenticati possono leggere la lista degli attributi certificati posseduti da uno specifico aderente
 

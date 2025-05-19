@@ -1,4 +1,4 @@
-@eservice_risk_analysis_read
+@eservice
 Feature: Lettura di un'analisi del rischio di un eservice
   Tutti gli utenti autenticati possono leggere l'analisi del rischio di un eservice
 

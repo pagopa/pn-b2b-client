@@ -1,4 +1,4 @@
-@descriptor_export
+@descriptor
 Feature: Export di un descrittore
   Tutti gli utenti autorizzati possono effettuare una richiesta di export di un descrittore di un e-service che il proprio ente eroga.
 

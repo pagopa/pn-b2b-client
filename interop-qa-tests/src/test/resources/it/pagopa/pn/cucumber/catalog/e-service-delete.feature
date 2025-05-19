@@ -1,4 +1,4 @@
-@eservice_delete
+@eservice
 Feature: Cancellazione di un e-service
   Tutti gli utenti autorizzati di enti erogatori possono cancellare un proprio e-service con un solo descrittore in DRAFT
 

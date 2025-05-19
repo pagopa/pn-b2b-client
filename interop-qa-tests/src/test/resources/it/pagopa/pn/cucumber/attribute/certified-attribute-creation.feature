@@ -1,4 +1,4 @@
-@certified_attribute_creation
+@attribute
 Feature: Creazione attributo certificato
   Gli enti certificatori possono creare attributi certificati
 

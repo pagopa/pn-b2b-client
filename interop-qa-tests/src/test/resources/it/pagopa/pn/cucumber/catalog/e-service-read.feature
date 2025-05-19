@@ -1,4 +1,4 @@
-@eservice_read
+@eservice
 Feature: Lettura di un e-service
   Tutti gli utenti autorizzati di enti erogatori possono leggere un proprio e-service
 

@@ -1,4 +1,4 @@
-@descriptor_read_producer
+@descriptor
 Feature: Lettura di un descrittore lato erogatore
   Tutti gli utenti autorizzati di enti erogatori possono leggere i propri descrittori
 

@@ -1,4 +1,4 @@
-@eservice_risk_analysis_delete
+@eservice
 Feature: Cancellazione di un'analisi del rischio ad un e-service
   Tutti gli utenti autorizzati di enti erogatori possono cancellare un'analisi del rischio di un e-service se è in mode RECEIVE
 

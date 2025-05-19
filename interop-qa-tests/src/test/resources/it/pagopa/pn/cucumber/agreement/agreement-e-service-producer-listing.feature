@@ -1,4 +1,4 @@
-@agreement_e_service_producer_listing
+@agreement
 Feature: Listing e-service con richieste di fruizione attive lato erogatore
   Tutti gli utenti autorizzati di enti PA e GSP possono ottenere la lista degli e-service con la quale hanno almeno una richiesta di fruizione attiva
 

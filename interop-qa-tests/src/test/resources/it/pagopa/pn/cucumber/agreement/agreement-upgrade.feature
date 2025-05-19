@@ -1,4 +1,4 @@
-@agreement_upgrade
+@agreement
 Feature: Upgrade di una richiesta di fruizione
   Tutti gli utenti autorizzati possono effettuare l'upgrade di una propria richiesta di fruizione
 

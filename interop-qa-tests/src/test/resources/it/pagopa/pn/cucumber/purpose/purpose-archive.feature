@@ -1,4 +1,4 @@
-@purpose_archive
+@purpose
 Feature: Archiviazione di una finalità
   Tutti gli utenti autorizzati possono archiviare una propria finalità
 

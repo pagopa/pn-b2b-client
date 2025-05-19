@@ -1,4 +1,4 @@
-@verified_attribute_creation
+@attribute
 Feature: Creazione attributo verificato
   Gli admin e gli operatori API di enti PA e GSP possono creare attributi verificati
 

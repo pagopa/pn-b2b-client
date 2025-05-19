@@ -1,4 +1,4 @@
-@tenant_verified_attributes_listing
+@tenant
 Feature: Listing attributi verificati posseduti da uno specifico ente
   Tutti gli utenti autenticati possono leggere la lista degli attributi verificati posseduti da uno specifico ente
 

@@ -1,4 +1,4 @@
-@agreement_archive
+@agreement
 Feature: Archiviazione richiesta di fruizione
   Tutti gli utenti autorizzati possono archiviare una richiesta di fruizione in stato ACTIVE o SUSPENDED
 

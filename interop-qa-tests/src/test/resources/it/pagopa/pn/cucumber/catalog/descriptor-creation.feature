@@ -1,4 +1,4 @@
-@descriptor_creation
+@@descriptor
 Feature: Creazione versione di un e-service
   Gli admin e gli operatori API di enti PA e GSP possono creare una versione di un e-service
 

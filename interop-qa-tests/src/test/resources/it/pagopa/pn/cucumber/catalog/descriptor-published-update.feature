@@ -1,4 +1,4 @@
-@descriptor_published_update
+@descriptor
 Feature: Aggiornamento di un descrittore già pubblicato
   Tutti gli utenti autorizzati di enti erogatori possono aggiornare la durata voucher e le soglie di carico di un descrittore già punlicato.
 

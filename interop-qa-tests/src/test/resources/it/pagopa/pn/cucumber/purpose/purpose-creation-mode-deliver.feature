@@ -1,4 +1,4 @@
-@purpose_creation_deliver
+@purpose
 Feature: Creazione finalità per e-service in erogazione diretta
   Tutti gli utenti autorizzati possono creare una nuova finalità per un e-service in erogazione diretta.
 

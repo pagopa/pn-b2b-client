@@ -1,4 +1,4 @@
-@tenant_declared_attributes_listing
+@tenant
 Feature: Listing attributi dichiarati posseduti da uno specifico ente
   Tutti gli utenti autenticati possono leggere la lista degli attributi dichiarati posseduti da uno specifico ente
 

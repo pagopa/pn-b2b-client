@@ -1,4 +1,4 @@
-@purpose_risk_analysis_document_download
+@purpose_risk_analysis
 Feature: Download documento di analisi del rischio sigillato
   Tutti gli utenti autorizzati possono scaricare il documento di analisi del rischio di una propria finalità
 

@@ -1,4 +1,4 @@
-@agreement_activate
+@agreement
 Feature: Attivazione richiesta di fruizione
   Tutti gli utenti autorizzati di enti PA e GSP possono attivare una richiesta di fruizione
 

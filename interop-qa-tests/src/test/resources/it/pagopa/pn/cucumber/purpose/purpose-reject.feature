@@ -1,4 +1,4 @@
-@purpose_reject
+@purpose
 Feature: Rifiuto di una versione di una finalità
   Tutti gli utenti autorizzati di enti erogatori possono rifiutare una nuova versione di una finalità
 

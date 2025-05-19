@@ -1,4 +1,4 @@
-@purpose_read
+@purpose
 Feature: Lettura singola finalità
   Tutti gli utenti possono leggere una finalità, l'analisi del rischio è disponibile solo per admin fruitori o erogatori di quella finalità.
 

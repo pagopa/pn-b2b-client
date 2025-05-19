@@ -1,4 +1,4 @@
-@eservice_description_update
+@eservice
 Feature: Aggiornamento della descrizione di un e-service
   Tutti gli utenti autorizzati di enti erogatori possono aggiornare la descrizione un proprio e-service a catalogo
 

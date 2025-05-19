@@ -1,4 +1,4 @@
-@attribute_read
+@attribute
 Feature: Lettura singolo attributo
   Tutti gli utenti autenticati possono leggere le informazioni di un singolo attributo
 

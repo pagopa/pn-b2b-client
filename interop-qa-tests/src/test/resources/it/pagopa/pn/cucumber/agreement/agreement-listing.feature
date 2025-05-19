@@ -1,4 +1,4 @@
-@agreement_listing
+@agreement
 Feature: Listing richieste di fruizione
   Tutti gli utenti autorizzati di enti PA, GSP e privati possono ottenere la lista delle richieste di fruizione
   NB: Gli e-service creati devono essere il minimo numero sufficiente per far passare il test, in caso contrario il sistema potrebbe sovraccaricarsi e non rispondere nei tempi attesi

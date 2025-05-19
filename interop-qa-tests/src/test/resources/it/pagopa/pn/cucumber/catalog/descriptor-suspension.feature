@@ -1,4 +1,4 @@
-@descriptor_suspension
+@descriptor
 Feature: Sospensione di un descrittore
   Tutti gli utenti autorizzati di enti erogatori possono sospendere i propri descrittori
 

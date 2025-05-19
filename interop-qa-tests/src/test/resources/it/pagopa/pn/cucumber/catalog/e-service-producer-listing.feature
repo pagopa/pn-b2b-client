@@ -1,4 +1,4 @@
-@producer_listing
+@producer
 Feature: Listing e-services lato erogatore
   Tutti gli utenti autenticati di enti erogatori possono ottenere la lista dei propri e-service erogati
 

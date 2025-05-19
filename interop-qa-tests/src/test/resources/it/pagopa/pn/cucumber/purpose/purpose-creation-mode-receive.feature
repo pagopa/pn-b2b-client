@@ -1,4 +1,4 @@
-@purpose_creation_receive
+@purpose
 Feature: Creazione finalità per e-service in erogazione inversa
   Tutti gli utenti autorizzati possono creare una nuova finalità per un e-service in erogazione inversa.
 

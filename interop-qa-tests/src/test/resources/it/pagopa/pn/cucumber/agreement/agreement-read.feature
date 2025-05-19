@@ -1,4 +1,4 @@
-@agreement_read
+@agreement
 Feature: Lettura richiesta di fruizione
   Tutti gli utenti autorizzati possono leggere le richieste di fruizione che hanno creato
 

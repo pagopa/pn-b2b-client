@@ -1,4 +1,4 @@
-@purpose_clone
+@purpose
 Feature: Clonazione di una finalità
   Tutti gli utenti autorizzati di enti fruitori possono clonare una propria finalità
 

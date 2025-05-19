@@ -1,4 +1,4 @@
-@document_update
+@document
 Feature: Aggiornamento del nome di un documento
   Tutti gli utenti autorizzati di enti erogatori possono modificare il nome di un documento (non di interfaccia) già caricato
 

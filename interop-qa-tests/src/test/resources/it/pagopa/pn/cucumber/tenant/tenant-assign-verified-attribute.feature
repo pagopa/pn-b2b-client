@@ -1,4 +1,4 @@
-@tenant_assign_verified_attribute
+@tenant
 Feature: Assegnazione di un attributo verificato ad un aderente
   Tutti gli utenti autorizzati di enti che possono erogare eservice possono assegnare un attributo verificato
 

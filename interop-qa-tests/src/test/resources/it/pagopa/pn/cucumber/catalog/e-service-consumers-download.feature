@@ -1,4 +1,4 @@
-@eservice_consumers
+@eservice
 Feature: Download dei fruitori di un e-service
   Tutti gli utenti autenticati di enti erogatori possono scaricare l'elenco dei fruitori di un e-service
 

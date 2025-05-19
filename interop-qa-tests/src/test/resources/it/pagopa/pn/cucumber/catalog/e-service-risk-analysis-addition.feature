@@ -1,4 +1,4 @@
-@eservice_risk_analysis_addition
+@eservice
 Feature: Aggiunta di un'analisi del rischio ad un e-service
   Tutti gli utenti autorizzati di enti erogatori possono aggiungere un'analisi del rischio all'e-service se è in mode RECEIVE
 

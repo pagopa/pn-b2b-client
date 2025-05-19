@@ -1,4 +1,4 @@
-@agreement_e_service_consumer_listing
+@agreement
 Feature: Listing e-service con richieste di fruizione attive lato fruitore
   Tutti gli utenti autorizzati possono ottenere la lista degli e-service per i quali hanno almeno una richiesta di fruizione attiva
 

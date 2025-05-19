@@ -1,4 +1,4 @@
-@daily_calls_update_request_delete
+@daily_calls_update_request
 Feature: Cancellazione di una richiesta di aggiornamento di una stima di carico
   Tutti gli utenti autorizzati di enti fruitori possono cancellare una richiesta di aggiornamento di una stima di carico 
 

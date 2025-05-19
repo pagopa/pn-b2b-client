@@ -1,4 +1,4 @@
-@document_delete
+@document
 Feature: Cancellazione di un documento
   Tutti gli utenti autorizzati di enti erogatori possono cancellare un documento dai propri descrittori
 

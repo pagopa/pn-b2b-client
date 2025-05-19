@@ -1,4 +1,4 @@
-@tenant_requester_certified_attributes_listing
+@tenant
 Feature: Listing attributi certificati assegnati dall'ente certificatore
   Tutti gli utenti autorizzati di enti certificatori possono leggere la lista degli attributi certificati assegnati.
   Ai fini dei test solo PA2 e GSP2 sono certificatori, la quale qualifica non può essere assegnata durante la loro esecuzione.

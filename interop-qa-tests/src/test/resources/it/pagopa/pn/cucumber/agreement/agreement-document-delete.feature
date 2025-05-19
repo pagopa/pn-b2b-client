@@ -1,4 +1,4 @@
-@agreement_document_delete
+@agreement
 Feature: Cancellazione di un documento allegato alla richiesta di fruizione
   Tutti gli utenti autorizzati possono cancellare un documento allegato alla richiesta di fruizione in stato DRAFT
 

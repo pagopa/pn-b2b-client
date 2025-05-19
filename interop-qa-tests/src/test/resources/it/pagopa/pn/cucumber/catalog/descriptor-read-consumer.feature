@@ -1,4 +1,4 @@
-@descriptor_read_consumer
+@descriptor
 Feature: Lettura di un descrittore lato fruitore
   Tutti gli utenti autenticati di enti fruitori possono leggere i descrittori degli e-service a catalogo
 

@@ -1,4 +1,4 @@
-@eservice_updating
+@eservice
 Feature: Aggiornamento di un e-service non pubblicato
   Tutti gli utenti autorizzati di enti erogatori possono aggiornare un proprio e-service non pubblicato
 

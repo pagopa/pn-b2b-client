@@ -1,4 +1,4 @@
-@tenant_read
+@tenant
 Feature: Lettura di un singolo aderente
   Tutti gli utenti autenticati possono leggere un singolo aderente
 

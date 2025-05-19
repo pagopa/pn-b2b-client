@@ -1,4 +1,4 @@
-@voucher_generation_m2m
+@voucher
 Feature: Generazione del voucher m2m richiesta da un Ente
 
   @voucher_generation_m2m1

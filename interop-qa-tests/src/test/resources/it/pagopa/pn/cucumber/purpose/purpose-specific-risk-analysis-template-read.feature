@@ -1,4 +1,4 @@
-@purpose_risk_analysis_read
+@purpose_risk_analysis
 Feature: Lettura di una specifica versione di analisi del rischio
   Tutti gli utenti possono leggere una specifica versione di analisi del rischio
 

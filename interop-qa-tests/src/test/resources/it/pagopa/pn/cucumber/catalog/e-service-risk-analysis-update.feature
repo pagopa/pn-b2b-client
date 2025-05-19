@@ -1,4 +1,4 @@
-@eservice_risk_analysis_update
+@eservice
 Feature: Aggiornamento di un'analisi del rischio ad un e-service
   Tutti gli utenti autenticati di enti erogatori possono aggiornare un'analisi del rischio ad un e-service se è in mode RECEIVE
 

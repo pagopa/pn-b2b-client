@@ -1,4 +1,4 @@
-@catalog_listing
+@catalog
 Feature: Listing catalogo e-services
   Tutti gli utenti autenticati di enti PA, GSP e privati possono ottenere la lista di e-services
 

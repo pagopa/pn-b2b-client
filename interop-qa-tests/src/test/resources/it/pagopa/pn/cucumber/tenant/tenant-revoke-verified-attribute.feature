@@ -1,4 +1,4 @@
-@tenant_revoke_verified_attribute
+@tenant
 Feature: Revoca di un attributo verificato posseduto da uno specifico aderente
   Tutti gli utenti autorizzati degli enti erogatori possono revocare uno degli attributi verificati che hanno assegnato precedentemente
 

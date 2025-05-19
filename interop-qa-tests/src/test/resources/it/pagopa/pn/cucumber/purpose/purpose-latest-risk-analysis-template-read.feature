@@ -1,4 +1,4 @@
-@purpose_latest_risk_analysis_template_read
+@purpose_latest_risk_analysis
 Feature: Lettura del template di analisi del rischio più recente
   Tutti gli utenti possono leggere il template dell'analisi del rischio, specifico per il proprio ente, di una propria finalità
 

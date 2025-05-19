@@ -1,4 +1,4 @@
-@descriptor_import
+@descriptor
 Feature: Import di un descrittore
   Tutti gli utenti autorizzati possono effettuare una richiesta di import di un descrittore di un e-service.
   Il controllo sui documenti da caricare e se il nome dell'eservice è già presente sono stati tralasciati in quanto già testati nei relativi endpoint dedicati

@@ -1,4 +1,4 @@
-@tenant_revoke_certified_attribute
+@tenant
 Feature: Revoca di un attributo certificato posseduto da uno specifico aderente
   Tutti gli utenti autorizzati degli enti certificatori possono revocare uno degli attributi certificati che hanno assegnato precedentemente
 
