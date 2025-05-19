@@ -23,7 +23,7 @@ public class InteropTokenFactory extends SessionTokenFactory {
         super(interopClientConfigs, configFileReader, kmsClient);
     }
 
-    public synchronized Map<String, Map<String, String>> loadToken() {
+    public Map<String, Map<String, String>> loadToken() {
         getSessionTokenPayloadTemplate().put("aud", "{{ENVIRONMENT}}.interop.pagopa.it/ui");
         try {
             if (cachedTokens == null) cachedTokens = generateSessionToken();
