@@ -20,15 +20,21 @@ public class InteropTokenFactory extends SessionTokenFactory {
 
     public InteropTokenFactory(InteropClientConfigs interopClientConfigs, ConfigFileReader configFileReader) {
         super(interopClientConfigs, configFileReader);
-    }
-
-    public Map<String, Map<String, String>> loadToken() {
         getSessionTokenPayloadTemplate().put("aud", "{{ENVIRONMENT}}.interop.pagopa.it/ui");
         try {
             if (cachedTokens == null) cachedTokens = generateSessionToken();
         } catch (Exception ex) {
             throw new IllegalArgumentException("There was an error while creating the session token: " + ex.getMessage(), ex);
         }
+    }
+
+    public Map<String, Map<String, String>> loadToken() {
+//        getSessionTokenPayloadTemplate().put("aud", "{{ENVIRONMENT}}.interop.pagopa.it/ui");
+//        try {
+//            if (cachedTokens == null) cachedTokens = generateSessionToken();
+//        } catch (Exception ex) {
+//            throw new IllegalArgumentException("There was an error while creating the session token: " + ex.getMessage(), ex);
+//        }
         return cachedTokens;
     }
 
