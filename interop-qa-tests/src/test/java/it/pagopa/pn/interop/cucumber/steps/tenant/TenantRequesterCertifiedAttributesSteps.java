@@ -37,18 +37,21 @@ public class TenantRequesterCertifiedAttributesSteps {
 
     @When("l'utente richiede una operazione di listing degli attributi certificati assegnati")
     public void listCertiedAttributes() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getTenantsApi().getRequesterCertifiedAttributes(0, 50)
         );
-        int size = 50;
-        AtomicInteger offset = new AtomicInteger(0);
-        while (size == 50) {
-            httpCallExecutor.performCall(() -> clientTokenConfigurator.getTenantsApi().getRequesterCertifiedAttributes(offset.get(), 50));
-            commonUtils.assertValidResponse();
-            RequesterCertifiedAttributes requesterCertifiedAttributes = ((RequesterCertifiedAttributes) httpCallExecutor.getResponse());
-            results.addAll(requesterCertifiedAttributes.getResults());
-            size = requesterCertifiedAttributes.getResults().size();
-            offset.set(offset.get() + size);
+        if (httpCallExecutor.getClientResponse().is2xxSuccessful()) {
+            int size = 50;
+            AtomicInteger offset = new AtomicInteger(0);
+            while (size == 50) {
+                httpCallExecutor.performCall(() -> clientTokenConfigurator.getTenantsApi().getRequesterCertifiedAttributes(offset.get(), 50));
+                commonUtils.assertValidResponse();
+                RequesterCertifiedAttributes requesterCertifiedAttributes = ((RequesterCertifiedAttributes) httpCallExecutor.getResponse());
+                results.addAll(requesterCertifiedAttributes.getResults());
+                size = requesterCertifiedAttributes.getResults().size();
+                offset.set(offset.get() + size);
+            }
         }
     }
 
@@ -60,6 +63,13 @@ public class TenantRequesterCertifiedAttributesSteps {
                         .stream().anyMatch(attr -> attr.getAttributeId().equals(sharedStepsContext.getAttributeCommonContext().getAttributeId())
                         && attr.getTenantId().equals(tenantId)),
                 "L'attributo assegnato non è presente nella lista degli attributi certificati");
+    }
+
+    @When("l'utente richiede una operazione di listing senza paginazione degli attributi certificati assegnati")
+    public void requireCertifiedAttributeListingOperation() {
+        httpCallExecutor.performCall(
+                () -> clientTokenConfigurator.getTenantsApi().getRequesterCertifiedAttributes(0, 50)
+        );
     }
 
 }

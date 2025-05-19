@@ -80,9 +80,10 @@ public class AgreementActivateSteps {
     }
 
     @Given("{string} ha già creato un attributo verificato")
-    public void tenantHasAlreadyCreatedVerifiedAttribute(String tenantType) {
-        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+    public void tenantHasAlreadyCreatedVerifiedAttribute(String consumer) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(consumer, null));
         UUID attributeId = dataPreparationService.createAttribute(AttributeKind.VERIFIED, null);
+        sharedStepsContext.getAttributeCommonContext().setAttributeId(attributeId);
         sharedStepsContext.getAttributeCommonContext().getRequiredVerifiedAttributes().add(List.of(attributeId));
     }
 

@@ -41,6 +41,7 @@ public class TenantUpdateVerifiedExpirationDateSteps {
 
     @When("l'utente richiede l'aggiornamento di quell'attributo di {string} con una data di scadenza nel futuro")
     public void updateAttributeWithFutureExpirationDate(String tenantType) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         LocalDate date = LocalDate.now().plusDays(7);
         UUID tenantId = identityService.getOrganizationId(tenantType);
 
@@ -52,6 +53,7 @@ public class TenantUpdateVerifiedExpirationDateSteps {
 
     @When("l'utente richiede l'aggiornamento di quell'attributo di {string} rimuovendo la data di scadenza")
     public void updateAttributeWithoutPassingExpirationDate(String tenantType) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         UUID tenantId = identityService.getOrganizationId(tenantType);
 
         httpCallExecutor.performCall(
@@ -62,6 +64,7 @@ public class TenantUpdateVerifiedExpirationDateSteps {
 
     @When("l'utente richiede l'aggiornamento di quell'attributo di {string} con una data di scadenza nel passato")
     public void updateAttributeWithPastExpirationDate(String tenantType) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         LocalDate date = LocalDate.now().minusDays(7);
         UUID tenantId = identityService.getOrganizationId(tenantType);
 

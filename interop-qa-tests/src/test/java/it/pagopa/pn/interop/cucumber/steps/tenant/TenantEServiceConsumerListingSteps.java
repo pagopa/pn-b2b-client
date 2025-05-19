@@ -30,6 +30,7 @@ public class TenantEServiceConsumerListingSteps {
 
     @When("l'utente richiede una operazione di listing dei fruitori")
     public void requireConsumerListingOperation() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getTenantsApi().getConsumers(0, 20, null)
         );
@@ -47,6 +48,7 @@ public class TenantEServiceConsumerListingSteps {
 
     @When("l'utente richiede una operazione di listing dei fruitori con limit {int}")
     public void requireListingOperationWithLimit(int limit) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getTenantsApi().getConsumers(0, limit, null)
         );
@@ -61,6 +63,7 @@ public class TenantEServiceConsumerListingSteps {
 
     @When("l'utente richiede una operazione di listing dei fruitori con offset {int}")
     public void requireListingOperationWithOffset(int offset) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getTenantsApi().getConsumers(offset, 20, null)
         );
@@ -76,12 +79,13 @@ public class TenantEServiceConsumerListingSteps {
         CompactOrganizations compactOrganizations = (CompactOrganizations) sharedStepsContext.getHttpCallExecutor().getResponse();
 
         int totalCount = compactOrganizations.getPagination().getTotalCount();
-        Assertions.assertEquals(20, sharedStepsContext.getHttpCallExecutor().getClientResponse().value());
+        Assertions.assertEquals(200, sharedStepsContext.getHttpCallExecutor().getClientResponse().value());
         Assertions.assertEquals(totalCount - offset, compactOrganizations.getResults().size());
     }
 
     @When("l'utente richiede una operazione di listing dei fruitori filtrando per nome aderente {string}")
     public void requireConsumerOperationListingByKeyword(String consumerName) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getTenantsApi().getConsumers(0, 20, consumerName)
         );

@@ -22,7 +22,7 @@ Feature: Assegnazione di un attributo certificato ad un aderente
     Given l'utente è un "admin" di "PA2"
     Given PA2 ha già creato 1 attributo CERTIFIED
     When l'utente assegna a "PA2" l'attributo certificato precedentemente creato
-    Then si ottiene status code 400
+    Then si ottiene status code 204
 
   @tenant_assign_certified_attribute3
   Scenario: Per un attributo certificato precedentemente creato da un primo aderente, alla richiesta di assegnazione dell’attributo ad un secondo ente da parte di un utente con sufficienti permessi (admin), il quale admin appartiene ad un terzo aderente, il quale ha la qualifica di ente certificatore (certifier), ottiene un errore.

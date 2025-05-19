@@ -27,6 +27,7 @@ public class TenantEServiceProducerListingSteps {
 
     @When("l'utente richiede una operazione di listing degli erogatori")
     public void requireProducerListingOperation() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getTenantsApi().getProducers(0, 20, null)
         );
@@ -34,6 +35,7 @@ public class TenantEServiceProducerListingSteps {
 
     @When("l'utente richiede una operazione di listing degli erogatori con limit {int}")
     public void requireListingOperationWithLimit(int limit) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getTenantsApi().getProducers(0, limit, null)
         );
@@ -41,6 +43,7 @@ public class TenantEServiceProducerListingSteps {
 
     @When("l'utente richiede una operazione di listing degli erogatori con offset {int}")
     public void requireListingOperationWithOffset(int offset) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getTenantsApi().getProducers(offset, 20, null)
         );
@@ -49,6 +52,7 @@ public class TenantEServiceProducerListingSteps {
 
     @When("l'utente richiede una operazione di listing degli erogatori filtrando per nome aderente {string}")
     public void requireConsumerOperationListingByKeyword(String producerName) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getTenantsApi().getProducers(0, 20, producerName)
         );
@@ -63,7 +67,7 @@ public class TenantEServiceProducerListingSteps {
         CompactOrganizations compactOrganizations = (CompactOrganizations) sharedStepsContext.getHttpCallExecutor().getResponse();
 
         int totalCount = compactOrganizations.getPagination().getTotalCount();
-        Assertions.assertEquals(20, sharedStepsContext.getHttpCallExecutor().getClientResponse().value());
+        Assertions.assertEquals(200, sharedStepsContext.getHttpCallExecutor().getClientResponse().value());
         Assertions.assertEquals(totalCount - offset, compactOrganizations.getResults().size());
     }
 }

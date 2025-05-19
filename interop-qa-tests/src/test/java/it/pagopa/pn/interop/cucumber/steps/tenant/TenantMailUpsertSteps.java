@@ -14,6 +14,7 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import org.junit.jupiter.api.Assertions;
 
 import java.util.Optional;
+import java.util.Random;
 import java.util.UUID;
 
 public class TenantMailUpsertSteps {
@@ -36,7 +37,7 @@ public class TenantMailUpsertSteps {
 
     @Given("{string} ha già inserito una mail di contatto")
     public void addContactEmail(String tenantType) {
-        email = "test@pagopa.it";
+        email = String.format("%dtest@pagopa.it", new Random().nextInt());
         UUID tenantId = identityService.getOrganizationId(tenantType);
         httpCallExecutor.performCall(
                 () -> dataPreparationService.addEmailToTenant(tenantId, new MailSeed().address(email).description("test description"))
@@ -45,16 +46,19 @@ public class TenantMailUpsertSteps {
 
     @When("l'utente richiede una operazione di aggiunta di una mail di contatto con description")
     public void addContactEmailWithDescription() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         UUID tenantId = identityService.getOrganizationId(sharedStepsContext.getTenantType());
         httpCallExecutor.performCall(
-                () -> dataPreparationService.addEmailToTenant(tenantId,
-                        new MailSeed().kind(MailKind.CONTACT_EMAIL).address(String.format("%s@pagopa.it", sharedStepsContext.getTestSeed())).description("test description"))
+                () -> clientTokenConfigurator.getTenantsApi().addTenantMail(tenantId,
+                        new MailSeed().kind(MailKind.CONTACT_EMAIL).address(String.format("%s@pagopa.it", sharedStepsContext.getTestSeed())).description("test description")
+                )
         );
     }
 
     @When("l'utente richiede una operazione di aggiunta di una mail di contatto senza description")
     public void addContactEmailWithoutDescription() {
-        email = String.format("%s@pagopa.it", sharedStepsContext.getTestSeed());
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        email = String.format("%d%d@pagopa.it", sharedStepsContext.getTestSeed(), new Random().nextInt());
         UUID tenantId = identityService.getOrganizationId(sharedStepsContext.getTenantType());
         httpCallExecutor.performCall(
                 () -> dataPreparationService.addEmailToTenant(tenantId, new MailSeed().kind(MailKind.CONTACT_EMAIL).address(email))
@@ -68,9 +72,10 @@ public class TenantMailUpsertSteps {
 
     @When("l'utente richiede una operazione di aggiunta della stessa mail di contatto già inserita")
     public void addSameContactEmailAlreadyPresent() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         UUID tenantId = identityService.getOrganizationId(sharedStepsContext.getTenantType());
         httpCallExecutor.performCall(
-                () -> dataPreparationService.addEmailToTenant(tenantId, new MailSeed().kind(MailKind.CONTACT_EMAIL).address(email))
+                () -> clientTokenConfigurator.getTenantsApi().addTenantMail(tenantId, new MailSeed().kind(MailKind.CONTACT_EMAIL).address(email))
         );
     }
 
@@ -83,5 +88,10 @@ public class TenantMailUpsertSteps {
                 "Tenant with desired email address not found!"
         );
         Assertions.assertEquals(statusCode, httpCallExecutor.getClientResponse().value());
+    }
+
+    @Then("aspetta che si aggiorni il readmodel")
+    public void waitReadModelUpdate() throws InterruptedException {
+        Thread.sleep(3000);
     }
 }

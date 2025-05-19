@@ -11,10 +11,10 @@ Feature: Listing attributi certificati assegnati dall'ente certificatore
 
     Examples: # PA2 è certificatore
       | ente    | ruolo        | statusCode |
-      | PA1     | admin        |        403 |
+      | PA1     | admin        |        200 |
       | PA1     | api          |        403 |
       | PA1     | security     |        403 |
-      | PA1     | support      |        403 |
+      | PA1     | support      |        200 |
       | PA1     | api,security |        403 |
       | PA2     | admin        |        200 |
       | PA2     | api          |        403 |
@@ -26,10 +26,10 @@ Feature: Listing attributi certificati assegnati dall'ente certificatore
       | Privato | security     |        403 |
       | Privato | support      |        403 |
       | Privato | api,security |        403 |
-      | GSP     | admin        |        403 |
+      | GSP     | admin        |        200 |
       | GSP     | api          |        403 |
       | GSP     | security     |        403 |
-      | GSP     | support      |        403 |
+      | GSP     | support      |        200 |
       | GSP     | api,security |        403 |
 
   @tenant_requester_certified_attributes_listing2

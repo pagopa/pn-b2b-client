@@ -25,6 +25,7 @@ public class TenantDeclaredAttributesListingSteps {
 
     @When("l'utente richiede una operazione di listing degli attributi dichiarati posseduti da {string}")
     public void userRequiredListingOperationOwnBy(String tenantType) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         UUID tenantId = identityService.getOrganizationId(tenantType);
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getTenantsApi().getDeclaredAttributes(tenantId)

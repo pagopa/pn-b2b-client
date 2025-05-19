@@ -23,6 +23,7 @@ public class TenantAssignCertifiedAttributeSteps {
 
     @When("l'utente assegna a {string} l'attributo certificato precedentemente creato")
     public void assignCertifiedAttribute(String tenantType) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         UUID tenantId = identityService.getOrganizationId(tenantType);
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getTenantsApi().addCertifiedAttribute(

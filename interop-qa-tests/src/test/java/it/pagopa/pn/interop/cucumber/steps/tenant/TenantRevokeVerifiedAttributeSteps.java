@@ -38,6 +38,7 @@ public class TenantRevokeVerifiedAttributeSteps {
 
     @When("l'utente revoca l'attributo precedentemente verificato")
     public void revokeAttributePreviouslyCreated() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getTenantsApi().revokeVerifiedAttribute(
                         identityService.getOrganizationId(sharedStepsContext.getTenantType()),

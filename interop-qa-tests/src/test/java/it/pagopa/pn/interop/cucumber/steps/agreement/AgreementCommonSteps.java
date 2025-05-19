@@ -55,8 +55,8 @@ public class AgreementCommonSteps {
     }
 
     @Given("{string} ha una richiesta di fruizione in stato {string} per quell'e-service")
-    public void tenantAlreadyHasFruitionRequestWithState(String tenant, String agreementState) {
-        String token = identityService.getToken(tenant, null);
+    public void tenantAlreadyHasFruitionRequestWithState(String consumer, String agreementState) {
+        String token = identityService.getToken(consumer, null);
         tenantAlreadyHasFruitionRequestWithState(agreementState, token, null);
     }
 

@@ -22,6 +22,7 @@ public class TenantRevokeCertifiedAttributeSteps {
 
     @When("l'utente revoca l'attributo precedentemente creato e assegnato")
     public void revokeAttributePreviouslyCreated() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getTenantsApi().revokeCertifiedAttribute(
                         identityService.getOrganizationId(sharedStepsContext.getTenantType()),

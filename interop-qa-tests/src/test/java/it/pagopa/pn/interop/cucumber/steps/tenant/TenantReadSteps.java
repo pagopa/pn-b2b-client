@@ -20,6 +20,7 @@ public class TenantReadSteps {
 
     @When("l'utente richiede la lettura dell'aderente {string}")
     public void readConsumer(String tenantType) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         UUID tenantId = identityService.getOrganizationId(tenantType);
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getTenantsApi().getTenant(tenantId)

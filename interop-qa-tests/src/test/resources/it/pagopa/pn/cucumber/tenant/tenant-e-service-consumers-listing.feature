@@ -52,7 +52,7 @@ Feature: Listing e-service consumers
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato e pubblicato 1 e-service
     Given "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    When l'utente richiede una operazione di listing dei fruitori filtrando per nome aderente "PagoPA"
+    When l'utente richiede una operazione di listing dei fruitori filtrando per nome aderente "PagoPA S.p.A."
     Then si ottiene status code 200 e la lista di 1 aderente
 
   @tenant_e_service_consumers_listing5

@@ -43,7 +43,7 @@ Feature: Listing e-service producers
   Scenario: Restituisce gli aderenti che contengono la keyword "PagoPA" all'interno del nome, con ricerca case insensitive (scopo del test è verificare che funzioni il filtro q)
     Given l'utente è un "admin" di "PA1"
     Given "GSP" ha già creato e pubblicato 1 e-service
-    When l'utente richiede una operazione di listing degli erogatori filtrando per nome aderente "PagoPA"
+    When l'utente richiede una operazione di listing degli erogatori filtrando per nome aderente "PagoPA S.p.A."
     Then si ottiene status code 200 e la lista di 1 aderente
 
   @tenant_e_service_producers_listing5

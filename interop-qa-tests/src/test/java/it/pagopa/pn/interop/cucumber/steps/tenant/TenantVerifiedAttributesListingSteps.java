@@ -27,6 +27,7 @@ public class TenantVerifiedAttributesListingSteps {
 
     @When("l'utente richiede una operazione di listing degli attributi verificati posseduti da {string}")
     public void listVerifiedAttributeOwnBy(String tenantType) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         UUID tenantId = identityService.getOrganizationId(tenantType);
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getTenantsApi().getVerifiedAttributes(tenantId)
