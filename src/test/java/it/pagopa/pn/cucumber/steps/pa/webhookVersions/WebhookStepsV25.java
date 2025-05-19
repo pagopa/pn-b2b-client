@@ -20,6 +20,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @Data
 @Slf4j
 public class WebhookStepsV25 implements WebhookStepsInterface {
@@ -159,6 +161,18 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
     @Override
     public void verifySpecificEventNotInStream(String elementType) {
         Assertions.assertFalse(progressResponseElementList.stream().map(ProgressResponseElementV25::getElement).anyMatch(x -> x.getElementId().contains(elementType)));
+    }
+
+    @Override
+    public void checkConsumeStreamStatusValue(boolean isPresente, String status) {
+        assertThat(progressResponseElementList).as("La lista di progressResponseElement non dev'essere null").isNotNull();
+        assertThat(progressResponseElementList).as("La lista di progressResponseElement non dev'essere vuota").isNotEmpty();
+        progressResponseElement = progressResponseElementList.stream().filter(x -> x.getNewStatus().getValue().equals(status)).findFirst().orElse(null);
+        if (isPresente) {
+            assertThat(progressResponseElement).as("La lista di progressResponseElement dovrebbe contenere almeno un elemento con status " + status).isNotNull();
+        } else {
+            assertThat(progressResponseElement).as("La lista di progressResponseElement NON dovrebbe contenere nessun elemento con status " + status).isNull();
+        }
     }
 
     @Override
