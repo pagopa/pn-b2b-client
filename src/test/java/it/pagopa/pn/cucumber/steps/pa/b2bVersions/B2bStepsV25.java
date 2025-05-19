@@ -68,7 +68,7 @@ public class B2bStepsV25 implements B2bStepsInterface {
 
     @Override
     public Object getFullSentNotification() {
-        return b2bClient.getSentNotificationV26(sharedSteps.getNotificationIun());
+        return b2bClient.getSentNotificationV27(sharedSteps.getNotificationIun());
     }
 
     private FullSentNotificationV27 getFullSentNotificationVersioned() {
