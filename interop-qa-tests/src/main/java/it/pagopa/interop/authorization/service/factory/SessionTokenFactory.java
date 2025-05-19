@@ -298,7 +298,7 @@ public abstract class SessionTokenFactory {
                 .signingAlgorithm(CONFIG.get("kms").get("alg"))
                 .build();
 
-        SignResponse response = KmsClient.create().sign(signRequest);
+        SignResponse response = this.kmsClient.sign(signRequest);
         if (response == null) {
             throw new IllegalArgumentException("JWT Signature failed. Empty signature returned");
         }
@@ -321,7 +321,7 @@ public abstract class SessionTokenFactory {
                 .signature(signature.signature())
                 .build();
 
-        VerifyResponse response = KmsClient.create().verify(verifyRequest);
+        VerifyResponse response = this.kmsClient.verify(verifyRequest);
         if (isNotTrue(response.signatureValid())) {
             throw new IllegalArgumentException("JWT Verify Signature failed");
         }
