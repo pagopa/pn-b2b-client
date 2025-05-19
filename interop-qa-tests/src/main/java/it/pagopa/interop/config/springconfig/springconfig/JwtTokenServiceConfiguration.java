@@ -10,21 +10,36 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
+import software.amazon.awssdk.services.kms.KmsClient;
 
 @Configuration
 public class JwtTokenServiceConfiguration {
 
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
-    public TracingTokenFactory tracingTokenFactory(InteropClientConfigs interopClientConfigs, ConfigFileReader configFileReader) {
-        return new TracingTokenFactory(interopClientConfigs, configFileReader);
+    public KmsClient kmsClient() {
+        return KmsClient.create();
+    }
+
+    @Bean
+    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
+    public TracingTokenFactory tracingTokenFactory(
+        InteropClientConfigs interopClientConfigs,
+        ConfigFileReader configFileReader,
+        KmsClient kmsClient
+    ) {
+        return new TracingTokenFactory(interopClientConfigs, configFileReader, kmsClient);
     }
 
     @Bean
     @Primary
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
-    public InteropTokenFactory interopTokenFactory(InteropClientConfigs interopClientConfigs, ConfigFileReader configFileReader) {
-        return new InteropTokenFactory(interopClientConfigs, configFileReader);
+    public InteropTokenFactory interopTokenFactory(
+        InteropClientConfigs interopClientConfigs,
+        ConfigFileReader configFileReader,
+        KmsClient kmsClient
+    ) {
+        return new InteropTokenFactory(interopClientConfigs, configFileReader, kmsClient);
     }
 
     @Bean(name = "tracingIdentityService")

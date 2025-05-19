@@ -2,14 +2,11 @@ package it.pagopa.interop.authorization.service.factory;
 
 import it.pagopa.interop.authorization.service.utils.ConfigFileReader;
 import it.pagopa.interop.conf.InteropClientConfigs;
+import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
-import java.util.Map;
+import software.amazon.awssdk.services.kms.KmsClient;
 
 @Slf4j
 @Getter
@@ -18,8 +15,12 @@ public class InteropTokenFactory extends SessionTokenFactory {
     private static final String WELLKNOWN_URL = "https://qa.interop.pagopa.it/.well-known/jwks.json";
     private Map<String, Map<String, String>> cachedTokens = null;
 
-    public InteropTokenFactory(InteropClientConfigs interopClientConfigs, ConfigFileReader configFileReader) {
-        super(interopClientConfigs, configFileReader);
+    public InteropTokenFactory(
+        InteropClientConfigs interopClientConfigs,
+        ConfigFileReader configFileReader,
+        KmsClient kmsClient
+        ) {
+        super(interopClientConfigs, configFileReader, kmsClient);
     }
 
     public Map<String, Map<String, String>> loadToken() {
