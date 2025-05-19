@@ -92,7 +92,7 @@ public class RicezioneNotificheWebDelegheSteps {
         };
     }
 
-    private UserDto getUserDtoByuser(String user) {
+    private UserDto getUserDtoByUser(String user) {
         return switch (user.trim().toLowerCase()) {
             case "mario cucumber" ->
                     createUserDto(MARIO_CUCUMBER, "Mario", "Cucumber", MARIO_CUCUMBER_TAX_ID, null, true);
@@ -124,7 +124,7 @@ public class RicezioneNotificheWebDelegheSteps {
         setBearerToken(delegator);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         MandateDto mandate = (new MandateDto()
-                .delegator(getUserDtoByuser(delegator)))
+                .delegator(getUserDtoByUser(delegator)))
                 .delegate(userDtoCustom)
                 .verificationCode(verificationCode)
                 .datefrom(sdf.format(new Date()))
@@ -146,8 +146,8 @@ public class RicezioneNotificheWebDelegheSteps {
         setBearerToken(delegator);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         MandateDto mandate = new MandateDto()
-                .delegator(getUserDtoByuser(delegator))
-                .delegate(getUserDtoByuser(delegate))
+                .delegator(getUserDtoByUser(delegator))
+                .delegate(getUserDtoByUser(delegate))
                 .verificationCode(verificationCode)
                 .datefrom(sdf.format(new Date()))
                 .visibilityIds(new LinkedList<>())
@@ -167,8 +167,8 @@ public class RicezioneNotificheWebDelegheSteps {
         setBearerToken(delegator);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         MandateDto mandate = (new MandateDto()
-                .delegator(getUserDtoByuser(delegator)))
-                .delegate(getUserDtoByuser(delegate))
+                .delegator(getUserDtoByUser(delegator)))
+                .delegate(getUserDtoByUser(delegate))
                 .verificationCode(verificationCode)
                 .dateto(sdf.format(new Date()))
                 .visibilityIds(new LinkedList<>())
@@ -210,8 +210,8 @@ public class RicezioneNotificheWebDelegheSteps {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         MandateDto mandate = (new MandateDto()
-                .delegator(getUserDtoByuser(delegator))
-                .delegate(getUserDtoByuser(delegate))
+                .delegator(getUserDtoByUser(delegator))
+                .delegate(getUserDtoByUser(delegate))
                 .verificationCode(verificationCode)
                 .datefrom(sdf.format(new Date()))
                 .visibilityIds(List.of(organizationIdDto))
@@ -231,12 +231,12 @@ public class RicezioneNotificheWebDelegheSteps {
     @Given("{string} rifiuta se presente la delega ricevuta {string} da portale")
     public void userRejectMandateFromUI(String delegate, String delegator) {
         this.webMandateClient = context.getBean(PnWebMandateExternalClientImpl.class);
-        userRejectIfPresentMandateOfAnotheruser(delegate, delegator);
+        userRejectIfPresentMandateOfAnotherUser(delegate, delegator);
     }
 
 
     @Given("{string} rifiuta se presente la delega ricevuta {string}")
-    public void userRejectIfPresentMandateOfAnotheruser(String delegate, String delegator) {
+    public void userRejectIfPresentMandateOfAnotherUser(String delegate, String delegator) {
         setBearerToken(delegate);
         String delegatorTaxId = getTaxIdByUser(delegator);
 
@@ -309,7 +309,7 @@ public class RicezioneNotificheWebDelegheSteps {
     }
 
     @Then("come delegante {string} l'associazione a gruppi sulla delega di {string}")
-    public void removeGrups(String delegator, String delegate) {
+    public void removeGroups(String delegator, String delegate) {
         sharedSteps.selectUser(delegator);
 
         UpdateRequestDto updateRequestDto = new UpdateRequestDto();
@@ -513,7 +513,7 @@ public class RicezioneNotificheWebDelegheSteps {
     }
 
     @And("lato destinatario la notifica può essere correttamente recuperata da {string} e verifica presenza dell'evento di timeline {string}")
-    public void notificationCanBeCorrectlyReadFromBytimeline(String recipient, String timelineEventString) {
+    public void notificationCanBeCorrectlyReadFromTimeline(String recipient, String timelineEventString) {
         sharedSteps.selectUser(recipient);
         try {
             TimelineElementCategoryV27 timelineElementCategory = TimelineElementCategoryV27.valueOf(timelineEventString);
@@ -528,7 +528,7 @@ public class RicezioneNotificheWebDelegheSteps {
     }
 
     @And("lato destinatario {string} viene verificato che l'elemento di timeline NOTIFICATION_VIEWED non esista")
-    public void notificationCanBeCorrectlyReadFromBytimelineNotExist(String recipient) {
+    public void notificationCanBeCorrectlyReadFromTimelineNotExist(String recipient) {
         sharedSteps.selectUser(recipient);
 
         try {
@@ -717,8 +717,8 @@ public class RicezioneNotificheWebDelegheSteps {
         setBearerToken(data.get("delegator"));
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         MandateDto mandate = new MandateDto()
-                .delegator(getUserDtoByuser(data.get("delegator")))
-                .delegate(Optional.ofNullable(data.get("delegate")).map(this::getInvalidUserDto).orElse(getUserDtoByuser("mario gherkin")))
+                .delegator(getUserDtoByUser(data.get("delegator")))
+                .delegate(Optional.ofNullable(data.get("delegate")).map(this::getInvalidUserDto).orElse(getUserDtoByUser("mario gherkin")))
                 .verificationCode(verificationCode)
                 .datefrom(data.getOrDefault("dateFrom", sdf.format(new Date())))
                 .visibilityIds(new LinkedList<>())

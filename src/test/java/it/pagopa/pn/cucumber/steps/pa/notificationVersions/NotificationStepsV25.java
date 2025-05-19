@@ -1,7 +1,7 @@
 package it.pagopa.pn.cucumber.steps.pa.notificationVersions;
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
-import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV26;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV28;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.NotificationUtilsV25;
@@ -167,7 +167,7 @@ public class NotificationStepsV25 implements NotificationStepsInterface {
                 uploadNotification(null);
                 if (status.equalsIgnoreCase(NOTIFICATION_STATUS_ACCEPTED)) {
                     threadWait(wait);
-                    PnPollingResponseV26 pollingResponse = utils.waitForEvent(notificationResponse, pollingStrategy, NOTIFICATION_STATUS_ACCEPTED);
+                    PnPollingResponseV28 pollingResponse = utils.waitForEvent(notificationResponse, pollingStrategy, NOTIFICATION_STATUS_ACCEPTED);
                     threadWait(wait);
                     assertThat(pollingResponse.getNotification())
                             .as("La fullSentNotification della notifica appena creata non dev'essere null")
@@ -175,14 +175,14 @@ public class NotificationStepsV25 implements NotificationStepsInterface {
                 } else if (status.equalsIgnoreCase(NOTIFICATION_STATUS_REFUSED)) {
                     log.info("Request status for " + sharedSteps.getNotificationIun());
                     long startTime = System.currentTimeMillis();
-                    PnPollingResponseV26 pollingResponse = utils.waitForEvent(notificationResponse, pollingStrategy, NOTIFICATION_STATUS_REFUSED);
+                    PnPollingResponseV28 pollingResponse = utils.waitForEvent(notificationResponse, pollingStrategy, NOTIFICATION_STATUS_REFUSED);
                     long endTime = System.currentTimeMillis();
                     log.info("Execution time {}ms", (endTime - startTime));
                     StringBuilder error = new StringBuilder();
                     if (pollingResponse.getStatusResponse() != null
                             && pollingResponse.getStatusResponse().getErrors() != null
                             && !pollingResponse.getStatusResponse().getErrors().isEmpty()) {
-                        for (ProblemError err : pollingResponse.getStatusResponse().getErrors()) {
+                        for (NotificationRequestRefusedProblemError err : pollingResponse.getStatusResponse().getErrors()) {
                             error.append(" ").append(err.getDetail());
                         }
                     }
@@ -197,7 +197,7 @@ public class NotificationStepsV25 implements NotificationStepsInterface {
                     assertThat(response.getDetails()).as("I details della response della chiamata di cancellazione non devono essere null").isNotNull();
                     assertThat(response.getDetails()).as("I details della response della chiamata di cancellazione non devono essere vuoti").isNotEmpty();
                     assertThat(response.getDetails().get(0).getCode()).isEqualToIgnoringCase("NOTIFICATION_CANCELLATION_ACCEPTED");
-                    PnPollingResponseV26 pollingResponse = utils.waitForEvent(notificationResponse, pollingStrategy, NOTIFICATION_STATUS_REFUSED);
+                    PnPollingResponseV28 pollingResponse = utils.waitForEvent(notificationResponse, pollingStrategy, NOTIFICATION_STATUS_REFUSED);
                     threadWait(wait);
                     assertThat(pollingResponse.getResult())
                             .as("La notifica dovrebbe essere stata annullata prima di andare in REFUSED")
@@ -440,13 +440,13 @@ public class NotificationStepsV25 implements NotificationStepsInterface {
         }
 
         long startTime = System.currentTimeMillis();
-        PnPollingResponseV26 pollingResponse = utils.waitForEvent(notificationResponse, VALIDATION_STATUS, NOTIFICATION_STATUS_REFUSED);
+        PnPollingResponseV28 pollingResponse = utils.waitForEvent(notificationResponse, VALIDATION_STATUS, NOTIFICATION_STATUS_REFUSED);
         long endTime = System.currentTimeMillis();
         log.info("Execution time {}ms", (endTime - startTime));
 
         StringBuilder error = new StringBuilder();
         if (pollingResponse.getStatusResponse() != null && pollingResponse.getStatusResponse().getErrors() != null && !pollingResponse.getStatusResponse().getErrors().isEmpty()) {
-            for (ProblemError err : pollingResponse.getStatusResponse().getErrors()) {
+            for (NotificationRequestRefusedProblemError err : pollingResponse.getStatusResponse().getErrors()) {
                 error.append(" ").append(err.getDetail());
             }
         }

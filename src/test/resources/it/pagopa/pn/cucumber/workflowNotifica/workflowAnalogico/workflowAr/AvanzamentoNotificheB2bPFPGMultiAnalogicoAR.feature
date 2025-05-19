@@ -264,7 +264,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico AR
     And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 2
 
 
-  Scenario: [B2B_TIMELINE_MULTI_ANALOG_AR_13] Invio notifica multidestinatario ritardo analogicoe controllo notificationCost non settato PN-9488
+  Scenario: [B2B_TIMELINE_MULTI_ANALOG_AR_13] Invio notifica multidestinatario ritardo analogico e controllo notificationCost non settato PN-9488
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |

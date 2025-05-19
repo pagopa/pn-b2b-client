@@ -304,22 +304,28 @@ public enum TimelineEventId {
     PUBLIC_REGISTRY_VALIDATION_CALL("PUBLIC_REGISTRY_VALIDATION_CALL") {
         @Override
         public String buildEventId(EventId eventId) {
-            return new TimelineEventIdBuilder()
-                    .withCategory(this.getValue())
-                    .withIun(eventId.getIun())
-                    .withRecIndex(eventId.getRecIndex())
-                    .build();
+            StringBuilder sb = new StringBuilder("NATIONAL_REGISTRY_VALIDATION_CALL")
+                    .append(TimelineEventIdBuilder.DELIMITER)
+                    .append("IUN_")
+                    .append(eventId.getIun());
+            return sb.toString();
         }
     },
 
+    //TODO VAS
     PUBLIC_REGISTRY_VALIDATION_RESPONSE("PUBLIC_REGISTRY_VALIDATION_RESPONSE") {
         @Override
         public String buildEventId(EventId eventId) {
-            return new TimelineEventIdBuilder()
-                    .withCategory(this.getValue())
-                    .withIun(eventId.getIun())
-                    .withRecIndex(eventId.getRecIndex())
-                    .build();
+            StringBuilder sb = new StringBuilder("NATIONAL_REGISTRY_VALIDATION_RESPONSE")
+                    .append(TimelineEventIdBuilder.DELIMITER)
+                    .append("RECINDEX_")
+                    .append(eventId.getRecIndex())
+                    .append(TimelineEventIdBuilder.DELIMITER)
+                    .append("CORRELATIONID_NATIONAL_REGISTRY_VALIDATION_CALL")
+                    .append(TimelineEventIdBuilder.DELIMITER)
+                    .append("IUN_")
+                    .append(eventId.getIun());
+            return sb.toString();
         }
     };
 

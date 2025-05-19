@@ -39,6 +39,8 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
@@ -56,6 +58,7 @@ import java.util.List;
 import java.util.Map;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @Data
 @Slf4j
@@ -349,6 +352,54 @@ public abstract class B2bUtils {
      */
     public static String getProfileInUse(ApplicationContext context) {
         return context.getEnvironment().getActiveProfiles()[0];
+    }
+
+    public static String getTimelineElementCategoryForVas(String timelineEventCategory) {
+        return switch (timelineEventCategory) {
+            case PUBLIC_REGISTRY_VALIDATION_CALL_REFUSED -> PUBLIC_REGISTRY_VALIDATION_CALL;
+            case PUBLIC_REGISTRY_VALIDATION_RESPONSE_REFUSED -> PUBLIC_REGISTRY_VALIDATION_RESPONSE;
+            default -> timelineEventCategory;
+        };
+    }
+
+    /**
+     * Confronta due oggetti qualsiasi, valutando l'uguaglianza solo per i field specificati nell'expected
+     * (NOTA: eventuali campi statici sono esclusi da questa verifica)
+     */
+    public static void compareActualAndExpected(String error, Object actual, Object expected) {
+        if (expected == null) {
+            assertThat(actual).as(error + actual + " dovrebbe essere null").isNull();
+            return;
+        }
+        Class<?> clazz = expected.getClass();
+        assertThat(actual).as(error + clazz.getName() + " non dev'essere null").isNotNull();
+        List<Field> nonStaticFields = Arrays.stream(clazz.getDeclaredFields()).filter(field -> !Modifier.isStatic(field.getModifiers())).toList();
+        try {
+            for (Field expectedField : nonStaticFields) {
+                String fieldName = expectedField.getName();
+                expectedField.setAccessible(true);
+                Object expectedValue = expectedField.get(expected);
+                try {
+                    Field actualField = clazz.getDeclaredField(fieldName);
+                    actualField.setAccessible(true);
+                    Object actualValue = actualField.get(actual);
+                    if (expectedValue != null) {
+                        assertThat(actualValue).as(error + fieldName + " non dev'essere null").isNotNull();
+                        assertThat(actualValue).as(error + fieldName + " non coincide col valore atteso").isEqualTo(expectedValue);
+                    } else {
+                        assertThat(actualValue).as(error + fieldName + " dovrebbe essere null").isNull();
+                    }
+                } catch (NoSuchFieldException e) {
+                    assertThat(true)
+                            .as("Eccezione imprevista in fase di controllo uguaglianza del campo " + fieldName + " tramite reflection " + e.getMessage())
+                            .isFalse();
+                }
+            }
+        } catch (IllegalAccessException e) {
+            assertThat(true)
+                    .as("Eccezione imprevista in fase di controllo uguaglianza tramite reflection " + e.getMessage())
+                    .isFalse();
+        }
     }
 
     /**

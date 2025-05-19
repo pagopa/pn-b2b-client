@@ -55,6 +55,7 @@ import java.io.IOException;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -239,7 +240,7 @@ public class SharedSteps {
 
     /**
      * Restituisce lo FullSentNotification aggiornata all'ultima versione (quella maggiormente utilizzata a codice)
-     * ma a differenza del metodo sopra anzichè usare il notificationIun di SharedSteps usa uno IUN arbitrario.
+     * ma a differenza del metodo sopra anziché usare il notificationIun di SharedSteps usa uno IUN arbitrario.
      * Usato in un solo punto del codice
      */
     //TODO: all'introduzione di una nuova versione, ri-fattorizzare il tipo di oggetto ritornato e cambiare i punti di codice che richiamano questo metodo
@@ -274,8 +275,22 @@ public class SharedSteps {
      */
     @Given("imposto lo iun di SharedSteps a {string} e la pa a {paName}")
     public void impostoIunAndPaForTestPurposes(String iun, String paName) {
-        this.notificationIun = iun;
+        notificationIun = iun;
         setPA(paName);
+        /*Imposta la data di creazione a cinque giorni fa (sufficienti per testare) e crea una notification request con un destinatario
+        e crea una request con destinatario Mario Cucumber (questi passaggi servono per poter recuperare anche le notifiche andate in REFUSED) */
+        notificationCreationDate = OffsetDateTime.now(ZoneOffset.UTC).minusDays(5);
+        getNotificationStepInterface().prepareNotificationRequest(Map.of(
+                "subject", "MOCKED NOTIFICATION",
+                "senderDenomination", "Comune di Palermo"));
+        getNotificationStepInterface().addRecipientToNotification(Destinatario.DESTINATARIO_MARIO_CUCUMBER, new HashMap<>());
+
+        //TODO VAS ESPERIMENTO
+//        String environment = this.getContext().getEnvironment().getActiveProfiles()[0];
+//        String calculationModeProperty = calculationMode(MODE_CALCULATED + ":" + MODE_UNIFORM);
+//        String value = this.getContext().getEnvironment().getProperty(calculationModeProperty + "." + environment);
+//        Long cost = Long.parseLong(value);
+//        System.out.println("Il costo è " + cost);
     }
 
     /**
@@ -767,8 +782,8 @@ public class SharedSteps {
         Assertions.assertTrue(expectedErrorCode.equalsIgnoreCase(errorCode));
     }
 
-    /* 8 vecchi metodi sono stati unificati in questo (alcuni di questi non vengono nemmeno mai richiamati da nessun file feature).
-      E' stato refattorizzato tutto quanto, in modo che possa runnare con qualsiasi versione
+    /* Sono stati unificati 8 vecchi metodi in questo (alcuni di questi non vengono nemmeno mai richiamati da nessun file feature).
+      È stato refattorizzato tutto quanto, in modo che possa runnare con qualsiasi versione
       (dalla 21 in su, in quanto i metadati non sono presenti in versioni precedenti)
      */
     private void sendNotificationRefusedDueToError(String errorType) {

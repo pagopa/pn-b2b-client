@@ -162,7 +162,9 @@ public class DataTestV25 extends AbstractDataTest {
                     }
                     //ignorare Sonar che dice che questa condizione è sempre true (in quanto il campo è annotato con @NotNull), non è vero
                     if (expected.getPhysicalAddress() != null) {
-                        assertThat(actual.getPhysicalAddress()).as(error + EQUALITY_PHYSICAL_ADDRESS).isEqualTo(expected.getPhysicalAddress());
+                        //TODO MATTEO TEST
+                        B2bUtils.compareActualAndExpected(error + EQUALITY_PHYSICAL_ADDRESS, actual, expected);
+//                        assertThat(actual.getPhysicalAddress()).as(error + EQUALITY_PHYSICAL_ADDRESS).isEqualTo(expected.getPhysicalAddress());
                     }
                     //ignorare Sonar che dice che questa condizione è sempre true (in quanto il campo è annotato con @NotNull), non è vero
                     if (expected.getResponseStatus() != null && expected.getResponseStatus().getValue() != null) {
@@ -259,18 +261,6 @@ public class DataTestV25 extends AbstractDataTest {
                 }
             }
             //TODO VAS
-            case PUBLIC_REGISTRY_VALIDATION_RESPONSE -> {
-                if (expected != null) {
-                    assertThat(actual.getRecIndex()).as(error + EQUALITY_REC_INDEX).isEqualTo(expected.getRecIndex());
-                    assertThat(actual.getPhysicalAddress()).as(error + EQUALITY_PHYSICAL_ADDRESS).isNotNull();
-                    assertThat(actual.getPhysicalAddress().getMunicipality()).as(error + EQUALITY_MUNICIPALITY).isEqualTo(expected.getPhysicalAddress().getMunicipality());
-                    assertThat(actual.getPhysicalAddress().getAddress()).as(error + EQUALITY_ADDRESS).isEqualTo(expected.getPhysicalAddress().getAddress());
-                    assertThat(actual.getPhysicalAddress().getZip()).as(error + EQUALITY_ZIP_CODE).isEqualTo(expected.getPhysicalAddress().getZip());
-                    //TODO VAS: valutare se fare il confronto di uguaglianza anche con altri campi del physicalAddress
-                    assertThat(actual.getRegistry()).as(error + EQUALITY_REGISTRY).isEqualTo(expected.getRegistry());
-//                    assertThat(actual.getResponseStatus()).as("TODO VAS").isEqualTo(expected.getResponseStatus());
-                }
-            }
             case PUBLIC_REGISTRY_VALIDATION_CALL -> {
                 if (expected != null) {
                     Assertions.assertEquals(actual.getRecIndex(), expected.getRecIndex());
@@ -281,7 +271,14 @@ public class DataTestV25 extends AbstractDataTest {
                        Assertions.assertEquals(actual.getUtilityList().get(i), expected.getUtilityList().get(i));*/
                 }
             }
-
+            case PUBLIC_REGISTRY_VALIDATION_RESPONSE -> {
+                if (expected != null) {
+                    assertThat(actual.getRecIndex()).as(error + EQUALITY_REC_INDEX).isEqualTo(expected.getRecIndex());
+                    B2bUtils.compareActualAndExpected(error + EQUALITY_PHYSICAL_ADDRESS, actual.getPhysicalAddress(), expected.getPhysicalAddress());
+                    assertThat(actual.getRegistry()).as(error + EQUALITY_REGISTRY).isEqualTo(expected.getRegistry());
+//                    assertThat(actual.getResponseStatus()).as("TODO VAS").isEqualTo(expected.getResponseStatus());
+                }
+            }
             default -> throw new IllegalArgumentException(INVALID_TIMELINE_CATEGORY + timelineEventCategory);
         }
     }
@@ -289,7 +286,6 @@ public class DataTestV25 extends AbstractDataTest {
     public String getTimelineEventId(String timelineEventCategory, String iun) {
         EventId event = getEventId(iun, this);
         return B2bUtils.getTimelineEventId(event, timelineEventCategory);
-
     }
 
     private static EventId getEventId(String iun, DataTestV25 dataFromTest) {

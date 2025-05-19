@@ -35,6 +35,7 @@ import java.util.*;
 import java.util.stream.IntStream;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.ParameterTypes.calculationMode;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.PollingType.STATUS;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.PollingType.TIMELINE;
 import static java.time.OffsetDateTime.now;
@@ -107,7 +108,7 @@ public class B2bStepsV25 implements B2bStepsInterface {
 
     @Override
     public void readEventsUpToTimelineElement(String timelineEventCategory) {
-        verifyTestCompatibilityWithVersion(timelineEventCategory, true);
+        verifyTestCompatibilityWithVersion(B2bUtils.getTimelineElementCategoryForVas(timelineEventCategory), true);
         WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder().build();
         waitForEventOrStatus(TIMELINE_SLOW, TIMELINE, timelineEventCategory, filters);
         checkIfTimelineElementExists(true, null, null);
@@ -132,8 +133,22 @@ public class B2bStepsV25 implements B2bStepsInterface {
             //ignorare Sonar che dice che il risultato di questo assetNull fallirà sempre in quanto il campo è annotato con @NotNull (non è vero)
             Assertions.assertNull(notificationCost);
         } else {
+            //TODO VAS
+            if (cost.toUpperCase().contains(MODE_CALCULATED)) {
+                String mode = cost.toUpperCase().split(":")[1];
+                cost = checkNotificationCostVas(mode);
+            }
             Assertions.assertEquals(Long.parseLong(cost), notificationCost);
         }
+    }
+
+    //TODO VAS
+    private String checkNotificationCostVas(String mode) {
+        String environment = sharedSteps.getContext().getEnvironment().getActiveProfiles()[0];
+        String calculationModeProperty = calculationMode(mode);
+        String value = sharedSteps.getContext().getEnvironment().getProperty(calculationModeProperty + "." + environment);
+        Long cost = Long.parseLong(value);
+        return cost.toString();
     }
 
     @Override
@@ -307,8 +322,9 @@ public class B2bStepsV25 implements B2bStepsInterface {
 
     @Override
     public void waitForEventOrStatus(String pollingStrategy, PollingType pollingType, String timelineEventCategory, WaitForEventPredicateFilters filters) {
-        if (timelineEventCategory.equals(REQUEST_REFUSED)) {
+        if (CATEGORY_LOADED_FROM_DELIVERY_PUSH.contains(timelineEventCategory)) {
             //GESTIONE LOAD TIMELINE E RECUPERO NOTIFICA CON CLIENT DI DELIVERY PUSH
+            timelineEventCategory = B2bUtils.getTimelineElementCategoryForVas(timelineEventCategory);
             loadTimelineByDeliveryPush(timelineEventCategory, DataTestV25.convertMap(new HashMap<>()), true);
         } else {
             //FLUSSO NORMALE, CON CARICAMENTO DELLA TIMELINE DA B2B
@@ -338,7 +354,7 @@ public class B2bStepsV25 implements B2bStepsInterface {
         if (mustLoadTimeline) {
             loadTimeline(timelineEventCategory, false, dataTest);
         }
-        getTimelineElementsByEventId(timelineEventCategory, dataTest);
+        getTimelineElementsByEventId(B2bUtils.getTimelineElementCategoryForVas(timelineEventCategory), dataTest);
         log.info("TIMELINE_ELEMENT: " + timelineElement);
         try {
             assertThat(timelineElement)
@@ -394,9 +410,14 @@ public class B2bStepsV25 implements B2bStepsInterface {
 
     @Override
     public void checkIfTimelineElementExistsFromData(String timelineEventCategory, Map<String, String> dataMap) {
-        verifyTestCompatibilityWithVersion(timelineEventCategory, true);
+        verifyTestCompatibilityWithVersion(B2bUtils.getTimelineElementCategoryForVas(timelineEventCategory), true);
         try {
             DataTestV25 dataTest = DataTestV25.convertMap(dataMap);
+            //TODO VAS ESPERIMENTO
+//            DataTestV25 d2 = DataTestV25.convertMap(dataMap);
+//            dataTest.getTimelineElement().getDetails().getPhysicalAddress().setMunicipalityDetails("MATTEO TEST WILL FAIL");
+//            B2bUtils.compareActualAndExpected("TEST: ", dataTest.getTimelineElement().getDetails().getPhysicalAddress(), d2.getTimelineElement().getDetails().getPhysicalAddress());
+            //
             boolean mustLoadTimeline = dataTest != null && dataTest.isLoadTimeline();
             if (mustLoadTimeline) {
                 loadTimeline(timelineEventCategory, true, dataTest);
@@ -444,8 +465,9 @@ public class B2bStepsV25 implements B2bStepsInterface {
     }
 
     private void loadTimeline(String timelineEventCategory, boolean existCheck, DataTestV25 dataTest) {
-        if (timelineEventCategory.equals(REQUEST_REFUSED)) {
+        if (CATEGORY_LOADED_FROM_DELIVERY_PUSH.contains(timelineEventCategory)) {
             //GESTIONE LOAD TIMELINE E RECUPERO NOTIFICA CON CLIENT DI DELIVERY PUSH
+            timelineEventCategory = B2bUtils.getTimelineElementCategoryForVas(timelineEventCategory);
             loadTimelineByDeliveryPush(timelineEventCategory, dataTest, existCheck);
         } else {
             //FLUSSO NORMALE, CON CARICAMENTO DELLA TIMELINE DA B2B
@@ -889,7 +911,7 @@ public class B2bStepsV25 implements B2bStepsInterface {
         if (filters.getStatusHistory() != null) {
             pnPollingPredicate.setNotificationStatusHistoryElementPredicateV26(statusHistory -> statusHistory.getStatus().getValue().equals(filters.getStatusHistory()));
         }
-        pnPollingPredicate.setTimelineElementPredicateV26(timelineElement ->
+        pnPollingPredicate.setTimelineElementPredicateV27(timelineElement ->
                 timelineElement.getCategory() != null
                         && (timelineEventCategory == null || Objects.requireNonNull(timelineElement.getCategory().getValue()).equals(timelineEventCategory))
                         && (filters.getRecipientIndex() == null || Objects.requireNonNull(Objects.requireNonNull(timelineElement.getDetails()).getRecIndex()).equals(filters.getRecipientIndex()))

@@ -7,6 +7,7 @@ import org.springframework.boot.convert.DurationStyle;
 import org.springframework.context.annotation.Scope;
 
 import java.time.Duration;
+import java.util.List;
 
 @Getter
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -113,6 +114,10 @@ public class Costanti {
     public static final String PREPARE_ANALOG_DOMICILE_FAILURE = "PREPARE_ANALOG_DOMICILE_FAILURE";
     public static final String PUBLIC_REGISTRY_VALIDATION_CALL = "PUBLIC_REGISTRY_VALIDATION_CALL";
     public static final String PUBLIC_REGISTRY_VALIDATION_RESPONSE = "PUBLIC_REGISTRY_VALIDATION_RESPONSE";
+    public static final String PUBLIC_REGISTRY_VALIDATION_CALL_REFUSED = "PUBLIC_REGISTRY_VALIDATION_CALL_REFUSED";
+    public static final String PUBLIC_REGISTRY_VALIDATION_RESPONSE_REFUSED = "PUBLIC_REGISTRY_VALIDATION_RESPONSE_REFUSED";
+    //TimelineElementCategory che devono essere caricati da deliveryPush (TODO VAS ESPERIMENTO)
+    public static final List<String> CATEGORY_LOADED_FROM_DELIVERY_PUSH = List.of(REQUEST_REFUSED, PUBLIC_REGISTRY_VALIDATION_CALL_REFUSED, PUBLIC_REGISTRY_VALIDATION_RESPONSE_REFUSED);
     //TimelineEquality errors
     public static final String EQUALITY_DIGITAL_ADDRESS = "digitalAddress";
     public static final String EQUALITY_REC_INDEX = "recIndex";
@@ -213,6 +218,13 @@ public class Costanti {
     public static final String PEC = "PEC";
     // Regex
     public static final String PHYSICAL_ADDRESS_REGEX = "^[A-Z0-9_.\\-:;@' \\[\\] ]*$";
+    // Properties
+    //TODO VAS ESPERIMENTO
+    public static final String MODE_CALCULATED = "CALCOLATO";
+    public static final String MODE_UNIFORM = "UNIFORM";
+    public static final String MODE_RECIPIENT_BASED = "RECIPIENT_BASED";
+    public static final String TECHNICAL_REFUSAL_COST_MODE_UNIFORM = "pn.technical_refusal_cost_mode.uniform";
+    public static final String TECHNICAL_REFUSAL_COST_MODE_RECIPIENT_BASED = "pn.technical_refusal_cost_mode.recipient_based";
     // Versioni
     public static final String MOST_RECENT = "più recente";
 
