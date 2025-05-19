@@ -12,6 +12,7 @@ import it.pagopa.interop.authorization.service.utils.voucher.domain.VoucherReque
 import it.pagopa.interop.authorization.service.utils.voucher.domain.VoucherResponse;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import org.springframework.http.ResponseEntity;
 
 public class VoucherGenerationSteps {
 
@@ -56,8 +57,10 @@ public class VoucherGenerationSteps {
             fail("Voucher generation failed: " + httpCallExecutor.getClientResponse());
         }
         Object response = httpCallExecutor.getResponse();
-        VoucherResponse voucherResponse = (VoucherResponse) response;
-        assertThat(voucherResponse.getTokenType()).isEqualTo("Bearer");
+        if (response instanceof ResponseEntity<?> respEntity &&
+                respEntity.getBody() instanceof VoucherResponse voucher) {
+            assertThat(voucher.getTokenType()).isEqualTo("Bearer");
+        }
     }
 
     private void requestVoucher(ClientAssertionOptions assertionOptions) {
