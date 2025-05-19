@@ -164,6 +164,11 @@ public class AvanzamentoNotificheB2bSteps {
         readEventsUpToTimelineElement(sharedSteps.getVersionUsed(), timelineEventCategory);
     }
 
+    @Then("vengono letti gli eventi da delivery push fino all'elemento di timeline della notifica {string}")
+    public void readEventUpToTimelineElementFromDeliveryPush(String timelineEventCategory) {
+        getB2bStepsInterface().readEventsUpToTimelineElementFromDeliveryPush(timelineEventCategory, null, true);
+    }
+
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} con la versione {string}")
     public void readEventUpToTimelineElementWithVersion(String timelineEventCategory, String version) {
         readEventsUpToTimelineElement(sharedSteps.getNotificationVersion(version), timelineEventCategory);

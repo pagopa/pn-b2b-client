@@ -5,6 +5,7 @@ import it.pagopa.pn.cucumber.steps.utilitySteps.PollingType;
 import it.pagopa.pn.cucumber.steps.utilitySteps.WaitForEventPredicateFilters;
 import it.pagopa.pn.cucumber.steps.utilitySteps.checkTimelineElement.TimelineElementCheck;
 import it.pagopa.pn.cucumber.steps.utilitySteps.checkTimelineElement.TimelineElementCheckFilters;
+import it.pagopa.pn.cucumber.utils.datatestVersions.AbstractDataTest;
 
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
@@ -23,7 +24,15 @@ public interface B2bStepsInterface {
 
     void checkFullSentNotificationWithVersion(boolean isPresent, String timelineEventCategory);
 
+    /**
+     * Per notifiche andate in ACCEPTED usare questo metodo (lettura timeline da b2b)
+     */
     void readEventsUpToTimelineElement(String timelineEventCategory);
+
+    /**
+     * Per notifiche andate in REFUSED usare questo metodo (lettura timeline da delivery-push)
+     */
+    void readEventsUpToTimelineElementFromDeliveryPush(String timelineEventCategory, AbstractDataTest dataTest, boolean existCheck);
 
     void readEventsUpToStatus(String status, boolean exists);
 
