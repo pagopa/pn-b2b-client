@@ -36,6 +36,7 @@ public class DataTestV20 extends AbstractDataTest {
         String numCheck = getValue(data, NUM_CHECK.key);
         String pollingType = getValue(data, POLLING_TYPE.key);
         String loadTimeline = getValue(data, LOAD_TIMELINE.key);
+        String loadTimelineFrom = getValue(data, LOAD_TIMELINE_FROM.key);
 
         if (data.size() == 1 && data.get("NULL") != null) {
             return null;
@@ -75,6 +76,7 @@ public class DataTestV20 extends AbstractDataTest {
             dataTest.setPollingType(pollingType);
             dataTest.setNumCheck(numCheck != null ? Integer.parseInt(numCheck) : null);
             dataTest.setLoadTimeline(loadTimeline != null ? Boolean.valueOf(loadTimeline) : null);
+            dataTest.setLoadTimelineFrom(loadTimelineFrom);
 
             return dataTest;
         } catch (JsonProcessingException jsonProcessingException) {

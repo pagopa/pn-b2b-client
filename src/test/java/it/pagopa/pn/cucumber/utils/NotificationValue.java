@@ -90,6 +90,7 @@ public enum NotificationValue {
     DETAILS_ANALOG_COST("details_analogCost", null, false),
     DETAILS_DELEGATE_INFO("details_delegateInfo", null, false),
     PAGOPAINTMODE("pagoPaIntMode", "NONE", false),
+    LOAD_TIMELINE_FROM("loadTimelineFrom", "fromB2b", false),
     REGISTRY("registry", null, false);
 
     private static final String NULL_VALUE = "NULL";

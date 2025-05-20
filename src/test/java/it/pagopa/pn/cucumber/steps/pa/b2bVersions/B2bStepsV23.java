@@ -494,7 +494,7 @@ public class B2bStepsV23 implements B2bStepsInterface {
     }
 
     private void loadTimeline(String timelineEventCategory, boolean existCheck, DataTestV23 dataTest) {
-        if (timelineEventCategory.equals(REQUEST_REFUSED)) {
+        if (timelineEventCategory.equals(REQUEST_REFUSED) || dataTest.getLoadTimelineFrom().equals(LOAD_FROM_DELIVERY_PUSH)) {
             //GESTIONE LOAD TIMELINE E RECUPERO NOTIFICA CON CLIENT DI DELIVERY PUSH
             readEventsUpToTimelineElementFromDeliveryPush(timelineEventCategory, dataTest, existCheck);
         } else {

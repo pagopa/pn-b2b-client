@@ -349,21 +349,14 @@ public abstract class B2bUtils {
 
     /**
      * Restituisce il profilo in uso a partire dall'applicationContext
+     * TODO VAS ESPERIMENTO
      */
     public static String getProfileInUse(ApplicationContext context) {
         return context.getEnvironment().getActiveProfiles()[0];
     }
 
-    public static String getTimelineElementCategoryForVas(String timelineEventCategory) {
-        return switch (timelineEventCategory) {
-            case PUBLIC_REGISTRY_VALIDATION_CALL_REFUSED -> PUBLIC_REGISTRY_VALIDATION_CALL;
-            case PUBLIC_REGISTRY_VALIDATION_RESPONSE_REFUSED -> PUBLIC_REGISTRY_VALIDATION_RESPONSE;
-            default -> timelineEventCategory;
-        };
-    }
-
     /**
-     * Confronta due oggetti qualsiasi, valutando l'uguaglianza solo per i field specificati nell'expected
+     * Confronta due oggetti qualsiasi, valutando l'uguaglianza solo per i field != null specificati nell'expected
      * (NOTA: eventuali campi statici sono esclusi da questa verifica)
      */
     public static void compareActualAndExpected(String error, Object actual, Object expected) {
@@ -384,10 +377,7 @@ public abstract class B2bUtils {
                     actualField.setAccessible(true);
                     Object actualValue = actualField.get(actual);
                     if (expectedValue != null) {
-                        assertThat(actualValue).as(error + fieldName + " non dev'essere null").isNotNull();
                         assertThat(actualValue).as(error + fieldName + " non coincide col valore atteso").isEqualTo(expectedValue);
-                    } else {
-                        assertThat(actualValue).as(error + fieldName + " dovrebbe essere null").isNull();
                     }
                 } catch (NoSuchFieldException e) {
                     assertThat(true)

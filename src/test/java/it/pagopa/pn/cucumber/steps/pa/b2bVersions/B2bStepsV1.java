@@ -487,7 +487,7 @@ public class B2bStepsV1 implements B2bStepsInterface {
     }
 
     private void loadTimeline(String timelineEventCategory, boolean existCheck, DataTestV1 dataTest) {
-        if (timelineEventCategory.equals(REQUEST_REFUSED)) {
+        if (timelineEventCategory.equals(REQUEST_REFUSED) || dataTest.getLoadTimelineFrom().equals(LOAD_FROM_DELIVERY_PUSH)) {
             //GESTIONE LOAD TIMELINE E RECUPERO NOTIFICA CON CLIENT DI DELIVERY PUSH
             readEventsUpToTimelineElementFromDeliveryPush(timelineEventCategory, dataTest, existCheck);
         } else {
@@ -901,7 +901,7 @@ public class B2bStepsV1 implements B2bStepsInterface {
                         && (filters.getResponseStatus() == null || Objects.requireNonNull(Objects.requireNonNull(timelineElement.getDetails()).getResponseStatus().getValue()).equals(filters.getResponseStatus()))
                         && (!filters.isF24() || Objects.requireNonNull(timelineElement.getDetails()).getIdF24() != null)
                         && (!filters.isLegalFactEmpty() || Objects.nonNull(timelineElement.getLegalFactsIds()) && !timelineElement.getLegalFactsIds().isEmpty())
-                        && (filters.getLegalFactIdCategory() == null || Objects.requireNonNull(Objects.requireNonNull(timelineElement.getLegalFactsIds()).get(0)).getCategory().equals(filters.getLegalFactIdCategory()))
+                        && (filters.getLegalFactIdCategory() == null || Objects.requireNonNull(Objects.requireNonNull(timelineElement.getLegalFactsIds()).get(0)).getCategory().getValue().equals(filters.getLegalFactIdCategory()))
                         && (!filters.isAttachmentEmpty() || Objects.nonNull(Objects.requireNonNull(timelineElement.getDetails()).getAttachments()) && !timelineElement.getDetails().getAttachments().isEmpty())
                         && (filters.getLegalFactIdCategory() == null || filters.getFailureCauses().contains(Objects.requireNonNull(Objects.requireNonNull(timelineElement.getDetails()).getDeliveryFailureCause())))
         );
@@ -1010,29 +1010,33 @@ public class B2bStepsV1 implements B2bStepsInterface {
         TimelineElement timelineElementForDateCalculation = getTimelineElementsByEventId(timelineElementForDateCalculationCategory, dataTest)
                 .stream().findAny().orElse(null);
         assertThat(timelineElementForDateCalculation)
-                .as(new StringBuilder("L'elemento di timeline ")
-                        .append(timelineElementForDateCalculationCategory)
-                        .append(" da cui viene calcolato il perfezionamento in caso di ")
-                        .append(timelineEventCategory)
-                        .append(" non può essere null")
-                        .toString())
+                .as("L'elemento di timeline " +
+                        timelineElementForDateCalculationCategory +
+                        " da cui viene calcolato il perfezionamento in caso di " +
+                        timelineEventCategory +
+                        " non può essere null")
                 .isNotNull();
 
         OffsetDateTime notificationDate = null;
         Duration schedulingDaysRefinement = null;
 
-        if (timelineEventCategory.equals(DIGITAL_SUCCESS_WORKFLOW)) {
-            notificationDate = timelineElementForDateCalculation.getDetails().getNotificationDate();
-            schedulingDaysRefinement = sharedSteps.getSchedulingDaysSuccessDigitalRefinement();
-        } else if (timelineEventCategory.equals(DIGITAL_FAILURE_WORKFLOW)) {
-            notificationDate = timelineElementForDateCalculation.getTimestamp();
-            schedulingDaysRefinement = sharedSteps.getSchedulingDaysFailureDigitalRefinement();
-        } else if (timelineEventCategory.equals(ANALOG_SUCCESS_WORKFLOW)) {
-            notificationDate = timelineElementForDateCalculation.getTimestamp();
-            schedulingDaysRefinement = sharedSteps.getSchedulingDaysSuccessAnalogRefinement();
-        } else if (timelineEventCategory.equals(ANALOG_FAILURE_WORKFLOW)) {
-            notificationDate = timelineElementForDateCalculation.getDetails().getNotificationDate();
-            schedulingDaysRefinement = sharedSteps.getSchedulingDaysFailureAnalogRefinement();
+        switch (timelineEventCategory) {
+            case DIGITAL_SUCCESS_WORKFLOW -> {
+                notificationDate = timelineElementForDateCalculation.getDetails().getNotificationDate();
+                schedulingDaysRefinement = sharedSteps.getSchedulingDaysSuccessDigitalRefinement();
+            }
+            case DIGITAL_FAILURE_WORKFLOW -> {
+                notificationDate = timelineElementForDateCalculation.getTimestamp();
+                schedulingDaysRefinement = sharedSteps.getSchedulingDaysFailureDigitalRefinement();
+            }
+            case ANALOG_SUCCESS_WORKFLOW -> {
+                notificationDate = timelineElementForDateCalculation.getTimestamp();
+                schedulingDaysRefinement = sharedSteps.getSchedulingDaysSuccessAnalogRefinement();
+            }
+            case ANALOG_FAILURE_WORKFLOW -> {
+                notificationDate = timelineElementForDateCalculation.getDetails().getNotificationDate();
+                schedulingDaysRefinement = sharedSteps.getSchedulingDaysFailureAnalogRefinement();
+            }
         }
 
         OffsetDateTime schedulingDate = notificationDate.plus(schedulingDaysRefinement);
