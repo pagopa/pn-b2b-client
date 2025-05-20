@@ -571,7 +571,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | details_physicalAddress    | {"at": "Presso", "address": "@OK-GIACENZADELEGATO-LTE10_890_REDRIVE", "addressDetails": "SCALA B", "zip": "87100", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "province": "CS", "foreignState": "ITALIA"} |
       | details_responseStatus     | OK                                                                                                                                                                                                                          |
     And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      |  |  |
+      | loadTimeline | true |
     #"sequenceName": "OK-GiacenzaDelegato-lte10_890_redrive", "sequence": "@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.30s-RECAG006A.5s-RECAG006B[DOC:ARCAD;DOC:23L].60s-RECAG006C.60s-RECAG012"
     #Risultato atteso: l’evento fuori ordine viene inserito nella tabella degli errori e recuperato automaticamente da paper channel all’arrivo dell’evento RECAG012
 
