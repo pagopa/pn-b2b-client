@@ -28,6 +28,7 @@ Feature: Radd Alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_RADD_RETRIEVED"
     And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED" non esista
+      | loadTimeline     | true     |
       | details          | NOT_NULL |
       | details_recIndex | 0        |
     And lato destinatario la notifica può essere correttamente recuperata da "<CITIZEN>" e verifica presenza dell'evento di timeline "NOTIFICATION_RADD_RETRIEVED"
@@ -1387,6 +1388,7 @@ Feature: Radd Alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_RADD_RETRIEVED"
     And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED" non esista
+      | loadTimeline     | true     |
       | details          | NOT_NULL |
       | details_recIndex | 0        |
     And lato destinatario la notifica può essere correttamente recuperata da "<CITIZEN>" e verifica presenza dell'evento di timeline "NOTIFICATION_RADD_RETRIEVED"

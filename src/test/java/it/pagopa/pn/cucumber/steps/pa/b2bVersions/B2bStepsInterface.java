@@ -60,8 +60,6 @@ public interface B2bStepsInterface {
 
     void waitForEventOrStatus(String pollingStrategy, PollingType pollingType, String timelineEventCategory, WaitForEventPredicateFilters filters);
 
-    void verifyTimelineElementDoesNotExists(boolean mustLoadTimeline, String timelineEventCategory, Map<String, String> dataMap);
-
     /**
      * La lettura avviene dentro a waitForEventOrStatus, qua si limita a fare le assertions
      *
@@ -72,7 +70,7 @@ public interface B2bStepsInterface {
      */
     void checkIfTimelineElementExists(boolean exists, TimelineElementCheck furtherChecks, TimelineElementCheckFilters filterParams);
 
-    void checkIfTimelineElementExistsFromData(String timelineEventCategory, Map<String, String> dataMap);
+    void checkIfTimelineElementExistsFromData(boolean exists, String timelineEventCategory, Map<String, String> dataMap);
 
     void checkIfStatusExists(boolean exists);
 

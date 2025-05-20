@@ -514,6 +514,7 @@ Feature: Resa al mittente di una notifica
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
     And viene verificato che l'elemento di timeline "ANALOG_WORKFLOW_RECIPIENT_DECEASED" non esista
+      | loadTimeline     | true     |
       | details          | NOT_NULL |
       | details_recIndex | 0        |
 

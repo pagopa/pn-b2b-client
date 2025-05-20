@@ -1032,10 +1032,10 @@ public class AvanzamentoNotificheB2bSteps {
         getB2bStepsInterface().checkIfLastAttemptMatchesIndex(index);
     }
 
-    @Then("viene verificato che l'elemento di timeline {string} esista")
-    public void checkIfTimelineElementExists(String timelineEventCategory, Map<String, String> data) {
+    @Then("viene verificato che l'elemento di timeline {string} {exists}")
+    public void checkIfTimelineElementExists(String timelineEventCategory, boolean exists, Map<String, String> data) {
         B2bStepsInterface b2bStepsInterface = getB2bStepsInterface();
-        b2bStepsInterface.checkIfTimelineElementExistsFromData(timelineEventCategory, data);
+        b2bStepsInterface.checkIfTimelineElementExistsFromData(exists, timelineEventCategory, data);
     }
 
     /**
@@ -1091,16 +1091,6 @@ public class AvanzamentoNotificheB2bSteps {
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
-    }
-
-    @And("viene verificato che l'elemento di timeline {string} non esista")
-    public void vieneVerificatoCheElementoTimelineNonEsista(String timelineEventCategory, Map<String, String> dataMap) {
-        getB2bStepsInterface().verifyTimelineElementDoesNotExists(true, timelineEventCategory, dataMap);
-    }
-
-    @And("viene verificato che l'elemento di timeline {string} non esista nella timeline caricata")
-    public void vieneVerificatoCheElementoTimelineNonEsistaNotLoadTimeline(String timelineEventCategory, Map<String, String> dataMap) {
-        getB2bStepsInterface().verifyTimelineElementDoesNotExists(false, timelineEventCategory, dataMap);
     }
 
     @And("viene schedulato il perfezionamento per decorrenza termini per il caso {string}")

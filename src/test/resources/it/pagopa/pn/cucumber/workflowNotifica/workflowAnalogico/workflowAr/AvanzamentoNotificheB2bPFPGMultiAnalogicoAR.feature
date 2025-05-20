@@ -112,6 +112,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico AR
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE" per l'utente 0
     Then "Leonardo da Vinci" legge la notifica
     And viene verificato che l'elemento di timeline "REFINEMENT" non esista
+      | loadTimeline     | true     |
       | details          | NOT_NULL |
       | details_recIndex | 0        |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 1

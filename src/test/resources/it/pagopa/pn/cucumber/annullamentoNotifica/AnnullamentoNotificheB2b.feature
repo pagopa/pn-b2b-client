@@ -785,6 +785,7 @@ Feature: annullamento notifiche b2b
         #Valutare lo step
     #And vengono letti gli eventi e verificho che l'utente 0 non abbia associato un evento "SEND_DIGITAL_PROGRESS"
     Then viene verificato che l'elemento di timeline "SEND_DIGITAL_PROGRESS" non esista
+      | loadTimeline            | true     |
       | details                 | NOT_NULL |
       | details_recIndex        | 0        |
       | details_sentAttemptMade | 0        |

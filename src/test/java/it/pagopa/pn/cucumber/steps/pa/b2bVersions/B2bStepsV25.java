@@ -386,23 +386,6 @@ public class B2bStepsV25 implements B2bStepsInterface {
     }
 
     @Override
-    public void verifyTimelineElementDoesNotExists(boolean mustLoadTimeline, String timelineEventCategory, Map<String, String> dataMap) {
-        DataTestV25 dataTest = DataTestV25.convertMap(dataMap);
-        if (mustLoadTimeline) {
-            loadTimeline(timelineEventCategory, false, dataTest);
-        }
-        getTimelineElementsByEventId(timelineEventCategory, dataTest);
-        log.info("TIMELINE_ELEMENT: " + timelineElement);
-        try {
-            assertThat(timelineElement)
-                    .as("Timeline element with category " + timelineEventCategory + " should be null")
-                    .isNull();
-        } catch (AssertionError assertionError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionError);
-        }
-    }
-
-    @Override
     public void checkIfTimelineElementExists(boolean exists, TimelineElementCheck furtherChecks, TimelineElementCheckFilters filterParams) {
         try {
             boolean result;
@@ -446,7 +429,7 @@ public class B2bStepsV25 implements B2bStepsInterface {
     }
 
     @Override
-    public void checkIfTimelineElementExistsFromData(String timelineEventCategory, Map<String, String> dataMap) {
+    public void checkIfTimelineElementExistsFromData(boolean exists, String timelineEventCategory, Map<String, String> dataMap) {
         verifyTestCompatibilityWithVersion(timelineEventCategory, true);
         try {
             DataTestV25 dataTest = DataTestV25.convertMap(dataMap);
@@ -457,44 +440,52 @@ public class B2bStepsV25 implements B2bStepsInterface {
             //
             boolean mustLoadTimeline = dataTest != null && dataTest.isLoadTimeline();
             if (mustLoadTimeline) {
-                loadTimeline(timelineEventCategory, true, dataTest);
+                loadTimeline(timelineEventCategory, exists, dataTest);
             }
             List<TimelineElementV27> timelineElements = getTimelineElementsByEventId(timelineEventCategory, dataTest);
-            assertThat(timelineElements)
-                    .as(logTimeline(dataTest, timelineEventCategory))
-                    .isNotEmpty();
-            if (dataTest != null && dataTest.getTimelineElement() != null) {
-                boolean atLeastOneSuccessful = false;
-                List<AssertionError> assertionErrorList = new LinkedList<>();
-                for (TimelineElementV27 te : timelineElements) {
-                    try {
-                        timelineElement = te;
-                        log.info("TIMELINE_ELEMENT: " + te);
-                        DataTestV25.checkTimelineElementEquality(timelineEventCategory, te, dataTest);
-                        atLeastOneSuccessful = true;// se si arriva a questo punto, allora l'ultimo check ha avuto successo e non è necessario continuare
-                        break;
-                    } catch (AssertionError e) {
-                        assertionErrorList.add(e);// se si arriva a questo punto allora l'ultimo check ha fallito e ci si prepara al prossimo
+            if (exists) {
+                assertThat(timelineElements)
+                        .as(logTimeline(dataTest, timelineEventCategory, true))
+                        .isNotEmpty();
+                if (dataTest != null && dataTest.getTimelineElement() != null) {
+                    boolean atLeastOneSuccessful = false;
+                    List<AssertionError> assertionErrorList = new LinkedList<>();
+                    for (TimelineElementV27 te : timelineElements) {
+                        try {
+                            timelineElement = te;
+                            log.info("TIMELINE_ELEMENT: " + te);
+                            DataTestV25.checkTimelineElementEquality(timelineEventCategory, te, dataTest);
+                            atLeastOneSuccessful = true;// se si arriva a questo punto, allora l'ultimo check ha avuto successo e non è necessario continuare
+                            break;
+                        } catch (AssertionError e) {
+                            assertionErrorList.add(e);// se si arriva a questo punto allora l'ultimo check ha fallito e ci si prepara al prossimo
+                        }
+                    }
+                    if (!atLeastOneSuccessful) {// se nessun confronto ha avuto successo allora di certo sarà stata lanciata un'eccezione
+                        B2bUtils.logTimelineElementsThatDoNotMatchExpected(assertionErrorList, dataTest, timelineEventCategory);
                     }
                 }
-                if (!atLeastOneSuccessful) {// se nessun confronto ha avuto successo allora di certo sarà stata lanciata un'eccezione
-                    B2bUtils.logTimelineElementsThatDoNotMatchExpected(assertionErrorList, dataTest, timelineEventCategory);
-                }
+            } else {
+                log.info("TIMELINE_ELEMENT LIST: " + timelineElements);
+                assertThat(timelineElements)
+                        .as(logTimeline(dataTest, timelineEventCategory, false))
+                        .isEmpty();
             }
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
-    private String logTimeline(DataTestV25 dataTest, String timelineEventCategory) {
+    private String logTimeline(DataTestV25 dataTest, String timelineEventCategory, boolean exists) {
         boolean isWithEventId = dataTest != null && dataTest.getTimelineElement() != null;
         boolean hasCheckOnDeliveryDetailCode = List.of(SEND_ANALOG_PROGRESS, SEND_SIMPLE_REGISTERED_LETTER_PROGRESS).contains(timelineEventCategory);
+        String prefix = exists ? "Non è stato trovato nessun elemento con " : "La ricerca non avrebbe dovuto restituire nessun elemento con ";
         String expectedDdc = "";
         if (hasCheckOnDeliveryDetailCode) {
             expectedDdc = " e DeliveryDetailCode " + dataTest.getTimelineElement().getDetails().getDeliveryDetailCode();
         }
         StringBuilder sb = new StringBuilder();
-        sb.append("Non è stato trovato nessun elemento con ")
+        sb.append(prefix)
                 .append(isWithEventId ? "eventId contenente " : "category ")
                 .append(isWithEventId ? dataTest.getTimelineEventId(timelineEventCategory, sharedSteps.getNotificationIun()) : timelineEventCategory)
                 .append(hasCheckOnDeliveryDetailCode ? expectedDdc : "")
