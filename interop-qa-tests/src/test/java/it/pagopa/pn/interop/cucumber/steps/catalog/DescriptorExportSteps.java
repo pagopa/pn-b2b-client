@@ -20,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +56,7 @@ public class DescriptorExportSteps {
 
     @Then("il pacchetto risulta correttamente formattato")
     public void verifyPackageFormattedCorrectly() throws IOException {
-        String fileUrl = ((FileResource) httpCallExecutor.getResponse()).getUrl().toString();
+        URI fileUrl = ((FileResource) httpCallExecutor.getResponse()).getUrl();
         try (InputStream byteStream = new ByteArrayInputStream(downloadFile(fileUrl));
              ZipArchiveInputStream zipStream = new ZipArchiveInputStream(byteStream)) {
             ArchiveEntry entry;
@@ -63,13 +64,13 @@ public class DescriptorExportSteps {
                 String entryName = entry.getName();
                 zipEntries.add(entryName);
 
-                if (entryName.endsWith("configuration.json")) {
+                if (entryName.endsWith("/configuration.json")) {
                     String json = new String(zipStream.readAllBytes(), StandardCharsets.UTF_8);
                     configJson = JsonParser.parseString(json).getAsJsonObject();
                 }
             }
         }
-        Assertions.assertNull(configJson, "Configuration.json not found");
+        Assertions.assertNotNull(configJson, "Configuration.json not found");
 
         String interfacePath = configJson
                 .getAsJsonObject("descriptor")
@@ -91,7 +92,8 @@ public class DescriptorExportSteps {
         List<String> paths = new ArrayList<>();
         configJson.getAsJsonObject("descriptor")
                 .getAsJsonArray("docs")
-                .forEach(docs -> paths.add(docs.getAsString()));
+                .forEach(docs -> paths.add(docs.getAsJsonObject().get("path").getAsString()));
+
 
         paths.forEach(p -> Assertions.assertTrue(zipEntries.stream().anyMatch(entryName -> entryName.endsWith(p))));
     }
@@ -106,7 +108,7 @@ public class DescriptorExportSteps {
         );
     }
 
-    private byte[] downloadFile(String fileUrl) {
+    private byte[] downloadFile(URI fileUrl) {
 //        fileUrl = fileUrl.replace("%2F", "/");
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<byte[]> response = restTemplate.getForEntity(fileUrl, byte[].class);

@@ -68,52 +68,72 @@ public class AgreementListingSteps {
         }
     }
 
-    //TODO il metodo getAgreements (/agreements) in GET sembra non essere più disponibile
     @When("l'utente richiede una operazione di listing limitata alle prime {int} richieste di fruizione")
     public void tenantRequireOperationListingWithLimit(int limit) {
-        throw new NotImplementedException();
+        requireConsumerListingOperation(0, limit, null);
     }
 
-    //TODO il metodo getAgreements (/agreements) in GET sembra non essere più disponibile
     @When("l'utente richiede una operazione di listing con offset {int}")
     public void requireListingOperationWithOffset(int offset) {
-        throw new NotImplementedException();
+        requireConsumerListingOperation(offset, 12, null);
     }
 
-    //TODO il metodo getAgreements (/agreements) in GET sembra non essere più disponibile
     @When("l'utente richiede una operazione di listing delle richieste di fruizione ai propri e-service")
     public void requireAgreementListingOperationToThierEService() {
-        throw new NotImplementedException();
+        requireProducerListingOperation(0, 12, null, null, null);
     }
 
-    //TODO il metodo getAgreements (/agreements) in GET sembra non essere più disponibile
     @When("l'utente richiede una operazione di listing delle richieste di fruizione che ha creato")
     public void requireListingOperationForEServiceCreated() {
-        throw new NotImplementedException();
+        requireConsumerListingOperation(0, 12, null);
     }
 
-    //TODO il metodo getAgreements (/agreements) in GET sembra non essere più disponibile
     @When("l'utente richiede una operazione di listing delle richieste di fruizione per {int} specifici e-service")
     public void requireListingOperationForNSpecificEService(int numberEServices) {
-        throw new NotImplementedException();
+        List<UUID> publishedEservicesIds = sharedStepsContext.getEServicesCommonContext().getPublishedEservicesIds().stream()
+                .map(EServiceDescriptor::getEServiceId).limit(numberEServices).toList();
+
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getAgreementClient().getProducerAgreements(
+                        0, 12, publishedEservicesIds, null, null, null
+                )
+        );
     }
 
-    //TODO il metodo getAgreements (/agreements) in GET sembra non essere più disponibile
     @When("l'utente richiede una operazione di listing delle richieste di fruizione di {string} che sono in stato {string} e {string}")
     public void requireListingOperationForAgreementWithStates(String consumer, String agreementState1, String agreementState2) {
-        throw new NotImplementedException();
+        requireProducerListingOperation(0, 12, List.of(identityService.getOrganizationId(consumer)),
+                List.of(AgreementState.fromValue(agreementState1), AgreementState.fromValue(agreementState2)), null);
     }
 
-    //TODO il metodo getAgreements (/agreements) in GET sembra non essere più disponibile
     @When("l'utente richiede una operazione di listing delle richieste di fruizione aggiornabili")
     public void requireListingOperationForUpdatableAgreement() {
-        throw new NotImplementedException();
+        requireConsumerListingOperation(0, 12, true);
     }
 
-    //TODO il metodo getAgreements (/agreements) in GET sembra non essere più disponibile
     @When("l'utente richiede una operazione di listing delle richieste di fruizione")
     public void userRequireAgreementListingOperation() {
-        throw new NotImplementedException();
+        requireConsumerListingOperation(0, 12, null);
+    }
+
+    private void requireConsumerListingOperation(int offset, int limit, Boolean showOnlyUpgradeable) {
+        List<UUID> publishedEservicesIds = sharedStepsContext.getEServicesCommonContext().getPublishedEservicesIds().stream()
+                .map(EServiceDescriptor::getEServiceId).toList();
+
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getAgreementClient().getConsumerAgreements(offset, limit,
+                        publishedEservicesIds, null, null, showOnlyUpgradeable)
+        );
+    }
+
+    private void requireProducerListingOperation(int offset, int limit, List<UUID> consumerIds, List<AgreementState> states, Boolean showOnlyUpgradeable) {
+        List<UUID> publishedEservicesIds = sharedStepsContext.getEServicesCommonContext().getPublishedEservicesIds().stream()
+                .map(EServiceDescriptor::getEServiceId).toList();
+
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getAgreementClient().getProducerAgreements(0, 12,
+                        publishedEservicesIds, consumerIds, states, showOnlyUpgradeable)
+        );
     }
 
     @Then("si ottiene status code {int} e la lista di {int} richiest(e)(a) di fruizione")

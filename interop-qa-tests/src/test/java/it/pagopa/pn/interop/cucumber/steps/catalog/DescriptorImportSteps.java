@@ -31,6 +31,9 @@ import org.springframework.web.client.RestTemplate;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.function.Consumer;
@@ -65,13 +68,15 @@ public class DescriptorImportSteps {
 
     @Given("l'utente ha già un pacchetto non correttamente strutturato con campi richiesti mancanti")
     public void verifyIncorrectPackagePresenceWithMissingFields() {
-        updateAndZipConfig("exportedWithDocument", configJson ->
+        folderName = "exportedWithDocument";
+        updateAndZipConfig(folderName, configJson ->
                 configJson.remove("name"), false);
     }
 
     @Given("l'utente ha già un pacchetto non correttamente strutturato con documenti mancanti nel percorso previsto")
     public void verifyIncorrectPackagePresenceWithMissingDocuments() {
-        updateAndZipConfig("exportedWithDocument", configJson -> {
+        folderName = "exportedWithDocument";
+        updateAndZipConfig(folderName, configJson -> {
             JsonArray docs = configJson.getAsJsonObject("descriptor").getAsJsonArray("docs");
             if (docs != null && !docs.isEmpty()) {
                 JsonObject firstDoc = docs.get(0).getAsJsonObject();
@@ -82,7 +87,8 @@ public class DescriptorImportSteps {
 
     @Given("l'utente ha già un pacchetto non correttamente strutturato con file non previsti")
     public void verifyIncorrectPackagePresenceWithWrongFile() {
-        updateAndZipConfig("exportedWithDocument", configJson ->
+        folderName = "exportedWithDocument";
+        updateAndZipConfig(folderName, configJson ->
                 configJson.addProperty("name", "e-service-IMPORTED-" + sharedStepsContext.getTestSeed()), true);
     }
 
@@ -98,7 +104,7 @@ public class DescriptorImportSteps {
 
     @Given("è già stato caricato il pacchetto nella presignedURL")
     public void uploadPackageInPresignedURL() throws IOException {
-        uploadFile(url.toString(), String.format("./data/%s.zip", folderName));
+        uploadFile(url, String.format("./%s.zip", folderName));
     }
 
     @When("l'utente effettua una richiesta di import del descrittore")
@@ -109,9 +115,11 @@ public class DescriptorImportSteps {
                         new FileResource().filename(String.format("%s.zip", folderName)).url(url)
                 )
         );
-        CreatedEServiceDescriptor createdEServiceDescriptor = ((CreatedEServiceDescriptor) httpCallExecutor.getResponse());
-        eServicesCommonContext.setEserviceId(createdEServiceDescriptor.getId());
-        eServicesCommonContext.setDescriptorId(createdEServiceDescriptor.getDescriptorId());
+        if (httpCallExecutor.getClientResponse().is2xxSuccessful()) {
+            CreatedEServiceDescriptor createdEServiceDescriptor = ((CreatedEServiceDescriptor) httpCallExecutor.getResponse());
+            eServicesCommonContext.setEserviceId(createdEServiceDescriptor.getId());
+            eServicesCommonContext.setDescriptorId(createdEServiceDescriptor.getDescriptorId());
+        }
     }
 
     @When("l'utente effettua una richiesta di import del descrittore con nome del file errato")
@@ -171,12 +179,14 @@ public class DescriptorImportSteps {
     }
 
     private void updateAndZipConfig(String folderName, Consumer<JsonObject> updateConfig, boolean notAllowedFiles) {
-        File folderPath = new File("./data/" + folderName);
-        File configFile = new File(folderPath, "configuration.json");
-        File notAllowedFile = new File(folderPath, "notAllowedFile.txt");
-        File zipFile = new File(folderPath.getParent(), folderName + ".zip");
-
+        URL configUrl = getClass().getClassLoader().getResource(folderName + "/configuration.json");
+        //URL notAllowedFileUrl = getClass().getClassLoader().getResource(folderName + "/notAllowedFile.txt");
+        File zipFile = new File(folderName + ".zip");
         try {
+            File folderPath = new File(getClass().getClassLoader().getResource(folderName).toURI());
+            File configFile = new File(configUrl.toURI());
+            File notAllowedFile = new File(String.format("%s/notAllowedFile.txt", folderPath.getPath()));
+           // File zipFile = new File(zipFileUrl.toURI());
             // Handle notAllowedFile.txt
             if (notAllowedFiles) {
                 FileUtils.write(notAllowedFile, "", StandardCharsets.UTF_8);
@@ -217,18 +227,20 @@ public class DescriptorImportSteps {
             try (ZipFile zip = new ZipFile(zipFile)) {
                 zip.addFolder(folderPath);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException("Errore durante l'aggiornamento del file JSON o la compressione della cartella", e);
         }
     }
 
-    public void uploadFile(String fileUrl, String zipFilePath) throws IOException {
+    public void uploadFile(URI fileUrl, String zipFilePath) throws IOException {
         RestTemplate restTemplate = new RestTemplate();
+
         File zipFile = new File(zipFilePath);
         byte[] fileBytes = Files.readAllBytes(zipFile.toPath());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM); // Or MediaType.valueOf("application/zip")
         HttpEntity<byte[]> requestEntity = new HttpEntity<>(fileBytes, headers);
+        System.out.println(fileUrl);
         ResponseEntity<String> response = restTemplate.exchange(
                 fileUrl,
                 HttpMethod.PUT,

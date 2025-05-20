@@ -10,9 +10,12 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementRejectionP
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementSubmissionPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementUpdatePayload;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Agreements;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactEServicesLight;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganizations;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
+
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
@@ -189,6 +192,18 @@ public class AgreementClientImpl implements IAgreementClient {
     public ResponseEntity<CompactEServicesLight> getAgreementEServiceProducers(Integer offset, Integer limit, String q) {
         return agreementsApi.getAgreementsProducerEServicesWithHttpInfo(offset, limit, q);
     }
+
+    @Override
+    public ResponseEntity<Agreements> getConsumerAgreements(Integer offset, Integer limit, List<UUID> eservicesIds, List<UUID> producersIds, List<AgreementState> states, Boolean showOnlyUpgradeable) {
+        return agreementsApi.getConsumerAgreementsWithHttpInfo(offset, limit, eservicesIds, producersIds, states, showOnlyUpgradeable);
+    }
+
+    @Override
+    public ResponseEntity<Agreements> getProducerAgreements(Integer offset, Integer limit, List<UUID> eservicesIds, List<UUID> consumersIds, List<AgreementState> states, Boolean showOnlyUpgradeable) {
+        return agreementsApi.getProducerAgreementsWithHttpInfo(offset, limit, eservicesIds, consumersIds, states, showOnlyUpgradeable);
+    }
+
+
 
     @Override
     public void setBearerToken(String bearerToken) {
