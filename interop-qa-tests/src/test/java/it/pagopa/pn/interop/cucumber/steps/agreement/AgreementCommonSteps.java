@@ -143,6 +143,7 @@ public class AgreementCommonSteps {
         // Set the first e-service and descriptor
         if (!eServiceDescriptorList.isEmpty()) {
             EServicesCommonContext eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
+            eServicesCommonContext.setPublishedEservicesIds(eServiceDescriptorList);
             EServiceDescriptor firstDescriptor = eServiceDescriptorList.get(0);
             eServicesCommonContext.setEserviceId(firstDescriptor.getEServiceId());
             eServicesCommonContext.setDescriptorId(firstDescriptor.getDescriptorId());

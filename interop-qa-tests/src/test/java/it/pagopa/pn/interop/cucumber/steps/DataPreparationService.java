@@ -412,7 +412,7 @@ public class DataPreparationService {
                 res -> res.getAttributes().stream()
                         .filter(attr -> attr.getId().equals(attributeId))
                         .anyMatch(attr -> attr.getVerifiedBy().stream().anyMatch(tenantVerifier -> tenantVerifier.getId().equals(verifierId))
-                        && attr.getRevokedBy().stream().anyMatch(tenantRevoker -> tenantRevoker.getId().equals(verifierId))),
+                        && attr.getRevokedBy().stream().noneMatch(tenantRevoker -> tenantRevoker.getId().equals(verifierId))),
                 String.format("Verified attribute with id: %s not found!", attributeId)
         );
     }
