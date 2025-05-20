@@ -28,6 +28,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CompactUser;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredTenantAttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
@@ -445,7 +446,27 @@ public class DataPreparationService {
         ProducerEServiceDescriptor descriptor = producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId);
         UpdateEServiceDescriptorSeed currentDescriptorSeed = new UpdateEServiceDescriptorSeed()
                 .agreementApprovalPolicy(descriptor.getAgreementApprovalPolicy())
-                .attributes(new DescriptorAttributesSeed().addCertifiedItem(List.of()).addDeclaredItem(List.of()).addVerifiedItem(List.of()))
+                .attributes(
+                        new DescriptorAttributesSeed()
+                                .addCertifiedItem(descriptor.getAttributes().getCertified().stream()
+                                        .flatMap(List::stream).
+                                        map(attr -> new DescriptorAttributeSeed()
+                                                .id(attr.getId())
+                                                .explicitAttributeVerification(attr.getExplicitAttributeVerification()))
+                                        .toList())
+                                .addDeclaredItem(descriptor.getAttributes().getDeclared().stream()
+                                        .flatMap(List::stream).
+                                        map(attr -> new DescriptorAttributeSeed()
+                                                .id(attr.getId())
+                                                .explicitAttributeVerification(attr.getExplicitAttributeVerification()))
+                                        .toList())
+                                .addVerifiedItem(descriptor.getAttributes().getVerified().stream()
+                                        .flatMap(List::stream).
+                                        map(attr -> new DescriptorAttributeSeed()
+                                                .id(attr.getId())
+                                                .explicitAttributeVerification(attr.getExplicitAttributeVerification()))
+                                        .toList())
+                )
                 .dailyCallsPerConsumer(descriptor.getDailyCallsPerConsumer())
                 .dailyCallsTotal(descriptor.getDailyCallsTotal())
                 .audience(descriptor.getAudience())

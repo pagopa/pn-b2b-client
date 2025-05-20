@@ -124,7 +124,7 @@ public class AgreementUpgradeSteps {
                 "There was an error while retrieving the agreement by id!"
         );
 
-        Agreement createdAgreement = clientTokenConfigurator.getAgreementClient().getAgreementById(sharedStepsContext.getAgreementId());
+        Agreement createdAgreement = clientTokenConfigurator.getAgreementClient().getAgreementById(sharedStepsContext.getAgreementCommonContext().getResponseAgreementId());
         Assertions.assertEquals(sharedStepsContext.getEServicesCommonContext().getDescriptorId(), createdAgreement.getDescriptorId());
     }
 }
