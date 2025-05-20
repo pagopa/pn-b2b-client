@@ -18,6 +18,7 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -122,7 +123,7 @@ public class AgreementCommonSteps {
     public void tenantHasAlreadyCreatedAndPublishedEService(String tenantType, int totalEservices, Optional<EServiceConfig> eServiceConfig) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         // Create e-services and publish descriptors
-        EServicesCommonContext eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
+        List<EServiceDescriptor> eServiceDescriptorList = new ArrayList<>();
         for (int i = 0; i < totalEservices; i++) {
             // Create e-service and descriptor
             int randomInt = ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE);
@@ -137,11 +138,12 @@ public class AgreementCommonSteps {
             dataPreparationService.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(),
                 eServiceDescriptor.getDescriptorId(), EServiceDescriptorState.PUBLISHED, false);
             // Add the e-service to the list of published ones
-            eServicesCommonContext.getPublishedEservicesIds().add(eServiceDescriptor);
+            eServiceDescriptorList.add(eServiceDescriptor);
         }
         // Set the first e-service and descriptor
-        if (!eServicesCommonContext.getPublishedEservicesIds().isEmpty()) {
-            EServiceDescriptor firstDescriptor = eServicesCommonContext.getPublishedEservicesIds().get(0);
+        if (!eServiceDescriptorList.isEmpty()) {
+            EServicesCommonContext eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
+            EServiceDescriptor firstDescriptor = eServiceDescriptorList.get(0);
             eServicesCommonContext.setEserviceId(firstDescriptor.getEServiceId());
             eServicesCommonContext.setDescriptorId(firstDescriptor.getDescriptorId());
         }

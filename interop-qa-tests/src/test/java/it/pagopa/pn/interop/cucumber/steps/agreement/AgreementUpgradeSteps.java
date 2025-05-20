@@ -42,8 +42,10 @@ public class AgreementUpgradeSteps {
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient().upgradeAgreement(sharedStepsContext.getAgreementId())
         );
-        Agreement agreement = ((Agreement) sharedStepsContext.getHttpCallExecutor().getResponse());
-        sharedStepsContext.getAgreementCommonContext().setResponseAgreementId(agreement.getId());
+        if (sharedStepsContext.getHttpCallExecutor().getClientResponse().is2xxSuccessful()) {
+            Agreement agreement = ((Agreement) sharedStepsContext.getHttpCallExecutor().getResponse());
+            sharedStepsContext.getAgreementCommonContext().setResponseAgreementId(agreement.getId());
+        }
     }
 
     @Given("{string} ha già pubblicato una nuova versione per quell'e-service richiedendo gli stessi attributi certificati")
