@@ -690,7 +690,6 @@ Feature: Resa al mittente di una notifica
     Then vengono letti gli eventi dello stream del "Comune_Multi" con la versione "V25" fino all'elemento di timeline "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG003B"
     And lo stato "RETURNED_TO_SENDER" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V25"
 
-
   #@returnedToSender
   Scenario: [RETURNED-TO-SENDER_20-FLAG-FALSE] Invio notifica AR mono-destinatario Deceduto con VersioningModeFlag=true, atteso stato DELIVERING
     Given viene generata una nuova notifica
