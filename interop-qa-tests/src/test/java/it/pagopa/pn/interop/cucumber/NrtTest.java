@@ -15,7 +15,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "same_thread"),
 })
 @ExcludeTags({"wait_for_fix"})
-@IncludeTags({"document", "eservice", "purpose", "daily_calls_update_request",
+@IncludeTags({"agreement", "attribute", "descriptor", "document", "eservice", "purpose", "daily_calls_update_request",
         "purpose_latest_risk_analysis", "purpose_risk_analysis",})
 public class NrtTest {
 }
