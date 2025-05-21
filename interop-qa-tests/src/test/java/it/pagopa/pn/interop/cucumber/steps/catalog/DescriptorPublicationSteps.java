@@ -54,7 +54,7 @@ public class DescriptorPublicationSteps {
         eServicesCommonContext.setDescriptorId(eServiceDescriptor.getDescriptorId());
 
         // If descriptorState is not DRAFT we have to add a completed risk analysis in order to correctly publish the descriptor
-        if (!"DRAFT".equals(mode)) {
+        if ("RECEIVE".equalsIgnoreCase(mode) && !"DRAFT".equalsIgnoreCase(eServiceDescriptorState)) {
             RiskAnalysis riskAnalysis = dataPreparationService.getRiskAnalysis(tenantType, true);
             UUID riskAnalysisId = dataPreparationService.addRiskAnalysisToEService(
                     sharedStepsContext.getEServicesCommonContext().getEserviceId(),

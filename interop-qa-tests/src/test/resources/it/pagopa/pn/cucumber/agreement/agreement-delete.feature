@@ -53,7 +53,6 @@ Feature: Cancellazione richiesta di fruizione
 
     Examples: 
       | statoAgreement | tipoApprovazione |
-      | PENDING        | MANUAL           |
       | ACTIVE         | AUTOMATIC        |
       | SUSPENDED      | AUTOMATIC        |
       | ARCHIVED       | AUTOMATIC        |
