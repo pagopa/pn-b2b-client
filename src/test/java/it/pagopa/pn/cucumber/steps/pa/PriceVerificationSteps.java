@@ -91,8 +91,7 @@ public class PriceVerificationSteps {
 
     private void priceVerificationV1(Integer price, String date, Integer recipientIndex) {
         List<String> datiPagamento = sharedSteps.getDatiPagamentoVersionamento(recipientIndex, 0);
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPriceResponse notificationPrice =
-                sharedSteps.getB2bClient().getNotificationPrice(datiPagamento.get(0), datiPagamento.get(1));
+        NotificationPriceResponse notificationPrice = sharedSteps.getB2bClient().getNotificationPrice(datiPagamento.get(0), datiPagamento.get(1));
         try {
             Assertions.assertEquals(notificationPrice.getIun(), sharedSteps.getNotificationIun());
             if (price != null) {
@@ -109,9 +108,10 @@ public class PriceVerificationSteps {
 
     private void priceVerificationV2(Integer price, String date, Integer destinatario) {
         String iun = sharedSteps.getNotificationIun();
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.FullSentNotificationV20 fullSentNotification = sharedSteps.getB2bClient().getSentNotificationV2(iun);
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPriceResponse notificationPrice =
-                sharedSteps.getB2bClient().getNotificationPrice(fullSentNotification.getRecipients().get(destinatario).getPayment().getCreditorTaxId(), fullSentNotification.getRecipients().get(destinatario).getPayment().getNoticeCode());
+        FullSentNotificationV20 fullSentNotification = sharedSteps.getB2bClient().getSentNotificationV2(iun);
+        NotificationPriceResponse notificationPrice = sharedSteps.getB2bClient().getNotificationPrice(
+                fullSentNotification.getRecipients().get(destinatario).getPayment().getCreditorTaxId(),
+                fullSentNotification.getRecipients().get(destinatario).getPayment().getNoticeCode());
         try {
             Assertions.assertEquals(notificationPrice.getIun(), fullSentNotification.getIun());
             if (price != null) {

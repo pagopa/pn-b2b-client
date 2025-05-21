@@ -43,6 +43,7 @@ public interface NotificationStepsInterface {
 
     void addDocumentItems(int numAllegati);
 
+    //TODO MATTEO: inutilizzata, ma serviva a qualcosa, ricordati cosa sostituire
     void performPriceVerification(String price, String date, Integer destinatario);
 
     void uploadNotificationAllegatiUgualiPagamento() throws IOException;

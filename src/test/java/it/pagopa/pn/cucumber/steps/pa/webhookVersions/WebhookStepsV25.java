@@ -1,12 +1,14 @@
 package it.pagopa.pn.cucumber.steps.pa.webhookVersions;
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV25;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryElement;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV25;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingWebhook;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v25.PnPollingServiceWebhookV25;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.*;
 import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -337,7 +339,7 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
             }
             String iun = webhookSteps.getSharedSteps().getNotificationIun();
             FullSentNotificationV25 fullSentNotification = webhookSteps.getB2bClient().getSentNotificationV25(iun);
-            TimelineElementV25 timelineElement = fullSentNotification.getTimeline().stream()
+            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV25 timelineElement = fullSentNotification.getTimeline().stream()
                     .filter(elem -> elem.getCategory().getValue().equals(timelineElementInternalCategory.getValue()))
                     .findAny()
                     .orElse(null);
@@ -379,7 +381,7 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
             TimelineElementCategoryV23 timelineElementInternalCategory = TimelineElementCategoryV23.valueOf(((TimelineElementCategoryV23) timelineForStream.getTimelineElementCategory()).name());
 
             FullSentNotificationV25 fullSentNotification = webhookSteps.getB2bClient().getSentNotificationV25(iun);
-            TimelineElementV25 elementToCheck = fullSentNotification.getTimeline().stream()
+            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV25 elementToCheck = fullSentNotification.getTimeline().stream()
                     .filter(elem -> elem.getCategory() != null)
                     .filter(elem -> elem.getCategory().getValue().equals(timelineElementInternalCategory.getValue()))
                     .findAny()
@@ -523,7 +525,7 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
         String elementId = timelineElementWebHook.getCategory().toString();
 
         FullSentNotificationV25 fullSentNotification = webhookSteps.getB2bClient().getSentNotificationV25(webhookSteps.getSharedSteps().getNotificationIun());
-        TimelineElementV25 timelineElement = fullSentNotification.getTimeline().
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV25 timelineElement = fullSentNotification.getTimeline().
                 stream()
                 .filter(data -> data.getCategory() != null)
                 .filter(data -> data.getCategory().getValue().equalsIgnoreCase(elementId))
@@ -531,7 +533,7 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
                 .orElse(null);
         Assertions.assertNotNull(timelineElement);
 
-        TimelineElementDetailsV25 timelineElementDetails = timelineElement.getDetails();
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementDetailsV25 timelineElementDetails = timelineElement.getDetails();
         Assertions.assertNotNull(timelineElementDetails);
         resultList.add(timelineElementDetails);
 

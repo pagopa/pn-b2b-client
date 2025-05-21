@@ -1,5 +1,9 @@
 package it.pagopa.pn.cucumber.steps.pa.utilityVersions;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactCategory;
@@ -104,9 +108,22 @@ public abstract class B2bUtils {
         E value2;
     }
 
+
+    //Metodi generali, indipendenti dalla versione usata, dovranno essere riportati qua come metodi statici
+
     /**
-     * Metodi generali, indipendenti dalla versione usata, dovranno essere riportati nella classe astratta
+     * Usato per convertire oggetti identici in package diversi nell'oggetto con il package passato come parametro
+     * (ES: )
      */
+    public static <T> T deepCopy(Object obj, Class<T> toClass) {
+        try {
+            ObjectMapper objMapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
+            String json = objMapper.writeValueAsString(obj);
+            return objMapper.readValue(json, toClass);
+        } catch (JsonProcessingException exc) {
+            throw new RuntimeException(exc);
+        }
+    }
 
     public static byte[] downloadFile(String downloadUrl) {
         if (downloadUrl == null) {
@@ -416,7 +433,12 @@ public abstract class B2bUtils {
     public static void logTimelineElementsThatDoNotMatchExpected(List<AssertionError> assertionErrorList, AbstractDataTest dataTest, String timelineElementCategory) {
         String expectedTimelineElement = getExpectedTimelineElement(dataTest, timelineElementCategory);
         StringBuilder sb = new StringBuilder();
-        sb.append("Sono stati trovati " + assertionErrorList.size() + " elementi con category " + timelineElementCategory + ", ma nessuno combacia con\n" + expectedTimelineElement);
+        sb.append("Sono stati trovati ")
+                .append(assertionErrorList.size())
+                .append(" elementi con category ")
+                .append(timelineElementCategory)
+                .append(", ma nessuno combacia con\n")
+                .append(expectedTimelineElement);
         for (int i = 0; i < assertionErrorList.size(); i++) {
             AssertionError error = assertionErrorList.get(i);
             sb.append("\n").append(i + 1).append(") -> ").append(error.getMessage());

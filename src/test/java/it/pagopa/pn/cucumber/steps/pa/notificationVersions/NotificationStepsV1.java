@@ -1,6 +1,6 @@
 package it.pagopa.pn.cucumber.steps.pa.notificationVersions;
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.*;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV1;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
@@ -229,8 +229,7 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
     @Override
     public void performPriceVerification(String price, String date, Integer destinatario) {
         List<String> datiPagamento = sharedSteps.getDatiPagamentoVersionamento(destinatario, 0);
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPriceResponse notificationPrice =
-                b2bClient.getNotificationPrice(datiPagamento.get(0), datiPagamento.get(1));
+        NotificationPriceResponse notificationPrice = b2bClient.getNotificationPrice(datiPagamento.get(0), datiPagamento.get(1));
         try {
             Assertions.assertEquals(notificationPrice.getIun(), sharedSteps.getNotificationIun());
             if (price != null) {

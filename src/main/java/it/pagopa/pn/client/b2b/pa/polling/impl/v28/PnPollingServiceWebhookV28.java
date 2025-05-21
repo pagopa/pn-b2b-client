@@ -7,7 +7,7 @@ import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV28;
 import it.pagopa.pn.client.b2b.pa.polling.exception.PnPollingException;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebhookB2bClient;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v28.ProgressResponseElementV28;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.ProgressResponseElementV28;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -41,7 +41,6 @@ public class PnPollingServiceWebhookV28 extends PnPollingTemplate<PnPollingRespo
             PnPollingResponseV28 pnPollingResponse = new PnPollingResponseV28();
             ResponseEntity<List<ProgressResponseElementV28>> listResponseEntity;
             int deepCount = pnPollingParameter.getDeepCount();
-
             try {
                 ++deepCount;
                 pnPollingParameter.setDeepCount(deepCount);

@@ -107,13 +107,13 @@ public class InvioNotificheB2bSteps {
 
     @And("la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V1")
     public void notificationCanBeRetrievedWithIUNV1() {
-        AtomicReference<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification> notificationByIun = new AtomicReference<>();
+        AtomicReference<FullSentNotification> notificationByIun = new AtomicReference<>();
         notificationCanBeRetrievedWithIUN(notificationByIun, b2bClient::getSentNotificationV1);
     }
 
     @And("la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V20")
     public void notificationCanBeRetrievedWithIUNV2() {
-        AtomicReference<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.FullSentNotificationV20> notificationByIun = new AtomicReference<>();
+        AtomicReference<FullSentNotificationV20> notificationByIun = new AtomicReference<>();
         notificationCanBeRetrievedWithIUN(notificationByIun, b2bClient::getSentNotificationV2);
     }
 
@@ -785,7 +785,7 @@ public class InvioNotificheB2bSteps {
 
     @And("la notifica a 2 avvisi di pagamento con OpenApi V1")
     public void notificationCanBeRetrievePaymentV1() {
-        AtomicReference<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification> notificationByIun = new AtomicReference<>();
+        AtomicReference<FullSentNotification> notificationByIun = new AtomicReference<>();
         String iun = sharedSteps.getNotificationIun();
 
         try {
@@ -812,7 +812,7 @@ public class InvioNotificheB2bSteps {
 
     @And("la notifica a 2 avvisi di pagamento con OpenApi V2")
     public void notificationCanBeRetrievePaymentV2() {
-        AtomicReference<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.FullSentNotificationV20> notificationByIun = new AtomicReference<>();
+        AtomicReference<FullSentNotificationV20> notificationByIun = new AtomicReference<>();
         String iun = sharedSteps.getNotificationIun();
         try {
             assertThatCode(() -> notificationByIun.set(b2bClient.getSentNotificationV2(iun)))
@@ -834,7 +834,7 @@ public class InvioNotificheB2bSteps {
 
     @And("la notifica a 1 avvisi di pagamento con OpenApi V1")
     public void notificationCanBeRetrievePayment1V1() {
-        AtomicReference<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification> notificationByIun = new AtomicReference<>();
+        AtomicReference<FullSentNotification> notificationByIun = new AtomicReference<>();
         String iun = sharedSteps.getNotificationIun();
         try {
             assertThatCode(() -> notificationByIun.set(b2bClient.getSentNotificationV1(iun)))

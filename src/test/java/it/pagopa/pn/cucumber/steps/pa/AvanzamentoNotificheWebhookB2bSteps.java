@@ -10,6 +10,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV24;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
@@ -17,11 +18,12 @@ import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebhookB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.ProgressResponseElement;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.NotificationStatus;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.ProgressResponseElementV23;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.TimelineElementCategoryV23;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.TimelineElementV23;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.NotificationStatus;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.ProgressResponseElement;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.ProgressResponseElementV23;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.StreamListElement;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.TimelineElementCategoryV23;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.TimelineElementV23;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.webhookVersions.*;
 import it.pagopa.pn.cucumber.utils.GroupPosition;
@@ -124,10 +126,10 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 //        while(iteratorNumberOfStreamSlotAcquiredForPa.hasNext()){
 //            String pa = iteratorNumberOfStreamSlotAcquiredForPa.next();
 //            log.info("releaseStreamCreationSlot phase start for pa {}",pa);
-//            PnPaB2bUtils.Pair<Boolean, Integer> isAcquireNumberOfStramSlot = numberOfStreamSlotAcquiredForPa.get(pa);
-//            if(isAcquireNumberOfStramSlot.getValue1() && isAcquireNumberOfStramSlot.getValue2() > 0){
-//                log.info("release n.{} of streamCreationSlot for pa {}",isAcquireNumberOfStramSlot.getValue2(),pa);
-//                WEBHOOKSYNCHRONIZER.releaseStreamCreationSlot(isAcquireNumberOfStramSlot.getValue2(),pa);
+//            PnPaB2bUtils.Pair<Boolean, Integer> isAcquireNumberOfStreamSlot = numberOfStreamSlotAcquiredForPa.get(pa);
+//            if(isAcquireNumberOfStreamSlot.getValue1() && isAcquireNumberOfStreamSlot.getValue2() > 0){
+//                log.info("release n.{} of streamCreationSlot for pa {}",isAcquireNumberOfStreamSlot.getValue2(),pa);
+//                WEBHOOKSYNCHRONIZER.releaseStreamCreationSlot(isAcquireNumberOfStreamSlot.getValue2(),pa);
 //            }
 //        }
     }
@@ -195,7 +197,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
     //versioni 23 e 27 only?
     @And("viene verificato che il campo legalFactIds sia valorizzato nel EventStream con la versione {string}")
-    public void vieneVerificatoCheIlCampoLegalfactIdsSiaValorizzato(String version) {
+    public void vieneVerificatoCheIlCampoLegalFactIdsSiaValorizzato(String version) {
         getWebhookStep(version).checkLegalFactId();
     }
 
@@ -511,7 +513,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         readStreamElement(version, version);
     }
 
-    // 1 occorrenza, in VisualizzazioneTimestampTecniciSla
+    // Una sola occorrenza, in VisualizzazioneTimestampTecniciSla
     @When("vengono letti gli eventi dello stream con versione {string} creati dalla versione {string}")
     public void vengonoLettiGliEventiDelloStreamConVersioneCreatiDallaVersione(String versionRead, String versionCreate) {
         readStreamElement(versionCreate, versionRead);
@@ -562,17 +564,16 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
         WebhookStepsInterface webhookStepsInterface = getWebhookStep(StreamVersion.V10);
 
-        StatusElementSearchResult<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.NotificationStatus> searchElementResult =
-                webhookStepsInterface.getStatusEventForStream(status, timingForPolling.getTimingForElement(status));
+        StatusElementSearchResult<NotificationStatus> searchElementResult = webhookStepsInterface.getStatusEventForStream(status, timingForPolling.getTimingForElement(status));
 
-        it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.NotificationStatus notificationStatus = searchElementResult.getNotificationStatus();
+        NotificationStatus notificationStatus = searchElementResult.getNotificationStatus();
 
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus notificationInternalStatus =
                 it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus.valueOf(searchElementResult.getNotificationStatus().name());
 
         Object progressResponseElement = null;
         int wait = 48;
-        boolean finded = false;
+        boolean found = false;
         for (int i = 0; i < wait; i++) {
             progressResponseElement = webhookStepsInterface.searchStatusElementInWebhook(null, 0, 0, searchElementResult);
             log.debug("PROGRESS-ELEMENT: " + progressResponseElement);
@@ -584,9 +585,9 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                     .findAny()
                     .orElse(null);
 
-            if (notificationStatusHistoryElement != null && !finded) {
+            if (notificationStatusHistoryElement != null && !found) {
                 wait = i + 4;
-                finded = true;
+                found = true;
             }
             if (progressResponseElement != null) {
                 break;
@@ -859,7 +860,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     //V10 only
     @Then("l'ultima creazione ha prodotto un errore con status code {string}")
     public void lastCreationProducedAnErrorWithStatusCode(String statusCode) {
-        List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamListElement> streamListElements = webhookB2bClient.listEventStreams();
+        List<StreamListElement> streamListElements = webhookB2bClient.listEventStreams();
         WebhookStepsV10 webhookStepsV10 = (WebhookStepsV10) getWebhookStep(StreamVersion.V10);
         System.out.println("streamListElements: " + streamListElements.size());
         System.out.println("eventStreamList: " + webhookStepsV10.getEventStreamList().size());

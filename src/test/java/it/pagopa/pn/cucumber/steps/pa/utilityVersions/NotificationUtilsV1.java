@@ -1,6 +1,6 @@
 package it.pagopa.pn.cucumber.steps.pa.utilityVersions;
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.*;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.IPnPollingService;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
@@ -184,14 +184,14 @@ public class NotificationUtilsV1 extends B2bUtils {
         //Verify Sha
         for (NotificationDocument doc : fsn.getDocuments()) {
             int docIdx = Integer.parseInt(Objects.requireNonNull(doc.getDocIdx()));
-            NotificationAttachmentDownloadMetadataResponse response = b2bClient.getSentNotificationDocumentV1(iun, docIdx);
+            NotificationAttachmentDownloadMetadataResponse response = b2bClient.getSentNotificationDocument(iun, docIdx);
             checkSha256(response.getUrl(), response.getSha256(), docIdx);
         }
         //Verify Attachments
         fsn.getRecipients().stream().filter(recipient -> recipient.getPayment() != null && recipient.getPayment().getPagoPaForm() != null)
                 .forEach(recipient -> {
                     int i = fsn.getRecipients().indexOf(recipient);
-                    NotificationAttachmentDownloadMetadataResponse resp = b2bClient.getSentNotificationAttachmentV1(fsn.getIun(), i, PAGOPA);
+                    NotificationAttachmentDownloadMetadataResponse resp = b2bClient.getSentNotificationAttachment(fsn.getIun(), i, PAGOPA, 0);
                     checkAttachment(resp.getFilename(), resp.getUrl(), resp.getSha256());
                 });
         //Verify LegalFacts format

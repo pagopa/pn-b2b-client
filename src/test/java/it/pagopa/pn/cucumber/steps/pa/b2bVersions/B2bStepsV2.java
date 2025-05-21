@@ -1,8 +1,7 @@
 package it.pagopa.pn.cucumber.steps.pa.b2bVersions;
 
 import io.cucumber.datatable.DataTable;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.*;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPriceResponse;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.IPnPollingService;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingPredicate;
@@ -278,7 +277,7 @@ public class B2bStepsV2 implements B2bStepsInterface {
         paymentEventPagoPaList.add(paymentEventPagoPa);
         eventsRequestPagoPa.setEvents(paymentEventPagoPaList);
 
-        b2bClient.paymentEventsRequestPagoPaV2(eventsRequestPagoPa);
+        b2bClient.paymentEventsRequestPagoPa(eventsRequestPagoPa);
     }
 
     @Override
