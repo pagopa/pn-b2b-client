@@ -106,23 +106,6 @@ public class AgreementActivateSteps {
                         .activateAgreement(sharedStepsContext.getAgreementId()));
     }
 
-    @Given("{string} ha già sospeso quella richiesta di fruizione come {userType}")
-    public void tenantHasAlreadySuspendAgreement(String tenantType, ClientType suspendedBy) {
-        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        dataPreparationService.suspendAgreement(sharedStepsContext.getAgreementId(), suspendedBy);
-
-    }
-
-    @ParameterType("PRODUCER|CONSUMER")
-    public ClientType userType(String userType) {
-        return switch (userType) {
-            case "PRODUCER" -> ClientType.PRODUCER;
-            case "CONSUMER" -> ClientType.CONSUMER;
-            default ->
-                    throw new IllegalArgumentException("Invalid client type: " + userType);
-        };
-    }
-
     @Given("due gruppi di due attributi certificati da {string}, dei quali {string} ne possiede uno per gruppo")
     public void tenantHasTwoCertifiedAttributeGroups(String certifier, String consumer) {
         UUID consumerId = identityService.getOrganizationId(consumer);

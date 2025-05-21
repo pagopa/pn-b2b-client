@@ -31,13 +31,16 @@ public class AgreementEServiceProducerListingStep {
 
     @When("l'utente richiede una operazione di listing degli e-services che hanno una richiesta di fruizione attiva con offset {int}")
     public void requireEServiceListingOperationWithOffset(int offset) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getAgreementClient().getAgreementEServiceProducers(offset, 10, null)
+                () -> clientTokenConfigurator.getAgreementClient().getAgreementEServiceProducers(offset, 10,
+                        String.valueOf(sharedStepsContext.getTestSeed()))
         );
     }
 
     @When("l'utente richiede una operazione di listing degli e-services che hanno una richiesta di fruizione attiva filtrando per la keyword {string}")
     public void requireEServiceListingOperationWithOffset(String keyword) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         String query = String.format("%s-%s", sharedStepsContext.getTestSeed(), keyword);
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient().getAgreementEServiceProducers(0, 10, query)

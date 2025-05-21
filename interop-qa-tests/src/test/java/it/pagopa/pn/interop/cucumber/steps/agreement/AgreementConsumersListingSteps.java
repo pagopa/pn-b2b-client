@@ -29,6 +29,7 @@ public class AgreementConsumersListingSteps {
 
     @When("l'utente richiede una operazione di listing dei fruitori dei propri e-service con offset {int}")
     public void listConsumersOfOwnedEServicesWithOffset(int offset) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getAgreementCommonContext().setResponseOffsetOne(
                 clientTokenConfigurator.getAgreementClient()
                         .getAgreementConsumers(offset, 50, null)

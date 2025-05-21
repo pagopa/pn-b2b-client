@@ -33,7 +33,7 @@ public class AgreementProducersListingSteps {
         );
 
         sharedStepsContext.getAgreementCommonContext().setResponseOffsetTwo(
-                clientTokenConfigurator.getAgreementClient().getAgreementProducers(offset + 1, 50, null)
+                clientTokenConfigurator.getAgreementClient().getAgreementProducers(offset - 1, 50, null)
         );
     }
 
