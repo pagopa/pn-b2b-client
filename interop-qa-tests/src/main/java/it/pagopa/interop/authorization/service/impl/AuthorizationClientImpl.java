@@ -76,7 +76,7 @@ public class AuthorizationClientImpl implements IAuthorizationClient {
 
     @Override
     public List<CompactUser> getClientUsers(UUID clientId) {
-        return clientsApi.getClientUsers(clientId, null);
+        return clientsApi.getClientUsers(clientId);
     }
 
     @Override
