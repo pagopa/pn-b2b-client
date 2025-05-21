@@ -1,8 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.common;
 
-import static it.pagopa.interop.authorization.service.utils.KeyPairUtil.stringToPrivateKey;
-import static it.pagopa.interop.authorization.service.utils.KeyPairUtil.stringToPublicKey;
-
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.ArrayList;
@@ -35,7 +32,11 @@ public class ClientCommonContext {
     //Represents the public key uploaded to the second client
     private String newClientPublicKey;
 
+    private PublicKey newClientPublicKeyAsObj;
+
     private String newClientPrivateKey;
+
+    private PrivateKey newClientPrivateKeyAsObj;
 
     private String keyType;
 
@@ -64,14 +65,6 @@ public class ClientCommonContext {
             clients = new ArrayList<>();
         }
         clients.add(clientId);
-    }
-
-    public PublicKey getNewClientPublicKeyAsObj() {
-        return stringToPublicKey(this.getNewClientPublicKey(), this.getKeyType());
-    }
-
-    public PrivateKey getNewClientPrivateKeyAsObj() {
-        return stringToPrivateKey(this.getNewClientPrivateKey(), this.getKeyType());
     }
 
 }

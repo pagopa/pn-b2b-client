@@ -11,9 +11,9 @@ import io.jsonwebtoken.security.PublicJwk;
 import it.pagopa.interop.authorization.service.utils.voucher.domain.ClientAssertionOptions;
 import it.pagopa.interop.authorization.service.utils.voucher.domain.ClientAssertionOptions.ClientType;
 import it.pagopa.interop.authorization.service.utils.voucher.domain.VoucherRequest;
-import it.pagopa.interop.authorization.service.utils.voucher.domain.VoucherResponse;
 import it.pagopa.interop.authorization.service.utils.voucher.exc.KidCalculationException;
 import it.pagopa.interop.utils.InteropAPIErrorResponse;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -35,14 +35,25 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.DefaultResponseErrorHandler;
+import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Component
 public class VoucherService {
+    private static class NoOpResponseErrorHandler extends DefaultResponseErrorHandler {
+        private NoOpResponseErrorHandler() {
+        }
+
+        public void handleError(ClientHttpResponse response) throws IOException {
+        }
+    }
+
     private final String clientAssertionJwtAudience;
     private final String authorizationServerTokenCreationUrl;
     private final RestTemplate restTemplate;
@@ -111,12 +122,41 @@ public class VoucherService {
         return jwtBuilder.signWith(options.getPrivateKey()).compact();
     }
 
-    public ResponseEntity<VoucherResponse> requestVoucher(VoucherRequest request) {
-        return requestVoucher(request, VoucherResponse.class);
-    }
-
     public ResponseEntity<InteropAPIErrorResponse> requestVoucherExpectingError(VoucherRequest request) {
         return requestVoucher(request, InteropAPIErrorResponse.class);
+    }
+
+    public Map<String, Object> requestVoucher(VoucherRequest request) {
+        ResponseErrorHandler originalErrorHandler = restTemplate.getErrorHandler();
+        try {
+            URI uri = UriComponentsBuilder
+                .fromHttpUrl(this.authorizationServerTokenCreationUrl)
+                .build()
+                .toUri();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+            Map<String, Object> voucherRequestProperties = PropertyUtils.describe(request);
+            MultiValueMap<String, Object> map = voucherRequestProperties.entrySet().stream()
+                .map(e -> Map.entry(
+                    SNAKE_CASE.convertFrom(SOFT_CAMEL_CASE, e.getKey()),
+                    List.of(e.getValue())))
+                .collect(Collectors.toMap(
+                    Entry::getKey,
+                    Entry::getValue,
+                    (e1, e2) -> e1,
+                    LinkedMultiValueMap::new
+                ));
+            HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(map, headers);
+
+            restTemplate.setErrorHandler(new NoOpResponseErrorHandler());
+            ResponseEntity<Object> exchange = restTemplate.exchange(uri, HttpMethod.POST, requestEntity,
+                Object.class);
+            return (Map<String, Object>) exchange.getBody();
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException("Ispezione dell'oggetto %s fallita".formatted(request.getClass().getName()), e);
+        } finally {
+            restTemplate.setErrorHandler(originalErrorHandler);
+        }
     }
 
     private <T> ResponseEntity<T> requestVoucher(VoucherRequest request, Class<T> clss) {
@@ -127,6 +167,9 @@ public class VoucherService {
                 .toUri();
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+            /* TODO 21/05/2025 provare a riformulare la creazione usando Jackson al posto
+            *   di apache.commons e textcaseconverter */
             Map<String, Object> voucherRequestProperties = PropertyUtils.describe(request);
             MultiValueMap<String, Object> map = voucherRequestProperties.entrySet().stream()
                     .map(e -> Map.entry(
@@ -138,6 +181,7 @@ public class VoucherService {
                         (e1, e2) -> e1,
                         LinkedMultiValueMap::new
                     ));
+
             HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(map, headers);
             /*ResponseEntity<T> exchange = restTemplate.exchange(uri, HttpMethod.POST, requestEntity,
                 clss);*/

@@ -1,16 +1,20 @@
 package it.pagopa.pn.interop.cucumber.steps.agreement;
 
-import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.domain.ClientType;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
-import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -30,6 +34,12 @@ public class AgreementActivateSteps {
         this.dataPreparationService = dataPreparationService;
         this.sharedStepsContext = sharedStepsContext;
         this.identityService = sharedStepsContext.getIdentityService();
+    }
+
+    @Given("{string} ha già sospeso quella richiesta di fruizione come {clientType}")
+    public void tenantHasAlreadySuspendedThatRequest(String tenantType, ClientType status) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        dataPreparationService.suspendAgreement(sharedStepsContext.getAgreementId(), status);
     }
 
     @Given("{string} ha già approvato quella richiesta di fruizione")
@@ -71,12 +81,6 @@ public class AgreementActivateSteps {
         dataPreparationService.bringDescriptorToGivenState(eserviceId, descriptorId, EServiceDescriptorState.valueOf(descriptorState), false);
         sharedStepsContext.getEServicesCommonContext().setEserviceId(eserviceId);
         sharedStepsContext.getEServicesCommonContext().setDescriptorId(descriptorId);
-    }
-
-    @Given("{string} ha già sospeso quella richiesta di fruizione come {clientType}")
-    public void tenantHasAlreadySuspendedAgreement(String tenantType, ClientType suspendedBy) {
-        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        dataPreparationService.suspendAgreement(sharedStepsContext.getAgreementId(), suspendedBy);
     }
 
     @Given("{string} ha già creato un attributo verificato")

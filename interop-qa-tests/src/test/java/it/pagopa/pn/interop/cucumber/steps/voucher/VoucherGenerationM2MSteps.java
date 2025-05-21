@@ -39,8 +39,7 @@ public class VoucherGenerationM2MSteps {
             .clientId(sharedStepsContext.getClientCommonContext().getFirstClient().toString())
             .clientAssertion(clientAssertion)
             .build();
-        httpCallExecutor.performCall(() ->
-            voucherService.requestVoucherExpectingError(voucherRequest).getBody());
+        httpCallExecutor.performCall(() -> voucherService.requestVoucher(voucherRequest));
     }
 
     @When("l'utente richiede la generazione del voucher M2M indicando il primo client ma con la chiave caricata nel secondo")
@@ -57,8 +56,7 @@ public class VoucherGenerationM2MSteps {
             .clientId(sharedStepsContext.getClientCommonContext().getFirstClient().toString())
             .clientAssertion(clientAssertion)
             .build();
-        httpCallExecutor.performCall(() ->
-            voucherService.requestVoucherExpectingError(voucherRequest).getBody());
+        httpCallExecutor.performCall(() -> voucherService.requestVoucher(voucherRequest));
     }
 
     @When("l'utente richiede la generazione del voucher M2M con una chiave associata a nessun client")
@@ -77,7 +75,6 @@ public class VoucherGenerationM2MSteps {
             .clientId(sharedStepsContext.getClientCommonContext().getFirstClient().toString())
             .clientAssertion(clientAssertion)
             .build();
-            httpCallExecutor.performCall(() ->
-                voucherService.requestVoucherExpectingError(voucherRequest).getBody());
+            httpCallExecutor.performCall(() -> voucherService.requestVoucher(voucherRequest));
     }
 }

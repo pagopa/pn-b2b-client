@@ -64,6 +64,7 @@ import it.pagopa.interop.purpose.domain.TEServiceMode;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
 import java.io.File;
 import java.io.IOException;
@@ -78,8 +79,6 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nullable;
-
-import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -212,10 +211,10 @@ public class DataPreparationService {
                     boolean isSuspended = purpose.getCurrentVersion().getState() == PurposeVersionState.SUSPENDED;
                     if (checkSuspendedBy == null) return isSuspended;
                     else if (checkSuspendedBy == ClientType.CONSUMER) {
-                        isSuspended = purpose.getSuspendedByConsumer();
+                        isSuspended = isTrue(purpose.getSuspendedByConsumer());
                     }
                     else {
-                        isSuspended = purpose.getSuspendedByProducer();
+                        isSuspended = isTrue(purpose.getSuspendedByProducer());
                     }
                     return isSuspended;
                 },

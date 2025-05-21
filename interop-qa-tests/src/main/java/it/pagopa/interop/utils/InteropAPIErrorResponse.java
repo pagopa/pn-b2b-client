@@ -24,6 +24,7 @@ public class InteropAPIErrorResponse {
     private UUID correlationId;
     private List<InteropAPIError> errors;
     private String status;
+    private String detail;
     private String title;
     private String type;
 }

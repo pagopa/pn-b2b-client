@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.voucher;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
@@ -96,7 +97,9 @@ public class VoucherGenerationEServiceSteps {
             .title("Bad request")
             .type("about:blank")
             .build();
-        InteropAPIErrorResponse originalResponse = (InteropAPIErrorResponse) httpCallExecutor.getResponse();
+        InteropAPIErrorResponse originalResponse = new ObjectMapper().convertValue(
+            httpCallExecutor.getResponse(),
+            InteropAPIErrorResponse.class);
         assertThat(originalResponse.toBuilder().correlationId(null)
             .build()) // perché il valore di correlationId è in questo caso irrilevante
             .as("Check che la error response abbia la valorizzazione prevista")
@@ -117,10 +120,13 @@ public class VoucherGenerationEServiceSteps {
                     .detail("Unable to generate a token for the given request")
                     .build()))
             .status("400")
+            .detail("Bad request") // ricavato sperimentalmente
             .title("The request contains bad syntax or cannot be fulfilled.")
             .type("about:blank")
             .build();
-        InteropAPIErrorResponse actualResponse = (InteropAPIErrorResponse) httpCallExecutor.getResponse();
+        InteropAPIErrorResponse actualResponse = new ObjectMapper().convertValue(
+            httpCallExecutor.getResponse(),
+            InteropAPIErrorResponse.class);
         assertThat(actualResponse.getCorrelationId())
             .isNotNull()
             .asString()

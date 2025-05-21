@@ -3,6 +3,7 @@ package it.pagopa.pn.interop.cucumber.steps.voucher;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.voucher.VoucherService;
@@ -12,7 +13,6 @@ import it.pagopa.interop.authorization.service.utils.voucher.domain.VoucherReque
 import it.pagopa.interop.authorization.service.utils.voucher.domain.VoucherResponse;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import org.springframework.http.ResponseEntity;
 
 public class VoucherGenerationSteps {
 
@@ -53,13 +53,19 @@ public class VoucherGenerationSteps {
 
     @Then("si ottiene la corretta generazione del voucher")
     public void checkVoucherGeneration() {
-        if(httpCallExecutor.getClientResponse().isError()) {
-            fail("Voucher generation failed: " + httpCallExecutor.getClientResponse());
-        }
-        Object response = httpCallExecutor.getResponse();
-        if (response instanceof ResponseEntity<?> respEntity &&
-                respEntity.getBody() instanceof VoucherResponse voucher) {
-            assertThat(voucher.getTokenType()).isEqualTo("Bearer");
+        /* non serve fare il check di status code dell'ultima chiamata effettuata perché,
+         * diversamente dal solito, l'ultima chiamata prevista prima di questo step non
+         * dovrebbe lanciare un eccezione nemmeno in caso d'errore */
+
+        try {
+            Object response = httpCallExecutor.getResponse();
+            VoucherResponse voucherResponse = new ObjectMapper()
+                .convertValue(response, VoucherResponse.class);
+            assertThat(voucherResponse.getTokenType()).isEqualTo("Bearer");
+        } catch (IllegalArgumentException e) {
+            fail("La conversione dell'oggetto restituito in %s è fallita. E' possibile "
+                + "che la generazione del voucher non sia andata come previsto, o che il formato "
+                + "della risposta sia cambiato nel tempo. Errore: %s", VoucherResponse.class.getName(), e.getMessage());
         }
     }
 

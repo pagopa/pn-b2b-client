@@ -36,7 +36,7 @@ public class VoucherGenerationPurposeSteps {
             UUID.fromString(purposeId),
             UUID.fromString(waitingForApprovalVersionId));
 
-        sharedStepsContext.getPurposeCommonContext().setCurrentVersionId(waitingForApprovalVersionId);
+        sharedStepsContext.getPurposeCommonContext().getCurrentVersionIds().add(waitingForApprovalVersionId);
     }
 
     @Given("{string} ha già rifiutato la richiesta di aggiornamento della stima di carico")

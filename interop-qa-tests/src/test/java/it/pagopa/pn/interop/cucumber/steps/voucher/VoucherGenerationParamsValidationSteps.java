@@ -35,8 +35,7 @@ public class VoucherGenerationParamsValidationSteps {
             .clientAssertion(clientAssertion)
             .build();
         voucherRequest.set(param, "unknown");
-        httpCallExecutor.performCall(() ->
-            voucherService.requestVoucherExpectingError(voucherRequest).getBody());
+        httpCallExecutor.performCall(() -> voucherService.requestVoucher(voucherRequest));
     }
 
     @When("l'utente richiede la generazione del voucher valorizzando il parametro client_id con un valore diverso dal claim sub nella client assertion")
@@ -48,8 +47,7 @@ public class VoucherGenerationParamsValidationSteps {
             .clientId(UUID.randomUUID().toString())
             .clientAssertion(clientAssertion)
             .build();
-        httpCallExecutor.performCall(() ->
-            voucherService.requestVoucherExpectingError(voucherRequest).getBody());
+        httpCallExecutor.performCall(() -> voucherService.requestVoucher(voucherRequest));
     }
 
     @When("l'utente richiede la generazione del voucher inserendo una client assertion come JWT non valida")
@@ -58,8 +56,7 @@ public class VoucherGenerationParamsValidationSteps {
             .clientId(sharedStepsContext.getClientCommonContext().getFirstClient().toString())
             .clientAssertion("unknown")
             .build();
-        httpCallExecutor.performCall(() ->
-            voucherService.requestVoucherExpectingError(voucherRequest).getBody());
+        httpCallExecutor.performCall(() -> voucherService.requestVoucher(voucherRequest));
     }
 
     private ClientAssertionOptions buildClientAssertionOptions() {
