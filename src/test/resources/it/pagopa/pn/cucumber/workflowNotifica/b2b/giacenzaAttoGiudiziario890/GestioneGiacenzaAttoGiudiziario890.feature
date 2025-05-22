@@ -166,7 +166,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
 
   #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.60s-RECAG012.5s-RECAG011B[DOC:ARCAD].5s-RECAG005A.5s-RECAG005B[DOC:23L].5s-RECAG005C"
 
-  @giacenza890Simplified
+  @giacenza890Simplified @esposizioneCadArcad
   Scenario: [B2B_GIACENZA_890_WI1.1_4] Consegnato a persona delegata in Giacenza prima dei 10 giorni.
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -214,6 +214,13 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | details_sentAttemptMade    | 0                         |
       | details_attachments        | [{"documentType": "23L"}] |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                          |
+      | details_recIndex           | 0                                 |
+      | details_deliveryDetailCode | RECAG006B                         |
+      | details_sentAttemptMade    | 0                                 |
+      | legalFactsIds              | [{"category": "ANALOG_DELIVERY"}] |
+      | details_attachments        | [{"documentType": "ARCAD"}]       |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                    | NOT_NULL  |
       | details_recIndex           | 0         |
       | details_deliveryDetailCode | RECAG006C |
@@ -224,7 +231,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
   #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.30s-RECAG012.5s-RECAG006A.5s-RECAG006B[DOC:ARCAD;DOC:23L].5s-RECAG006C"
 
 
-  @giacenza890Simplified
+  @giacenza890Simplified @esposizioneCadArcad
   Scenario: [B2B_GIACENZA_890_WI1.1_5] Consegnato a persona delegata in Giacenza dopo dei 10 giorni. In questo scenario viene simulato il perfezionamento dell’atto al 10° giorno
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -271,6 +278,13 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | details_deliveryDetailCode | RECAG011B                 |
       | details_sentAttemptMade    | 0                         |
       | details_attachments        | [{"documentType": "23L"}] |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                          |
+      | details_recIndex           | 0                                 |
+      | details_deliveryDetailCode | RECAG011B                         |
+      | details_sentAttemptMade    | 0                                 |
+      | legalFactsIds              | [{"category": "ANALOG_DELIVERY"}] |
+      | details_attachments        | [{"documentType": "ARCAD"}]       |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                    | NOT_NULL  |
       | details_recIndex           | 0         |
@@ -353,6 +367,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG010"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG011A"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG007B" e verifica tipo DOC "Plico"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG007B" e verifica tipo DOC "ARCAD"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG007C"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
@@ -444,7 +459,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
   #"@sequence.5s-CON080.5s-RECAG010.5s-RECAG011A.60s-RECAG012.5s-RECAG011B[DOC:ARCAD].5s-RECAG007A.5s-RECAG007B[DOC:23L;DOC:Plico].5s-RECAG007C"
 
 
-  @giacenza890Simplified
+  @giacenza890Simplified @esposizioneCadArcad
   Scenario: [B2B_GIACENZA_890_WI1.1_10] Compiuta Giacenza. In questo scenario viene simulato il perfezionamento dell’atto al 10° giorno
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -492,6 +507,12 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | details_sentAttemptMade    | 0                         |
       | details_attachments        | [{"documentType": "23L"}] |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                  |
+      | details_recIndex           | 0                         |
+      | details_deliveryDetailCode | RECAG011B                 |
+      | details_sentAttemptMade    | 0                         |
+      | details_attachments        | [{"documentType": "ARCAD"}] |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                    | NOT_NULL                    |
       | details_recIndex           | 0                           |
       | details_deliveryDetailCode | RECAG008B                   |
@@ -506,6 +527,66 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       |  |  |
     #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.60s-RECAG012.5s-RECAG011B[DOC:ARCAD;DOC:23L].60s-RECAG008A.5s-RECAG008B[DOC:Plico].5s-RECAG008C"
 
+  @esposizioneCadArcad
+  Scenario: [B2B_GIACENZA_890_WI1.1_10_ALLEGATI] Compiuta Giacenza. Verifica degli allegati CAD, 23L
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario
+      | denomination            | OK-GiacenzaCAD-lte10_890     |
+      | taxId                   | CLMCST42R12D969Z            |
+      | digitalDomicile         | NULL                        |
+      | physicalAddress_address | via@OK-GiacenzaCAD-lte10_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    #[vecchio]And si verifica che il timestamp dell'elemento di timeline della notifica SEND_ANALOG_FEEDBACK con deliveryDetailCode RECAG012 sia uguale al timestamp di REFINEMENT
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
+      | details_deliveryDetailCode | CON080   |
+      | details_sentAttemptMade    | 0        |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
+      | details_deliveryDetailCode | RECAG010 |
+      | details_sentAttemptMade    | 0        |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
+      | details_deliveryDetailCode | RECAG011A |
+      | details_sentAttemptMade    | 0         |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | details                    | NOT_NULL                                                                                                                                                                                                         |
+      | details_recIndex           | 0                                                                                                                                                                                                                |
+      | details_deliveryDetailCode | RECAG012                                                                                                                                                                                                         |
+      | details_sentAttemptMade    | 0                                                                                                                                                                                                                |
+      | details_physicalAddress    | {"at": "Presso", "address": "VIA@OK-GiacenzaCAD-lte10_890", "addressDetails": "SCALA B", "zip": "87100", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "province": "CS", "foreignState": "ITALIA"} |
+      | details_responseStatus     | OK
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
+      | details_deliveryDetailCode | RECAG005A |
+      | details_sentAttemptMade    | 0         |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                  |
+      | details_recIndex           | 0                         |
+      | details_deliveryDetailCode | RECAG005B                 |
+      | details_sentAttemptMade    | 0                         |
+      | details_attachments        | [{"documentType": "23L"}] |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                  |
+      | details_recIndex           | 0                         |
+      | details_deliveryDetailCode | RECAG005B                 |
+      | details_sentAttemptMade    | 0                         |
+      | details_attachments        | [{"documentType": "CAD"}] |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
+      | details_deliveryDetailCode | RECAG005C |
+      | details_sentAttemptMade    | 0         |
+    And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+      |  |  |
+    #"@sequence.5s-CON080.5s-RECAG010.5s-RECAG011A.5s-RECAG012.5s-RECAG005A.5s-RECAG005B[DOC:CAD;DOC:23L].5s-RECAG005C"
 
   @giacenza890Simplified
   Scenario: [B2B_GIACENZA_890_WI1.1_11] Attesa elemento di timeline REFINEMENT con physicalAddress OK-WO-011B (TEST TECNICO)

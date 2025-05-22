@@ -182,6 +182,12 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza 890
       | details_deliveryDetailCode | RECAG007B                   |
       | details_sentAttemptMade    | 0                           |
       | details_attachments        | [{"documentType": "Plico"}] |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                    |
+      | details_recIndex           | 0                           |
+      | details_deliveryDetailCode | RECAG007B                   |
+      | details_sentAttemptMade    | 0                           |
+      | details_attachments        | [{"documentType": "ARCAD"}] |
     #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.30s-RECAG007A.5s-RECAG007B[DOC:ARCAD;DOC:Plico].5s-RECAG007C"
 
 
