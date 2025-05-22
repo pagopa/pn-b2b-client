@@ -47,6 +47,15 @@ public class NotificationStepsV2 implements NotificationStepsInterface {
     }
 
     @Override
+    public Object getFullSentNotification() {
+        return b2bClient.getSentNotificationV2(sharedSteps.getNotificationIun());
+    }
+
+    private FullSentNotificationV20 getFullSentNotificationVersioned() {
+        return (FullSentNotificationV20) getFullSentNotification();
+    }
+
+    @Override
     public void prepareNotificationRequest(Map<String, String> data) {
         notificationRequest = utils.convertNotificationRequest(data);
         sharedSteps.setVersionUsed(version);

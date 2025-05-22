@@ -91,6 +91,8 @@ public enum NotificationValue {
     DETAILS_DELEGATE_INFO("details_delegateInfo", null, false),
     PAGOPAINTMODE("pagoPaIntMode", "NONE", false),
     LOAD_TIMELINE_FROM("loadTimelineFrom", "fromB2b", false),
+    DETAILS_NOTIFICATION_COST("details_notificationCost", null, false),
+    PARAMETRI_CALCOLO_COSTO_NOTIFICA("parametriCalcoloCostoNotifica", null, false),
     REGISTRY("registry", null, false);
 
     private static final String NULL_VALUE = "NULL";

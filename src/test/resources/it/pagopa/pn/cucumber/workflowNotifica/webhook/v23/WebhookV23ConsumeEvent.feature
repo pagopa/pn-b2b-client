@@ -183,13 +183,13 @@ Feature: avanzamento notifiche webhook b2b V23
     #TEST DEANONIMIZZAZIONE
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     And vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "SEND_COURTESY_MESSAGE" con la versione "V23" e apiKey aggiornata con position 0
-    And verifica deanonimizzazione degli eventi di timeline versione "V23" con delega "NO" digitale
+    And verifica deanonimizzazione degli eventi di timeline versione "V23" senza delega digitale
     And vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "SEND_DIGITAL_DOMICILE" con la versione "V23" e apiKey aggiornata con position 0
-    And verifica deanonimizzazione degli eventi di timeline versione "V23" con delega "NO" digitale
+    And verifica deanonimizzazione degli eventi di timeline versione "V23" senza delega digitale
     And vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "SEND_DIGITAL_FEEDBACK" con la versione "V23" e apiKey aggiornata con position 0
-    And verifica deanonimizzazione degli eventi di timeline versione "V23" con delega "NO" digitale
+    And verifica deanonimizzazione degli eventi di timeline versione "V23" senza delega digitale
     And vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" con la versione "V23" e apiKey aggiornata con position 0
-    And verifica deanonimizzazione degli eventi di timeline versione "V23" con delega "NO" digitale
+    And verifica deanonimizzazione degli eventi di timeline versione "V23" senza delega digitale
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 

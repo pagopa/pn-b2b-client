@@ -147,6 +147,9 @@ public class Costanti {
     public static final String EQUALITY_ZIP_CODE = "zipCode";
     public static final String EQUALITY_REGISTRY = "registry";
     public static final String INVALID_TIMELINE_CATEGORY = "Valore non valido per timelineEventCategory: ";
+    // Messaggi di errore WebhookSteps
+    public static final String NOT_NULL_P_R_E = "Il progressResponseElement non dev'essere null";
+    public static final String MUST_NOT_BE_NULL = "non dev'essere null";
     // PollingStrategy (generiche)
     public static final String TIMELINE_RAPID = "TIMELINE_RAPID";
     public static final String TIMELINE_SLOW = "TIMELINE_SLOW";

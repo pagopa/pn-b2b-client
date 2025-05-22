@@ -47,6 +47,15 @@ public class NotificationStepsV25 implements NotificationStepsInterface {
     }
 
     @Override
+    public Object getFullSentNotification() {
+        return b2bClient.getSentNotificationV27(sharedSteps.getNotificationIun());
+    }
+
+    private FullSentNotificationV27 getFullSentNotificationVersioned() {
+        return (FullSentNotificationV27) getFullSentNotification();
+    }
+
+    @Override
     public void prepareNotificationRequest(Map<String, String> data) {
         notificationRequest = utils.convertNotificationRequest(data);
         sharedSteps.setVersionUsed(version);
@@ -236,8 +245,7 @@ public class NotificationStepsV25 implements NotificationStepsInterface {
 
     @Override
     public void performPriceVerification(String price, String date, Integer destinatario) {
-        String iun = sharedSteps.getNotificationIun();
-        FullSentNotificationV27 fullSentNotification = b2bClient.getSentNotificationV27(iun);
+        FullSentNotificationV27 fullSentNotification = getFullSentNotificationVersioned();
         List<NotificationPaymentItem> listNotificationPaymentItem = fullSentNotification.getRecipients().get(destinatario).getPayments();
         if (listNotificationPaymentItem != null) {
             for (NotificationPaymentItem notificationPaymentItem : listNotificationPaymentItem) {
@@ -336,8 +344,7 @@ public class NotificationStepsV25 implements NotificationStepsInterface {
 
     @Override
     public void checkTaxonomyCode() {
-        String iun = sharedSteps.getNotificationIun();
-        FullSentNotificationV27 fullSentNotification = b2bClient.getSentNotificationV27(iun);
+        FullSentNotificationV27 fullSentNotification = getFullSentNotificationVersioned();
         assertThat(fullSentNotification.getTaxonomyCode())
                 .as("Il taxonomyCode nella notifica inviata non dovrebbe essere null")
                 .isNotNull();

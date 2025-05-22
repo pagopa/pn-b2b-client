@@ -37,6 +37,8 @@ public class DataTestV25 extends AbstractDataTest {
         String pollingType = getValue(data, POLLING_TYPE.key);
         String loadTimeline = getValue(data, LOAD_TIMELINE.key);
         String loadTimelineFrom = getValue(data, LOAD_TIMELINE_FROM.key);
+        String notificationCost = getValue(data, DETAILS_NOTIFICATION_COST.key);
+        String parametriCalcoloCostoNotifica = getValue(data, PARAMETRI_CALCOLO_COSTO_NOTIFICA.key);
         String registry = getValue(data, REGISTRY.key);
 
         if (data.size() == 1 && data.get("NULL") != null) {
@@ -65,6 +67,7 @@ public class DataTestV25 extends AbstractDataTest {
                             .physicalAddress(getObjValue(PhysicalAddress.class, data, DETAILS_PHYSICALADDRESS.key))
                             .analogCost(analogCost != null ? Integer.parseInt(analogCost) : null)
                             .delegateInfo(getObjValue(DelegateInfo.class, data, DETAILS_DELEGATE_INFO.key))
+                            .notificationCost(notificationCost != null ? Long.parseLong(notificationCost) : null)
                             .registry(registry != null ? getValue(data, REGISTRY.key) : null)
                     );
 
@@ -79,6 +82,7 @@ public class DataTestV25 extends AbstractDataTest {
             dataTest.setNumCheck(numCheck != null ? Integer.parseInt(numCheck) : null);
             dataTest.setLoadTimeline(loadTimeline != null ? Boolean.valueOf(loadTimeline) : null);
             dataTest.setLoadTimelineFrom(loadTimelineFrom);
+            dataTest.setParametriCalcoloCostoNotifica(parametriCalcoloCostoNotifica);
 
             return dataTest;
         } catch (JsonProcessingException jsonProcessingException) {
@@ -104,12 +108,18 @@ public class DataTestV25 extends AbstractDataTest {
             }
             case REQUEST_REFUSED -> {
                 if (expected != null) {
-                    Assertions.assertNotNull(actual.getRefusalReasons());
+                    assertThat(actual.getRefusalReasons()).as("Le motivazioni del rifiuto non devono essere null").isNotNull();
                     assertThat(actual.getRefusalReasons().size()).as(error + EQUALITY_REFUSAL_REASON_SIZE).isEqualTo(expected.getRefusalReasons().size());
                     for (int i = 0; i < actual.getRefusalReasons().size(); i++) {
                         assertThat(actual.getRefusalReasons().get(i).getErrorCode())
                                 .as(error + EQUALITY_ERROR_CODE)
                                 .isEqualTo(expected.getRefusalReasons().get(i).getErrorCode());
+                    }
+                    if (dataTest.getParametriCalcoloCostoNotifica() != null) {
+                        expected.setNotificationCost(B2bUtils.calcolaCostoNotifica(dataTest.getParametriCalcoloCostoNotifica()));
+                    }
+                    if (expected.getNotificationCost() != null) {
+                        assertThat(actual.getNotificationCost()).as("").isEqualTo(expected.getNotificationCost());
                     }
                 }
             }

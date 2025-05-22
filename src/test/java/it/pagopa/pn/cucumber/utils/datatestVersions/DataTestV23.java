@@ -37,6 +37,7 @@ public class DataTestV23 extends AbstractDataTest {
         String pollingType = getValue(data, POLLING_TYPE.key);
         String loadTimeline = getValue(data, LOAD_TIMELINE.key);
         String loadTimelineFrom = getValue(data, LOAD_TIMELINE_FROM.key);
+        String notificationCost = getValue(data, DETAILS_NOTIFICATION_COST.key);
 
         if (data.size() == 1 && data.get("NULL") != null) {
             return null;
@@ -63,6 +64,7 @@ public class DataTestV23 extends AbstractDataTest {
                             .attachments(getListValue(AttachmentDetails.class, data, DETAILS_ATTACHMENTS.key))
                             .physicalAddress(getObjValue(PhysicalAddress.class, data, DETAILS_PHYSICALADDRESS.key))
                             .analogCost(analogCost != null ? Integer.parseInt(analogCost) : null)
+                            .notificationCost(notificationCost != null ? Long.parseLong(notificationCost) : null)
                             .delegateInfo(getObjValue(DelegateInfo.class, data, DETAILS_DELEGATE_INFO.key))
                     );
 

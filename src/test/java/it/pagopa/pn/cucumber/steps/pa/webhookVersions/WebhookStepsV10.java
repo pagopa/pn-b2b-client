@@ -1,16 +1,19 @@
 package it.pagopa.pn.cucumber.steps.pa.webhookVersions;
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV20;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryElement;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV20;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV20;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingWebhook;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v20.PnPollingServiceWebhookV20;
+import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.*;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.NotificationStatus;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.ProgressResponseElement;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.StreamCreationRequest;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.StreamListElement;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.StreamMetadataResponse;
+import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -35,12 +38,25 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
     private List<StreamMetadataResponse> eventStreamList;
     private StreamCreationRequest streamRequest;
     private final AvanzamentoNotificheWebhookB2bSteps webhookSteps;
+    private final SharedSteps sharedSteps;
+    private final IPnPaB2bClient b2bClient;
     private final StreamVersion streamVersion;
 
     public WebhookStepsV10(AvanzamentoNotificheWebhookB2bSteps webhookSteps) {
         this.webhookSteps = webhookSteps;
+        sharedSteps = webhookSteps.getSharedSteps();
+        b2bClient = webhookSteps.getB2bClient();
         streamVersion = StreamVersion.V10;
         progressResponseElementList = new LinkedList<>();
+    }
+
+    @Override
+    public Object getFullSentNotification() {
+        return b2bClient.getSentNotificationV1(sharedSteps.getNotificationIun());
+    }
+
+    private FullSentNotification getFullSentNotificationVersioned() {
+        return (FullSentNotification) getFullSentNotification();
     }
 
     //TODO MATTEO: controllare per possibili metodi non implementati
@@ -147,8 +163,8 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
         streamRequest.setEventType(StreamCreationRequest.EventTypeEnum.TIMELINE);
         for (StreamMetadataResponse eventStream : eventStreamList) {
             StreamMetadataResponse result = webhookSteps.getWebhookB2bClient().updateEventStream(eventStream.getStreamId(), streamRequest);
-            Assertions.assertNotNull(result);
-            Assertions.assertTrue(streamRequest.getTitle().equalsIgnoreCase(result.getTitle()));
+            assertThat(result).as("Il risultato dell'operazione di update stream con id " + eventStream.getStreamId() + " non dev'essere null").isNotNull();
+            assertThat(result.getTitle()).as("Il titolo dello stream non coincide con quanto atteso").isEqualToIgnoringCase(streamRequest.getTitle());
             log.info("EVENTSTREAM update : {}", result);
         }
     }
@@ -204,8 +220,10 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
     public void getStreamById(UUID streamId) {
         StreamMetadataResponse eventStream = Assertions.assertDoesNotThrow(() ->
                 webhookSteps.getWebhookB2bClient().retrieveEventStream(streamId));
-        Assertions.assertNotNull(eventStream);
-        Assertions.assertNotNull(eventStream.getStreamId());
+        assertThat(eventStream).as("Nessuno stream trovato con streamId " + streamId).isNotNull();
+        assertThat(eventStream.getStreamId())
+                .as("Lo streamId dello stream recuperato tramite id " + streamId + " non dev'essere null")
+                .isNotNull();
         log.info("EVENTSTREAM: {}", eventStream);
     }
 
@@ -221,14 +239,15 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
         UUID streamId = eventStreamList.get(0).getStreamId();
         progressResponseElementList = webhookSteps.getWebhookB2bClient().consumeEventStream(streamId, null);
         log.info("progressResponseElements: " + progressResponseElementList);
-        Assertions.assertEquals(progressResponseElementList.size(), numEvents);
-        System.out.println("ELEMENTI NEL WEBHOOK: " + progressResponseElementList.size());
+        assertThat(progressResponseElementList.size()).as("Il numero di eventi non coincide con quanto atteso").isEqualTo(numEvents);
+        log.info("ELEMENTI NEL WEBHOOK: " + progressResponseElementList.size());
     }
 
     @Override
     public void verifyNoEventsInStream() {
         UUID streamId = getStreamId();
-        Assertions.assertTrue(webhookSteps.getWebhookB2bClient().consumeEventStream(streamId, null).isEmpty());
+        progressResponseElementList = webhookSteps.getWebhookB2bClient().consumeEventStream(streamId, null);
+        assertThat(progressResponseElementList).as("La lista di eventi restituiti dalla consume dovrebbe essere vuota").isEmpty();
     }
 
     @Override
@@ -433,12 +452,7 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
     }
 
     @Override
-    public void verificaDeanonimizzazioneEventiTimelineAnalogica(boolean delega) {
-        //non previsto per la V10
-    }
-
-    @Override
-    public void verificaDeanonimizzazioneEventiTimelineDigitale(boolean delega) {
+    public void verificaDeanonimizzazioneEventiTimeline(boolean isDigitale, boolean withDelega) {
         //non previsto per la V10
     }
 
@@ -479,14 +493,26 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
     }
 
     @Override
-    public void checkLegalFactCategory(String timelineCategory, String legalFactCategory) {
-        String iun = webhookSteps.getSharedSteps().getNotificationIun();
-        FullSentNotificationV20 fullSentNotification = webhookSteps.getB2bClient().getSentNotificationV2(iun);
-        TimelineElementV20 timelineElementWithTargetCategory =
+    public void checkLegalFactCategory(String timelineCategory, String legalFactCategory, boolean arePresent) {
+        FullSentNotification fullSentNotification = getFullSentNotificationVersioned();
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElement timelineElementWithTargetCategory =
                 fullSentNotification.getTimeline().stream().filter(
                         x -> x.getCategory().getValue().equals(timelineCategory)).findFirst().orElse(null);
-        Assertions.assertNotNull(timelineElementWithTargetCategory);
-        timelineElementWithTargetCategory.getLegalFactsIds().forEach(
-                x -> Assertions.assertNotEquals(x.getCategory().getValue(), legalFactCategory));
+
+        assertThat(timelineElementWithTargetCategory)
+                .as("La timeline b2b dovrebbe restituire almeno un elemento con categoria " + timelineCategory)
+                .isNotNull();
+        List<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactsId> elementsWithLegalFactCategory =
+                timelineElementWithTargetCategory.getLegalFactsIds().stream().filter(
+                        x -> x.getCategory().equals(legalFactCategory)).toList();
+        if (arePresent) {
+            assertThat(elementsWithLegalFactCategory)
+                    .as("La ricerca dovrebbe restituire almeno un elemento di timeline con legalFactCategory " + legalFactCategory)
+                    .isNotEmpty();
+        } else {
+            assertThat(elementsWithLegalFactCategory)
+                    .as("La ricerca non dovrebbe restituire nessun elemento di timeline con legalFactCategory " + legalFactCategory)
+                    .isEmpty();
+        }
     }
 }

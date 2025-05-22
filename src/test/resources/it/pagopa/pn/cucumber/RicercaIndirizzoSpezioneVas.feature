@@ -13,21 +13,20 @@ Feature: test per il recupero indirizzo al primo tentativo vas
   #PA ABILITATA, PF CENSITA, CLIENT ABILITATO (OK -> DWXA-QELZ-WLJK-202505-T-1)
   @ricercaIndirizzoVas @technicalRefusalCostUniform @technicalRefusalCostRecipient #costi 1-6-43-48
   Scenario: [3-15-24-43-48] Invio notifica AR monodestinatario verso PF con campo address vuoto e recupero indirizzo da ANPR - Vas attivo
-#    Given il test è effettuabile con API versione "V25" o superiore
-#    Given viene generata una nuova notifica
-#      | subject            | invio notifica con cucumber |
-#      | senderDenomination | Comune di Palermo           |
-#    And destinatario Mario Cucumber e:
-#      | digitalDomicile | NULL |
-#      | physicalAddress | NULL |
-#    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-#    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_VALIDATION_CALL"
-#    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
-#      | registry                | ANPR                                                                   |
-#      | details                 | NOT_NULL                                                               |
-#      | details_recIndex        | 0                                                                      |
-#      | details_physicalAddress | {"address": "Via Umbria 5L", "municipality": "PADOVA", "zip": "35127"} |
-    Given imposto lo iun di SharedSteps a "DWXA-QELZ-WLJK-202505-T-1" e la pa a "Comune_Multi"
+    Given il test è effettuabile con API versione "V25" o superiore
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+    And destinatario Mario Cucumber e:
+      | digitalDomicile | NULL |
+      | physicalAddress | NULL |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_VALIDATION_CALL"
+    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
+      | registry                | ANPR                                                                   |
+      | details                 | NOT_NULL                                                               |
+      | details_recIndex        | 0                                                                      |
+      | details_physicalAddress | {"address": "Via Umbria 5L", "municipality": "PADOVA", "zip": "35127"} |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
       | loadTimeline               | true                                                                   |
       | details                    | NOT_NULL                                                               |
@@ -742,11 +741,11 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | physicalAddress | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
-      | loadTimeline               | true                                                                                                              |
-      | details                    | NOT_NULL                                                                                                          |
-      | details_numberOfRecipients | 1                                                                                                                 |
-      | details_refusalReasons     | [{"detail": "Address search for recipient index: 0, encountered an error", "errorCode": "ADDRESS_SEARCH_FAILED"}] |
- #TODO     | details_notificationCost | xxx  cost |
+      | loadTimeline                  | true                                                                                                              |
+      | details                       | NOT_NULL                                                                                                          |
+      | details_numberOfRecipients    | 1                                                                                                                 |
+      | details_refusalReasons        | [{"detail": "Address search for recipient index: 0, encountered an error", "errorCode": "ADDRESS_SEARCH_FAILED"}] |
+      | parametriCalcoloCostoNotifica | mode:UNIFORM,recipients:1,ko:1,ok:0                                                                               |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | loadTimeline | false |
 

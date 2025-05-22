@@ -372,6 +372,11 @@ public abstract class B2bUtils {
         return context.getEnvironment().getActiveProfiles()[0];
     }
 
+    public static Long calcolaCostoNotifica(String parametriCalcoloCostoNotifica) {
+        //TODO VAS
+        return 1L;
+    }
+
     /**
      * Confronta due oggetti qualsiasi, valutando l'uguaglianza solo per i field != null specificati nell'expected
      * (NOTA: eventuali campi statici sono esclusi da questa verifica)

@@ -927,16 +927,9 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         return result;
     }
 
-    @Then("verifica deanonimizzazione degli eventi di timeline versione {string} con delega {string} analogico")
-    public void verificaDeanonimizzazioneDegliEventiDiTimelineAnalogico(String version, String delega) {
-        boolean withDelega = delega.trim().equalsIgnoreCase("SI");
-        getWebhookStep(version).verificaDeanonimizzazioneEventiTimelineAnalogica(withDelega);
-    }
-
-    @Then("verifica deanonimizzazione degli eventi di timeline versione {string} con delega {string} digitale")
-    public void verificaDeanonimizzazioneDegliEventiDiTimelineDigitale(String version, String delega) {
-        boolean withDelega = delega.trim().equalsIgnoreCase("SI");
-        getWebhookStep(version).verificaDeanonimizzazioneEventiTimelineDigitale(withDelega);
+    @Then("verifica deanonimizzazione degli eventi di timeline versione {string} {with} delega {isDigital}")
+    public void verificaDeanonimizzazioneDegliEventiDiTimelineDigitale(String version, boolean withDelega, boolean isDigital) {
+        getWebhookStep(version).verificaDeanonimizzazioneEventiTimeline(isDigital, withDelega);
     }
 
     @When("vengono letti gli eventi di timeline dello stream con versione {string} nonostante sia stato creato con la {string} - Cross Versioning")
@@ -1160,8 +1153,8 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         webhookStepsInterface.consumeEventStream(streamId);
     }
 
-    @Then("tra gli elementi di timeline versione {string} di categoria {string} nessuno contiene un legalFact con categoria {string}")
-    public void checkTimelineElementVersionLegalFacts(String version, String timelineCategory, String legalFactCategory) {
-        getWebhookStep(version).checkLegalFactCategory(timelineCategory, legalFactCategory);
+    @Then("tra gli elementi di timeline versione {string} di categoria {string} {are} presenti legalFacts con categoria {string}")
+    public void checkTimelineElementVersionLegalFacts(String version, String timelineCategory, boolean arePresent, String legalFactCategory) {
+        getWebhookStep(version).checkLegalFactCategory(timelineCategory, legalFactCategory, arePresent);
     }
 }
