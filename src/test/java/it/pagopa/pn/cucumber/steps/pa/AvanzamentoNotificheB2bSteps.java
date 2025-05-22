@@ -369,7 +369,7 @@ public class AvanzamentoNotificheB2bSteps {
                     Assertions.assertNotNull(elementFromNotification.getLegalFactsIds().get(i).getKey());
                 }
             }
-            case REFINEMENT -> {
+            case REFINEMENT, SCHEDULE_REFINEMENT -> {
                 if (detailsFromTest != null) {
                     Assertions.assertEquals(detailsFromNotification.getRecIndex(), detailsFromTest.getRecIndex());
                 }
