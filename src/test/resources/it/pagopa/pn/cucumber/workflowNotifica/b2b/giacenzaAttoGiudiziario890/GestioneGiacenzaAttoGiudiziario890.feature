@@ -567,7 +567,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | details_deliveryDetailCode | RECAG012                                                                                                                                                                                                          |
       | details_sentAttemptMade    | 0                                                                                                                                                                                                                 |
       | details_physicalAddress    | {"at": "Presso", "address": "VIA@OK-GiacenzaCAD-lte10_890", "addressDetails": "SCALA B", "zip": "87100", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "province": "CS", "foreignState": "ITALIA"} |
-      | details_responseStatus     | OK
+      | details_responseStatus     | OK                                                                                                                                                                                                                |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                    | NOT_NULL  |
       | details_recIndex           | 0         |
