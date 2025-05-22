@@ -682,6 +682,13 @@ Feature: Workflow analogico
       | details_deliveryDetailCode | RECAG011B                         |
       | legalFactsIds              | [{"category": "ANALOG_DELIVERY"}] |
       | details_attachments        | [{"documentType": "23L"}]         |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                          |
+      | details_recIndex           | 0                                 |
+      | details_sentAttemptMade    | 0                                 |
+      | details_deliveryDetailCode | RECAG011B                         |
+      | legalFactsIds              | [{"category": "ANALOG_DELIVERY"}] |
+      | details_attachments        | [{"documentType": "ARCAD"}]       |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
       | details                    | NOT_NULL |
       | details_recIndex           | 0        |
