@@ -168,7 +168,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         TemplateEngineClientImpl.class,
         TemplateConfiguration.class,
         TemplateEngineContextFactory.class,
-        EmdIntegrationApiImpl.class
+        EmdIntegrationApiImpl.class,
 })
 @EnableScheduling
 @EnableConfigurationProperties

@@ -82,11 +82,5 @@ public class ParameterTypes {
         return paName;
     }
 
-    //TODO VAS ESPERIMENTO
-    @ParameterType(MODE_UNIFORM + "|" + MODE_RECIPIENT_BASED)
-    public static String calculationMode(String mode) {
-        return mode.equals(MODE_UNIFORM) ? TECHNICAL_REFUSAL_COST_MODE_UNIFORM : TECHNICAL_REFUSAL_COST_MODE_RECIPIENT_BASED;
-    }
-
 
 }

@@ -284,13 +284,6 @@ public class SharedSteps {
                 "subject", "MOCKED NOTIFICATION",
                 "senderDenomination", "Comune di Palermo"));
         getNotificationStepInterface().addRecipientToNotification(Destinatario.DESTINATARIO_MARIO_CUCUMBER, new HashMap<>());
-
-        //TODO VAS ESPERIMENTO
-//        String environment = this.getContext().getEnvironment().getActiveProfiles()[0];
-//        String calculationModeProperty = calculationMode(MODE_CALCULATED + ":" + MODE_UNIFORM);
-//        String value = this.getContext().getEnvironment().getProperty(calculationModeProperty + "." + environment);
-//        Long cost = Long.parseLong(value);
-//        System.out.println("Il costo è " + cost);
     }
 
     /**

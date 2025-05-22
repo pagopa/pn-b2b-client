@@ -1,9 +1,5 @@
 package it.pagopa.pn.cucumber.steps.pa.utilityVersions;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactCategory;
@@ -110,20 +106,6 @@ public abstract class B2bUtils {
 
 
     //Metodi generali, indipendenti dalla versione usata, dovranno essere riportati qua come metodi statici
-
-    /**
-     * Usato per convertire oggetti identici in package diversi nell'oggetto con il package passato come parametro
-     * (ES: )
-     */
-    public static <T> T deepCopy(Object obj, Class<T> toClass) {
-        try {
-            ObjectMapper objMapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
-            String json = objMapper.writeValueAsString(obj);
-            return objMapper.readValue(json, toClass);
-        } catch (JsonProcessingException exc) {
-            throw new RuntimeException(exc);
-        }
-    }
 
     public static byte[] downloadFile(String downloadUrl) {
         if (downloadUrl == null) {
@@ -365,16 +347,46 @@ public abstract class B2bUtils {
     }
 
     /**
-     * Restituisce il profilo in uso a partire dall'applicationContext
-     * TODO VAS ESPERIMENTO
+     * Restituisce una property a partire dal nome
      */
-    public static String getProfileInUse(ApplicationContext context) {
-        return context.getEnvironment().getActiveProfiles()[0];
+    public static String getProperty(ApplicationContext context, String propertyName) {
+        return context.getEnvironment().getProperty(propertyName);
     }
 
-    public static Long calcolaCostoNotifica(String parametriCalcoloCostoNotifica) {
-        //TODO VAS
-        return 1L;
+    /**
+     * Se nel DataTest viene passato il parametro parametriCalcoloCostoNotifica, provvede a calcolare il costo della notifica a partire
+     * da una stringa in input con il seguente formato:
+     * mode:UNIFORM,recipients:1,ko:1,ok:0
+     * La stringa deve pertanto avere sempre 4 parametri, separati da virgola, e le coppie chiave-valore devono essere separate da :
+     */
+    public static Long calcolaCostoNotifica(ApplicationContext context, String parametriCalcoloCostoNotifica) {
+        String mode;
+        int numRecipients;
+        int responseKo;
+        int responseOk;
+        try {
+            String[] parameters = parametriCalcoloCostoNotifica.split(",");
+            mode = parameters[0].split(":")[1];
+            numRecipients = Integer.parseInt(parameters[1].split(":")[1]);
+            responseKo = Integer.parseInt(parameters[2].split(":")[1]);
+            responseOk = Integer.parseInt(parameters[3].split(":")[1]);
+        } catch (Exception e) {
+            throw new RuntimeException("Formato parametri calcolo costo notifica non valido. Rivedere i dati in input");
+        }
+
+        switch (mode) {
+            case "RECIPIENT_BASED" -> {
+                long technicalRefusalCost = Long.parseLong(getProperty(context, TECHNICAL_REFUSAL_COST_MODE_RECIPIENT_BASED));
+                return (responseOk * technicalRefusalCost) + (responseKo * technicalRefusalCost);
+            }
+            case "UNIFORM" -> {
+                return Long.parseLong(getProperty(context, TECHNICAL_REFUSAL_COST_MODE_UNIFORM));
+            }
+            case "DEFAULT" -> {
+                return (long) numRecipients * Integer.parseInt(getProperty(context, "pn.external.costo_base_notifica"));
+            }
+            default -> throw new RuntimeException("Modalità di calcolo non riconosciuta, rivedere i dati in input");
+        }
     }
 
     /**

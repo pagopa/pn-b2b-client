@@ -3,7 +3,7 @@ package it.pagopa.pn.cucumber.steps.pf;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
+import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientImpl;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.Consent;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.ConsentType;
 import org.junit.jupiter.api.Assertions;
@@ -11,13 +11,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.HttpStatusCodeException;
 
 public class UserAttributesSteps {
-    private final IPnWebUserAttributesClient webUserAttributesClient;
+
+    //    private final IPnWebUserAttributesClient webUserAttributesClient;//INTERFACCIA NON VA
+
+    private final B2BUserAttributesExternalClientImpl webUserAttributesClient;//B2B
+//    private final PnWebUserAttributesExternalClientImpl webUserAttributesClient;//WEB
+
     private Consent consent;
     private HttpStatusCodeException consentError;
 
 
     @Autowired
-    public UserAttributesSteps(IPnWebUserAttributesClient webUserAttributesClient) {
+//    public UserAttributesSteps(IPnWebUserAttributesClient webUserAttributesClient) {
+    public UserAttributesSteps(B2BUserAttributesExternalClientImpl webUserAttributesClient) {
+//    public UserAttributesSteps(PnWebUserAttributesExternalClientImpl webUserAttributesClient) {
         this.webUserAttributesClient = webUserAttributesClient;
     }
 

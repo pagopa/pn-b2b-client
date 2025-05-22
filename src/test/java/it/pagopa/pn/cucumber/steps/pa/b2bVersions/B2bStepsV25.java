@@ -35,7 +35,6 @@ import java.util.*;
 import java.util.stream.IntStream;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.ParameterTypes.calculationMode;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.PollingType.STATUS;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.PollingType.TIMELINE;
 import static java.time.OffsetDateTime.now;
@@ -175,22 +174,8 @@ public class B2bStepsV25 implements B2bStepsInterface {
             //ignorare Sonar che dice che il risultato di questo assetNull fallirà sempre in quanto il campo è annotato con @NotNull (non è vero)
             Assertions.assertNull(notificationCost);
         } else {
-            //TODO VAS
-            if (cost.toUpperCase().contains(MODE_CALCULATED)) {
-                String mode = cost.toUpperCase().split(":")[1];
-                cost = checkNotificationCostVas(mode);
-            }
             Assertions.assertEquals(Long.parseLong(cost), notificationCost);
         }
-    }
-
-    //TODO VAS
-    private String checkNotificationCostVas(String mode) {
-        String environment = sharedSteps.getContext().getEnvironment().getActiveProfiles()[0];
-        String calculationModeProperty = calculationMode(mode);
-        String value = sharedSteps.getContext().getEnvironment().getProperty(calculationModeProperty + "." + environment);
-        long cost = Long.parseLong(value);
-        return Long.toString(cost);
     }
 
     @Override
@@ -432,11 +417,6 @@ public class B2bStepsV25 implements B2bStepsInterface {
         verifyTestCompatibilityWithVersion(timelineEventCategory, true);
         try {
             DataTestV25 dataTest = DataTestV25.convertMap(dataMap);
-            //TODO VAS ESPERIMENTO
-//            DataTestV25 d2 = DataTestV25.convertMap(dataMap);
-//            dataTest.getTimelineElement().getDetails().getPhysicalAddress().setMunicipalityDetails("MATTEO TEST WILL FAIL");
-//            B2bUtils.compareActualAndExpected("TEST: ", dataTest.getTimelineElement().getDetails().getPhysicalAddress(), d2.getTimelineElement().getDetails().getPhysicalAddress());
-            //
             boolean mustLoadTimeline = dataTest != null && dataTest.isLoadTimeline();
             if (mustLoadTimeline) {
                 loadTimeline(timelineEventCategory, exists, dataTest);
@@ -453,7 +433,7 @@ public class B2bStepsV25 implements B2bStepsInterface {
                         try {
                             timelineElement = te;
                             log.info("TIMELINE_ELEMENT: " + te);
-                            DataTestV25.checkTimelineElementEquality(timelineEventCategory, te, dataTest);
+                            DataTestV25.checkTimelineElementEquality(sharedSteps.getContext(), timelineEventCategory, te, dataTest);
                             atLeastOneSuccessful = true;// se si arriva a questo punto, allora l'ultimo check ha avuto successo e non è necessario continuare
                             break;
                         } catch (AssertionError e) {

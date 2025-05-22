@@ -6,6 +6,7 @@ import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.utils.EventId;
 import lombok.Data;
 import org.junit.jupiter.api.Assertions;
+import org.springframework.context.ApplicationContext;
 
 import java.util.Arrays;
 import java.util.List;
@@ -90,7 +91,7 @@ public class DataTestV25 extends AbstractDataTest {
         }
     }
 
-    public static void checkTimelineElementEquality(String timelineEventCategory, TimelineElementV27 elementFromNotification, DataTestV25 dataTest) {
+    public static void checkTimelineElementEquality(ApplicationContext context, String timelineEventCategory, TimelineElementV27 elementFromNotification, DataTestV25 dataTest) {
         TimelineElementV27 elementFromTest = dataTest.getTimelineElement();
         TimelineElementDetailsV27 expected = elementFromTest.getDetails();
         TimelineElementDetailsV27 actual = elementFromNotification.getDetails();
@@ -116,7 +117,7 @@ public class DataTestV25 extends AbstractDataTest {
                                 .isEqualTo(expected.getRefusalReasons().get(i).getErrorCode());
                     }
                     if (dataTest.getParametriCalcoloCostoNotifica() != null) {
-                        expected.setNotificationCost(B2bUtils.calcolaCostoNotifica(dataTest.getParametriCalcoloCostoNotifica()));
+                        expected.setNotificationCost(B2bUtils.calcolaCostoNotifica(context, dataTest.getParametriCalcoloCostoNotifica()));
                     }
                     if (expected.getNotificationCost() != null) {
                         assertThat(actual.getNotificationCost()).as("").isEqualTo(expected.getNotificationCost());

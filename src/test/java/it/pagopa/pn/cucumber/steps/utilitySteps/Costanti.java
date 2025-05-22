@@ -42,16 +42,11 @@ public class Costanti {
     public static final String COMUNE_ROOT = "Comune_Root";
     public static final String DEFAULT_PA = COMUNE_1;
 
-    //TODO MATTEO: capire come riuscire a prendere i valori annotati con value (non so perchè me li dà null quando commento il valore e scommento il @Value)
-
     @Value("${pn.external.utilized.pec:testpagopa3@pec.pagopa.it}")
     public static String DIGITAL_ADDRESS;
     public static final String DEFAULT_DIGITAL_ADDRESS = "testpagopa3@pec.pagopa.it";
-    //    @Value("${pn.bearer-token.user1.taxID}")
     public static String MARIO_CUCUMBER_TAX_ID = "FRMTTR76M06B715E";
-    //    @Value("${pn.bearer-token.user2.taxID}")
     public static String MARIO_GHERKIN_TAX_ID = "CLMCST42R12D969Z";
-    //    @Value("${pn.bearer-token.user4.taxID}")
 
     // Tax ID
     public static final String CUCUMBER_SRL_TAX_ID = "20517490320";
@@ -220,10 +215,6 @@ public class Costanti {
     // Regex
     public static final String PHYSICAL_ADDRESS_REGEX = "^[A-Z0-9_.\\-:;@' \\[\\] ]*$";
     // Properties
-    //TODO VAS ESPERIMENTO
-    public static final String MODE_CALCULATED = "CALCOLATO";
-    public static final String MODE_UNIFORM = "UNIFORM";
-    public static final String MODE_RECIPIENT_BASED = "RECIPIENT_BASED";
     public static final String TECHNICAL_REFUSAL_COST_MODE_UNIFORM = "pn.technical_refusal_cost_mode.uniform";
     public static final String TECHNICAL_REFUSAL_COST_MODE_RECIPIENT_BASED = "pn.technical_refusal_cost_mode.recipient_based";
     // Versioni

@@ -14,6 +14,14 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent")
 @IncludeTags({"ricercaIndirizzoVas"})
 @ExcludeTags({"ignore", "physicalAddressLookupDisabled"})
-public class RicercaIndirizzoVas {
 
+/**TODO VAS IMPORTANTE:
+ * a seconda della modalità di calcolo per il costo della notifica impostata su ParameterStore,
+ * andranno esclusi dalla run i test con le annotation
+ * @technicalRefusalCostUniform
+ * @technicalRefusalCostRecipient
+ * @TODO modalitàDefault (nessuno dei due sopra, tag ancora da creare)
+ */
+
+public class RicercaIndirizzoVas {
 }

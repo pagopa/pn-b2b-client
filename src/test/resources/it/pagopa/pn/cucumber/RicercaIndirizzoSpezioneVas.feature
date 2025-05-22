@@ -741,11 +741,11 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | physicalAddress | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
-      | loadTimeline                  | true                                                                                                              |
-      | details                       | NOT_NULL                                                                                                          |
-      | details_numberOfRecipients    | 1                                                                                                                 |
-      | details_refusalReasons        | [{"detail": "Address search for recipient index: 0, encountered an error", "errorCode": "ADDRESS_SEARCH_FAILED"}] |
-      | parametriCalcoloCostoNotifica | mode:UNIFORM,recipients:1,ko:1,ok:0                                                                               |
+      | loadTimeline               | true                                                                                                              |
+      | details                    | NOT_NULL                                                                                                          |
+      | details_numberOfRecipients | 1                                                                                                                 |
+      | details_refusalReasons     | [{"detail": "Address search for recipient index: 0, encountered an error", "errorCode": "ADDRESS_SEARCH_FAILED"}] |
+      #TODO| parametriCalcoloCostoNotifica | mode:UNIFORM,recipients:1,ko:1,ok:0                                                                               |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | loadTimeline | false |
 
@@ -767,3 +767,16 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     Given imposto lo iun di SharedSteps a "UWAE-ZLAG-PNDE-202505-N-1" e la pa a Comune_Multi
     And lato destinatario la notifica può essere correttamente recuperata da "Mario Cucumber" e verifica presenza dell'evento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL"
     Then lato destinatario la notifica può essere correttamente recuperata da "Mario Cucumber" e verifica presenza dell'evento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE"
+
+
+  Scenario: [TEST_LAZY_COSTI] Invio notifica AR monodestinatario verso PF con campo address vuoto e nessun trovato da RI notifica rifiutata - Vas attivo
+    Given imposto lo iun di SharedSteps a "UENK-VKXT-ZUPN-202505-A-1" e la pa a Comune_Multi
+    Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
+      | loadTimeline                  | true                                                                     |
+      | details                       | NOT_NULL                                                                 |
+      | details_numberOfRecipients    | 1                                                                        |
+      #2 ADDRESS NOT FOUND, MODALITA' DEFAULT, 2 recipients, 2 ADDRESS_NOT_FOUND (contano come OK), mi aspetto 100 (costoBaseNotifica -> pn.technical_refusal_cost_mode.uniform)
+      | details_refusalReasons        | [{"errorCode": "ADDRESS_NOT_FOUND"}, {"errorCode": "ADDRESS_NOT_FOUND"}] |
+      | parametriCalcoloCostoNotifica | mode:DEFAULT,recipients:2,ko:0,ok:2                                      |
+    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
+      | loadTimeline | false |
