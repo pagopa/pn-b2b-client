@@ -19,8 +19,6 @@ public class PurposeCommonContext {
     private List<String> waitingForApprovalVersionIds = new ArrayList<>();
     private String purposeId;
 
-    /* NOTA 23/04/2025: non sono ancora stati osservati casi in cui è stato usato contemporaneamente
-    * a purposeId; possibile sia da rimuovere e usare al suo posto sempre purposeId */
     private UUID newPurposeId;
 
     private String versionId;

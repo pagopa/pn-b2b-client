@@ -7,6 +7,7 @@ import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
+import it.pagopa.interop.purpose.domain.CreatedEserviceVersion;
 import it.pagopa.interop.purpose.domain.RiskAnalysis;
 import it.pagopa.interop.purpose.domain.TEServiceMode;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
@@ -51,23 +52,23 @@ public class VoucherGenerationClientAndKeysSteps {
     }
 
     @Given("{string} rimuove quella nuova finalità dal client")
-    public void removeNewPurposeFromClient(String clientName) {
-        removePurposeFromClient(clientName,
+    public void removeNewPurposeFromClient(String tenant) {
+        removePurposeFromClient(tenant,
             sharedStepsContext.getPurposeCommonContext().getNewPurposeId());
     }
 
     @Given("{string} rimuove quella finalità dal client")
-    public void removePurposeFromClient(String clientName) {
-        removePurposeFromClient(clientName,
+    public void removePurposeFromClient(String tenant) {
+        removePurposeFromClient(tenant,
             sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID());
     }
 
-    private void removePurposeFromClient(String clientName, UUID newPurposeId) {
-        clientTokenConfigurator.setBearerToken(identityService.getToken(clientName, null));
+    private void removePurposeFromClient(String tenant, UUID purposeId) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenant, null));
         UUID clientId = sharedStepsContext.getClientCommonContext().getFirstClient();
         dataPreparationService.deletePurposeFromClient(
             clientId,
-            newPurposeId
+            purposeId
         );
     }
 
@@ -109,23 +110,38 @@ public class VoucherGenerationClientAndKeysSteps {
 
     @Given("{string} ha già creato una nuova finalità attiva per quell'eservice")
     public void createNewActivePurposeForEservice(String tenantType) {
-        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        UUID consumerId = identityService.getOrganizationId(tenantType);
-        UUID eserviceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
-        RiskAnalysis riskAnalysis = dataPreparationService.getRiskAnalysis(tenantType, true);
-        dataPreparationService.createPurposeWithGivenState(
-            sharedStepsContext.getTestSeed(),
-            EServiceMode.DELIVER,
-            PurposeVersionState.ACTIVE,
-            TEServiceMode.builder()
-                .eserviceId(eserviceId)
-                .consumerId(consumerId)
-                .riskAnalysisFormSeed(riskAnalysis.getRiskAnalysisForm())
-                .build()
-        );
+        String previousPurpose = sharedStepsContext.getPurposeCommonContext().getPurposeId();
+        try {
+            clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+            UUID consumerId = identityService.getOrganizationId(tenantType);
+            UUID eserviceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+            RiskAnalysis riskAnalysis = dataPreparationService.getRiskAnalysis(tenantType, true);
+            CreatedEserviceVersion createdPurpose = dataPreparationService.createPurposeWithGivenState(
+                sharedStepsContext.getTestSeed(),
+                EServiceMode.DELIVER,
+                PurposeVersionState.ACTIVE,
+                TEServiceMode.builder()
+                    .eserviceId(eserviceId)
+                    .consumerId(consumerId)
+                    .riskAnalysisFormSeed(riskAnalysis.getRiskAnalysisForm())
+                    .build()
+            );
 
-        UUID purposeId = sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID();
-        sharedStepsContext.getPurposeCommonContext().setNewPurposeId(purposeId);
+            sharedStepsContext.getPurposeCommonContext()
+                .setNewPurposeId(createdPurpose.getPurposeId());
+
+        /* TODO 22/05/2025: il metodo dataPreparationService.createPurposeWithGivenState(...)
+            inserisce autonomamente nel contesto le risorse create; ciò non causava ambiguità
+            quando esisteva un solo purposeId da inserire in contesto, ma adesso che
+            è stato introdotto newPurposeId si ha che, in questo caso, il metodo sovrascrive
+            purposeId anziché settare newPurposeId.
+            Si ri-setta quindi manualmente il purposeId originale come misura temporanea in vista
+            di un refactor (per esempio, si potrebbe rimuovere il setting in contesto dal corpo
+            del metodo ed affidare questa responsabilità agli step chiamanti).
+         */
+        } finally {
+            sharedStepsContext.getPurposeCommonContext().setPurposeId(previousPurpose);
+        }
     }
 
     @Given("{string} ha già associato quella nuova finalità a quel client")

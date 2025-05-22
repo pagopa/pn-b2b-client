@@ -598,13 +598,13 @@ public class DataPreparationService {
         String templateType = (tenantType.equals("PA1") || tenantType.equals("PA2")) ? "PA" : "Privato/GSP";
         RiskAnalysisDataFromJson.RiskAnalysisTemplate riskAnalysisTemplate = riskAnalysisDataInitializer.getRiskAnalysisData().get(templateType);
         RiskAnalysisDataFromJson.RiskAnalysisAttributes riskAnalysisAttributes = (completed) ? riskAnalysisTemplate.getCompleted() : riskAnalysisTemplate.getUncompleted();
-        httpCallExecutor.performCall(() -> purposeApiClient.retrieveLatestRiskAnalysisConfiguration());
+        httpCallExecutor.performCall(purposeApiClient::retrieveLatestRiskAnalysisConfiguration);
         assertValidResponse();
         String version = ((RiskAnalysisFormConfig) httpCallExecutor.getResponse()).getVersion();
         return new RiskAnalysis(String.format("finalità_test_%d", new Random().nextInt()), new RiskAnalysisFormSeed().version(version).answers(riskAnalysisAttributes.toMap()));
     }
 
-    public void createPurposeWithGivenState(int testSeed, EServiceMode eServiceMode, PurposeVersionState purposeState, TEServiceMode teServiceMode) {
+    public CreatedEserviceVersion createPurposeWithGivenState(int testSeed, EServiceMode eServiceMode, PurposeVersionState purposeState, TEServiceMode teServiceMode) {
         // 1. Define default values
         String title = String.format("purpose title - QA - %d - %d", testSeed, ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE));
         String description = "description of the purpose - QA";
@@ -667,7 +667,10 @@ public class DataPreparationService {
         if (purposeState == PurposeVersionState.DRAFT) {
             sharedStepsContext.getPurposeCommonContext().setPurposeId(String.valueOf(purposeId));
             sharedStepsContext.getPurposeCommonContext().setVersionId(String.valueOf(currentVersion));
-            return ;
+            return CreatedEserviceVersion.builder()
+                    .purposeId(purposeId)
+                    .currentVersionId(currentVersion.get())
+                    .build();
         }
         // 2. Activate the purpose version
         httpCallExecutor.performCall(() -> purposeApiClient.activatePurposeVersion(purposeId, currentVersion.get()));
@@ -688,7 +691,10 @@ public class DataPreparationService {
             );
             sharedStepsContext.getPurposeCommonContext().setPurposeId(String.valueOf(purposeId));
             sharedStepsContext.getPurposeCommonContext().setWaitingForApprovalVersionId(String.valueOf(waitingForApprovalVersionId.get()));
-            return;
+            return CreatedEserviceVersion.builder()
+                    .purposeId(purposeId)
+                    .waitingForApprovalVersionId(waitingForApprovalVersionId.get())
+                    .build();
         }
 
         pollingService.makePolling(
@@ -737,6 +743,11 @@ public class DataPreparationService {
         }
         sharedStepsContext.getPurposeCommonContext().setPurposeId(String.valueOf(purposeId));
         sharedStepsContext.getPurposeCommonContext().setVersionId(String.valueOf(currentVersion.get()));
+
+        return CreatedEserviceVersion.builder()
+                .purposeId(purposeId)
+                .currentVersionId(currentVersion.get())
+                .build();
     }
 
     public CreatedEserviceVersion createNewPurposeVersion(UUID purposeId, PurposeVersionSeed purposeVersionSeed) {
@@ -846,7 +857,7 @@ public class DataPreparationService {
         );
     }
 
-    public UUID upgradeAgreement(UUID agreementId) {
+    public void upgradeAgreement(UUID agreementId) {
         httpCallExecutor.performCall(() -> agreementClient.upgradeAgreement(agreementId));
         assertValidResponse();
         Agreement response = (Agreement) httpCallExecutor.getResponse();
@@ -858,7 +869,7 @@ public class DataPreparationService {
             ERROR_RETRIEVING_AGREEMENT
         );
 
-        return newAgreementId;
+        sharedStepsContext.setAgreementId(newAgreementId);
     }
 
     public void deleteClientKeyById(UUID clientId, String keyId) {

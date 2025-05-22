@@ -65,7 +65,8 @@ public class VoucherGenerationSteps {
         } catch (IllegalArgumentException e) {
             fail("La conversione dell'oggetto restituito in %s è fallita. E' possibile "
                 + "che la generazione del voucher non sia andata come previsto, o che il formato "
-                + "della risposta sia cambiato nel tempo. Errore: %s", VoucherResponse.class.getName(), e.getMessage());
+                + "della risposta sia cambiato nel tempo. Visionare i log degli step precedenti per "
+                + "maggiori dettagli. Errore: %s", VoucherResponse.class.getName(), e.getMessage());
         }
     }
 

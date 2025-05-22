@@ -52,7 +52,7 @@ public class VoucherGenerationAgreementSteps {
             case "CERTIFIED":
                 dataPreparationService.assignCertifiedAttributeToTenant(
                     idDestinatario,
-                    sharedStepsContext.getAgreementId()
+                    sharedStepsContext.getAttributeCommonContext().getAttributeId()
                 );
                 break;
             case "VERIFIED":
@@ -82,6 +82,7 @@ public class VoucherGenerationAgreementSteps {
     ) {
         var revokerId = identityService.getOrganizationId(revokerTenant);
         var dstId = identityService.getOrganizationId(dstTenant);
+        clientTokenConfigurator.setBearerToken(identityService.getToken(revokerTenant, null));
         switch (attributeKind) {
             case "CERTIFIED":
                 dataPreparationService.revokeCertifiedAttributeToTenant(

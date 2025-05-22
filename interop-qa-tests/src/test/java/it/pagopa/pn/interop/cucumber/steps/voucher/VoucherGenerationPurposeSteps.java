@@ -2,6 +2,8 @@ package it.pagopa.pn.interop.cucumber.steps.voucher;
 
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.agreement.domain.ClientType;
+import it.pagopa.interop.authorization.service.utils.IdentityService;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import java.util.UUID;
@@ -10,17 +12,23 @@ public class VoucherGenerationPurposeSteps {
 
     private final SharedStepsContext sharedStepsContext;
     private final DataPreparationService dataPreparationService;
+    private final ClientTokenConfigurator clientTokenConfigurator;
+    private final IdentityService identityService;
 
     public VoucherGenerationPurposeSteps(
         SharedStepsContext sharedStepsContext,
-        DataPreparationService dataPreparationService
+        DataPreparationService dataPreparationService,
+        ClientTokenConfigurator clientTokenConfigurator
     ) {
         this.sharedStepsContext = sharedStepsContext;
         this.dataPreparationService = dataPreparationService;
+        this.clientTokenConfigurator = clientTokenConfigurator;
+        this.identityService = sharedStepsContext.getIdentityService();
     }
 
     @Given("{string} ha già richiesto la cancellazione della richiesta di aggiornamento della stima di carico")
     public void tenantAlreadyRequestedCancellationOfTheUpdateRequest(String tenant) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenant, null));
         dataPreparationService.deletePurposeVersion(
             sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID(),
             sharedStepsContext.getPurposeCommonContext().getWaitingForApprovalVersionIdAsUUID());
@@ -28,6 +36,7 @@ public class VoucherGenerationPurposeSteps {
 
     @Given("{string} ha già approvato la richiesta di aggiornamento della stima di carico")
     public void tenantAlreadyApprovedTheUpdateRequest(String tenant) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenant, null));
         String purposeId = sharedStepsContext.getPurposeCommonContext().getPurposeId();
         String waitingForApprovalVersionId = sharedStepsContext.getPurposeCommonContext()
             .getWaitingForApprovalVersionId();
@@ -41,6 +50,7 @@ public class VoucherGenerationPurposeSteps {
 
     @Given("{string} ha già rifiutato la richiesta di aggiornamento della stima di carico")
     public void tenantAlreadyRefusedTheUpdateRequest(String tenant) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenant, null));
         String purposeId = sharedStepsContext.getPurposeCommonContext().getPurposeId();
         String waitingForApprovalVersionId = sharedStepsContext.getPurposeCommonContext()
             .getWaitingForApprovalVersionId();
@@ -52,6 +62,8 @@ public class VoucherGenerationPurposeSteps {
 
     @Given("{string} ha già sospeso la finalità che risulta sospesa dal fruitore")
     public void tenantAlreadySuspendedThePurpose(String tenant) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenant, null));
+
         String purposeId = sharedStepsContext.getPurposeCommonContext().getPurposeId();
         String currentVersionId = sharedStepsContext.getPurposeCommonContext().getCurrentVersionId();
 
@@ -63,6 +75,8 @@ public class VoucherGenerationPurposeSteps {
 
     @Given("{string} ha già sospeso la finalità che risulta sospesa dall'erogatore")
     public void tenantAlreadySuspendedThePurposeByProvider(String tenant) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenant, null));
+
         String purposeId = sharedStepsContext.getPurposeCommonContext().getPurposeId();
         String currentVersionId = sharedStepsContext.getPurposeCommonContext().getCurrentVersionId();
 
@@ -74,6 +88,7 @@ public class VoucherGenerationPurposeSteps {
 
     @Given("{string} ha già riattivato la finalità sospesa dal fruitore")
     public void tenantAlreadyReactivatedTheSuspendedPurpose(String tenant) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenant, null));
         String purposeId = sharedStepsContext.getPurposeCommonContext().getPurposeId();
         String currentVersionId = sharedStepsContext.getPurposeCommonContext().getCurrentVersionId();
 
@@ -85,6 +100,7 @@ public class VoucherGenerationPurposeSteps {
 
     @Given("{string} ha già riattivato la finalità sospesa dall'erogatore")
     public void tenantAlreadyReactivatedTheSuspendedPurposeByProvider(String tenant) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenant, null));
         String purposeId = sharedStepsContext.getPurposeCommonContext().getPurposeId();
         String currentVersionId = sharedStepsContext.getPurposeCommonContext().getCurrentVersionId();
 

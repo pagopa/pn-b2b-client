@@ -1,7 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.voucher;
 
 import io.cucumber.java.en.When;
-import it.pagopa.interop.authorization.domain.KeyPairPEM;
 import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
 import it.pagopa.interop.authorization.service.utils.voucher.VoucherService;
 import it.pagopa.interop.authorization.service.utils.voucher.domain.ClientAssertionOptions;
@@ -9,6 +8,7 @@ import it.pagopa.interop.authorization.service.utils.voucher.domain.ClientAssert
 import it.pagopa.interop.authorization.service.utils.voucher.domain.VoucherRequest;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import java.security.KeyPair;
 
 public class VoucherGenerationM2MSteps {
 
@@ -62,12 +62,12 @@ public class VoucherGenerationM2MSteps {
     @When("l'utente richiede la generazione del voucher M2M con una chiave associata a nessun client")
     public void voucherGenerationM2MWithUnboundKey() {
         String keyType = "RSA";
-        KeyPairPEM keyPair = KeyPairGeneratorUtil.createKeyPairPEM(keyType, 2048);
+        KeyPair keyPair = KeyPairGeneratorUtil.createKeyPair(keyType, 2048);
         ClientAssertionOptions assertionOptions = ClientAssertionOptions.builder()
             .clientType(ClientType.API)
             .clientId(sharedStepsContext.getClientCommonContext().getFirstClient().toString())
-            .publicKey(keyPair.getPublicKeyAsObj(keyType))
-            .privateKey(keyPair.getPrivateKeyAsObj(keyType))
+            .publicKey(keyPair.getPublic())
+            .privateKey(keyPair.getPrivate())
             .build();
         String clientAssertion = this.voucherService.createClientAssertion(assertionOptions);
 
