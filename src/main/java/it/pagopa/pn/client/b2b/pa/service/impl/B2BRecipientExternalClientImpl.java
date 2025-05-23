@@ -4,12 +4,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.ApiClient;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullReceivedNotificationV26;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationAttachmentDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.api.LegalFactsApi;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.model.LegalFactDownloadMetadataResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient.ApiClient;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient.v2.NotificationReceivedApi;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v1.BffDocumentDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffFullNotificationV1;
@@ -66,24 +66,18 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
         this.b2bBasePath = b2bBasePath;
         this.bearerTokenSetted = BearerTokenType.PG_1;
 //        this.recipientReadB2BApi = new RecipientReadB2BApi(newApiClient(restTemplate, webBasePath, gherkinSrlBearerToken));//TODO VAS IMPORTANTE
-        this.notificationReceivedApi = new NotificationReceivedApi(newNotificationReceivedApiClient(restTemplate, webBasePath, gherkinSrlBearerToken));
+        this.notificationReceivedApi = new NotificationReceivedApi(newApiClient(restTemplate, webBasePath, gherkinSrlBearerToken));
         this.legalFactsApi = new LegalFactsApi(newLegalFactApiClient(restTemplate, b2bBasePath, gherkinSrlBearerToken));
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken) {
         ApiClient newApiClient = new ApiClient(restTemplate);
         newApiClient.setBasePath(basePath);
-        newApiClient.setBearerToken(bearerToken);
+//        newApiClient.addDefaultHeader("user-agent", userAgent);
+        newApiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
         return newApiClient;
     }
 
-    private static it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient.ApiClient newNotificationReceivedApiClient(RestTemplate restTemplate, String basePath, String bearerToken) {
-        it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient.ApiClient newApiClient =
-                new it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient.ApiClient(restTemplate);
-        newApiClient.setBasePath(basePath);
-//        newApiClient.setBearerToken(bearerToken);//TODO VAS IMPORTANTE
-        return newApiClient;
-    }
 
     private static it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.ApiClient newLegalFactApiClient(RestTemplate restTemplate, String basePath, String bearerToken) {
         it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.ApiClient newApiClient = new it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.ApiClient(restTemplate);
@@ -94,8 +88,8 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
 
     @Override
     public FullReceivedNotificationV26 getReceivedNotification(String iun, String mandateId) throws RestClientException {
-//        return recipientReadB2BApi.getReceivedNotificationV26(iun, mandateId);//TODO VAS IMPORTANTE
-        it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffFullNotificationV1 notification = getReceivedNotificationV2(iun, mandateId);
+//        return recipientReadB2BApi.getReceivedNotificationV26(iun, mandateId);//TODO VAS IMPORTANTE VERY MUCH
+        BffFullNotificationV1 notification = notificationReceivedApi.getReceivedNotificationV1(iun, mandateId);
         return deepCopy(notification, FullReceivedNotificationV26.class);
     }
 
@@ -169,23 +163,33 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
     public boolean setBearerToken(BearerTokenType bearerToken) {
         switch (bearerToken) {
             case USER_1 -> {
+                //TODO VAS IMPORTANTE
 //                this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, webBasePath, marioCucumberBearerToken));
+                this.notificationReceivedApi.setApiClient(newApiClient(restTemplate, webBasePath, marioCucumberBearerToken));
                 this.bearerTokenSetted = BearerTokenType.USER_1;
             }
             case USER_2 -> {
+                //TODO VAS IMPORTANTE
 //                this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, webBasePath, marioGherkinBearerToken));
+                this.notificationReceivedApi.setApiClient(newApiClient(restTemplate, webBasePath, marioGherkinBearerToken));
                 this.bearerTokenSetted = BearerTokenType.USER_2;
             }
             case USER_3 -> {
+                //TODO VAS IMPORTANTE
 //                this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, webBasePath, leonardoBearerToken));
+                this.notificationReceivedApi.setApiClient(newApiClient(restTemplate, webBasePath, leonardoBearerToken));
                 this.bearerTokenSetted = BearerTokenType.USER_3;
             }
             case PG_1 -> {
+                //TODO VAS IMPORTANTE
 //                this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, webBasePath, gherkinSrlBearerToken));
+                this.notificationReceivedApi.setApiClient(newApiClient(restTemplate, webBasePath, gherkinSrlBearerToken));
                 this.bearerTokenSetted = BearerTokenType.PG_1;
             }
             case PG_2 -> {
+                //TODO VAS IMPORTANTE
 //                this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, b2bBasePath, cucumberSpaBearerToken));
+                this.notificationReceivedApi.setApiClient(newApiClient(restTemplate, webBasePath, cucumberSpaBearerToken));
                 this.legalFactsApi.setApiClient(newLegalFactApiClient(restTemplate, b2bBasePath, cucumberSpaBearerToken));
                 this.bearerTokenSetted = BearerTokenType.PG_2;
             }

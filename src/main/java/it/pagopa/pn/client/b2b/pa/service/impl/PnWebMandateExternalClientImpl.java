@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
 import java.util.List;
 
 
@@ -35,7 +36,7 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
                                           @Value("${pn.bearer-token.user3}") String leonardoBearerToken,
                                           @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
                                           @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken,
-                                          @Value("${pn.webapi.external.user-agent}")String userAgent) {
+                                          @Value("${pn.webapi.external.user-agent}") String userAgent) {
         this.restTemplate = restTemplate;
         this.marioCucumberBearerToken = marioCucumberBearerToken;
         this.marioGherkinBearerToken = marioGherkinBearerToken;
@@ -44,14 +45,14 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
         this.cucumberSpaBearerToken = cucumberSpaBearerToken;
         this.basePath = basePath;
         this.userAgent = userAgent;
-        this.mandateServiceApi = new MandateServiceApi( newApiClient( restTemplate, basePath, marioCucumberBearerToken,userAgent) );
+        this.mandateServiceApi = new MandateServiceApi(newApiClient(restTemplate, basePath, marioCucumberBearerToken, userAgent));
         this.bearerTokenSetted = BearerTokenType.USER_1;
     }
 
-    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken, String userAgent ) {
-        ApiClient newApiClient = new ApiClient( restTemplate );
-        newApiClient.setBasePath( basePath );
-        newApiClient.addDefaultHeader("user-agent",userAgent);
+    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken, String userAgent) {
+        ApiClient newApiClient = new ApiClient(restTemplate);
+        newApiClient.setBasePath(basePath);
+        newApiClient.addDefaultHeader("user-agent", userAgent);
         newApiClient.setBearerToken(bearerToken);
         return newApiClient;
     }
@@ -110,7 +111,7 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
 
 
     public void updateMandate(String xPagopaPnCxId, CxTypeAuthFleet xPagopaPnCxType, String mandateId, List<String> xPagopaPnCxGroups, String xPagopaPnCxRole, UpdateRequestDto updateRequestDto) throws RestClientException {
-         mandateServiceApi.updateMandate( xPagopaPnCxId,  xPagopaPnCxType,  mandateId, xPagopaPnCxGroups,  xPagopaPnCxRole,  updateRequestDto);
+        mandateServiceApi.updateMandate(xPagopaPnCxId, xPagopaPnCxType, mandateId, xPagopaPnCxGroups, xPagopaPnCxRole, updateRequestDto);
     }
 
     public MandateDto createMandate(MandateDto mandateDto) throws RestClientException {
@@ -122,7 +123,7 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
         return mandateServiceApi.listMandatesByDelegate1(status);
     }
 
-    public List<MandateDto> searchMandatesByDelegate(String taxId,List<String> groups) throws RestClientException {
+    public List<MandateDto> searchMandatesByDelegate(String taxId, List<String> groups) throws RestClientException {
         SearchMandateRequestDto searchMandateRequestDto = new SearchMandateRequestDto();
         searchMandateRequestDto.setTaxId(taxId);
         searchMandateRequestDto.setGroups(groups);
@@ -130,7 +131,7 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
         return responseDto != null ? responseDto.getResultsPage() : null;
     }
 
-    public List<MandateDto> searchMandatesByDelegateStatusFilter(String taxId,List<String> status, List<String> groups) throws RestClientException {
+    public List<MandateDto> searchMandatesByDelegateStatusFilter(String taxId, List<String> status, List<String> groups) throws RestClientException {
         SearchMandateRequestDto searchMandateRequestDto = new SearchMandateRequestDto();
         searchMandateRequestDto.setTaxId(taxId);
         searchMandateRequestDto.setGroups(groups);

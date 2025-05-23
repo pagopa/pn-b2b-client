@@ -255,7 +255,7 @@ public class DataTestV20 extends AbstractDataTest {
                     }
                 }
             }
-            case REFINEMENT -> {
+            case REFINEMENT, SCHEDULE_REFINEMENT -> {
                 if (expected != null) {
                     assertThat(actual.getRecIndex()).as(error + EQUALITY_REC_INDEX).isEqualTo(expected.getRecIndex());
                 }

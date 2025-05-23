@@ -60,7 +60,7 @@ public class B2BUserAttributesExternalClientImpl implements IPnWebUserAttributes
         this.leonardoBearerToken = leonardoBearerToken;
         this.galileoBearerToken = galileoBearerToken;
         this.dinoBearerToken = dinoBearerToken;
-        this.userBearerTokenScaduto= userBearerTokenScaduto;
+        this.userBearerTokenScaduto = userBearerTokenScaduto;
         this.gherkinSrlBearerToken = gherkinSrlBearerToken;
         this.cucumberSpaBearerToken = cucumberSpaBearerToken;
         this.basePath = basePath;
@@ -82,7 +82,7 @@ public class B2BUserAttributesExternalClientImpl implements IPnWebUserAttributes
         it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.ApiClient newApiClient =
                 new it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.ApiClient(restTemplate);
         newApiClient.setBasePath(basePath);
-        newApiClient.addDefaultHeader("Authorization","Bearer " + bearerToken);
+        newApiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
         return newApiClient;
     }
 
@@ -166,7 +166,7 @@ public class B2BUserAttributesExternalClientImpl implements IPnWebUserAttributes
     }
 
     public UserAddresses getAddressesByRecipient() throws RestClientException {
-        return deepCopy(allApi.getAddressesByRecipient(), UserAddresses.class) ;
+        return deepCopy(allApi.getAddressesByRecipient(), UserAddresses.class);
     }
 
 
@@ -205,13 +205,13 @@ public class B2BUserAttributesExternalClientImpl implements IPnWebUserAttributes
         courtesyApiAddressBook.postRecipientCourtesyAddress(senderId, courtesyChannelType, address);
     }
 
-    private <T> T deepCopy( Object obj, Class<T> toClass) {
+    private <T> T deepCopy(Object obj, Class<T> toClass) {
         ObjectMapper objMapper = JsonMapper.builder()
                 .addModule(new JavaTimeModule())
                 .build();
         try {
-            String json = objMapper.writeValueAsString( obj );
-            return objMapper.readValue( json, toClass );
+            String json = objMapper.writeValueAsString(obj);
+            return objMapper.readValue(json, toClass);
         } catch (JsonProcessingException exc) {
             throw new PnB2bException(exc.getMessage());
         }

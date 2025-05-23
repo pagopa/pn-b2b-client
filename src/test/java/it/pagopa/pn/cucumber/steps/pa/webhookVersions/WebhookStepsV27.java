@@ -66,10 +66,10 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
     public void initializeStreamRequest(String action, String pa) {
         streamRequest = new StreamRequestV27();
         List<String> groups = switch (action.toLowerCase()) {
-            case "rimuove" -> (webhookSteps.getSharedSteps().getRequestNewApiKey() != null
-                    && webhookSteps.getSharedSteps().getRequestNewApiKey().getGroups().size() >= 2) ?
-                    webhookSteps.getSharedSteps().getRequestNewApiKey().getGroups().subList(0, 0) : null;
-            case "aggiunge" -> webhookSteps.getSharedSteps().getGroupAllActiveByPa(pa);
+            case "rimuove" -> (sharedSteps.getRequestNewApiKey() != null
+                    && sharedSteps.getRequestNewApiKey().getGroups().size() >= 2) ?
+                    sharedSteps.getRequestNewApiKey().getGroups().subList(0, 0) : null;
+            case "aggiunge" -> sharedSteps.getGroupAllActiveByPa(pa);
             case "stesso" ->
                     eventStreamList.stream().findFirst().map(StreamMetadataResponseV27::getGroups).orElse(null);
             default -> throw new IllegalArgumentException("Action not supported!: " + action);
@@ -92,12 +92,12 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
 
     @Override
     public Object retrieveStreamEvent(UUID streamId) {
-        return webhookSteps.getWebhookB2bClient().retrieveEventStreamV27(streamId);
+        return webhookClient.retrieveEventStreamV27(streamId);
     }
 
     @Override
     public void deleteStream(UUID streamId) {
-        webhookSteps.getWebhookB2bClient().deleteEventStreamV27(streamId);
+        webhookClient.deleteEventStreamV27(streamId);
     }
 
     @Override
@@ -123,7 +123,7 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
 
     @Override
     public void deleteStreamsBeforeTest(String pa) {
-        List<StreamListElement> streamListElements = webhookSteps.getWebhookB2bClient().listEventStreamsV27();
+        List<StreamListElement> streamListElements = webhookClient.listEventStreamsV27();
         for (StreamListElement elem : streamListElements) {
             deleteStream(elem.getStreamId(), pa);
         }
@@ -131,7 +131,7 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
 
     private boolean deleteStream(UUID streamId, String pa) {
         try {
-            webhookSteps.getWebhookB2bClient().deleteEventStreamV27(streamId);
+            webhookClient.deleteEventStreamV27(streamId);
             return true;
         } catch (HttpStatusCodeException e) {
             return handleException(e, pa, streamId);
@@ -140,7 +140,7 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
 
     private boolean handleException(HttpStatusCodeException e, String pa, UUID streamID) {
         try {
-            webhookSteps.getWebhookB2bClient().retrieveEventStreamV27(streamID);
+            webhookClient.retrieveEventStreamV27(streamID);
             webhookSteps.setNotificationError(e);
             sharedSteps.setNotificationError(e);
             log.error("ERROR IN DELETE STREAM id {} streamVersion " + streamVersion + " pa {}", streamID, pa);
@@ -156,19 +156,19 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
         streamRequest = new StreamRequestV27();
         streamRequest.setTitle("Update Stream " + streamVersion);
         streamRequest.setEventType(StreamRequestV27.EventTypeEnum.TIMELINE);
-        webhookSteps.getWebhookB2bClient().updateEventStreamV27(idStream, streamRequest);
+        webhookClient.updateEventStreamV27(idStream, streamRequest);
     }
 
     @Override
     public void updateStreamWithExistingRequest(UUID idStream) {
-        webhookSteps.getWebhookB2bClient().updateEventStreamV27(idStream, streamRequest);
+        webhookClient.updateEventStreamV27(idStream, streamRequest);
     }
 
     @Override
     public void updateStreams() {
         if (streamRequest == null) {
             streamRequest = new StreamRequestV27();
-            streamRequest.setGroups(webhookSteps.getSharedSteps().getRequestNewApiKey().getGroups());
+            streamRequest.setGroups(sharedSteps.getRequestNewApiKey().getGroups());
         }
         streamRequest.setTitle("Update Stream " + streamVersion);
         streamRequest.setEventType(StreamRequestV27.EventTypeEnum.TIMELINE);
@@ -227,11 +227,11 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
 
     @Override
     public void checkCorrectCancellation() {
-        List<StreamListElement> streamListElements = webhookClient.listEventStreamsV27();
+        List<StreamListElement> streamElementList = webhookClient.listEventStreamsV27();
         for (StreamMetadataResponseV27 eventStream : eventStreamList) {
-            StreamListElement streamListElement = streamListElements.stream().filter(
+            StreamListElement streamElement = streamElementList.stream().filter(
                     elem -> elem.getStreamId() == eventStream.getStreamId()).findAny().orElse(null);
-            assertThat(streamListElement).as("Cancellazione stream non andata a buon fine con id " + eventStream.getStreamId()).isNull();
+            assertThat(streamElement).as("Cancellazione stream non andata a buon fine con id " + eventStream.getStreamId()).isNull();
         }
     }
 
@@ -310,8 +310,8 @@ public class WebhookStepsV27 implements WebhookStepsInterface {
     public Object searchTimelineElementInWebhook(String lastEventId, int deepCount, int position, AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream) {
         TimelineElementCategoryV26 timeLineOrStatus = ((TimelineElementCategoryV26) timelineForStream.getTimelineElementCategory());
         PnPollingWebhook pnPollingWebhook = getPnPollingWebhook(timeLineOrStatus);
-        PnPollingServiceWebhookV27 webhook = (PnPollingServiceWebhookV27) webhookSteps.getSharedSteps().getPollingFactory().getPollingService(PnPollingStrategy.WEBHOOK_V27);
-        PnPollingResponseV27 pnPollingResponse = webhook.waitForEvent(webhookSteps.getSharedSteps().getNotificationIun(),
+        PnPollingServiceWebhookV27 webhook = (PnPollingServiceWebhookV27) sharedSteps.getPollingFactory().getPollingService(PnPollingStrategy.WEBHOOK_V27);
+        PnPollingResponseV27 pnPollingResponse = webhook.waitForEvent(sharedSteps.getNotificationIun(),
                 PnPollingParameter.builder()
                         .value("WEBHOOK")
                         .pnPollingWebhook(pnPollingWebhook)

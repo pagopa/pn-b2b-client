@@ -92,12 +92,12 @@ public class WebhookStepsV28 implements WebhookStepsInterface {
 
     @Override
     public Object retrieveStreamEvent(UUID streamId) {
-        return webhookSteps.getWebhookB2bClient().retrieveEventStreamV28(streamId);
+        return webhookClient.retrieveEventStreamV28(streamId);
     }
 
     @Override
     public void deleteStream(UUID streamId) {
-        webhookSteps.getWebhookB2bClient().deleteEventStreamV28(streamId);
+        webhookClient.deleteEventStreamV28(streamId);
     }
 
     @Override
@@ -123,7 +123,7 @@ public class WebhookStepsV28 implements WebhookStepsInterface {
 
     @Override
     public void deleteStreamsBeforeTest(String pa) {
-        List<StreamListElement> streamListElements = webhookSteps.getWebhookB2bClient().listEventStreamsV28();
+        List<StreamListElement> streamListElements = webhookClient.listEventStreamsV28();
         for (StreamListElement elem : streamListElements) {
             deleteStream(elem.getStreamId(), pa);
         }
@@ -131,7 +131,7 @@ public class WebhookStepsV28 implements WebhookStepsInterface {
 
     private boolean deleteStream(UUID streamId, String pa) {
         try {
-            webhookSteps.getWebhookB2bClient().deleteEventStreamV28(streamId);
+            webhookClient.deleteEventStreamV28(streamId);
             return true;
         } catch (HttpStatusCodeException e) {
             return handleException(e, pa, streamId);
@@ -140,7 +140,7 @@ public class WebhookStepsV28 implements WebhookStepsInterface {
 
     private boolean handleException(HttpStatusCodeException e, String pa, UUID streamID) {
         try {
-            webhookSteps.getWebhookB2bClient().retrieveEventStreamV28(streamID);
+            webhookClient.retrieveEventStreamV28(streamID);
             webhookSteps.setNotificationError(e);
             sharedSteps.setNotificationError(e);
             log.error("ERROR IN DELETE STREAM id {} streamVersion " + streamVersion + " pa {}", streamID, pa);
@@ -156,12 +156,12 @@ public class WebhookStepsV28 implements WebhookStepsInterface {
         streamRequest = new StreamRequestV28();
         streamRequest.setTitle("Update Stream " + streamVersion);
         streamRequest.setEventType(StreamRequestV28.EventTypeEnum.TIMELINE);
-        webhookSteps.getWebhookB2bClient().updateEventStreamV28(idStream, streamRequest);
+        webhookClient.updateEventStreamV28(idStream, streamRequest);
     }
 
     @Override
     public void updateStreamWithExistingRequest(UUID idStream) {
-        webhookSteps.getWebhookB2bClient().updateEventStreamV28(idStream, streamRequest);
+        webhookClient.updateEventStreamV28(idStream, streamRequest);
     }
 
     @Override
@@ -227,11 +227,11 @@ public class WebhookStepsV28 implements WebhookStepsInterface {
 
     @Override
     public void checkCorrectCancellation() {
-        List<StreamListElement> streamListElements = webhookClient.listEventStreamsV28();
+        List<StreamListElement> streamElementList = webhookClient.listEventStreamsV28();
         for (StreamMetadataResponseV28 eventStream : eventStreamList) {
-            StreamListElement streamListElement = streamListElements.stream().filter(
+            StreamListElement streamElement = streamElementList.stream().filter(
                     elem -> elem.getStreamId() == eventStream.getStreamId()).findAny().orElse(null);
-            assertThat(streamListElement).as("Cancellazione stream non andata a buon fine con id " + eventStream.getStreamId()).isNull();
+            assertThat(streamElement).as("Cancellazione stream non andata a buon fine con id " + eventStream.getStreamId()).isNull();
         }
     }
 

@@ -355,38 +355,46 @@ public abstract class B2bUtils {
 
     /**
      * Se nel DataTest viene passato il parametro parametriCalcoloCostoNotifica, provvede a calcolare il costo della notifica a partire
-     * da una stringa in input con il seguente formato:
-     * mode:UNIFORM,recipients:1,ko:1,ok:0
+     * da una stringa in input con il seguente formato: mode:UNIFORM,recipients:1,ko:1,ok:0
      * La stringa deve pertanto avere sempre 4 parametri, separati da virgola, e le coppie chiave-valore devono essere separate da :
+     * NOTA: il parametro a indice 0 (mode) non viene usato, serve solo a livello visivo per avere un quadro più chiaro di cosa il test si propone di fare
      */
     public static Long calcolaCostoNotifica(ApplicationContext context, String parametriCalcoloCostoNotifica) {
+
         String mode;
+        long costoBaseNotifica;
+        long technicalRefusalCost;
         int numRecipients;
         int responseKo;
         int responseOk;
+
         try {
             String[] parameters = parametriCalcoloCostoNotifica.split(",");
-            mode = parameters[0].split(":")[1];
             numRecipients = Integer.parseInt(parameters[1].split(":")[1]);
             responseKo = Integer.parseInt(parameters[2].split(":")[1]);
             responseOk = Integer.parseInt(parameters[3].split(":")[1]);
-        } catch (Exception e) {
-            throw new RuntimeException("Formato parametri calcolo costo notifica non valido. Rivedere i dati in input");
-        }
 
-        switch (mode) {
-            case "RECIPIENT_BASED" -> {
-                long technicalRefusalCost = Long.parseLong(getProperty(context, TECHNICAL_REFUSAL_COST_MODE_RECIPIENT_BASED));
-                return (responseOk * technicalRefusalCost) + (responseKo * technicalRefusalCost);
+            costoBaseNotifica = Long.parseLong(getProperty(context, COSTO_BASE_NOTIFICA));
+            String propertyValue = getProperty(context, TECHNICAL_REFUSAL_COST_MODE);
+            String[] modeCost = (propertyValue != null) ? propertyValue.split(";") : null;
+
+            if (modeCost == null || modeCost.length < 2 || responseKo == 0) {
+                mode = "DEFAULT";
+                technicalRefusalCost = 0;
+            } else {
+                mode = modeCost[0];
+                technicalRefusalCost = Integer.parseInt(modeCost[1]);
             }
-            case "UNIFORM" -> {
-                return Long.parseLong(getProperty(context, TECHNICAL_REFUSAL_COST_MODE_UNIFORM));
-            }
-            case "DEFAULT" -> {
-                return (long) numRecipients * Integer.parseInt(getProperty(context, "pn.external.costo_base_notifica"));
-            }
-            default -> throw new RuntimeException("Modalità di calcolo non riconosciuta, rivedere i dati in input");
+        } catch (Exception e) {
+            throw new RuntimeException("Formato parametri calcolo costo notifica non valido, controllare i dati in input e le properties");
         }
+        return switch (mode) {
+            case "RECIPIENT_BASED" -> (responseKo * technicalRefusalCost) + (responseOk * costoBaseNotifica);
+            case "UNIFORM" -> technicalRefusalCost;
+            case "DEFAULT" -> numRecipients * costoBaseNotifica;
+            default ->
+                    throw new RuntimeException("Modalità di calcolo non riconosciuta, controllare i dati in input e le properties");
+        };
     }
 
     /**

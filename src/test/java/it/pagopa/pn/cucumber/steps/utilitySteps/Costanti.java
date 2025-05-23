@@ -215,8 +215,8 @@ public class Costanti {
     // Regex
     public static final String PHYSICAL_ADDRESS_REGEX = "^[A-Z0-9_.\\-:;@' \\[\\] ]*$";
     // Properties
-    public static final String TECHNICAL_REFUSAL_COST_MODE_UNIFORM = "pn.technical_refusal_cost_mode.uniform";
-    public static final String TECHNICAL_REFUSAL_COST_MODE_RECIPIENT_BASED = "pn.technical_refusal_cost_mode.recipient_based";
+    public static final String COSTO_BASE_NOTIFICA = "pn.external.costo_base_notifica";
+    public static final String TECHNICAL_REFUSAL_COST_MODE = "pn.technical_refusal_cost_mode";
     // Versioni
     public static final String MOST_RECENT = "più recente";
 
