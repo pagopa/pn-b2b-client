@@ -355,9 +355,8 @@ public abstract class B2bUtils {
 
     /**
      * Se nel DataTest viene passato il parametro parametriCalcoloCostoNotifica, provvede a calcolare il costo della notifica a partire
-     * da una stringa in input con il seguente formato: mode:UNIFORM,recipients:1,ko:1,ok:0
-     * La stringa deve pertanto avere sempre 4 parametri, separati da virgola, e le coppie chiave-valore devono essere separate da :
-     * NOTA: il parametro a indice 0 (mode) non viene usato, serve solo a livello visivo per avere un quadro più chiaro di cosa il test si propone di fare
+     * da una stringa in input con il seguente formato: recipients:1,ko:1,ok:0
+     * La stringa deve pertanto avere sempre 3 parametri, separati da virgola, e le coppie chiave-valore devono essere separate da :
      */
     public static Long calcolaCostoNotifica(ApplicationContext context, String parametriCalcoloCostoNotifica) {
 
@@ -370,9 +369,9 @@ public abstract class B2bUtils {
 
         try {
             String[] parameters = parametriCalcoloCostoNotifica.split(",");
-            numRecipients = Integer.parseInt(parameters[1].split(":")[1]);
-            responseKo = Integer.parseInt(parameters[2].split(":")[1]);
-            responseOk = Integer.parseInt(parameters[3].split(":")[1]);
+            numRecipients = Integer.parseInt(parameters[0].split(":")[1]);
+            responseKo = Integer.parseInt(parameters[1].split(":")[1]);
+            responseOk = Integer.parseInt(parameters[2].split(":")[1]);
 
             costoBaseNotifica = Long.parseLong(getProperty(context, COSTO_BASE_NOTIFICA));
             String propertyValue = getProperty(context, TECHNICAL_REFUSAL_COST_MODE);
