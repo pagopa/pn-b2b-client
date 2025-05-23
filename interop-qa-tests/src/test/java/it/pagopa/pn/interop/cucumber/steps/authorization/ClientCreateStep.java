@@ -33,7 +33,14 @@ public class ClientCreateStep {
 
     @Given("l'utente è un {string} di {string}")
     public void setRole(String role, String tenantType) {
-        String token = identityService.getToken(tenantType, role);
+        setRole(1, role, tenantType);
+    }
+
+    @Given("l'utente è il numero {int} ad avere ruolo {string} di {string}")
+    public void setRole(int userIndex, String role, String tenantType) {
+        // La numerazione di userIndex parte da 1 dal pdv del chiamante
+        String token = identityService.getToken(tenantType, role, --userIndex);
+
         clientTokenConfigurator.setBearerToken(token);
         sharedStepsContext.setUserToken(token);
         sharedStepsContext.setTenantType(tenantType);

@@ -1,5 +1,6 @@
 package it.pagopa.interop.authorization.service.impl;
 
+import it.pagopa.interop.authorization.service.ClientAdminConfig;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
@@ -74,7 +75,7 @@ public class AuthorizationClientImpl implements IAuthorizationClient {
 
     @Override
     public List<CompactUser> getClientUsers(UUID clientId) {
-        return clientsApi.getClientUsers(clientId, null);
+        return clientsApi.getClientUsers(clientId);
     }
 
     @Override
@@ -115,8 +116,20 @@ public class AuthorizationClientImpl implements IAuthorizationClient {
     }
 
     @Override
-    public CreatedResource addUsersToClient(UUID clientId, InlineObject4 inlineObject3) {
-        return clientsApi.addUsersToClient(clientId, inlineObject3);
+    public CreatedResource addUsersToClient(UUID clientId, InlineObject4 inlineObject) {
+        return clientsApi.addUsersToClient(clientId, inlineObject);
+    }
+
+    @Override
+    public Client editClientAdmin(UUID clientId, ClientAdminConfig adminConfig) {
+        InlineObject3 inlineObject3 = new InlineObject3()
+            .adminId(adminConfig.getAdminId());
+        return clientsApi.setAdminToClient(clientId, inlineObject3);
+    }
+
+    @Override
+    public void deleteClientAdmin(UUID clientId, UUID adminId) {
+        clientsApi.removeClientAdmin(clientId, adminId);
     }
 
     @Override
