@@ -73,7 +73,6 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken) {
         ApiClient newApiClient = new ApiClient(restTemplate);
         newApiClient.setBasePath(basePath);
-//        newApiClient.addDefaultHeader("user-agent", userAgent);
         newApiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
         return newApiClient;
     }

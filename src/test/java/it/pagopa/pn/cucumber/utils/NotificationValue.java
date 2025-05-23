@@ -93,7 +93,8 @@ public enum NotificationValue {
     LOAD_TIMELINE_FROM("loadTimelineFrom", "fromB2b", false),
     DETAILS_NOTIFICATION_COST("details_notificationCost", null, false),
     PARAMETRI_CALCOLO_COSTO_NOTIFICA("parametriCalcoloCostoNotifica", null, false),
-    REGISTRY("registry", null, false);
+    DETAILS_REGISTRY("details_registry", null, false),
+    DETAILS_REC_INDEXES("details_recIndexes", null, false);
 
     private static final String NULL_VALUE = "NULL";
     private static final Integer NOTICE_CODE_LENGTH = 18;

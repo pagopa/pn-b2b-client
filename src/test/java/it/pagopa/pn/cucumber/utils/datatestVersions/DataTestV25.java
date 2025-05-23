@@ -40,7 +40,7 @@ public class DataTestV25 extends AbstractDataTest {
         String loadTimelineFrom = getValue(data, LOAD_TIMELINE_FROM.key);
         String notificationCost = getValue(data, DETAILS_NOTIFICATION_COST.key);
         String parametriCalcoloCostoNotifica = getValue(data, PARAMETRI_CALCOLO_COSTO_NOTIFICA.key);
-        String registry = getValue(data, REGISTRY.key);
+        String registry = getValue(data, DETAILS_REGISTRY.key);
 
         if (data.size() == 1 && data.get("NULL") != null) {
             return null;
@@ -69,7 +69,8 @@ public class DataTestV25 extends AbstractDataTest {
                             .analogCost(analogCost != null ? Integer.parseInt(analogCost) : null)
                             .delegateInfo(getObjValue(DelegateInfo.class, data, DETAILS_DELEGATE_INFO.key))
                             .notificationCost(notificationCost != null ? Long.parseLong(notificationCost) : null)
-                            .registry(registry != null ? getValue(data, REGISTRY.key) : null)
+                            .registry(registry != null ? getValue(data, DETAILS_REGISTRY.key) : null)
+                            .recIndexes(getListValue(Integer.class, data, DETAILS_REC_INDEXES.key))
                     );
 
             // IMPORTANT: no empty data check; enrich with new checks if it is needed
@@ -275,7 +276,7 @@ public class DataTestV25 extends AbstractDataTest {
             //TODO VAS
             case PUBLIC_REGISTRY_VALIDATION_CALL -> {
                 if (expected != null) {
-                    Assertions.assertEquals(actual.getRecIndex(), expected.getRecIndex());
+                    Assertions.assertEquals(actual.getRecIndexes(), expected.getRecIndexes());
                     //TODO VAS Esempio per una lista di utenze
                    /* Assertions.assertNotNull(actual.getUtilityList());
                    Assertions.assertEquals(actual.getUtilityList().size(), expected.getUtilityList().size());
