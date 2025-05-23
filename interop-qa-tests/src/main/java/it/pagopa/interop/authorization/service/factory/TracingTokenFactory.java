@@ -2,6 +2,7 @@ package it.pagopa.interop.authorization.service.factory;
 
 import it.pagopa.interop.authorization.service.utils.ConfigFileReader;
 import it.pagopa.interop.conf.InteropClientConfigs;
+import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +14,7 @@ import software.amazon.awssdk.services.kms.KmsClient;
 @Setter
 public class TracingTokenFactory extends SessionTokenFactory {
     private static final String WELLKNOWN_URL = "https://tracing-qa-only-well-known-qa.s3.eu-south-1.amazonaws.com/.well-known/jwks.json";
-    private Map<String, Map<String, String>> cachedTokens = null;
+    private Map<String, Map<String, List<String>>> cachedTokens = null;
 
     public TracingTokenFactory(
         InteropClientConfigs interopClientConfigs,
@@ -24,7 +25,7 @@ public class TracingTokenFactory extends SessionTokenFactory {
     }
 
     @Override
-    public Map<String, Map<String, String>> loadToken() {
+    public Map<String, Map<String, List<String>>> loadToken() {
         getSessionTokenPayloadTemplate().put("aud", "{{ENVIRONMENT}}.interop.pagopa.it/m2m");
         try {
             if (cachedTokens == null) cachedTokens = generateSessionToken();

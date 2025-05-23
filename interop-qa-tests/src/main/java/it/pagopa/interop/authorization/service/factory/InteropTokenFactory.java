@@ -2,6 +2,7 @@ package it.pagopa.interop.authorization.service.factory;
 
 import it.pagopa.interop.authorization.service.utils.ConfigFileReader;
 import it.pagopa.interop.conf.InteropClientConfigs;
+import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +14,7 @@ import software.amazon.awssdk.services.kms.KmsClient;
 @Setter
 public class InteropTokenFactory extends SessionTokenFactory {
     private static final String WELLKNOWN_URL = "https://qa.interop.pagopa.it/.well-known/jwks.json";
-    private Map<String, Map<String, String>> cachedTokens = null;
+    private Map<String, Map<String, List<String>>> cachedTokens = null;
 
     public InteropTokenFactory(
         InteropClientConfigs interopClientConfigs,
@@ -23,7 +24,7 @@ public class InteropTokenFactory extends SessionTokenFactory {
         super(interopClientConfigs, configFileReader, kmsClient);
     }
 
-    public synchronized Map<String, Map<String, String>> loadToken() {
+    public synchronized Map<String, Map<String, List<String>>> loadToken() {
         getSessionTokenPayloadTemplate().put("aud", "{{ENVIRONMENT}}.interop.pagopa.it/ui");
         try {
             if (cachedTokens == null) cachedTokens = generateSessionToken();

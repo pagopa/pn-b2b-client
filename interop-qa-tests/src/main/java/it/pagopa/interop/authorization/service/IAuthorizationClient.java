@@ -23,5 +23,6 @@ public interface IAuthorizationClient extends SettableBearerToken {
     Client getClient(UUID clientId);
     void removeClientPurpose(UUID clientId, UUID purposeId);
     CreatedResource addUsersToClient(UUID clientId, InlineObject4 inlineObject);
-
+    Client editClientAdmin(UUID clientId, ClientAdminConfig adminConfig);
+    void deleteClientAdmin(UUID clientId, UUID adminId);
 }
