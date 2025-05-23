@@ -1724,8 +1724,6 @@
                             <modelPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2</modelPackage>
                         </configuration>
                     </execution>
-
-
                     <execution>
                         <id>generate-external-pn-bff-recipient-digital-addresses.yaml</id>
                         <goals>
@@ -1756,9 +1754,6 @@
                             <modelPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient.digitaladdresses</modelPackage>
                         </configuration>
                     </execution>
-
-
-
                     <execution>
                         <id>generate-external-bff-pa-recipient</id>
                         <goals>
