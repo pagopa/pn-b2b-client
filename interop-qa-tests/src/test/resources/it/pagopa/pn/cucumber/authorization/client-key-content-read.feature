@@ -10,7 +10,6 @@ Feature: Lettura di una chiave pubblica contenuta in un client
     Given un "admin" di "<ente>" ha caricato una chiave pubblica in quel client
     When l'utente richiede la lettura del contenuto della chiave pubblica
     Then si ottiene status code 200
-
     Examples:
       | ente    |
       | GSP     |
