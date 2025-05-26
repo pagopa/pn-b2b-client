@@ -12,7 +12,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 
   #PA ABILITATA, PF CENSITA, CLIENT ABILITATO (OK -> DWXA-QELZ-WLJK-202505-T-1)
   @ricercaIndirizzoVas @technicalRefusalCost #costi 1-6-43-48
-  Scenario: [3-5-15-24-43-48] Invio notifica AR monodestinatario verso PF con campo address vuoto e recupero indirizzo da ANPR - Vas attivo
+  Scenario: [RICERCA_INDIRIZZO_MONO_PF_OK_3-5-15-24-43-48] Invio notifica AR monodestinatario verso PF con campo address vuoto e recupero indirizzo da ANPR - Vas attivo
     Given il test è effettuabile con API versione "V25" o superiore
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -256,7 +256,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 
   #TODO: serve sequence KO primo tentativo (ma nella request viene passata come physicalAddress, quindi non so se questo vanifica il test)
   #PA ABILITATA, PF CENSITA, CLIENT ABILITATO, SEQUENCE KO AL PRIMO TENTATIVO
-  @ricercaIndirizzoVas
+  #@ricercaIndirizzoVas
   Scenario: [12] Invio notifica AR monodestinatario verso PF con campo address vuoto e recupero indirizzo da ANPR -  Vas attivo
     Given il test è effettuabile con API versione "V25" o superiore
     And viene generata una nuova notifica
@@ -289,7 +289,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
   #TODO NOTA by MATTEO: Questo scenario si può tranquillamente integrare con il primo scenario del file feature, la struttura è praticamente identica
   #TODO: serve sequence KO primo tentativo (ma nella request viene passata come physicalAddress, quindi non so se questo vanifica il test)
   #PA ABILITATA, PF CENSITA, CLIENT ABILITATO, SEQUENCE OK AL PRIMO TENTATIVO
-  @ricercaIndirizzoVas #serve sequence ok primo tentativo
+  #@ricercaIndirizzoVas #serve sequence ok primo tentativo
   Scenario: [11] Invio notifica AR monodestinatario verso PF con campo address vuoto e recupero indirizzo da ANPR - Vas attivo
     Given il test è effettuabile con API versione "V25" o superiore
     And viene generata una nuova notifica
