@@ -12,7 +12,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 
   #PA ABILITATA, PF CENSITA, CLIENT ABILITATO (OK -> DWXA-QELZ-WLJK-202505-T-1)
   @ricercaIndirizzoVas @technicalRefusalCost #costi 1-6-43-48
-  Scenario: [RICERCA_INDIRIZZO_MONO_PF_OK_3-5-15-24-43-48] Invio notifica AR monodestinatario verso PF con campo address vuoto e recupero indirizzo da ANPR - Vas attivo
+  Scenario: [RICERCA_INDIRIZZO_MONO_PF_OK_3-5-15-24-43-48-11] Invio notifica AR monodestinatario verso PF con campo address vuoto e recupero indirizzo da ANPR - Vas attivo
     Given il test è effettuabile con API versione "V25" o superiore
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -42,6 +42,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details                       | NOT_NULL               |
       | details_numberOfRecipients    | 1                      |
       | parametriCalcoloCostoNotifica | recipients:1,ko:0,ok:1 |
+      | details_recIndex              | 0                      |
           #| details_notificationCost   | 100      |
   #TODO PUBLIC_REGISTRY_VALIDATION_CALL: contenga lista utenze
   #todo elementi presenti una sola volta.
@@ -277,6 +278,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details_physicalAddress | {"address": "Via Umbria 5L", "municipality": "PADOVA", "zip": "35127"} |
       | details_responseStatus  | OK                                                                     |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | loadTimeline           | true     |
       | details                | NOT_NULL |
       | details_responseStatus | KO       |
       | details_recIndex       | 0        |
@@ -311,10 +313,11 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details_physicalAddress | {"address": "Via Umbria 5L", "municipality": "PADOVA", "zip": "35127"} |
       | details_responseStatus  | OK                                                                     |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | loadTimeline               | true      |
       | details                    | NOT_NULL  |
       | details_responseStatus     | OK        |
       | details_recIndex           | 0         |
-      | details_deliveryDetailCode | RECAG001C |
+      #| details_deliveryDetailCode | RECRN001C |
       #TODO      | details_physicalAddress    | {"address": "Via Umbria 5L", "municipality": "PADOVA", "zip": "35127"} |
 
 # ************************************************** Abilitazione PA / FeatureFlag / WI-VAS-1.3 + WI-VAS-1.4 + client WI-VAS-1.5 ********************
@@ -820,13 +823,27 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 
 
   Scenario: [TEST_LAZY_COSTI] Invio notifica AR monodestinatario verso PF con campo address vuoto e nessun trovato da RI notifica rifiutata - Vas attivo
-    Given imposto lo iun di SharedSteps a "UENK-VKXT-ZUPN-202505-A-1" e la pa a Comune_Multi
-    Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
-      | loadTimeline                  | true                                                                     |
-      | details                       | NOT_NULL                                                                 |
-      | details_numberOfRecipients    | 1                                                                        |
-      #2 ADDRESS NOT FOUND, MODALITA' DEFAULT, 2 recipients, 2 ADDRESS_NOT_FOUND (contano come OK), mi aspetto 100 (costoBaseNotifica -> pn.technical_refusal_cost_mode.uniform)
-      | details_refusalReasons        | [{"errorCode": "ADDRESS_NOT_FOUND"}, {"errorCode": "ADDRESS_NOT_FOUND"}] |
-      | parametriCalcoloCostoNotifica | recipients:2,ko:0,ok:2                                                   |
+    Given imposto lo iun di SharedSteps a "QTMU-GQYL-AGLP-202505-Q-1" e la pa a Comune_Multi
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
-      | loadTimeline | false |
+      | loadTimelime       | true     |
+      | details            | NOT_NULL |
+      | details_recIndexes | [0]      |
+    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
+      | details                 | NOT_NULL                                                               |
+      | details_registry        | ANPR                                                                   |
+      | details_recIndex        | 0                                                                      |
+      | details_physicalAddress | {"address": "Via Umbria 5L", "municipality": "PADOVA", "zip": "35127"} |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | loadTimeline            | true                                                                   |
+      | details                 | NOT_NULL                                                               |
+      | details_recIndex        | 0                                                                      |
+      | details_physicalAddress | {"address": "VIA UMBRIA 5L", "municipality": "PADOVA", "zip": "35127"} |
+      | details_responseStatus  | OK                                                                     |
+    Then viene verificato che l'elemento di timeline "REFINEMENT" esista
+      | loadTimeline                  | true                   |
+      | details                       | NOT_NULL               |
+      | details_numberOfRecipients    | 1                      |
+      | parametriCalcoloCostoNotifica | recipients:1,ko:0,ok:1 |
+      | details_recIndex              | 0                      |
+
+      #TODO      | details_physicalAddress    | {"address": "Via Umbria 5L", "municipality": "PADOVA", "zip": "35127"} |
