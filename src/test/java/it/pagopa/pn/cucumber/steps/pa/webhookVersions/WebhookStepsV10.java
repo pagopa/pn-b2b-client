@@ -374,7 +374,7 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
     public <T> void verifyAssertionsTimeline(AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream, T progressResponseElement) {
         try {
             assertThat(progressResponseElement).as(NOT_NULL_P_R_E).isNotNull();
-            TimelineElementCategoryV20 timelineElementInternalCategory = TimelineElementCategoryV20.valueOf(((TimelineElementCategoryV27) timelineForStream.getTimelineElementCategory()).name());
+            TimelineElementCategoryV20 timelineElementInternalCategory = TimelineElementCategoryV20.valueOf(((TimelineElementCategoryV20) timelineForStream.getTimelineElementCategory()).name());
 
             FullSentNotificationV20 fullSentNotification = getFullSentNotificationVersioned();
             it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV20 elementToCheck = fullSentNotification.getTimeline().stream()
