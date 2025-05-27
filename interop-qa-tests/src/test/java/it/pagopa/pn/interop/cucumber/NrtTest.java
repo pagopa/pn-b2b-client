@@ -16,6 +16,6 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 })
 @ExcludeTags({"wait_for_fix"})
 @IncludeTags({"agreement", "attribute", "descriptor", "document", "eservice", "purpose", "daily_calls_update_request",
-        "purpose_latest_risk_analysis", "purpose_risk_analysis", "voucher"})
+        "purpose_latest_risk_analysis", "purpose_risk_analysis"})
 public class NrtTest {
 }
