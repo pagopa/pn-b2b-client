@@ -7,7 +7,7 @@ Feature: verifica compatibilità tra v2 a v2.1
       | senderDenomination | Comune di palermo               |
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" V2
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" con la versione "V2"
 
 
   @version
@@ -46,7 +46,7 @@ Feature: verifica compatibilità tra v2 a v2.1
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm | NULL |
       | payment_f24        | NULL |
-    When la notifica viene inviata tramite api b2b con la versione "V2" dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V20
     And viene richiesto il download del documento "PAGOPA"
     And l'operazione ha prodotto un errore con status code "404"
@@ -61,7 +61,7 @@ Feature: verifica compatibilità tra v2 a v2.1
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm | NULL |
       | payment_f24        | NULL |
-    When la notifica viene inviata tramite api b2b con la versione "V2" dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
 
@@ -85,7 +85,7 @@ Feature: verifica compatibilità tra v2 a v2.1
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
     And destinatario Mario Cucumber
-    When la notifica viene inviata tramite api b2b con la versione "V2" dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And "Mario Cucumber" legge la notifica ricevuta
     Then vengono verificati costo = "100" e data di perfezionamento della notifica

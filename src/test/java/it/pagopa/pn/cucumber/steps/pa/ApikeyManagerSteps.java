@@ -19,7 +19,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 import java.util.List;
 
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.*;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 
 
 public class ApikeyManagerSteps {
@@ -31,7 +31,6 @@ public class ApikeyManagerSteps {
     private HttpStatusCodeException httpStatusCodeException;
     private String firstGroupUsed;
     private String responseNewApiKeyTaxId;
-
 
     @Autowired
     public ApikeyManagerSteps(IPnApiKeyManagerClient apiKeyManagerClient, SharedSteps sharedSteps) {
@@ -45,9 +44,8 @@ public class ApikeyManagerSteps {
                 apiKeys = this.apiKeyManagerClient.getApiKeys(null, null, null, true));
     }
 
-
     @Then("la lettura è avvenuta correttamente")
-    public void laLetturaÈAvvenutaCorrettamente() {
+    public void letturaAvvenutaCorrettamente() {
         Assertions.assertNotNull(apiKeys);
     }
 
@@ -61,19 +59,19 @@ public class ApikeyManagerSteps {
 
 
     @And("l'apiKey creata è presente tra quelle lette")
-    public void lApiKeyCreataÈPresenteTraQuelleLette() {
+    public void apiKeyCreataPresenteTraQuelleLette() {
         Assertions.assertNotNull(
                 apiKeys.getItems().stream()
                         .filter(elem -> elem.getId().equals(responseNewApiKey.getId())).findAny().orElse(null));
     }
 
     @When("l'apiKey viene cancellata")
-    public void lApiKeyVieneCancellata() {
+    public void apiKeyGetsDeleted() {
         Assertions.assertDoesNotThrow(() -> apiKeyManagerClient.deleteApiKeys(responseNewApiKey.getId()));
     }
 
     @Then("l'apiKey non è più presente")
-    public void lApiKeyNonÈPiùPresente() {
+    public void apiKeyIsNotPresentAnymore() {
         Assertions.assertNull(
                 apiKeys.getItems().stream()
                         .filter(elem -> elem.getId().equals(responseNewApiKey.getId())).findAny().orElse(null));
@@ -101,7 +99,7 @@ public class ApikeyManagerSteps {
         }
     }
 
-    @Then("si verifica lo stato dell'apikey {string}")
+    @Then("si verifica lo stato dell'apiKey {string}")
     public void siVerificaLoStatoDellApikey(String state) {
         BffApiKeyStatus apiKeyStatus = switch (state) {
             case "BLOCKED" -> BffApiKeyStatus.BLOCKED;
@@ -111,9 +109,9 @@ public class ApikeyManagerSteps {
             default -> throw new IllegalArgumentException("Invalid status for ApiKey:" + state);
         };
         Assertions.assertNotNull(
-                apiKeys.getItems().stream()
-                        .filter(elem -> (elem.getId().equals(responseNewApiKey.getId()))
-                                && (elem.getStatus().equals(apiKeyStatus))).findAny().orElse(null));
+                apiKeys.getItems().stream().filter(elem -> (
+                        elem.getId().equals(responseNewApiKey.getId()))
+                        && (elem.getStatus().equals(apiKeyStatus))).findAny().orElse(null));
     }
 
     private BffRequestApiKeyStatus getRequestApiKeyStatus(String state) {
@@ -130,7 +128,6 @@ public class ApikeyManagerSteps {
     @When("viene impostata l'apikey appena generata")
     public void vieneImpostataLApikeyAppenaGenerataPerIl() {
         sharedSteps.getB2bClient().setApiKey(responseNewApiKey.getApiKey());
-        sharedSteps.getB2bUtils().setClient(sharedSteps.getB2bClient());
         sharedSteps.setRequestNewApiKey(requestNewApiKey);
         sharedSteps.setResponseNewApiKey(responseNewApiKey);
     }
@@ -225,12 +222,12 @@ public class ApikeyManagerSteps {
 
     @Given("viene settato il gruppo della notifica con quello dell'apikey")
     public void vieneSettatoIlGruppoDellaNotificaConQuelloDellApikey() {
-        this.sharedSteps.getNotificationRequest().setGroup(requestNewApiKey.getGroups().get(0));
+        this.sharedSteps.setGroup(requestNewApiKey.getGroups().get(0));
     }
 
     @Given("viene settato il taxId della notifica con quello dell'apikey")
     public void vieneSettatoIlTaxIdDellaNotificaConQuelloDellApikey() {
-        this.sharedSteps.getNotificationRequest().setSenderTaxId(this.responseNewApiKeyTaxId);
+        this.sharedSteps.setSenderTaxId(this.responseNewApiKeyTaxId);
     }
 
     @When("viene modificato lo stato dell'apiKey in {string} per il {string}")
@@ -245,7 +242,7 @@ public class ApikeyManagerSteps {
     public void vieneSettatoIlPrimoGruppoValidoPerIlComune(String paName) {
         setBearerToken(paName);
         firstGroupUsed = this.sharedSteps.getGroupIdByPa(paName, GroupPosition.FIRST);
-        this.sharedSteps.getNotificationRequest().setGroup(firstGroupUsed);
+        this.sharedSteps.setGroup(firstGroupUsed);
     }
 
     @Given("viene settato un gruppo differente da quello utilizzato nell'apikey per il comune {string}")
@@ -254,7 +251,7 @@ public class ApikeyManagerSteps {
         String group = this.sharedSteps.getGroupIdByPa(paName, GroupPosition.LAST);
         Assertions.assertNotNull(firstGroupUsed);
         Assertions.assertNotEquals(firstGroupUsed, group);
-        this.sharedSteps.getNotificationRequest().setGroup(group);
+        this.sharedSteps.setGroup(group);
     }
 
     @Given("Viene creata una nuova apiKey per il comune {string} con gruppo differente (del invio notifica)(dallo stream)")
@@ -295,7 +292,7 @@ public class ApikeyManagerSteps {
     @Then("si tenta il recupero dal sistema tramite codice IUN")
     public void siTentaIlRecuperoDalSistemaTramiteCodiceIUN() {
         try {
-            sharedSteps.getB2bUtils().getNotificationByIun(sharedSteps.getNotificationIun());
+            sharedSteps.getSentNotificationLastVersion();
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
         }
@@ -304,7 +301,7 @@ public class ApikeyManagerSteps {
     @Then("si tenta il recupero dal sistema tramite codice IUN con api v1")
     public void siTentaIlRecuperoDalSistemaTramiteCodiceIUNV1() {
         try {
-            sharedSteps.getB2bUtils().getNotificationByIunV1(sharedSteps.getNotificationIun());
+            sharedSteps.getB2bClient().getSentNotificationV1(sharedSteps.getNotificationIun());
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
         }
@@ -322,5 +319,4 @@ public class ApikeyManagerSteps {
             default -> throw new IllegalArgumentException("Invalid paName: " + paName);
         }
     }
-
 }

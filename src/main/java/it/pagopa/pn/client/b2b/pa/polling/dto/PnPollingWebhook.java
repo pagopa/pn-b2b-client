@@ -35,7 +35,4 @@ public class PnPollingWebhook {
     private List<ProgressResponseElementV25> progressResponseElementListV25;
     private List<ProgressResponseElementV26> progressResponseElementListV26;
     private List<ProgressResponseElementV27> progressResponseElementListV27;
-
-//    private it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26.NotificationStatus notificationStatus_noVersionV26;
-//    private it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v27.NotificationStatus notificationStatus_noVersionV27;
 }

@@ -1,7 +1,7 @@
 Feature: esposizione timestamp tecnici per gli SLA
 
   @timestampTecnici
-  Scenario Outline: [TIMESTAMP_TECNICI_SLA_B2B_ANALOG] Controllo che i nuovi campi del TimelineElement siano presenti chiamando la versione v24 dell'API e assenti chiamando la v23
+  Scenario: [TIMESTAMP_TECNICI_SLA_B2B_ANALOG] Controllo che i nuovi campi del TimelineElement siano presenti chiamando la versione v24 dell'API e assenti chiamando la v23
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
@@ -9,16 +9,12 @@ Feature: esposizione timestamp tecnici per gli SLA
       | digitalDomicile         | NULL        |
       | physicalAddress_address | Via @ok_890 |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "<timeline_element>"
-    When si invoca l'api B2B versione "<version>" per ottenere gli elementi di timeline di tale notifica
-    Then gli elementi di timeline restituiti da B2B contengono i campi attesi in accordo alla versione "<version>"
-    Examples:
-      | timeline_element        | version |
-      | ANALOG_SUCCESS_WORKFLOW | V24     |
-      | ANALOG_SUCCESS_WORKFLOW | V23     |
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    Then gli elementi di timeline restituiti da B2B contengono i campi attesi in accordo alla versione "V24"
+    Then gli elementi di timeline restituiti da B2B contengono i campi attesi in accordo alla versione "V23"
 
   @timestampTecnici
-  Scenario Outline: [TIMESTAMP_TECNICI_SLA_B2B_ANALOG_FAIL] Controllo che i nuovi campi del TimelineElement siano presenti chiamando la versione v24 dell'API e assenti chiamando la v23
+  Scenario: [TIMESTAMP_TECNICI_SLA_B2B_ANALOG_FAIL] Controllo che i nuovi campi del TimelineElement siano presenti chiamando la versione v24 dell'API e assenti chiamando la v23
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
@@ -28,27 +24,19 @@ Feature: esposizione timestamp tecnici per gli SLA
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    When si invoca l'api B2B versione "<version>" per ottenere gli elementi di timeline di tale notifica
-    Then gli elementi di timeline restituiti da B2B contengono i campi attesi in accordo alla versione "<version>"
-    Examples:
-      | version |
-      | V24     |
-      | V23     |
+    Then gli elementi di timeline restituiti da B2B contengono i campi attesi in accordo alla versione "V24"
+    Then gli elementi di timeline restituiti da B2B contengono i campi attesi in accordo alla versione "V23"
 
   @timestampTecnici
-  Scenario Outline: [TIMESTAMP_TECNICI_SLA_B2B_DIGITAL] Controllo che i nuovi campi del TimelineElement siano presenti chiamando la versione v24 dell'API e assenti chiamando la v23
+  Scenario: [TIMESTAMP_TECNICI_SLA_B2B_DIGITAL] Controllo che i nuovi campi del TimelineElement siano presenti chiamando la versione v24 dell'API e assenti chiamando la v23
     Given viene generata una nuova notifica
       | subject            | notifica digitale con cucumber |
       | senderDenomination | Comune di palermo              |
     And destinatario Mario Gherkin
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "<timeline_element>"
-    When si invoca l'api B2B versione "<version>" per ottenere gli elementi di timeline di tale notifica
-    Then gli elementi di timeline restituiti da B2B contengono i campi attesi in accordo alla versione "<version>"
-    Examples:
-      | timeline_element | version |
-      | REQUEST_ACCEPTED | V24     |
-      | REQUEST_ACCEPTED | V23     |
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+    Then gli elementi di timeline restituiti da B2B contengono i campi attesi in accordo alla versione "V24"
+    Then gli elementi di timeline restituiti da B2B contengono i campi attesi in accordo alla versione "V23"
 
   @timestampTecnici @precondition @webhook2 @cleanWebhook
   Scenario Outline: [TIMESTAMP_TECNICI_SLA_WEBHOOK] Controllo che i nuovi campi del TimelineElement siano presenti chiamando la versione v24 dell'API e assenti chiamando la v23
@@ -63,13 +51,13 @@ Feature: esposizione timestamp tecnici per gli SLA
     And viene aggiornata la apiKey utilizzata per gli stream
     And si crea il nuovo stream per il "Comune_Multi" con versione "<version>"
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "<timeline_element>"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     When vengono letti gli eventi dello stream versione "<version>"
     Then gli elementi di timeline restituiti dal Webhook contengono i campi attesi in accordo alla versione "<version>"
     Examples:
-      | timeline_element | version |
-      | REQUEST_ACCEPTED | V24     |
-      | REQUEST_ACCEPTED | V23     |
+      | version |
+      | V24     |
+      | V23     |
 
   @timestampTecnici @precondition @webhook2 @cleanWebhook
   Scenario: [TIMESTAMP_TECNICI_SLA_WEBHOOK_2] Controllo che in presenza di due stream (uno v23 e uno v24) richiamando la get con versione v23 i nuovi campi del TimelineElement non siano presenti

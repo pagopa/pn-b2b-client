@@ -5,7 +5,7 @@ import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV25;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingWebhook;
-import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceWebhookV25;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v25.PnPollingServiceWebhookV25;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps;
 import lombok.Data;
@@ -19,6 +19,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Data
 @Slf4j
@@ -162,6 +164,18 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
     }
 
     @Override
+    public void checkConsumeStreamStatusValue(boolean isPresente, String status) {
+        assertThat(progressResponseElementList).as("La lista di progressResponseElement non dev'essere null").isNotNull();
+        assertThat(progressResponseElementList).as("La lista di progressResponseElement non dev'essere vuota").isNotEmpty();
+        progressResponseElement = progressResponseElementList.stream().filter(x -> x.getNewStatus().getValue().equals(status)).findFirst().orElse(null);
+        if (isPresente) {
+            assertThat(progressResponseElement).as("La lista di progressResponseElement dovrebbe contenere almeno un elemento con status " + status).isNotNull();
+        } else {
+            assertThat(progressResponseElement).as("La lista di progressResponseElement NON dovrebbe contenere nessun elemento con status " + status).isNull();
+        }
+    }
+
+    @Override
     public void createStreamRequestWithGroupsPA(List<String> groupIdByPa) {
         streamRequest = new StreamRequestV25();
         streamRequest.setGroups(groupIdByPa);
@@ -279,10 +293,10 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
                         .streamId(eventStreamList.get(position).getStreamId())
                         .build());
 
-        log.info("WEBHOOK_PROGRESS_RESPONSE_ELEMENT_V25: " + pnPollingResponse.getProgressResponseElementV25());
-        if (pnPollingResponse.getProgressResponseElementV25() != null) {
-            progressResponseElement = pnPollingResponse.getProgressResponseElementV25();
-            progressResponseElementList = pnPollingResponse.getProgressResponseElementListV25();
+        log.info("WEBHOOK_PROGRESS_RESPONSE_ELEMENT_V25: " + pnPollingResponse.getProgressResponseElement());
+        if (pnPollingResponse.getProgressResponseElement() != null) {
+            progressResponseElement = pnPollingResponse.getProgressResponseElement();
+            progressResponseElementList = pnPollingResponse.getProgressResponseElementList();
             return progressResponseElement;
         }
         return null;
@@ -302,10 +316,10 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
                         .streamId(eventStreamList.get(position).getStreamId())
                         .build());
 
-        log.info("WEBHOOK_PROGRESS_RESPONSE_ELEMENT_V25: " + pnPollingResponse.getProgressResponseElementV25());
-        if (pnPollingResponse.getProgressResponseElementListV25() != null) {
-            progressResponseElement = pnPollingResponse.getProgressResponseElementV25();
-            progressResponseElementList = pnPollingResponse.getProgressResponseElementListV25();
+        log.info("WEBHOOK_PROGRESS_RESPONSE_ELEMENT_V25: " + pnPollingResponse.getProgressResponseElement());
+        if (pnPollingResponse.getProgressResponseElementList() != null) {
+            progressResponseElement = pnPollingResponse.getProgressResponseElement();
+            progressResponseElementList = pnPollingResponse.getProgressResponseElementList();
             return progressResponseElement;
         }
         return null;
@@ -435,11 +449,6 @@ public class WebhookStepsV25 implements WebhookStepsInterface {
             pnPollingWebhook.setProgressResponseElementListV25(progressResponseElementList);
         }
         return pnPollingWebhook;
-    }
-
-    @Override
-    public void getTimelineElementVersionB2B(String iun) {
-        webhookSteps.getB2bClient().getSentNotificationV25(iun);
     }
 
     @Override

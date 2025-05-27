@@ -1,5 +1,6 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
+import it.pagopa.pn.client.b2b.pa.exception.IllegalConfigurationException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -160,7 +161,8 @@ public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttribut
                 this.bearerTokenSetted = BearerTokenType.USER_SCADUTO;
                 beenSet = true;
                 break;
-
+            default:
+                throw new IllegalConfigurationException("Invalid token: " + bearerToken);
         }
         return beenSet;
     }

@@ -17,6 +17,6 @@ public class PnPollingResponseV27 extends PnPollingResponse {
     private NewNotificationRequestStatusResponseV24 statusResponse;
     private TimelineElementV26 timelineElement;
     private NotificationStatusHistoryElementV26 notificationStatusHistoryElement;
-    private List<ProgressResponseElementV27> progressResponseElementListV27;
-    private ProgressResponseElementV27 progressResponseElementV27;
+    private List<ProgressResponseElementV27> progressResponseElementList;
+    private ProgressResponseElementV27 progressResponseElement;
 }
