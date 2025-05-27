@@ -11,18 +11,13 @@ import it.pagopa.interop.authorization.domain.Tenant;
 import it.pagopa.interop.authorization.service.exception.UnsignedSTSGenerationException;
 import it.pagopa.interop.authorization.service.utils.ConfigFileReader;
 import it.pagopa.interop.conf.InteropClientConfigs;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.HashMap;
@@ -83,11 +78,11 @@ public abstract class SessionTokenFactory {
         this.configFileReader = configFileReader;
     }
 
-    public abstract Map<String, Map<String, String>> loadToken();
+    public abstract Map<String, Map<String, List<String>>> loadToken();
 
     public abstract String getRemoteWellknownUrl();
 
-    public Map<String, Map<String, String>> generateSessionToken() throws Exception {
+    public Map<String, Map<String, List<String>>> generateSessionToken() throws Exception {
         // Step 1. Read session token payload values file
         log.info("##Generating session token... ##");
         log.debug("##Step 1. Read session token payload values file ##");
@@ -137,11 +132,11 @@ public abstract class SessionTokenFactory {
         log.debug("ST Payload Compiled: {}", stPayloadCompiled);
 
         log.debug("## Step 5. Generate unsigned STs ##");
-        Map<String, Map<String, String>> unsignedSTs = unsignedStsGeneration(stHeaderCompiled, stPayloadCompiled, configFileReader.getTenantList(), environment);
+        Map<String, Map<String, List<String>>> unsignedSTs = unsignedStsGeneration(stHeaderCompiled, stPayloadCompiled, configFileReader.getTenantList(), environment);
         log.debug("Unsigned STs: {}", unsignedSTs);
 
         log.debug("## Step 6. Generate signed STs ##");
-        Map<String, Map<String, String>> signedSTs = signedStsGeneration(unsignedSTs);
+        Map<String, Map<String, List<String>>> signedSTs = signedStsGeneration(unsignedSTs);
         log.info("Session Token generation completed successfully.");
 
         return signedSTs;
@@ -176,7 +171,7 @@ public abstract class SessionTokenFactory {
     }
 
 
-    private Map<String, Map<String, String>> unsignedStsGeneration(Map<String, String> stHeaderCompiled,
+    private Map<String, Map<String, List<String>>> unsignedStsGeneration(Map<String, String> stHeaderCompiled,
        HashMap<String, Object> stPayloadCompiled, List<Tenant> stPayloadValues, String environment) {
         try {
             log.debug("unsignedStsGeneration::Phase1:START: Build roles dynamic substitutions");
@@ -186,7 +181,7 @@ public abstract class SessionTokenFactory {
                String organizationId = tenant.getOrganizationId().get(environment);
                String selfcareId = tenant.getSelfcareId();
                ExternalId externalId = tenant.getExternalId();
-               Map<String, String> userRoles = tenant.getUserRoles();
+               Map<String, List<String>> userRoles = tenant.getUserRoles();
 
                if (organizationId == null || selfcareId == null || externalId == null || userRoles == null) {
                     throw new IllegalArgumentException(String.format("Missing values for tenant %s in env %s", tenant, environment));
@@ -194,19 +189,24 @@ public abstract class SessionTokenFactory {
 
                Map<String, Object> stsSubOutput2 = new HashMap<>();
 
-               for (Entry<String, String> interopRole : userRoles.entrySet()) {
+               for (Entry<String, List<String>> interopRole : userRoles.entrySet()) {
                    log.debug("unsignedStsGeneration::Phase1: Start dynamic substition for role {}", interopRole);
-                   String uid = interopRole.getValue();
+                   List<String> uids = interopRole.getValue();
 
-                   Map<String, Object> stsSubOutput3 = deepCopy(stPayloadCompiled);
+                   List<Map<String, Object>> stsSubOutput3List = new ArrayList<>();
+                   for (String uid : uids) {
+                       Map<String, Object> stsSubOutput3 = deepCopy(stPayloadCompiled);
+                       stsSubOutput3.put("externalId", externalId);
+                       stsSubOutput3.put("uid", uid);
+                       stsSubOutput3.put("selfcareId", selfcareId);
+                       stsSubOutput3.put("organizationId", organizationId);
+                       stsSubOutput3.put("user-roles", interopRole.getKey());
 
-                   stsSubOutput3.put("externalId", externalId);
-                   stsSubOutput3.put("uid", uid);
-                   stsSubOutput3.put("selfcareId", selfcareId);
-                   stsSubOutput3.put("organizationId", organizationId);
-                   stsSubOutput3.put("user-roles", interopRole.getKey());
+                       stsSubOutput3List.add(stsSubOutput3);
+                   }
 
-                   stsSubOutput2.put(interopRole.getKey(), stsSubOutput3);
+
+                   stsSubOutput2.put(interopRole.getKey(), stsSubOutput3List);
                }
                stsSubOutput.put(tenant.getName(), stsSubOutput2);
 
@@ -219,7 +219,7 @@ public abstract class SessionTokenFactory {
             String base64Header = b64UrlEncode(new ObjectMapper().writeValueAsString(stHeaderCompiled));
             log.debug("unsignedStsGeneration::Phase2: Build base64 header done");
 
-            Map<String, Map<String, String>> stOutputIntermediate = new HashMap<>();
+            Map<String, Map<String, List<String>>> stOutputIntermediate = new HashMap<>();
 
 
             for (Entry<String, Object> tenant : stsSubOutput.entrySet()) {
@@ -228,10 +228,15 @@ public abstract class SessionTokenFactory {
                 stOutputIntermediate.put(tenant.getKey(), new HashMap<>());
 
                 for (String interopRole : ((Map<String, Object>)tenant.getValue()).keySet()) {
-                    String base64Role = b64UrlEncode(new ObjectMapper().writeValueAsString(((Map<String, Object>)tenant.getValue()).get(interopRole)));
-                    String poJwtForRole = base64Header + "." + base64Role;
+                    List<Map<String, Object>> undecodedJwts = (List<Map<String, Object>>) ((Map<String, Object>) tenant.getValue()).get(interopRole);
+                    List<String> poJwtForRoles = new ArrayList<>();
+                    for(Map<String, Object> undecodedJwt : undecodedJwts) {
+                        String stPayloadJson = new ObjectMapper().writeValueAsString(undecodedJwt);
+                        String base64Body = b64UrlEncode(stPayloadJson);
+                        poJwtForRoles.add(base64Header + "." + base64Body);
+                    }
 
-                    stOutputIntermediate.get(tenant.getKey()).put(interopRole, poJwtForRole);
+                    stOutputIntermediate.get(tenant.getKey()).put(interopRole, poJwtForRoles);
                 }
 
             }
@@ -245,11 +250,11 @@ public abstract class SessionTokenFactory {
         }
     }
 
-    private Map<String, Map<String, String>> signedStsGeneration(Map<String, Map<String, String>> unsignedStValues) {
+    private Map<String, Map<String, List<String>>> signedStsGeneration(Map<String, Map<String, List<String>>> unsignedStValues) {
         log.debug("SignedTokenGeneration::START");
-        Map<String, Map<String, String>> signedTokens = new HashMap<>();
+        Map<String, Map<String, List<String>>> signedTokens = new HashMap<>();
 
-        for (Entry<String,Map<String,String>> tenant : unsignedStValues.entrySet()) {
+        for (Entry<String,Map<String, List<String>>> tenant : unsignedStValues.entrySet()) {
             log.debug("Building token for tenant {}", tenant);
 
             signedTokens.put(tenant.getKey(), new HashMap<>());
@@ -257,16 +262,18 @@ public abstract class SessionTokenFactory {
             for (String tenantRole : tenant.getValue().keySet()) {
                 log.debug("Building token for role {}", tenantRole);
 
-                String currentUnsignedJwt = unsignedStValues.get(tenant.getKey()).get(tenantRole);
-                Map<String, Object> kmsSignResponse = kmsSign(currentUnsignedJwt);
-
-                if (!kmsVerify(currentUnsignedJwt, (SignResponse) kmsSignResponse.get("signature"))) {
-                    throw new IllegalArgumentException("Signed Token generation process failed to verify signature");
+                List<String> currentUnsignedJwts = unsignedStValues.get(tenant.getKey()).get(tenantRole);
+                List<String> signedJwts = new ArrayList<>();
+                for (String currentUnsignedJwt : currentUnsignedJwts) {
+                    Map<String, Object> kmsSignResponse = kmsSign(currentUnsignedJwt);
+                    if (!kmsVerify(currentUnsignedJwt, (SignResponse) kmsSignResponse.get("signature"))) {
+                        throw new IllegalArgumentException("Signed Token generation process failed to verify signature");
+                    }
+                    signedJwts.add((String) kmsSignResponse.get("signedToken"));
                 }
 
-                signedTokens.get(tenant.getKey()).put(tenantRole, (String) kmsSignResponse.get("signedToken"));
 
-
+                signedTokens.get(tenant.getKey()).put(tenantRole, signedJwts);
             }
         }
         log.debug("SignedTokenGeneration::END");

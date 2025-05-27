@@ -66,9 +66,9 @@ public class B2bMandateServiceClientImpl implements IPnWebMandateClient {
     }
 
     @Override
-    public MandateDto createMandate(MandateDto mandateDto) throws RestClientException {
+    public void createMandate(MandateDto mandateDto) throws RestClientException {
         it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.MandateDto convertedMandateDto = deepCopy(mandateDto, it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.MandateDto.class);
-        return deepCopy(mandateServiceApi.createMandate(convertedMandateDto), MandateDto.class);
+        deepCopy(mandateServiceApi.createMandate(convertedMandateDto), MandateDto.class);
     }
 
     @Override

@@ -19,7 +19,6 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnWebMandateExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.*;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
-import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.jupiter.api.Assertions;
@@ -30,11 +29,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
-import java.io.ByteArrayInputStream;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -322,6 +319,7 @@ public class RicezioneNotificheWebDelegheSteps {
     public void comeAmministratoreDaVoglioModificareUnaDelegaPerAssociarlaAdUnGruppo(String recipient, String delegato) {
         sharedSteps.selectUser(delegato);
 
+        //TODO Recuperare i gruppi della PG come Admin....
         List<HashMap<String, String>> resp = sharedSteps.getPnExternalServiceClient().pgGroupInfo(webRecipientClient.getBearerTokenSetted());
         String gruppoAttivo = null;
         if (resp != null && !resp.isEmpty()) {
@@ -335,6 +333,7 @@ public class RicezioneNotificheWebDelegheSteps {
 
 
         String xPagopaPnCxRole = "ADMIN";
+        //TODO capire dove recuperare il dato
         //Questo è l’identificativo della PG, e come gli altri header viene recuperato dal token JWT di autorizzazione
         String xPagopaPnCxId = switch (webRecipientClient.getBearerTokenSetted()) {
             case PG_1 -> sharedSteps.getIdOrganizationGherkinSrl();
@@ -403,6 +402,7 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @Then("l'allegato {string} può essere correttamente recuperato da {string} con delega")
     public void attachmentCanBeCorrectlyRetrievedFromWithMandate(String attachmentName, String recipient) {
+        //TODO Modificare attachmentIdx al momento e 0...............
         sharedSteps.selectUser(recipient);
         NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
                 sharedSteps.getNotificationIun(),
@@ -425,17 +425,6 @@ public class RicezioneNotificheWebDelegheSteps {
 //        if (!"F24".equalsIgnoreCase(attachmentName)) {
 //            verifySha256(downloadResponse);
 //        }
-    }
-
-    //TODO: inutilizzato in seguito a fix bff, rimuovere ?
-    private void verifySha256(NotificationAttachmentDownloadMetadataResponse downloadResponse) {
-        AtomicReference<String> sha256 = new AtomicReference<>("");
-        Assertions.assertDoesNotThrow(() -> {
-            byte[] bytes = Assertions.assertDoesNotThrow(() ->
-                    B2bUtils.downloadFile(Objects.requireNonNull(downloadResponse).getUrl()));
-            sha256.set(B2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
-        });
-        Assertions.assertEquals(sha256.get(), Objects.requireNonNull(downloadResponse).getSha256());
     }
 
     private void verifyRetrievedDocument(NotificationAttachmentDownloadMetadataResponse downloadResponse) {
@@ -592,11 +581,11 @@ public class RicezioneNotificheWebDelegheSteps {
 
     //TODO: insert recipientID da selfcare (si possono recuperare dai token)
     private String getRecipientId(String recipientId) {
-        return switch (recipientId.trim()) {
-            case MARIO_CUCUMBER -> "123";
-            case MARIO_GHERKIN -> "345";
-            case GHERKIN_SRL -> "789";
-            case CUCUMBER_SPA -> "1011";
+        return switch (recipientId.toLowerCase().trim()) {
+            case "mario cucumber" -> "123";
+            case "mario gherkin" -> "345";
+            case "gherkinsrl" -> "789";
+            case "cucumberspa" -> "1011";
             default -> throw new IllegalStateException("Unexpected value: " + recipientId);
         };
     }
@@ -688,11 +677,15 @@ public class RicezioneNotificheWebDelegheSteps {
         setBearerToken(delegate);
         try {
             List<MandateDto> mandateList;
-            if (!status.trim().isEmpty() && !delegator.trim().isEmpty()) {
+            if (status.trim().equals("")) {
+                mandateList = webMandateClient.searchMandatesByDelegate(getTaxIdByUser(delegator), null);
+            } else if (delegator.trim().equals("")) {
+                mandateList = webMandateClient.searchMandatesByDelegateStatusFilter("", List.of(status), null);
+            } else {
                 mandateList = webMandateClient.searchMandatesByDelegateStatusFilter(getTaxIdByUser(delegator), List.of(status), null);
-                Assertions.assertNotNull(mandateList, "La lista mandateList è null");
-                Assertions.assertFalse(mandateList.isEmpty(), "La lista mandateList è vuota");
             }
+            Assertions.assertNotNull(mandateList, "La lista mandateList è null");
+            Assertions.assertFalse(mandateList.isEmpty(), "La lista mandateList è vuota");
         } catch (HttpStatusCodeException e) {
             this.notificationError = e;
         }
