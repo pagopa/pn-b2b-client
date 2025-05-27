@@ -7,11 +7,11 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchRow;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.*;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffDocumentType;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffFullNotificationV1;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffNotificationDetailDocument;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffNotificationDetailTimeline;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.NotificationStatusV26;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.*;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffConsent;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffTosPrivacyActionBody;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.ConsentType;
@@ -24,7 +24,6 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.*;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationStatusV26;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV27;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
@@ -109,7 +108,7 @@ public class RicezioneNotificheWebSteps {
     public void recipientReadNotification(String recipient) {
         sharedSteps.selectUser(recipient);
         Assertions.assertDoesNotThrow(() -> {
-            fullReceivedNotification = webRecipientClient.getReceivedNotification(sharedSteps.getNotificationIun(), null);
+            fullReceivedNotification = webRecipientClient.getFullReceivedNotification(sharedSteps.getNotificationIun(), null);
             log.info("timeline received: " + fullReceivedNotification.getTimeline());
         });
     }
@@ -118,7 +117,7 @@ public class RicezioneNotificheWebSteps {
     public void notificationCanBeCorrectlyReadBy(String recipient) {
         sharedSteps.selectUser(recipient);
         try {
-            webRecipientClient.getReceivedNotification(sharedSteps.getNotificationIun(), null);
+            webRecipientClient.getFullReceivedNotification(sharedSteps.getNotificationIun(), null);
         } catch (HttpStatusCodeException e) {
             this.notificationError = e;
         }
@@ -263,7 +262,7 @@ public class RicezioneNotificheWebSteps {
     @Then("la notifica non può essere correttamente recuperata da {string}")
     public void notificationCanNotBeCorrectlyReadby(String recipient) {
         sharedSteps.selectUser(recipient);
-        fullReceivedNotification = webRecipientClient.getReceivedNotification(sharedSteps.getNotificationIun(), null);
+        fullReceivedNotification = webRecipientClient.getFullReceivedNotification(sharedSteps.getNotificationIun(), null);
         Assertions.assertNull(fullReceivedNotification);
     }
 
@@ -312,8 +311,8 @@ public class RicezioneNotificheWebSteps {
         String iun = sharedSteps.getNotificationIun();
 
         try {
-            String scheduleDate = Objects.requireNonNull(webRecipientClient.getReceivedNotification(iun, null).getTimeline().stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(TimelineElementCategoryV27.SCHEDULE_REFINEMENT)).findAny().get().getDetails()).getSchedulingDate();
-            String refinementDate = webRecipientClient.getReceivedNotification(iun, null).getTimeline().stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(TimelineElementCategoryV27.REFINEMENT)).findAny().get().getTimestamp();
+            String scheduleDate = Objects.requireNonNull(webRecipientClient.getFullReceivedNotification(iun, null).getTimeline().stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(TimelineElementCategoryV27.SCHEDULE_REFINEMENT)).findAny().get().getDetails()).getSchedulingDate();
+            String refinementDate = webRecipientClient.getFullReceivedNotification(iun, null).getTimeline().stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(TimelineElementCategoryV27.REFINEMENT)).findAny().get().getTimestamp();
             log.info("scheduleDate : {}", scheduleDate);
             log.info("refinementDate : {}", refinementDate);
             assertThat(refinementDate).as("La data di refinement non coincide con la scheduleDate").isEqualTo(scheduleDate);
@@ -493,7 +492,7 @@ public class RicezioneNotificheWebSteps {
         searchParam.subjectRegExp = data.getOrDefault("subjectRegExp", null);
         String iun = data.getOrDefault("iunMatch", null);
         if (data.containsKey("status")) {
-            searchParam.status = NotificationStatusV26.valueOf(data.get("status"));
+            searchParam.status = data.get("status");
         }
         searchParam.iunMatch = iun != null && iun.equalsIgnoreCase("ACTUAL") ? sharedSteps.getNotificationIun() : iun;
         searchParam.size = Integer.parseInt(data.getOrDefault("size", "10"));
@@ -544,10 +543,11 @@ public class RicezioneNotificheWebSteps {
 
     private boolean searchNotification(NotificationSearchParam searchParam) {
         boolean beenFound;
+        NotificationStatusV26 notificationStatus = searchParam.status != null ? NotificationStatusV26.valueOf(searchParam.status) : null;
         NotificationSearchResponse notificationSearchResponse = webRecipientClient
                 .searchReceivedNotification(
                         searchParam.startDate, searchParam.endDate, searchParam.mandateId,
-                        searchParam.senderId, searchParam.status, searchParam.subjectRegExp,
+                        searchParam.senderId, notificationStatus, searchParam.subjectRegExp,
                         searchParam.iunMatch, searchParam.size, null);
         List<NotificationSearchRow> resultsPage = notificationSearchResponse.getResultsPage();
         beenFound = Objects.requireNonNull(resultsPage).stream().filter(elem -> Objects.requireNonNull(elem.getIun()).equals(sharedSteps.getNotificationIun())).findAny().orElse(null) != null;
@@ -558,14 +558,14 @@ public class RicezioneNotificheWebSteps {
                     notificationSearchResponse = webRecipientClient
                             .searchReceivedNotification(
                                     searchParam.startDate, searchParam.endDate, searchParam.mandateId,
-                                    searchParam.senderId, searchParam.status, searchParam.subjectRegExp,
+                                    searchParam.senderId, notificationStatus, searchParam.subjectRegExp,
                                     searchParam.iunMatch, searchParam.size, pageKey);
                     beenFound = resultsPage.stream().filter(elem -> Objects.requireNonNull(elem.getIun()).equals(sharedSteps.getNotificationIun())).findAny().orElse(null) != null;
                     if (beenFound) break;
-                }//for
+                }
                 if (beenFound) break;
-            }//while
-        }//search cycle
+            }
+        }
         return beenFound;
     }
 
@@ -760,7 +760,7 @@ public class RicezioneNotificheWebSteps {
         OffsetDateTime endDate;
         String mandateId;
         String senderId;
-        NotificationStatusV26 status;
+        String status;
         String subjectRegExp;
         String iunMatch;
         Integer size = 10;

@@ -778,7 +778,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 # ************************************************* VERIFICHE LATO DESTINATARIO ***************************************
 
   # ricezione notifiche
-  @useB2B @ricercaIndirizzoVas
+  @ricercaIndirizzoVas
   Scenario: [RICERCA_INDIRIZZO_MONO_LATO_DESTINATARIO]
     Given il test è effettuabile con API versione "V25" o superiore
     And viene generata una nuova notifica
@@ -792,30 +792,3 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_VALIDATION_RESPONSE"
     And lato destinatario la notifica può essere correttamente recuperata da "Mario Cucumber" e verifica presenza dell'evento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL"
     Then lato destinatario la notifica può essere correttamente recuperata da "Mario Cucumber" e verifica presenza dell'evento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE"
-
-
-  Scenario: [TEST_LAZY_COSTI] Invio notifica AR monodestinatario verso PF con campo address vuoto e nessun trovato da RI notifica rifiutata - Vas attivo
-    Given imposto lo iun di SharedSteps a "QTMU-GQYL-AGLP-202505-Q-1" e la pa a Comune_Multi
-    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
-      | loadTimelime       | true     |
-      | details            | NOT_NULL |
-      | details_recIndexes | [0]      |
-    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
-      | details                 | NOT_NULL                                                               |
-      | details_registry        | ANPR                                                                   |
-      | details_recIndex        | 0                                                                      |
-      | details_physicalAddress | {"address": "Via Umbria 5L", "municipality": "PADOVA", "zip": "35127"} |
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
-      | loadTimeline            | true                                                                   |
-      | details                 | NOT_NULL                                                               |
-      | details_recIndex        | 0                                                                      |
-      | details_physicalAddress | {"address": "VIA UMBRIA 5L", "municipality": "PADOVA", "zip": "35127"} |
-      | details_responseStatus  | OK                                                                     |
-    Then viene verificato che l'elemento di timeline "REFINEMENT" esista
-      | loadTimeline                  | true                   |
-      | details                       | NOT_NULL               |
-      | details_numberOfRecipients    | 1                      |
-      | parametriCalcoloCostoNotifica | recipients:1,ko:0,ok:1 |
-      | details_recIndex              | 0                      |
-
-      #TODO      | details_physicalAddress    | {"address": "Via Umbria 5L", "municipality": "PADOVA", "zip": "35127"} |

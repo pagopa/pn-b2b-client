@@ -785,7 +785,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     @And("{string} legge la notifica")
     public void userReadNotification(String recipient) {
         sharedSteps.selectUser(recipient);
-        Assertions.assertDoesNotThrow(() -> getWebRecipientClient().getReceivedNotification(sharedSteps.getNotificationIun(), null));
+        Assertions.assertDoesNotThrow(() -> getWebRecipientClient().getFullReceivedNotification(sharedSteps.getNotificationIun(), null));
         sleepTest(Long.valueOf(sharedSteps.getWorkFlowWait()));
     }
 
@@ -794,7 +794,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         sharedSteps.selectUser(recipient);
         sleepTest(sharedSteps.getSchedulingDaysSuccessAnalogRefinement().toMillis());
         Assertions.assertDoesNotThrow(() -> {
-            getWebRecipientClient().getReceivedNotification(sharedSteps.getNotificationIun(), null);
+            getWebRecipientClient().getFullReceivedNotification(sharedSteps.getNotificationIun(), null);
         });
         sleepTest(Long.valueOf(sharedSteps.getWorkFlowWait()));
     }

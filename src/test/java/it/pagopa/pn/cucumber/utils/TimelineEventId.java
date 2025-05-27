@@ -84,6 +84,18 @@ public enum TimelineEventId {
         }
     },
 
+    PREPARE_ANALOG_DOMICILE_FAILURE("PREPARE_ANALOG_DOMICILE_FAILURE") {
+        @Override
+        public String buildEventId(EventId eventId) {
+            return new TimelineEventIdBuilder()
+                    .withCategory(this.getValue())
+                    .withIun(eventId.getIun())
+                    .withRecIndex(eventId.getRecIndex())
+//                    .withSentAttemptMade(eventId.getSentAttemptMade())//TODO VAS ???
+                    .build();
+        }
+    },
+
     SEND_ANALOG_DOMICILE("SEND_ANALOG_DOMICILE") {
         @Override
         public String buildEventId(EventId eventId) {

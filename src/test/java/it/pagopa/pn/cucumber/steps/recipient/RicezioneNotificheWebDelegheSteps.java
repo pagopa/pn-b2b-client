@@ -9,6 +9,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullRe
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationAttachmentDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.TimelineElementV27;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.NotificationStatusV26;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV27;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV27;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebMandateClient;
@@ -301,7 +302,7 @@ public class RicezioneNotificheWebDelegheSteps {
     public void notificationCanBeCorrectlyReadFromWithMandate(String recipient) {
         sharedSteps.selectUser(recipient);
         Assertions.assertDoesNotThrow(() -> {
-            webRecipientClient.getReceivedNotification(sharedSteps.getNotificationIun(), mandateToSearch.getMandateId());
+            webRecipientClient.getFullReceivedNotification(sharedSteps.getNotificationIun(), mandateToSearch.getMandateId());
         });
     }
 
@@ -477,7 +478,7 @@ public class RicezioneNotificheWebDelegheSteps {
         sharedSteps.selectUser(recipient);
         HttpClientErrorException httpClientErrorException = null;
         try {
-            webRecipientClient.getReceivedNotification(sharedSteps.getNotificationIun(), mandateToSearch.getMandateId());
+            webRecipientClient.getFullReceivedNotification(sharedSteps.getNotificationIun(), mandateToSearch.getMandateId());
         } catch (HttpClientErrorException e) {
             httpClientErrorException = e;
         }
@@ -496,7 +497,7 @@ public class RicezioneNotificheWebDelegheSteps {
     public void notificationCanBeCorrectlyReadFrom(String recipient) {
         sharedSteps.selectUser(recipient);
         Assertions.assertDoesNotThrow(() -> {
-            webRecipientClient.getReceivedNotification(sharedSteps.getNotificationIun(), null);
+            webRecipientClient.getFullReceivedNotification(sharedSteps.getNotificationIun(), null);
         });
         webRecipientClient.setBearerToken(baseUser);
     }
@@ -531,7 +532,7 @@ public class RicezioneNotificheWebDelegheSteps {
     }
 
     private TimelineElementV27 getTimelineElementWebRecipient(TimelineElementCategoryV27 timelineElementCategory) {
-        FullReceivedNotificationV26 result = webRecipientClient.getReceivedNotification(sharedSteps.getNotificationIun(), null);
+        FullReceivedNotificationV26 result = webRecipientClient.getFullReceivedNotification(sharedSteps.getNotificationIun(), null);
         log.info("NOTIFICATION_TIMELINE: " + result.getTimeline());
         return result
                 .getTimeline()
@@ -545,7 +546,7 @@ public class RicezioneNotificheWebDelegheSteps {
     public void notificationCanBeCorrectlyReadFromAtPa(String recipient, String paName) {
         sharedSteps.setPA(paName);
         sharedSteps.selectUser(recipient);
-        Assertions.assertDoesNotThrow(() -> webRecipientClient.getReceivedNotification(sharedSteps.getNotificationIun(), null));
+        Assertions.assertDoesNotThrow(() -> webRecipientClient.getFullReceivedNotification(sharedSteps.getNotificationIun(), null));
     }
 
     private NotificationSearchResponse notificationSearchResponse;
@@ -554,9 +555,10 @@ public class RicezioneNotificheWebDelegheSteps {
     public void notificationCanBeCorrectlyReadFromAtPa(String recipient, String paName, @Transpose RicezioneNotificheWebSteps.NotificationSearchParam searchParam) {
         sharedSteps.setPA(paName);
         sharedSteps.selectUser(recipient);
+        NotificationStatusV26 notificationStatus = searchParam.status != null ? NotificationStatusV26.valueOf(searchParam.status) : null;
         try {
             this.notificationSearchResponse = webRecipientClient.searchReceivedNotification(searchParam.startDate, searchParam.endDate, searchParam.mandateId /*mandateId = null by default*/,
-                    searchParam.senderId, searchParam.status, searchParam.subjectRegExp,
+                    searchParam.senderId, notificationStatus, searchParam.subjectRegExp,
                     searchParam.iunMatch, searchParam.size, null);
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
@@ -568,10 +570,11 @@ public class RicezioneNotificheWebDelegheSteps {
     public void notificationCanBeCorrectlyReadFromAtPa(String user, String recipient, String paName, @Transpose RicezioneNotificheWebSteps.NotificationSearchParam searchParam) {
         sharedSteps.setPA(paName);
         sharedSteps.selectUser(user);
+        NotificationStatusV26 notificationStatus = searchParam.status != null ? NotificationStatusV26.valueOf(searchParam.status) : null;
         try {
             this.notificationSearchResponse = webRecipientClient.searchReceivedDelegatedNotification(
                     searchParam.startDate, searchParam.endDate, getRecipientId(recipient),
-                    null, searchParam.senderId, searchParam.status,
+                    null, searchParam.senderId, notificationStatus,
                     searchParam.iunMatch, searchParam.size, null);
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);

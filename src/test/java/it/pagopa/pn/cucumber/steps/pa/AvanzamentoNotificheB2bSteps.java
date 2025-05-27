@@ -729,7 +729,7 @@ public class AvanzamentoNotificheB2bSteps {
         sharedSteps.selectUser(recipient);
         String iun = sharedSteps.getNotificationIun();
         try {
-            sharedSteps.getWebRecipientClient().getReceivedNotification(iun, null);
+            sharedSteps.getWebRecipientClient().getFullReceivedNotification(iun, null);
         } catch (HttpStatusCodeException e) {
             sharedSteps.setNotificationError(e);
         }
@@ -740,7 +740,7 @@ public class AvanzamentoNotificheB2bSteps {
         sharedSteps.selectUser(recipient);
         String iun = sharedSteps.getNotificationIun();
         Assertions.assertDoesNotThrow(() -> {
-            sharedSteps.getWebRecipientClient().getReceivedNotification(iun, null);
+            sharedSteps.getWebRecipientClient().getFullReceivedNotification(iun, null);
         });
         try {
             Thread.sleep(sharedSteps.getWorkFlowWait());
@@ -754,11 +754,12 @@ public class AvanzamentoNotificheB2bSteps {
         sharedSteps.selectUser(recipient);
         String iun = sharedSteps.getNotificationIun();
         try {
-            if (versione.equalsIgnoreCase("V1")) {
-                sharedSteps.getWebRecipientClient().getReceivedNotificationV1(iun, null);
-            } else {
-                sharedSteps.getWebRecipientClient().getReceivedNotificationV2(iun, null);
-            }
+            sharedSteps.getWebRecipientClient().getFullReceivedNotification(iun, null);
+//            if (versione.equalsIgnoreCase("V1")) {
+//                sharedSteps.getWebRecipientClient().getReceivedNotificationV1(iun, null);
+//            } else {
+//                sharedSteps.getWebRecipientClient().getReceivedNotificationV2(iun, null);
+//            }
             try {
                 Thread.sleep(sharedSteps.getWorkFlowWait());
             } catch (InterruptedException exc) {
