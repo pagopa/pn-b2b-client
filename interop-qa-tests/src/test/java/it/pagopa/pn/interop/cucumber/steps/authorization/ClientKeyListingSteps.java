@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Assertions;
 import java.util.List;
 
 public class ClientKeyListingSteps {
-    private final ClientTokenConfigurator clientTokenConfigurator;
     private final IAuthorizationClient authorizationClient;
     private final SharedStepsContext sharedStepsContext;
     private final IdentityService identityService;
@@ -21,7 +20,6 @@ public class ClientKeyListingSteps {
 
     public ClientKeyListingSteps(ClientTokenConfigurator clientTokenConfigurator,
                                  SharedStepsContext sharedStepsContext) {
-        this.clientTokenConfigurator = clientTokenConfigurator;
         this.authorizationClient = clientTokenConfigurator.getAuthorizationClient();
         this.sharedStepsContext = sharedStepsContext;
         this.identityService = sharedStepsContext.getIdentityService();

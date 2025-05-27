@@ -13,7 +13,6 @@ public class ClientKeyUploadSteps {
     private final IAuthorizationClient authorizationClient;
     private final SharedStepsContext sharedStepsContext;
     private final HttpCallExecutor httpCallExecutor;
-    private final IdentityService identityService;
 
     public ClientKeyUploadSteps(ClientTokenConfigurator clientTokenConfigurator,
                                 SharedStepsContext sharedStepsContext) {
@@ -21,7 +20,6 @@ public class ClientKeyUploadSteps {
         this.authorizationClient = clientTokenConfigurator.getAuthorizationClient();
         this.sharedStepsContext = sharedStepsContext;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
-        this.identityService = sharedStepsContext.getIdentityService();
     }
 
     @When("l'utente richiede il caricamento di una chiave pubblica di tipo {string}")

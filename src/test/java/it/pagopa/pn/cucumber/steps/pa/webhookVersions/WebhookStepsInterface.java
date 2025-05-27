@@ -31,6 +31,8 @@ public interface WebhookStepsInterface {
 
     void verifySpecificEventNotInStream(String elementType);
 
+    void checkConsumeStreamStatusValue(boolean isPresente, String status);
+
     void createStreamRequestWithGroupsPA(List<String> groupIdByPa);
 
     UUID getStreamId();
@@ -74,8 +76,6 @@ public interface WebhookStepsInterface {
     <T> AvanzamentoNotificheWebhookB2bSteps.StatusElementSearchResult<T> getStatusEventForStream(String notificationStatusName, TimingForPolling.TimingResult timingForElement);
 
     <T> PnPollingWebhook getPnPollingWebhook(T timeLineOrStatus);
-
-    void getTimelineElementVersionB2B(String iun);
 
     void compareTimestampWebhook(String timelineElementCategory, String webhookElementCategory, boolean mustBeEqual);
 

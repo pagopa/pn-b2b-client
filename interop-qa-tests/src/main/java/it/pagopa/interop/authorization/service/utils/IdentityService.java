@@ -20,18 +20,28 @@ public class IdentityService {
     }
 
     public String getToken(String tenantType, String role) {
+        return getToken(tenantType, role, 0);
+    }
+
+    public String getToken(String tenantType, String role, int userIndex) {
         return Optional.ofNullable(sessionTokenFactory.loadToken())
-                .map(m -> m.get(tenantType))
-                .map(m -> (role == null) ? m.get("admin") : m.get(role))
-                .filter(Objects::nonNull)
-                .orElseThrow(() -> new IllegalArgumentException("Token not found for tenant: " + tenantType + " and role: " + role));
+            .map(m -> m.get(tenantType))
+            .map(m -> (role == null) ? m.get("admin") : m.get(role))
+            .map(m -> m.get(userIndex))
+            .filter(Objects::nonNull)
+            .orElseThrow(() -> new IllegalArgumentException("Token not found for tenant: " + tenantType + " and role: " + role));
     }
 
     public UUID getUserId(String tenantType, String role) {
+        return getUserId(tenantType, role, 0);
+    }
+
+    public UUID getUserId(String tenantType, String role, int userIndex) {
         return tenantList.stream()
                 .filter(tenant -> tenantType.equals(tenant.getName()))
                 .map(Tenant::getUserRoles)
                 .map(userRole -> userRole.get(role))
+                .map(user -> user.get(userIndex))
                 .findFirst()
                 .map(UUID::fromString)
                 .orElseThrow(() -> new IllegalArgumentException("TenantID or Role not defined in the config file!"));

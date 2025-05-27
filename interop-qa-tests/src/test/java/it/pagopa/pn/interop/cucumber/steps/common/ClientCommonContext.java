@@ -43,6 +43,8 @@ public class ClientCommonContext {
     //Represents the publicKey ID returned when the public key is associated with a client.
     private String keyId;
 
+    private UUID adminId;
+
     private String newKeyId;
 
     public UUID getFirstUser() {
