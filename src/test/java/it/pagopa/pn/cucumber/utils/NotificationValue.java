@@ -94,7 +94,9 @@ public enum NotificationValue {
     DETAILS_NOTIFICATION_COST("details_notificationCost", null, false),
     PARAMETRI_CALCOLO_COSTO_NOTIFICA("parametriCalcoloCostoNotifica", null, false),
     DETAILS_REGISTRY("details_registry", null, false),
-    DETAILS_REC_INDEXES("details_recIndexes", null, false);
+    DETAILS_REC_INDEXES("details_recIndexes", null, false),
+    DETAILS_FAILURE_CAUSE("details_failureCause", null, false);
+
 
     private static final String NULL_VALUE = "NULL";
     private static final Integer NOTICE_CODE_LENGTH = 18;

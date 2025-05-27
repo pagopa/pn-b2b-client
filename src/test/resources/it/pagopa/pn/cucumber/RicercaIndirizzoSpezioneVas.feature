@@ -8,7 +8,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
   #PF censita per il vas SI -> Mario Cucumber AKA Ettore Fieramosca
   #PF censita per il vas NO -> Leonardo da Vinci
 
-# ************************************************ Indirizzi recuperati dai registri - CREAZIONE notifica andata a buon fine - CONSEGNA andata a buon fine.
+# *Indirizzi recuperati dai registri - CREAZIONE notifica andata a buon fine - CONSEGNA andata a buon fine.
 
   #PA ABILITATA, PF CENSITA, CLIENT ABILITATO
   @ricercaIndirizzoVas  #rif srs 3-5-15-24-43-48-11
@@ -108,7 +108,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details_recIndex              | 1                      |
       | parametriCalcoloCostoNotifica | recipients:2,ko:0,ok:2 |
 
-# *************************************************** Indirizzi NON recuperati dai registri (recipient non abilitati) - CREAZIONE notifica NON andata a buon fine
+# Indirizzi NON recuperati dai registri (recipient non abilitati) - CREAZIONE notifica NON andata a buon fine
 
   #PA ABILITATA, PF NON CENSITA, CLIENT ABILITATO
   @ricercaIndirizzoVas  #rif srs 6-44
@@ -223,7 +223,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details          | NOT_NULL |
       | details_recIndex | 0        |
 
-# ************************** Indirizzi recuperati dai registri - CREAZIONE notifica andata a buon fine - CONSEGNA andata a buon fine (CONDIZIONI PARTICOLARI)
+# Indirizzi recuperati dai registri - CREAZIONE notifica andata a buon fine - CONSEGNA andata a buon fine (CONDIZIONI PARTICOLARI)
 
   #PA ABILITATA, PF COMPILATA A MANO + PG CENSITA, CLIENT ABILITATO
   @ricercaIndirizzoVas #rif srs 9
@@ -251,43 +251,36 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details_registry        | REGISTRO_IMPRESE                                                              |
       | details_physicalAddress | {"address": "Roma Via del Campo 101", "municipality": "Roma", "zip": "00121"} |
 
-  #TODO: serve sequence KO primo tentativo (ma nella request viene passata come physicalAddress, quindi non so se questo vanifica il test)
+
   #PA ABILITATA, PF CENSITA, CLIENT ABILITATO, SEQUENCE KO AL PRIMO TENTATIVO
-  #@ricercaIndirizzoVas
-  Scenario: [12] Invio notifica AR monodestinatario verso PF con campo address vuoto e recupero indirizzo da ANPR -  Vas attivo
+  @ricercaIndirizzoVas #rif srs 12
+  Scenario: [RICERCA_INDIRIZZO_SECONDO_TENTATIVO] Invio notifica AR monodestinatario verso PF con campo address vuoto e recupero indirizzo da ANPR -  Vas attivo
     Given il test è effettuabile con API versione "V25" o superiore
     And viene generata una nuova notifica
-      | subject               | invio notifica con cucumber |
-      | senderDenomination    | Comune di Palermo           |
-      | physicalCommunication | REGISTERED_LETTER_890       |
-    And destinatario Mario Cucumber e:
-      | digitalDomicile | NULL |
-      | physicalAddress | NULL |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+    And destinatario
+      | denomination    | PF 2 tentativi   |
+      | recipientType   | PF               |
+      | taxId           | CNCGPP80A01H501J |
+      | digitalDomicile | NULL             |
+      | physicalAddress | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
-      | loadTimeline       | true     |
+      | loadTimelime       | true     |
       | details            | NOT_NULL |
       | details_recIndexes | [0]      |
-    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
-      | details_registry        | ANPR                                                                   |
-      | details                 | NOT_NULL                                                               |
-      | details_recIndex        | 0                                                                      |
-      | details_physicalAddress | {"address": "Via Umbria 5L", "municipality": "PADOVA", "zip": "35127"} |
-      | details_responseStatus  | OK                                                                     |
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
-      | loadTimeline           | true     |
-      | details                | NOT_NULL |
-      | details_responseStatus | KO       |
-      | details_recIndex       | 0        |
-      #TODO      | details_physicalAddress | {"address": "Via Umbria 5L", "municipality": "PADOVA", "zip": "35127"} |
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" non esista
-      | details                 | NOT_NULL |
-      | details_sentAttemptMade | 1        |
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_VALIDATION_RESPONSE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
+    And viene verificato che l'elemento di timeline "PREPARE_ANALOG_DOMICILE_FAILURE" esista
+      | loadTimelime         | true     |
+      | details              | NOT_NULL |
+      | details_failureCause | D02      |
+      | details_recIndex     | 0        |
 
 
 
-# ************************************************** Abilitazione PA / FeatureFlag / WI-VAS-1.3 + WI-VAS-1.4 + client WI-VAS-1.5 ********************
+#  Abilitazione PA / FeatureFlag / WI-VAS-1.3 + WI-VAS-1.4 + client WI-VAS-1.5
 
   #PA ABILITATA, PG CENSITA, CLIENT NON ABILITATO
   @ricercaIndirizzoVas #rif srs 16-17
@@ -354,7 +347,6 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400"
 
-  #TODO MATTEO (SECONDO ME E' UN PO INUTILE QUESTO SCENARIO, a meno che nel refusal reason non ci aspettiamo un messaggio diverso rispetto allo scenario 23_19 o un Errorcode diverso)
   #PA ABILITATA, PG CENSITA, CLIENT NON ABILITATO, FEATURE FLAG DISATTIVATO
   @ricercaIndirizzoVas @physicalAddressLookupDisabled #rif srs 20
   Scenario: [RICERCA_INDIRIZZO_MONO_FLAG_OFF_2] Creazione notifica PA abilitata - Feature flag Spento - Client NON aggiornato e notifica rifiutata
@@ -388,7 +380,6 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400"
 
-  #TODO MATTEO (SECONDO ME E' UN PO INUTILE QUESTO SCENARIO, a meno che nel refusal reason non ci aspettiamo un messaggio diverso rispetto allo scenario 23_19 o  error code diverso)
   #PA NON ABILITATA, PG CENSITA, CLIENT NON ABILITATO, FEATURE FLAG DISATTIVATO
   @ricercaIndirizzoVas @physicalAddressLookupDisabled #rif srs 22
   Scenario: [RICERCA_INDIRIZZO_MONO_FLAG_OFF_4] Creazione notifica PA non abilitata - Feature flag Spento - Client non aggiornato e notifica rifiutata
@@ -422,7 +413,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     Then recuperando la fullSentNotification con la versione b2b "V24" non è presente l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL"
     Then recuperando la fullSentNotification con la versione b2b "V24" non è presente l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE"
 
-# **************************************************** Stream *************************************************************
+# STREAM
 
   #PA ABILITATA, PG CENSITA, CLIENT ABILITATO, STREAM PIU' RECENTE
   @cleanWebhook @webhook1
@@ -464,7 +455,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     Then si controlla che tra gli elementi dello stream con versione "V27" ritornati non ci sia l'elemento "PUBLIC_REGISTRY_VALIDATION_CALL"
     And si controlla che tra gli elementi dello stream con versione "V27" ritornati non ci sia l'elemento "PUBLIC_REGISTRY_VALIDATION_RESPONSE"
 
-#********************************************** VERIFICA COSTI  *****************************************************
+# VERIFICA COSTI
 
 #Flag : technicalRefusalCostMode
 #Param: technicalRefusalCost
@@ -599,7 +590,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details          | NOT_NULL |
       | details_recIndex | 1        |
 
-#********************************************** VERIFICA COSTI RECIPIENT_BASED *****************************************************
+#VERIFICA COSTI RECIPIENT_BASED
 
   @ricercaIndirizzoVas #rif srs 58
   Scenario: [RICERCA_INDIRIZZO_MULTI_COSTI_5] Invio notifica AR multidestinatario verso PF-PG con campo address vuoto e un solo indirizzo trovato da RI notifica rifiutata - Vas attivo
@@ -725,8 +716,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details                       | NOT_NULL                                                                                                          |
       | details_refusalReasons        | [{"detail": "Address search for recipient index: 0, encountered an error", "errorCode": "ADDRESS_SEARCH_FAILED"}] |
       | parametriCalcoloCostoNotifica | recipients:1,ko:1,ok:0                                                                                            |
-  #TODO    | details_notificationCost | xxx  cost |
-    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
+      And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | details            | NOT_NULL |
       | details_recIndexes | [0]      |
 
@@ -775,7 +765,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details            | NOT_NULL |
       | details_recIndexes | [0]      |
 
-# ************************************************* VERIFICHE LATO DESTINATARIO ***************************************
+#VERIFICHE LATO DESTINATARIO
 
   # ricezione notifiche
   @ricercaIndirizzoVas
@@ -792,3 +782,8 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_VALIDATION_RESPONSE"
     And lato destinatario la notifica può essere correttamente recuperata da "Mario Cucumber" e verifica presenza dell'evento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL"
     Then lato destinatario la notifica può essere correttamente recuperata da "Mario Cucumber" e verifica presenza dell'evento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE"
+
+
+
+
+

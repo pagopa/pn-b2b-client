@@ -64,6 +64,7 @@ public class DataTestV25 extends AbstractDataTest {
                             .isAvailable(isAvailable != null ? Boolean.valueOf(getValue(data, DETAILS_IS_AVAILABLE.key)) : null)
                             .deliveryDetailCode(getValue(data, DETAILS_DELIVERY_DETAIL_CODE.key))
                             .deliveryFailureCause(getValue(data, DETAILS_DELIVERY_FAILURE_CAUSE.key))
+                            .failureCause(getValue(data, DETAILS_FAILURE_CAUSE.key))
                             .attachments(getListValue(AttachmentDetails.class, data, DETAILS_ATTACHMENTS.key))
                             .physicalAddress(getObjValue(PhysicalAddress.class, data, DETAILS_PHYSICALADDRESS.key))
                             .analogCost(analogCost != null ? Integer.parseInt(analogCost) : null)
@@ -291,6 +292,19 @@ public class DataTestV25 extends AbstractDataTest {
                     assertThat(actual.getRegistry()).as(error + EQUALITY_REGISTRY).isEqualTo(expected.getRegistry());
 //                    assertThat(actual.getResponseStatus()).as("TODO VAS").isEqualTo(expected.getResponseStatus());
                 }
+            }
+                case PREPARE_ANALOG_DOMICILE_FAILURE -> {
+                    if (expected != null) {
+                        assertThat(actual.getRecIndex()).as(error + EQUALITY_REC_INDEX).isEqualTo(expected.getRecIndex());
+                        B2bUtils.compareActualAndExpected(error + EQUALITY_PHYSICAL_ADDRESS, actual.getPhysicalAddress(), expected.getPhysicalAddress());
+                        if (expected.getDeliveryFailureCause() != null) {
+                            List<String> failureCauses = Arrays.asList(expected.getDeliveryFailureCause().split(" "));
+                            assertThat(failureCauses).asList()
+                                    .as(error + EQUALITY_FAILURE_CAUSES)
+                                    .contains(elementFromNotification.getDetails().getDeliveryFailureCause());
+                        }
+
+                    }
             }
             default -> throw new IllegalArgumentException(INVALID_TIMELINE_CATEGORY + timelineEventCategory);
         }
