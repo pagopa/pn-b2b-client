@@ -10,6 +10,21 @@ Feature: Generazione del voucher m2m richiesta da un Ente
     When l'utente richiede la generazione del voucher M2M
     Then si ottiene la corretta generazione del voucher
 
+  # NOTE 27/05/2025: non presente nel parco test originale in TS. E' correlato all' SRS
+  # Amministratore Client API https://pagopa.atlassian.net/wiki/spaces/PDNDI/pages/1627324417/SRS+Amministratore+Client+API
+  # nel quale è stata aggiunta la facoltà di specificare un amministratore del client, con
+  # conseguente aggiunta del ruolo "m2m-admin" all'interno del voucher qualora la sua generazione
+  # venisse effettuata dall'amministratore del client.
+  @voucher_generation_m2m1_admin
+  Scenario: [VOUCHER-M2M-ADMIN-1] La generazione del JWT per un client admin va a buon fine quando i parametri sono validi
+    Given l'utente è un "admin" di "PA1"
+    Given "PA1" ha già creato 1 client "API"
+    Given "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
+    Given l'utente effettua la modifica dell'amministratore del client indicando se stesso con successo
+    Given un "admin" di "PA1" ha caricato una chiave pubblica nel client
+    When l'utente richiede la generazione del voucher M2M
+    Then si ottiene la corretta generazione del voucher m2m admin
+
   @voucher_generation_m2m2
   Scenario: La generazione del JWT va a buon fine quando viene aggiunta una nuova chiave al client
     Given l'utente è un "admin" di "PA1"
