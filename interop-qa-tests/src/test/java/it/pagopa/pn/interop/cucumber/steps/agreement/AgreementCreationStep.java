@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.agreement;
 
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
@@ -81,6 +82,17 @@ public class AgreementCreationStep {
             "Auxiliary delegation not found");
         agreementCreationRequest(delegationId);
     }
+
+    @And("viene effettuato la creazione di un agreement con successo")
+    public void agreementCreationSuccess() {
+        UUID eserviceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+
+        UUID agreementId = dataPreparationService.createAndCheckAgreement(eserviceId, descriptorId);
+
+        sharedStepsContext.setAgreementId(agreementId);
+    }
+
 
     private void agreementProcessRequest(String token, UUID delegationId) {
         clientTokenConfigurator.setBearerToken(token);

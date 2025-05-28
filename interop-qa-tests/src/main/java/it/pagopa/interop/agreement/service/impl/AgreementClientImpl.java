@@ -4,14 +4,13 @@ import it.pagopa.interop.agreement.service.IAgreementClient;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.AgreementsApi;
-import it.pagopa.interop.generated.openapi.clients.bff.model.Agreement;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementRejectionPayload;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementSubmissionPayload;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+
 import java.io.File;
+import java.util.List;
 import java.util.UUID;
 
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreements;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -75,6 +74,11 @@ public class AgreementClientImpl implements IAgreementClient {
     @Override
     public File addAgreementConsumerDocument(UUID agreementId, String name, String prettyName, org.springframework.core.io.Resource doc) {
         return agreementsApi.addAgreementConsumerDocument(agreementId, name, prettyName, doc);
+    }
+
+    @Override
+    public Agreements getAgreements(Integer offset, Integer limit, List<AgreementState> states, List<UUID> producerIds, List<UUID> consumerIds, List<UUID> eserviceIds) {
+        return null;
     }
 
     @Override

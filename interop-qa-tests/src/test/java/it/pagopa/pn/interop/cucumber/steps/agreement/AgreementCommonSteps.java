@@ -2,26 +2,27 @@ package it.pagopa.pn.interop.cucumber.steps.agreement;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.agreement.service.IAgreementClient;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
+
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import lombok.Builder;
 import lombok.Data;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @Data
 public class AgreementCommonSteps {
@@ -171,4 +172,45 @@ public class AgreementCommonSteps {
                 "The agreement was not archived"
         );
     }
+
+    @When("l'utente tenta di recuperare la lista completa degli agreements")
+    public void utente_recupera_lista_completa_agreements() {
+        int offset = 0;
+        int limit = 100;
+
+        // Per recuperare la lista completa senza filtri si passano liste vuote
+        List<AgreementState> states = Collections.emptyList();
+        List<UUID> producerIds = Collections.emptyList();
+        List<UUID> consumerIds = Collections.emptyList();
+        List<UUID> eserviceIds = Collections.emptyList();
+
+        var retrievedAgreements = this.agreementClient.getAgreements(offset, limit, states, producerIds, consumerIds, eserviceIds);
+        this.sharedStepsContext.getAgreementCommonContext().setAgreements(retrievedAgreements);
+    }
+
+    private void verificaStatoRecuperoAgreements(boolean successoAtteso) {
+        it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreements retrievedAgreements = this.sharedStepsContext.getAgreementCommonContext().getAgreements();
+
+        if (successoAtteso) {
+            assertNotNull(retrievedAgreements, "La lista di agreements non dovrebbe essere null");
+            assertFalse(retrievedAgreements.getResults() == null || retrievedAgreements.getResults().isEmpty(), "La lista di agreements non dovrebbe essere vuota");
+        } else {
+            // Quando il recupero non è corretto, ci aspettiamo che l'oggetto sia null o la lista vuota
+            boolean condizioneErrore = retrievedAgreements == null || retrievedAgreements.getResults() == null || retrievedAgreements.getResults().isEmpty();
+            assertTrue(condizioneErrore, "Gli agreements non dovrebbero essere recuperati correttamente");
+        }
+    }
+
+    @And("gli agreements sono stati recuperati correttamente")
+    public void agreements_sono_stati_recuperati_correttamente() {
+        verificaStatoRecuperoAgreements(true);
+    }
+
+    @And("gli agreements non sono stati recuperati correttamente")
+    public void agreements_non_sono_stati_recuperati_correttamente() {
+        verificaStatoRecuperoAgreements(false);
+    }
+
+
+
 }

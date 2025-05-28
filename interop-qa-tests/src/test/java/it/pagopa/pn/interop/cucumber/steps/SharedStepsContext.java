@@ -4,10 +4,7 @@ import io.cucumber.java.Before;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.utils.HttpCallExecutor;
-import it.pagopa.pn.interop.cucumber.steps.common.ClientCommonContext;
-import it.pagopa.pn.interop.cucumber.steps.common.DelegationCommonContext;
-import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
-import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
+import it.pagopa.pn.interop.cucumber.steps.common.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +32,7 @@ public class SharedStepsContext {
     private PurposeCommonContext purposeCommonContext;
     private EServicesCommonContext eServicesCommonContext;
     private DelegationCommonContext delegationCommonContext;
+    private AgreementCommonContext agreementCommonContext;
 
     public SharedStepsContext(
         HttpCallExecutor httpCallExecutor,
