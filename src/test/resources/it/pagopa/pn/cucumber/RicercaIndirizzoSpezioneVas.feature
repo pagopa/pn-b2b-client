@@ -416,7 +416,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 # STREAM
 
   #PA ABILITATA, PG CENSITA, CLIENT ABILITATO, STREAM PIU' RECENTE
-  @cleanWebhook @webhook1
+  @ricercaIndirizzoVas@cleanWebhook @webhook1
   Scenario: [RICERCA_INDIRIZZI_VAS_STREAM_NEW] Invio notifica e controllo che stream con eventType vuoto e versione da V26 contenga elemento PUBLIC_REGISTRY_VALIDATION_CALL
     Given il test è effettuabile con API versione "V25" o superiore
     And viene generata una nuova notifica
@@ -436,7 +436,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" con la versione "più recente"
 
   #PA ABILITATA, PG CENSITA, CLIENT ABILITATO, STREAM PRECEDENTE ALLA 28 (CHE HA STATO INTRODOTTO IL VAS)
-  @cleanWebhook @webhook1
+  @ricercaIndirizzoVas@cleanWebhook @webhook1
   Scenario: [RICERCA_INDIRIZZI_VAS_STREAM_OLD] Invio notifica e controllo che stream con eventType vuoto e versione da V26 contenga elemento PUBLIC_REGISTRY_VALIDATION_CALL
     Given il test è effettuabile con API versione "V25" o superiore
     And viene generata una nuova notifica
