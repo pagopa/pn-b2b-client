@@ -2,7 +2,6 @@ package it.pagopa.pn.interop.cucumber.steps;
 
 import static it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode.RECEIVE;
 import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.BooleanUtils.isNotTrue;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
@@ -26,7 +25,6 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedTenantAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CompactUser;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredTenantAttributeSeed;
@@ -38,7 +36,6 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysi
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTechnology;
-import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject4;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.MailKind;
 import it.pagopa.interop.generated.openapi.clients.bff.model.MailSeed;
@@ -105,12 +102,12 @@ public class DataPreparationService {
     private final SharedStepsContext sharedStepsContext;
     private final CommonUtils commonUtils;
     private final BlobFileCreator blobFileCreator;
+    private final it.pagopa.interop.authorization.service.DataPreparationService mainDataPrepService;
     public static final String ERROR_RETRIEVING_AGREEMENT = "There was an error while retrieving the agreement by ID!";
     public static final String ERROR_RETRIEVING_PRODUCER_DESCRIPTOR = "There was an error while retrieving the producer e-service descriptor";
     public static final String ERROR_RETRIEVING_PURPOSE = "There was an error while retrieving the purpose!";
     public static final String DESCRIPTION_TEST = "description_test";
 
-    
     static {
         DEFAULT_CLIENT_SEED.setName(String.format("client %d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)));
         DEFAULT_CLIENT_SEED.setDescription("Descrizione client");
@@ -121,7 +118,8 @@ public class DataPreparationService {
                                   RiskAnalysisDataInitializer riskAnalysisDataInitializer,
                                   SharedStepsContext sharedStepsContext,
                                   BlobFileCreator blobFileCreator,
-                                  CommonUtils commonUtils) {
+                                  CommonUtils commonUtils,
+                                  it.pagopa.interop.authorization.service.DataPreparationService mainDataPrepService) {
         this.authorizationClient = clientTokenConfigurator.getAuthorizationClient();
         this.agreementClient = clientTokenConfigurator.getAgreementClient();
         this.attributeApiClient = clientTokenConfigurator.getAttributeApiClient();
@@ -135,42 +133,15 @@ public class DataPreparationService {
         this.pollingService = sharedStepsContext.getPollingService();
         this.riskAnalysisDataInitializer = riskAnalysisDataInitializer;
         this.commonUtils = commonUtils;
+        this.mainDataPrepService = mainDataPrepService;
     }
 
     public UUID createClient(String clientKind, ClientSeed partialClientSeed) {
-        ClientSeed mergedClientSeed = merge(DEFAULT_CLIENT_SEED, partialClientSeed);
-        if ("CONSUMER".equals(clientKind)) {
-            httpCallExecutor.performCall(() -> authorizationClient.createConsumerClient(mergedClientSeed));
-        } else {
-            httpCallExecutor.performCall(() -> authorizationClient.createApiClient(mergedClientSeed));
-        }
-        assertValidResponse();
-        UUID clientId = ((CreatedResource) httpCallExecutor.getResponse()).getId();
-        pollingService.makePolling(
-                () -> httpCallExecutor.performCall(() -> authorizationClient.getClient(clientId)),
-                res -> res != HttpStatus.NOT_FOUND,
-                "Failed to retrieve the client!"
-        );
-        return clientId;
+        return this.mainDataPrepService.createClient(clientKind, partialClientSeed);
     }
 
     public void addMemberToClient(UUID clientId, UUID userId) {
-        InlineObject4 inlineObject = new InlineObject4().addUserIdsItem(userId);
-        pollingService.makePolling(
-                () -> httpCallExecutor.performCall(() -> authorizationClient.addUsersToClient(clientId, inlineObject)),
-                res -> !res.is5xxServerError(),
-                "Failed to add a user to the client!"
-        );
-        assertValidResponse();
-        pollingService.makePolling(
-                () -> httpCallExecutor.performCall(() -> authorizationClient.getClientUsers(clientId)),
-                res -> Optional.ofNullable(httpCallExecutor.getResponse())
-                        .map(obj -> (List<CompactUser>) obj)
-                        .orElse(List.of())
-                        .stream()
-                        .anyMatch(user -> user.getUserId().equals(userId)),
-                "Failed to retrieve the client users list!"
-        );
+        this.mainDataPrepService.addMemberToClient(clientId, userId);
     }
 
     public void addPurposeToClient(UUID clientId, UUID purposeId) {
@@ -1020,14 +991,6 @@ public class DataPreparationService {
     }
 
     public void editClientAdmin(UUID clientId, ClientAdminConfig adminConfig) {
-        httpCallExecutor.performCall(
-            () -> authorizationClient.editClientAdmin(
-                clientId,
-                adminConfig));
-        assertValidResponse();
-        pollingService.makePolling(
-            () -> authorizationClient.getClient(clientId),
-            client -> nonNull(client.getAdmin()) && client.getAdmin().getUserId().equals(adminConfig.getAdminId()),
-            "L'amministratore del client non è stato modificato correttamente: adminId vuoto oppure difforme da quello indicato");
+        this.mainDataPrepService.editClientAdmin(clientId, adminConfig);
     }
 }
