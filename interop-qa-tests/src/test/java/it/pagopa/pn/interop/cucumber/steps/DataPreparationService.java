@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps;
 
 import static it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode.RECEIVE;
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.BooleanUtils.isNotTrue;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
@@ -10,6 +11,7 @@ import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.agreement.service.IAgreementClient;
 import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.attribute.service.IAttributeApiClient;
+import it.pagopa.interop.authorization.service.ClientAdminConfig;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.IProducerClient;
 import it.pagopa.interop.authorization.service.utils.PollingService;
@@ -1015,5 +1017,17 @@ public class DataPreparationService {
                 },
                 "There was an error while activating the purpose version!"
         );
+    }
+
+    public void editClientAdmin(UUID clientId, ClientAdminConfig adminConfig) {
+        httpCallExecutor.performCall(
+            () -> authorizationClient.editClientAdmin(
+                clientId,
+                adminConfig));
+        assertValidResponse();
+        pollingService.makePolling(
+            () -> authorizationClient.getClient(clientId),
+            client -> nonNull(client.getAdmin()) && client.getAdmin().getUserId().equals(adminConfig.getAdminId()),
+            "L'amministratore del client non è stato modificato correttamente: adminId vuoto oppure difforme da quello indicato");
     }
 }
