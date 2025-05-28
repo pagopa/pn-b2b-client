@@ -401,6 +401,7 @@ public abstract class B2bUtils {
      * (NOTA: eventuali campi statici sono esclusi da questa verifica)
      */
     public static void compareActualAndExpected(String error, Object actual, Object expected) {
+        error += " -> ";
         if (expected == null) {
             assertThat(actual).as(error + actual + " dovrebbe essere null").isNull();
             return;

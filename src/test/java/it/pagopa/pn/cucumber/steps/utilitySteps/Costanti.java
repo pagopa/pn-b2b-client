@@ -179,6 +179,9 @@ public class Costanti {
     public static final String NOTIFICATION_STATUS_REFUSED = "REFUSED";
     public static final String NOTIFICATION_STATUS_CANCELLED = "CANCELLED";
     public static final String NOTIFICATION_STATUS_VIEWED = "VIEWED";
+    // Stream Type
+    public static final String STREAM_EVENT_TYPE_TIMELINE = "TIMELINE";
+    public static final String STREAM_EVENT_TYPE_STATUS = "STATUS";
     // Async Validation Errors
     public static final String WRONG_EXTENSION = "WRONG_EXTENSION";
     public static final String OVERSIZE_ALLEGATO = "OVERSIZE_ALLEGATO";

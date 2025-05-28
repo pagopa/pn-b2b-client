@@ -45,6 +45,11 @@ public class ParameterTypes {
         return value.equals("contiene");
     }
 
+    @ParameterType("stato|category")
+    public static String streamEventType(String value) {
+        return value.equals("stato") ? STREAM_EVENT_TYPE_STATUS : STREAM_EVENT_TYPE_TIMELINE;
+    }
+
     @ParameterType("con|senza")
     public static boolean with(String value) {
         return value.equals("con");

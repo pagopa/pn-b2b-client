@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_NULL_P_R_E;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.STREAM_EVENT_TYPE_STATUS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -175,19 +176,22 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
     }
 
     @Override
-    public void verifySpecificEventNotInStream(String elementType) {
-        //TODO: implementare ???
-    }
-
-    @Override
-    public void checkConsumeStreamStatusValue(boolean isPresente, String status) {
+    public void checkIfStreamContains(String type, String timelineCategoryOrStatus, boolean contains) {
         assertThat(progressResponseElementList).as("La lista di progressResponseElement non dev'essere null").isNotNull();
         assertThat(progressResponseElementList).as("La lista di progressResponseElement non dev'essere vuota").isNotEmpty();
-        progressResponseElement = progressResponseElementList.stream().filter(x -> x.getNewStatus().getValue().equals(status)).findFirst().orElse(null);
-        if (isPresente) {
-            assertThat(progressResponseElement).as("La lista di progressResponseElement dovrebbe contenere almeno un elemento con status " + status).isNotNull();
+        boolean isStatus = type.equals(STREAM_EVENT_TYPE_STATUS);
+        progressResponseElement = isStatus ?
+                progressResponseElementList.stream().filter(x -> x.getNewStatus().getValue().equals(timelineCategoryOrStatus)).findFirst().orElse(null)
+                : progressResponseElementList.stream().filter(x -> x.getTimelineEventCategory().getValue().equals(timelineCategoryOrStatus)).findFirst().orElse(null);
+        String filter = isStatus ? "status" : "category";
+        if (contains) {
+            assertThat(progressResponseElement)
+                    .as("La lista di progressResponseElement dovrebbe contenere un elemento con " + filter + ":" + timelineCategoryOrStatus + logTimelineWebhook()).
+                    isNotNull();
         } else {
-            assertThat(progressResponseElement).as("La lista di progressResponseElement NON dovrebbe contenere nessun elemento con status " + status).isNull();
+            assertThat(progressResponseElement)
+                    .as("La lista di progressResponseElement NON dovrebbe contenere nessun elemento con " + filter + ":" + timelineCategoryOrStatus + logTimelineWebhook())
+                    .isNull();
         }
     }
 
@@ -540,5 +544,17 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
                     .as("La ricerca non dovrebbe restituire nessun elemento di timeline con legalFactCategory " + legalFactCategory)
                     .isEmpty();
         }
+    }
+
+    private String logTimelineWebhook() {
+        StringBuilder sb = new StringBuilder("\n");
+        progressResponseElementList.forEach(x -> {
+            sb.append("eventType: ");
+            sb.append(x.getEventId());
+            sb.append(" status:");
+            sb.append(x.getNewStatus());
+            sb.append("\n");
+        });
+        return sb.toString();
     }
 }

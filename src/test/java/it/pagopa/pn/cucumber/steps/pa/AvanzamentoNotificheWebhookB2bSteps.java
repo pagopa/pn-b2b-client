@@ -1070,15 +1070,9 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         return groupList;
     }
 
-    //Usato solo con la V25 (resa al mittente deceduto)
-    @Then("si controlla che tra gli elementi dello stream con versione {string} ritornati non ci sia l'elemento {string}")
-    public void streamDoesNotContainElement(String version, String elementType) {
-        getWebhookStep(version).verifySpecificEventNotInStream(elementType);
-    }
-
-    @Then("lo stato {string} {is} presente in (nessun)(almeno un) elemento di timeline restituito dalla consumeStream con versione {string}")
-    public void checkConsumeStreamStatusValue(String status, boolean isPresente, String version) {
-        getWebhookStep(version).checkConsumeStreamStatusValue(isPresente, status);
+    @Then("(lo)(la) {streamEventType} {string} {is} presente in (nessun)(almeno un) elemento di timeline restituito dalla consumeStream con versione {string}")
+    public void checkIfStreamContainsElement(String type, String timelineCategoryOrStatus, boolean isPresente, String version) {
+        getWebhookStep(version).checkIfStreamContains(type, timelineCategoryOrStatus, isPresente);
     }
 
     //V23 and V24 only (VisualizzazioneTimeStampTecniciSLA.feature)

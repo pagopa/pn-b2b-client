@@ -32,11 +32,11 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details_recIndex        | 0                                                                      |
       | details_physicalAddress | {"address": "Via Umbria 5L", "municipality": "PADOVA", "zip": "35127"} |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
-      | loadTimeline            | true                                                                   |
-      | details                 | NOT_NULL                                                               |
-      | details_recIndex        | 0                                                                      |
-      | details_physicalAddress | {"address": "VIA UMBRIA 5L", "municipality": "PADOVA", "zip": "35127"} |
-      | details_responseStatus  | OK                                                                     |
+      | loadTimeline            | true                                       |
+      | details                 | NOT_NULL                                   |
+      | details_recIndex        | 0                                          |
+      | details_physicalAddress | {"municipality": "PADOVA", "zip": "35127"} |
+      | details_responseStatus  | OK                                         |
     Then viene verificato che l'elemento di timeline "REFINEMENT" esista
       | loadTimeline                  | true                   |
       | details                       | NOT_NULL               |
@@ -417,8 +417,10 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 
   #PA ABILITATA, PG CENSITA, CLIENT ABILITATO, STREAM PIU' RECENTE
   @ricercaIndirizzoVas@cleanWebhook @webhook1
-  Scenario: [RICERCA_INDIRIZZI_VAS_STREAM_NEW] Invio notifica e controllo che stream con eventType vuoto e versione da V26 contenga elemento PUBLIC_REGISTRY_VALIDATION_CALL
+  Scenario: [RICERCA_INDIRIZZI_VAS_STREAM_NEW] Invio notifica e controllo che stream con eventType vuoto e versione V28 o superiore contenga elemento PUBLIC_REGISTRY_VALIDATION_CALL
     Given il test è effettuabile con API versione "V25" o superiore
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "più recente"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "più recente"
     And viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -430,15 +432,16 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | digitalDomicile | NULL        |
       | physicalAddress | NULL        |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "più recente"
-    And si crea il nuovo stream per il "Comune_Multi" con versione "più recente"
-    Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" con la versione "più recente"
-    And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" con la versione "più recente"
+    And si invoca l'api Webhook versione "più recente" per ottenere gli elementi di timeline di tale notifica
+    Then la category "PUBLIC_REGISTRY_VALIDATION_CALL" è presente in almeno un elemento di timeline restituito dalla consumeStream con versione "più recente"
+    And la category "PUBLIC_REGISTRY_VALIDATION_RESPONSE" è presente in almeno un elemento di timeline restituito dalla consumeStream con versione "più recente"
 
   #PA ABILITATA, PG CENSITA, CLIENT ABILITATO, STREAM PRECEDENTE ALLA 28 (CHE HA STATO INTRODOTTO IL VAS)
   @ricercaIndirizzoVas@cleanWebhook @webhook1
-  Scenario: [RICERCA_INDIRIZZI_VAS_STREAM_OLD] Invio notifica e controllo che stream con eventType vuoto e versione da V26 contenga elemento PUBLIC_REGISTRY_VALIDATION_CALL
+  Scenario: [RICERCA_INDIRIZZI_VAS_STREAM_OLD] Invio notifica e controllo che stream con eventType vuoto e versione V27 o inferiore non contenga elemento PUBLIC_REGISTRY_VALIDATION_CALL
     Given il test è effettuabile con API versione "V25" o superiore
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V27"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V27"
     And viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -450,10 +453,9 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | digitalDomicile | NULL        |
       | physicalAddress | NULL        |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V27"
-    And si crea il nuovo stream per il "Comune_Multi" con versione "V27"
-    Then si controlla che tra gli elementi dello stream con versione "V27" ritornati non ci sia l'elemento "PUBLIC_REGISTRY_VALIDATION_CALL"
-    And si controlla che tra gli elementi dello stream con versione "V27" ritornati non ci sia l'elemento "PUBLIC_REGISTRY_VALIDATION_RESPONSE"
+    And si invoca l'api Webhook versione "V27" per ottenere gli elementi di timeline di tale notifica
+    Then la category "PUBLIC_REGISTRY_VALIDATION_CALL" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V27"
+    And la category "PUBLIC_REGISTRY_VALIDATION_RESPONSE" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V27"
 
 # VERIFICA COSTI
 
@@ -716,7 +718,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details                       | NOT_NULL                                                                                                          |
       | details_refusalReasons        | [{"detail": "Address search for recipient index: 0, encountered an error", "errorCode": "ADDRESS_SEARCH_FAILED"}] |
       | parametriCalcoloCostoNotifica | recipients:1,ko:1,ok:0                                                                                            |
-      And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
+    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
       | details            | NOT_NULL |
       | details_recIndexes | [0]      |
 
@@ -807,11 +809,11 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details_recIndex        | 0                                                                      |
       | details_physicalAddress | {"address": "Via Umbria 5L", "municipality": "PADOVA", "zip": "35127"} |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
-      | loadTimeline            | true                                                                   |
-      | details                 | NOT_NULL                                                               |
-      | details_recIndex        | 0                                                                      |
-      | details_physicalAddress | {"address": "VIA UMBRIA 5L", "municipality": "PADOVA", "zip": "35127"} |
-      | details_responseStatus  | OK                                                                     |
+      | loadTimeline            | true                                       |
+      | details                 | NOT_NULL                                   |
+      | details_recIndex        | 0                                          |
+      | details_physicalAddress | {"municipality": "PADOVA", "zip": "35127"} |
+      | details_responseStatus  | OK                                         |
     Then viene verificato che l'elemento di timeline "REFINEMENT" esista
       | loadTimeline                  | true                   |
       | details                       | NOT_NULL               |

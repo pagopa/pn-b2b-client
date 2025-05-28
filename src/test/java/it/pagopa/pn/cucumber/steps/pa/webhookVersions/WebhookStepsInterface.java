@@ -37,9 +37,7 @@ public interface WebhookStepsInterface {
 
     void updateStreams();
 
-    void verifySpecificEventNotInStream(String elementType);
-
-    void checkConsumeStreamStatusValue(boolean isPresente, String status);
+    void checkIfStreamContains(String type, String timelineCategoryOrStatus, boolean contains);
 
     void createStreamRequestWithGroupsPA(List<String> groupIdByPa);
 
