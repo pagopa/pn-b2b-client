@@ -1,4 +1,4 @@
-@client_key_upload
+@client
 Feature: Caricamento di una chiave pubblica contenuta in un client
   Tutti gli utenti autorizzati o security possono caricare una chiave pubblica di tipo RSA lunghezza 2048
 

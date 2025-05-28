@@ -42,6 +42,7 @@ public class InteropRestTemplateConfiguration {
         restTemplate.setRequestFactory(requestFactory);
         List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
         interceptors.add(new RequestResponseLoggingInterceptor());
+        restTemplate.getMessageConverters().add(new FileHttpMessageConverter());
         return restTemplate;
     }
 

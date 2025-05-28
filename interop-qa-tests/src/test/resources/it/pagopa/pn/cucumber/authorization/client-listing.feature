@@ -1,4 +1,4 @@
-@client_listing
+@client
 Feature: Listing client
   Tutti gli utenti autenticati possono leggere la lista dei client
 

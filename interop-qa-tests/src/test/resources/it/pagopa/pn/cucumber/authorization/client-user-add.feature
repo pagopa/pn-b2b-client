@@ -1,4 +1,4 @@
-@client_user_add
+@client
 Feature: Aggiunta di un membro ad un client
   Tutti gli admin possono associare un membro ad un client
 
