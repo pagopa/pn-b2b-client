@@ -784,6 +784,39 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     Then lato destinatario la notifica può essere correttamente recuperata da "Mario Cucumber" e verifica presenza dell'evento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE"
 
 
+# TEST POST-SPERIMENTAZIONE
 
+  #@ricercaIndirizzoVas  #rif srs 28 # test post-sperimentazione
+  Scenario: [RICERCA_INDIRIZZO_MONO_PF_FINE_SPERIMENT_OK] Invio notifica con vas post-sperimentazione anche per PA non abilitate - Vas attivo
+    Given il test è effettuabile con API versione "V25" o superiore
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | digitalDomicile | NULL |
+      | physicalAddress | NULL |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
+      | loadTimelime       | true     |
+      | details            | NOT_NULL |
+      | details_recIndexes | [0]      |
+    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
+      | details                 | NOT_NULL                                                               |
+      | details_registry        | ANPR                                                                   |
+      | details_recIndex        | 0                                                                      |
+      | details_physicalAddress | {"address": "Via Umbria 5L", "municipality": "PADOVA", "zip": "35127"} |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | loadTimeline            | true                                                                   |
+      | details                 | NOT_NULL                                                               |
+      | details_recIndex        | 0                                                                      |
+      | details_physicalAddress | {"address": "VIA UMBRIA 5L", "municipality": "PADOVA", "zip": "35127"} |
+      | details_responseStatus  | OK                                                                     |
+    Then viene verificato che l'elemento di timeline "REFINEMENT" esista
+      | loadTimeline                  | true                   |
+      | details                       | NOT_NULL               |
+      | details_numberOfRecipients    | 1                      |
+      | parametriCalcoloCostoNotifica | recipients:1,ko:0,ok:1 |
+      | details_recIndex              | 0                      |
 
 
