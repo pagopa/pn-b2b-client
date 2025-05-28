@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.common;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganizations;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreements;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;

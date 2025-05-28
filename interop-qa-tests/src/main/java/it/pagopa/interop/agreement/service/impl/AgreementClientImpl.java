@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreements;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
@@ -205,9 +204,8 @@ public class AgreementClientImpl implements IAgreementClient {
     }
 
 
-
     @Override
-    public Agreements getAgreements(Integer offset, Integer limit, List<AgreementState> states, List<UUID> producerIds, List<UUID> consumerIds, List<UUID> eserviceIds) {
+    public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreements getAgreements(Integer offset, Integer limit, List<AgreementState> states, List<UUID> producerIds, List<UUID> consumerIds, List<UUID> eserviceIds) {
         return null;
     }
 

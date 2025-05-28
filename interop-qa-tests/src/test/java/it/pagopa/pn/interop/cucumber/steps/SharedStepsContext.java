@@ -44,7 +44,6 @@ public class SharedStepsContext {
     private AttributeCommonContext attributeCommonContext;
     private AgreementCommonContext agreementCommonContext;
     private RiskAnalysisCommonContext riskAnalysisCommonContext;
-    private AgreementCommonContext agreementCommonContext;
 
     public SharedStepsContext(
         HttpCallExecutor httpCallExecutor,
