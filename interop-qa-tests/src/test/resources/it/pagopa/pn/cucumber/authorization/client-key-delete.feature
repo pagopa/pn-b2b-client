@@ -1,4 +1,4 @@
-@client_key_delete
+@client
 Feature: Cancellazione delle chiavi di un client
   Tutti gli utenti autorizzati possono cancellare le chiavi del proprio client, security solo le proprie
 

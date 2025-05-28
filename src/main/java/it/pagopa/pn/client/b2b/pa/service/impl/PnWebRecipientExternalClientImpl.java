@@ -233,7 +233,8 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
 
     @Override
     public List<BffLegalFactId> getLegalFactsV20(String iun, UUID mandateId) throws RestClientException {
-        it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffFullNotificationV1 bffFullNotificationV1 = notificationReceivedApiV2.getReceivedNotificationV1(iun, mandateId.toString());
+        it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffFullNotificationV1 bffFullNotificationV1 =
+                notificationReceivedApiV2.getReceivedNotificationV1(iun, mandateId != null ? mandateId.toString() : null);
         return bffFullNotificationV1.getNotificationStatusHistory().stream()
                 .flatMap(bffNotificationStatusHistory -> bffNotificationStatusHistory.getSteps().stream())
                 .flatMap(bffNotificationDetailTimeline -> bffNotificationDetailTimeline.getLegalFactsIds().stream())

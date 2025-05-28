@@ -1,5 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.authorization;
 
+import static java.util.List.of;
+
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
@@ -42,7 +44,7 @@ public class ClientListingSteps {
             clientSeed.setName(String.format("client-%d-%d-%s", i, sharedStepsContext.getTestSeed(), keyword));
             result.add(dataPreparationService.createClient(clientKind, clientSeed));
         }
-        sharedStepsContext.getClientCommonContext().setClients(List.of(result.get(0)));
+        sharedStepsContext.getClientCommonContext().setClients(new ArrayList<>(of(result.get(0)))); // si usa il costr. di ArrayList per non avere una lista immutabile
     }
 
     @When("l'utente richiede una operazione di listing dei client con offset {int}")
@@ -67,7 +69,7 @@ public class ClientListingSteps {
     public void retrieveClientsListByFilterForUserAndRole(String role) {
         UUID userId = identityService.getUserId(sharedStepsContext.getTenantType(), role);
         httpCallExecutor.performCall(() ->
-                authorizationClient.getClients(0, 12, String.valueOf(sharedStepsContext.getTestSeed()), List.of(userId), null));
+                authorizationClient.getClients(0, 12, String.valueOf(sharedStepsContext.getTestSeed()), of(userId), null));
     }
 
     @When("l'utente richiede una operazione di listing dei client")

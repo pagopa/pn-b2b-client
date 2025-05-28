@@ -10,9 +10,10 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Attributes;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedAttributeSeed;
 import java.util.List;
-
+import java.util.UUID;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -54,6 +55,26 @@ public class AttributeApiClientImpl implements IAttributeApiClient {
     @Override
     public Attributes getAttributes(Integer limit, Integer offset, List<AttributeKind> kinds, String q, String origin) {
         return attributesApi.getAttributes(limit, offset, kinds, q, origin);
+    }
+
+    @Override
+    public ResponseEntity<Attribute> createCertifiedAttributeRE(CertifiedAttributeSeed certifiedAttributeSeed) {
+        return attributesApi.createCertifiedAttributeWithHttpInfo(certifiedAttributeSeed);
+    }
+
+    @Override
+    public ResponseEntity<Attribute> createDeclaredAttributeRE(AttributeSeed declaredAttributeSeed) {
+        return attributesApi.createDeclaredAttributeWithHttpInfo(declaredAttributeSeed);
+    }
+
+    @Override
+    public ResponseEntity<Attribute> createVerifiedAttributeRE(AttributeSeed declaredAttributeSeed) {
+        return attributesApi.createVerifiedAttributeWithHttpInfo(declaredAttributeSeed);
+    }
+
+    @Override
+    public ResponseEntity<Attribute> getAttributeByIdRE(UUID attributeId) {
+        return attributesApi.getAttributeByIdWithHttpInfo(attributeId);
     }
 
     @Override
