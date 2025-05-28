@@ -656,7 +656,7 @@ Feature: annullamento notifiche b2b
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     #And si verifica la coretta cancellazione da tabella pn-NotificationsCost
-    When viene generata una nuova notifica con uguale codice fiscale del creditore e uguale codice avviso
+    When viene generata una nuova notifica con uguale codice fiscale del creditore e codice avviso uguale
     Then la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
 
 
@@ -669,7 +669,7 @@ Feature: annullamento notifiche b2b
     And destinatario GherkinSpa e:
       | payment_creditorTaxId | 77777777777 |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
-    When viene generata una nuova notifica con uguale codice fiscale del creditore e uguale codice avviso
+    When viene generata una nuova notifica con uguale codice fiscale del creditore e codice avviso uguale
     Then la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
 
 

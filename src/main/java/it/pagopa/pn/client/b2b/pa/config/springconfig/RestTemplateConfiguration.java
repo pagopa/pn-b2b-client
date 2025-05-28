@@ -22,6 +22,7 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -93,18 +94,18 @@ public class RestTemplateConfiguration {
         return restTemplate;
     }
 
-    private static class RequestAndTraceIdInterceptor implements ClientHttpRequestInterceptor {
+    public static class RequestAndTraceIdInterceptor implements ClientHttpRequestInterceptor {
 
         public static final String TRACE_ID_RESPONSE_HEADER_NAME = "x-amzn-trace-Id";
 
-        public final Logger log = LoggerFactory.getLogger( RequestAndTraceIdInterceptor.class );
+        public final Logger log = LoggerFactory.getLogger(RequestAndTraceIdInterceptor.class);
 
         @Override
         public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
 
-            ClientHttpResponse response = execution.execute( request, body );
+            ClientHttpResponse response = execution.execute(request, body);
 
-            doLog( request, response );
+            doLog(request, response);
 
             return response;
         }
@@ -112,24 +113,23 @@ public class RestTemplateConfiguration {
         private void doLog(HttpRequest request, ClientHttpResponse response) {
             String httpMethod = request.getMethodValue();
             String requestUrl = request.getURI().toString();
-            String traceId = getTraceIdFromHttpResponse( response );
+            String traceId = getTraceIdFromHttpResponse(response);
 
-            String scenarioName = MDC.get( CUCUMBER_SCENARIO_NAME_MDC_ENTRY );
+            String scenarioName = MDC.get(CUCUMBER_SCENARIO_NAME_MDC_ENTRY);
             log.info("Request TraceId, method, url, scenario: [{}, {}, {}, {}]", traceId, httpMethod, requestUrl, scenarioName);
         }
 
         private String getTraceIdFromHttpResponse(ClientHttpResponse response) {
             HttpHeaders responseHeaders = response.getHeaders();
             List<String> traceIdHeaderValues = responseHeaders.get(TRACE_ID_RESPONSE_HEADER_NAME);
-            return getFirstOrNull( traceIdHeaderValues );
+            return getFirstOrNull(traceIdHeaderValues);
         }
 
-        private String getFirstOrNull( List<String> list ) {
+        private String getFirstOrNull(List<String> list) {
             String result;
-            if( list != null && !list.isEmpty() ) {
-                result = list.get( 0 );
-            }
-            else {
+            if (list != null && !list.isEmpty()) {
+                result = list.get(0);
+            } else {
                 result = null;
             }
             return result;

@@ -6,7 +6,7 @@ import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV23;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingWebhook;
-import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceWebhookV23;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v23.PnPollingServiceWebhookV23;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.*;
 import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps;
@@ -21,6 +21,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Data
 @Slf4j
@@ -164,6 +166,18 @@ public class WebhookStepsV23 implements WebhookStepsInterface {
     }
 
     @Override
+    public void checkConsumeStreamStatusValue(boolean isPresente, String status) {
+        assertThat(progressResponseElementList).as("La lista di progressResponseElement non dev'essere null").isNotNull();
+        assertThat(progressResponseElementList).as("La lista di progressResponseElement non dev'essere vuota").isNotEmpty();
+        progressResponseElement = progressResponseElementList.stream().filter(x -> x.getNewStatus().getValue().equals(status)).findFirst().orElse(null);
+        if (isPresente) {
+            assertThat(progressResponseElement).as("La lista di progressResponseElement dovrebbe contenere almeno un elemento con status " + status).isNotNull();
+        } else {
+            assertThat(progressResponseElement).as("La lista di progressResponseElement NON dovrebbe contenere nessun elemento con status " + status).isNull();
+        }
+    }
+
+    @Override
     public void createStreamRequestWithGroupsPA(List<String> groupIdByPa) {
         streamRequest = new StreamRequestV23();
         streamRequest.setGroups(groupIdByPa);
@@ -281,10 +295,10 @@ public class WebhookStepsV23 implements WebhookStepsInterface {
                         .streamId(eventStreamList.get(position).getStreamId())
                         .build());
 
-        log.info("WEBHOOK_PROGRESS_RESPONSE_ELEMENT_V23: " + pnPollingResponse.getProgressResponseElementV23());
-        if (pnPollingResponse.getProgressResponseElementV23() != null) {
-            progressResponseElement = pnPollingResponse.getProgressResponseElementV23();
-            progressResponseElementList = pnPollingResponse.getProgressResponseElementListV23();
+        log.info("WEBHOOK_PROGRESS_RESPONSE_ELEMENT_V23: " + pnPollingResponse.getProgressResponseElement());
+        if (pnPollingResponse.getProgressResponseElement() != null) {
+            progressResponseElement = pnPollingResponse.getProgressResponseElement();
+            progressResponseElementList = pnPollingResponse.getProgressResponseElementList();
             return progressResponseElement;
         }
         return null;
@@ -304,10 +318,10 @@ public class WebhookStepsV23 implements WebhookStepsInterface {
                         .streamId(eventStreamList.get(position).getStreamId())
                         .build());
 
-        log.info("WEBHOOK_PROGRESS_RESPONSE_ELEMENT_V23: " + pnPollingResponse.getProgressResponseElementV23());
-        if (pnPollingResponse.getProgressResponseElementListV23() != null) {
-            progressResponseElement = pnPollingResponse.getProgressResponseElementV23();
-            progressResponseElementList = pnPollingResponse.getProgressResponseElementListV23();
+        log.info("WEBHOOK_PROGRESS_RESPONSE_ELEMENT_V23: " + pnPollingResponse.getProgressResponseElement());
+        if (pnPollingResponse.getProgressResponseElementList() != null) {
+            progressResponseElement = pnPollingResponse.getProgressResponseElement();
+            progressResponseElementList = pnPollingResponse.getProgressResponseElementList();
             return progressResponseElement;
         }
         return null;
@@ -435,11 +449,6 @@ public class WebhookStepsV23 implements WebhookStepsInterface {
             pnPollingWebhook.setProgressResponseElementListV23(progressResponseElementList);
         }
         return pnPollingWebhook;
-    }
-
-    @Override
-    public void getTimelineElementVersionB2B(String iun) {
-        webhookSteps.getB2bClient().getSentNotificationV23(iun);
     }
 
     @Override

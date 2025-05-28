@@ -14,8 +14,7 @@ public class PurposeSuspendStep {
     private final HttpCallExecutor httpCallExecutor;
 
     public PurposeSuspendStep(ClientTokenConfigurator clientTokenConfigurator,
-                              SharedStepsContext sharedStepsContext,
-                              IPurposeApiClient purposeApiClient) {
+                              SharedStepsContext sharedStepsContext) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.purposeApiClient = clientTokenConfigurator.getPurposeApiClient();

@@ -28,7 +28,7 @@ Feature: Sperimentazione Radd wave 1
       | apply_cost_f24               | SI                   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
-    Then si verifica il contenuto degli attacchment da inviare nella pec del destinatario 0 con 4 allegati
+    Then si verifica il contenuto degli attachment da inviare nella pec del destinatario 0 con 4 allegati
     And si verifica il contenuto della pec abbia 1 attachment di tipo "AAR"
     And si verifica il contenuto della pec abbia 2 attachment di tipo "NOTIFICATION_ATTACHMENTS"
     And si verifica il contenuto della pec abbia 1 attachment di tipo "F24"
@@ -117,7 +117,7 @@ Feature: Sperimentazione Radd wave 1
       | apply_cost_f24               | SI                   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
-    Then si verifica il contenuto degli attacchment da inviare nella pec del destinatario 0 con 4 allegati
+    Then si verifica il contenuto degli attachment da inviare nella pec del destinatario 0 con 4 allegati
     And si verifica il contenuto della pec abbia 1 attachment di tipo "AAR"
     And si verifica il contenuto della pec abbia 2 attachment di tipo "NOTIFICATION_ATTACHMENTS"
     And si verifica il contenuto della pec abbia 1 attachment di tipo "F24"
@@ -224,7 +224,7 @@ Feature: Sperimentazione Radd wave 1
       | apply_cost_f24               | SI                   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
-    Then si verifica il contenuto degli attacchment da inviare nella pec del destinatario 0 con 4 allegati
+    Then si verifica il contenuto degli attachment da inviare nella pec del destinatario 0 con 4 allegati
     And si verifica il contenuto della pec abbia 1 attachment di tipo "AAR"
     And si verifica il contenuto della pec abbia 2 attachment di tipo "NOTIFICATION_ATTACHMENTS"
     And si verifica il contenuto della pec abbia 1 attachment di tipo "F24"
