@@ -9,32 +9,32 @@ Feature: Lettura singola finalità
     Given "<ente>" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     Given "<ente>" ha già creato 1 finalità in stato "<statoFinalità>" per quell'eservice
     When l'utente richiede la lettura della finalità
-    Then si ottiene status code <risultato> ma l'analisi del rischio solo per admin
+    Then si ottiene status code 200 ma l'analisi del rischio solo per admin
 
     Examples: # Test sui ruoli
-      | ente    | ruolo        | statoFinalità | risultato |
-      | PA1     | admin        | ACTIVE        |       200 |
-      | PA1     | api          | ACTIVE        |       200 |
-      | PA1     | security     | ACTIVE        |       200 |
-      | PA1     | api,security | ACTIVE        |       200 |
-      | PA1     | support      | ACTIVE        |       200 |
-      | GSP     | admin        | ACTIVE        |       200 |
-      | GSP     | api          | ACTIVE        |       200 |
-      | GSP     | security     | ACTIVE        |       200 |
-      | GSP     | api,security | ACTIVE        |       200 |
-      | GSP     | support      | ACTIVE        |       200 |
-      | Privato | admin        | ACTIVE        |       200 |
-      | Privato | api          | ACTIVE        |       200 |
-      | Privato | security     | ACTIVE        |       200 |
-      | Privato | api,security | ACTIVE        |       200 |
-      | Privato | support      | ACTIVE        |       200 |
+      | ente    | ruolo        | statoFinalità |
+      | PA1     | admin        | ACTIVE        |
+      | PA1     | api          | ACTIVE        |
+      | PA1     | security     | ACTIVE        |
+      | PA1     | api,security | ACTIVE        |
+      | PA1     | support      | ACTIVE        |
+      | GSP     | admin        | ACTIVE        |
+      | GSP     | api          | ACTIVE        |
+      | GSP     | security     | ACTIVE        |
+      | GSP     | api,security | ACTIVE        |
+      | GSP     | support      | ACTIVE        |
+      | Privato | admin        | ACTIVE        |
+      | Privato | api          | ACTIVE        |
+      | Privato | security     | ACTIVE        |
+      | Privato | api,security | ACTIVE        |
+      | Privato | support      | ACTIVE        |
 
     Examples: # Test sugli stati
-      | ente | ruolo | statoFinalità        | risultato |
-      | PA1  | admin | WAITING_FOR_APPROVAL |       200 |
-      | PA1  | admin | SUSPENDED            |       200 |
-      | PA1  | admin | ARCHIVED             |       200 |
-      | PA1  | admin | DRAFT                |       200 |
+      | ente | ruolo | statoFinalità        |
+      | PA1  | admin | WAITING_FOR_APPROVAL |
+      | PA1  | admin | SUSPENDED            |
+      | PA1  | admin | ARCHIVED             |
+      | PA1  | admin | DRAFT                |
 
   @purpose_read2 @no-parallel
   Scenario Outline: Per una finalità precedentemente creata da un fruitore, la quale prima versione è in stato NON DRAFT (WAITING_FOR_APPROVAL, ACTIVE, SUSPENDED, ARCHIVED), alla richiesta di lettura da parte dell’erogatore, va a buon fine
