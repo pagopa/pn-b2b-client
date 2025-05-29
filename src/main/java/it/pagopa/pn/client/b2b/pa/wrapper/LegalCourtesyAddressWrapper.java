@@ -13,6 +13,7 @@ public class LegalCourtesyAddressWrapper {
         SMS("SMS"),
         PEC("PEC"),
         APPIO("APPIO"),
+        SERCQ("SERCQ"),
         SERCQ_SEND("SERCQ_SEND");
 
         private String value;
