@@ -360,7 +360,8 @@ Feature: avanzamento notifiche b2b persona fisica
       | physicalAddress_address | Via @FAIL-IRREPERIBILE_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_1"
-    Then viene verificato che nel dettaglio di timeline sia presente:
+    Then viene verificato che nell'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" sia presente:
+      | details.sentAttemptMade         | 1                            |
       | details.physicalAddress.address | __REGEX__.*\\b\\d+/\\d+\\b.* |
 
   @bugAvanzamentoNotifiche
@@ -374,6 +375,6 @@ Feature: avanzamento notifiche b2b persona fisica
       | taxId                   | FRMTTR76M06B715E          |
       | physicalAddress_address | Via @FAIL-IRREPERIBILE_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_1"
-    Then viene verificato che nel dettaglio di timeline sia presente:
+    Then viene verificato che nell'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" sia presente:
+      | details.sentAttemptMade         | 1                             |
       | details.physicalAddress.address | __REGEX__..*\b\d+[A-Za-z]\b.* |
