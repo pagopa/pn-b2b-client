@@ -513,20 +513,32 @@ public class RicezioneNotificheWebDelegheSteps {
         webRecipientClient.setBearerToken(baseUser);
     }
 
-    @And("lato desinatario {string} viene verificato che l'elemento di timeline NOTIFICATION_VIEWED non esista")
-    public void notificationCanBeCorrectlyReadFromBytimelineNotExist(String recipient) {
+    @And("lato destinatario {string} viene verificato che l'elemento di timeline NOTIFICATION_VIEWED non esista")
+    public void notificationCanBeCorrectlyReadFromByTimelineNotExist(String recipient) {
+        // Seleziona l'utente destinatario
         sharedSteps.selectUser(recipient);
 
-        try {
-            TimelineElementCategoryV26 timelineElementCategoryV23 = TimelineElementCategoryV26.NOTIFICATION_VIEWED;
-            TimelineElementV26 timelineElement = getTimelineElementV23WebRecipient(timelineElementCategoryV23);
+        // Definisce la categoria dell'elemento di timeline da verificare
+        TimelineElementCategoryV26 category = TimelineElementCategoryV26.NOTIFICATION_VIEWED;
 
-            Assertions.assertNull(timelineElement);
-        } catch (AssertionError assertionError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        // Recupera l'elemento di timeline per il destinatario
+        TimelineElementV26 timelineElement = getTimelineElementV23WebRecipient(category);
+
+        // Verifica che l'elemento di timeline non esista
+        if (timelineElement != null) {
+            log.error("Elemento di timeline '{}' trovato per il destinatario '{}', ma non avrebbe dovuto esistere. Dettagli: {}",
+                    category, recipient, timelineElement);
         }
+
+        // Asserzione che fallisce se l'elemento di timeline esiste
+        Assertions.assertNull(timelineElement,
+                String.format("Elemento di timeline '%s' trovato per il destinatario '%s', ma non avrebbe dovuto esistere.",
+                        category, recipient));
+
+        // Reimposta il token di autenticazione per il client del destinatario
         webRecipientClient.setBearerToken(baseUser);
     }
+
 
     private TimelineElementV26 getTimelineElementV23WebRecipient(TimelineElementCategoryV26 timelineElementCategoryV23) {
         FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
