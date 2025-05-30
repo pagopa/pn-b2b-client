@@ -419,7 +419,7 @@ public abstract class B2bUtils {
                     actualField.setAccessible(true);
                     Object actualValue = actualField.get(actual);
                     //TODO aggiunto controllo per escludere municipalityDetails dal controllo sull'equals (causa consolidatore che fa fallire i test)
-                    if (expectedValue != null && fieldName != "municipalityDetails") {
+                    if (expectedValue != null && !fieldName.equals("municipalityDetails")) {
                         assertThat(actualValue).as(error + fieldName + " non coincide col valore atteso").isEqualTo(expectedValue);
                     }
                 } catch (NoSuchFieldException e) {

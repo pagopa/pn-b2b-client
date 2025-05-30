@@ -25,7 +25,6 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesExternalClient
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.*;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationStatusV26;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.utils.DataTest;
@@ -913,7 +912,6 @@ public class RicezioneNotificheWebSteps {
         if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
             exists = legalAddressByRecipient.stream()
                     .anyMatch(address -> LegalChannelType.PEC.getValue().equals(address.getChannelType().getValue()) && senderId.equals(address.getSenderId()) && address.getCodeValid());
-//                    .anyMatch(address -> LegalChannelType.PEC.equals(address.getChannelType()) && senderId.equals(address.getSenderId()) && address.getCodeValid());
         }
         Assertions.assertFalse(exists, "PEC FOUND");
 
