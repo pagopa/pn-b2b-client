@@ -5,7 +5,7 @@ import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.*;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV26;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebMandateClient;
@@ -14,17 +14,7 @@ import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2bMandateServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebMandateExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.AcceptRequestDto;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.CxTypeAuthFleet;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.MandateDto;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.OrganizationIdDto;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.UpdateRequestDto;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.UserDto;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.TimelineElementCategoryV26;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.TimelineElementV26;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullReceivedNotificationV25;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationAttachmentDownloadMetadataResponse;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchResponse;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.*;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.time.DateUtils;
@@ -37,31 +27,10 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.COMUNE_1;
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.COMUNE_2;
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.COMUNE_MULTI;
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.COMUNE_ROOT;
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.COMUNE_SON;
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.CUCUMBER_SPA;
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.CUCUMBER_SPA_TAX_ID;
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.GHERKIN_SRL;
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.GHERKIN_SRL_TAX_ID;
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.MARIO_CUCUMBER;
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.MARIO_CUCUMBER_TAX_ID;
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.MARIO_GHERKIN;
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.MARIO_GHERKIN_TAX_ID;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 import static org.awaitility.Awaitility.await;
 
 
@@ -71,7 +40,6 @@ public class RicezioneNotificheWebDelegheSteps {
     private IPnWebMandateClient webMandateClient;
     private IPnWebRecipientClient webRecipientClient;
     private final SharedSteps sharedSteps;
-    private final PnPaB2bUtils b2bUtils;
     private MandateDto mandateToSearch;
     private final SettableBearerToken.BearerTokenType baseUser = SettableBearerToken.BearerTokenType.USER_2;
     private final String verificationCode = "24411";
@@ -104,7 +72,6 @@ public class RicezioneNotificheWebDelegheSteps {
         this.webMandateClient = webMandateClient;
         this.sharedSteps = sharedSteps;
         this.webRecipientClient = sharedSteps.getWebRecipientClient();
-        this.b2bUtils = sharedSteps.getB2bUtils();
     }
 
     private String getTaxIdByUser(String user) {
@@ -240,7 +207,7 @@ public class RicezioneNotificheWebDelegheSteps {
                 .delegate(getUserDtoByuser(delegate))
                 .verificationCode(verificationCode)
                 .datefrom(sdf.format(new Date()))
-                .visibilityIds(Arrays.asList(organizationIdDto))
+                .visibilityIds(List.of(organizationIdDto))
                 .status(MandateDto.StatusEnum.PENDING)
                 .dateto(sdf.format(DateUtils.addDays(new Date(), 1)))
         );
@@ -539,27 +506,39 @@ public class RicezioneNotificheWebDelegheSteps {
             TimelineElementV26 timelineElement = getTimelineElementV23WebRecipient(timelineElementCategoryV23);
 
             Assertions.assertNotNull(timelineElement);
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
 
         webRecipientClient.setBearerToken(baseUser);
     }
 
-    @And("lato desinatario {string} viene verificato che l'elemento di timeline NOTIFICATION_VIEWED non esista")
-    public void notificationCanBeCorrectlyReadFromBytimelineNotExist(String recipient) {
+    @And("lato destinatario {string} viene verificato che l'elemento di timeline NOTIFICATION_VIEWED non esista")
+    public void notificationCanBeCorrectlyReadFromByTimelineNotExist(String recipient) {
+        // Seleziona l'utente destinatario
         sharedSteps.selectUser(recipient);
 
-        try {
-            TimelineElementCategoryV26 timelineElementCategoryV23 = TimelineElementCategoryV26.NOTIFICATION_VIEWED;
-            TimelineElementV26 timelineElement = getTimelineElementV23WebRecipient(timelineElementCategoryV23);
+        // Definisce la categoria dell'elemento di timeline da verificare
+        TimelineElementCategoryV26 category = TimelineElementCategoryV26.NOTIFICATION_VIEWED;
 
-            Assertions.assertNull(timelineElement);
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
+        // Recupera l'elemento di timeline per il destinatario
+        TimelineElementV26 timelineElement = getTimelineElementV23WebRecipient(category);
+
+        // Verifica che l'elemento di timeline non esista
+        if (timelineElement != null) {
+            log.error("Elemento di timeline '{}' trovato per il destinatario '{}', ma non avrebbe dovuto esistere. Dettagli: {}",
+                    category, recipient, timelineElement);
         }
+
+        // Asserzione che fallisce se l'elemento di timeline esiste
+        Assertions.assertNull(timelineElement,
+                String.format("Elemento di timeline '%s' trovato per il destinatario '%s', ma non avrebbe dovuto esistere.",
+                        category, recipient));
+
+        // Reimposta il token di autenticazione per il client del destinatario
         webRecipientClient.setBearerToken(baseUser);
     }
+
 
     private TimelineElementV26 getTimelineElementV23WebRecipient(TimelineElementCategoryV26 timelineElementCategoryV23) {
         FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
@@ -633,7 +612,7 @@ public class RicezioneNotificheWebDelegheSteps {
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 timelineElement = getTimelineElementV23();
 
         String userTaxId = getTaxIdByUser(user);
-        System.out.println("TIMELINE ELEMENT: " + timelineElement);
+        log.info("TIMELINE ELEMENT : {}", timelineElement);
         Assertions.assertNotNull(timelineElement);
         Assertions.assertNotNull(timelineElement.getDetails());
         Assertions.assertNotNull(timelineElement.getDetails().getDelegateInfo());
@@ -644,7 +623,7 @@ public class RicezioneNotificheWebDelegheSteps {
     public void siVerificaCheLElementoDiTimelineDellaLetturaNonRiportiIDatiDi() {
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 timelineElement = getTimelineElementV23();
 
-        System.out.println("TIMELINE ELEMENT: " + timelineElement);
+        log.info("TIMELINE ELEMENT : {}", timelineElement);
         Assertions.assertNotNull(timelineElement);
         Assertions.assertNotNull(timelineElement.getDetails());
         Assertions.assertNull(timelineElement.getDetails().getDelegateInfo());
@@ -715,9 +694,9 @@ public class RicezioneNotificheWebDelegheSteps {
                 mandateList = webMandateClient.searchMandatesByDelegateStatusFilter("", List.of(status), null);
             } else {
                 mandateList = webMandateClient.searchMandatesByDelegateStatusFilter(getTaxIdByUser(delegator), List.of(status), null);
-                Assertions.assertNotNull(mandateList, "La lista mandateList è null");
-                Assertions.assertFalse(mandateList.isEmpty(), "La lista mandateList è vuota");
             }
+            Assertions.assertNotNull(mandateList, "La lista mandateList è null");
+            Assertions.assertFalse(mandateList.isEmpty(), "La lista mandateList è vuota");
         } catch (HttpStatusCodeException e) {
             this.notificationError = e;
         }

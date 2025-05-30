@@ -1,6 +1,5 @@
 package it.pagopa.pn.cucumber.steps.pa.webhookVersions;
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV26;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.FullSentNotificationV20;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationStatusHistoryElement;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.TimelineElementV20;
@@ -8,7 +7,7 @@ import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV20;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingWebhook;
-import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceWebhookV20;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v20.PnPollingServiceWebhookV20;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.*;
 import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps;
@@ -21,6 +20,8 @@ import java.time.OffsetDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Data
 @Slf4j
@@ -153,6 +154,19 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
 
     @Override
     public void verifySpecificEventNotInStream(String elementType) {
+        //TODO: implementare ???
+    }
+
+    @Override
+    public void checkConsumeStreamStatusValue(boolean isPresente, String status) {
+        assertThat(progressResponseElementList).as("La lista di progressResponseElement non dev'essere null").isNotNull();
+        assertThat(progressResponseElementList).as("La lista di progressResponseElement non dev'essere vuota").isNotEmpty();
+        progressResponseElement = progressResponseElementList.stream().filter(x -> x.getNewStatus().getValue().equals(status)).findFirst().orElse(null);
+        if (isPresente) {
+            assertThat(progressResponseElement).as("La lista di progressResponseElement dovrebbe contenere almeno un elemento con status " + status).isNotNull();
+        } else {
+            assertThat(progressResponseElement).as("La lista di progressResponseElement NON dovrebbe contenere nessun elemento con status " + status).isNull();
+        }
     }
 
     @Override
@@ -256,10 +270,10 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
                         .streamId(eventStreamList.get(position).getStreamId())
                         .build());
 
-        log.info("WEBHOOK_PROGRESS_RESPONSE_ELEMENT_V20: " + pnPollingResponse.getProgressResponseElementV20());
-        if (pnPollingResponse.getProgressResponseElementV20() != null) {
-            progressResponseElement = pnPollingResponse.getProgressResponseElementV20();
-            progressResponseElementList = pnPollingResponse.getProgressResponseElementListV20();
+        log.info("WEBHOOK_PROGRESS_RESPONSE_ELEMENT_V20: " + pnPollingResponse.getProgressResponseElement());
+        if (pnPollingResponse.getProgressResponseElement() != null) {
+            progressResponseElement = pnPollingResponse.getProgressResponseElement();
+            progressResponseElementList = pnPollingResponse.getProgressResponseElementList();
             return progressResponseElement;
         }
         return null;
@@ -270,8 +284,7 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
         NotificationStatus status = ((NotificationStatus) statusForStream.getNotificationStatus());
         PnPollingWebhook pnPollingWebhook = getPnPollingWebhook(status);
         PnPollingServiceWebhookV20 webhook = (PnPollingServiceWebhookV20) webhookSteps.getSharedSteps().getPollingFactory().getPollingService(PnPollingStrategy.WEBHOOK_V20);
-        FullSentNotificationV26 fullSentNotification = webhookSteps.getSharedSteps().getSentNotificationLastVersion();
-        PnPollingResponseV20 pnPollingResponse = webhook.waitForEvent(fullSentNotification.getIun(),
+        PnPollingResponseV20 pnPollingResponse = webhook.waitForEvent(webhookSteps.getSharedSteps().getNotificationIun(),
                 PnPollingParameter.builder()
                         .value("WEBHOOK")
                         .pnPollingWebhook(pnPollingWebhook)
@@ -280,10 +293,10 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
                         .streamId(eventStreamList.get(position).getStreamId())
                         .build());
 
-        log.info("WEBHOOK_PROGRESS_RESPONSE_ELEMENT_V20: " + pnPollingResponse.getProgressResponseElementV20());
-        if (pnPollingResponse.getProgressResponseElementV20() != null) {
-            progressResponseElement = pnPollingResponse.getProgressResponseElementV20();
-            progressResponseElementList = pnPollingResponse.getProgressResponseElementListV20();
+        log.info("WEBHOOK_PROGRESS_RESPONSE_ELEMENT_V20: " + pnPollingResponse.getProgressResponseElement());
+        if (pnPollingResponse.getProgressResponseElement() != null) {
+            progressResponseElement = pnPollingResponse.getProgressResponseElement();
+            progressResponseElementList = pnPollingResponse.getProgressResponseElementList();
             return progressResponseElement;
         }
         return null;
@@ -388,11 +401,6 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
 
         }
         return pnPollingWebhook;
-    }
-
-    @Override
-    public void getTimelineElementVersionB2B(String iun) {
-        webhookSteps.getB2bClient().getSentNotificationV2(iun);
     }
 
     @Override
