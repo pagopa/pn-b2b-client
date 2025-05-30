@@ -178,7 +178,6 @@ public class DataTestV25 extends AbstractDataTest {
                     //ignorare Sonar che dice che questa condizione è sempre true (in quanto il campo è annotato con @NotNull), non è vero
                     if (expected.getPhysicalAddress() != null) {
                         B2bUtils.compareActualAndExpected(error + EQUALITY_PHYSICAL_ADDRESS, actual.getPhysicalAddress(), expected.getPhysicalAddress());
-//                        assertThat(actual.getPhysicalAddress()).as(error + EQUALITY_PHYSICAL_ADDRESS).isEqualTo(expected.getPhysicalAddress());
                     }
                     //ignorare Sonar che dice che questa condizione è sempre true (in quanto il campo è annotato con @NotNull), non è vero
                     if (expected.getResponseStatus() != null && expected.getResponseStatus().getValue() != null) {
@@ -230,12 +229,12 @@ public class DataTestV25 extends AbstractDataTest {
             case ANALOG_SUCCESS_WORKFLOW, PREPARE_SIMPLE_REGISTERED_LETTER -> {
                 //ignorare Sonar che dice che questa condizione è sempre true (in quanto il campo è annotato con @NotNull), non è vero
                 if (expected != null && expected.getPhysicalAddress() != null) {
-                    assertThat(actual.getPhysicalAddress()).as(error + EQUALITY_PHYSICAL_ADDRESS).isEqualTo(expected.getPhysicalAddress());
+                    B2bUtils.compareActualAndExpected(error + EQUALITY_PHYSICAL_ADDRESS, actual.getPhysicalAddress(), expected.getPhysicalAddress());
                 }
             }
             case SEND_SIMPLE_REGISTERED_LETTER -> {
                 if (expected != null) {
-                    assertThat(actual.getPhysicalAddress()).as(error + EQUALITY_PHYSICAL_ADDRESS).isEqualTo(expected.getPhysicalAddress());
+                    B2bUtils.compareActualAndExpected(error + EQUALITY_PHYSICAL_ADDRESS, actual.getPhysicalAddress(), expected.getPhysicalAddress());
                     assertThat(actual.getAnalogCost()).as(error + EQUALITY_ANALOG_COST).isEqualTo(expected.getAnalogCost());
                 }
             }
@@ -274,15 +273,9 @@ public class DataTestV25 extends AbstractDataTest {
                     assertThat(actual.getRecIndex()).as(error + EQUALITY_REC_INDEX).isEqualTo(expected.getRecIndex());
                 }
             }
-            //TODO VAS
             case PUBLIC_REGISTRY_VALIDATION_CALL -> {
                 if (expected != null) {
                     Assertions.assertEquals(actual.getRecIndexes(), expected.getRecIndexes());
-                    //TODO VAS Esempio per una lista di utenze
-                   /* Assertions.assertNotNull(actual.getUtilityList());
-                   Assertions.assertEquals(actual.getUtilityList().size(), expected.getUtilityList().size());
-                   for (int i = 0; i < actual.getUtilityList().size(); i++) {
-                       Assertions.assertEquals(actual.getUtilityList().get(i), expected.getUtilityList().get(i));*/
                 }
             }
             case PUBLIC_REGISTRY_VALIDATION_RESPONSE -> {
@@ -293,18 +286,18 @@ public class DataTestV25 extends AbstractDataTest {
 //                    assertThat(actual.getResponseStatus()).as("TODO VAS").isEqualTo(expected.getResponseStatus());
                 }
             }
-                case PREPARE_ANALOG_DOMICILE_FAILURE -> {
-                    if (expected != null) {
-                        assertThat(actual.getRecIndex()).as(error + EQUALITY_REC_INDEX).isEqualTo(expected.getRecIndex());
-                        B2bUtils.compareActualAndExpected(error + EQUALITY_PHYSICAL_ADDRESS, actual.getPhysicalAddress(), expected.getPhysicalAddress());
-                        if (expected.getDeliveryFailureCause() != null) {
-                            List<String> failureCauses = Arrays.asList(expected.getDeliveryFailureCause().split(" "));
-                            assertThat(failureCauses).asList()
-                                    .as(error + EQUALITY_FAILURE_CAUSES)
-                                    .contains(elementFromNotification.getDetails().getDeliveryFailureCause());
-                        }
-
+            case PREPARE_ANALOG_DOMICILE_FAILURE -> {
+                if (expected != null) {
+                    assertThat(actual.getRecIndex()).as(error + EQUALITY_REC_INDEX).isEqualTo(expected.getRecIndex());
+                    B2bUtils.compareActualAndExpected(error + EQUALITY_PHYSICAL_ADDRESS, actual.getPhysicalAddress(), expected.getPhysicalAddress());
+                    if (expected.getDeliveryFailureCause() != null) {
+                        List<String> failureCauses = Arrays.asList(expected.getDeliveryFailureCause().split(" "));
+                        assertThat(failureCauses).asList()
+                                .as(error + EQUALITY_FAILURE_CAUSES)
+                                .contains(elementFromNotification.getDetails().getDeliveryFailureCause());
                     }
+
+                }
             }
             default -> throw new IllegalArgumentException(INVALID_TIMELINE_CATEGORY + timelineEventCategory);
         }

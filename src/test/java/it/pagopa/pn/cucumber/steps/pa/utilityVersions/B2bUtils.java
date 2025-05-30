@@ -504,11 +504,10 @@ public abstract class B2bUtils {
                     TimelineEventId.DIGITAL_DELIVERY_CREATION_REQUEST.buildEventId(event);
             case ANALOG_WORKFLOW_RECIPIENT_DECEASED ->
                     TimelineEventId.ANALOG_WORKFLOW_RECIPIENT_DECEASED.buildEventId(event);
-            //TODO VAS
             case PUBLIC_REGISTRY_VALIDATION_CALL -> TimelineEventId.PUBLIC_REGISTRY_VALIDATION_CALL.buildEventId(event);
             case PUBLIC_REGISTRY_VALIDATION_RESPONSE ->
                     TimelineEventId.PUBLIC_REGISTRY_VALIDATION_RESPONSE.buildEventId(event);
-            default -> null;
+            default -> throw new IllegalArgumentException("Category non riconosciuta: " + timelineEventCategory);
         };
     }
 }

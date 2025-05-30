@@ -110,7 +110,7 @@ public class B2bStepsV23 implements B2bStepsInterface {
         verifyTestCompatibilityWithVersion(timelineEventCategory, true);
         WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder().build();
         waitForEventOrStatus(TIMELINE_SLOW, TIMELINE, timelineEventCategory, filters);
-        checkIfTimelineElementExists(true, null, null);
+        checkIfTimelineElementExists(timelineEventCategory, true, null, null);
     }
 
     @Override
@@ -370,7 +370,7 @@ public class B2bStepsV23 implements B2bStepsInterface {
     }
 
     @Override
-    public void checkIfTimelineElementExists(boolean exists, TimelineElementCheck furtherChecks, TimelineElementCheckFilters filterParams) {
+    public void checkIfTimelineElementExists(String category, boolean exists, TimelineElementCheck furtherChecks, TimelineElementCheckFilters filterParams) {
         try {
             boolean result;
             //se siamo giunti a questo metodo dopo aver recuperato la timeline da B2B andiamo a valorizzare timelineElement e timelineElementList col risultato del polling
@@ -386,7 +386,7 @@ public class B2bStepsV23 implements B2bStepsInterface {
             if (exists) {
                 assertSoftly(softly -> {
                     assertThat(result)
-                            .as("Il risultato del polling dovrebbe essere valorizzato. Primo controllo: Verificare che l'elemento sia presente in timeline e le tempistiche con cui viene prodotto")
+                            .as(logTimeline(null, category, true))
                             .isTrue();
                     assertThat(timelineElement)
                             .as("L'elemento della timeline non dovrebbe essere null")
@@ -399,7 +399,7 @@ public class B2bStepsV23 implements B2bStepsInterface {
             } else {
                 assertSoftly(softly -> {
                     assertThat(result)
-                            .as("Il risultato del polling dovrebbe essere false. Verificare la correttezza dello scenario di test e i dati passati in input\"")
+                            .as(logTimeline(null, category, false))
                             .isFalse();
                     assertThat(timelineElement)
                             .as("L'elemento di timeline dovrebbe essere null")
@@ -457,7 +457,7 @@ public class B2bStepsV23 implements B2bStepsInterface {
 
     private String logTimeline(DataTestV23 dataTest, String timelineEventCategory, boolean exists) {
         boolean isWithEventId = dataTest != null && dataTest.getTimelineElement() != null;
-        boolean hasCheckOnDeliveryDetailCode = List.of(SEND_ANALOG_PROGRESS, SEND_SIMPLE_REGISTERED_LETTER_PROGRESS).contains(timelineEventCategory);
+        boolean hasCheckOnDeliveryDetailCode = dataTest != null && List.of(SEND_ANALOG_PROGRESS, SEND_SIMPLE_REGISTERED_LETTER_PROGRESS).contains(timelineEventCategory);
         String prefix = exists ? "Non è stato trovato nessun elemento con " : "La ricerca non avrebbe dovuto restituire nessun elemento con ";
         String expectedDdc = "";
         if (hasCheckOnDeliveryDetailCode) {
@@ -477,7 +477,7 @@ public class B2bStepsV23 implements B2bStepsInterface {
             sb.append(te.getCategory())
                     .append(" EventId: ")
                     .append(te.getElementId())
-                    .append(hasCheckOnDeliveryDetailCode ? actualDdc : "")
+                    .append(actualDdc)
                     .append("\n");
         });
         return sb.toString();

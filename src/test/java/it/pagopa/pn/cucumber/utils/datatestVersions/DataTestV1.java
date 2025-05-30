@@ -165,7 +165,6 @@ public class DataTestV1 extends AbstractDataTest {
                     //ignorare Sonar che dice che questa condizione è sempre true (in quanto il campo è annotato con @NotNull), non è vero
                     if (expected.getPhysicalAddress() != null) {
                         B2bUtils.compareActualAndExpected(error + EQUALITY_PHYSICAL_ADDRESS, actual.getPhysicalAddress(), expected.getPhysicalAddress());
-//                        assertThat(actual.getPhysicalAddress()).as(error + EQUALITY_PHYSICAL_ADDRESS).isEqualTo(expected.getPhysicalAddress());
                     }
                     //ignorare Sonar che dice che questa condizione è sempre true (in quanto il campo è annotato con @NotNull), non è vero
                     if (expected.getResponseStatus() != null && expected.getResponseStatus().getValue() != null) {
@@ -217,12 +216,12 @@ public class DataTestV1 extends AbstractDataTest {
             case ANALOG_SUCCESS_WORKFLOW, PREPARE_SIMPLE_REGISTERED_LETTER -> {
                 //ignorare Sonar che dice che questa condizione è sempre true (in quanto il campo è annotato con @NotNull), non è vero
                 if (expected != null && expected.getPhysicalAddress() != null) {
-                    assertThat(actual.getPhysicalAddress()).as(error + EQUALITY_PHYSICAL_ADDRESS).isEqualTo(expected.getPhysicalAddress());
+                    B2bUtils.compareActualAndExpected(error + EQUALITY_PHYSICAL_ADDRESS, actual.getPhysicalAddress(), expected.getPhysicalAddress());
                 }
             }
             case SEND_SIMPLE_REGISTERED_LETTER -> {
                 if (expected != null) {
-                    assertThat(actual.getPhysicalAddress()).as(error + EQUALITY_PHYSICAL_ADDRESS).isEqualTo(expected.getPhysicalAddress());
+                    B2bUtils.compareActualAndExpected(error + EQUALITY_PHYSICAL_ADDRESS, actual.getPhysicalAddress(), expected.getPhysicalAddress());
                     assertThat(actual.getAnalogCost()).as(error + EQUALITY_ANALOG_COST).isEqualTo(expected.getAnalogCost());
                 }
             }

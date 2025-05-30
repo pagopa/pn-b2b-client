@@ -26,8 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_NULL_P_R_E;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.STREAM_EVENT_TYPE_STATUS;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -254,8 +253,7 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
     @Override
     public void verifyNoEventsInStream() {
         UUID streamId = getStreamId();
-        progressResponseElementList = webhookClient.consumeEventStream(streamId, null);
-        assertThat(progressResponseElementList).as("La lista di eventi restituiti dalla consume dovrebbe essere vuota").isEmpty();
+        assertThat(webhookClient.consumeEventStream(streamId, null)).as("La lista di eventi restituiti dalla consume dovrebbe essere vuota").isEmpty();
     }
 
     @Override
@@ -507,10 +505,7 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
 
     @Override
     public void checkCorrectDisabling(UUID streamId) {
-        StreamMetadataResponse eventStream = webhookClient.retrieveEventStream(streamId);
-        assertThat(eventStream).as("Lo stream recuperato tramite id " + streamId + " non dev'essere null").isNotNull();
-        assertThat(eventStream.getStreamId()).as("L'id dello stream recuperato non dev'essere null").isNotNull();
-        log.info("EVENTSTREAM REPLACED: {}", eventStream);
+        //disabilitazione introdotta dalla V23
     }
 
     @Override
@@ -518,7 +513,7 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
         String channel = isPresent ? "SERCQ" : "PEC";
         Assertions.assertTrue(progressResponseElementList.stream()
                 .filter(data -> data.getTimelineEventCategory() != null)
-                .filter(progressResponseElement -> progressResponseElement.getTimelineEventCategory().getValue().contains("SEND_DIGITAL_FEEDBACK"))
+                .filter(progressResponseElement -> progressResponseElement.getTimelineEventCategory().getValue().contains(SEND_DIGITAL_FEEDBACK))
                 .allMatch(progressResponseElement -> channel.equals(progressResponseElement.getChannel())));
     }
 

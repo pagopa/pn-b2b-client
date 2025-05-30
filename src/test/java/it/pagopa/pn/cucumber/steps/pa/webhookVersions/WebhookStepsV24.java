@@ -24,8 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_NULL_P_R_E;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.STREAM_EVENT_TYPE_STATUS;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -266,8 +265,7 @@ public class WebhookStepsV24 implements WebhookStepsInterface {
     @Override
     public void verifyNoEventsInStream() {
         UUID streamId = getStreamId();
-        progressResponseElementList = webhookClient.consumeEventStreamV24(streamId, null);
-        assertThat(progressResponseElementList).as("La lista di eventi restituiti dalla consume dovrebbe essere vuota").isEmpty();
+        assertThat(webhookClient.consumeEventStreamV24(streamId, null)).as("La lista di eventi restituiti dalla consume dovrebbe essere vuota").isEmpty();
     }
 
     @Override
@@ -412,7 +410,7 @@ public class WebhookStepsV24 implements WebhookStepsInterface {
             assertThat(elementToCheck)
                     .as("La ricerca sulla fullSentNotification di elementi con category = " + timelineElementInternalCategory + " deve restituire almeno un elemento")
                     .isNotNull();
-            assertThat(elementToCheck.getEventTimestamp()).as("Il timestamp dell'elemento restituito da b2b non dev'essere null").isNotNull();
+            assertThat(elementToCheck.getTimestamp()).as("Il timestamp dell'elemento restituito da b2b non dev'essere null").isNotNull();
             assertThat(convertedProgressResponseElement.getElement()).as(NOT_NULL_P_R_E).isNotNull();
             assertThat(convertedProgressResponseElement.getElement().getTimestamp()).as("Il timestamp del progressResponseElement non dev'essere null").isNotNull();
             assertThat(convertedProgressResponseElement.getElement().getTimestamp().truncatedTo(ChronoUnit.SECONDS))
@@ -537,28 +535,24 @@ public class WebhookStepsV24 implements WebhookStepsInterface {
     public List<Object> verificaCorrispondenzaElementiTimelineWebhookAndB2B() {
         List<Object> resultList = new LinkedList<>();
 
-        TimelineElementV24 timelineElement = progressResponseElement.getElement();
-        assertThat(timelineElement).as("L'elemento di timeline restituito dal webhook non dev'essere null").isNotNull();
-
-        TimelineElementCategoryV23 timelineElementCategory = timelineElement.getCategory();
-        assertThat(timelineElementCategory).as("La category dell'elemento di timeline recuperato dal webhook non dev'essere null").isNotNull();
+        TimelineElementV24 teWebhook = progressResponseElement.getElement();
+        assertThat(teWebhook).as("L'elemento di timeline recuperato dal webhook non dev'essere null").isNotNull();
+        assertThat(teWebhook.getCategory()).as("La category dell'elemento di timeline recuperato dal webhook non dev'essere null").isNotNull();
 
         FullSentNotificationV24 fullSentNotification = getFullSentNotificationVersioned();
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV24 timelineElementB2b = fullSentNotification.getTimeline().
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV24 teB2b = fullSentNotification.getTimeline().
                 stream()
                 .filter(data -> data.getCategory() != null)
-                .filter(data -> data.getCategory().getValue().equalsIgnoreCase(timelineElementCategory.getValue()))
+                .filter(data -> data.getCategory().getValue().equalsIgnoreCase(teWebhook.getCategory().getValue()))
                 .findFirst()
                 .orElse(null);
-        assertThat(timelineElementB2b).as("Dalla timeline b2b non è stato trovato alcun elemento che corrisponda a quello recuperato dal webhook").isNotNull();
+        assertThat(teB2b).as("Dalla timeline b2b non è stato trovato alcun elemento che corrisponda a quello recuperato dal webhook").isNotNull();
 
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementDetailsV23 timelineElementB2bDetails = timelineElementB2b.getDetails();
-        assertThat(timelineElementB2bDetails).as("I details dell'elemento recuperato dalla timeline b2b non devono essere null").isNotNull();
-        resultList.add(timelineElementB2bDetails);
+        assertThat(teB2b.getDetails()).as("I details dell'elemento recuperato dalla timeline b2b non devono essere null").isNotNull();
+        resultList.add(teB2b.getDetails());
 
-        TimelineElementDetailsV23 timelineElementDetails = timelineElement.getDetails();
-        assertThat(timelineElementB2bDetails).as("I details dell'elemento recuperato dal webhook non devono essere null").isNotNull();
-        resultList.add(timelineElementDetails);
+        assertThat(teWebhook.getDetails()).as("I details dell'elemento recuperato dal webhook non devono essere null").isNotNull();
+        resultList.add(teWebhook.getDetails());
 
         return resultList;
     }
@@ -588,7 +582,7 @@ public class WebhookStepsV24 implements WebhookStepsInterface {
         String channel = isPresent ? "SERCQ" : "PEC";
         Assertions.assertTrue(progressResponseElementList.stream()
                 .filter(data -> data.getElement().getElementId() != null)
-                .filter(timelineElement -> timelineElement.getElement().getElementId().contains("SEND_DIGITAL_FEEDBACK"))
+                .filter(timelineElement -> timelineElement.getElement().getElementId().contains(SEND_DIGITAL_FEEDBACK))
                 .allMatch(elementDetails -> "OK".equals(elementDetails.getElement().getDetails().getResponseStatus().toString())
                         && channel.equals(elementDetails.getElement().getDetails().getDigitalAddress().getType())
                 ));

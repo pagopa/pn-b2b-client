@@ -12,6 +12,8 @@ import java.util.List;
 @Setter
 public class PnPollingWebhook {
 
+    //TODO TULLIO 2: Una volta che i dev sistemano il pom, rimuovere l'import di TimelineElementCategoryV20 (va benissimo quello di externalb2bwebhook.model.*)
+
     private TimelineElementCategoryV20 timelineElementCategoryV20;
     private TimelineElementCategoryV23 timelineElementCategoryV23;
     private TimelineElementCategoryV23 timelineElementCategoryV24;
