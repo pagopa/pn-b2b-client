@@ -7,6 +7,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingPredicate;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnPrivateDeliveryPushExternalClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
@@ -15,11 +16,13 @@ import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v24.ResponsePaperNotificationFailedDto;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.b2bVersions.B2bStepsInterface;
+import it.pagopa.pn.cucumber.steps.pa.b2bVersions.B2bStepsV24;
 import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion;
 import it.pagopa.pn.cucumber.steps.utilitySteps.WaitForEventPredicateFilters;
 import it.pagopa.pn.cucumber.steps.utilitySteps.checkTimelineElement.TimelineElementCheckFilters;
 import it.pagopa.pn.cucumber.utils.DataTest;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
@@ -27,11 +30,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.HttpStatusCodeException;
 
+import java.lang.reflect.Field;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v24.NotificationFeePolicy.DELIVERY_MODE;
 import static it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v24.NotificationFeePolicy.FLAT_RATE;
@@ -1549,6 +1555,102 @@ public class AvanzamentoNotificheB2bSteps {
             });
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
+    }
+
+    @And("viene verificato che nell'elemento di timeline della notifica {string} sia presente:")
+    public void verificaTimelineDetails(String timelineEventCategory, io.cucumber.datatable.DataTable dataTable) throws Throwable {
+        Assertions.assertNotNull(timelineEventCategory, "Il parametro 'timelineEventCategory' non può essere null.");
+
+        Map<String, String> inputFields = dataTable.asMap();
+        Map<String, String> expectedFields = new HashMap<>(inputFields);
+        expectedFields.put("category", timelineEventCategory);
+
+        FullSentNotificationV26 fullSentNotification = (FullSentNotificationV26) getB2bStepsInterface().getFullSentNotification();
+        List<TimelineElementV26> timeline = fullSentNotification.getTimeline();
+
+        log.info("Ricerca elemento di timeline con i seguenti criteri:");
+        expectedFields.forEach((k, v) -> log.info("  - {} = {}", k, v));
+
+        boolean matchFound = timeline.stream()
+                .anyMatch(element -> matchesAllFields(element, expectedFields));
+
+        if (!matchFound) {
+            throw new AssertionError("Nessun elemento della timeline corrisponde a tutti i criteri: " + expectedFields);
+        }
+    }
+
+    private boolean matchesAllFields(TimelineElementV26 element, Map<String, String> expectedFields) {
+        for (Map.Entry<String, String> entry : expectedFields.entrySet()) {
+            String fieldPath = entry.getKey();
+            String expectedValue = entry.getValue();
+
+            Object actualFieldValue;
+            try {
+                actualFieldValue = resolveNestedFieldValue(element, fieldPath);
+            } catch (Exception e) {
+                log.debug("Errore nell'accesso al campo '{}': {}", fieldPath, e.getMessage());
+                return false;
+            }
+
+            String actualValue = actualFieldValue != null ? actualFieldValue.toString() : null;
+
+            if (!compareExpectedValue(expectedValue, actualValue)) {
+                log.debug("Confronto fallito per '{}': atteso='{}', trovato='{}'", fieldPath, expectedValue, actualValue);
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private Object resolveNestedFieldValue(Object rootObject, String fieldPath) throws Exception {
+        String[] fields = fieldPath.split("\\.");
+        Object currentObject = rootObject;
+
+        for (int i = 0; i < fields.length; i++) {
+            String fieldName = fields[i];
+
+            Field field = getFieldFromHierarchy(currentObject.getClass(), fieldName);
+            field.setAccessible(true);
+
+            currentObject = field.get(currentObject);
+
+            if (currentObject == null && i < fields.length - 1) {
+                throw new NullPointerException("Campo intermedio '" + fieldName + "' è null nel path '" + fieldPath + "'");
+            }
+        }
+
+        return currentObject;
+    }
+
+    private Field getFieldFromHierarchy(Class<?> cls, String fieldName) throws NoSuchFieldException {
+        while (cls != null) {
+            try {
+                return cls.getDeclaredField(fieldName);
+            } catch (NoSuchFieldException e) {
+                cls = cls.getSuperclass();
+            }
+        }
+        throw new NoSuchFieldException("Campo '" + fieldName + "' non trovato nella gerarchia di classi.");
+    }
+
+    private boolean verifyRegexMatch(String regex, String actualValue) {
+        Pattern pattern = Pattern.compile(regex);
+        String safeValue = actualValue != null ? actualValue : "";
+        Matcher matcher = pattern.matcher(safeValue);
+
+        return matcher.matches();
+    }
+
+    private boolean compareExpectedValue(String expectedValue, String actualValue) {
+        final String REGEX_TOKEN = "__REGEX__";
+
+        if (expectedValue != null && expectedValue.startsWith(REGEX_TOKEN)) {
+            String regex = expectedValue.substring(REGEX_TOKEN.length());
+            return verifyRegexMatch(regex, actualValue);
+        } else {
+            return Objects.equals(expectedValue, actualValue);
         }
     }
 
