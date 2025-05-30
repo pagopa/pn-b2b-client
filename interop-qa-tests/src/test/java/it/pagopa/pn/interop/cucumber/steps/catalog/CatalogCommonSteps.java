@@ -3,14 +3,14 @@ package it.pagopa.pn.interop.cucumber.steps.catalog;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
-import it.pagopa.interop.authorization.service.utils.IdentityService;
+import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactEServicesLight;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import org.junit.jupiter.api.Assertions;
@@ -25,11 +25,11 @@ public class CatalogCommonSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
     private final IdentityService identityService;
-    private final DataPreparationService dataPreparationService;
+    private final BFFDataPreparationService dataPreparationService;
 
     public CatalogCommonSteps(ClientTokenConfigurator clientTokenConfigurator,
                               SharedStepsContext sharedStepsContext,
-                              DataPreparationService dataPreparationService) {
+                              BFFDataPreparationService dataPreparationService) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.identityService = sharedStepsContext.getIdentityService();

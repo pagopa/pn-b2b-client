@@ -3,7 +3,7 @@ package it.pagopa.pn.interop.cucumber.steps.purpose;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.interop.authorization.service.utils.IdentityService;
+import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Purpose;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionDocument;
@@ -11,7 +11,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionSeed;
 import it.pagopa.interop.purpose.domain.CreatedEserviceVersion;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
 import org.junit.jupiter.api.Assertions;
@@ -26,14 +26,14 @@ public class PurposeRiskAnalysisDocumentDownloadSteps {
     private final HttpCallExecutor httpCallExecutor;
     private final IdentityService identityService;
     private final CommonUtils commonUtils;
-    private final DataPreparationService dataPreparationService;
+    private final BFFDataPreparationService dataPreparationService;
 
     private List<PurposeVersion> purposeVersions;
 
     public PurposeRiskAnalysisDocumentDownloadSteps(ClientTokenConfigurator clientTokenConfigurator,
                                                     SharedStepsContext sharedStepsContext,
                                                     CommonUtils commonUtils,
-                                                    DataPreparationService dataPreparationService) {
+                                                    BFFDataPreparationService dataPreparationService) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();

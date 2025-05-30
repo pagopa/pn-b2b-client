@@ -16,6 +16,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -31,7 +32,7 @@ import org.springframework.stereotype.Service;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class DataPreparationService {
     private static final ClientSeed DEFAULT_CLIENT_SEED = new ClientSeed();
-    private final IAuthorizationClient authorizationClient;
+    @Setter private IAuthorizationClient authorizationClient;
     private final PollingService pollingService;
     private final HttpCallExecutor httpCallExecutor;
 

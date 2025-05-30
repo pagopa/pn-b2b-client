@@ -11,7 +11,6 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.Agreements;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactEServicesLight;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganizations;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import java.io.File;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.http.ResponseEntity;

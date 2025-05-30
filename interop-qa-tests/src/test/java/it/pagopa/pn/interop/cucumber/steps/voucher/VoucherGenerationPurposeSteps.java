@@ -2,22 +2,22 @@ package it.pagopa.pn.interop.cucumber.steps.voucher;
 
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.agreement.domain.ClientType;
-import it.pagopa.interop.authorization.service.utils.IdentityService;
+import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import java.util.UUID;
 
 public class VoucherGenerationPurposeSteps {
 
     private final SharedStepsContext sharedStepsContext;
-    private final DataPreparationService dataPreparationService;
+    private final BFFDataPreparationService dataPreparationService;
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final IdentityService identityService;
 
     public VoucherGenerationPurposeSteps(
         SharedStepsContext sharedStepsContext,
-        DataPreparationService dataPreparationService,
+        BFFDataPreparationService dataPreparationService,
         ClientTokenConfigurator clientTokenConfigurator
     ) {
         this.sharedStepsContext = sharedStepsContext;

@@ -3,6 +3,7 @@ package it.pagopa.pn.interop.cucumber.steps;
 import io.cucumber.spring.ScenarioScope;
 import it.pagopa.interop.agreement.service.IAgreementClient;
 import it.pagopa.interop.agreement.service.IEServiceClient;
+import it.pagopa.interop.agreement.service.IM2MAgreementClient;
 import it.pagopa.interop.attribute.service.IAttributeApiClient;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.IProducerClient;
@@ -30,6 +31,7 @@ public class ClientTokenConfigurator {
     private IProducerDelegationsApiClient producerDelegationsApiClient;
     private IConsumerDelegationsApiClient consumerDelegationsApiClient;
     private IDelegationApiClient delegationApiClient;
+    private IM2MAgreementClient m2mAgreementClient;
 
     public void setBearerToken(String token) {
         authorizationClient.setBearerToken(token);
@@ -42,6 +44,7 @@ public class ClientTokenConfigurator {
         producerDelegationsApiClient.setBearerToken(token);
         consumerDelegationsApiClient.setBearerToken(token);
         delegationApiClient.setBearerToken(token);
+        m2mAgreementClient.setBearerToken(token);
     }
 
 }

@@ -3,12 +3,12 @@ package it.pagopa.pn.interop.cucumber.steps.tenant;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.interop.authorization.service.utils.IdentityService;
+import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.VerifiedTenantAttribute;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import org.junit.jupiter.api.Assertions;
 
@@ -22,13 +22,13 @@ public class TenantRevokeVerifiedAttributeSteps {
     private final SharedStepsContext sharedStepsContext;
     private final HttpCallExecutor httpCallExecutor;
     private final IdentityService identityService;
-    private final DataPreparationService dataPreparationService;
+    private final BFFDataPreparationService dataPreparationService;
 
     private UUID otherAgreementId;
 
     public TenantRevokeVerifiedAttributeSteps(ClientTokenConfigurator clientTokenConfigurator,
                                               SharedStepsContext sharedStepsContext,
-                                              DataPreparationService dataPreparationService) {
+                                              BFFDataPreparationService dataPreparationService) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
