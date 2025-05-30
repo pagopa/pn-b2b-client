@@ -1,5 +1,6 @@
 package it.pagopa.pn.client.b2b.pa;
 
+import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -23,19 +24,20 @@ public class SearchNotification implements CommandLineRunner {
     @Override
     public void run(String... args) {
         mainBean.doAll();
-        System.exit( 0 );
+        System.exit(0);
     }
 
     @Component
     public static class MainBean {
-        private final PnPaB2bUtils utils;
 
-        public MainBean(PnPaB2bUtils utils) {
-            this.utils = utils;
+        private final IPnPaB2bClient b2bClient;
+
+        public MainBean(IPnPaB2bClient b2bClient) {
+            this.b2bClient = b2bClient;
         }
 
         public void doAll() {
-            log.info("MainBean Notification: {}",utils.getNotificationByIun( "TPZH-WLML-JUXK-202206-P-1" ) );
+            log.info("MainBean Notification: {}", b2bClient.getSentNotificationV26("TPZH-WLML-JUXK-202206-P-1"));
         }
     }
 }

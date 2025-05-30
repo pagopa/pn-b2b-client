@@ -33,7 +33,7 @@ Feature: recupero notifiche tramite api AppIO b2b
     And destinatario Mario Gherkin
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere recuperata tramite AppIO
-    And viene generata una nuova notifica con uguale codice fiscale del creditore e diverso codice avviso
+    And viene generata una nuova notifica con uguale codice fiscale del creditore e codice avviso differente
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere recuperata tramite AppIO
 

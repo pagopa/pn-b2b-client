@@ -7,8 +7,6 @@ import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateRequestContext;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-
 @Component
 public class LegalFactMalfunctionStrategy implements ITemplateEngineStrategy {
 

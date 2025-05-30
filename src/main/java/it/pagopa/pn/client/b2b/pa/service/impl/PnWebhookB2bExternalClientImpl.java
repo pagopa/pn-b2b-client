@@ -89,9 +89,9 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
         this.eventsApiV25 = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api.EventsApi(newApiClientV25(restTemplate, devBasePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
         this.streamsApiV25 = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api.StreamsApi(newApiClientV25(restTemplate, devBasePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
         this.eventsApiV26 = new it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.api_v26.EventsApi(newApiClient(restTemplate, devBasePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
-        this.streamsApiV26 = new it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.api_v26.StreamsApi(newApiClientV26(restTemplate, devBasePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
+        this.streamsApiV26 = new it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.api_v26.StreamsApi(newApiClient(restTemplate, devBasePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
         this.eventsApiV27 = new it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.api_v27.EventsApi(newApiClient(restTemplate, devBasePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
-        this.streamsApiV27 = new it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.api_v27.StreamsApi(newApiClientV27(restTemplate, devBasePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
+        this.streamsApiV27 = new it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.api_v27.StreamsApi(newApiClient(restTemplate, devBasePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
 
         this.apiKeySetted = ApiKeyType.MVP_1;
     }
@@ -121,6 +121,7 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
         return newApiClient;
     }
 
+    //TODO: sarebbe carino modificare il POM in modo che il package della V25 segua l'impostazione delle altre versioni, evitando questo duplicato inutile
     private static it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.ApiClient newApiClientV25(RestTemplate restTemplate, String basePath, String apikey, String bearerToken, String enableInterop) {
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.ApiClient newApiClient = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.ApiClient(restTemplate);
         newApiClient.setBasePath(basePath);
@@ -131,26 +132,54 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
         return newApiClient;
     }
 
-    private static it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.ApiClient newApiClientV26(RestTemplate restTemplate, String basePath, String apikey, String bearerToken, String enableInterop) {
-        it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.ApiClient newApiClient = new it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.ApiClient(restTemplate);
-        newApiClient.setBasePath(basePath);
-        newApiClient.addDefaultHeader("x-api-key", apikey);
-        if (ENEBLED_INTEROP.equalsIgnoreCase(enableInterop)) {
-            newApiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
+    @Override
+    public boolean setApiKeys(ApiKeyType apiKey) {
+        boolean beenSet = false;
+        switch (apiKey) {
+            case MVP_1 -> {
+                if (this.apiKeySetted != ApiKeyType.MVP_1) {
+                    setApiKey(apiKeyMvp1);
+                    this.apiKeySetted = ApiKeyType.MVP_1;
+                }
+                beenSet = true;
+            }
+            case MVP_2 -> {
+                if (this.apiKeySetted != ApiKeyType.MVP_2) {
+                    setApiKey(apiKeyMvp2);
+                    this.apiKeySetted = ApiKeyType.MVP_2;
+                }
+                beenSet = true;
+            }
+            case GA -> {
+                if (this.apiKeySetted != ApiKeyType.GA) {
+                    setApiKey(apiKeyGa);
+                    this.apiKeySetted = ApiKeyType.GA;
+                }
+                beenSet = true;
+            }
         }
-        return newApiClient;
+        return beenSet;
     }
 
-    private static it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.ApiClient newApiClientV27(RestTemplate restTemplate, String basePath, String apikey, String bearerToken, String enableInterop) {
-        it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.ApiClient newApiClient = new it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.ApiClient(restTemplate);
-        newApiClient.setBasePath(basePath);
-        newApiClient.addDefaultHeader("x-api-key", apikey);
-        if (ENEBLED_INTEROP.equalsIgnoreCase(enableInterop)) {
-            newApiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
-        }
-        return newApiClient;
+    @Override
+    public ApiKeyType getApiKeySetted() {
+        return this.apiKeySetted;
     }
 
+    public void setApiKey(String apiKey) {
+        this.eventsApi.setApiClient(newApiClient(restTemplate, devBasePath, apiKey, bearerTokenInterop, enableInterop));
+        this.streamsApi.setApiClient(newApiClient(restTemplate, devBasePath, apiKey, bearerTokenInterop, enableInterop));
+        this.eventsApiV23.setApiClient(newApiClient(restTemplate, devBasePath, apiKey, bearerTokenInterop, enableInterop));
+        this.streamsApiV23.setApiClient(newApiClient(restTemplate, devBasePath, apiKey, bearerTokenInterop, enableInterop));
+        this.eventsApiV25.setApiClient(newApiClientV25(restTemplate, devBasePath, apiKey, bearerTokenInterop, enableInterop));
+        this.streamsApiV25.setApiClient(newApiClientV25(restTemplate, devBasePath, apiKey, bearerTokenInterop, enableInterop));
+        this.eventsApiV26.setApiClient(newApiClient(restTemplate, devBasePath, apiKey, bearerTokenInterop, enableInterop));
+        this.streamsApiV26.setApiClient(newApiClient(restTemplate, devBasePath, apiKey, bearerTokenInterop, enableInterop));
+        this.eventsApiV27.setApiClient(newApiClient(restTemplate, devBasePath, apiKey, bearerTokenInterop, enableInterop));
+        this.streamsApiV27.setApiClient(newApiClient(restTemplate, devBasePath, apiKey, bearerTokenInterop, enableInterop));
+    }
+
+    //V2
     public StreamMetadataResponse createEventStream(StreamCreationRequest streamCreationRequest) {
         refreshAndSetTokenInteropClient();
         return this.streamsApi.createEventStream(streamCreationRequest);
@@ -423,52 +452,5 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
     public ResponseEntity<List<ProgressResponseElementV27>> consumeEventStreamHttpV27(UUID streamId, String lastEventId) throws RestClientException {
         refreshAndSetTokenInteropClient();
         return this.eventsApiV27.consumeEventStreamV27WithHttpInfo(streamId, lastEventId);
-    }
-
-    @Override
-    public boolean setApiKeys(ApiKeyType apiKey) {
-        boolean beenSet = false;
-        switch (apiKey) {
-            case MVP_1 -> {
-                if (this.apiKeySetted != ApiKeyType.MVP_1) {
-                    setApiKey(apiKeyMvp1);
-                    this.apiKeySetted = ApiKeyType.MVP_1;
-                }
-                beenSet = true;
-            }
-            case MVP_2 -> {
-                if (this.apiKeySetted != ApiKeyType.MVP_2) {
-                    setApiKey(apiKeyMvp2);
-                    this.apiKeySetted = ApiKeyType.MVP_2;
-                }
-                beenSet = true;
-            }
-            case GA -> {
-                if (this.apiKeySetted != ApiKeyType.GA) {
-                    setApiKey(apiKeyGa);
-                    this.apiKeySetted = ApiKeyType.GA;
-                }
-                beenSet = true;
-            }
-        }
-        return beenSet;
-    }
-
-    @Override
-    public ApiKeyType getApiKeySetted() {
-        return this.apiKeySetted;
-    }
-
-    public void setApiKey(String apiKey) {
-        this.eventsApi.setApiClient(newApiClient(restTemplate, devBasePath, apiKey, bearerTokenInterop, enableInterop));
-        this.streamsApi.setApiClient(newApiClient(restTemplate, devBasePath, apiKey, bearerTokenInterop, enableInterop));
-        this.eventsApiV23.setApiClient(newApiClient(restTemplate, devBasePath, apiKey, bearerTokenInterop, enableInterop));
-        this.streamsApiV23.setApiClient(newApiClient(restTemplate, devBasePath, apiKey, bearerTokenInterop, enableInterop));
-        this.eventsApiV25.setApiClient(newApiClientV25(restTemplate, devBasePath, apiKey, bearerTokenInterop, enableInterop));
-        this.streamsApiV25.setApiClient(newApiClientV25(restTemplate, devBasePath, apiKey, bearerTokenInterop, enableInterop));
-        this.eventsApiV26.setApiClient(newApiClientV26(restTemplate, devBasePath, apiKey, bearerTokenInterop, enableInterop));
-        this.streamsApiV26.setApiClient(newApiClientV26(restTemplate, devBasePath, apiKey, bearerTokenInterop, enableInterop));
-        this.eventsApiV27.setApiClient(newApiClientV27(restTemplate, devBasePath, apiKey, bearerTokenInterop, enableInterop));
-        this.streamsApiV27.setApiClient(newApiClientV27(restTemplate, devBasePath, apiKey, bearerTokenInterop, enableInterop));
     }
 }
