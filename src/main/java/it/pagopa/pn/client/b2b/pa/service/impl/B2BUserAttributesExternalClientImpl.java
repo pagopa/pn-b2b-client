@@ -9,7 +9,11 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.api.C
 import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.api.LegalApi;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.*;
+import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.AddressVerification;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.CourtesyChannelType;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.UserAddresses;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.api.ConsentsApi;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.Consent;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.ConsentAction;
@@ -175,10 +179,10 @@ public class B2BUserAttributesExternalClientImpl implements IPnWebUserAttributes
     }
 
 
-    public List<LegalAndUnverifiedDigitalAddress> getLegalAddressByRecipient() throws RestClientException {
+    public List<LegalCourtesyAddressWrapper> getLegalAddressByRecipient() throws RestClientException {
         return legalApi.getLegalAddressByRecipient()
                 .stream()
-                .map(x -> deepCopy(x, LegalAndUnverifiedDigitalAddress.class))
+                .map(x -> deepCopy(x, LegalCourtesyAddressWrapper.class))
                 .toList();
     }
 
@@ -192,10 +196,10 @@ public class B2BUserAttributesExternalClientImpl implements IPnWebUserAttributes
         courtesyApiAddressBook.deleteRecipientCourtesyAddress(senderId, deepCopy(channelType, it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.CourtesyChannelType.class));
     }
 
-    public List<CourtesyDigitalAddress> getCourtesyAddressByRecipient() throws RestClientException {
+    public List<LegalCourtesyAddressWrapper> getCourtesyAddressByRecipient() throws RestClientException {
         return courtesyApiAddressBook.getCourtesyAddressByRecipient()
                 .stream()
-                .map(x -> deepCopy(x, CourtesyDigitalAddress.class))
+                .map(x -> deepCopy(x, LegalCourtesyAddressWrapper.class))
                 .toList();
     }
 

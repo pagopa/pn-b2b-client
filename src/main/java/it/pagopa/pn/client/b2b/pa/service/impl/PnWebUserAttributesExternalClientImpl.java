@@ -16,6 +16,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.pa.exception.IllegalConfigurationException;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
+import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.*;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.Consent;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.ConsentAction;
@@ -191,7 +192,6 @@ public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttribut
         return deepCopy(bffConsents.get(0), Consent.class);
     }
 
-
     public List<Consent> getConsents() throws RestClientException {
         return consentsApi.getTosPrivacyV2(Arrays.asList(it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.ConsentType.values()))
                 .stream().map(item -> deepCopy(item, Consent.class))
@@ -216,16 +216,14 @@ public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttribut
         return userAddresses;
     }
 
-
     public void deleteRecipientLegalAddress(String senderId, LegalChannelType channelType) throws RestClientException {
         addressesApi.deleteAddressV1(BffAddressType.LEGAL, senderId, BffChannelType.fromValue(channelType.getValue()));
     }
 
-
-    public List<LegalAndUnverifiedDigitalAddress> getLegalAddressByRecipient() throws RestClientException {
+    public List<LegalCourtesyAddressWrapper> getLegalAddressByRecipient() throws RestClientException {
         return addressesApi.getAddressesV1().stream()
                 .filter(item -> "LEGAL".equals(item.getAddressType()))
-                .map(item -> deepCopy(item, LegalAndUnverifiedDigitalAddress.class))
+                .map(item -> deepCopy(item, LegalCourtesyAddressWrapper.class))
                 .toList();
     }
 
@@ -239,10 +237,10 @@ public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttribut
         addressesApi.deleteAddressV1(BffAddressType.COURTESY, senderId, BffChannelType.fromValue(channelType.getValue()));
     }
 
-    public List<CourtesyDigitalAddress> getCourtesyAddressByRecipient() throws RestClientException {
+    public List<LegalCourtesyAddressWrapper> getCourtesyAddressByRecipient() throws RestClientException {
         return addressesApi.getAddressesV1().stream()
                 .filter(item -> "COURTESY".equals(item.getAddressType()))
-                .map(item -> deepCopy(item, CourtesyDigitalAddress.class))
+                .map(item -> deepCopy(item, LegalCourtesyAddressWrapper.class))
                 .toList();
     }
 
@@ -259,18 +257,9 @@ public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttribut
                 .build();
         try {
             String json = objMapper.writeValueAsString(obj);
-            json = editChannelType(json);
             return objMapper.readValue(json, toClass);
         } catch (JsonProcessingException exc) {
             throw new PnB2bException(exc.getMessage());
         }
-    }
-
-    /**
-     * Attualmente vi è discrepanza tra l'enum BffChannelType e LegalChannelType
-     * TODO IMPORTANTE: in attesa che vengano resi compatibili, dobbiamo ricorrere a questo metodo per evitare il fail dei test
-     */
-    private String editChannelType(String json) {
-        return json.replace("\"channelType\":\"SERCQ_SEND\"", "\"channelType\":\"SERCQ\"");
     }
 }

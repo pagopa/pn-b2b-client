@@ -23,8 +23,9 @@ import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientIm
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
+import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.*;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV27;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationStatusV26;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.utils.DataTest;
@@ -311,8 +312,10 @@ public class RicezioneNotificheWebSteps {
         String iun = sharedSteps.getNotificationIun();
 
         try {
-            String scheduleDate = Objects.requireNonNull(webRecipientClient.getFullReceivedNotification(iun, null).getTimeline().stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(TimelineElementCategoryV27.SCHEDULE_REFINEMENT)).findAny().get().getDetails()).getSchedulingDate();
-            String refinementDate = webRecipientClient.getFullReceivedNotification(iun, null).getTimeline().stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(TimelineElementCategoryV27.REFINEMENT)).findAny().get().getTimestamp();
+            String scheduleDate = Objects.requireNonNull(webRecipientClient.getFullReceivedNotification(iun, null).getTimeline().stream().filter(
+                    elem -> Objects.requireNonNull(elem.getCategory().getValue()).equals(SCHEDULE_REFINEMENT)).findAny().get().getDetails()).getSchedulingDate();
+            String refinementDate = webRecipientClient.getFullReceivedNotification(iun, null).getTimeline().stream().filter(
+                    elem -> Objects.requireNonNull(elem.getCategory().getValue()).equals(REFINEMENT)).findAny().get().getTimestamp();
             log.info("scheduleDate : {}", scheduleDate);
             log.info("refinementDate : {}", refinementDate);
             assertThat(refinementDate).as("La data di refinement non coincide con la scheduleDate").isEqualTo(scheduleDate);
@@ -433,12 +436,11 @@ public class RicezioneNotificheWebSteps {
             throw exc;
         }
 
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV27 timelineElementInternalCategory = it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV27.AAR_GENERATION;
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV27 timelineElement = null;
 
         FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         for (it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV27 element : fullSentNotification.getTimeline()) {
-            if (Objects.requireNonNull(element.getCategory()).equals(timelineElementInternalCategory)) {
+            if (Objects.requireNonNull(element.getCategory().getValue()).equals(AAR_GENERATION)) {
                 timelineElement = element;
                 break;
             }
@@ -831,7 +833,7 @@ public class RicezioneNotificheWebSteps {
     public void vieneDisabilitatoSercqPerEnte(String pa) {
         String senderId = getSenderIdPa(pa);
         Assertions.assertDoesNotThrow(() -> {
-            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
+            List<LegalCourtesyAddressWrapper> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
             if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
                 this.iPnWebUserAttributesClient.deleteRecipientLegalAddress(senderId, LegalChannelType.SERCQ);
                 log.info("SERCQ DISABLED");
@@ -844,12 +846,12 @@ public class RicezioneNotificheWebSteps {
     public void viewedPecDiPiattaformaDi() {
 
 
-        List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = Assertions.assertDoesNotThrow(() -> this.iPnWebUserAttributesClient.getLegalAddressByRecipient());
+        List<LegalCourtesyAddressWrapper> legalAddressByRecipient = Assertions.assertDoesNotThrow(() -> this.iPnWebUserAttributesClient.getLegalAddressByRecipient());
 
         Assertions.assertNotNull(legalAddressByRecipient);
 
         boolean exists = legalAddressByRecipient.stream()
-                .anyMatch(address -> LegalChannelType.PEC.equals(address.getChannelType()));
+                .anyMatch(address -> LegalChannelType.PEC.getValue().equals(address.getChannelType().getValue()));
         Assertions.assertFalse(exists, "PEC IS PRESENT");
 
     }
@@ -858,7 +860,7 @@ public class RicezioneNotificheWebSteps {
     public void verifyPecIsPresentPerUserPerEnte(String pa) {
         String senderId = getSenderIdPa(pa);
 
-        List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = Assertions.assertDoesNotThrow(() -> this.iPnWebUserAttributesClient.getLegalAddressByRecipient());
+        List<LegalCourtesyAddressWrapper> legalAddressByRecipient = Assertions.assertDoesNotThrow(() -> this.iPnWebUserAttributesClient.getLegalAddressByRecipient());
         boolean exists = false;
         if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
             exists = legalAddressByRecipient.stream()
@@ -871,12 +873,12 @@ public class RicezioneNotificheWebSteps {
     public void viewedSercqPerEnte(String act, String pa) {
         String senderId = getSenderIdPa(pa);
 
-        List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = Assertions.assertDoesNotThrow(() -> this.iPnWebUserAttributesClient.getLegalAddressByRecipient());
+        List<LegalCourtesyAddressWrapper> legalAddressByRecipient = Assertions.assertDoesNotThrow(() -> this.iPnWebUserAttributesClient.getLegalAddressByRecipient());
 
         boolean exists = Optional.ofNullable(legalAddressByRecipient)
                 .filter(data -> !data.isEmpty())
                 .map(data -> data.stream()
-                        .anyMatch(address -> senderId.equals(address.getSenderId()) && LegalChannelType.SERCQ.equals(address.getChannelType())))
+                        .anyMatch(address -> senderId.equals(address.getSenderId()) && address.getAddressType().getValue().contains(LegalChannelType.SERCQ.getValue())))
                 .orElse(false);
 
         switch (act) {
@@ -892,11 +894,11 @@ public class RicezioneNotificheWebSteps {
     public void viewedSercqPerUtente(String user) {
         selectUser(user);
 
-        List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = Assertions.assertDoesNotThrow(() -> this.iPnWebUserAttributesClient.getLegalAddressByRecipient());
+        List<LegalCourtesyAddressWrapper> legalAddressByRecipient = Assertions.assertDoesNotThrow(() -> this.iPnWebUserAttributesClient.getLegalAddressByRecipient());
         boolean exists = false;
         if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
             exists = legalAddressByRecipient.stream()
-                    .anyMatch(address -> LegalChannelType.SERCQ.equals(address.getChannelType()));
+                    .anyMatch(address -> address.getChannelType().getValue().contains(LegalChannelType.SERCQ.getValue()));
         }
         Assertions.assertTrue(exists, "SERCQ NOT FOUND");
     }
@@ -906,11 +908,12 @@ public class RicezioneNotificheWebSteps {
     public void viewedPecPerUtentePerEnte(String pa) {
         String senderId = getSenderIdPa(pa);
 
-        List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = Assertions.assertDoesNotThrow(() -> this.iPnWebUserAttributesClient.getLegalAddressByRecipient());
+        List<LegalCourtesyAddressWrapper> legalAddressByRecipient = Assertions.assertDoesNotThrow(() -> this.iPnWebUserAttributesClient.getLegalAddressByRecipient());
         boolean exists = false;
         if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
             exists = legalAddressByRecipient.stream()
-                    .anyMatch(address -> LegalChannelType.PEC.equals(address.getChannelType()) && senderId.equals(address.getSenderId()) && address.getCodeValid());
+                    .anyMatch(address -> LegalChannelType.PEC.getValue().equals(address.getChannelType().getValue()) && senderId.equals(address.getSenderId()) && address.getCodeValid());
+//                    .anyMatch(address -> LegalChannelType.PEC.equals(address.getChannelType()) && senderId.equals(address.getSenderId()) && address.getCodeValid());
         }
         Assertions.assertFalse(exists, "PEC FOUND");
 
@@ -945,10 +948,10 @@ public class RicezioneNotificheWebSteps {
             throw new RuntimeException("Sleep was interrupted", e);
         }
         boolean exists = false;
-        List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = Assertions.assertDoesNotThrow(() -> this.iPnWebUserAttributesClient.getLegalAddressByRecipient());
+        List<LegalCourtesyAddressWrapper> legalAddressByRecipient = Assertions.assertDoesNotThrow(() -> this.iPnWebUserAttributesClient.getLegalAddressByRecipient());
         if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
             exists = legalAddressByRecipient.stream()
-                    .anyMatch(address -> LegalChannelType.PEC.equals(address.getChannelType()) && senderId.equals(address.getSenderId()));
+                    .anyMatch(address -> LegalChannelType.PEC.getValue().equals(address.getChannelType().getValue()) && senderId.equals(address.getSenderId()));
 
 
         }
