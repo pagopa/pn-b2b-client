@@ -113,7 +113,7 @@ Feature: avanzamento notifiche asincrone b2b PG - controllo costi
 
   @Async @mockNR
   Scenario: [B2B_ASYNC_5_PG] Notifica mono PG-Verifica amount GPD per notifica ASYNC fino a "SEND_ANALOG_DOMICILE" al secondo tentativo
-    Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Gherkin Analogic" con Piva "80048790176"
+    Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Cucumber" con Piva "80048790176"
     Given viene generata una nuova notifica
       | subject       | invio notifica con cucumber |
       | feePolicy     | DELIVERY_MODE               |
