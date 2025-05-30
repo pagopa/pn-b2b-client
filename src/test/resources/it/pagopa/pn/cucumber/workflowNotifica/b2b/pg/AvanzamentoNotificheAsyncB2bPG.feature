@@ -113,13 +113,13 @@ Feature: avanzamento notifiche asincrone b2b PG - controllo costi
 
   @Async @mockNR
   Scenario: [B2B_ASYNC_5_PG] Notifica mono PG-Verifica amount GPD per notifica ASYNC fino a "SEND_ANALOG_DOMICILE" al secondo tentativo
-    Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Gherkin Analogic" con Piva "80048790176"
+    Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Cucumber" con Piva "80048790176"
     Given viene generata una nuova notifica
       | subject       | invio notifica con cucumber |
       | feePolicy     | DELIVERY_MODE               |
       | pagoPaIntMode | ASYNC                       |
       | paFee         | 10                          |
-    And destinatario Gherkin Analogic e:
+    And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | via@FAIL-Irreperibile_AR_SLOW |
       | payment_creditorTaxId   | 77777777777                   |
@@ -127,7 +127,7 @@ Feature: avanzamento notifiche asincrone b2b PG - controllo costi
       | payment_f24             | NULL                          |
       | apply_cost_pagopa       | SI                            |
       | payment_multy_number    | 1                             |
-    And al destinatario viene associato lo iuv creato mediante partita debitoria per "Gherkin Analogic" alla posizione 0
+    And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Cucumber" alla posizione 0
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED per controllo GPD
     And viene aggiunto il costo della notifica totale
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_0"
@@ -136,10 +136,10 @@ Feature: avanzamento notifiche asincrone b2b PG - controllo costi
       | details_recIndex        | 0        |
       | details_sentAttemptMade | 0        |
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" al tentativo "ATTEMPT_1"
-    And  lettura amount posizione debitoria per la notifica corrente di "Gherkin Analogic"
+    And  lettura amount posizione debitoria per la notifica corrente di "Mario Cucumber"
     And viene effettuato il controllo del cambiamento dell'amount nella timeline "SEND_ANALOG_DOMICILE" del utente 0 al tentativo:
       | details                 | NOT_NULL |
       | details_recIndex        | 0        |
       | details_sentAttemptMade | 1        |
     Then si controlla che l'aggiornamento del costo del utente 0 sia corretto
-    Then viene cancellata la posizione debitoria di "Gherkin Analogic"
+    Then viene cancellata la posizione debitoria di "Mario Cucumber"
