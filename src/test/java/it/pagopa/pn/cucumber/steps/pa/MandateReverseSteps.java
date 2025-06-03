@@ -26,7 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Predicate;
 
-import static it.pagopa.pn.cucumber.steps.pa.notificationVersions.Costanti.*;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 
 public class MandateReverseSteps {
     private final IMandateReverseServiceClient mandateReverseServiceClient;
@@ -154,7 +154,6 @@ public class MandateReverseSteps {
             }
             default -> throw new IllegalStateException("Unexpected value: " + user.trim().toLowerCase());
         }
-        ;
     }
 
     private Optional<MandateDto> isMandatePresent(String delegator) {

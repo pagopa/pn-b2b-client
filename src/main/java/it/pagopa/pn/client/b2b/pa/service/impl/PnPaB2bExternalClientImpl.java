@@ -10,8 +10,8 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api.*;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.api.NotificationProcessCostApi;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationProcessCostResponse;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.api_v24.NotificationProcessCostApi;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v24.NotificationProcessCostResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -157,41 +157,41 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     public boolean setApiKeys(ApiKeyType apiKey) {
         boolean beenSet = false;
         switch (apiKey) {
-            case MVP_1:
+            case MVP_1 -> {
                 if (this.apiKeySetted != ApiKeyType.MVP_1) {
                     setApiKey(apiKeyMvp1);
                     this.apiKeySetted = ApiKeyType.MVP_1;
                 }
                 beenSet = true;
-                break;
-            case MVP_2:
+            }
+            case MVP_2 -> {
                 if (this.apiKeySetted != ApiKeyType.MVP_2) {
                     setApiKey(apiKeyMvp2);
                     this.apiKeySetted = ApiKeyType.MVP_2;
                 }
                 beenSet = true;
-                break;
-            case GA:
+            }
+            case GA -> {
                 if (this.apiKeySetted != ApiKeyType.GA) {
                     setApiKey(apiKeyGa);
                     this.apiKeySetted = ApiKeyType.GA;
                 }
                 beenSet = true;
-                break;
-            case SON:
+            }
+            case SON -> {
                 if (this.apiKeySetted != ApiKeyType.SON) {
                     setApiKey(apiKeySon);
                     this.apiKeySetted = ApiKeyType.SON;
                 }
                 beenSet = true;
-                break;
-            case ROOT:
+            }
+            case ROOT -> {
                 if (this.apiKeySetted != ApiKeyType.ROOT) {
                     setApiKey(apiKeyRoot);
                     this.apiKeySetted = ApiKeyType.ROOT;
                 }
                 beenSet = true;
-                break;
+            }
         }
         return beenSet;
     }
@@ -283,7 +283,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         return this.notificationPriceV23Api.retrieveNotificationPriceV23(paTaxId, noticeCode);
     }
 
-    public NotificationProcessCostResponse getNotificationProcessCost(String iun, Integer recipientIndex, it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationFeePolicy notificationFeePolicy, Boolean applyCost, Integer paFee, Integer vat) throws RestClientException {
+    public NotificationProcessCostResponse getNotificationProcessCost(String iun, Integer recipientIndex, it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v24.NotificationFeePolicy notificationFeePolicy, Boolean applyCost, Integer paFee, Integer vat) throws RestClientException {
         refreshAndSetTokenInteropClient();
         return this.notificationProcessCostApi.notificationProcessCost(iun, recipientIndex, notificationFeePolicy, applyCost, paFee, vat);
     }
@@ -320,7 +320,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     }
 
     @Override
-    public FullSentNotificationV26 getSentNotification(String iun) {
+    public FullSentNotificationV26 getSentNotificationV26(String iun) {
         refreshAndSetTokenInteropClient();
         return senderReadB2BApi.retrieveSentNotificationV26(iun);
     }
@@ -361,38 +361,57 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
 
     @Override
     public NewNotificationRequestStatusResponseV24 getNotificationRequestStatusV24(String notificationRequestId) {
+        return getNotificationRequestStatusAllParamV24(notificationRequestId, null, null);
+    }
+
+    @Override
+    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequestStatusResponse getNotificationRequestStatusAllParamV1(String notificationRequestId, String paProtocolNumber, String idempotenceToken) {
         refreshAndSetTokenInteropClient();
-        return senderReadB2BApi.retrieveNotificationRequestStatusV24(notificationRequestId, null, null);
+        return senderReadB2BApiV1.retrieveNotificationRequestStatus(notificationRequestId, paProtocolNumber, idempotenceToken);
+    }
+
+    @Override
+    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationRequestStatusResponse getNotificationRequestStatusAllParamV2(String notificationRequestId, String paProtocolNumber, String idempotenceToken) {
+        refreshAndSetTokenInteropClient();
+        return senderReadB2BApiV2.retrieveNotificationRequestStatus(notificationRequestId, paProtocolNumber, idempotenceToken);
+    }
+
+    @Override
+    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationRequestStatusResponseV21 getNotificationRequestStatusAllParamV21(String notificationRequestId, String paProtocolNumber, String idempotenceToken) {
+        refreshAndSetTokenInteropClient();
+        return senderReadB2BApiV21.retrieveNotificationRequestStatusV21(notificationRequestId, paProtocolNumber, idempotenceToken);
     }
 
     @Override
     public NewNotificationRequestStatusResponseV23 getNotificationRequestStatusV23(String notificationRequestId) {
-        refreshAndSetTokenInteropClient();
-        return senderReadB2BApi.retrieveNotificationRequestStatusV23(notificationRequestId, null, null);
+        return getNotificationRequestStatusAllParamV23(notificationRequestId, null, null);
     }
 
     @Override
     public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequestStatusResponse getNotificationRequestStatusV1(String notificationRequestId) {
-        refreshAndSetTokenInteropClient();
-        return senderReadB2BApiV1.retrieveNotificationRequestStatus(notificationRequestId, null, null);
+        return getNotificationRequestStatusAllParamV1(notificationRequestId, null, null);
     }
 
     @Override
     public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationRequestStatusResponse getNotificationRequestStatusV2(String notificationRequestId) {
-        refreshAndSetTokenInteropClient();
-        return senderReadB2BApiV2.retrieveNotificationRequestStatus(notificationRequestId, null, null);
+        return getNotificationRequestStatusAllParamV2(notificationRequestId, null, null);
     }
 
     @Override
     public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationRequestStatusResponseV21 getNotificationRequestStatusV21(String notificationRequestId) {
-        refreshAndSetTokenInteropClient();
-        return senderReadB2BApiV21.retrieveNotificationRequestStatusV21(notificationRequestId, null, null);
+        return getNotificationRequestStatusAllParamV21(notificationRequestId, null, null);
     }
 
     @Override
-    public NewNotificationRequestStatusResponseV23 getNotificationRequestStatusAllParam(String notificationRequestId, String paProtocolNumber, String idempotenceToken) {
+    public NewNotificationRequestStatusResponseV23 getNotificationRequestStatusAllParamV23(String notificationRequestId, String paProtocolNumber, String idempotenceToken) {
         refreshAndSetTokenInteropClient();
         return senderReadB2BApi.retrieveNotificationRequestStatusV23(notificationRequestId, paProtocolNumber, idempotenceToken);
+    }
+
+    @Override
+    public NewNotificationRequestStatusResponseV24 getNotificationRequestStatusAllParamV24(String notificationRequestId, String paProtocolNumber, String idempotenceToken) {
+        refreshAndSetTokenInteropClient();
+        return senderReadB2BApi.retrieveNotificationRequestStatusV24(notificationRequestId, paProtocolNumber, idempotenceToken);
     }
 
     @Override

@@ -14,7 +14,7 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 public class ClientKeyReadSteps {
     private static final long MAX_SAFE_INTEGER = 9007199254740991L;
 
-    private ClientTokenConfigurator clientTokenConfigurator;
+    private final ClientTokenConfigurator clientTokenConfigurator;
     private final IAuthorizationClient authorizationClient;
     private final SharedStepsContext sharedStepsContext;
     private final IdentityService identityService;

@@ -9,7 +9,11 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.api.C
 import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.api.LegalApi;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.*;
+import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.AddressVerification;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.CourtesyChannelType;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.UserAddresses;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.api.ConsentsApi;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.Consent;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.ConsentAction;
@@ -60,7 +64,7 @@ public class B2BUserAttributesExternalClientImpl implements IPnWebUserAttributes
         this.leonardoBearerToken = leonardoBearerToken;
         this.galileoBearerToken = galileoBearerToken;
         this.dinoBearerToken = dinoBearerToken;
-        this.userBearerTokenScaduto= userBearerTokenScaduto;
+        this.userBearerTokenScaduto = userBearerTokenScaduto;
         this.gherkinSrlBearerToken = gherkinSrlBearerToken;
         this.cucumberSpaBearerToken = cucumberSpaBearerToken;
         this.basePath = basePath;
@@ -82,7 +86,7 @@ public class B2BUserAttributesExternalClientImpl implements IPnWebUserAttributes
         it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.ApiClient newApiClient =
                 new it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.ApiClient(restTemplate);
         newApiClient.setBasePath(basePath);
-        newApiClient.addDefaultHeader("Authorization","Bearer " + bearerToken);
+        newApiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
         return newApiClient;
     }
 
@@ -166,7 +170,7 @@ public class B2BUserAttributesExternalClientImpl implements IPnWebUserAttributes
     }
 
     public UserAddresses getAddressesByRecipient() throws RestClientException {
-        return deepCopy(allApi.getAddressesByRecipient(), UserAddresses.class) ;
+        return deepCopy(allApi.getAddressesByRecipient(), UserAddresses.class);
     }
 
 
@@ -175,10 +179,10 @@ public class B2BUserAttributesExternalClientImpl implements IPnWebUserAttributes
     }
 
 
-    public List<LegalAndUnverifiedDigitalAddress> getLegalAddressByRecipient() throws RestClientException {
+    public List<LegalCourtesyAddressWrapper> getLegalAddressByRecipient() throws RestClientException {
         return legalApi.getLegalAddressByRecipient()
                 .stream()
-                .map(x -> deepCopy(x, LegalAndUnverifiedDigitalAddress.class))
+                .map(x -> deepCopy(x, LegalCourtesyAddressWrapper.class))
                 .toList();
     }
 
@@ -192,10 +196,10 @@ public class B2BUserAttributesExternalClientImpl implements IPnWebUserAttributes
         courtesyApiAddressBook.deleteRecipientCourtesyAddress(senderId, deepCopy(channelType, it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.CourtesyChannelType.class));
     }
 
-    public List<CourtesyDigitalAddress> getCourtesyAddressByRecipient() throws RestClientException {
+    public List<LegalCourtesyAddressWrapper> getCourtesyAddressByRecipient() throws RestClientException {
         return courtesyApiAddressBook.getCourtesyAddressByRecipient()
                 .stream()
-                .map(x -> deepCopy(x, CourtesyDigitalAddress.class))
+                .map(x -> deepCopy(x, LegalCourtesyAddressWrapper.class))
                 .toList();
     }
 
@@ -205,13 +209,13 @@ public class B2BUserAttributesExternalClientImpl implements IPnWebUserAttributes
         courtesyApiAddressBook.postRecipientCourtesyAddress(senderId, courtesyChannelType, address);
     }
 
-    private <T> T deepCopy( Object obj, Class<T> toClass) {
+    private <T> T deepCopy(Object obj, Class<T> toClass) {
         ObjectMapper objMapper = JsonMapper.builder()
                 .addModule(new JavaTimeModule())
                 .build();
         try {
-            String json = objMapper.writeValueAsString( obj );
-            return objMapper.readValue( json, toClass );
+            String json = objMapper.writeValueAsString(obj);
+            return objMapper.readValue(json, toClass);
         } catch (JsonProcessingException exc) {
             throw new PnB2bException(exc.getMessage());
         }

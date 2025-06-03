@@ -26,9 +26,7 @@ Feature: produzione del documento di annullamento notifica
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And la notifica "può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
-    When si invoca l'api B2B versione "V24" per ottenere gli elementi di timeline di tale notifica
     Then tra gli elementi di timeline versione "V24" di categoria "NOTIFICATION_CANCELLED" nessuno contiene un legalFact con categoria "NOTIFICATION_CANCELLED"
-    When si invoca l'api B2B versione "V23" per ottenere gli elementi di timeline di tale notifica
     Then tra gli elementi di timeline versione "V23" di categoria "NOTIFICATION_CANCELLED" nessuno contiene un legalFact con categoria "NOTIFICATION_CANCELLED"
 
   @attestatoAnnullamentoNotifica @precondition @webhook2 @cleanWebhook

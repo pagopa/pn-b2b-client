@@ -25,16 +25,22 @@
         <spring.boot-version>2.5.2</spring.boot-version>
         <cucumber.version>7.8.1</cucumber.version>
         <open.api.version>develop</open.api.version>
-        <open.api.version.delivery>v2.15.1</open.api.version.delivery>
-        <open.api.version.delivery.push>v2.15.1</open.api.version.delivery.push>
+        <!--V1 -->
         <open.api.version.delivery_v1>v2.0.2</open.api.version.delivery_v1>
         <open.api.version.delivery.push_v1>v2.0.3</open.api.version.delivery.push_v1>
+        <!--V2 -->
         <open.api.version.delivery_v2>v2.1.0</open.api.version.delivery_v2>
-        <open.api.version.delivery.push_v2>v2.1.0</open.api.version.delivery.push_v2> <!--TODO: a cosa serve ?-->
+        <open.api.version.delivery.push_v2>v2.1.0</open.api.version.delivery.push_v2>
+        <!--V21 -->
         <open.api.version.delivery_v21>v2.3.0</open.api.version.delivery_v21>
         <open.api.version.delivery.push_v21>v2.3.2</open.api.version.delivery.push_v21>
-        <open.api.version.delivery.push_v23>v2.5.0</open.api.version.delivery.push_v23>
+        <!--V23 -->
         <open.api.version.delivery_v23>v2.10.0</open.api.version.delivery_v23>
+        <open.api.version.delivery.push_v23>v2.5.0</open.api.version.delivery.push_v23>
+        <!--V24 -->
+        <open.api.version.delivery>v2.15.1</open.api.version.delivery>
+        <open.api.version.delivery.push>v2.15.1</open.api.version.delivery.push>
+
         <open.api.version.user.attributes>v2.8.0</open.api.version.user.attributes>
         <open.api.version.mandate>v2.5.0</open.api.version.mandate>
         <open.api.version.apikey.manager>v2.2.0</open.api.version.apikey.manager>
@@ -44,7 +50,8 @@
         <open.api.version.external.channels>develop</open.api.version.external.channels>
         <open.api.version.external.registries>v2.4.1</open.api.version.external.registries>
         <open.api.version.paper.channel>develop</open.api.version.paper.channel>
-        <open.api.version.external.bff>v1.8.0</open.api.version.external.bff>
+        <open.api.version.external.bff_v1>v1.0.0</open.api.version.external.bff_v1>
+        <open.api.version.external.bff_v2>v1.9.0</open.api.version.external.bff_v2>
     </properties>
 
     <dependencies>
@@ -215,9 +222,10 @@
             <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>5.4.0</version>
+                <version>7.3.0</version>
                 <inherited>false</inherited>
                 <executions>
+                    <!--EMD api private-->
                     <execution>
                         <id>generate-internal-emd-api-private</id>
                         <goals>
@@ -229,6 +237,7 @@
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-emd-integration/refs/heads/develop/docs/openapi/api-private.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -250,6 +259,7 @@
                             <modelPackage>it.pagopa.pn.client.b2b.radd.generated.openapi.clients.emd.model</modelPackage>
                         </configuration>
                     </execution>
+                    <!--internal client raddFsu -->
                     <execution>
                         <id>generate-internal-client-radd</id>
                         <goals>
@@ -261,6 +271,7 @@
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-radd-fsu/${open.api.version.radd.fsu}/docs/openapi/pn-radd-fsu-v1.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -282,6 +293,7 @@
                             <modelPackage>it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model</modelPackage>
                         </configuration>
                     </execution>
+                    <!--internal client raddAlt -->
                     <execution>
                         <id>generate-internal-client-radd-alternative</id>
                         <goals>
@@ -293,6 +305,7 @@
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-radd-alt/${open.api.version.radd.alt}/docs/openapi/pn-radd-alt-private.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -314,6 +327,7 @@
                             <modelPackage>it.pagopa.pn.client.b2b.radd.generated.openapi.clients.privateb2braddalt.model</modelPackage>
                         </configuration>
                     </execution>
+                    <!--external client raddAlt -->
                     <execution>
                         <id>generate-external-client-radd-alternative</id>
                         <goals>
@@ -326,6 +340,7 @@
                                 <typeMapping>Object=byte[]</typeMapping>
                             </typeMappings>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-radd-alt/${open.api.version.radd.alt}/docs/openapi/pn-radd-alt-external.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -347,64 +362,8 @@
                             <modelPackage>it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model</modelPackage>
                         </configuration>
                     </execution>
-                    <execution>
-                        <id>generate-internal-client-b2b-pa</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <phase>process-resources</phase>
-                        <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery}/docs/openapi/api-internal-b2b-pa.yaml</inputSpec>
-                            <generatorName>java</generatorName>
-                            <library>resttemplate</library>
-                            <generateApiTests>false</generateApiTests>
-                            <generateModelTests>false</generateModelTests>
-                            <configOptions>
-                                <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api</apiPackage>
-                                <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model</modelPackage>
-                                <dateLibrary>java8</dateLibrary>
-                                <annotationLibrary>none</annotationLibrary>
-                                <documentationProvider>source</documentationProvider>
-                                <openApiNullable>false</openApiNullable>
-                                <useAbstractionForFiles>true</useAbstractionForFiles>
-                                <useBeanValidation>false</useBeanValidation>
-                                <additionalModelTypeAnnotations>
-                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
-                                </additionalModelTypeAnnotations>
-                            </configOptions>
-                            <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api</apiPackage>
-                            <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model</modelPackage>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>generate-internal-client-b2b-pa-v23</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <phase>process-resources</phase>
-                        <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery_v23}/docs/openapi/api-internal-b2b-pa.yaml</inputSpec>
-                            <generatorName>java</generatorName>
-                            <library>resttemplate</library>
-                            <generateApiTests>false</generateApiTests>
-                            <generateModelTests>false</generateModelTests>
-                            <configOptions>
-                                <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.v23.api</apiPackage>
-                                <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.v23.model</modelPackage>
-                                <dateLibrary>java8</dateLibrary>
-                                <annotationLibrary>none</annotationLibrary>
-                                <documentationProvider>source</documentationProvider>
-                                <openApiNullable>false</openApiNullable>
-                                <useAbstractionForFiles>true</useAbstractionForFiles>
-                                <useBeanValidation>false</useBeanValidation>
-                                <additionalModelTypeAnnotations>
-                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
-                                </additionalModelTypeAnnotations>
-                            </configOptions>
-                            <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.v23.api</apiPackage>
-                            <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.v23.model</modelPackage>
-                        </configuration>
-                    </execution>
+
+                    <!--internal delivery V1 -->
                     <execution>
                         <id>generate-internal-client-b2b-pa_v1</id>
                         <goals>
@@ -413,6 +372,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery_v1}/docs/openapi/api-internal-b2b-pa.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -434,6 +394,7 @@
                             <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model_v1</modelPackage>
                         </configuration>
                     </execution>
+                    <!--internal delivery V2 -->
                     <execution>
                         <id>generate-internal-client-b2b-pa_v2</id>
                         <goals>
@@ -442,6 +403,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery_v2}/docs/openapi/api-internal-b2b-pa.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -463,6 +425,7 @@
                             <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model_v2</modelPackage>
                         </configuration>
                     </execution>
+                    <!--internal delivery V21 -->
                     <execution>
                         <id>generate-internal-client-b2b-pa_v21</id>
                         <goals>
@@ -471,6 +434,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery_v21}/docs/openapi/api-internal-b2b-pa.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -492,21 +456,23 @@
                             <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model_v21</modelPackage>
                         </configuration>
                     </execution>
+                    <!--internal delivery V23 -->
                     <execution>
-                        <id>generate-internal-delivery-push-client-b2b-pa</id>
+                        <id>generate-internal-client-b2b-pa-v23</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version.delivery.push}/docs/openapi/api-internal-pn-delivery-push.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery_v23}/docs/openapi/api-internal-b2b-pa.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
                             <generateModelTests>false</generateModelTests>
                             <configOptions>
-                                <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaldeliveryPushb2bpa.api</apiPackage>
-                                <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaldeliveryPushb2bpa.model</modelPackage>
+                                <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.v23.api</apiPackage>
+                                <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.v23.model</modelPackage>
                                 <dateLibrary>java8</dateLibrary>
                                 <annotationLibrary>none</annotationLibrary>
                                 <documentationProvider>source</documentationProvider>
@@ -517,10 +483,44 @@
                                     @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
                                 </additionalModelTypeAnnotations>
                             </configOptions>
-                            <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaldeliveryPushb2bpa.api</apiPackage>
-                            <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaldeliveryPushb2bpa.model</modelPackage>
+                            <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.v23.api</apiPackage>
+                            <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.v23.model</modelPackage>
                         </configuration>
                     </execution>
+                    <!--internal delivery V24 -->
+                    <execution>
+                        <id>generate-internal-client-b2b-pa</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery}/docs/openapi/api-internal-b2b-pa.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <configOptions>
+                                <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api</apiPackage>
+                                <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+                            <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api</apiPackage>
+                            <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model</modelPackage>
+                        </configuration>
+                    </execution>
+
+
+                    <!--internal deliveryPush V1 -->
                     <execution>
                         <id>generate-internal-delivery-push-client-b2b-pa_v1</id>
                         <goals>
@@ -529,6 +529,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version.delivery.push_v1}/docs/openapi/api-internal-pn-delivery-push.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -550,6 +551,7 @@
                             <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaldeliveryPushb2bpa.model_v1</modelPackage>
                         </configuration>
                     </execution>
+                    <!--internal deliveryPush V2 -->
                     <execution>
                         <id>generate-internal-delivery-push-client-b2b-pa_v2</id>
                         <goals>
@@ -558,6 +560,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version.delivery.push_v2}/docs/openapi/api-internal-pn-delivery-push.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -579,21 +582,23 @@
                             <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaldeliveryPushb2bpa.model_v1</modelPackage>
                         </configuration>
                     </execution>
+                    <!--internal deliveryPush V24 -->
                     <execution>
-                        <id>generate-external-client-b2b-pa</id>
+                        <id>generate-internal-delivery-push-client-b2b-pa</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery}/docs/openapi/api-external-b2b-pa-bundle.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version.delivery.push}/docs/openapi/api-internal-pn-delivery-push.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
                             <generateModelTests>false</generateModelTests>
                             <configOptions>
-                                <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api</apiPackage>
-                                <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model</modelPackage>
+                                <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaldeliveryPushb2bpa.api</apiPackage>
+                                <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaldeliveryPushb2bpa.model</modelPackage>
                                 <dateLibrary>java8</dateLibrary>
                                 <annotationLibrary>none</annotationLibrary>
                                 <documentationProvider>source</documentationProvider>
@@ -604,10 +609,13 @@
                                     @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
                                 </additionalModelTypeAnnotations>
                             </configOptions>
-                            <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api</apiPackage>
-                            <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model</modelPackage>
+                            <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaldeliveryPushb2bpa.api</apiPackage>
+                            <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaldeliveryPushb2bpa.model</modelPackage>
                         </configuration>
                     </execution>
+
+
+                    <!--external delivery V1 -->
                     <execution>
                         <id>generate-external-client-b2b-pa_v1</id>
                         <goals>
@@ -616,6 +624,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery_v1}/docs/openapi/api-external-b2b-pa-bundle.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -637,6 +646,7 @@
                             <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1</modelPackage>
                         </configuration>
                     </execution>
+                    <!--external delivery V2 -->
                     <execution>
                         <id>generate-external-client-b2b-pa_v2</id>
                         <goals>
@@ -645,6 +655,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery_v2}/docs/openapi/api-external-b2b-pa-bundle.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -666,6 +677,7 @@
                             <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2</modelPackage>
                         </configuration>
                     </execution>
+                    <!--external delivery V21 -->
                     <execution>
                         <id>generate-external-client-b2b-pa_v21</id>
                         <goals>
@@ -674,6 +686,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/feature/PN-9569-api-21/docs/openapi/api-external-b2b-pa-merged.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -695,6 +708,38 @@
                             <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21</modelPackage>
                         </configuration>
                     </execution>
+                    <!--external delivery V24 -->
+                    <execution>
+                        <id>generate-external-client-b2b-pa</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery}/docs/openapi/api-external-b2b-pa-bundle.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <configOptions>
+                                <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api</apiPackage>
+                                <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+                            <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api</apiPackage>
+                            <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model</modelPackage>
+                        </configuration>
+                    </execution>
+                    <!--external client b2b V25 -->
                     <execution>
                         <id>generate-external-client-b2b-pa_v25</id>
                         <goals>
@@ -703,6 +748,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/refs/tags/v2.11.0/docs/openapi/api-external-b2b-pa-bundle.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -727,6 +773,9 @@
                             <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api_v25</modelPackage>
                         </configuration>
                     </execution>
+
+
+                    <!--private safeStorage -->
                     <execution>
                         <id>generate-private-safestorage</id>
                         <goals>
@@ -737,6 +786,7 @@
                             <inputSpec>
                                 https://raw.githubusercontent.com/pagopa/pn-ss/develop/docs/openapi/pn-safestorage-v1.1-api.yaml
                             </inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -758,64 +808,8 @@
                             <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.model</modelPackage>
                         </configuration>
                     </execution>
-                    <execution>
-                        <id>generate-external-web-recipient</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <phase>process-resources</phase>
-                        <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery}/docs/openapi/api-external-web-recipient.yaml</inputSpec>
-                            <generatorName>java</generatorName>
-                            <library>resttemplate</library>
-                            <generateApiTests>false</generateApiTests>
-                            <generateModelTests>false</generateModelTests>
-                            <configOptions>
-                                <apiPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.api</apiPackage>
-                                <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model</modelPackage>
-                                <dateLibrary>java8</dateLibrary>
-                                <annotationLibrary>none</annotationLibrary>
-                                <documentationProvider>source</documentationProvider>
-                                <openApiNullable>false</openApiNullable>
-                                <useAbstractionForFiles>true</useAbstractionForFiles>
-                                <useBeanValidation>false</useBeanValidation>
-                                <additionalModelTypeAnnotations>
-                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
-                                </additionalModelTypeAnnotations>
-                            </configOptions>
-                            <apiPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.api</apiPackage>
-                            <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model</modelPackage>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>generate-external-web-recipient-v25</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <phase>process-resources</phase>
-                        <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version.delivery.push}/docs/openapi/api-external-pn-delivery-push.yaml</inputSpec>
-                            <generatorName>java</generatorName>
-                            <library>resttemplate</library>
-                            <generateApiTests>false</generateApiTests>
-                            <generateModelTests>false</generateModelTests>
-                            <configOptions>
-                                <apiPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.api</apiPackage>
-                                <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model</modelPackage>
-                                <dateLibrary>java8</dateLibrary>
-                                <annotationLibrary>none</annotationLibrary>
-                                <documentationProvider>source</documentationProvider>
-                                <openApiNullable>false</openApiNullable>
-                                <useAbstractionForFiles>true</useAbstractionForFiles>
-                                <useBeanValidation>false</useBeanValidation>
-                                <additionalModelTypeAnnotations>
-                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
-                                </additionalModelTypeAnnotations>
-                            </configOptions>
-                            <apiPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.api</apiPackage>
-                            <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model</modelPackage>
-                        </configuration>
-                    </execution>
+
+                    <!--webRecipient V1-->
                     <execution>
                         <id>generate-external-web-recipient_v1</id>
                         <goals>
@@ -824,6 +818,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery_v1}/docs/openapi/api-external-web-recipient.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -845,6 +840,7 @@
                             <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model_v1</modelPackage>
                         </configuration>
                     </execution>
+                    <!--webRecipient V2-->
                     <execution>
                         <id>generate-external-web-recipient_v2</id>
                         <goals>
@@ -853,6 +849,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery_v2}/docs/openapi/api-external-web-recipient.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -874,6 +871,71 @@
                             <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model_v2</modelPackage>
                         </configuration>
                     </execution>
+                    <!--webRecipient V24-->
+                    <execution>
+                        <id>generate-external-web-recipient</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery}/docs/openapi/api-external-web-recipient.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <configOptions>
+                                <apiPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.api</apiPackage>
+                                <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+                            <apiPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.api</apiPackage>
+                            <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model</modelPackage>
+                        </configuration>
+                    </execution>
+                    <!--webRecipient V25-->
+                    <execution>
+                        <id>generate-external-web-recipient-v25</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version.delivery.push}/docs/openapi/api-external-pn-delivery-push.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <configOptions>
+                                <apiPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.api</apiPackage>
+                                <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+                            <apiPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.api</apiPackage>
+                            <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model</modelPackage>
+                        </configuration>
+                    </execution>
+
+
+                    <!--Webhook V2 -->
                     <execution>
                         <id>generate-external-client-b2b-webhook_v2</id>
                         <goals>
@@ -882,6 +944,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version.delivery.push_v21}/docs/openapi/api-external-b2b-webhook.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -903,6 +966,7 @@
                             <modelPackage>it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2</modelPackage>
                         </configuration>
                     </execution>
+                    <!--Webhook V23 -->
                     <execution>
                         <id>generate-external-client-b2b-webhook_v2_3</id>
                         <goals>
@@ -911,6 +975,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version.delivery.push_v23}/docs/openapi/api-external-b2b-webhook-bundle.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -932,6 +997,7 @@
                             <modelPackage>it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3</modelPackage>
                         </configuration>
                     </execution>
+                    <!--Webhook V26 -->
                     <execution>
                         <id>generate-external-client-b2b-webhook-v26</id>
                         <goals>
@@ -940,6 +1006,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/a6aa030f9055080736723a5935e593b80adfedf3/docs/openapi/api-external-b2b-webhook-bundle.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -961,8 +1028,7 @@
                             <modelPackage>it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v26</modelPackage>
                         </configuration>
                     </execution>
-
-                    <!--MATTEO TODO new v27-->
+                    <!--Webhook V27 -->
                     <execution>
                         <id>generate-external-client-b2b-webhook-v27</id>
                         <goals>
@@ -971,6 +1037,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/refs/heads/feature/PN-13954/docs/openapi/api-external-b2b-webhook-bundle.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -993,6 +1060,7 @@
                         </configuration>
                     </execution>
 
+                    <!--webMandate-->
                     <execution>
                         <id>generate-external-web-mandate</id>
                         <goals>
@@ -1001,6 +1069,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-mandate/${open.api.version.mandate}/docs/openapi/pn-mandate-external-web.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1022,6 +1091,7 @@
                             <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model</modelPackage>
                         </configuration>
                     </execution>
+                    <!--appIO-->
                     <execution>
                         <id>generate-external-api-appIO</id>
                         <goals>
@@ -1030,6 +1100,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery}/docs/openapi/api-external-b2b-appio.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1051,6 +1122,7 @@
                             <modelPackage>it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model</modelPackage>
                         </configuration>
                     </execution>
+                    <!--appIO V1-->
                     <execution>
                         <id>generate-external-api-appIO_v1</id>
                         <goals>
@@ -1059,6 +1131,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery_v1}/docs/openapi/api-external-b2b-appio.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1080,6 +1153,7 @@
                             <modelPackage>it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model_v1</modelPackage>
                         </configuration>
                     </execution>
+                    <!--appIO V2-->
                     <execution>
                         <id>generate-external-api-appIO_v2</id>
                         <goals>
@@ -1088,6 +1162,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery_v2}/docs/openapi/api-external-b2b-appio.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1109,6 +1184,7 @@
                             <modelPackage>it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model_v2</modelPackage>
                         </configuration>
                     </execution>
+
                     <execution>
                         <id>generate-external-web-userAttributes-consents</id>
                         <goals>
@@ -1117,6 +1193,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-user-attributes/${open.api.version.user.attributes}/docs/openapi/pn-user-consents-api-external.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1146,6 +1223,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery}/docs/openapi/api-external-web-pa.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1175,6 +1253,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery_v1}/docs/openapi/api-external-web-pa.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1204,6 +1283,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery_v2}/docs/openapi/api-external-web-pa.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1233,6 +1313,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-user-attributes/${open.api.version.user.attributes}/docs/openapi/pn-address-book-api-external.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1262,6 +1343,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-user-attributes/${open.api.version.user.attributes}/docs/openapi/pn-address-book-b2b-external-io.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1291,6 +1373,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-apikey-manager/${open.api.version.apikey.manager}/docs/openapi/pn-apikey-manager-external-web.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1320,6 +1403,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-downtime-logs/refs/heads/${open.api.version.downtime.logs}/docs/openapi/api-internal-v1.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1341,38 +1425,9 @@
                             <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model</modelPackage>
                         </configuration>
                     </execution>
-                    <execution>
-                        <id>generate-private-delivery-push</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <phase>process-resources</phase>
-                        <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version.delivery.push}/docs/openapi/api-private.yaml</inputSpec>
-                            <generatorName>java</generatorName>
-                            <library>resttemplate</library>
-                            <generateApiTests>false</generateApiTests>
-                            <generateModelTests>false</generateModelTests>
-                            <importMappings>
-                                FullSentNotificationV25=it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV25
-                            </importMappings>
-                            <configOptions>
-                                <apiPackage>it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.api</apiPackage>
-                                <modelPackage>it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model</modelPackage>
-                                <dateLibrary>java8</dateLibrary>
-                                <annotationLibrary>none</annotationLibrary>
-                                <documentationProvider>source</documentationProvider>
-                                <openApiNullable>false</openApiNullable>
-                                <useAbstractionForFiles>true</useAbstractionForFiles>
-                                <useBeanValidation>false</useBeanValidation>
-                                <additionalModelTypeAnnotations>
-                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
-                                </additionalModelTypeAnnotations>
-                            </configOptions>
-                            <apiPackage>it.pagopa.pn.client.web.generated.openapi.clients.privateDeliveryPush.api</apiPackage>
-                            <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.privateDeliveryPush.model</modelPackage>
-                        </configuration>
-                    </execution>
+
+                    <!--PRIVATE DELIVERY PUSH (per recupero timeline da delivery-push)-->
+                    <!--private delivery push V1 -->
                     <execution>
                         <id>generate-private-delivery-push_v1</id>
                         <goals>
@@ -1381,6 +1436,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version.delivery.push_v1}/docs/openapi/api-private.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1405,6 +1461,7 @@
                             <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.privateDeliveryPush.model_v1</modelPackage>
                         </configuration>
                     </execution>
+                    <!--private delivery push V2 -->
                     <execution>
                         <id>generate-private-delivery-push_v2</id>
                         <goals>
@@ -1413,6 +1470,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version.delivery.push_v2}/docs/openapi/api-private.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1437,6 +1495,110 @@
                             <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.privateDeliveryPush.model_v2</modelPackage>
                         </configuration>
                     </execution>
+                    <!--private delivery push V21 -->
+                    <execution>
+                        <id>generate-private-delivery-push_v21</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version.delivery.push_v21}/docs/openapi/api-private.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <importMappings>
+                                TimelineElementV20=it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV20
+                            </importMappings>
+                            <configOptions>
+                                <apiPackage>it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.api_v21</apiPackage>
+                                <modelPackage>it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v21</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+                            <apiPackage>it.pagopa.pn.client.web.generated.openapi.clients.privateDeliveryPush.api_v21</apiPackage>
+                            <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.privateDeliveryPush.model_v21</modelPackage>
+                        </configuration>
+                    </execution>
+                    <!--private delivery push V23 -->
+                    <execution>
+                        <id>generate-private-delivery-push_v23</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version.delivery.push_v23}/docs/openapi/api-private.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <importMappings>
+                                TimelineElementV23=it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23
+                            </importMappings>
+                            <configOptions>
+                                <apiPackage>it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.api_v23</apiPackage>
+                                <modelPackage>it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v23</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+                            <apiPackage>it.pagopa.pn.client.web.generated.openapi.clients.privateDeliveryPush.api_v23</apiPackage>
+                            <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.privateDeliveryPush.model_v23</modelPackage>
+                        </configuration>
+                    </execution>
+                    <!--private delivery push V24 -->
+                    <execution>
+                        <id>generate-private-delivery-push_v24</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version.delivery.push}/docs/openapi/api-private.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <importMappings>
+                                FullSentNotificationV25=it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV25
+                            </importMappings>
+                            <configOptions>
+                                <apiPackage>it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.api_v24</apiPackage>
+                                <modelPackage>it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v24</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+                            <apiPackage>it.pagopa.pn.client.web.generated.openapi.clients.privateDeliveryPush.api_v24</apiPackage>
+                            <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.privateDeliveryPush.model_v24</modelPackage>
+                        </configuration>
+                    </execution>
+
+                    <!--serviceDesk external-->
                     <execution>
                         <id>generate-external-servicedesk</id>
                         <goals>
@@ -1445,6 +1607,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-service-desk/${open.api.version}/docs/openapi/api-internal-pn-service-desk-v1.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1466,6 +1629,7 @@
                             <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.serviceDesk.model</modelPackage>
                         </configuration>
                     </execution>
+                    <!--gpd external-->
                     <execution>
                         <id>generate-external-gpd</id>
                         <goals>
@@ -1474,6 +1638,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pagopa-api/0b70603c14c463ad9b40d8c4dbcbdb0a1b8dc3f2/openapi/gpd.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1498,7 +1663,7 @@
                             <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.gpd.model</modelPackage>
                         </configuration>
                     </execution>
-
+                    <!--serviceDesk integration-->
                     <execution>
                         <id>generate-external-servicedesk-integration</id>
                         <goals>
@@ -1507,6 +1672,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-service-desk/v1.7.0-RC.1/docs/openapi/api-cruscotto-assistenza-pn-service-desk-v1.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1528,6 +1694,7 @@
                             <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.serviceDeskIntegration.model</modelPackage>
                         </configuration>
                     </execution>
+                    <!--raddAòt anagrafica csv-->
                     <execution>
                         <id>generate-external-radd-import-anagrafica-csv</id>
                         <goals>
@@ -1536,6 +1703,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-radd-alt/${open.api.version.radd.alt}/docs/openapi/pn-radd-alt-import-registry-external.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1557,6 +1725,7 @@
                             <modelPackage>it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCsv</modelPackage>
                         </configuration>
                     </execution>
+                    <!--raddAlt anagrafica crud-->
                     <execution>
                         <id>generate-external-raddAlt-import-anagrafica-crud</id>
                         <goals>
@@ -1565,6 +1734,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-radd-alt/${open.api.version.radd.alt}/docs/openapi/pn-radd-alt-registry-external.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1586,6 +1756,7 @@
                             <modelPackage>it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD</modelPackage>
                         </configuration>
                     </execution>
+                    <!--mock pec-->
                     <execution>
                         <id>generate-external-channels-mock-pec</id>
                         <goals>
@@ -1594,6 +1765,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-external-channels/${open.api.version.external.channels}/docs/openapi/api-mock-received-message-v1.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1615,21 +1787,23 @@
                             <modelPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec</modelPackage>
                         </configuration>
                     </execution>
+                    <!--bff recipient V1-->
                     <execution>
-                        <id>generate-external-bff-recipient</id>
+                        <id>generate-external-bff-recipient-v1</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-bff/${open.api.version.external.bff}/docs/openapi/api-external-pn-bff-recipient-notifications.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-bff/${open.api.version.external.bff_v1}/docs/openapi/api-external-pn-bff-recipient-notifications.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
                             <generateModelTests>false</generateModelTests>
                             <configOptions>
-                                <apiPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient</apiPackage>
-                                <modelPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient</modelPackage>
+                                <apiPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient.v1</apiPackage>
+                                <modelPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v1</modelPackage>
                                 <dateLibrary>java8</dateLibrary>
                                 <annotationLibrary>none</annotationLibrary>
                                 <documentationProvider>source</documentationProvider>
@@ -1640,8 +1814,69 @@
                                     @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
                                 </additionalModelTypeAnnotations>
                             </configOptions>
-                            <apiPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient</apiPackage>
-                            <modelPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient</modelPackage>
+                            <apiPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient.v1</apiPackage>
+                            <modelPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v1</modelPackage>
+                        </configuration>
+                    </execution>
+                    <!--bff recipient V2-->
+                    <execution>
+                        <id>generate-external-bff-recipient-v2</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-bff/${open.api.version.external.bff_v2}/docs/openapi/api-external-pn-bff-recipient-notifications.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <configOptions>
+                                <apiPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient.v2</apiPackage>
+                                <modelPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+                            <apiPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient.v2</apiPackage>
+                            <modelPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2</modelPackage>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-external-pn-bff-recipient-digital-addresses.yaml</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-bff/develop/docs/openapi/api-external-pn-bff-recipient-digital-addresses.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <configOptions>
+                                <apiPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient.digitaladdresses</apiPackage>
+                                <modelPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.digitaladdresses</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+                            <apiPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient.digitaladdresses</apiPackage>
+                            <modelPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient.digitaladdresses</modelPackage>
                         </configuration>
                     </execution>
                     <execution>
@@ -1652,6 +1887,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-bff/develop/docs/openapi/api-external-pn-bff-pa-notifications.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1684,6 +1920,7 @@
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-paper-channel/${open.api.version.paper.channel}/docs/openapi/api-internal-v1.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1716,6 +1953,7 @@
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-mandate/${open.api.version.mandate}/docs/openapi/pn-mandate-b2b-pg-external.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1748,6 +1986,7 @@
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery}/docs/openapi/pn-delivery-b2b-pg-external.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1779,7 +2018,8 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-bff/${open.api.version.external.bff}/docs/openapi/api-external-pn-bff-recipient-mandate.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-bff/${open.api.version.external.bff_v2}/docs/openapi/api-external-pn-bff-recipient-mandate.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1812,6 +2052,7 @@
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-external-registries/refs/heads/develop/docs/openapi/api-private-v1.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1841,6 +2082,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-bff/refs/heads/develop/docs/openapi/api-external-pn-bff-payments.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1863,6 +2105,46 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>generate-external-bff-apikey-manager-pa</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <inputSpec>
+                                https://raw.githubusercontent.com/pagopa/pn-bff/${open.api.version.external.bff_v2}/docs/openapi/api-external-pn-bff-pa-apikeys.yaml
+                            </inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <configOptions>
+                                <apiPackage>
+                                    it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.apikey.manager.pa
+                                </apiPackage>
+                                <modelPackage>
+                                    it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pa
+                                </modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+                            <apiPackage>
+                                it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.apikey.manager.pa
+                            </apiPackage>
+                            <modelPackage>
+                                it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pa
+                            </modelPackage>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>generate-external-bff-apikey-manager-pg</id>
                         <goals>
                             <goal>generate</goal>
@@ -1870,8 +2152,9 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>
-                                https://raw.githubusercontent.com/pagopa/pn-bff/${open.api.version.external.bff}/docs/openapi/api-external-pn-bff-pg-apikeys.yaml
+                                https://raw.githubusercontent.com/pagopa/pn-bff/${open.api.version.external.bff_v2}/docs/openapi/api-external-pn-bff-pg-apikeys.yaml
                             </inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1909,8 +2192,9 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>
-                                https://raw.githubusercontent.com/pagopa/pn-bff/${open.api.version.external.bff}/docs/openapi/api-external-pn-bff-tos-privacy.yaml
+                                https://raw.githubusercontent.com/pagopa/pn-bff/${open.api.version.external.bff_v2}/docs/openapi/api-external-pn-bff-tos-privacy.yaml
                             </inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1952,6 +2236,7 @@
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-user-attributes/${open.api.version.user.attributes}/docs/openapi/pn-address-book-b2b-pg-external.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1973,6 +2258,8 @@
                             <modelPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model</modelPackage>
                         </configuration>
                     </execution>
+
+                    <!--delivery push b2b -->
                     <execution>
                         <id>generate-external-delivery-push-b2b</id>
                         <goals>
@@ -1984,6 +2271,7 @@
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version.delivery.push}/docs/openapi/api-external-pn-delivery-push-b2b-pg.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -2005,7 +2293,7 @@
                             <modelPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.model</modelPackage>
                         </configuration>
                     </execution>
-
+                    <!--template engine-->
                     <execution>
                         <id>generate-external-templates-engine-client</id>
                         <goals>
@@ -2018,6 +2306,7 @@
                                 <typeMapping>file=org.springframework.core.io.Resource</typeMapping>
                             </typeMappings>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-templates-engine/refs/heads/develop/docs/openapi/pn-internal-templates-v1.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>

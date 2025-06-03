@@ -1,16 +1,27 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullReceivedNotificationV25;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.model.LegalFactDownloadMetadataResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient.ApiClient;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient.v1.NotificationReceivedApi;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v1.BffDocumentDownloadMetadataResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v1.BffDocumentType;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v1.BffFullNotificationV1;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffLegalFactId;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffNotificationsResponse;
+import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.ApiClient;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.api.RecipientReadApi;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.FullReceivedNotificationV25;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationAttachmentDownloadMetadataResponse;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationSearchResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationAttachmentDownloadMetadataResponse;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationStatusV26;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model_v1.FullReceivedNotification;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.api.DocumentsWebApi;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.api.LegalFactsApi;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.*;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactCategory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -20,7 +31,9 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 
 @Component
@@ -29,9 +42,8 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
     private static final String AUTHORIZATION = "Authorization";
     private static final String BEARER = "Bearer ";
     private final RestTemplate restTemplate;
-    private final RecipientReadApi recipientReadApi;
-    private final it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.api_v1.RecipientReadApi recipientReadApiV1;
-    private final it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.api_v2.RecipientReadApi recipientReadApiV2;
+    private final NotificationReceivedApi notificationReceivedApiV1;
+    private final it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient.v2.NotificationReceivedApi notificationReceivedApiV2;
     private final LegalFactsApi legalFactsApi;
     private final DocumentsWebApi documentsWebApi;
     private BearerTokenType bearerTokenSetted;
@@ -66,9 +78,8 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
         this.cucumberSpaBearerToken = cucumberSpaBearerToken;
         this.basePath = basePath;
         this.userAgent = userAgent;
-        this.recipientReadApi = new RecipientReadApi(newApiClient(restTemplate, basePath, marioGherkinBearerToken, userAgent));
-        this.recipientReadApiV1 = new it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.api_v1.RecipientReadApi(newApiClient(restTemplate, basePath, marioGherkinBearerToken, userAgent));
-        this.recipientReadApiV2 = new it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.api_v2.RecipientReadApi(newApiClient(restTemplate, basePath, marioGherkinBearerToken, userAgent));
+        this.notificationReceivedApiV1 = new NotificationReceivedApi(newApiClient(restTemplate, basePath, marioGherkinBearerToken, userAgent));
+        this.notificationReceivedApiV2 = new it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient.v2.NotificationReceivedApi(newApiClient(restTemplate, basePath, marioGherkinBearerToken, userAgent));
         this.legalFactsApi = new LegalFactsApi(newApiClientV25(restTemplate, basePath, marioGherkinBearerToken));
         this.documentsWebApi = new DocumentsWebApi(newApiClientV25(restTemplate, basePath, marioGherkinBearerToken));
         this.bearerTokenSetted = BearerTokenType.USER_2;
@@ -78,7 +89,15 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
         ApiClient newApiClient = new ApiClient(restTemplate);
         newApiClient.setBasePath(basePath);
         newApiClient.addDefaultHeader("user-agent", userAgent);
-        newApiClient.setBearerToken(bearerToken);
+        newApiClient.addDefaultHeader("Authorization","Bearer " + bearerToken);
+        return newApiClient;
+    }
+
+    private static it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient.ApiClient newNotificationReceivedApiClient(RestTemplate restTemplate, String basePath, String bearerToken, String userAgent) {
+        it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient.ApiClient newApiClient = new it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient.ApiClient(restTemplate);
+        newApiClient.setBasePath(basePath);
+        newApiClient.addDefaultHeader("user-agent", userAgent);
+        newApiClient.addDefaultHeader("Authorization","Bearer " + bearerToken);
         return newApiClient;
     }
 
@@ -94,63 +113,56 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
         boolean beenSet = false;
         switch (bearerToken) {
             case USER_1:
-                this.recipientReadApi.setApiClient(newApiClient(restTemplate, basePath, marioCucumberBearerToken, userAgent));
-                this.recipientReadApiV1.setApiClient(newApiClient(restTemplate, basePath, marioCucumberBearerToken, userAgent));
-                this.recipientReadApiV2.setApiClient(newApiClient(restTemplate, basePath, marioCucumberBearerToken, userAgent));
+                this.notificationReceivedApiV1.setApiClient(newNotificationReceivedApiClient(restTemplate, basePath, marioCucumberBearerToken, userAgent));
+                this.notificationReceivedApiV2.setApiClient(newNotificationReceivedApiClient(restTemplate, basePath, marioCucumberBearerToken, userAgent));
                 this.legalFactsApi.setApiClient(newApiClientV25(restTemplate, basePath, marioCucumberBearerToken));
                 this.documentsWebApi.setApiClient(newApiClientV25(restTemplate, basePath, marioCucumberBearerToken));
                 this.bearerTokenSetted = BearerTokenType.USER_1;
                 beenSet = true;
                 break;
             case USER_2:
-                this.recipientReadApi.setApiClient(newApiClient(restTemplate, basePath, marioGherkinBearerToken, userAgent));
-                this.recipientReadApiV1.setApiClient(newApiClient(restTemplate, basePath, marioGherkinBearerToken, userAgent));
-                this.recipientReadApiV2.setApiClient(newApiClient(restTemplate, basePath, marioGherkinBearerToken, userAgent));
+                this.notificationReceivedApiV1.setApiClient(newNotificationReceivedApiClient(restTemplate, basePath, marioGherkinBearerToken, userAgent));
+                this.notificationReceivedApiV2.setApiClient(newNotificationReceivedApiClient(restTemplate, basePath, marioGherkinBearerToken, userAgent));
                 this.legalFactsApi.setApiClient(newApiClientV25(restTemplate, basePath, marioGherkinBearerToken));
                 this.documentsWebApi.setApiClient(newApiClientV25(restTemplate, basePath, marioGherkinBearerToken));
                 this.bearerTokenSetted = BearerTokenType.USER_2;
                 beenSet = true;
                 break;
             case USER_3:
-                this.recipientReadApi.setApiClient(newApiClient(restTemplate, basePath, leonardoBearerToken, userAgent));
-                this.recipientReadApiV1.setApiClient(newApiClient(restTemplate, basePath, leonardoBearerToken, userAgent));
-                this.recipientReadApiV2.setApiClient(newApiClient(restTemplate, basePath, leonardoBearerToken, userAgent));
+                this.notificationReceivedApiV1.setApiClient(newNotificationReceivedApiClient(restTemplate, basePath, leonardoBearerToken, userAgent));
+                this.notificationReceivedApiV2.setApiClient(newNotificationReceivedApiClient(restTemplate, basePath, leonardoBearerToken, userAgent));
                 this.legalFactsApi.setApiClient(newApiClientV25(restTemplate, basePath, leonardoBearerToken));
                 this.documentsWebApi.setApiClient(newApiClientV25(restTemplate, basePath, leonardoBearerToken));
                 this.bearerTokenSetted = BearerTokenType.USER_3;
                 beenSet = true;
                 break;
             case USER_5:
-                this.recipientReadApi.setApiClient(newApiClient(restTemplate, basePath, dinoBearerToken, userAgent));
-                this.recipientReadApiV1.setApiClient(newApiClient(restTemplate, basePath, dinoBearerToken, userAgent));
-                this.recipientReadApiV2.setApiClient(newApiClient(restTemplate, basePath, dinoBearerToken, userAgent));
+                this.notificationReceivedApiV1.setApiClient(newNotificationReceivedApiClient(restTemplate, basePath, dinoBearerToken, userAgent));
+                this.notificationReceivedApiV2.setApiClient(newNotificationReceivedApiClient(restTemplate, basePath, dinoBearerToken, userAgent));
                 this.legalFactsApi.setApiClient(newApiClientV25(restTemplate, basePath, dinoBearerToken));
                 this.documentsWebApi.setApiClient(newApiClientV25(restTemplate, basePath, dinoBearerToken));
                 this.bearerTokenSetted = BearerTokenType.USER_5;
                 beenSet = true;
                 break;
             case PG_1:
-                this.recipientReadApi.setApiClient(newApiClient(restTemplate, basePath, gherkinSrlBearerToken, userAgent));
-                this.recipientReadApiV1.setApiClient(newApiClient(restTemplate, basePath, gherkinSrlBearerToken, userAgent));
-                this.recipientReadApiV2.setApiClient(newApiClient(restTemplate, basePath, gherkinSrlBearerToken, userAgent));
+                this.notificationReceivedApiV1.setApiClient(newNotificationReceivedApiClient(restTemplate, basePath, gherkinSrlBearerToken, userAgent));
+                this.notificationReceivedApiV2.setApiClient(newNotificationReceivedApiClient(restTemplate, basePath, gherkinSrlBearerToken, userAgent));
                 this.legalFactsApi.setApiClient(newApiClientV25(restTemplate, basePath, gherkinSrlBearerToken));
                 this.documentsWebApi.setApiClient(newApiClientV25(restTemplate, basePath, gherkinSrlBearerToken));
                 this.bearerTokenSetted = BearerTokenType.PG_1;
                 beenSet = true;
                 break;
             case PG_2:
-                this.recipientReadApi.setApiClient(newApiClient(restTemplate, basePath, cucumberSpaBearerToken, userAgent));
-                this.recipientReadApiV1.setApiClient(newApiClient(restTemplate, basePath, cucumberSpaBearerToken, userAgent));
-                this.recipientReadApiV2.setApiClient(newApiClient(restTemplate, basePath, cucumberSpaBearerToken, userAgent));
+                this.notificationReceivedApiV1.setApiClient(newNotificationReceivedApiClient(restTemplate, basePath, cucumberSpaBearerToken, userAgent));
+                this.notificationReceivedApiV2.setApiClient(newNotificationReceivedApiClient(restTemplate, basePath, cucumberSpaBearerToken, userAgent));
                 this.legalFactsApi.setApiClient(newApiClientV25(restTemplate, basePath, cucumberSpaBearerToken));
                 this.documentsWebApi.setApiClient(newApiClientV25(restTemplate, basePath, cucumberSpaBearerToken));
                 this.bearerTokenSetted = BearerTokenType.PG_2;
                 beenSet = true;
                 break;
             case USER_SCADUTO:
-                this.recipientReadApi.setApiClient(newApiClient(restTemplate, basePath, userBearerTokenScaduto, userAgent));
-                this.recipientReadApiV1.setApiClient(newApiClient(restTemplate, basePath, userBearerTokenScaduto, userAgent));
-                this.recipientReadApiV2.setApiClient(newApiClient(restTemplate, basePath, userBearerTokenScaduto, userAgent));
+                this.notificationReceivedApiV1.setApiClient(newNotificationReceivedApiClient(restTemplate, basePath, userBearerTokenScaduto, userAgent));
+                this.notificationReceivedApiV2.setApiClient(newNotificationReceivedApiClient(restTemplate, basePath, userBearerTokenScaduto, userAgent));
                 this.legalFactsApi.setApiClient(newApiClientV25(restTemplate, basePath, userBearerTokenScaduto));
                 this.documentsWebApi.setApiClient(newApiClientV25(restTemplate, basePath, userBearerTokenScaduto));
                 this.bearerTokenSetted = BearerTokenType.USER_SCADUTO;
@@ -166,54 +178,88 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
     }
 
     public FullReceivedNotificationV25 getReceivedNotification(String iun, String mandateId) throws RestClientException {
-        return recipientReadApi.getReceivedNotificationV25(iun, mandateId);
+        it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffFullNotificationV1 notification = getReceivedNotificationV2(iun, mandateId);
+        return deepCopy(notification, FullReceivedNotificationV25.class);
     }
 
     @Override
-    public it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model_v1.NotificationAttachmentDownloadMetadataResponse getReceivedNotificationAttachment(String iun, String attachmentName, UUID mandateId) throws RestClientException {
-        return recipientReadApiV1.getReceivedNotificationAttachment(iun, attachmentName, mandateId);
+    public BffDocumentDownloadMetadataResponse getReceivedNotificationAttachment(String iun, String attachmentName, UUID mandateId) throws RestClientException {
+        return notificationReceivedApiV1.getReceivedNotificationDocumentV1(iun, BffDocumentType.ATTACHMENT, mandateId, null, attachmentName, null);
     }
 
-    public FullReceivedNotification getReceivedNotificationV1(String iun, String mandateId) throws RestClientException {
-        return recipientReadApiV1.getReceivedNotification(iun, mandateId);
+    public BffFullNotificationV1 getReceivedNotificationV1(String iun, String mandateId) throws RestClientException {
+        return notificationReceivedApiV1.getReceivedNotificationV1(iun, mandateId);
     }
 
-    public it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model_v2.FullReceivedNotification getReceivedNotificationV2(String iun, String mandateId) throws RestClientException {
-        return recipientReadApiV2.getReceivedNotification(iun, mandateId);
+    public it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffFullNotificationV1 getReceivedNotificationV2(String iun, String mandateId) throws RestClientException {
+        return notificationReceivedApiV2.getReceivedNotificationV1(iun, mandateId);
     }
 
     public NotificationAttachmentDownloadMetadataResponse getReceivedNotificationAttachment(String iun, String attachmentName, UUID mandateId, Integer attachmentIdx) throws RestClientException {
-        return recipientReadApi.getReceivedNotificationAttachment(iun, attachmentName, mandateId, attachmentIdx);
+        it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffDocumentDownloadMetadataResponse bffDocumentDownloadMetadataResponse = notificationReceivedApiV2.getReceivedNotificationDocumentV1(iun, it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffDocumentType.ATTACHMENT, mandateId, 0, attachmentName);
+        return deepCopy(bffDocumentDownloadMetadataResponse, NotificationAttachmentDownloadMetadataResponse.class);
     }
 
     public NotificationAttachmentDownloadMetadataResponse getReceivedNotificationDocument(String iun, Integer docIdx, UUID mandateId) throws RestClientException {
-        return recipientReadApi.getReceivedNotificationDocument(iun, docIdx, mandateId);
+        it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffDocumentDownloadMetadataResponse bffDocumentDownloadMetadataResponse = notificationReceivedApiV2.getReceivedNotificationDocumentV1(iun, it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffDocumentType.ATTACHMENT, mandateId, docIdx, null);
+        return deepCopy(bffDocumentDownloadMetadataResponse, NotificationAttachmentDownloadMetadataResponse.class);
     }
 
     public NotificationSearchResponse searchReceivedNotification(OffsetDateTime startDate, OffsetDateTime endDate, String mandateId, String senderId, NotificationStatusV26 status, String subjectRegExp, String iunMatch, Integer size, String nextPagesKey) throws RestClientException {
-        return recipientReadApi.searchReceivedNotification(startDate, endDate, mandateId, senderId, status, subjectRegExp, iunMatch, size, nextPagesKey);
+        it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.NotificationStatusV26 statusV26 = Optional.ofNullable(status)
+                .map(NotificationStatusV26::getValue)
+                .map(it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.NotificationStatusV26::fromValue)
+                .orElse(null);
+
+        BffNotificationsResponse notificationsResponse = notificationReceivedApiV2.searchReceivedNotificationsV1(startDate, endDate, mandateId, senderId, statusV26, subjectRegExp, iunMatch, size, nextPagesKey);
+        return deepCopy(notificationsResponse, NotificationSearchResponse.class);
     }
 
     public NotificationSearchResponse searchReceivedDelegatedNotification(OffsetDateTime startDate, OffsetDateTime endDate, String senderId, String recipientId, String group, NotificationStatusV26 status, String iunMatch, Integer size, String nextPagesKey) throws RestClientException {
-        return recipientReadApi.searchReceivedDelegatedNotification(startDate, endDate, senderId, recipientId, group, iunMatch, status, size, nextPagesKey);
+        it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.NotificationStatusV26 statusV26 = Optional.ofNullable(status)
+                .map(NotificationStatusV26::getValue)
+                .map(it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.NotificationStatusV26::fromValue)
+                .orElse(null);
+
+        BffNotificationsResponse notificationsResponse = notificationReceivedApiV2.searchReceivedDelegatedNotificationsV1(startDate, endDate, senderId, recipientId, group, statusV26, iunMatch, size, nextPagesKey);
+        return deepCopy(notificationsResponse, NotificationSearchResponse.class);
     }
 
     @Override
     public LegalFactDownloadMetadataResponse getLegalFact(String iun, LegalFactCategory legalFactType, String legalFactId) throws RestClientException {
-        return this.legalFactsApi.retrieveLegalFact(iun, legalFactType, legalFactId, null);
+        it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffDocumentDownloadMetadataResponse bffDocumentDownloadMetadataResponse = notificationReceivedApiV2.getReceivedNotificationDocumentV1(iun, it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffDocumentType.LEGAL_FACT, null, null, legalFactId);
+        return deepCopy(bffDocumentDownloadMetadataResponse, LegalFactDownloadMetadataResponse.class);
     }
 
     @Override
-    public List<LegalFactListElementV20> getLegalFactsV20(String iun, UUID mandateId) throws RestClientException {
-        return this.legalFactsApi.retrieveNotificationLegalFactsV20(iun, mandateId);
+    public List<BffLegalFactId> getLegalFactsV20(String iun, UUID mandateId) throws RestClientException {
+        it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffFullNotificationV1 bffFullNotificationV1 =
+                notificationReceivedApiV2.getReceivedNotificationV1(iun, mandateId != null ? mandateId.toString() : null);
+        return bffFullNotificationV1.getNotificationStatusHistory().stream()
+                .flatMap(bffNotificationStatusHistory -> bffNotificationStatusHistory.getSteps().stream())
+                .flatMap(bffNotificationDetailTimeline -> bffNotificationDetailTimeline.getLegalFactsIds().stream())
+                .collect(Collectors.toList());
     }
 
     @Override
-    public LegalFactDownloadMetadataResponse downloadLegalFactById(String iun, String legalFactId, UUID mandateId) throws RestClientException {
-        return this.legalFactsApi.downloadLegalFactById(iun, legalFactId, mandateId);
+    public it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffDocumentDownloadMetadataResponse downloadLegalFactById(String iun, String legalFactId, UUID mandateId) throws RestClientException {
+        return notificationReceivedApiV2.getReceivedNotificationDocumentV1(iun, it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffDocumentType.LEGAL_FACT, mandateId, null, legalFactId);
     }
 
-    public DocumentDownloadMetadataResponse getDocumentsWeb(String iun, DocumentCategory documentType, String documentId, String mandateId) throws RestClientException {
-        return this.documentsWebApi.getDocumentsWeb(iun, documentType, documentId, null);
+    public it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffDocumentDownloadMetadataResponse getDocumentsWeb(String iun, String documentId, UUID mandateId) throws RestClientException {
+        return notificationReceivedApiV2.getReceivedNotificationDocumentV1(iun, it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.v2.BffDocumentType.AAR, mandateId, null, documentId);
+    }
+
+    private <T> T deepCopy(Object obj, Class<T> toClass) {
+        ObjectMapper objMapper = JsonMapper.builder()
+                .addModule(new JavaTimeModule())
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .build();
+        try {
+            String json = objMapper.writeValueAsString(obj);
+            return objMapper.readValue(json, toClass);
+        } catch (JsonProcessingException exc) {
+            throw new PnB2bException(exc.getMessage());
+        }
     }
 }
