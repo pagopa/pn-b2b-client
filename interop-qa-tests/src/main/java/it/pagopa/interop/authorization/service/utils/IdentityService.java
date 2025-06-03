@@ -38,23 +38,23 @@ public class IdentityService {
 
     public UUID getUserId(String tenantType, String role, int userIndex) {
         return tenantList.stream()
-                .filter(tenant -> tenantType.equals(tenant.getName()))
-                .map(Tenant::getUserRoles)
-                .map(userRole -> userRole.get(role))
-                .map(user -> user.get(userIndex))
-                .findFirst()
-                .map(UUID::fromString)
-                .orElseThrow(() -> new IllegalArgumentException("TenantID or Role not defined in the config file!"));
+            .filter(tenant -> tenantType.equals(tenant.getName()))
+            .map(Tenant::getUserRoles)
+            .map(userRole -> userRole.get(role))
+            .map(user -> user.get(userIndex))
+            .findFirst()
+            .map(UUID::fromString)
+            .orElseThrow(() -> new IllegalArgumentException("TenantID or Role not defined in the config file!"));
     }
 
     public UUID getOrganizationId(String tenantType) {
         return tenantList.stream()
-                .filter(tenant -> tenantType.equals(tenant.getName()))
-                .map(Tenant::getOrganizationId)
-                .map(o -> o.get("dev"))
-                .findAny()
-                .map(UUID::fromString)
-                .orElse(null);
+            .filter(tenant -> tenantType.equals(tenant.getName()))
+            .map(Tenant::getOrganizationId)
+            .map(o -> o.get("dev"))
+            .findAny()
+            .map(UUID::fromString)
+            .orElse(null);
     }
 
 }

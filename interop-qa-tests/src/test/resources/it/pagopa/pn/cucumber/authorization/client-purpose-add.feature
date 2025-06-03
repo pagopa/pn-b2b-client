@@ -1,4 +1,4 @@
-@client_purpose_add
+@client
 Feature: Associazione finalità al client
   Tutti gli utenti autenticati possono associare una finalità ad un client
   

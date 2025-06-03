@@ -4,15 +4,19 @@ import io.cucumber.java.Before;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.pn.interop.cucumber.steps.common.AgreementCommonContext;
+import it.pagopa.pn.interop.cucumber.steps.common.AttributeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.ClientCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.DelegationCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
+import it.pagopa.pn.interop.cucumber.steps.common.RiskAnalysisCommonContext;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import it.pagopa.interop.authorization.domain.Role;
 import org.springframework.context.annotation.Scope;
 
 import java.util.UUID;
@@ -29,12 +33,16 @@ public class SharedStepsContext {
 
     private int testSeed;
     private String tenantType;
+    private Role role;
     private String userToken;
     private UUID agreementId;
     private ClientCommonContext clientCommonContext;
     private PurposeCommonContext purposeCommonContext;
     private EServicesCommonContext eServicesCommonContext;
     private DelegationCommonContext delegationCommonContext;
+    private AttributeCommonContext attributeCommonContext;
+    private AgreementCommonContext agreementCommonContext;
+    private RiskAnalysisCommonContext riskAnalysisCommonContext;
 
     public SharedStepsContext(
         HttpCallExecutor httpCallExecutor,
@@ -52,6 +60,9 @@ public class SharedStepsContext {
         purposeCommonContext = new PurposeCommonContext();
         eServicesCommonContext = new EServicesCommonContext();
         delegationCommonContext = new DelegationCommonContext();
+        attributeCommonContext = new AttributeCommonContext();
+        agreementCommonContext = new AgreementCommonContext();
+        riskAnalysisCommonContext = new RiskAnalysisCommonContext();
     }
 
 }
