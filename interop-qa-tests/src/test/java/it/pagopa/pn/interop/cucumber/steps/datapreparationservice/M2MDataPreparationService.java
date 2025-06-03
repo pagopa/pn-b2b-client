@@ -54,6 +54,10 @@ public class M2MDataPreparationService {
         );
     }
 
+    public UUID createAndCheckAgreement(UUID eServiceID, UUID descriptorId) {
+        return createAndCheckAgreement(eServiceID, descriptorId, null);
+    }
+
     public UUID createAndCheckAgreement(UUID eServiceID, UUID descriptorId, UUID delegationId) {
         CreateAndCheckAgreementOperation operation = CreateAndCheckAgreementOperation.of(
             buildCreateAgreementOperation(eServiceID, descriptorId, delegationId),

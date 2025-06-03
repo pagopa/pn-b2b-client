@@ -4,7 +4,6 @@ import io.cucumber.java.Before;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.utils.HttpCallExecutor;
-import it.pagopa.pn.interop.cucumber.steps.common.*;
 import it.pagopa.pn.interop.cucumber.steps.common.AgreementCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.AttributeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.ClientCommonContext;

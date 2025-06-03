@@ -203,12 +203,6 @@ public class AgreementClientImpl implements IAgreementClient {
         return agreementsApi.getProducerAgreementsWithHttpInfo(offset, limit, eservicesIds, consumersIds, states, showOnlyUpgradeable);
     }
 
-
-    @Override
-    public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreements getAgreements(Integer offset, Integer limit, List<AgreementState> states, List<UUID> producerIds, List<UUID> consumerIds, List<UUID> eserviceIds) {
-        return null;
-    }
-
     @Override
     public void setBearerToken(String bearerToken) {
         this.agreementsApi.setApiClient(createApiClient(bearerToken));

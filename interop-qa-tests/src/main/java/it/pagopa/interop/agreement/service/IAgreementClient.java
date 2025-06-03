@@ -1,8 +1,6 @@
 package it.pagopa.interop.agreement.service;
 
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreements;
-
 import it.pagopa.interop.generated.openapi.clients.bff.model.Agreement;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementRejectionPayload;
@@ -38,15 +36,5 @@ public interface IAgreementClient extends SettableBearerToken {
     ResponseEntity<CompactEServicesLight> getAgreementEServiceProducers(Integer offset, Integer limit, String q);
     ResponseEntity<it.pagopa.interop.generated.openapi.clients.bff.model.Agreements> getConsumerAgreements(Integer offset, Integer limit, List<UUID> eservicesIds, List<UUID> producersIds, List<AgreementState> states, Boolean showOnlyUpgradeable);
     ResponseEntity<it.pagopa.interop.generated.openapi.clients.bff.model.Agreements> getProducerAgreements(Integer offset, Integer limit, List<UUID> eservicesIds, List<UUID> consumersIds, List<AgreementState> states, Boolean showOnlyUpgradeable);
-
-    // nuovi metodi
-    Agreements getAgreements(
-            Integer offset,
-            Integer limit,
-            List<AgreementState> states,
-            List<UUID> producerIds,
-            List<UUID> consumerIds,
-            List<UUID> eserviceIds
-    );
 
 }

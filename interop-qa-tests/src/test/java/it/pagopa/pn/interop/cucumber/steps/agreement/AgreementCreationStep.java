@@ -1,6 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.agreement;
 
-import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
@@ -15,11 +14,10 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorS
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -115,17 +113,6 @@ public class AgreementCreationStep {
             "Auxiliary delegation not found");
         agreementCreationRequest(delegationId);
     }
-
-    @And("viene effettuato la creazione di un agreement con successo")
-    public void agreementCreationSuccess() {
-        UUID eserviceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
-        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
-
-        UUID agreementId = dataPreparationService.createAndCheckAgreement(eserviceId, descriptorId);
-
-        sharedStepsContext.setAgreementId(agreementId);
-    }
-
 
     private void agreementProcessRequest(String token, UUID delegationId) {
         clientTokenConfigurator.setBearerToken(token);
