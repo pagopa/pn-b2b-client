@@ -203,8 +203,6 @@ public class AgreementClientImpl implements IAgreementClient {
         return agreementsApi.getProducerAgreementsWithHttpInfo(offset, limit, eservicesIds, consumersIds, states, showOnlyUpgradeable);
     }
 
-
-
     @Override
     public void setBearerToken(String bearerToken) {
         this.agreementsApi.setApiClient(createApiClient(bearerToken));

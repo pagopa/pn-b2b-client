@@ -7,7 +7,6 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementRejectionP
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementSubmissionPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementUpdatePayload;
-import it.pagopa.interop.generated.openapi.clients.bff.model.Agreements;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactEServicesLight;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganizations;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
@@ -35,7 +34,7 @@ public interface IAgreementClient extends SettableBearerToken {
     void removeAgreementConsumerDocument(UUID agreementId, UUID documentId);
     ResponseEntity<CompactEServicesLight> getAgreementEServiceConsumers(Integer offset, Integer limit, String q);
     ResponseEntity<CompactEServicesLight> getAgreementEServiceProducers(Integer offset, Integer limit, String q);
-    ResponseEntity<Agreements> getConsumerAgreements(Integer offset, Integer limit, List<UUID> eservicesIds, List<UUID> producersIds, List<AgreementState> states, Boolean showOnlyUpgradeable);
-    ResponseEntity<Agreements> getProducerAgreements(Integer offset, Integer limit, List<UUID> eservicesIds, List<UUID> consumersIds, List<AgreementState> states, Boolean showOnlyUpgradeable);
+    ResponseEntity<it.pagopa.interop.generated.openapi.clients.bff.model.Agreements> getConsumerAgreements(Integer offset, Integer limit, List<UUID> eservicesIds, List<UUID> producersIds, List<AgreementState> states, Boolean showOnlyUpgradeable);
+    ResponseEntity<it.pagopa.interop.generated.openapi.clients.bff.model.Agreements> getProducerAgreements(Integer offset, Integer limit, List<UUID> eservicesIds, List<UUID> consumersIds, List<AgreementState> states, Boolean showOnlyUpgradeable);
 
 }

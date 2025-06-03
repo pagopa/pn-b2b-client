@@ -19,3 +19,18 @@ Feature: Gestione degli agreements
       | security     | m2m        |
       | api,security | m2m        |
       | support      | m2m        |
+
+  Scenario: [M2MG_AGREEMENTS_2] Recupero dell’elenco delle richieste di fruizione con utente autorizzato (Scenario 65)
+    Given l'utente è un "admin" di "PA1" con ruolo M2M "m2m"
+    And l'utente è amministratore del client
+    And viene effettuato la creazione di un agreement con successo
+    When l'utente tenta di recuperare la lista completa degli agreements
+    Then si ottiene lo status code 200
+    And gli agreements sono stati recuperati correttamente
+
+  Scenario: [M2MG_AGREEMENTS_3] Accesso negato alla lista degli agreements con token non valido (Scenario 66)
+    Given l'utente è un "admin" di "PA1" con ruolo M2M "m2m"
+    And l'utente possiede un token non valido
+    When l'utente tenta di recuperare la lista completa degli agreements
+    Then si ottiene lo status code 401
+    And gli agreements non sono stati recuperati correttamente
