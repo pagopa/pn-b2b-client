@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.voucher;
 
+import static it.pagopa.interop.authorization.service.utils.JWTUtils.decodeJwtPayload;
 import static org.assertj.core.api.Assertions.fail;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -13,8 +14,6 @@ import it.pagopa.interop.authorization.service.utils.voucher.domain.VoucherReque
 import it.pagopa.interop.authorization.service.utils.voucher.domain.VoucherResponse;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import java.io.IOException;
-import java.util.Base64;
 import java.util.Map;
 
 public class VoucherGenerationSteps {
@@ -69,7 +68,7 @@ public class VoucherGenerationSteps {
                 softly.assertThat(voucherResponse.getTokenType()).isEqualTo("Bearer");
 
                 /*NOTA 27/05/2025: controllo in più rispetto al test originale in TS*/
-                Map<String, Object> jwtClaims = decodeJwt(voucherResponse.getAccessToken());
+                Map<String, Object> jwtClaims = decodeJwtPayload(voucherResponse.getAccessToken());
                 softly.assertThat(jwtClaims.get("role").toString()).isEqualTo("m2m");
             });
         } catch (IllegalArgumentException e) {
@@ -86,7 +85,7 @@ public class VoucherGenerationSteps {
             Object response = httpCallExecutor.getResponse();
             VoucherResponse voucherResponse = new ObjectMapper()
                 .convertValue(response, VoucherResponse.class);
-            Map<String, Object> jwtClaims = decodeJwt(voucherResponse.getAccessToken());
+            Map<String, Object> jwtClaims = decodeJwtPayload(voucherResponse.getAccessToken());
             assertSoftly(softly -> {
                 softly.assertThat(voucherResponse.getTokenType()).isEqualTo("Bearer");
                 softly.assertThat(jwtClaims.get("adminId").toString())
@@ -99,16 +98,6 @@ public class VoucherGenerationSteps {
                 + "che la generazione del voucher non sia andata come previsto, o che il formato "
                 + "della risposta sia cambiato nel tempo. Visionare i log degli step precedenti per "
                 + "maggiori dettagli. Errore: %s", VoucherResponse.class.getName(), e.getMessage());
-        }
-    }
-
-    public Map<String, Object> decodeJwt(String jwt) {
-        try {
-            String jsonPayload = jwt.split("\\.")[1];
-            byte[] decodedJsonPayload = Base64.getUrlDecoder().decode(jsonPayload);
-            return new ObjectMapper().readValue(decodedJsonPayload, Map.class);
-        } catch (IOException e) {
-            throw new RuntimeException("Errore durante la decodifica del token JWT", e);
         }
     }
 

@@ -2,7 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.delegate;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import it.pagopa.interop.authorization.service.utils.IdentityService;
+import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.TenantFeature;
 import it.pagopa.interop.tenant.service.ITenantsApi;

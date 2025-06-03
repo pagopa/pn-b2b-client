@@ -7,7 +7,7 @@ import static it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole.DELEGA
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
-import it.pagopa.interop.authorization.service.utils.IdentityService;
+import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.delegate.service.IConsumerDelegationsApiClient;
 import it.pagopa.interop.delegate.service.IDelegationApiClient;

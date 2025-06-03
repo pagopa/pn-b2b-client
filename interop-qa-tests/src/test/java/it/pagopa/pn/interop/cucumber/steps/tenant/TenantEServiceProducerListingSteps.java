@@ -2,14 +2,11 @@ package it.pagopa.pn.interop.cucumber.steps.tenant;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganizations;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
 import org.junit.jupiter.api.Assertions;
-
-import java.util.UUID;
 
 public class TenantEServiceProducerListingSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;

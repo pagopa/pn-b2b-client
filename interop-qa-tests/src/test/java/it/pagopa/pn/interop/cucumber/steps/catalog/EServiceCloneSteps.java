@@ -2,23 +2,23 @@ package it.pagopa.pn.interop.cucumber.steps.catalog;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
-import it.pagopa.interop.authorization.service.utils.IdentityService;
+import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 
 import java.util.UUID;
 
 public class EServiceCloneSteps {
-    private final DataPreparationService dataPreparationService;
+    private final BFFDataPreparationService dataPreparationService;
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
     private final IdentityService identityService;
     private final EServicesCommonContext eServicesCommonContext;
 
-    public EServiceCloneSteps(DataPreparationService dataPreparationService,
+    public EServiceCloneSteps(BFFDataPreparationService dataPreparationService,
                                        ClientTokenConfigurator clientTokenConfigurator,
                                        SharedStepsContext sharedStepsContext) {
         this.dataPreparationService = dataPreparationService;

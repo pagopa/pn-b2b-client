@@ -1,4 +1,4 @@
-package it.pagopa.pn.interop.cucumber.steps;
+package it.pagopa.pn.interop.cucumber.steps.datapreparationservice;
 
 import static it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode.RECEIVE;
 import static java.util.Objects.isNull;
@@ -63,6 +63,13 @@ import it.pagopa.interop.purpose.domain.TEServiceMode;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
+import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.CreateAgreementOperation;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.CreateAndCheckAgreementOperation;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.DataPreparationServiceTemplate;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.SubmitAgreementOperation;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.UpperAgreementState;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
 import java.io.File;
@@ -70,7 +77,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
@@ -87,7 +93,7 @@ import org.springframework.http.HttpStatus;
 
 @Slf4j
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class DataPreparationService {
+public class BFFDataPreparationService {
     private static final ClientSeed DEFAULT_CLIENT_SEED = new ClientSeed();
     private final IAuthorizationClient authorizationClient;
     private final IAgreementClient agreementClient;
@@ -103,6 +109,7 @@ public class DataPreparationService {
     private final CommonUtils commonUtils;
     private final BlobFileCreator blobFileCreator;
     private final it.pagopa.interop.authorization.service.DataPreparationService mainDataPrepService;
+    private final DataPreparationServiceTemplate templateService;
     public static final String ERROR_RETRIEVING_AGREEMENT = "There was an error while retrieving the agreement by ID!";
     public static final String ERROR_RETRIEVING_PRODUCER_DESCRIPTOR = "There was an error while retrieving the producer e-service descriptor";
     public static final String ERROR_RETRIEVING_PURPOSE = "There was an error while retrieving the purpose!";
@@ -114,7 +121,7 @@ public class DataPreparationService {
         DEFAULT_CLIENT_SEED.setMembers(List.of());
     }
 
-    public DataPreparationService(ClientTokenConfigurator clientTokenConfigurator,
+    public BFFDataPreparationService(ClientTokenConfigurator clientTokenConfigurator,
                                   RiskAnalysisDataInitializer riskAnalysisDataInitializer,
                                   SharedStepsContext sharedStepsContext,
                                   BlobFileCreator blobFileCreator,
@@ -133,7 +140,15 @@ public class DataPreparationService {
         this.pollingService = sharedStepsContext.getPollingService();
         this.riskAnalysisDataInitializer = riskAnalysisDataInitializer;
         this.commonUtils = commonUtils;
+
         this.mainDataPrepService = mainDataPrepService;
+        this.mainDataPrepService.setAuthorizationClient(this.authorizationClient);
+
+        this.templateService = new DataPreparationServiceTemplate(
+            this.httpCallExecutor,
+            this.pollingService,
+            this.commonUtils
+        );
     }
 
     public UUID createClient(String clientKind, ClientSeed partialClientSeed) {
@@ -265,38 +280,35 @@ public class DataPreparationService {
     }
 
     public Optional<UUID> createAgreement(UUID eServiceID, UUID descriptorId, @Nullable UUID delegationId) {
-        httpCallExecutor.performCall(() -> agreementClient.createAgreement(
-            new AgreementPayload().eserviceId(eServiceID).descriptorId(descriptorId).delegationId(delegationId)));
-        return httpCallExecutor.getClientResponse().is2xxSuccessful()
-            ? Optional.of(((CreatedResource) httpCallExecutor.getResponse()).getId())
-            : Optional.empty();
+        CreateAgreementOperation operation = buildCreateAgreementOperation(
+            eServiceID, descriptorId, delegationId);
+        return templateService.createAgreement(operation);
+    }
+
+    private CreateAgreementOperation buildCreateAgreementOperation(UUID eServiceID, UUID descriptorId,
+        UUID delegationId) {
+        return CreateAgreementOperation.of(
+            () -> agreementClient.createAgreement(
+                new AgreementPayload().eserviceId(eServiceID).descriptorId(descriptorId)
+                    .delegationId(delegationId)),
+            res -> ((CreatedResource) res).getId()
+        );
     }
 
     public UUID createAndCheckAgreement(UUID eServiceID, UUID descriptorId, UUID delegationId) {
-        UUID agreementId = createAgreement(eServiceID, descriptorId, delegationId).orElseThrow(
-            () -> new NoSuchElementException("Failed to create an agreement: result of agreement creation API is '%s'".formatted(httpCallExecutor.getClientResponse())));
-        assertValidResponse();
-        pollingService.makePolling(
-            () ->  httpCallExecutor.performCall(() -> agreementClient.getAgreementById(agreementId)),
-            res -> res != HttpStatus.NOT_FOUND,
-            ERROR_RETRIEVING_AGREEMENT
+        CreateAndCheckAgreementOperation operation = CreateAndCheckAgreementOperation.of(
+            buildCreateAgreementOperation(eServiceID, descriptorId, delegationId),
+            agreementClient::getAgreementById
         );
-        return agreementId;
+        return templateService.createAndCheckAgreement(operation);
     }
 
     public void submitAgreement(UUID agreementId, AgreementState expectedState) {
-        pollingService.makePolling(
-                () -> httpCallExecutor.performCall(() -> agreementClient.submitAgreement(agreementId, new AgreementSubmissionPayload())),
-                res -> res.is2xxSuccessful(),
-                "There was an error while submitting the agreement!"
-        );
-
-        assertValidResponse();
-        pollingService.makePolling(
-                () -> agreementClient.getAgreementById(agreementId),
-                res -> res.getState() == expectedState,
-                ERROR_RETRIEVING_AGREEMENT
-        );
+        SubmitAgreementOperation operation = SubmitAgreementOperation.of(
+            () -> agreementClient.submitAgreement(agreementId, new AgreementSubmissionPayload()),
+            () -> agreementClient.getAgreementById(agreementId),
+            res -> UpperAgreementState.from(((Agreement) res).getState()));
+        templateService.submitAgreement(operation, UpperAgreementState.from(expectedState));
     }
 
     public void suspendAgreement(UUID agreementId, ClientType suspendedBy) {

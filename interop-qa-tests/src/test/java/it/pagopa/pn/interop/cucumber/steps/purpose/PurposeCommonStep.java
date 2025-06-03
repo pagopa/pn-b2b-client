@@ -3,7 +3,7 @@ package it.pagopa.pn.interop.cucumber.steps.purpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import it.pagopa.interop.authorization.service.utils.IdentityService;
+import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.purpose.domain.CreatedEserviceVersion;
@@ -12,7 +12,7 @@ import it.pagopa.interop.purpose.domain.TEServiceMode;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
-import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,7 +27,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class PurposeCommonStep {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final IdentityService identityService;
-    private final DataPreparationService dataPreparationService;
+    private final BFFDataPreparationService dataPreparationService;
     private final SharedStepsContext sharedStepsContext;
     private final IPurposeApiClient purposeApiClient;
     private final PollingService pollingService;
@@ -35,7 +35,7 @@ public class PurposeCommonStep {
 
     public PurposeCommonStep(ClientTokenConfigurator clientTokenConfigurator,
                              @Qualifier("interopIdentityService") IdentityService identityService,
-                             DataPreparationService dataPreparationService,
+                             BFFDataPreparationService dataPreparationService,
                              SharedStepsContext sharedStepsContext) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.identityService = identityService;

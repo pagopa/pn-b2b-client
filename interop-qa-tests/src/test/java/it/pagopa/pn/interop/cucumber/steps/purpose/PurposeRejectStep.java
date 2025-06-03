@@ -3,7 +3,6 @@ package it.pagopa.pn.interop.cucumber.steps.purpose;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RejectPurposeVersionPayload;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.utils.HttpCallExecutor;
