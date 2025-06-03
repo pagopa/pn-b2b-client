@@ -395,6 +395,35 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400"
 
+  @ricercaIndirizzoVas @physicalAddressLookupDisabled #rif srs n/p
+  Scenario: [RICERCA_INDIRIZZO_MONO_FLAG_OFF_5] Creazione notifica PA abilitata - Feature flag Spento - Client aggiornato, notifica accettata e elementi vas assenti
+    Given il test è effettuabile con API versione "V25" o superiore
+    And viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+    And destinatario Mario Cucumber e:
+      | digitalDomicile | NULL        |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then recuperando la fullSentNotification con la versione b2b "più recente" non è presente l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL"
+    Then recuperando la fullSentNotification con la versione b2b "più recente" non è presente l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE"
+
+
+  @ricercaIndirizzoVas @physicalAddressLookupDisabled #rif srs n/p
+  Scenario: [RICERCA_INDIRIZZO_MULTI_FLAG_OFF_6] Creazione notifica PA abilitata - Feature flag Spento - Client aggiornato e notifica rifiutata
+    Given il test è effettuabile con API versione "V25" o superiore
+    And viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+    And destinatario Mario Gherkin
+    And destinatario
+      | denomination    | PG Censito  |
+      | recipientType   | PG          |
+      | taxId           | 01113570442 |
+      | digitalDomicile | NULL        |
+      | physicalAddress | NULL        |
+    When la notifica viene inviata dal "Comune_Multi"
+    Then l'operazione ha prodotto un errore con status code "400"
+
   #PA ABILITATA, PG CENSITA, CLIENT ABILITATO IN INVIO, CLIENT DISABILITATO IN LETTURA
   @ricercaIndirizzoVas #rif srs 23
   Scenario: [RICERCA_INDIRIZZO_MONO_API_NON_AGGIORN_DESTINAT] Creazione notifica PA abilitata - Feature flag Attivo - Client Non aggiornato in lettura
