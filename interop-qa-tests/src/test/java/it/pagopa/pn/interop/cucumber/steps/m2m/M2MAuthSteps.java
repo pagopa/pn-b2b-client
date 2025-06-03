@@ -48,6 +48,14 @@ public class M2MAuthSteps {
         sharedStepsContext.getClientCommonContext().addClient(clientId);
     }
 
+    @Given("viene impostato per l'utente un token m2m scaduto")
+    public void setExpiredM2MAuth() {
+        String expiredToken = "eyJhbGciOiJSUzI1NiIsInVzZSI6InNpZyIsInR5cCI6ImF0K2p3dCIsImtpZCI6IjE3ZDNmM2MwLTU3MzAtNDVhOS1iZThhLTY1NWU3N2JmMzU1NSJ9.eyJqdGkiOiJmYTIxOTIwMy1hODE3LTQzNmMtYTFhOS1lYjZlYWNiOTRjZGEiLCJpc3MiOiJxYS5pbnRlcm9wLnBhZ29wYS5pdCIsImF1ZCI6InFhLmludGVyb3AucGFnb3BhLml0L20ybSIsImNsaWVudF9pZCI6ImU4ZTRiMDA0LWM0NTAtNGM5MS1hZDdjLWZkNDJlZTlhMDA1NSIsInN1YiI6ImU4ZTRiMDA0LWM0NTAtNGM5MS1hZDdjLWZkNDJlZTlhMDA1NSIsImlhdCI6MTc0ODkzNzE0MiwibmJmIjoxNzQ4OTM3MTQyLCJleHAiOjE4NDg5MzcxNDEsIm9yZ2FuaXphdGlvbklkIjoiZTc5YTI0Y2QtOGVkYy00NDFlLWFlOGQtZTg3YzNhZWEwMDU5Iiwicm9sZSI6Im0ybS1hZG1pbiIsImFkbWluSWQiOiJmMDdkZGI4Zi0xN2Y5LTQ3ZDQtYjMxZS0zNWQxYWMxMGU1MjEifQ.HfhAKKu06x7uCGAYl7M8Pbzm6EfQFiqgFlKD-0bqraz0UFCJKRi91rFiaurWiRA-4lQiX5S6apuKcSvOZ6_DYGQcwgkrIhRCQ-dtohxRR_zyR-mTImkEfJow-t3eAkuKMRN8jxeNl8eWJ-lWbTKNkIxlzmmSaueH-ga-uDC6hNj6hOP6WukFCIN5yq-Gthr_NZzMcHZdHaHCKxcpIbjmrRvJJYTfztQZgJqC_N6Uv3_fKUzdJtZLswjqr5vUW1_DOYhEez2Iv5tOycMKQLn9N0Q474lPJ3TAiAHpOFpbSKZhj_IwWKjV5z37Gc04H6-csLYJrumvDyz6H0hf_ofNNA";
+        clientTokenConfigurator.setBearerToken(expiredToken);
+        sharedStepsContext.setUserToken(expiredToken);
+        sharedStepsContext.setTenantType(expiredToken);
+    }
+
     @Deprecated(forRemoval = true)
     @Given("l'utente è un {string} di {string} e predispone le credenziali per il ruolo M2M {m2mRole}")
     public void prepareM2MUser(String selfcareRole, String tenant, M2MRole m2MRole) {
