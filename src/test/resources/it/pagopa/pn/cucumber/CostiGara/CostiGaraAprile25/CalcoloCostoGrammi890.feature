@@ -3,7 +3,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
   Background:
     Given viene rimossa se presente la pec di piattaforma di "Mario Gherkin"
 
-  @costoAnalogicoAprile25_890
+  @costoAnalogicoAprile25
   Scenario Outline: [CALCOLO-COSTO_890-20GR_1] (Aprile) Invio notifica e verifica calcolo del costo su raccomandata con peso <= 20gr
     Given viene generata una nuova notifica
       | subject               | <SUBJECT>             |
@@ -39,10 +39,8 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 21009 | 967   | BARDELLO              | VA       | notifica analogica RECAPITISTA |
       | 14027 | 987   | TONENGO               | AT       | notifica analogica RECAPITISTA |
 
-      | 11100 | 948  | AOSTA           | AO       | notifica analogica RECAPITISTA |
-      | 38121 | 948  | TRENTO          | TN       | notifica analogica RECAPITISTA |
 
-  @costoAnalogicoAprile25_890
+  @costoAnalogicoAprile25
   Scenario Outline: [CALCOLO-COSTO_890-21GR_2] (Aprile) Invio notifica e verifica calcolo del costo su raccomandata con peso = 21gr
     Given viene generata una nuova notifica
       | subject               | <SUBJECT>             |
@@ -71,11 +69,10 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 60012 | 1155  | MONTERADO      | AN       | notifica analogica RECAPITISTA |
       | 06012 | 1036  | CERBARA        | PG       | notifica analogica RECAPITISTA |
 
-      | 11100 | 1036  | AOSTA           | AO       | notifica analogica RECAPITISTA |
-      | 38121 | 1036  | TRENTO          | TN       | notifica analogica RECAPITISTA |
+      | 11100 | 1036  | AOSTA          | AO       | notifica analogica RECAPITISTA |
 
 
-  @costoAnalogicoAprile25_890
+  @costoAnalogicoAprile25
   Scenario Outline: [CALCOLO-COSTO_890-50GR_3] (Aprile) Invio notifica e verifica calcolo del costo su raccomandata con peso = 50gr
     Given viene generata una nuova notifica
       | subject               | <SUBJECT>             |
@@ -108,10 +105,8 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
 
       | 38097 | 1053  | TERRE D'ADIGE  | TN       | notifica analogica RECAPITISTA |
 
-      | 11100 | 1053  | AOSTA          | AO       | notifica analogica RECAPITISTA |
-      | 38121 | 1053  | TRENTO         | TN       | notifica analogica RECAPITISTA |
 
-  @costoAnalogicoAprile25_890
+  @costoAnalogicoAprile25
   Scenario Outline: [CALCOLO-COSTO_890-51GR_4] (Aprile) Invio notifica e verifica calcolo del costo su raccomandata con peso = 51gr
     Given viene generata una nuova notifica
       | subject               | <SUBJECT>                  |
@@ -141,10 +136,8 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
 
       | 06012 | 1056  | CERBARA        | PG       | notifica analogica RECAPITISTA |
 
-      | 11100 | 1056  | AOSTA          | AO       | notifica analogica RECAPITISTA |
-      | 38121 | 1056  | TRENTO         | TN       | notifica analogica RECAPITISTA |
 
-  @costoAnalogicoAprile25_890
+  @costoAnalogicoAprile25
   Scenario Outline: [CALCOLO-COSTO_890-100GR_5] (Aprile) Invio notifica e verifica calcolo del costo su raccomandata con peso = 100gr
     Given viene generata una nuova notifica
       | subject               | <SUBJECT>                                     |
@@ -175,10 +168,8 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
 
       | 06012 | 1085  | CERBARA        | PG       | notifica analogica RECAPITISTA |
 
-      | 11100 | 1085  | AOSTA          | AO       | notifica analogica RECAPITISTA |
-      | 38121 | 1085 | TRENTO          | TN       | notifica analogica RECAPITISTA |
 
-  @costoAnalogicoAprile25_890
+  @costoAnalogicoAprile25
   Scenario Outline: [CALCOLO-COSTO_890-101GR_6] (Aprile) Invio notifica e verifica calcolo del costo su raccomandata con peso = 101gr
     Given viene generata una nuova notifica
       | subject               | <SUBJECT>                                    |
@@ -209,10 +200,8 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
 
       | 86081 | 1221  | AGNONE         | IS       | notifica analogica RECAPITISTA |
 
-      | 11100 | 1163  | AOSTA          | AO       | notifica analogica RECAPITISTA |
-      | 38121 | 1163  | TRENTO         | TN       | notifica analogica RECAPITISTA |
 
-  @costoAnalogicoAprile25_890
+  @costoAnalogicoAprile25
   Scenario Outline: [CALCOLO-COSTO_890-250GR_7] (Aprile) Invio notifica e verifica calcolo del costo su raccomandata con peso = 250gr
     Given viene generata una nuova notifica
       | subject               | <SUBJECT>                                                       |
@@ -243,10 +232,8 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
 
       | 06012 | 1257  | CERBARA             | PG       | notifica analogica RECAPITISTA |
 
-      | 11100 | 1257  | AOSTA          | AO       | notifica analogica RECAPITISTA |
-      | 38121 | 1257  | TRENTO         | TN       | notifica analogica RECAPITISTA |
 
-  @costoAnalogicoAprile25_890
+  @costoAnalogicoAprile25
   Scenario Outline: [CALCOLO-COSTO_890-251GR_8] (Aprile) Invio notifica e verifica calcolo del costo su raccomandata con peso = 251gr
     Given viene generata una nuova notifica
       | subject               | <SUBJECT>                                                       |
@@ -277,10 +264,8 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
 
       | 34129 | 1261  | TRIESTE        | TS       | notifica analogica RECAPITISTA |
 
-      | 11100 | 1261  | AOSTA          | AO       | notifica analogica RECAPITISTA |
-      | 38121 | 1261  | TRENTO         | TN       | notifica analogica RECAPITISTA |
 
-  @costoAnalogicoAprile25_890
+  @costoAnalogicoAprile25
   Scenario Outline: [CALCOLO-COSTO_890-350GR_9] (Aprile) Invio notifica e verifica calcolo del costo su raccomandata con peso = 350gr
     Given viene generata una nuova notifica
       | subject               | <SUBJECT>                                                        |
@@ -311,10 +296,8 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
 
       | 06012 | 1323  | CERBARA        | PG       | notifica analogica RECAPITISTA |
 
-      | 11100 | 1323  | AOSTA           | AO       | notifica analogica RECAPITISTA |
-      | 38121 | 1323  | TRENTO          | TN       | notifica analogica RECAPITISTA |
 
-  @costoAnalogicoAprile25_890
+  @costoAnalogicoAprile25
   Scenario Outline: [CALCOLO-COSTO_890-351GR_10] (Aprile) Invio notifica e verifica calcolo del costo su raccomandata con peso = 351gr
     Given viene generata una nuova notifica
       | subject               | <SUBJECT>                                                        |
@@ -344,10 +327,8 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 06012 | 1422  | CERBARA        | PG       | notifica analogica RECAPITISTA |
       | 19126 | 1422  | LA SPEZIA      | SP       | notifica analogica RECAPITISTA |
 
-      | 11100 | 1422  | AOSTA           | AO       | notifica analogica RECAPITISTA |
-      | 38121 | 1422  | TRENTO          | TN       | notifica analogica RECAPITISTA |
 
-  @costoAnalogicoAprile25_890
+  @costoAnalogicoAprile25
   Scenario Outline: [CALCOLO-COSTO_890-1000GR_11] (Aprile) Invio notifica e verifica calcolo del costo su raccomandata con peso = 1000gr
     Given viene generata una nuova notifica
       | subject               | <SUBJECT>                                                                                        |
@@ -377,7 +358,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 95055 | 1814  | SAN PIETRO CLARENZA | CT       | notifica analogica RECAPITISTA |
       | 06012 | 1843  | CERBARA             | PG       | notifica analogica RECAPITISTA |
 
-  @costoAnalogicoAprile25_890
+  @costoAnalogicoAprile25
   Scenario Outline: [CALCOLO-COSTO_890-1001GR_12] (Aprile) Invio notifica e verifica calcolo del costo su raccomandata con peso = 1001gr
     Given viene generata una nuova notifica
       | subject               | <SUBJECT>                                                                                        |
@@ -407,10 +388,8 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
 
       | 06012 | 1847  | CERBARA        | PG       | notifica analogica RECAPITISTA |
 
-      | 11100 | 1847  | AOSTA          | AO       | notifica analogica RECAPITISTA |
-      | 38121 | 1847  | TRENTO          | TN       | notifica analogica RECAPITISTA |
 
-  @costoAnalogicoAprile25_890
+  @costoAnalogicoAprile25
   Scenario Outline: [CALCOLO-COSTO_890-2000GR_13] (Aprile) Invio notifica e verifica calcolo del costo su raccomandata con peso = 2000gr
     Given viene generata una nuova notifica
       | subject               | <SUBJECT>                                                                                        |
@@ -440,7 +419,4 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 06012 | 2497  | CERBARA        | PG       | notifica analogica RECAPITISTA |
 
       | 09121 | 2497  | CAGLIARI       | CA       | notifica analogica RECAPITISTA |
-
-      | 11100 | 2497  | AOSTA           | AO       | notifica analogica RECAPITISTA |
-      | 38121 | 2497  | TRENTO          | TN       | notifica analogica RECAPITISTA |
 
