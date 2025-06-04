@@ -31,12 +31,32 @@ Feature: Gestione degli attributes
     And il dettaglio dell'attributo certificato non viene restituito
 
   Scenario: [M2MG_CERTIFIEDATTRIBUTES_4] Errore nel recupero del dettaglio di un attributo certificato con attributeId inesistente (Scenario 64)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M "m2m"
-    And l'utente è amministratore del client
-    And viene effettuata la creazione degli attributi certificati:
-      | attributeId     | name                |
-      | attr-cert-001   | Attributo Fiscale   |
-    When l'utente tenta di recuperare il dettaglio dell'attributo certificato "attr-cert-999"
+    Given "PA1" ha già creato e pubblicato 1 e-services
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene effettuata la creazione dell'attributo certificato:
+      | name          | description       | code          |
+      | test-attr-cert | Attributo di test | GENERATE_AUTO |
+    When l'utente tenta di recuperare il dettaglio dell'attributo certificato "invalid"
     Then si ottiene lo status code 404
     And il dettaglio dell'attributo certificato non viene restituito
+    And non viene restituito il dettaglio dell'attributo certificato "test-attr-cert"
+
+  Scenario: [M2MG_CERTIFIEDATTRIBUTES_5] Creazione di un attributo certificato con utente M2M-ADMIN (Scenario 20)
+    Given "PA1" ha già creato e pubblicato 1 e-services
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When viene effettuata la creazione dell'attributo certificato:
+      | name          | description       | code          |
+      | test-attr-cert | Attributo di test | GENERATE_AUTO |
+    Then si ottiene lo status code 201
+    And viene restituito il dettaglio dell'attributo certificato "test-attr-cert"
+
+  Scenario: [M2MG_CERTIFIEDATTRIBUTES_6] Accesso negato alla creazione di un attributo certificato con utente M2M (Scenario 41)
+    Given "PA1" ha già creato e pubblicato 1 e-services
+    And l'utente è un "admin" di "PA1" con ruolo M2M "m2m"
+    When viene effettuata la creazione dell'attributo certificato:
+      | name          | description               | code          |
+      | test-attr-cert | Attributo di test | GENERATE_AUTO |
+    Then si ottiene lo status code 403
+    And non viene restituito il dettaglio dell'attributo certificato "attr-cert-002"
+
 
