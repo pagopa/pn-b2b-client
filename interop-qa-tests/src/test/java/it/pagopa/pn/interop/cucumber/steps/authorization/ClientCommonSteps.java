@@ -2,6 +2,8 @@ package it.pagopa.pn.interop.cucumber.steps.authorization;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import static java.util.stream.Collectors.toList;
+
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
@@ -58,9 +60,10 @@ public class ClientCommonSteps {
     public void createClientsForTenants(String tenantType, int numClient, String clientKind) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
 
+        @SuppressWarnings("java:S6204") // si evita volutamente il metodo diretto toList() perché produrrebbe una lista immutabile
         List<UUID> clientIds = IntStream.range(0, numClient)
                 .mapToObj(i -> dataPreparationService.createClient(clientKind, createClientSeed(i)))
-                .toList();
+                .collect(toList());
         sharedStepsContext.getClientCommonContext().setClients(clientIds);
     }
 
@@ -81,8 +84,10 @@ public class ClientCommonSteps {
     @Given("un {string} di {string} ha caricato una chiave pubblica in quel client")
     public void roleOfTenantHasAlreadyUploadClientPublicKey(String role, String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, role));
-        String userPublicKey = KeyPairGeneratorUtil.createBase64PublicKey("RSA", 2048);
+        String keyType = "RSA";
+        String userPublicKey = KeyPairGeneratorUtil.createBase64PublicKey(keyType, 2048);
         sharedStepsContext.getClientCommonContext().setClientPublicKey(userPublicKey);
+        sharedStepsContext.getClientCommonContext().setKeyType(keyType);
         String keyId = dataPreparationService.addPublicKeyToClient(sharedStepsContext.getClientCommonContext().getFirstClient(), KeyPairGeneratorUtil.createKeySeed(
             userPublicKey).get(0));
         sharedStepsContext.getClientCommonContext().setKeyId(keyId);

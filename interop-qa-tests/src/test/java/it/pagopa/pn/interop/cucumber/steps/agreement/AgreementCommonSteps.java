@@ -18,6 +18,10 @@ import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
@@ -53,8 +57,8 @@ public class AgreementCommonSteps {
     }
 
     @Given("{string} ha una richiesta di fruizione in stato {string} per quell'e-service")
-    public void tenantAlreadyHasFruitionRequestWithState(String tenant, String agreementState) {
-        String token = identityService.getToken(tenant, null);
+    public void tenantAlreadyHasFruitionRequestWithState(String consumer, String agreementState) {
+        String token = identityService.getToken(consumer, null);
         tenantAlreadyHasFruitionRequestWithState(agreementState, token, null);
     }
 
@@ -79,17 +83,15 @@ public class AgreementCommonSteps {
 
     @Given("{string} ha creato un attributo certificato e lo ha assegnato a {string}")
     public void tenantHasCreatedCertifiedAttribute(String certifier, String tenantType) {
-        AttributeKind certified = AttributeKind.CERTIFIED;
         clientTokenConfigurator.setBearerToken(identityService.getToken(certifier, null));
         UUID tenantId = identityService.getOrganizationId(tenantType);
-        Attribute attribute = dataPreparationService.createAttribute(
-            certified, null);
-        sharedStepsContext.getEServiceTemplateStepContext().addCreatedAttribute(attribute);
+        Attribute attribute = dataPreparationService.createAttribute(AttributeKind.CERTIFIED, null);
+        sharedStepsContext.getAttributeCommonContext().addCreatedAttribute(attribute);
         dataPreparationService.assignCertifiedAttributeToTenant(tenantId, attribute.getId());
     }
 
     /* NOTA 26/03/2025: al momento usato solo in scenari di test negativi (in altri termini: non
-    * è stato testato in situazioni in cui ci si aspetta che funzioni) */
+     * è stato testato in situazioni in cui ci si aspetta che funzioni) */
     @Given("{string} ha creato un attributo dichiarato e lo ha assegnato a {string}")
     public void tenantHasCreatedDeclaredAttribute(String certifier, String tenantType) {
         AttributeKind attributeKind = AttributeKind.DECLARED;
@@ -97,7 +99,7 @@ public class AgreementCommonSteps {
         UUID tenantId = identityService.getOrganizationId(tenantType);
         Attribute attribute = dataPreparationService.createAttribute(
             attributeKind, null);
-        sharedStepsContext.getEServiceTemplateStepContext().addCreatedAttribute(attribute);
+        sharedStepsContext.getAttributeCommonContext().addCreatedAttribute(attribute);
         dataPreparationService.assignDeclaredAttributeToTenant(tenantId, attribute.getId());
     }
 
@@ -135,7 +137,7 @@ public class AgreementCommonSteps {
     public void tenantHasAlreadyCreatedAndPublishedEService(String tenantType, int totalEservices, Optional<EServiceConfig> eServiceConfig) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         // Create e-services and publish descriptors
-        EServicesCommonContext eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
+        List<EServiceDescriptor> eServiceDescriptorList = new ArrayList<>();
         for (int i = 0; i < totalEservices; i++) {
             // Create e-service and descriptor
             int randomInt = ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE);
@@ -150,11 +152,13 @@ public class AgreementCommonSteps {
             dataPreparationService.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(),
                 eServiceDescriptor.getDescriptorId(), EServiceDescriptorState.PUBLISHED, false);
             // Add the e-service to the list of published ones
-            eServicesCommonContext.getPublishedEservicesIds().add(eServiceDescriptor);
+            eServiceDescriptorList.add(eServiceDescriptor);
         }
         // Set the first e-service and descriptor
-        if (!eServicesCommonContext.getPublishedEservicesIds().isEmpty()) {
-            EServiceDescriptor firstDescriptor = eServicesCommonContext.getPublishedEservicesIds().get(0);
+        if (!eServiceDescriptorList.isEmpty()) {
+            EServicesCommonContext eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
+            eServicesCommonContext.setPublishedEservicesIds(eServiceDescriptorList);
+            EServiceDescriptor firstDescriptor = eServiceDescriptorList.get(0);
             eServicesCommonContext.setEserviceId(firstDescriptor.getEServiceId());
             eServicesCommonContext.setDescriptorId(firstDescriptor.getDescriptorId());
         }
@@ -187,5 +191,40 @@ public class AgreementCommonSteps {
                 res -> res.getState().equals(AgreementState.ARCHIVED),
                 "The agreement was not archived"
         );
+    }
+
+    @Given("{string} ha già dichiarato un attributo")
+    public void tenantDeclaresAnAttribute(String tenantType) {
+        UUID tenantId = this.identityService.getOrganizationId(tenantType);
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        UUID attributeId = dataPreparationService.createAttribute(AttributeKind.DECLARED, null);
+        dataPreparationService.declareDeclaredAttribute(tenantId, attributeId);
+        sharedStepsContext.getAttributeCommonContext().getRequiredDeclaredAttributes().add(List.of(attributeId));
+        sharedStepsContext.getAttributeCommonContext().setAttributeId(attributeId);
+    }
+
+    @Given("{string} ha già creato una richiesta di fruizione in stato {string} con un documento allegato")
+    public void tenantHasAlreadyCreatedAgreementWithSpecificStateAndAttachments(String consumer, String agreementState) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(consumer, null));
+        Map<String, UUID> result = dataPreparationService.createAgreementWithGivenStateAndDocument(
+                AgreementState.fromValue(agreementState), sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                sharedStepsContext.getEServicesCommonContext().getDescriptorId());
+        sharedStepsContext.setAgreementId(result.get("agreementId"));
+        sharedStepsContext.getAgreementCommonContext().setDocumentId(result.get("documentId"));
+    }
+
+    @Given("{string} ha una richiesta di fruizione in stato {string} per ognuno di quegli e-services")
+    public void tenantHasAlreadyAnAgreementForEachEService(String consumer, String agreementState) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(consumer, null));
+
+        List<UUID> agreementIds = sharedStepsContext.getEServicesCommonContext().getPublishedEservicesIds()
+                        .stream()
+                        .map(eServiceDescriptor -> dataPreparationService.createAgreementWithGivenState(
+                                AgreementState.fromValue(agreementState),
+                                eServiceDescriptor.getEServiceId(),
+                                eServiceDescriptor.getDescriptorId(),
+                                null))
+                        .toList();
+        sharedStepsContext.getAgreementCommonContext().setAgreementIds(agreementIds);
     }
 }

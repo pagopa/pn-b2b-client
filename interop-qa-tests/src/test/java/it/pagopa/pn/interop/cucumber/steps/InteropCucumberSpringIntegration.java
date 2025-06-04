@@ -13,6 +13,7 @@ import it.pagopa.interop.authorization.service.impl.ProducerClientImpl;
 import it.pagopa.interop.authorization.service.utils.ConfigFileReader;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
+import it.pagopa.interop.authorization.service.utils.voucher.VoucherService;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.config.springconfig.springconfig.InteropRestTemplateConfiguration;
 import it.pagopa.interop.config.springconfig.springconfig.JwtTokenServiceConfiguration;
@@ -33,6 +34,8 @@ import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext$EServiceTemplateInfoMapperImpl;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
+import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
+import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.TracingFileUtils;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -67,8 +70,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
     ConfigFileReader.class,
     InteropClientConfigs.class,
     TracingFileUtils.class,
+    BlobFileCreator.class,
     TracingClientConfigs.class,
     DevAbstractInteropTracingClient.class,
+    QAAbstractInteropTracingClient.class,
+    CommonUtils.class,
+    VoucherService.class
     QAAbstractInteropTracingClient.class,
     DescriptorAttributesMapperImpl.class,
     EServiceTemplateStepContext$EServiceTemplateInfoMapperImpl.class,
