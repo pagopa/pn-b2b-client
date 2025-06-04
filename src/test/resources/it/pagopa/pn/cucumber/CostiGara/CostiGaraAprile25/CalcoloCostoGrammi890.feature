@@ -40,7 +40,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 14027 | 987   | TONENGO               | AT       | notifica analogica RECAPITISTA |
 
       | 11100 | 948  | AOSTA           | AO       | notifica analogica RECAPITISTA |
-      | 38121 | 848  | TRENTO          | TN       | notifica analogica RECAPITISTA |
+      | 38121 | 948  | TRENTO          | TN       | notifica analogica RECAPITISTA |
 
   @costoAnalogicoAprile25_890
   Scenario Outline: [CALCOLO-COSTO_890-21GR_2] (Aprile) Invio notifica e verifica calcolo del costo su raccomandata con peso = 21gr
