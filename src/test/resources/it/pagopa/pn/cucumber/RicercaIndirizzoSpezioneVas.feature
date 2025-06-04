@@ -299,7 +299,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     Then l'operazione ha prodotto un errore con status code "400"
 
   #PA NON ABILITATA, PG CENSITA, CLIENT NON ABILITATO
-  @ricercaIndirizzoVas #rif srs 23-19
+  #@ricercaIndirizzoVas #rif srs 23-19
   Scenario: [RICERCA_INDIRIZZO_MONO_API_NON_AGGIORN_KO_2] Creazione notifica PA NON abilitata - Feature flag Attivo - Client NON aggiornato e notifica rifiutata
     Given viene generata una nuova notifica con la versione "V24"
       | subject            | invio notifica con cucumber |
@@ -314,7 +314,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     Then l'operazione ha prodotto un errore con status code "400"
 
   #PA NON ABILITATA, PG CENSITA, CLIENT ABILITATO
-  @ricercaIndirizzoVas #rif srs 18-17
+  #@ricercaIndirizzoVas #rif srs 18-17
   Scenario: [RICERCA_INDIRIZZO_MONO_PA_NON_ABILIT_KO] Creazione notifica PA NON abilitata - Feature flag Attivo - Client aggiornato e notifica rifiutata
     Given il test è effettuabile con API versione "V25" o superiore
     And viene generata una nuova notifica
@@ -381,7 +381,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     Then l'operazione ha prodotto un errore con status code "400"
 
   #PA NON ABILITATA, PG CENSITA, CLIENT NON ABILITATO, FEATURE FLAG DISATTIVATO
-  @ricercaIndirizzoVas @physicalAddressLookupDisabled #rif srs 22
+  #@ricercaIndirizzoVas @physicalAddressLookupDisabled #rif srs 22
   Scenario: [RICERCA_INDIRIZZO_MONO_FLAG_OFF_4] Creazione notifica PA non abilitata - Feature flag Spento - Client non aggiornato e notifica rifiutata
     Given viene generata una nuova notifica con la versione "V24"
       | subject            | invio notifica con cucumber |
@@ -817,7 +817,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 
 # TEST POST-SPERIMENTAZIONE
 
-  #@ricercaIndirizzoVas  #rif srs 28 # test post-sperimentazione
+  @ricercaIndirizzoVas  #rif srs 28 # test post-sperimentazione
   Scenario: [RICERCA_INDIRIZZO_MONO_PF_FINE_SPERIMENT_OK] Invio notifica con vas post-sperimentazione anche per PA non abilitate - Vas attivo
     Given il test è effettuabile con API versione "V25" o superiore
     Given viene generata una nuova notifica
