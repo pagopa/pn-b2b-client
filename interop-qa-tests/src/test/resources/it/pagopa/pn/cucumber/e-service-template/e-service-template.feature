@@ -4,13 +4,8 @@ Feature: Test API of e-service template
   @e-service-template-create
   Scenario Outline: [INTEROP-EST-001] La creazione di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
     Given l'utente è un "<ruolo>" di "PA1"
-
-    #TODO usare invece lo step sottostante e rimuovere questo, per ridurre le ambiguità e la presenza di step tra loro simili
-    #"l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>"
     When l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
-
     Then si ottiene response status code 403
-
     Examples:
       | ruolo         |
       | security      |
@@ -478,7 +473,6 @@ Feature: Test API of e-service template
       | DOCUMENT  |
       | INTERFACE |
 
-  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-6483
   @e-service-template-version-document-read
   Scenario: [INTEROP-EST-049] Il reperimento di un documento da un e-service template inesistente non può essere fatto
     Given l'utente è un "admin" di "PA1"
