@@ -3,9 +3,11 @@ package it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
+
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 
@@ -26,11 +28,7 @@ public class DataPreparationServiceTemplate {
     }
 
     public Optional<UUID> createAgreement(CreateAgreementOperation operation) {
-        httpCallExecutor.performCall(operation.getApiCaller());
-        UUID result = operation.getResultExtractor().apply(httpCallExecutor.getResponse());
-        return httpCallExecutor.getClientResponse().is2xxSuccessful()
-            ? Optional.of(result)
-            : Optional.empty();
+        return performOperation(operation);
     }
 
     public UUID createAndCheckAgreement(CreateAndCheckAgreementOperation operation) {
@@ -55,13 +53,36 @@ public class DataPreparationServiceTemplate {
         assertValidResponse();
         pollingService.makePolling(
             operation.getCheckerApiCaller(),
-                res -> operation.getStateExtractor().apply(res) == expectedState,
+                res -> operation.getResultExtractor().apply(res) == expectedState,
                 ERROR_RETRIEVING_AGREEMENT
         );
     }
 
+    public Optional<UUID> createAttribute(CreateAttributeOperation operation) {
+        return performOperation(operation);
+    }
+
     private void assertValidResponse() {
         commonUtils.assertValidResponse();
+    }
+
+    private <T, R> Optional<R> performOperation(ICreateOperation<T, R> operation) {
+        // Esegue la chiamata HTTP
+        httpCallExecutor.performCall(operation.getApiCaller());
+
+        // Recupera la risposta e l'esito della chiamata (cast se necessario)
+        @SuppressWarnings("unchecked")
+        T rawResponse = (T) httpCallExecutor.getResponse();
+        var response = httpCallExecutor.getClientResponse();
+
+        // Se la risposta è positiva, estrae e restituisce il risultato
+        if (response.is2xxSuccessful()) {
+            return Optional.ofNullable(operation.getResultExtractor().apply(rawResponse));
+        }
+
+        // In caso di errore, loggare o gestire in altro modo se necessario
+        log.warn("HTTP call failed with status: {}", response.value());
+        return Optional.empty();
     }
 
 }

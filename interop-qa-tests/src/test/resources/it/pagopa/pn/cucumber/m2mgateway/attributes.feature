@@ -4,7 +4,7 @@ Feature: Gestione degli attributes
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene effettuata la creazione dell'attributo certificato:
-      | name          | description       | code          |
+      | name           | description       | code          |
       | test-attr-cert | Attributo di test | GENERATE_AUTO |
     When l'utente tenta di recuperare il dettaglio dell'attributo certificato "test-attr-cert"
     Then si ottiene lo status code 200
@@ -14,17 +14,18 @@ Feature: Gestione degli attributes
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene effettuata la creazione dell'attributo certificato:
-      | name          | description       | code          |
+      | name           | description       | code          |
       | test-attr-cert | Attributo di test | GENERATE_AUTO |
     When l'utente tenta di recuperare il dettaglio dell'attributo certificato "null"
     Then si ottiene lo status code 400
     And non viene restituito il dettaglio dell'attributo certificato "test-attr-cert"
 
   Scenario: [M2MG_CERTIFIEDATTRIBUTES_3] Accesso negato al dettaglio di un attributo certificato con token non valido (Scenario 63)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M "m2m"
+    Given "PA1" ha già creato e pubblicato 1 e-services
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente possiede un token non valido
     And viene effettuata la creazione dell'attributo certificato:
-      | name          | description       | code          |
+      | name           | description       | code          |
       | test-attr-cert | Attributo di test | GENERATE_AUTO |
     When l'utente tenta di recuperare il dettaglio dell'attributo certificato "test-attr-cert"
     Then si ottiene lo status code 401
@@ -34,7 +35,7 @@ Feature: Gestione degli attributes
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene effettuata la creazione dell'attributo certificato:
-      | name          | description       | code          |
+      | name           | description       | code          |
       | test-attr-cert | Attributo di test | GENERATE_AUTO |
     When l'utente tenta di recuperare il dettaglio dell'attributo certificato "invalid"
     Then si ottiene lo status code 404
@@ -44,16 +45,16 @@ Feature: Gestione degli attributes
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When viene effettuata la creazione dell'attributo certificato:
-      | name          | description       | code          |
+      | name           | description       | code          |
       | test-attr-cert | Attributo di test | GENERATE_AUTO |
     Then si ottiene lo status code 201
     And viene restituito il dettaglio dell'attributo certificato "test-attr-cert"
 
   Scenario: [M2MG_CERTIFIEDATTRIBUTES_6] Accesso negato alla creazione di un attributo certificato con utente M2M (Scenario 41)
     Given "PA1" ha già creato e pubblicato 1 e-services
-    And l'utente è un "admin" di "PA1" con ruolo M2M "m2m"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
     When viene effettuata la creazione dell'attributo certificato:
-      | name          | description               | code          |
+      | name           | description       | code          |
       | test-attr-cert | Attributo di test | GENERATE_AUTO |
     Then si ottiene lo status code 403
     And non viene restituito il dettaglio dell'attributo certificato "attr-cert-002"

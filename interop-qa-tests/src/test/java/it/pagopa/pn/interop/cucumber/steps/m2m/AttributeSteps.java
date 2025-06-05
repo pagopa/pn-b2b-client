@@ -16,6 +16,7 @@ import org.assertj.core.api.Assertions;
 import org.springframework.http.HttpStatus;
 
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class AttributeSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
@@ -44,24 +45,20 @@ public class AttributeSteps {
     @And("viene effettuata la creazione dell'attributo certificato:")
     public void creazioneAttributoCertificato(CertifiedAttributeSeed payloadAttrCert) {
 
-        // Genera automaticamente il campo "code" se richiesto
+        // Genera il nome se necessario
+        String actualName = payloadAttrCert.getName() == null ? String.format("new_attribute_%d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)) : payloadAttrCert.getName();
+        payloadAttrCert.setName(actualName);
+
+        // Genera automaticamente il campo "code" se necessario
         if (payloadAttrCert.getCode().equals(AUTO_GENERATE_ATTRIBUTE_CODE_TOKEN))
             payloadAttrCert.setCode(generateUniqueAttributeCode());
 
-        HttpStatus clientResponse = httpCallExecutor
-                .performCall(() -> attributeClient.createCertifiedAttribute(payloadAttrCert));
-
-        // Verifica che la risposta sia 201 Created
-        if(clientResponse.isError()) {
-            Assertions.fail("Attribute create request failed: ", clientResponse);
-        }
-
-        // Recupera la risposta
-        CertifiedAttribute response = (CertifiedAttribute) httpCallExecutor.getResponse();
-
+        // Esegue le creazione
+        UUID attributeId = dataPreparationService.createCertifiedAttribute(payloadAttrCert)
+                .orElseThrow(() -> new IllegalStateException("Certified attribute creation failed"));
 
         // Aggiorna il contesto corrente
-        sharedStepsContext.getAttributeCommonContext().setAttributeId(response.getId());
+        sharedStepsContext.getAttributeCommonContext().setAttributeId(attributeId);
     }
 
     @When("l'utente tenta di recuperare il dettaglio dell'attributo certificato {string}")
