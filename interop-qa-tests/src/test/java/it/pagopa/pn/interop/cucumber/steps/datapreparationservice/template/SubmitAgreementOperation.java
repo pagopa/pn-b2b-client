@@ -9,8 +9,8 @@ import lombok.Data;
 @Data
 @Builder
 @AllArgsConstructor(staticName = "of")
-public class SubmitAgreementOperation {
+public class SubmitAgreementOperation implements ICreateOperation<Object, UpperAgreementState>{
     private Supplier<Object> apiCaller;
     private Supplier<Object> checkerApiCaller;
-    private Function<Object, UpperAgreementState> stateExtractor;
+    private Function<Object, UpperAgreementState> resultExtractor;
 }
