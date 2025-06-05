@@ -37,6 +37,48 @@ Feature: Gestione purposes
       | api,security | m2m       | 403        |
       | support      | m2m       | 403        |
 
+  Scenario Outline: [M2M_PURPOSES_LIST_1] La lista delle finalità può essere visionata da un utente con ruolo M2M o M2M-ADMIN
+    Given l'utente è un "admin" di "<ente_1>"
+    And "<ente_1>" ha già creato e pubblicato 1 e-service
+    And l'utente è un "<ruolo_2>" di "PA2" con ruolo M2M <ruolo-m2m_2>
+    Given "PA2" ha una richiesta di fruizione m2m in stato "ACTIVE" per quell'e-service
+    Given "PA2" ha già creato 5 finalità m2m in stato "ACTIVE" per quell'eservice
+    When l'utente fruitore richiede una operazione di listing m2m delle finalità limitata ai primi 3 risultati
+    Then si ottiene status code 200
+    And sono stati visualizzate correttamente 3 finalità
+    Examples:
+      | ente_1  | ruolo_2      | ruolo-m2m_2  |
+      | PA1     | admin        | m2m          |
+      | PA1     | api          | m2m          |
+      | PA1     | security     | m2m          |
+      | PA1     | api,security | m2m          |
+      | PA1     | support      | m2m          |
+      | PA1     | admin        | m2m-admin    |
+      | PA1     | api          | m2m-admin    |
+      | PA1     | security     | m2m-admin    |
+      | PA1     | api,security | m2m-admin    |
+      | PA1     | support      | m2m-admin    |
+      | GSP     | admin        | m2m          |
+      | GSP     | api          | m2m          |
+      | GSP     | security     | m2m          |
+      | GSP     | api,security | m2m          |
+      | GSP     | support      | m2m          |
+      | GSP     | admin        | m2m-admin    |
+      | GSP     | api          | m2m-admin    |
+      | GSP     | security     | m2m-admin    |
+      | GSP     | api,security | m2m-admin    |
+      | GSP     | support      | m2m-admin    |
+      | Privato | admin        | m2m          |
+      | Privato | api          | m2m          |
+      | Privato | security     | m2m          |
+      | Privato | api,security | m2m          |
+      | Privato | support      | m2m          |
+      | Privato | admin        | m2m-admin    |
+      | Privato | api          | m2m-admin    |
+      | Privato | security     | m2m-admin    |
+      | Privato | api,security | m2m-admin    |
+      | Privato | support      | m2m-admin    |
+
   Scenario Outline: [M2MG_PURPOSES_4] Le versioni di una finalità possono essere recuperate da un utente con ruolo M2M o M2M-ADMIN (Scenario 10)
     Given l'utente è un "<ruolo>" di "PA1" con ruolo M2M <ruolo-m2m>
     And l'utente è amministratore del client

@@ -1,6 +1,11 @@
 package it.pagopa.pn.interop.cucumber.steps.datapreparationservice;
 
+import static it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.UpperAgreement.from;
+
 import it.pagopa.interop.agreement.service.IM2MAgreementClient;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementState;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementSubmission;
 import it.pagopa.interop.attribute.service.IM2MAttributeClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
@@ -25,31 +30,28 @@ public class M2MDataPreparationService {
     private final DataPreparationServiceTemplate templateService;
 
     public M2MDataPreparationService(ClientTokenConfigurator clientTokenConfigurator,
-                                     SharedStepsContext sharedStepsContext,
-                                     CommonUtils commonUtils) {
+                                  SharedStepsContext sharedStepsContext,
+                                  CommonUtils commonUtils) {
         this.agreementClient = clientTokenConfigurator.getM2mAgreementClient();
         this.attributeClient = clientTokenConfigurator.getM2mAttributeClient();
         this.templateService = new DataPreparationServiceTemplate(
-                sharedStepsContext.getHttpCallExecutor(),
-                sharedStepsContext.getPollingService(),
-                commonUtils
+            sharedStepsContext.getHttpCallExecutor(),
+            sharedStepsContext.getPollingService(),
+            commonUtils
         );
     }
 
     public Optional<UUID> createAgreement(UUID eServiceID, UUID descriptorId, @Nullable UUID delegationId) {
-        CreateAgreementOperation operation = buildCreateAgreementOperation(
-                eServiceID, descriptorId, delegationId);
-        return templateService.createAgreement(operation);
+        CreateAgreementOperation operation = buildCreateAgreementOperation();
+        return templateService.createAgreement(operation, eServiceID, descriptorId, delegationId);
     }
 
-    private CreateAgreementOperation buildCreateAgreementOperation(UUID eServiceID, UUID descriptorId,
-                                                                   UUID delegationId) {
+    private CreateAgreementOperation buildCreateAgreementOperation() {
         return CreateAgreementOperation.of(
-                () -> agreementClient.createAgreement(new AgreementSeed()
-                        .eserviceId(eServiceID)
-                        .descriptorId(descriptorId)
-                        .delegationId(delegationId)),
-                res -> ((it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreement) res).getId()
+            params -> agreementClient.createAgreement(new AgreementSeed()
+                .eserviceId(params.getEServiceID())
+                .descriptorId(params.getDescriptorId())
+                .delegationId(params.getDelegationId())).getId()
         );
     }
 
@@ -59,18 +61,21 @@ public class M2MDataPreparationService {
 
     public UUID createAndCheckAgreement(UUID eServiceID, UUID descriptorId, UUID delegationId) {
         CreateAndCheckAgreementOperation operation = CreateAndCheckAgreementOperation.of(
-                buildCreateAgreementOperation(eServiceID, descriptorId, delegationId),
-                agreementClient::getAgreementById
+            buildCreateAgreementOperation(),
+            agreementClient::getAgreementById
         );
-        return templateService.createAndCheckAgreement(operation);
+        return templateService.createAndCheckAgreement(operation, eServiceID, descriptorId, delegationId);
     }
 
     public void submitAgreement(UUID agreementId, AgreementState expectedState) {
-        SubmitAgreementOperation operation = SubmitAgreementOperation.of(
-                () -> agreementClient.submitAgreement(agreementId, new AgreementSubmission()),
-                () -> agreementClient.getAgreementById(agreementId),
-                res -> UpperAgreementState.from(((Agreement) res).getState()));
-        templateService.submitAgreement(operation, UpperAgreementState.from(expectedState));
+        SubmitAgreementOperation operation = buildSubmitAgreementOperation();
+        templateService.submitAgreement(operation, agreementId, UpperAgreementState.from(expectedState));
+    }
+
+    private SubmitAgreementOperation buildSubmitAgreementOperation() {
+        return SubmitAgreementOperation.of(
+            id -> from(agreementClient.submitAgreement(id, new AgreementSubmission())),
+            id -> from(agreementClient.getAgreementById(id)));
     }
 
     public Optional<UUID> createCertifiedAttribute(CertifiedAttributeSeed payloadAttrCert) {

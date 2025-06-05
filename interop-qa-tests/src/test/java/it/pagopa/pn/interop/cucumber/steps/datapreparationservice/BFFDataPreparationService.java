@@ -65,10 +65,15 @@ import it.pagopa.interop.tenant.service.ITenantsApi;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.AddConsumerDocumentOperation;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.ArchiveAgreementOperation;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.CreateAgreementOperation;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.CreateAgreementWithStateOperation;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.CreateAndCheckAgreementOperation;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.DataPreparationServiceTemplate;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.SubmitAgreementOperation;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.SuspendAgreementOperation;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.UpperAgreement;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.UpperAgreementState;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
@@ -109,7 +114,7 @@ public class BFFDataPreparationService {
     private final CommonUtils commonUtils;
     private final BlobFileCreator blobFileCreator;
     private final it.pagopa.interop.authorization.service.DataPreparationService mainDataPrepService;
-    private final DataPreparationServiceTemplate templateService;
+    private final DataPreparationServiceTemplate template;
     public static final String ERROR_RETRIEVING_AGREEMENT = "There was an error while retrieving the agreement by ID!";
     public static final String ERROR_RETRIEVING_PRODUCER_DESCRIPTOR = "There was an error while retrieving the producer e-service descriptor";
     public static final String ERROR_RETRIEVING_PURPOSE = "There was an error while retrieving the purpose!";
@@ -144,7 +149,7 @@ public class BFFDataPreparationService {
         this.mainDataPrepService = mainDataPrepService;
         this.mainDataPrepService.setAuthorizationClient(this.authorizationClient);
 
-        this.templateService = new DataPreparationServiceTemplate(
+        this.template = new DataPreparationServiceTemplate(
             this.httpCallExecutor,
             this.pollingService,
             this.commonUtils
@@ -239,28 +244,14 @@ public class BFFDataPreparationService {
     }
 
     public UUID createAgreementWithGivenState(AgreementState agreementState, UUID eServiceID, UUID descriptorId, UUID delegationId, File doc) {
-        // agreement in state DRAFT
-        UUID agreementId = createAndCheckAgreement(eServiceID, descriptorId, delegationId);
-        if (doc != null) addConsumerDocumentToAgreement(agreementId, doc);
-        return switch (agreementState) {
-            case DRAFT -> agreementId;
-            case PENDING, ACTIVE -> {
-                submitAgreement(agreementId, agreementState);
-                yield agreementId;
-            }
-            case SUSPENDED -> {
-                submitAgreement(agreementId, AgreementState.ACTIVE);
-                suspendAgreement(agreementId, ClientType.CONSUMER);
-                yield agreementId;
-            }
-            case ARCHIVED -> {
-                submitAgreement(agreementId, AgreementState.ACTIVE);
-                suspendAgreement(agreementId, ClientType.CONSUMER);
-                archiveAgreement(agreementId);
-                yield agreementId;
-            }
-            default -> throw new IllegalArgumentException("Unsupported AgreementState: " + agreementState);
-        };
+        CreateAgreementWithStateOperation op = CreateAgreementWithStateOperation.builder()
+            .createAndCheckAgreementOperation(buildCreateAndCheckAgreementOperation())
+            .submitAgreementOperation(buildSubmitAgreementOperation())
+            .suspendAgreementOperation(buildSuspendAgreementOperation())
+            .archiveAgreementOperation(buildArchiveAgreementOperation())
+            .addConsumerDocumentOperation(buildAddConsumerDocumentOperation())
+            .build();
+        return template.createAgreementWithGivenState(op, UpperAgreementState.from(agreementState), eServiceID, descriptorId, delegationId, doc);
     }
 
     public Map<String, UUID> createAgreementWithGivenStateAndDocument(AgreementState agreementState, UUID eserviceId, UUID descriptorId) {
@@ -280,68 +271,83 @@ public class BFFDataPreparationService {
     }
 
     public Optional<UUID> createAgreement(UUID eServiceID, UUID descriptorId, @Nullable UUID delegationId) {
-        CreateAgreementOperation operation = buildCreateAgreementOperation(
-            eServiceID, descriptorId, delegationId);
-        return templateService.createAgreement(operation);
+        CreateAgreementOperation operation = buildCreateAgreementOperation();
+        return template.createAgreement(operation, eServiceID, descriptorId, delegationId);
     }
 
-    private CreateAgreementOperation buildCreateAgreementOperation(UUID eServiceID, UUID descriptorId,
-        UUID delegationId) {
+    private CreateAgreementOperation buildCreateAgreementOperation() {
         return CreateAgreementOperation.of(
-            () -> agreementClient.createAgreement(
-                new AgreementPayload().eserviceId(eServiceID).descriptorId(descriptorId)
-                    .delegationId(delegationId)),
-            res -> ((CreatedResource) res).getId()
+            params -> agreementClient.createAgreement(new AgreementPayload()
+                .eserviceId(params.getEServiceID())
+                .descriptorId(params.getDescriptorId())
+                .delegationId(params.getDelegationId())
+            ).getId()
         );
     }
 
     public UUID createAndCheckAgreement(UUID eServiceID, UUID descriptorId, UUID delegationId) {
-        CreateAndCheckAgreementOperation operation = CreateAndCheckAgreementOperation.of(
-            buildCreateAgreementOperation(eServiceID, descriptorId, delegationId),
+        CreateAndCheckAgreementOperation operation = buildCreateAndCheckAgreementOperation();
+        return template.createAndCheckAgreement(operation, eServiceID, descriptorId, delegationId);
+    }
+
+    private CreateAndCheckAgreementOperation buildCreateAndCheckAgreementOperation() {
+        return CreateAndCheckAgreementOperation.of(
+            buildCreateAgreementOperation(),
             agreementClient::getAgreementById
         );
-        return templateService.createAndCheckAgreement(operation);
     }
 
     public void submitAgreement(UUID agreementId, AgreementState expectedState) {
-        SubmitAgreementOperation operation = SubmitAgreementOperation.of(
-            () -> agreementClient.submitAgreement(agreementId, new AgreementSubmissionPayload()),
-            () -> agreementClient.getAgreementById(agreementId),
-            res -> UpperAgreementState.from(((Agreement) res).getState()));
-        templateService.submitAgreement(operation, UpperAgreementState.from(expectedState));
+        SubmitAgreementOperation operation = buildSubmitAgreementOperation();
+        template.submitAgreement(operation, agreementId, UpperAgreementState.from(expectedState));
+    }
+
+    private SubmitAgreementOperation buildSubmitAgreementOperation() {
+        return SubmitAgreementOperation.of(
+            agrId -> UpperAgreement.from(
+                agreementClient.submitAgreement(agrId, new AgreementSubmissionPayload())),
+            agrId -> UpperAgreement.from(agreementClient.getAgreementById(agrId)));
     }
 
     public void suspendAgreement(UUID agreementId, ClientType suspendedBy) {
-        httpCallExecutor.performCall(() -> agreementClient.suspendAgreement(agreementId));
-        assertValidResponse();
-        pollingService.makePolling(
-                () -> agreementClient.getAgreementById(agreementId),
-                res -> isTrue(res.getState().equals(AgreementState.SUSPENDED)
-                    && ClientType.PRODUCER.equals(suspendedBy) ? res.getSuspendedByProducer()
-                    : res.getSuspendedByConsumer()),
-                ERROR_RETRIEVING_AGREEMENT
-        );
+        SuspendAgreementOperation op = buildSuspendAgreementOperation();
+        template.suspendAgreement(op, agreementId, suspendedBy);
+    }
 
+    private SuspendAgreementOperation buildSuspendAgreementOperation() {
+        return SuspendAgreementOperation.builder()
+            .apiCaller(id -> UpperAgreement.from(agreementClient.suspendAgreement(id)))
+            .checkerApiCaller(id -> UpperAgreement.from(agreementClient.getAgreementById(id)))
+            .build();
     }
 
     public void archiveAgreement(UUID agreementId) {
-        httpCallExecutor.performCall(() -> agreementClient.archiveAgreement(agreementId));
-        assertValidResponse();
-        pollingService.makePolling(
-                () -> agreementClient.getAgreementById(agreementId),
-                res -> res.getState() == AgreementState.ARCHIVED,
-                ERROR_RETRIEVING_AGREEMENT
-        );
+        ArchiveAgreementOperation op = buildArchiveAgreementOperation();
+        template.archiveAgreement(op, agreementId);
+    }
+
+    private ArchiveAgreementOperation buildArchiveAgreementOperation() {
+        return ArchiveAgreementOperation.builder()
+            .apiCaller(agreementClient::archiveAgreement)
+            .checkerApiCaller(id -> UpperAgreement.from(agreementClient.getAgreementById(id)))
+            .build();
     }
 
     public void addConsumerDocumentToAgreement(UUID agreementId, File doc) {
-        httpCallExecutor.performCall(
-                () -> agreementClient.addAgreementConsumerDocument(agreementId, "documento-test-qa.pdf", "documento-test-qa", new FileSystemResource(doc)));
-        pollingService.makePolling(
-                () -> agreementClient.getAgreementById(agreementId),
-                res -> !res.getConsumerDocuments().isEmpty(),
-                ERROR_RETRIEVING_AGREEMENT
-        );
+        AddConsumerDocumentOperation op = buildAddConsumerDocumentOperation();
+        template.addConsumerDocumentToAgreement(op, agreementId, doc);
+    }
+
+    private AddConsumerDocumentOperation buildAddConsumerDocumentOperation() {
+        return AddConsumerDocumentOperation.builder()
+            .apiCaller(params -> agreementClient.addAgreementConsumerDocument(
+                params.getAgreementId(),
+                "documento-test-qa.pdf",
+                "documento-test-qa",
+                new FileSystemResource(params.getDoc())))
+            .checkerApiCaller(id -> UpperAgreement.from(agreementClient.getAgreementById(id)))
+            .documentListExtractor(res -> ((Agreement) res).getConsumerDocuments())
+            .build();
     }
 
     public UUID createAttribute(AttributeKind attributeKind, String name) {
