@@ -57,6 +57,6 @@ Feature: Gestione degli attributes
       | name           | description       | code          |
       | test-attr-cert | Attributo di test | GENERATE_AUTO |
     Then si ottiene lo status code 403
-    And non viene restituito il dettaglio dell'attributo certificato "attr-cert-002"
+    And non viene restituito il dettaglio dell'attributo certificato "test-attr-cert"
 
 
