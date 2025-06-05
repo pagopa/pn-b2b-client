@@ -41,7 +41,7 @@ public class TenantRequesterCertifiedAttributesSteps {
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getTenantsApi().getRequesterCertifiedAttributes(0, 50)
         );
-        if (httpCallExecutor.getClientResponse().is2xxSuccessful()) {
+        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             int size = 50;
             AtomicInteger offset = new AtomicInteger(0);
             while (size == 50) {
@@ -57,7 +57,7 @@ public class TenantRequesterCertifiedAttributesSteps {
 
     @Then("si ottiene status code 200 e la lista degli attributi contenente l'attributo assegnato a {string}")
     public void verifyStatusCodeAndAttributeList(String tenantType) {
-        Assertions.assertEquals(200, httpCallExecutor.getClientResponse().value());
+        Assertions.assertEquals(200, httpCallExecutor.getResponseStatus().value());
         UUID tenantId = identityService.getOrganizationId(tenantType);
         Assertions.assertTrue(((RequesterCertifiedAttributes) httpCallExecutor.getResponse()).getResults()
                         .stream().anyMatch(attr -> attr.getAttributeId().equals(sharedStepsContext.getAttributeCommonContext().getAttributeId())

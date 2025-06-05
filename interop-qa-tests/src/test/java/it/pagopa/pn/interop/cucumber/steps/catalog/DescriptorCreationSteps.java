@@ -73,7 +73,7 @@ public class DescriptorCreationSteps {
                 newDescriptorId
         );
 
-        Assertions.assertEquals(HttpStatus.OK, sharedStepsContext.getHttpCallExecutor().getClientResponse());
+        Assertions.assertEquals(HttpStatus.OK, sharedStepsContext.getHttpCallExecutor().getResponseStatus());
         Assertions.assertEquals(descriptor.getDescription(), newDescriptor.getDescription());
         Assertions.assertEquals(descriptor.getVoucherLifespan(), newDescriptor.getVoucherLifespan());
         Assertions.assertEquals(descriptor.getDailyCallsPerConsumer(), newDescriptor.getDailyCallsPerConsumer());

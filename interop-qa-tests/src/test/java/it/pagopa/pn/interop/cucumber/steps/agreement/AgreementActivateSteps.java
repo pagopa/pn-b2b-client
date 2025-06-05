@@ -86,7 +86,7 @@ public class AgreementActivateSteps {
     @Given("{string} ha già creato un attributo verificato")
     public void tenantHasAlreadyCreatedVerifiedAttribute(String consumer) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(consumer, null));
-        UUID attributeId = dataPreparationService.createAttribute(AttributeKind.VERIFIED, null);
+        UUID attributeId = dataPreparationService.createAttribute(AttributeKind.VERIFIED, null).getId();
         sharedStepsContext.getAttributeCommonContext().setAttributeId(attributeId);
         sharedStepsContext.getAttributeCommonContext().getRequiredVerifiedAttributes().add(List.of(attributeId));
     }
@@ -153,7 +153,7 @@ public class AgreementActivateSteps {
             List<UUID> attributeGroup = new ArrayList<>();
 
             for (int attrIdx = 0; attrIdx < 2; attrIdx++) {
-                UUID attributeId = dataPreparationService.createAttribute(attributeKind, null);
+                UUID attributeId = dataPreparationService.createAttribute(attributeKind, null).getId();
 
                 if (attrIdx % 2 == 0) {
                     consumerFunction.accept(tenantId, attributeId);
@@ -176,7 +176,7 @@ public class AgreementActivateSteps {
         for (int groupIdx = 0; groupIdx < 2; groupIdx++) {
             List<UUID> attributeGroup = new ArrayList<>();
             for (int attrIdx = 0; attrIdx < 2; attrIdx++) {
-                UUID attributeId = dataPreparationService.createAttribute(AttributeKind.VERIFIED, null);
+                UUID attributeId = dataPreparationService.createAttribute(AttributeKind.VERIFIED, null).getId();
                 attributeGroup.add(attributeId);
             }
 

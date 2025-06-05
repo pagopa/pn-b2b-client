@@ -60,7 +60,7 @@ public class EServiceTemplateVersionAttributeUpdateSteps {
         List<DescriptorAttributeSeed> declared = new ArrayList<>();
         List<DescriptorAttributeSeed> verified = new ArrayList<>();
 
-        for(Attribute attribute : sharedStepsContext.getEServiceTemplateStepContext().getCreatedAttributes()) {
+        for(Attribute attribute : sharedStepsContext.getAttributeCommonContext().getCreatedAttributes()) {
             List<DescriptorAttributeSeed> seedList = switch (attribute.getKind()) {
                 case CERTIFIED -> certified;
                 case DECLARED -> declared;
@@ -92,7 +92,7 @@ public class EServiceTemplateVersionAttributeUpdateSteps {
 
     @When("l'utente tenta di aggiungere un nuovo gruppo di attributi alla versione dell'e-service template usando l'API specifica")
     public void editEServiceTemplateVersionAttributesAddGroup() {
-        List<DescriptorAttributeSeed> certified = sharedStepsContext.getEServiceTemplateStepContext().getCreatedAttributes().stream()
+        List<DescriptorAttributeSeed> certified = sharedStepsContext.getAttributeCommonContext().getCreatedAttributes().stream()
             .map(attribute -> new DescriptorAttributeSeed()
                 .id(attribute.getId())
                 .explicitAttributeVerification(false))

@@ -75,7 +75,7 @@ public class PurposeRiskAnalysisDocumentDownloadSteps {
 
     @Then("si ottiene status code {int} e un documento diverso")
     public void verifiyStatusCodeAndDocument(int statusCode) {
-        Assertions.assertEquals(statusCode, httpCallExecutor.getClientResponse().value());
+        Assertions.assertEquals(statusCode, httpCallExecutor.getResponseStatus().value());
 
         int length = purposeVersions.size();
         Assertions.assertNotEquals(purposeVersions.get(length - 1).getRiskAnalysisDocument().getId(),

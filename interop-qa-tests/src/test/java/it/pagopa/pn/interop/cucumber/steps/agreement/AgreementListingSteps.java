@@ -11,12 +11,10 @@ import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import org.apache.commons.lang.NotImplementedException;
-import org.junit.jupiter.api.Assertions;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.junit.jupiter.api.Assertions;
 
 public class AgreementListingSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
@@ -139,7 +137,7 @@ public class AgreementListingSteps {
     @Then("si ottiene status code {int} e la lista di {int} richiest(e)(a) di fruizione")
     public void verifyStatusCodeAndAgreementRequest(int statusCode, int count) {
         HttpCallExecutor httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
-        Assertions.assertEquals(statusCode, httpCallExecutor.getClientResponse().value());
+        Assertions.assertEquals(statusCode, httpCallExecutor.getResponseStatus().value());
     }
 
 

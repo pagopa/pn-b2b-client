@@ -109,7 +109,7 @@ public class PurposeCommonStep {
     @Then("si ottiene status code {int} e la lista di {int} finalità")
     public void verifyStatusAndPurposeList(int statusCode, int count) {
         Purposes purposes = (Purposes) sharedStepsContext.getHttpCallExecutor().getResponse();
-        Assertions.assertEquals(statusCode, sharedStepsContext.getHttpCallExecutor().getClientResponse().value());
+        Assertions.assertEquals(statusCode, sharedStepsContext.getHttpCallExecutor().getResponseStatus().value());
         Assertions.assertEquals(count, purposes.getResults().size());
     }
 
@@ -222,7 +222,7 @@ public class PurposeCommonStep {
     @Then("si ottiene status code {int} e il template in versione {string}")
     public void verifyStatusCodeAndTemplateVersion(int statusCode, String expectedVersion) {
         RiskAnalysisFormConfig riskAnalysisFormConfig = (RiskAnalysisFormConfig) sharedStepsContext.getHttpCallExecutor().getResponse();
-        Assertions.assertEquals(statusCode, sharedStepsContext.getHttpCallExecutor().getClientResponse().value());
+        Assertions.assertEquals(statusCode, sharedStepsContext.getHttpCallExecutor().getResponseStatus().value());
         Assertions.assertEquals(expectedVersion, riskAnalysisFormConfig.getVersion());
     }
 

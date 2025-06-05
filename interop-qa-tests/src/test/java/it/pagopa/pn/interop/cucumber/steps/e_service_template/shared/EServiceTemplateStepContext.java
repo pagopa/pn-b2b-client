@@ -1,6 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template.shared;
 
-import it.pagopa.interop.generated.openapi.clients.bff.model.Attribute;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
@@ -58,7 +57,6 @@ public class EServiceTemplateStepContext {
     private CompactDescriptor lastEServiceDescriptorCreatedFromTemplate;
     private UUID lastEServiceDescriptorIdCreatedFromTemplate;
 
-    private List<Attribute> createdAttributes = new ArrayList<>();
     private DescriptorAttributesSeed lastDescriptorAttributesSeed;
     private String lastEServiceNameCreatedFromTemplate;
 
@@ -108,14 +106,6 @@ public class EServiceTemplateStepContext {
 
     public void addTemplateManaged(EServiceTemplateInfo templateInfo) {
         this.templatesManaged.add(templateInfo);
-    }
-
-    public Attribute getLastCreatedAttribute() {
-        return lastOf(createdAttributes);
-    }
-
-    public void addCreatedAttribute(Attribute attribute) {
-        this.createdAttributes.add(attribute);
     }
 
     private <T> T lastOf(List<T> list) {

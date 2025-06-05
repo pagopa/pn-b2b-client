@@ -17,6 +17,13 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.function.Consumer;
 import net.lingala.zip4j.ZipFile;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
@@ -27,16 +34,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.function.Consumer;
 
 public class DescriptorImportSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
@@ -115,7 +112,7 @@ public class DescriptorImportSteps {
                         new FileResource().filename(String.format("%s.zip", folderName)).url(url)
                 )
         );
-        if (httpCallExecutor.getClientResponse().is2xxSuccessful()) {
+        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             CreatedEServiceDescriptor createdEServiceDescriptor = ((CreatedEServiceDescriptor) httpCallExecutor.getResponse());
             eServicesCommonContext.setEserviceId(createdEServiceDescriptor.getId());
             eServicesCommonContext.setDescriptorId(createdEServiceDescriptor.getDescriptorId());

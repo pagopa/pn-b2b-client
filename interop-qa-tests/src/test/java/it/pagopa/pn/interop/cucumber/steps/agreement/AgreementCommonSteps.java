@@ -197,7 +197,7 @@ public class AgreementCommonSteps {
     public void tenantDeclaresAnAttribute(String tenantType) {
         UUID tenantId = this.identityService.getOrganizationId(tenantType);
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        UUID attributeId = dataPreparationService.createAttribute(AttributeKind.DECLARED, null);
+        UUID attributeId = dataPreparationService.createAttribute(AttributeKind.DECLARED, null).getId();
         dataPreparationService.declareDeclaredAttribute(tenantId, attributeId);
         sharedStepsContext.getAttributeCommonContext().getRequiredDeclaredAttributes().add(List.of(attributeId));
         sharedStepsContext.getAttributeCommonContext().setAttributeId(attributeId);

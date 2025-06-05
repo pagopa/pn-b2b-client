@@ -75,7 +75,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
     DevAbstractInteropTracingClient.class,
     QAAbstractInteropTracingClient.class,
     CommonUtils.class,
-    VoucherService.class
+    VoucherService.class,
     QAAbstractInteropTracingClient.class,
     DescriptorAttributesMapperImpl.class,
     EServiceTemplateStepContext$EServiceTemplateInfoMapperImpl.class,

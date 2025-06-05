@@ -180,7 +180,7 @@ public class AgreementCreationStep {
         clientTokenConfigurator.setBearerToken(identityService.getToken(certifier, null));
 
         sharedStepsContext.getAttributeCommonContext().setAttributeId(
-                dataPreparationService.createAttribute(AttributeKind.CERTIFIED, null)
+                dataPreparationService.createAttribute(AttributeKind.CERTIFIED, null).getId()
         );
     }
 

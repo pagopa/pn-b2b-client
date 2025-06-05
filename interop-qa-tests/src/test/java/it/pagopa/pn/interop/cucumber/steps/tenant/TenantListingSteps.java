@@ -2,7 +2,6 @@ package it.pagopa.pn.interop.cucumber.steps.tenant;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganizations;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Tenants;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
@@ -40,7 +39,7 @@ public class TenantListingSteps {
     @Then("si ottiene status code {int} e la lista di {int} tenant")
     public void verifyStatusCodeAndConsumerListSize(int statusCode, int tenantNum) {
         Tenants compactOrganizations = (Tenants) sharedStepsContext.getHttpCallExecutor().getResponse();
-        Assertions.assertEquals(statusCode, sharedStepsContext.getHttpCallExecutor().getClientResponse().value());
+        Assertions.assertEquals(statusCode, sharedStepsContext.getHttpCallExecutor().getResponseStatus().value());
         Assertions.assertEquals(tenantNum, compactOrganizations.getResults().size());
     }
 }

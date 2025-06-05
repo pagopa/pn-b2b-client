@@ -36,7 +36,7 @@ public class TenantVerifiedAttributesListingSteps {
 
     @Then("si ottiene status code 200 e la lista degli attributi contenente l'attributo verificato da {string}")
     public void verifyStatusCodeAndAttributeList(String tenantType) {
-        Assertions.assertEquals(200, httpCallExecutor.getClientResponse().value());
+        Assertions.assertEquals(200, httpCallExecutor.getResponseStatus().value());
 
         UUID verifierId = identityService.getOrganizationId(tenantType);
         Assertions.assertTrue(

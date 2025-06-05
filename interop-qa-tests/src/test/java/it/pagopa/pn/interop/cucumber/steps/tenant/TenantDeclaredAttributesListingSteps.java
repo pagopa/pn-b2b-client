@@ -35,7 +35,7 @@ public class TenantDeclaredAttributesListingSteps {
     @Then("si ottiene status code 200 e la lista degli attributi contenente l'attributo dichiarato")
     public void verifyStatusCodeAndAttributeList() {
         DeclaredAttributesResponse declaredAttributesResponse = (DeclaredAttributesResponse) sharedStepsContext.getHttpCallExecutor().getResponse();
-        Assertions.assertEquals(200, sharedStepsContext.getHttpCallExecutor().getClientResponse().value());
+        Assertions.assertEquals(200, sharedStepsContext.getHttpCallExecutor().getResponseStatus().value());
         Assertions.assertTrue(declaredAttributesResponse.getAttributes().stream()
                 .anyMatch(declaredTenantAttribute -> declaredTenantAttribute.getId().equals(sharedStepsContext.getAttributeCommonContext().getAttributeId())),
                 "The desired declared attribute is not present in the declared attribute list!");

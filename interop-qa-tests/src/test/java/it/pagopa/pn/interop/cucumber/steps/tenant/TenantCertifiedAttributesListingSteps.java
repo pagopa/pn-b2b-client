@@ -35,7 +35,7 @@ public class TenantCertifiedAttributesListingSteps {
     @Then("si ottiene status code 200 e la lista degli attributi certificati contenente l'attributo assegnato e l'attributo IPA \"Comune\"")
     public void verifyStatusCodeeAndAttributeList() {
         CertifiedAttributesResponse certifiedAttributesResponse = (CertifiedAttributesResponse) sharedStepsContext.getHttpCallExecutor().getResponse();
-        Assertions.assertEquals(200, sharedStepsContext.getHttpCallExecutor().getClientResponse().value());
+        Assertions.assertEquals(200, sharedStepsContext.getHttpCallExecutor().getResponseStatus().value());
         Assertions.assertTrue(certifiedAttributesResponse.getAttributes().stream()
                 .anyMatch(certifiedTenantAttribute -> certifiedTenantAttribute.getId().equals(sharedStepsContext.getAttributeCommonContext().getAttributeId())),
                 "The desired attribute is not present in the certified attribute list!");

@@ -35,7 +35,7 @@ public class PurposeReadSteps {
 
     @Then("si ottiene status code 200 ma l'analisi del rischio solo per admin")
     public void verifyStatusCodeAndRiskAnalysis() {
-        Assertions.assertEquals(200, httpCallExecutor.getClientResponse().value());
+        Assertions.assertEquals(200, httpCallExecutor.getResponseStatus().value());
         if (sharedStepsContext.getRole() != Role.ADMIN) {
             Assertions.assertNull(((Purpose)httpCallExecutor.getResponse()).getRiskAnalysisForm());
         }

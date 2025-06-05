@@ -40,7 +40,7 @@ public class TenantEServiceConsumerListingSteps {
     public void verifyStatusCodeAndConsumerList(String tenantType) {
         CompactOrganizations compactOrganizations = (CompactOrganizations) sharedStepsContext.getHttpCallExecutor().getResponse();
         UUID organizationId = identityService.getOrganizationId(tenantType);
-        Assertions.assertEquals(200, sharedStepsContext.getHttpCallExecutor().getClientResponse().value());
+        Assertions.assertEquals(200, sharedStepsContext.getHttpCallExecutor().getResponseStatus().value());
         Assertions.assertTrue(compactOrganizations.getResults().stream()
                 .anyMatch(consumer -> consumer.getId().equals(organizationId)),
                 String.format("%s is not present in the consumer list!", tenantType.toUpperCase()));
@@ -57,7 +57,7 @@ public class TenantEServiceConsumerListingSteps {
     @Then("si ottiene status code {int} e la lista di {int} aderent(i)(e)")
     public void verifyStatusCodeAndConsumerListSize(int statusCode, int tenantNum) {
         CompactOrganizations compactOrganizations = (CompactOrganizations) sharedStepsContext.getHttpCallExecutor().getResponse();
-        Assertions.assertEquals(statusCode, sharedStepsContext.getHttpCallExecutor().getClientResponse().value());
+        Assertions.assertEquals(statusCode, sharedStepsContext.getHttpCallExecutor().getResponseStatus().value());
         Assertions.assertEquals(tenantNum, compactOrganizations.getResults().size());
     }
 
@@ -79,7 +79,7 @@ public class TenantEServiceConsumerListingSteps {
         CompactOrganizations compactOrganizations = (CompactOrganizations) sharedStepsContext.getHttpCallExecutor().getResponse();
 
         int totalCount = compactOrganizations.getPagination().getTotalCount();
-        Assertions.assertEquals(200, sharedStepsContext.getHttpCallExecutor().getClientResponse().value());
+        Assertions.assertEquals(200, sharedStepsContext.getHttpCallExecutor().getResponseStatus().value());
         Assertions.assertEquals(totalCount - offset, compactOrganizations.getResults().size());
     }
 
