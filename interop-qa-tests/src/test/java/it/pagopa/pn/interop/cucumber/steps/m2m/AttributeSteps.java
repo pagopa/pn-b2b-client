@@ -19,27 +19,17 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class AttributeSteps {
-    private final ClientTokenConfigurator clientTokenConfigurator;
+
     private final SharedStepsContext sharedStepsContext;
-    private final IdentityService identityService;
     private final M2MDataPreparationService dataPreparationService;
-    private IM2MAttributeClient attributeClient;
-    private final HttpCallExecutor httpCallExecutor;
-    private final PollingService pollingService;
 
     private static final String AUTO_GENERATE_ATTRIBUTE_CODE_TOKEN = "GENERATE_AUTO";
     private static final String INVALID_ATTRIBUTE_NAME_TOKEN = "invalid";
 
-    public AttributeSteps(ClientTokenConfigurator clientTokenConfigurator,
-                          SharedStepsContext sharedStepsContext,
+    public AttributeSteps(SharedStepsContext sharedStepsContext,
                           M2MDataPreparationService dataPreparationService) {
-        this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
-        this.identityService = sharedStepsContext.getIdentityService();
         this.dataPreparationService = dataPreparationService;
-        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
-        this.pollingService = sharedStepsContext.getPollingService();
-        this.attributeClient = clientTokenConfigurator.getM2mAttributeClient();
     }
 
     @And("viene effettuata la creazione dell'attributo certificato:")
@@ -69,15 +59,13 @@ public class AttributeSteps {
                 : this.sharedStepsContext.getAttributeCommonContext()
                 .getAttributeId();
 
-        // Esegue la chiamata e verifica che non sia fallita
-        HttpStatus clientResponse = httpCallExecutor.performCall(() ->
-                attributeClient.getCertifiedAttribute(attributeId)
-        );
+        UUID certifiedAttributeId =
+                dataPreparationService.getCertifiedAttribute(attributeId)
+                        .map(CertifiedAttribute::getId)
+                        .orElse(null);
 
-        if (clientResponse.isError()) {
-            Assertions.fail("Fallita la richiesta di recupero del dettaglio dell'attributo certificato \"" + name + "\" con ID: "
-                    + attributeId + " — HTTP Status: " + clientResponse);
-        }
+        // Aggiorna il context
+        sharedStepsContext.getAttributeCommonContext().setAttributeId(certifiedAttributeId);
 
     }
 
@@ -93,30 +81,28 @@ public class AttributeSteps {
     }
 
     private void checkDettaglioAttributoCertificato(UUID expectedId, String name, boolean shouldExist) {
-        CertifiedAttribute response = (CertifiedAttribute) httpCallExecutor.getResponse();
+        UUID id = this.sharedStepsContext.getAttributeCommonContext().getAttributeId();
 
         if (shouldExist) {
-            Assertions.assertThat(response)
+            Assertions.assertThat(id)
                     .as("La risposta del dettaglio dell'attributo certificato \"" + name + "\" non deve essere null (ID atteso: " + expectedId + ")")
                     .isNotNull();
 
-            Assertions.assertThat(response.getId())
+            Assertions.assertThat(id)
                     .as("L'ID dell'attributo nella risposta non corrisponde a quello atteso (atteso: "
-                            + expectedId + ", ottenuto: " + response.getId() + ") per l'attributo certificato \"" + name + "\"")
+                            + expectedId + ", ottenuto: " + id + ") per l'attributo certificato \"" + name + "\"")
                     .isEqualByComparingTo(expectedId);
 
         } else {
-            Assertions.assertThat(response)
-                    .as("Nessun dettaglio dell'attributo certificato doveva essere restituito, ma è stato ricevuto un oggetto: " + response)
+            Assertions.assertThat(id)
+                    .as("Nessun dettaglio dell'attributo certificato doveva essere restituito, ma è stato ricevuto un oggetto con id: " + id)
                     .isNull();
         }
     }
-
 
     private String generateUniqueAttributeCode() {
         final String prefix = "unique_code";
         long timestamp = System.currentTimeMillis();
         return prefix + "_" + timestamp;
     }
-
 }

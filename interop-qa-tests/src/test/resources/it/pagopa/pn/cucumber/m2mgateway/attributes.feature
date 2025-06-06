@@ -23,7 +23,7 @@ Feature: Gestione degli attributes
   Scenario: [M2MG_CERTIFIEDATTRIBUTES_3] Accesso negato al dettaglio di un attributo certificato con token non valido (Scenario 63)
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And l'utente possiede un token non valido
+    And viene impostato per l'utente un token m2m scaduto
     And viene effettuata la creazione dell'attributo certificato:
       | name           | description       | code          |
       | test-attr-cert | Attributo di test | GENERATE_AUTO |

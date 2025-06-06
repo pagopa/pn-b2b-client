@@ -81,12 +81,21 @@ public class M2MDataPreparationService {
             id -> from(agreementClient.getAgreementById(id)));
     }
 
+    // ---ATTRIBUTES---
     public Optional<UUID> createCertifiedAttribute(CertifiedAttributeSeed payloadAttrCert) {
         CreateAttributeOperation operation = buildAttributeOperation(payloadAttrCert);
         return templateService.createAttribute(operation);
     }
 
-    public Optional<List<EService>> getEServices(IM2MEserviceClient.EserviceListRequest request) {
+    public Optional<CertifiedAttribute> getCertifiedAttribute(UUID id){
+        return templateService.performOperation( SimpleCreateOperation.of(
+                () -> attributeClient.getCertifiedAttribute(id),
+                res -> res
+        ));
+    }
+
+    // ---ESERVICE---
+    public Optional<EServices> getEServices(IM2MEserviceClient.EserviceListRequest request) {
         return templateService.performOperation( SimpleCreateOperation.of(
                 () -> eserviceClient.getEServices(request),
                 res -> res.getResults()
