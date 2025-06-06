@@ -66,7 +66,7 @@ public class DataPreparationServiceTemplate {
         commonUtils.assertValidResponse();
     }
 
-    private <T, R> Optional<R> performOperation(ICreateOperation<T, R> operation) {
+    public <T, R> Optional<R> performOperation(ICreateOperation<T, R> operation) {
         // Esegue la chiamata HTTP
         httpCallExecutor.performCall(operation.getApiCaller());
 

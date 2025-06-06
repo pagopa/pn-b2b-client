@@ -34,7 +34,7 @@ public class M2MAttributeClientImpl implements IM2MAttributeClient {
         ApiClient apiClient = new ApiClient(restTemplate);
         apiClient.setBasePath(basePath);
 
-        //apiClient.setBearerToken(bearerToken);
+        apiClient.setBearerToken(bearerToken);
 
         return apiClient;
     }

@@ -2,15 +2,16 @@ package it.pagopa.pn.interop.cucumber.steps.datapreparationservice;
 
 import it.pagopa.interop.agreement.service.IM2MAgreementClient;
 import it.pagopa.interop.attribute.service.IM2MAttributeClient;
+import it.pagopa.interop.agreement.service.IM2MEserviceClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.*;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 import javax.annotation.Nullable;
 
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,7 @@ import org.springframework.context.annotation.Scope;
 public class M2MDataPreparationService {
     private final IM2MAgreementClient agreementClient;
     private final IM2MAttributeClient attributeClient;
+    private final IM2MEserviceClient eserviceClient;
     private final DataPreparationServiceTemplate templateService;
 
     public M2MDataPreparationService(ClientTokenConfigurator clientTokenConfigurator,
@@ -29,6 +31,7 @@ public class M2MDataPreparationService {
                                      CommonUtils commonUtils) {
         this.agreementClient = clientTokenConfigurator.getM2mAgreementClient();
         this.attributeClient = clientTokenConfigurator.getM2mAttributeClient();
+        this.eserviceClient = clientTokenConfigurator.getM2meServiceClient();
         this.templateService = new DataPreparationServiceTemplate(
                 sharedStepsContext.getHttpCallExecutor(),
                 sharedStepsContext.getPollingService(),
@@ -42,8 +45,7 @@ public class M2MDataPreparationService {
         return templateService.createAgreement(operation);
     }
 
-    private CreateAgreementOperation buildCreateAgreementOperation(UUID eServiceID, UUID descriptorId,
-                                                                   UUID delegationId) {
+    private CreateAgreementOperation buildCreateAgreementOperation(UUID eServiceID, UUID descriptorId, UUID delegationId) {
         return CreateAgreementOperation.of(
                 () -> agreementClient.createAgreement(new AgreementSeed()
                         .eserviceId(eServiceID)
@@ -76,6 +78,13 @@ public class M2MDataPreparationService {
     public Optional<UUID> createCertifiedAttribute(CertifiedAttributeSeed payloadAttrCert) {
         CreateAttributeOperation operation = buildAttributeOperation(payloadAttrCert);
         return templateService.createAttribute(operation);
+    }
+
+    public Optional<List<EService>> getEServices(IM2MEserviceClient.EserviceListRequest request) {
+        return templateService.performOperation( SimpleCreateOperation.of(
+                () -> eserviceClient.getEServices(request),
+                res -> res.getResults()
+        ));
     }
 
     private CreateAttributeOperation buildAttributeOperation(CertifiedAttributeSeed payloadAttrCert) {

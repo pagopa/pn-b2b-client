@@ -1,11 +1,8 @@
 Feature: Gestione degli eServices
 
   Scenario Outline: [M2MG_ESERVICES_1] RED - La lista degli eServices può essere visionata da un utente con ruolo M2M o M2M-ADMIN (Scenario 4)
-    Given l'utente è un "<ruolo>" di "PA1" con ruolo M2M <ruolo-m2m>
-    And l'utente è amministratore del client
-    And viene effettuata la creazione degli eServices:
-      | eserviceId      | name     |
-      | eservice-test-1 | Anagrafe |
+    Given "PA1" ha già creato e pubblicato 1 e-services
+    And l'utente è un "<ruolo>" di "PA1" con ruolo M2M <ruolo-m2m>
     When l'utente tenta di recuperare la lista completa degli eServices
     Then si ottiene lo status code <statusCode>
     And gli eServices sono stati recuperati correttamente
@@ -18,8 +15,8 @@ Feature: Gestione degli eServices
       | support      | m2m       | 403        |
 
   Scenario: [M2MG_ESERVICES_2] RED - Recupero corretto della lista degli eServices con utente autorizzato (Scenario 81)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M "m2m"
-    And l'utente è amministratore del client
+    Given "PA1" ha già creato e pubblicato 1 e-services
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
     And viene effettuata la creazione degli eServices:
       | eserviceId      | name       |
       | eservice-test-1 | Anagrafe   |
@@ -30,15 +27,16 @@ Feature: Gestione degli eServices
     And viene restituito l'elenco degli eServices
 
   Scenario: [M2MG_ESERVICES_3] RED - Accesso negato alla lista degli eServices con token non valido (Scenario 82)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M "m2m"
+    Given "PA1" ha già creato e pubblicato 1 e-services
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
     And l'utente possiede un token non valido
     When l'utente tenta di recuperare la lista completa degli eServices
     Then si ottiene lo status code 401
     And l'elenco degli eServices non viene restituito
 
   Scenario Outline: [M2MG_ESERVICES_4] Un utente con ruolo M2M o M2M-ADMIN può visualizzare un eService specifico (Scenario 5)
-    Given l'utente è un "<ruolo>" di "PA1" con ruolo M2M <ruolo-m2m>
-    And l'utente è amministratore del client
+    Given "PA1" ha già creato e pubblicato 1 e-services
+    And l'utente è un "<ruolo>" di "PA1" con ruolo M2M <ruolo-m2m>
     And viene effettuata la creazione degli eServices:
       | eserviceId      | name     |
       | eservice-test-1 | Anagrafe |
@@ -54,8 +52,8 @@ Feature: Gestione degli eServices
       | support      | m2m       | 403        |
 
   Scenario: [M2MG_ESERVICES_5] Recupero del dettaglio di un eService con utente autorizzato (Scenario 83)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M "m2m"
-    And l'utente è amministratore del client
+    Given "PA1" ha già creato e pubblicato 1 e-services
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
     And viene effettuata la creazione degli eServices:
       | eserviceId      | name     |
       | eservice-test-1 | Anagrafe |
@@ -64,8 +62,8 @@ Feature: Gestione degli eServices
     And viene restituito il dettaglio dell'eService richiesto
 
   Scenario: [M2MG_ESERVICES_6] Accesso negato al dettaglio dell'eService con eserviceId invalido (Scenario 84)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M "m2m"
-    And l'utente è amministratore del client
+    Given "PA1" ha già creato e pubblicato 1 e-services
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
     And viene effettuata la creazione degli eServices:
       | eserviceId      | name     |
       | eservice-test-1 | Anagrafe |
@@ -74,8 +72,8 @@ Feature: Gestione degli eServices
     And il dettaglio dell'eService non viene restituito
 
   Scenario: [M2MG_ESERVICES_7] Accesso negato al dettaglio di un eService con token non valido (Scenario 85)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M "m2m"
-    And l'utente è amministratore del client
+    Given "PA1" ha già creato e pubblicato 1 e-services
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
     And l'utente possiede un token non valido
     And viene effettuata la creazione degli eServices:
       | eserviceId      | name     |
@@ -85,15 +83,15 @@ Feature: Gestione degli eServices
     And il dettaglio dell'eService non viene restituito
 
   Scenario: [M2MG_ESERVICES_8] Errore nel recupero del dettaglio di un eService inesistente (Scenario 86)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M "m2m"
-    And l'utente è amministratore del client
+    Given "PA1" ha già creato e pubblicato 1 e-services
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
     When l'utente tenta di recuperare il dettaglio dell'eService "id-inesistente"
     Then il sistema restituisce lo status code 404
     And il dettaglio dell'eService non viene restituito
 
   Scenario Outline: [M2MG_ESERVICES_9] RED - La lista dei descriptors di un eService può essere visualizzata da un utente con ruolo M2M o M2M-ADMIN (Scenario 6)
-    Given l'utente è un "<ruolo>" di "PA1" con ruolo M2M <ruolo-m2m>
-    And l'utente è amministratore del client
+    Given "PA1" ha già creato e pubblicato 1 e-services
+    And l'utente è un "<ruolo>" di "PA1" con ruolo M2M <ruolo-m2m>
     And viene effettuata la creazione degli eServices:
       | eserviceId      | name     |
       | eservice-test-1 | Anagrafe |
@@ -109,8 +107,8 @@ Feature: Gestione degli eServices
       | support      | m2m       | 403        |
 
   Scenario: [M2MG_ESERVICES_9] RED - Recupero corretto della lista dei descriptors per un eService con utente autorizzato (Scenario 87)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M "m2m"
-    And l'utente è amministratore del client
+    Given "PA1" ha già creato e pubblicato 1 e-services
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
     And viene effettuata la creazione degli eServices:
       | eserviceId      | name     |
       | eservice-test-1 | Anagrafe |
@@ -119,8 +117,8 @@ Feature: Gestione degli eServices
     And viene restituita la lista dei descriptors dell'eService
 
   Scenario: [M2MG_ESERVICES_10] RED - Accesso negato alla lista dei descriptors con eserviceId nullo (Scenario 88)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M "m2m"
-    And l'utente è amministratore del client
+    Given "PA1" ha già creato e pubblicato 1 e-services
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
     And viene effettuata la creazione degli eServices:
       | eserviceId      | name     |
       | eservice-test-1 | Anagrafe |
@@ -129,8 +127,8 @@ Feature: Gestione degli eServices
     And la lista dei descriptors dell'eService non viene restituita
 
   Scenario: [M2MG_ESERVICES_11] RED - Accesso negato alla lista dei descriptors con token non valido (Scenario 89)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M "m2m"
-    And l'utente è amministratore del client
+    Given "PA1" ha già creato e pubblicato 1 e-services
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
     And l'utente possiede un token non valido
     And viene effettuata la creazione degli eServices:
       | eserviceId      | name     |
@@ -140,8 +138,8 @@ Feature: Gestione degli eServices
     And la lista dei descriptors dell'eService non viene restituita
 
   Scenario: [M2MG_ESERVICES_12] RED - Errore nel recupero della lista dei descriptors con eserviceId inesistente (Scenario 90)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M "m2m"
-    And l'utente è amministratore del client
+    Given "PA1" ha già creato e pubblicato 1 e-services
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
     And viene effettuata la creazione degli eServices:
       | eserviceId      | name     |
       | eservice-test-1 | Anagrafe |
@@ -150,8 +148,8 @@ Feature: Gestione degli eServices
     And la lista dei descriptors dell'eService non viene restituita
 
   Scenario: [M2MG_ESERVICES_13] Recupero del descriptor di un eService con utente autorizzato (Scenario 7)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M "m2m"
-    And l'utente è amministratore del client
+    Given "PA1" ha già creato e pubblicato 1 e-services
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
     And viene effettuata la creazione degli eServices:
       | eserviceId      | name     |
       | eservice-test-1 | Anagrafe |
@@ -163,8 +161,8 @@ Feature: Gestione degli eServices
     And viene restituito il dettaglio del descriptor richiesto
 
   Scenario: [M2MG_ESERVICES_14] Recupero corretto di un descriptor per uno specifico eService (Scenario 91)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M "m2m"
-    And l'utente è amministratore del client
+    Given "PA1" ha già creato e pubblicato 1 e-services
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
     And viene effettuata la creazione degli eServices:
       | eserviceId      | name     |
       | eservice-test-1 | Anagrafe |
@@ -176,8 +174,8 @@ Feature: Gestione degli eServices
     And viene restituito il dettaglio del descriptor richiesto
 
   Scenario: [M2MG_ESERVICES_15] Errore nel recupero di un descriptor con eserviceId e descriptorId nulli (Scenario 92)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M "m2m"
-    And l'utente è amministratore del client
+    Given "PA1" ha già creato e pubblicato 1 e-services
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
     And viene effettuata la creazione degli eServices:
       | eserviceId      | name     |
       | eservice-test-1 | Anagrafe |
@@ -189,8 +187,8 @@ Feature: Gestione degli eServices
     And il dettaglio del descriptor non viene restituito
 
   Scenario: [M2MG_ESERVICES_16] Accesso negato al recupero di un descriptor con token non valido (Scenario 93)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M "m2m"
-    And l'utente è amministratore del client
+    Given "PA1" ha già creato e pubblicato 1 e-services
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
     And l'utente possiede un token non valido
     And viene effettuata la creazione degli eServices:
       | eserviceId      | name     |
@@ -203,8 +201,8 @@ Feature: Gestione degli eServices
     And il dettaglio del descriptor non viene restituito
 
   Scenario: [M2MG_ESERVICES_17] Errore nel recupero di un descriptor con eserviceId e descriptorId inesistenti (Scenario 94)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M "m2m"
-    And l'utente è amministratore del client
+    Given "PA1" ha già creato e pubblicato 1 e-services
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
     And viene effettuata la creazione degli eServices:
       | eserviceId      | name     |
       | eservice-test-1 | Anagrafe |
