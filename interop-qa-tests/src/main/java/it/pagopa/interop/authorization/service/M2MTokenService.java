@@ -26,7 +26,11 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 /* Usato per la formulazione di token di tipo m2m. Introdotto durante lo sviluppo dei test di
- * SRS API v2 https://pagopa.atlassian.net/wiki/spaces/PDNDI/pages/1607860403/DRAFT+SRS+API+V2 */
+ * SRS API v2 https://pagopa.atlassian.net/wiki/spaces/PDNDI/pages/1607860403/DRAFT+SRS+API+V2 .
+ * IDEATO PER UTILIZZO SOLO IN TEST AUTOMATICI, non come servizio di auth di utilità generale. Si
+ * noti infatti che nella procedura di recupero del token vengono prese in carico tutte le ops.
+ * correlate affinché la procedura vada "per forza" a buon fine (creazione del client, eventuale
+ * set di adminId...).  */
 @Slf4j
 @ToString
 @EqualsAndHashCode
@@ -88,7 +92,8 @@ public class M2MTokenService {
     * - @voucher_generation_m2m1_admin
     * al netto dei controlli di verifica. */
     public String getToken(@NonNull String tenantType, @NonNull M2MRole role, int roleIndex) {
-        if(!tokenCache.containsKey(of(tenantType, role))) {
+        TokenKey tokenKey = of(tenantType, role);
+        if(!tokenCache.containsKey(tokenKey)) {
             log.info("Generating M2M token for tenantType: {}, role: {}", tenantType, role);
 
             String token = identityService.getToken(tenantType, "admin", roleIndex);
@@ -128,9 +133,9 @@ public class M2MTokenService {
             VoucherResponse voucherResponse = new ObjectMapper()
                 .convertValue(voucher, VoucherResponse.class);
 
-            this.tokenCache.put(of(tenantType, role), voucherResponse.getAccessToken());
+            this.tokenCache.put(tokenKey, voucherResponse.getAccessToken());
         }
 
-        return this.tokenCache.get(of(tenantType, role));
+        return this.tokenCache.get(tokenKey);
     }
 }

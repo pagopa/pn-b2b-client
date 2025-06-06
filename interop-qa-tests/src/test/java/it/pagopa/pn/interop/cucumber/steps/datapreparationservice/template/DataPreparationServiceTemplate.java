@@ -1,13 +1,18 @@
 package it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template;
 
+import it.pagopa.interop.agreement.domain.ClientType;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.AddConsumerDocumentOperation.AddConsumerDocumentParams;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.CreateAgreementOperation.CreateAgreementParams;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.ICreateOperation.CreateOperationImpl;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
-
+import java.io.File;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
-
+import java.util.function.Function;
+import javax.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 
@@ -27,12 +32,15 @@ public class DataPreparationServiceTemplate {
         this.commonUtils = commonUtils;
     }
 
-    public Optional<UUID> createAgreement(CreateAgreementOperation operation) {
-        return performOperation(operation);
+    public Optional<UUID> createAgreement(CreateAgreementOperation operation, UUID eServiceID, UUID descriptorId, @Nullable UUID delegationId) {
+        return performOperation(CreateOperationImpl.of(
+            () -> operation.getApiCaller().apply(CreateAgreementParams.of(eServiceID, descriptorId, delegationId)),
+            Function.identity()
+        ));
     }
 
-    public UUID createAndCheckAgreement(CreateAndCheckAgreementOperation operation) {
-        UUID agreementId = createAgreement(operation.getCreateOperation()).orElseThrow(
+    public UUID createAndCheckAgreement(CreateAndCheckAgreementOperation operation, UUID eServiceID, UUID descriptorId, UUID delegationId) {
+        UUID agreementId = createAgreement(operation.getCreateOperation(), eServiceID, descriptorId, delegationId).orElseThrow(
             () -> new NoSuchElementException("Failed to create an agreement: result of agreement creation API is '%s'".formatted(httpCallExecutor.getClientResponse())));
         assertValidResponse();
         pollingService.makePolling(
@@ -43,18 +51,75 @@ public class DataPreparationServiceTemplate {
         return agreementId;
     }
 
-    public void submitAgreement(SubmitAgreementOperation operation, UpperAgreementState expectedState) {
+    public void submitAgreement(SubmitAgreementOperation operation, UUID agreementId, UpperAgreementState expectedState) {
         pollingService.makePolling(
-                () -> httpCallExecutor.performCall(operation.getApiCaller()),
+                () -> httpCallExecutor.performCall(() -> operation.getApiCaller().apply(agreementId)),
             HttpStatus::is2xxSuccessful,
                 "There was an error while submitting the agreement!"
         );
 
         assertValidResponse();
         pollingService.makePolling(
-            operation.getCheckerApiCaller(),
-                res -> operation.getResultExtractor().apply(res) == expectedState,
+            () -> operation.getCheckerApiCaller().apply(agreementId),
+                res -> res.getState() == expectedState,
                 ERROR_RETRIEVING_AGREEMENT
+        );
+    }
+
+    public UUID createAgreementWithGivenState(CreateAgreementWithStateOperation op, UpperAgreementState agreementState, UUID eServiceID, UUID descriptorId, UUID delegationId, File doc) {
+        // agreement in state DRAFT
+        UUID agreementId = createAndCheckAgreement(op.getCreateAndCheckAgreementOperation(), eServiceID, descriptorId, delegationId);
+        if (doc != null) addConsumerDocumentToAgreement(op.getAddConsumerDocumentOperation(), agreementId, doc);
+        return switch (agreementState) {
+            case DRAFT -> agreementId;
+            case PENDING, ACTIVE -> {
+                submitAgreement(op.getSubmitAgreementOperation(), agreementId, agreementState);
+                yield agreementId;
+            }
+            case SUSPENDED -> {
+                submitAgreement(op.getSubmitAgreementOperation(), agreementId, UpperAgreementState.ACTIVE);
+                suspendAgreement(op.getSuspendAgreementOperation(), agreementId, ClientType.CONSUMER);
+                yield agreementId;
+            }
+            case ARCHIVED -> {
+                submitAgreement(op.getSubmitAgreementOperation(), agreementId, UpperAgreementState.ACTIVE);
+                suspendAgreement(op.getSuspendAgreementOperation(), agreementId, ClientType.CONSUMER);
+                archiveAgreement(op.getArchiveAgreementOperation(), agreementId);
+                yield agreementId;
+            }
+            default -> throw new IllegalArgumentException("Unsupported AgreementState: " + agreementState);
+        };
+    }
+
+    public void addConsumerDocumentToAgreement(AddConsumerDocumentOperation op, UUID agreementId, File doc) {
+        httpCallExecutor.performCall(() -> op.getApiCaller().apply(
+            AddConsumerDocumentParams.of(agreementId, doc)));
+        pollingService.makePolling(
+            () -> op.getCheckerApiCaller().apply(agreementId),
+            res -> !op.getDocumentListExtractor().apply(res).isEmpty(),
+            ERROR_RETRIEVING_AGREEMENT
+        );
+    }
+
+    public void suspendAgreement(SuspendAgreementOperation op, UUID agreementId, ClientType suspendedBy) {
+        httpCallExecutor.performCall(() -> op.getApiCaller().apply(agreementId));
+        assertValidResponse();
+        pollingService.makePolling(
+            () -> op.getCheckerApiCaller().apply(agreementId),
+            agreement -> agreement.getState().equals(UpperAgreementState.SUSPENDED)
+                && ClientType.PRODUCER.equals(suspendedBy) ? agreement.isSuspendedByProducer()
+                : agreement.isSuspendedByConsumer(),
+            ERROR_RETRIEVING_AGREEMENT
+        );
+    }
+
+    public void archiveAgreement(ArchiveAgreementOperation op, UUID agreementId) {
+        httpCallExecutor.performCall(() -> op.getApiCaller().accept(agreementId));
+        assertValidResponse();
+        pollingService.makePolling(
+            () -> op.getCheckerApiCaller().apply(agreementId),
+            res -> res.getState() == UpperAgreementState.ARCHIVED,
+            ERROR_RETRIEVING_AGREEMENT
         );
     }
 

@@ -8,6 +8,7 @@ import it.pagopa.interop.agreement.service.impl.EServiceApiClientImpl;
 import it.pagopa.interop.agreement.service.impl.M2MAgreementClientImpl;
 import it.pagopa.interop.attribute.service.IAttributeApiClient;
 import it.pagopa.interop.attribute.service.impl.AttributeApiClientImpl;
+import it.pagopa.interop.attribute.service.impl.M2MAttributeClientImpl;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.impl.AuthorizationClientImpl;
 import it.pagopa.interop.authorization.service.impl.ProducerClientImpl;
@@ -72,6 +73,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
     VoucherService.class,
     it.pagopa.interop.authorization.service.DataPreparationService.class,
     M2MAgreementClientImpl.class,
+    M2MAttributeClientImpl.class,
     M2MDataPreparationService.class
 })
 @EnableScheduling

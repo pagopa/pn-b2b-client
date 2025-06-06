@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.m2m;
 
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -54,26 +55,32 @@ public class AgreementSteps {
             .toList();
 
         agreementsIds.forEach(agreementId -> dataPreparationService.submitAgreement(agreementId, AgreementState.ACTIVE));
+        sharedStepsContext.getAgreementCommonContext().setAgreementIds(agreementsIds);
     }
 
     @SuppressWarnings("java:S6204")
-    @When("l'utente tenta di recuperare la lista completa degli agreements")
-    public void agreementsListAttempt() {
+    @When("l'utente tenta di recuperare una lista di {int} agreements creati")
+    public void agreementsListAttempt(int agreementsQuantity) {
+        String tenant = sharedStepsContext.getTenantType();
+        UUID producerId = identityService.getOrganizationId(tenant);
         httpCallExecutor.performCall(() -> agreementClient.getAgreements(
             AgreementsListRequest.builder()
                 .offset(0)
-                .limit(30)
+                .limit(agreementsQuantity)
+                .producersIds(List.of(producerId))
                 .build()
         ));
 
-        Agreements res = (Agreements) httpCallExecutor.getResponse();
-        sharedStepsContext.getAgreementCommonContext().setAgreementIds(
-            res.getResults().stream()
-                .map(Agreement::getId)
-                .collect(toList()));
+        if (httpCallExecutor.getClientResponse().is2xxSuccessful()) {
+            Agreements res = (Agreements) httpCallExecutor.getResponse();
+            sharedStepsContext.getAgreementCommonContext().setAgreementIds(
+                res.getResults().stream()
+                    .map(Agreement::getId)
+                    .collect(toList()));
+        }
     }
 
-    @Then("sono stati visualizzati correttamente {int} agreements")
+    @Then("sono stati visualizzati correttamente {int} agreements creati")
     public void agreementsSuccessfullyGot(int expectedSize) {
         HttpStatus clientResponse = httpCallExecutor.getClientResponse();
         if(clientResponse.isError()) {
@@ -81,7 +88,12 @@ public class AgreementSteps {
         }
 
         Agreements agreements = (Agreements) httpCallExecutor.getResponse();
-        assertThat(agreements.getResults()).hasSize(expectedSize);
+        List<UUID> visualizedIds = agreements.getResults().stream().map(Agreement::getId).toList();
+        List<UUID> createdIds = sharedStepsContext.getAgreementCommonContext().getAgreementIds();
+        assertSoftly(softly -> {
+            softly.assertThat(visualizedIds).hasSize(expectedSize);
+            softly.assertThat(createdIds).containsAll(visualizedIds);
+        }) ;
     }
 
     private void verificaStatoRecuperoAgreements(boolean successoAtteso) {
@@ -112,5 +124,24 @@ public class AgreementSteps {
 
         sharedStepsContext.setAgreementId(agreementId);
     }
+        // FIXME
+/*
+    @Given("{string} ha una richiesta di fruizione in stato {string} per quell'e-service")
+    public void tenantAlreadyHasFruitionRequestWithState(String consumer, String agreementState) {
+        String token = identityService.getToken(consumer, null);
+        tenantAlreadyHasFruitionRequestWithState(agreementState, token, null);
+    }
+
+    private void tenantAlreadyHasFruitionRequestWithState(String agreementState, String token, UUID delegationId) {
+        clientTokenConfigurator.setBearerToken(token);
+
+        UUID agreementId = dataPreparationService.createAgreementWithGivenState(
+            it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState.fromValue(agreementState),
+            sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+            sharedStepsContext.getEServicesCommonContext().getDescriptorId(),
+            delegationId,
+            null);
+        sharedStepsContext.setAgreementId(agreementId);
+    }*/
 
 }

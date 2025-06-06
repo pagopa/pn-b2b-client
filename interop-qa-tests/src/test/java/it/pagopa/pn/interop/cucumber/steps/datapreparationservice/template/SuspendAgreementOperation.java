@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 @Builder
 @AllArgsConstructor(staticName = "of")
-public class SubmitAgreementOperation {
+public class SuspendAgreementOperation {
     private Function<UUID, UpperAgreement> apiCaller;
     private Function<UUID, UpperAgreement> checkerApiCaller;
 }
