@@ -7,14 +7,13 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementSee
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementState;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementSubmission;
 import it.pagopa.interop.attribute.service.IM2MAttributeClient;
-import it.pagopa.interop.agreement.service.IM2MEserviceClient;
+import it.pagopa.interop.eservice.service.IM2MEserviceClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.*;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import javax.annotation.Nullable;
@@ -98,7 +97,28 @@ public class M2MDataPreparationService {
     public Optional<EServices> getEServices(IM2MEserviceClient.EserviceListRequest request) {
         return templateService.performOperation( SimpleCreateOperation.of(
                 () -> eserviceClient.getEServices(request),
-                res -> res.getResults()
+                res -> res
+        ));
+    }
+
+    public Optional<EService> getEService(UUID eServiceID) {
+        return templateService.performOperation( SimpleCreateOperation.of(
+                () -> eserviceClient.getEService(eServiceID),
+                res -> res
+        ));
+    }
+
+    public Optional<EServiceDescriptors> getEserviceDescriptors(IM2MEserviceClient.EserviceDescriptorsListRequest request) {
+        return templateService.performOperation( SimpleCreateOperation.of(
+                () -> eserviceClient.getEserviceDescriptors(request),
+                res -> res
+        ));
+    }
+
+    public Optional<EServiceDescriptor> getEServiceDescriptor(UUID eServiceID, UUID descriptorId) {
+        return templateService.performOperation( SimpleCreateOperation.of(
+                () -> eserviceClient.getEserviceDescriptor(eServiceID, descriptorId),
+                res -> res
         ));
     }
 

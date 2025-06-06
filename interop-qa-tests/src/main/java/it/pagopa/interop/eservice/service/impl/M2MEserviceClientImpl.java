@@ -1,9 +1,12 @@
-package it.pagopa.interop.agreement.service.impl;
+package it.pagopa.interop.eservice.service.impl;
 
 import it.pagopa.interop.conf.InteropClientConfigs;
-import it.pagopa.interop.agreement.service.IM2MEserviceClient;
+import it.pagopa.interop.eservice.service.IM2MEserviceClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.EservicesApi;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EService;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptors;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServices;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -11,6 +14,8 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.UUID;
 
 @ToString
 @EqualsAndHashCode
@@ -42,6 +47,11 @@ public class M2MEserviceClientImpl implements IM2MEserviceClient {
     }
 
     @Override
+    public EService getEService(UUID eserviceId) {
+        return eservicesApi.getEService(eserviceId);
+    }
+
+    @Override
     public EServices getEServices(EserviceListRequest eserviceListRequest) {
         return eservicesApi.getEServices(
                 eserviceListRequest.getOffset(),
@@ -50,4 +60,20 @@ public class M2MEserviceClientImpl implements IM2MEserviceClient {
                 eserviceListRequest.getTemplateIds()
         );
     }
+
+    @Override
+    public EServiceDescriptors getEserviceDescriptors(EserviceDescriptorsListRequest eserviceDescriptorsListRequest) {
+        return eservicesApi.getEServiceDescriptors(
+                eserviceDescriptorsListRequest.getEserviceId(),
+                eserviceDescriptorsListRequest.getOffset(),
+                eserviceDescriptorsListRequest.getLimit(),
+                eserviceDescriptorsListRequest.getState()
+        );
+    }
+
+    @Override
+    public EServiceDescriptor getEserviceDescriptor(UUID eserviceId, UUID descriptorId) {
+        return eservicesApi.getEServiceDescriptor(eserviceId, descriptorId);
+    }
+
 }
