@@ -50,10 +50,10 @@ Feature: Gestione degli eServices
     Then si ottiene lo status code 200
     And eService viene restituito
 
-  Scenario: [M2MG_ESERVICES_6] Accesso negato al dettaglio dell'eService con eserviceId invalido (Scenario 84)
+  Scenario: [M2MG_ESERVICES_6] Accesso negato al dettaglio dell'eService con eserviceId nullo (Scenario 84)
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m
-    When l'utente tenta di recuperare eService con un id invalido
+    When l'utente tenta di recuperare eService con un id nullo
     Then si ottiene lo status code 400
     And eService non restituito
 
@@ -93,10 +93,10 @@ Feature: Gestione degli eServices
     Then si ottiene lo status code 200
     And descriptors viene restituito
 
-  Scenario: [M2MG_ESERVICES_10] RED - Accesso negato alla lista dei descriptors con eserviceId invalido (Scenario 88)
+  Scenario: [M2MG_ESERVICES_10] RED - Accesso negato alla lista dei descriptors con eserviceId nullo (Scenario 88)
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m
-    When l'utente tenta di recuperare descriptors con un id invalido
+    When l'utente tenta di recuperare descriptors con un id nullo
     Then si ottiene lo status code 400
     And descriptors non restituito
 
@@ -128,10 +128,10 @@ Feature: Gestione degli eServices
     Then si ottiene lo status code 200
     And descriptor viene restituito
 
-  Scenario: [M2MG_ESERVICES_15] Errore nel recupero di un descriptor con eserviceId e descriptorId invalidi (Scenario 92)
+  Scenario: [M2MG_ESERVICES_15] Errore nel recupero di un descriptor con eserviceId e descriptorId nulli (Scenario 92)
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m
-    When l'utente tenta di recuperare descriptor con un id invalido
+    When l'utente tenta di recuperare descriptor con un id nullo
     Then si ottiene lo status code 400
     And descriptor non restituito
 

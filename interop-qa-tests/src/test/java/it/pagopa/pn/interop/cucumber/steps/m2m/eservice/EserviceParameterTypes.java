@@ -10,7 +10,7 @@ public class EserviceParameterTypes {
         return EserviceEntityType.fromString(type);
     }
 
-    @ParameterType("invalido|inesistente")
+    @ParameterType("null|nullo|inesistente")
     public EserviceRequestType descriptorRequestType(String type) {
         return EserviceRequestType.fromString(type);
     }

@@ -7,7 +7,6 @@ import it.pagopa.interop.eservice.service.IM2MEserviceClient;
 import it.pagopa.interop.eservice.service.enums.EServiceCheckMode;
 import it.pagopa.interop.eservice.service.enums.EserviceEntityType;
 import it.pagopa.interop.eservice.service.enums.EserviceRequestType;
-import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.M2MDataPreparationService;
 import org.apache.commons.lang3.tuple.Pair;
@@ -43,7 +42,7 @@ public class EserviceSteps {
     @Then("{entityType} {word} restituito")
     public void verifyEntityList(EserviceEntityType type, String presence) {
         EServiceCheckMode mode = switch (presence.toLowerCase()) {
-            case "viene" -> EServiceCheckMode.PRESENT_AND_MATCHING;
+            case "viene" -> EServiceCheckMode.PRESENT;
             case "non" -> EServiceCheckMode.NONE;
             default -> throw new IllegalArgumentException("Unsupported presence: " + presence);
         };
@@ -102,7 +101,7 @@ public class EserviceSteps {
                 EServiceDescriptor descriptor = list.get(0);
                 yield Pair.of(descriptor.getEServiceId(), descriptor.getDescriptorId());
             }
-            case INVALID_ID -> Pair.of(new UUID(0L, 0L), new UUID(0L, 0L)) ;
+            case NULL_ID -> Pair.of(null, null) ;
             case NON_EXISTENT_ID -> Pair.of(UUID.randomUUID(), UUID.randomUUID());
         };
     }
