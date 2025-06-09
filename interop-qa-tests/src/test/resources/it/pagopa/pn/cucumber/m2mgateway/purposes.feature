@@ -77,6 +77,39 @@ Feature: Gestione purposes
     When l'utente tenta di recuperare una lista di 5 finalità create
     Then si ottiene status code 401
 
+  Scenario Outline: [M2M_PURPOSES_VERSIONS_1] La creazione di una nuova versione di una finalità può essere effettuata solo da un utente con ruolo M2M-ADMIN
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    When l'utente è un "<ruolo>" di "PA2" con ruolo M2M m2m-admin
+    And "PA2" tenta di creare una nuova versione della finalità aggiornando la stima di carico
+    Then si ottiene status code 200
+    And la nuova versione della finalità è stata creata correttamente
+    Examples:
+      | ruolo        |
+      | admin        |
+      | api          |
+      | security     |
+      | api,security |
+      | support      |
+
+  Scenario Outline: [M2M_PURPOSES_VERSIONS_2] La creazione di una nuova versione di una finalità NON può essere effettuata da un utente con ruolo diverso da M2M-ADMIN
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    When l'utente è un "<ruolo>" di "PA2" con ruolo M2M m2m
+    And "PA2" tenta di creare una nuova versione della finalità aggiornando la stima di carico
+    Then si ottiene status code 403
+    Examples:
+      | ruolo        |
+      | admin        |
+      | api          |
+      | security     |
+      | api,security |
+      | support      |
+
   Scenario Outline: [M2MG_PURPOSES_4] Le versioni di una finalità possono essere recuperate da un utente con ruolo M2M o M2M-ADMIN (Scenario 10)
     Given l'utente è un "<ruolo>" di "PA1" con ruolo M2M <ruolo-m2m>
     And l'utente è amministratore del client

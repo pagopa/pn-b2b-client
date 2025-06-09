@@ -35,7 +35,16 @@ public class PurposeCommonContext {
         return UUID.fromString(waitingForApprovalVersionId);
     }
 
+    // TODO 09/06/2025: sarebbe il caso di cambiare il tipo String -> UUID e uniformare quindi i getters
+    public UUID getCurrentVersionIdAsUUID() {
+        return UUID.fromString(currentVersionIds.get(currentVersionIds.size() - 1));
+    }
+
     public String getCurrentVersionId() {
         return currentVersionIds.get(currentVersionIds.size() - 1);
+    }
+
+    public void addCurrentVersionId(UUID id) {
+        currentVersionIds.add(id.toString());
     }
 }

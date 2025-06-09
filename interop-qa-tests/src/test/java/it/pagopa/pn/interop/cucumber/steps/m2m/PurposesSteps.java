@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m;
 
 import static java.util.stream.Collectors.toList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import io.cucumber.java.en.Then;
@@ -10,12 +11,15 @@ import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreement;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreements;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purpose;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersion;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersionSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient.PurposesListRequest;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.M2MDataPreparationService;
 import java.util.List;
@@ -32,6 +36,7 @@ public class PurposesSteps {
     private final IM2MPurposeClient purposeClient;
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
+    private final int newDailyCalls = 50;
 
     public PurposesSteps(ClientTokenConfigurator clientTokenConfigurator,
         SharedStepsContext sharedStepsContext,
@@ -82,6 +87,42 @@ public class PurposesSteps {
             softly.assertThat(visualizedIds).hasSize(expectedSize);
             softly.assertThat(createdIds).containsAll(visualizedIds);
         }) ;
+    }
+
+    @When("{string} tenta di creare una nuova versione della finalità aggiornando la stima di carico")
+    public void createPurposeVersion(String tenant) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        PurposeCommonContext purposeCommonContext = sharedStepsContext.getPurposeCommonContext();
+        PurposeVersionSeed purposeVersionSeed = new PurposeVersionSeed().dailyCalls(newDailyCalls);
+        httpCallExecutor.performCall(
+            () -> purposeClient.createPurposeVersion(
+                UUID.fromString(purposeCommonContext.getPurposeId()),
+                purposeVersionSeed
+            )
+        );
+
+        if(httpCallExecutor.getClientResponse().is2xxSuccessful()) {
+            PurposeVersion createdVersion = (PurposeVersion) httpCallExecutor.getResponse();
+            purposeCommonContext.addCurrentVersionId(createdVersion.getId());
+        }
+    }
+
+    @Then("la nuova versione della finalità è stata creata correttamente")
+    public void purposeVersionSuccessfullyCreated() {
+        httpCallExecutor.performCall(() -> purposeClient.getVersion(
+            sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID(),
+            sharedStepsContext.getPurposeCommonContext().getCurrentVersionIdAsUUID()));
+
+        assertThat(httpCallExecutor.getClientResponse().is2xxSuccessful())
+            .as("Check GET created purpose response status")
+            .withFailMessage("Non è stato possibile reperire la purpose version creata. "
+                + "Visionare i log delle chiamate per maggiori dettagli.")
+            .isTrue();
+
+        PurposeVersion version = (PurposeVersion) httpCallExecutor.getResponse();
+        assertThat(version.getDailyCalls())
+            .as("Check purpose version created")
+            .isEqualTo(this.newDailyCalls);
     }
 
 }
