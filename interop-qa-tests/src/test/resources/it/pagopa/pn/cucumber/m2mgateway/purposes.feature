@@ -1,14 +1,13 @@
 Feature: Gestione purposes
 
   Scenario: [M2MG_PURPOSES_1] Recupero corretto della lista delle finalità con utente autorizzato (Scenario 95)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M "m2m"
-    And l'utente è amministratore del client
-    And viene effettuata la creazione delle finalità:
-      | purposeId   | name               |
-      | purpose-001 | Finalità Sanitaria |
-    When l'utente tenta di recuperare la lista completa delle finalità
-    Then si ottiene lo status code 200
-    And viene restituito l'elenco delle finalità
+    Given "PA1" ha già creato e pubblicato 1 e-services
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 5 finalità in stato "ACTIVE" per quell'eservice
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
+    When l'utente tenta di recuperare una lista di 5 finalità create
+    Then si ottiene status code 200
 
   Scenario Outline: [M2MG_PURPOSES_3] La lista delle finalità può essere visionata da un utente con ruolo M2M o M2M-ADMIN (Scenario 8)
     Given l'utente è un "<ruolo>" di "PA1" con ruolo M2M <ruolo-m2m>
