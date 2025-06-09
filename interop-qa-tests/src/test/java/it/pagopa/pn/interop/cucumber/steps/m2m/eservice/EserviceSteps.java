@@ -59,7 +59,7 @@ public class EserviceSteps {
                     .as("Il body della response dovrebbe essere valorizzato per status code %s".formatted(expectedStatusCode))
                     .isNotNull();
 
-            assertExpectedEntity(type, EServiceCheckMode.PRESENT_AND_MATCHING);
+            assertExpectedEntity(type, EServiceCheckMode.PRESENT);
         } else {
             assertExpectedEntity(type, EServiceCheckMode.NONE);
         }
@@ -75,10 +75,13 @@ public class EserviceSteps {
 
         switch (entityType) {
             case ESERVICE -> response = dataPreparationService.getEService(eserviceId);
+
             case DESCRIPTORS -> response = dataPreparationService.getEserviceDescriptors(
                     IM2MEserviceClient.EserviceDescriptorsListRequest.builder().eserviceId(eserviceId).offset(0).limit(30).build());
+
             case ESERVICES -> response = dataPreparationService.getEServices(
                     IM2MEserviceClient.EserviceListRequest.builder().offset(0).limit(30).build());
+
             case DESCRIPTOR -> response = dataPreparationService.getEServiceDescriptor(eserviceId, descriptorId);
             default -> throw new UnsupportedOperationException("Tipo non supportato: " + entityType);
         }

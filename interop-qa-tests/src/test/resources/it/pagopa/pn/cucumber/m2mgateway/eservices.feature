@@ -15,8 +15,8 @@ Feature: Gestione degli eServices
       | support      | m2m       | 403        |
 
   Scenario: [M2MG_ESERVICES_2] RED - Recupero corretto della lista degli eServices con utente autorizzato (Scenario 81)
-    Given "PA1" ha già creato e pubblicato 1 e-services
-    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
+    Given "PA2" ha già creato e pubblicato 1 e-services
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m
     When l'utente tenta di recuperare eServices
     And si ottiene lo status code 200
     Then eServices viene restituito
