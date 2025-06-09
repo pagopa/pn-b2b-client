@@ -22,6 +22,7 @@ import it.pagopa.interop.delegate.service.impl.ConsumerDelegationsApiClientImpl;
 import it.pagopa.interop.delegate.service.impl.DelegationApiClientImpl;
 import it.pagopa.interop.delegate.service.impl.ProducerDelegationsApiClientImpl;
 import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
+import it.pagopa.interop.purpose.service.impl.M2MPurposeClientImpl;
 import it.pagopa.interop.purpose.service.impl.PurposeApiClientImpl;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import it.pagopa.interop.tenant.service.impl.TenantsApiClientImpl;
@@ -74,6 +75,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
     it.pagopa.interop.authorization.service.DataPreparationService.class,
     M2MAgreementClientImpl.class,
     M2MAttributeClientImpl.class,
+    M2MPurposeClientImpl.class,
     M2MDataPreparationService.class
 })
 @EnableScheduling

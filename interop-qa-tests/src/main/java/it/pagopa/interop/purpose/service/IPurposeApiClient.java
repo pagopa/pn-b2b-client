@@ -1,8 +1,19 @@
 package it.pagopa.interop.purpose.service;
 
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
-import it.pagopa.interop.generated.openapi.clients.bff.model.*;
-
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Purpose;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeCloneSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeEServiceSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeUpdateContent;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Purposes;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RejectPurposeVersionPayload;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ReversePurposeUpdateContent;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormConfig;
 import java.io.File;
 import java.util.List;
 import java.util.UUID;
@@ -26,5 +37,4 @@ public interface IPurposeApiClient extends SettableBearerToken {
     File getRiskAnalysisDocument(UUID purposeId, UUID versionId, UUID documentId);
     PurposeVersionResource updatePurpose(UUID purposeId, PurposeUpdateContent purposeUpdateContent);
     PurposeVersionResource updateReversePurpose(UUID purposeId, ReversePurposeUpdateContent reversePurposeUpdateContent);
-
 }
