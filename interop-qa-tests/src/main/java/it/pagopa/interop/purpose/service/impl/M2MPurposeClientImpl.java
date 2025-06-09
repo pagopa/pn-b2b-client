@@ -3,8 +3,11 @@ package it.pagopa.interop.purpose.service.impl;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.PurposesApi;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersion;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersionSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient;
+import java.util.UUID;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -36,6 +39,17 @@ public class M2MPurposeClientImpl implements IM2MPurposeClient {
             request.getOffset(),
             request.getLimit(),
             request.getEservicesIds());
+    }
+
+    @Override
+    public PurposeVersion createPurposeVersion(
+        UUID purposeId, PurposeVersionSeed purposeVersionSeed) {
+        return purposesApi.createPurposeVersion(purposeId.toString(), purposeVersionSeed);
+    }
+
+    @Override
+    public PurposeVersion getVersion(UUID purposeId, UUID purposeVersionId) {
+        return purposesApi.getPurposeVersion(purposeId, purposeVersionId);
     }
 
     @Override
