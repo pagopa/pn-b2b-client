@@ -3,6 +3,9 @@ package it.pagopa.pn.interop.cucumber.steps.datapreparationservice;
 import static it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.UpperAgreement.from;
 
 import it.pagopa.interop.agreement.service.IM2MAgreementClient;
+import it.pagopa.interop.eservice_template.IM2MEserviceTemplateClient;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementState;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementSubmission;
@@ -28,6 +31,7 @@ public class M2MDataPreparationService {
     private final IM2MAgreementClient agreementClient;
     private final IM2MAttributeClient attributeClient;
     private final IM2MEserviceClient eserviceClient;
+    private final IM2MEserviceTemplateClient eserviceTemplateClient;
     private final DataPreparationServiceTemplate templateService;
 
     public M2MDataPreparationService(ClientTokenConfigurator clientTokenConfigurator,
@@ -36,6 +40,7 @@ public class M2MDataPreparationService {
         this.agreementClient = clientTokenConfigurator.getM2mAgreementClient();
         this.attributeClient = clientTokenConfigurator.getM2mAttributeClient();
         this.eserviceClient = clientTokenConfigurator.getM2meServiceClient();
+        this.eserviceTemplateClient = clientTokenConfigurator.getM2mEServiceTemplateClient();
         this.templateService = new DataPreparationServiceTemplate(
             sharedStepsContext.getHttpCallExecutor(),
             sharedStepsContext.getPollingService(),
@@ -127,5 +132,10 @@ public class M2MDataPreparationService {
                 () -> attributeClient.createCertifiedAttribute(payloadAttrCert),
                 res -> ((CertifiedAttribute) res).getId()
         );
+    }
+
+    // --ESERVICE TEMPLATE--
+    public CreatedEServiceTemplateVersion createEServiceTemplate(EServiceTemplateSeed payload){
+        return eserviceTemplateClient.createEserviceTemplate(payload);
     }
 }

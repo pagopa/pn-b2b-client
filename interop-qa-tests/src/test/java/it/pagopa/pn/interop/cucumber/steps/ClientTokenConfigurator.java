@@ -12,6 +12,7 @@ import it.pagopa.interop.delegate.service.IConsumerDelegationsApiClient;
 import it.pagopa.interop.delegate.service.IDelegationApiClient;
 import it.pagopa.interop.delegate.service.IProducerDelegationsApiClient;
 import it.pagopa.interop.eservice.service.IM2MEserviceClient;
+import it.pagopa.interop.eservice_template.IM2MEserviceTemplateClient;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.tenant.service.ITenantsApi;
@@ -38,6 +39,7 @@ public class ClientTokenConfigurator {
     private IM2MAttributeClient m2mAttributeClient;
     private IM2MEserviceClient m2meServiceClient;
     private IM2MPurposeClient m2mPurposeClient;
+    private IM2MEserviceTemplateClient m2mEServiceTemplateClient;
 
     public void setBearerToken(String token) {
         authorizationClient.setBearerToken(token);
@@ -54,6 +56,7 @@ public class ClientTokenConfigurator {
         m2mAttributeClient.setBearerToken(token);
         m2meServiceClient.setBearerToken(token);
         m2mPurposeClient.setBearerToken(token);
+        m2mEServiceTemplateClient.setBearerToken(token);
     }
 
 }
