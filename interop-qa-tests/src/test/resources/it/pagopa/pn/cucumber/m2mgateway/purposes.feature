@@ -83,7 +83,7 @@ Feature: Gestione purposes
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     When l'utente è un "<ruolo>" di "PA2" con ruolo M2M m2m-admin
-    And "PA2" tenta di creare una nuova versione della finalità aggiornando la stima di carico
+    And l'utente tenta di creare una nuova versione della finalità aggiornando la stima di carico
     Then si ottiene status code 200
     And la nuova versione della finalità è stata creata correttamente
     Examples:
@@ -100,7 +100,7 @@ Feature: Gestione purposes
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     When l'utente è un "<ruolo>" di "PA2" con ruolo M2M m2m
-    And "PA2" tenta di creare una nuova versione della finalità aggiornando la stima di carico
+    And l'utente tenta di creare una nuova versione della finalità aggiornando la stima di carico
     Then si ottiene status code 403
     Examples:
       | ruolo        |
@@ -110,32 +110,29 @@ Feature: Gestione purposes
       | api,security |
       | support      |
 
-  Scenario Outline: [M2MG_PURPOSES_4] Le versioni di una finalità possono essere recuperate da un utente con ruolo M2M o M2M-ADMIN (Scenario 10)
-    Given l'utente è un "<ruolo>" di "PA1" con ruolo M2M <ruolo-m2m>
-    And l'utente è amministratore del client
-    And viene effettuata la creazione delle finalità:
-      | purposeId   | name               |
-      | purpose-001 | Finalità Sanitaria |
-    When l'utente tenta di recuperare le versioni della finalità "purpose-001"
-    Then si ottiene lo status code <statusCode>
-    And viene restituito l'elenco delle versioni della finalità
+  Scenario Outline: [M2M_PURPOSES_VERSIONS_3] La lista delle versioni di una finalità può essere visualizzata da un utente con ruolo M2M o M2M-ADMIN
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    And l'utente crea una nuova versione della finalità con successo aggiornando la stima di carico
+    When l'utente è un "<ruolo>" di "PA2" con ruolo M2M <ruolo_m2m>
+    And l'utente tenta di visualizzare la lista delle versioni della finalità
+    Then si ottiene status code 200
+    And sono state visualizzate correttamente 2 versioni della finalità
     Examples:
-      | ruolo        | ruolo-m2m | statusCode |
-      | admin        | m2m       | 200        |
-      | api          | m2m       | 403        |
-      | security     | m2m       | 403        |
-      | api,security | m2m       | 403        |
-      | support      | m2m       | 403        |
-
-  Scenario: [M2MG_PURPOSES_5] Recupero corretto delle versioni di una finalità con utente autorizzato (Scenario 97)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M "m2m"
-    And l'utente è amministratore del client
-    And viene effettuata la creazione delle finalità:
-      | purposeId   | name               |
-      | purpose-001 | Finalità Sanitaria |
-    When l'utente tenta di recuperare le versioni della finalità "purpose-001"
-    Then si ottiene lo status code 200
-    And viene restituito l'elenco delle versioni della finalità
+      | ruolo        | ruolo_m2m  |
+      | admin        | m2m        |
+      | api          | m2m        |
+      | security     | m2m        |
+      | api,security | m2m        |
+      | support      | m2m        |
+      | admin        | m2m-admin  |
+      | api          | m2m-admin  |
+      | security     | m2m-admin  |
+      | api,security | m2m-admin  |
+      | support      | m2m-admin  |
 
   Scenario: [M2MG_PURPOSES_6] Errore nel recupero delle versioni di una finalità con purposeId nullo (Scenario 98)
     Given l'utente è un "admin" di "PA1" con ruolo M2M "m2m"

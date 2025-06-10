@@ -1,5 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.common;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -38,6 +40,18 @@ public class PurposeCommonContext {
     // TODO 09/06/2025: sarebbe il caso di cambiare il tipo String -> UUID e uniformare quindi i getters
     public UUID getCurrentVersionIdAsUUID() {
         return UUID.fromString(currentVersionIds.get(currentVersionIds.size() - 1));
+    }
+
+    public List<UUID> getPurposesIdsAsUUID() {
+        return this.getPurposesIds().stream()
+            .map(UUID::fromString)
+            .collect(toList());
+    }
+
+    public List<UUID> getPurposeCurrentVersionsIdsAsUUID() {
+        return this.getCurrentVersionIds().stream()
+            .map(UUID::fromString)
+            .collect(toList());
     }
 
     public String getCurrentVersionId() {
