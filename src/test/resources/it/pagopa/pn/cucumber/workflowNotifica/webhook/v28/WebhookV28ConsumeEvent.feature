@@ -187,10 +187,11 @@ Feature: avanzamento notifiche webhook b2b V28
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
-      | denomination            | Giovanna D'Arco  |
-      | taxId                   | DRCGNN12A46A326K |
-      | digitalDomicile         | NULL             |
-      | physicalAddress_address | Via@ok_AR        |
+      | denomination                        | Giovanna D'Arco  |
+      | taxId                               | DRCGNN12A46A326K |
+      | digitalDomicile                     | NULL             |
+      | physicalAddress_address             | Via@ok_AR        |
+      | physicalAddress_municipalityDetails | FRAZIONE         |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V28"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
