@@ -1,6 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m;
 
-import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -8,13 +7,13 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreement;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreements;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purpose;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersion;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersionSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersions;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient;
+import it.pagopa.interop.purpose.service.IM2MPurposeClient.PurposeVersionsListRequest;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient.PurposesListRequest;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
@@ -63,34 +62,26 @@ public class PurposesSteps {
                 .eservicesIds(List.of(eServiceId))
                 .build()
         ));
-
-        if (httpCallExecutor.getClientResponse().is2xxSuccessful()) {
-            Purposes res = (Purposes) httpCallExecutor.getResponse();
-            sharedStepsContext.getAgreementCommonContext().setAgreementIds(
-                res.getResults().stream()
-                    .map(Purpose::getId)
-                    .collect(toList()));
-        }
     }
 
     @Then("sono state visualizzate correttamente {int} finalità create")
-    public void agreementsSuccessfullyGot(int expectedSize) {
+    public void purposesSuccessfullyGot(int expectedSize) {
         HttpStatus clientResponse = httpCallExecutor.getClientResponse();
         if(clientResponse.isError()) {
             Assertions.fail("Agreements list request failed: ", clientResponse);
         }
 
-        Agreements agreements = (Agreements) httpCallExecutor.getResponse();
-        List<UUID> visualizedIds = agreements.getResults().stream().map(Agreement::getId).toList();
-        List<UUID> createdIds = sharedStepsContext.getAgreementCommonContext().getAgreementIds();
+        Purposes purposes = (Purposes) httpCallExecutor.getResponse();
+        List<UUID> visualizedIds = purposes.getResults().stream().map(Purpose::getId).toList();
+        List<UUID> createdIds = sharedStepsContext.getPurposeCommonContext().getPurposesIdsAsUUID();
         assertSoftly(softly -> {
             softly.assertThat(visualizedIds).hasSize(expectedSize);
             softly.assertThat(createdIds).containsAll(visualizedIds);
         }) ;
     }
 
-    @When("{string} tenta di creare una nuova versione della finalità aggiornando la stima di carico")
-    public void createPurposeVersion(String tenant) {
+    @When("l'utente tenta di creare una nuova versione della finalità aggiornando la stima di carico")
+    public void createPurposeVersion() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         PurposeCommonContext purposeCommonContext = sharedStepsContext.getPurposeCommonContext();
         PurposeVersionSeed purposeVersionSeed = new PurposeVersionSeed().dailyCalls(newDailyCalls);
@@ -125,4 +116,38 @@ public class PurposesSteps {
             .isEqualTo(this.newDailyCalls);
     }
 
+    @When("l'utente crea una nuova versione della finalità con successo aggiornando la stima di carico")
+    public void successfullyCreateNewVersion() {
+        createPurposeVersion();
+        purposeVersionSuccessfullyCreated();
+    }
+
+    //@SuppressWarnings("java:S6204")
+    @When("l'utente tenta di visualizzare la lista delle versioni della finalità")
+    public void purposeVersionsListAttempt() {
+        httpCallExecutor.performCall(() -> purposeClient.getVersions(
+            PurposeVersionsListRequest.builder()
+                .offset(0)
+                .limit(20)
+                .purposeId(sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID())
+                .build()
+        ));
+    }
+
+    @Then("sono state visualizzate correttamente {int} versioni della finalità")
+    public void purposeVersionsSuccessfullyGot(int expectedSize) {
+        HttpStatus clientResponse = httpCallExecutor.getClientResponse();
+        if(clientResponse.isError()) {
+            Assertions.fail("Agreements list request failed: ", clientResponse);
+        }
+
+        PurposeVersions versions = (PurposeVersions) httpCallExecutor.getResponse();
+        List<UUID> visualizedIds = versions.getResults().stream().map(PurposeVersion::getId).toList();
+        List<UUID> createdIds = sharedStepsContext.getPurposeCommonContext().getPurposeCurrentVersionsIdsAsUUID();
+
+        assertSoftly(softly -> {
+            softly.assertThat(visualizedIds).hasSize(expectedSize);
+            softly.assertThat(createdIds).containsAll(visualizedIds);
+        }) ;
+    }
 }

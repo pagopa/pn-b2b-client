@@ -5,6 +5,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.PurposesApi;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersion;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersionSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersions;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient;
 import java.util.UUID;
@@ -50,6 +51,15 @@ public class M2MPurposeClientImpl implements IM2MPurposeClient {
     @Override
     public PurposeVersion getVersion(UUID purposeId, UUID purposeVersionId) {
         return purposesApi.getPurposeVersion(purposeId, purposeVersionId);
+    }
+
+    @Override
+    public PurposeVersions getVersions(PurposeVersionsListRequest request) {
+        return purposesApi.getPurposeVersions(
+            request.getPurposeId().toString(),
+            request.getOffset(),
+            request.getLimit(),
+            null);
     }
 
     @Override
