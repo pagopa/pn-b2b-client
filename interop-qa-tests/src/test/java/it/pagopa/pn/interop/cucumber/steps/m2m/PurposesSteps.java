@@ -122,16 +122,9 @@ public class PurposesSteps {
         purposeVersionSuccessfullyCreated();
     }
 
-    //@SuppressWarnings("java:S6204")
     @When("l'utente tenta di visualizzare la lista delle versioni della finalità")
     public void purposeVersionsListAttempt() {
-        httpCallExecutor.performCall(() -> purposeClient.getVersions(
-            PurposeVersionsListRequest.builder()
-                .offset(0)
-                .limit(20)
-                .purposeId(sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID())
-                .build()
-        ));
+        listPurposeVersions(sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID());
     }
 
     @Then("sono state visualizzate correttamente {int} versioni della finalità")
@@ -150,4 +143,20 @@ public class PurposesSteps {
             softly.assertThat(createdIds).containsAll(visualizedIds);
         }) ;
     }
+
+    @When("l'utente tenta di visualizzare la lista delle versioni di una finalità inesistente")
+    public void nonExistentPurposeVersionsListAttempt() {
+        listPurposeVersions(UUID.randomUUID());
+    }
+
+    private void listPurposeVersions(UUID purposeId) {
+        httpCallExecutor.performCall(() -> purposeClient.getVersions(
+            PurposeVersionsListRequest.builder()
+                .offset(0)
+                .limit(20)
+                .purposeId(purposeId)
+                .build()
+        ));
+    }
+
 }
