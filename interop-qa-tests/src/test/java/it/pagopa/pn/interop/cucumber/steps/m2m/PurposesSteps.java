@@ -110,6 +110,10 @@ public class PurposesSteps {
                 + "Visionare i log delle chiamate per maggiori dettagli.")
             .isTrue();
 
+        checkCreatedVersion();
+    }
+
+    private void checkCreatedVersion() {
         PurposeVersion version = (PurposeVersion) httpCallExecutor.getResponse();
         assertThat(version.getDailyCalls())
             .as("Check purpose version created")
@@ -157,6 +161,40 @@ public class PurposesSteps {
                 .purposeId(purposeId)
                 .build()
         ));
+    }
+
+    @When("l'utente tenta di visualizzare la nuova versione della finalità")
+    public void getPurposeVersionAttempt() {
+        getPurposeVersion(
+            sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID(),
+            sharedStepsContext.getPurposeCommonContext().getCurrentVersionIdAsUUID()
+        );
+
+    }
+
+    @When("l'utente tenta di visualizzare una versione inesistente di una finalità inesistente")
+    public void nonExistentPurposeVersionGetAttempt() {
+        getPurposeVersion(
+            UUID.randomUUID(),
+            UUID.randomUUID()
+        );
+    }
+
+    @When("l'utente tenta di visualizzare una versione inesistente della finalità esistente")
+    public void purposeNonExistentVersionGetAttempt() {
+        getPurposeVersion(
+            sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID(),
+            UUID.randomUUID()
+        );
+    }
+
+    private void getPurposeVersion(UUID purposeId, UUID versionId) {
+        httpCallExecutor.performCall(() -> purposeClient.getVersion(purposeId, versionId));
+    }
+
+    @Then("la nuova versione della finalità è stata visualizzata correttamente")
+    public void purposeVersionSuccessfullyGot() {
+        checkCreatedVersion();
     }
 
 }
