@@ -3,7 +3,7 @@ package it.pagopa.pn.interop.cucumber.steps.datapreparationservice;
 import static it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.UpperAgreement.from;
 
 import it.pagopa.interop.agreement.service.IM2MAgreementClient;
-import it.pagopa.interop.eservice_template.IM2MEserviceTemplateClient;
+import it.pagopa.interop.eservice_template.IM2MEServiceTemplateClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementSeed;
@@ -31,7 +31,7 @@ public class M2MDataPreparationService {
     private final IM2MAgreementClient agreementClient;
     private final IM2MAttributeClient attributeClient;
     private final IM2MEserviceClient eserviceClient;
-    private final IM2MEserviceTemplateClient eserviceTemplateClient;
+    private final IM2MEServiceTemplateClient eserviceTemplateClient;
     private final DataPreparationServiceTemplate templateService;
 
     public M2MDataPreparationService(ClientTokenConfigurator clientTokenConfigurator,

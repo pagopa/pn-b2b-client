@@ -1,13 +1,11 @@
 package it.pagopa.interop.eservice_template.impl;
 
 import it.pagopa.interop.conf.InteropClientConfigs;
-import it.pagopa.interop.eservice.service.IM2MEserviceClient;
-import it.pagopa.interop.eservice_template.IM2MEserviceTemplateClient;
+import it.pagopa.interop.eservice_template.IM2MEServiceTemplateClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.EserviceTemplatesApi;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.EservicesApi;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -22,13 +20,13 @@ import java.util.UUID;
 @EqualsAndHashCode
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class M2MEserviceTemplateClientImpl implements IM2MEserviceTemplateClient {
+public class M2MEServiceTemplateClientImpl implements IM2MEServiceTemplateClient {
     private final EserviceTemplatesApi eserviceTemplatesApi;
     private final it.pagopa.interop.generated.openapi.clients.bff.api.EserviceTemplatesApi bffEserviceTemplatesApi;
     private final RestTemplate restTemplate;
     private final String basePath;
 
-    public M2MEserviceTemplateClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
+    public M2MEServiceTemplateClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
         this.basePath = interopClientConfigs.getM2mBaseUrl();
         this.eserviceTemplatesApi = new EserviceTemplatesApi(createApiClient("dummyBearer"));

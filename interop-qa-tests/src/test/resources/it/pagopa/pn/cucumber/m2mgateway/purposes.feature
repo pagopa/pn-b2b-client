@@ -134,15 +134,19 @@ Feature: Gestione purposes
       | api,security | m2m-admin  |
       | support      | m2m-admin  |
 
-  Scenario: [M2MG_PURPOSES_6] Errore nel recupero delle versioni di una finalità con purposeId nullo (Scenario 98)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M "m2m"
-    And l'utente è amministratore del client
-    And viene effettuata la creazione delle finalità:
-      | purposeId   | name               |
-      | purpose-001 | Finalità Sanitaria |
-    When l'utente tenta di recuperare le versioni della finalità "null"
-    Then si ottiene lo status code 400
-    And l'elenco delle versioni della finalità non viene restituito
+  Scenario: [M2M_PURPOSES_VERSIONS_4] La lista delle versioni di una finalità NON può essere visualizzata indicando un auth token non valido
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    When viene impostato per l'utente un token m2m scaduto
+    And l'utente tenta di visualizzare la lista delle versioni della finalità
+    Then si ottiene status code 401
+
+  Scenario: [M2M_PURPOSES_VERSIONS_5] La lista delle versioni di una finalità inesistente NON può essere visualizzata
+    Given l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta di visualizzare la lista delle versioni di una finalità inesistente
+    Then si ottiene status code 404
 
   Scenario: [M2MG_PURPOSES_7] Accesso negato al recupero delle versioni di una finalità con token non valido (Scenario 99)
     Given l'utente è un "admin" di "PA1" con ruolo M2M "m2m"
