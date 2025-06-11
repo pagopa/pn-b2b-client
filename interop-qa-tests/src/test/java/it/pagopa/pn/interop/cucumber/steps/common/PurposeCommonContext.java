@@ -39,7 +39,7 @@ public class PurposeCommonContext {
 
     // TODO 09/06/2025: sarebbe il caso di cambiare il tipo String -> UUID e uniformare quindi i getters
     public UUID getCurrentVersionIdAsUUID() {
-        return UUID.fromString(currentVersionIds.get(currentVersionIds.size() - 1));
+        return UUID.fromString(getCurrentVersionId());
     }
 
     public List<UUID> getPurposesIdsAsUUID() {
