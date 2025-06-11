@@ -41,19 +41,22 @@ public class Costanti {
     public static final String COMUNE_SON = "Comune_Son";
     public static final String COMUNE_ROOT = "Comune_Root";
     public static final String DEFAULT_PA = COMUNE_1;
-
-    //TODO MATTEO: capire come riuscire a prendere i valori annotati con value (non so perchè me li dà null quando commento il valore e scommento il @Value)
-
-    @Value("${pn.external.utilized.pec:testpagopa3@pec.pagopa.it}")
-    public static String DIGITAL_ADDRESS;
-    public static final String DEFAULT_DIGITAL_ADDRESS = "testpagopa3@pec.pagopa.it";
-    //    @Value("${pn.bearer-token.user1.taxID}")
-    public static String MARIO_CUCUMBER_TAX_ID = "FRMTTR76M06B715E";
-    //    @Value("${pn.bearer-token.user2.taxID}")
-    public static String MARIO_GHERKIN_TAX_ID = "CLMCST42R12D969Z";
-    //    @Value("${pn.bearer-token.user4.taxID}")
-
+    // Tipologie destinatario
+    public static final String PF = "PF";
+    public static final String PG = "PG";
+    // Tipologie indirizzo
+    public static final String PEC = "PEC";
+    // Notification Status
+    public static final String NOTIFICATION_STATUS_ACCEPTED = "ACCEPTED";
+    public static final String NOTIFICATION_STATUS_REFUSED = "REFUSED";
+    public static final String NOTIFICATION_STATUS_CANCELLED = "CANCELLED";
+    public static final String NOTIFICATION_STATUS_VIEWED = "VIEWED";
+    // Stream Type
+    public static final String STREAM_EVENT_TYPE_TIMELINE = "TIMELINE";
+    public static final String STREAM_EVENT_TYPE_STATUS = "STATUS";
     // Tax ID
+    public static String MARIO_CUCUMBER_TAX_ID = "FRMTTR76M06B715E";
+    public static String MARIO_GHERKIN_TAX_ID = "CLMCST42R12D969Z";
     public static final String CUCUMBER_SRL_TAX_ID = "20517490320";
     public static final String CUCUMBER_SPA_TAX_ID = "20517490320";
     public static final String GHERKIN_SRL_TAX_ID = "12666810299";
@@ -81,35 +84,57 @@ public class Costanti {
      * 20517490320 - LuAnSe SpA
      */
 
-    // TimelineElementCategory
-    public static final String AAR_GENERATION = "AAR_GENERATION";
-    public static final String ANALOG_FAILURE_WORKFLOW = "ANALOG_FAILURE_WORKFLOW";
-    public static final String ANALOG_SUCCESS_WORKFLOW = "ANALOG_SUCCESS_WORKFLOW";
-    public static final String ANALOG_WORKFLOW_RECIPIENT_DECEASED = "ANALOG_WORKFLOW_RECIPIENT_DECEASED";
-    public static final String COMPLETELY_UNREACHABLE = "COMPLETELY_UNREACHABLE";
-    public static final String DIGITAL_DELIVERY_CREATION_REQUEST = "DIGITAL_DELIVERY_CREATION_REQUEST";
-    public static final String DIGITAL_FAILURE_WORKFLOW = "DIGITAL_FAILURE_WORKFLOW";
-    public static final String DIGITAL_SUCCESS_WORKFLOW = "DIGITAL_SUCCESS_WORKFLOW";
-    public static final String GET_ADDRESS = "GET_ADDRESS";
-    public static final String NOTIFICATION_VIEWED = "NOTIFICATION_VIEWED";
-    public static final String PREPARE_ANALOG_DOMICILE = "PREPARE_ANALOG_DOMICILE";
-    public static final String PREPARE_SIMPLE_REGISTERED_LETTER = "PREPARE_SIMPLE_REGISTERED_LETTER";
-    public static final String REFINEMENT = "REFINEMENT";
+    // TimelineElementCategory (V1)
+    public static final String SENDER_ACK_CREATION_REQUEST = "SENDER_ACK_CREATION_REQUEST";
+    public static final String VALIDATE_NORMALIZE_ADDRESSES_REQUEST = "VALIDATE_NORMALIZE_ADDRESSES_REQUEST";
+    public static final String NORMALIZED_ADDRESS = "NORMALIZED_ADDRESS";
     public static final String REQUEST_ACCEPTED = "REQUEST_ACCEPTED";
-    public static final String REQUEST_REFUSED = "REQUEST_REFUSED";
-    public static final String SCHEDULE_ANALOG_WORKFLOW = "SCHEDULE_ANALOG_WORKFLOW";
-    public static final String SCHEDULE_REFINEMENT = "SCHEDULE_REFINEMENT";
-    public static final String SEND_ANALOG_DOMICILE = "SEND_ANALOG_DOMICILE";
-    public static final String SEND_ANALOG_FEEDBACK = "SEND_ANALOG_FEEDBACK";
-    public static final String SEND_ANALOG_PROGRESS = "SEND_ANALOG_PROGRESS";
     public static final String SEND_COURTESY_MESSAGE = "SEND_COURTESY_MESSAGE";
+    public static final String GET_ADDRESS = "GET_ADDRESS";
+    public static final String PUBLIC_REGISTRY_CALL = "PUBLIC_REGISTRY_CALL";
+    public static final String PUBLIC_REGISTRY_RESPONSE = "PUBLIC_REGISTRY_RESPONSE";
+    public static final String SCHEDULE_ANALOG_WORKFLOW = "SCHEDULE_ANALOG_WORKFLOW";
+    public static final String SCHEDULE_DIGITAL_WORKFLOW = "SCHEDULE_DIGITAL_WORKFLOW";
+    public static final String PREPARE_DIGITAL_DOMICILE = "PREPARE_DIGITAL_DOMICILE";
     public static final String SEND_DIGITAL_DOMICILE = "SEND_DIGITAL_DOMICILE";
+    public static final String SEND_DIGITAL_PROGRESS = "SEND_DIGITAL_PROGRESS";
     public static final String SEND_DIGITAL_FEEDBACK = "SEND_DIGITAL_FEEDBACK";
+    public static final String REFINEMENT = "REFINEMENT";
+    public static final String SCHEDULE_REFINEMENT = "SCHEDULE_REFINEMENT";
+    public static final String DIGITAL_DELIVERY_CREATION_REQUEST = "DIGITAL_DELIVERY_CREATION_REQUEST";
+    public static final String DIGITAL_SUCCESS_WORKFLOW = "DIGITAL_SUCCESS_WORKFLOW";
+    public static final String DIGITAL_FAILURE_WORKFLOW = "DIGITAL_FAILURE_WORKFLOW";
+    public static final String ANALOG_SUCCESS_WORKFLOW = "ANALOG_SUCCESS_WORKFLOW";
+    public static final String ANALOG_FAILURE_WORKFLOW = "ANALOG_FAILURE_WORKFLOW";
+    public static final String PREPARE_SIMPLE_REGISTERED_LETTER = "PREPARE_SIMPLE_REGISTERED_LETTER";
     public static final String SEND_SIMPLE_REGISTERED_LETTER = "SEND_SIMPLE_REGISTERED_LETTER";
     public static final String SEND_SIMPLE_REGISTERED_LETTER_PROGRESS = "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS";
+    public static final String NOTIFICATION_VIEWED_CREATION_REQUEST = "NOTIFICATION_VIEWED_CREATION_REQUEST";
+    public static final String NOTIFICATION_VIEWED = "NOTIFICATION_VIEWED";
+    public static final String PREPARE_ANALOG_DOMICILE = "PREPARE_ANALOG_DOMICILE";
+    public static final String SEND_ANALOG_DOMICILE = "SEND_ANALOG_DOMICILE";
+    public static final String SEND_ANALOG_PROGRESS = "SEND_ANALOG_PROGRESS";
+    public static final String SEND_ANALOG_FEEDBACK = "SEND_ANALOG_FEEDBACK";
     public static final String PAYMENT = "PAYMENT";
+    public static final String COMPLETELY_UNREACHABLE = "COMPLETELY_UNREACHABLE";
     public static final String COMPLETELY_UNREACHABLE_CREATION_REQUEST = "COMPLETELY_UNREACHABLE_CREATION_REQUEST";
+    public static final String REQUEST_REFUSED = "REQUEST_REFUSED";
+    public static final String AAR_CREATION_REQUEST = "AAR_CREATION_REQUEST";
+    public static final String AAR_GENERATION = "AAR_GENERATION";
+    public static final String NOT_HANDLED = "NOT_HANDLED";
+    public static final String PROBABLE_SCHEDULING_ANALOG_DATE = "PROBABLE_SCHEDULING_ANALOG_DATE";
+    // TimelineElementCategoryV20
+    public static final String NOTIFICATION_CANCELLATION_REQUEST = "NOTIFICATION_CANCELLATION_REQUEST";
+    public static final String NOTIFICATION_CANCELLED = "NOTIFICATION_CANCELLED";
     public static final String PREPARE_ANALOG_DOMICILE_FAILURE = "PREPARE_ANALOG_DOMICILE_FAILURE";
+    // TimelineElementCategoryV23
+    public static final String NOTIFICATION_RADD_RETRIEVED = "NOTIFICATION_RADD_RETRIEVED";
+    // TimelineElementCategoryV26
+    public static final String ANALOG_WORKFLOW_RECIPIENT_DECEASED = "ANALOG_WORKFLOW_RECIPIENT_DECEASED";
+    // TimelineElementCategoryV27
+    public static final String PUBLIC_REGISTRY_VALIDATION_CALL = "PUBLIC_REGISTRY_VALIDATION_CALL";
+    public static final String PUBLIC_REGISTRY_VALIDATION_RESPONSE = "PUBLIC_REGISTRY_VALIDATION_RESPONSE";
+
     //TimelineEquality errors
     public static final String EQUALITY_DIGITAL_ADDRESS = "digitalAddress";
     public static final String EQUALITY_REC_INDEX = "recIndex";
@@ -139,7 +164,14 @@ public class Costanti {
     public static final String EQUALITY_DELEGATE_TAX_ID = "delegate_taxId";
     public static final String EQUALITY_DELEGATE_TYPE = "delegate_type";
     public static final String EQUALITY_DELEGATE_DENOMINATION = "delegate_denomination";
+    public static final String EQUALITY_MUNICIPALITY = "municipality";
+    public static final String EQUALITY_ADDRESS = "address";
+    public static final String EQUALITY_ZIP_CODE = "zipCode";
+    public static final String EQUALITY_REGISTRY = "registry";
     public static final String INVALID_TIMELINE_CATEGORY = "Valore non valido per timelineEventCategory: ";
+    // Messaggi di errore WebhookSteps
+    public static final String NOT_NULL_P_R_E = "Il progressResponseElement non dev'essere null";
+    public static final String MUST_NOT_BE_NULL = "non dev'essere null";
     // PollingStrategy (generiche)
     public static final String TIMELINE_RAPID = "TIMELINE_RAPID";
     public static final String TIMELINE_SLOW = "TIMELINE_SLOW";
@@ -169,11 +201,6 @@ public class Costanti {
     public static final Duration DURATION_TIME_TO_ADD_IN_NON_VISIBILITY_TIME_CASE_DEFAULT = DurationStyle.detectAndParse("10m");
     public static final Duration DURATION_SECOND_NOTIFICATION_WORKFLOW_WAITING_TIME_DEFAULT = DurationStyle.detectAndParse("6m");
     public static final Duration DURATION_WAIT_READ_COURTESY_MESSAGE_DEFAULT = DurationStyle.detectAndParse("5m");
-    // Notification Status
-    public static final String NOTIFICATION_STATUS_ACCEPTED = "ACCEPTED";
-    public static final String NOTIFICATION_STATUS_REFUSED = "REFUSED";
-    public static final String NOTIFICATION_STATUS_CANCELLED = "CANCELLED";
-    public static final String NOTIFICATION_STATUS_VIEWED = "VIEWED";
     // Async Validation Errors
     public static final String WRONG_EXTENSION = "WRONG_EXTENSION";
     public static final String OVERSIZE_ALLEGATO = "OVERSIZE_ALLEGATO";
@@ -186,7 +213,6 @@ public class Costanti {
     public static final String NOT_EQUAL_SHA_JSON = "NOT_EQUAL_SHA_JSON";
     // Error causes
     public static final String ALLEGATO = "ALLEGATO";
-
     public static final String EXTENSION = "EXTENSION";
     public static final String SHA_256 = "SHA_256";
     public static final String TAX_ID = "TAX_ID";
@@ -199,13 +225,17 @@ public class Costanti {
     public static final String INVALID_PARAMETER_MAX_ATTACHMENT = "INVALID_PARAMETER_MAX_ATTACHMENT";
     public static final String FILE_PDF_INVALID_ERROR = "FILE_PDF_INVALID_ERROR";
     public static final String NOT_VALID_ADDRESS = "NOT_VALID_ADDRESS";
-    // Tipologie destinatario
-    public static final String PF = "PF";
-    public static final String PG = "PG";
-    // Tipologie indirizzo
-    public static final String PEC = "PEC";
+    // LoadTimelineFrom
+    public static final String LOAD_FROM_B2B = "fromB2b";
+    public static final String LOAD_FROM_DELIVERY_PUSH = "fromDeliveryPush";
     // Regex
     public static final String PHYSICAL_ADDRESS_REGEX = "^[A-Z0-9_.\\-:;@' \\[\\] ]*$";
+    // Properties
+    public static final String COSTO_BASE_NOTIFICA = "pn.external.costo_base_notifica";
+    public static final String TECHNICAL_REFUSAL_COST_MODE = "pn.technical_refusal_cost_mode";
+    @Value("${pn.external.utilized.pec:testpagopa3@pec.pagopa.it}")
+    public static String DIGITAL_ADDRESS;
+    public static final String DEFAULT_DIGITAL_ADDRESS = "testpagopa3@pec.pagopa.it";
     // Versioni
     public static final String MOST_RECENT = "più recente";
 

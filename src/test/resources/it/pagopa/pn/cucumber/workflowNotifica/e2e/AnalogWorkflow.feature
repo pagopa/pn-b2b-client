@@ -538,11 +538,6 @@ Feature: Workflow analogico
       | details_digitalAddress  | {"address": "provaemail@test.it", "type": "EMAIL"} |
       | details_recIndex        | 0                                                  |
       | details_sentAttemptMade | 0                                                  |
-#    And viene verificato che l'elemento di timeline "SCHEDULE_ANALOG_WORKFLOW" esista
-#      | NULL | NULL |
-#    And controlla che il timestamp di "SEND_ANALOG_DOMICILE" sia dopo quello di invio e di attesa di lettura del messaggio di cortesia
-#      | NULL | NULL |
-    #TODO: step commentati sopra riscritti come segue sotto:
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_ANALOG_WORKFLOW"
     And il timestamp dell'evento "SEND_ANALOG_DOMICILE" è successivo a quello dell'evento "SEND_COURTESY_MESSAGE"
 

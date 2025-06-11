@@ -1,7 +1,7 @@
 package it.pagopa.pn.client.b2b.pa.polling.impl.v1;
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.TimelineElement;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotification;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElement;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingTemplate;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
@@ -87,17 +87,17 @@ public class PnPollingServiceTimelineRapidV1 extends PnPollingTemplate<PnPolling
 
     @Override
     public boolean setApiKeys(ApiKeyType apiKey) {
-        return this.b2bClient.setApiKeys(apiKey);
+        return b2bClient.setApiKeys(apiKey);
     }
 
     @Override
     public void setApiKey(String apiKeyString) {
-        this.b2bClient.setApiKey(apiKeyString);
+        b2bClient.setApiKey(apiKeyString);
     }
 
     @Override
     public ApiKeyType getApiKeySetted() {
-        return this.b2bClient.getApiKeySetted();
+        return b2bClient.getApiKeySetted();
     }
 
 

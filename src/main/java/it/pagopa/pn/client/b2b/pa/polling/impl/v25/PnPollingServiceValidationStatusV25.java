@@ -1,7 +1,7 @@
 package it.pagopa.pn.client.b2b.pa.polling.impl.v25;
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV25;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NewNotificationRequestStatusResponseV23;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NewNotificationRequestStatusResponseV25;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingTemplate;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
@@ -23,7 +23,7 @@ import java.util.function.Predicate;
 @Slf4j
 public class PnPollingServiceValidationStatusV25 extends PnPollingTemplate<PnPollingResponseV25> {
     private final IPnPaB2bClient b2bClient;
-    private NewNotificationRequestStatusResponseV23 requestStatusResponse;
+    private NewNotificationRequestStatusResponseV25 requestStatusResponse;
     private FullSentNotificationV25 fullSentNotification;
     private final TimingForPolling timingForPolling;
 
@@ -37,7 +37,7 @@ public class PnPollingServiceValidationStatusV25 extends PnPollingTemplate<PnPol
     protected Callable<PnPollingResponseV25> getPollingResponse(String id, PnPollingParameter pnPollingParameter) {
         return () -> {
             PnPollingResponseV25 pnPollingResponse = new PnPollingResponseV25();
-            requestStatusResponse = b2bClient.getNotificationRequestStatusV23(id);
+            requestStatusResponse = b2bClient.getNotificationRequestStatusV25(id);
             pnPollingResponse.setStatusResponse(requestStatusResponse);
 
             if (pnPollingResponse.getStatusResponse().getIun() != null) {

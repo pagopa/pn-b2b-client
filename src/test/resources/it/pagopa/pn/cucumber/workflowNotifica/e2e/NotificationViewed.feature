@@ -155,6 +155,7 @@ Feature: Notifica visualizzata
       | details          | NOT_NULL |
       | details_recIndex | 0        |
     And viene verificato che l'elemento di timeline "REFINEMENT" non esista
+      | loadTimeline     | true     |
       | details          | NOT_NULL |
       | details_recIndex | 0        |
 
@@ -177,9 +178,11 @@ Feature: Notifica visualizzata
       | details_recIndex | 0        |
     And la notifica può essere correttamente recuperata da "Cristoforo Colombo"
     And viene verificato che l'elemento di timeline "PREPARE_SIMPLE_REGISTERED_LETTER" non esista
+      | loadTimeline     | true     |
       | details          | NOT_NULL |
       | details_recIndex | 0        |
     And viene verificato che l'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER" non esista
+      | loadTimeline     | true     |
       | details          | NOT_NULL |
       | details_recIndex | 0        |
 
@@ -196,6 +199,7 @@ Feature: Notifica visualizzata
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente recuperata da "Ettore Fieramosca"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_DOMICILE" non esista
+      | loadTimeline            | true     |
       | details                 | NOT_NULL |
       | details_recIndex        | 0        |
       | details_sentAttemptMade | 0        |
@@ -230,6 +234,7 @@ Feature: Notifica visualizzata
       | details          | NOT_NULL |
       | details_recIndex | 0        |
     And viene verificato che l'elemento di timeline "REFINEMENT" non esista
+      | loadTimeline     | true     |
       | details          | NOT_NULL |
       | details_recIndex | 0        |
 
@@ -307,5 +312,6 @@ Feature: Notifica visualizzata
       | details          | NOT_NULL |
       | details_recIndex | 0        |
     And viene verificato che l'elemento di timeline "REFINEMENT" non esista
+      | loadTimeline     | true     |
       | details          | NOT_NULL |
       | details_recIndex | 0        |

@@ -47,6 +47,15 @@ public class NotificationStepsV24 implements NotificationStepsInterface {
     }
 
     @Override
+    public Object getFullSentNotification() {
+        return b2bClient.getSentNotificationV24(sharedSteps.getNotificationIun());
+    }
+
+    private FullSentNotificationV26 getFullSentNotificationVersioned() {
+        return (FullSentNotificationV26) getFullSentNotification();
+    }
+
+    @Override
     public void prepareNotificationRequest(Map<String, String> data) {
         notificationRequest = utils.convertNotificationRequest(data);
         sharedSteps.setVersionUsed(version);
@@ -241,8 +250,9 @@ public class NotificationStepsV24 implements NotificationStepsInterface {
         List<NotificationPaymentItem> listNotificationPaymentItem = fullSentNotification.getRecipients().get(destinatario).getPayments();
         if (listNotificationPaymentItem != null) {
             for (NotificationPaymentItem notificationPaymentItem : listNotificationPaymentItem) {
-                it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPriceResponse notificationPrice =
-                        b2bClient.getNotificationPrice(notificationPaymentItem.getPagoPa().getCreditorTaxId(), notificationPaymentItem.getPagoPa().getNoticeCode());
+                NotificationPriceResponse notificationPrice = b2bClient.getNotificationPrice(
+                        notificationPaymentItem.getPagoPa().getCreditorTaxId(),
+                        notificationPaymentItem.getPagoPa().getNoticeCode());
                 try {
                     Assertions.assertEquals(notificationPrice.getIun(), sharedSteps.getNotificationIun());
                     if (price != null) {

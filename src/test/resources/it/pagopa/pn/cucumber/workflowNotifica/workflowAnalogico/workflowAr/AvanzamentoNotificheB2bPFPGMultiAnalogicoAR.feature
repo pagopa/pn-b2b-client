@@ -112,6 +112,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico AR
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE" per l'utente 0
     Then "Leonardo da Vinci" legge la notifica
     And viene verificato che l'elemento di timeline "REFINEMENT" non esista
+      | loadTimeline     | true     |
       | details          | NOT_NULL |
       | details_recIndex | 0        |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 1
@@ -264,7 +265,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico AR
     And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 2
 
 
-  Scenario: [B2B_TIMELINE_MULTI_ANALOG_AR_13] Invio notifica multidestinatario ritardo analogicoe controllo notificationCost non settato PN-9488
+  Scenario: [B2B_TIMELINE_MULTI_ANALOG_AR_13] Invio notifica multidestinatario ritardo analogico e controllo notificationCost non settato PN-9488
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |

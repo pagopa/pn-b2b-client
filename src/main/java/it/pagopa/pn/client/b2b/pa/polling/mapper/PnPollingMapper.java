@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 @Getter
 @Component
 public class PnPollingMapper {
+
     private final ModelMapper modelMapper;
 
     public PnPollingMapper(ModelMapper modelMapper) {

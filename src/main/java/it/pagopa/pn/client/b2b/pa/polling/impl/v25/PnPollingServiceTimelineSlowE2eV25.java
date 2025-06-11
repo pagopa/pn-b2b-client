@@ -66,7 +66,7 @@ public class PnPollingServiceTimelineSlowE2eV25 extends PnPollingServiceTimeline
     @Override
     protected PnPollingResponseV25 getException(Exception exception) {
         PnPollingResponseV25 pollingResponse = new PnPollingResponseV25();
-        pollingResponse.setNotification(this.fullSentNotification);
+        pollingResponse.setNotification(fullSentNotification);
         pollingResponse.setResult(false);
         return pollingResponse;
     }

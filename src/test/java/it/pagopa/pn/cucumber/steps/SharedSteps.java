@@ -54,6 +54,7 @@ import java.io.IOException;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -232,13 +233,23 @@ public class SharedSteps {
      * Restituisce lo FullSentNotification aggiornata all'ultima versione (quella maggiormente utilizzata a codice)
      */
     //TODO: all'introduzione di una nuova versione, ri-fattorizzare il tipo di oggetto ritornato e cambiare i punti di codice che richiamano questo metodo
-    public FullSentNotificationV26 getSentNotificationLastVersion() {
-        return b2bClient.getSentNotificationV26(notificationIun);
+    public FullSentNotificationV27 getSentNotificationLastVersion() {
+        return b2bClient.getSentNotificationV27(notificationIun);
+    }
+
+    /**
+     * Restituisce lo FullSentNotification aggiornata all'ultima versione (quella maggiormente utilizzata a codice)
+     * ma a differenza del metodo sopra anziché usare il notificationIun di SharedSteps usa uno IUN arbitrario.
+     * Usato in un solo punto del codice
+     */
+    //TODO: all'introduzione di una nuova versione, ri-fattorizzare il tipo di oggetto ritornato e cambiare i punti di codice che richiamano questo metodo
+    public FullSentNotificationV27 getSentNotificationLastVersionByIun(String iun) {
+        return b2bClient.getSentNotificationV27(iun);
     }
 
     public NotificationVersion getNotificationVersion(String version) {
         if (version.trim().equalsIgnoreCase(MOST_RECENT)) {
-            return NotificationVersion.V24;//TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente
+            return NotificationVersion.V25;//TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente
         }
         return NotificationVersion.valueOf(version.trim().toUpperCase());
     }
@@ -263,8 +274,15 @@ public class SharedSteps {
      */
     @Given("imposto lo iun di SharedSteps a {string} e la pa a {string}")
     public void impostoIunAndPaForTestPurposes(String iun, String paName) {
-        this.notificationIun = iun;
+        notificationIun = iun;
         setPA(paName);
+        /*Imposta la data di creazione a cinque giorni fa (sufficienti per testare) e crea una notification request con un destinatario
+        e crea una request con destinatario Mario Cucumber (questi passaggi servono per poter recuperare anche le notifiche andate in REFUSED) */
+        notificationCreationDate = OffsetDateTime.now(ZoneOffset.UTC).minusDays(5);
+        getNotificationStepInterface().prepareNotificationRequest(Map.of(
+                "subject", "MOCKED NOTIFICATION",
+                "senderDenomination", "Comune di Palermo"));
+        getNotificationStepInterface().addRecipientToNotification(Destinatario.DESTINATARIO_MARIO_CUCUMBER, new HashMap<>());
     }
 
     /**
@@ -756,8 +774,8 @@ public class SharedSteps {
         Assertions.assertTrue(expectedErrorCode.equalsIgnoreCase(errorCode));
     }
 
-    /* 8 vecchi metodi sono stati unificati in questo (alcuni di questi non vengono nemmeno mai richiamati da nessun file feature).
-      E' stato refattorizzato tutto quanto, in modo che possa runnare con qualsiasi versione
+    /* Sono stati unificati 8 vecchi metodi in questo (alcuni di questi non vengono nemmeno mai richiamati da nessun file feature).
+      È stato refattorizzato tutto quanto, in modo che possa runnare con qualsiasi versione
       (dalla 21 in su, in quanto i metadati non sono presenti in versioni precedenti)
      */
     private void sendNotificationRefusedDueToError(String errorType) {
@@ -1114,8 +1132,8 @@ public class SharedSteps {
     }
 
     private static EventId getEventId(String iun, DataTest dataFromTest) {
-        TimelineElementV26 timelineElement = dataFromTest.getTimelineElement();
-        TimelineElementDetailsV26 timelineElementDetails = timelineElement.getDetails();
+        TimelineElementV27 timelineElement = dataFromTest.getTimelineElement();
+        TimelineElementDetailsV27 timelineElementDetails = timelineElement.getDetails();
         DigitalAddress digitalAddress = timelineElementDetails == null ? null : timelineElementDetails.getDigitalAddress();
         DigitalAddressSource digitalAddressSource = timelineElementDetails == null ? null : timelineElementDetails.getDigitalAddressSource();
 
@@ -1137,16 +1155,16 @@ public class SharedSteps {
      * @param dataFromTest          the data filters
      * @return a list of timeline elements that match the given event category and data from test
      */
-    public List<TimelineElementV26> getTimelineElementsByEventId(String timelineEventCategory, DataTest dataFromTest) {
-        FullSentNotificationV26 fullSentNotification = getSentNotificationLastVersion();
-        List<TimelineElementV26> timelineElementList = fullSentNotification.getTimeline();
+    public List<TimelineElementV27> getTimelineElementsByEventId(String timelineEventCategory, DataTest dataFromTest) {
+        FullSentNotificationV27 fullSentNotification = getSentNotificationLastVersion();
+        List<TimelineElementV27> timelineElementList = fullSentNotification.getTimeline();
         if (dataFromTest != null && dataFromTest.getTimelineElement() != null) {
             // get timeline event id
             String timelineEventId = getTimelineEventId(timelineEventCategory, notificationIun, dataFromTest);
-            if (timelineEventCategory.equals(TimelineElementCategoryV26.SEND_ANALOG_PROGRESS.getValue())
-                    || timelineEventCategory.equals(TimelineElementCategoryV26.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS.getValue())) {
-                TimelineElementV26 timelineElementFromTest = dataFromTest.getTimelineElement();
-                TimelineElementDetailsV26 timelineElementDetails = timelineElementFromTest.getDetails();
+            if (timelineEventCategory.equals(SEND_ANALOG_PROGRESS)
+                    || timelineEventCategory.equals(SEND_SIMPLE_REGISTERED_LETTER_PROGRESS)) {
+                TimelineElementV27 timelineElementFromTest = dataFromTest.getTimelineElement();
+                TimelineElementDetailsV27 timelineElementDetails = timelineElementFromTest.getDetails();
                 return timelineElementList.stream().filter(elem ->
                                 Objects.requireNonNull(elem.getElementId()).startsWith(timelineEventId)
                                         && Objects.equals(Objects.requireNonNull(elem.getDetails()).getDeliveryDetailCode(), Objects.requireNonNull(timelineElementDetails).getDeliveryDetailCode()))
@@ -1157,7 +1175,7 @@ public class SharedSteps {
         return timelineElementList.stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).getValue().equals(timelineEventCategory)).toList();
     }
 
-    public TimelineElementV26 getTimelineElementByEventId(String timelineEventCategory, DataTest dataFromTest) {
+    public TimelineElementV27 getTimelineElementByEventId(String timelineEventCategory, DataTest dataFromTest) {
         return getTimelineElementsByEventId(timelineEventCategory, dataFromTest).stream()
                 .findAny()
                 .orElse(null);
