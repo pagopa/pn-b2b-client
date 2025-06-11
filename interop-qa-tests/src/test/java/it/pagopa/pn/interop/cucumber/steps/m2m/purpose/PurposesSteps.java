@@ -25,6 +25,8 @@ import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPrepara
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.M2MDataPreparationService;
 import java.util.List;
 import java.util.UUID;
+
+import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.enums.PurposeOperation;
 import org.assertj.core.api.Assertions;
 import org.springframework.http.HttpStatus;
 
@@ -231,16 +233,33 @@ public class PurposesSteps {
 
     @When("l'utente tenta di riattivare purpose")
     public void unsuspendPurpose() {
-        httpCallExecutor.performCall(() ->
-                purposeClient.unsuspendPurpose(generateId(EntityIdType.DEFAULT_ID))
-        );
+        performPurposeAction(PurposeOperation.UNSUSPEND, EntityIdType.DEFAULT_ID);
     }
 
     @When("l'utente tenta di riattivare purpose con un id {entityIdType}")
     public void unsuspendPurposeByIdType(EntityIdType entityIdType) {
-        httpCallExecutor.performCall(() ->
-                purposeClient.unsuspendPurpose(generateId(entityIdType))
-        );
+        performPurposeAction(PurposeOperation.UNSUSPEND, entityIdType);
+    }
+
+    @When("l'utente tenta di approvare purpose")
+    public void approvePurpose() {
+        performPurposeAction(PurposeOperation.APPROVE, EntityIdType.DEFAULT_ID);
+    }
+
+    @When("l'utente tenta di approvare purpose con un id {entityIdType}")
+    public void approvePurposeByIdType(EntityIdType entityIdType) {
+        performPurposeAction(PurposeOperation.APPROVE, entityIdType);
+    }
+
+    private void performPurposeAction(PurposeOperation action, EntityIdType entityIdType) {
+        UUID id = generateId(entityIdType);
+        httpCallExecutor.performCall(() -> {
+            switch (action) {
+                case APPROVE -> purposeClient.approvePurpose(id);
+                case UNSUSPEND -> purposeClient.unsuspendPurpose(id);
+            }
+            return null;
+        });
     }
 
     private UUID generateId(EntityIdType entityIdType) {
