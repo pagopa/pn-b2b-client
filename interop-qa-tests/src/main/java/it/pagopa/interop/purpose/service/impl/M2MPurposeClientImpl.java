@@ -3,6 +3,7 @@ package it.pagopa.interop.purpose.service.impl;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.PurposesApi;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purpose;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersion;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersionSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersions;
@@ -32,6 +33,16 @@ public class M2MPurposeClientImpl implements IM2MPurposeClient {
         apiClient.setBasePath(basePath);
         apiClient.setBearerToken(bearerToken);
         return apiClient;
+    }
+
+    @Override
+    public Purpose activatePurpose(UUID purposeId) {
+        return purposesApi.activateDraftPurpose(purposeId);
+    }
+
+    @Override
+    public Purpose getPurpose(UUID purposeId) {
+        return purposesApi.getPurpose(purposeId);
     }
 
     @Override

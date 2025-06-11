@@ -10,6 +10,7 @@ import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purpose;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersion;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersionSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersionState;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersions;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient;
@@ -195,6 +196,36 @@ public class PurposesSteps {
     @Then("la nuova versione della finalità è stata visualizzata correttamente")
     public void purposeVersionSuccessfullyGot() {
         checkCreatedVersion();
+    }
+
+    @When("l'utente tenta l'attivazione della finalità")
+    public void activatePurposeAttempt() {
+        activatePurpose(sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID());
+    }
+
+    @When("l'utente tenta l'attivazione di una finalità inesistente")
+    public void activateNonExistentPurpose() {
+        activatePurpose(UUID.randomUUID());
+    }
+
+    private void activatePurpose(UUID purposeIdAsUUID) {
+        httpCallExecutor.performCall(() -> purposeClient.activatePurpose(purposeIdAsUUID));
+    }
+
+    @Then("la finalità è stata attivata correttamente")
+    public void purposeSuccessfullyActivated() {
+        Purpose purpose = (Purpose) httpCallExecutor.getResponse();
+        PurposeVersionState expectedState = PurposeVersionState.ACTIVE;
+        PurposeVersionState returnedState = purpose.getCurrentVersion().getState();
+        assertThat(expectedState)
+            .as("Verifica finalità restituita")
+            .isEqualTo(returnedState);
+
+        pollingService.makePolling(() -> purposeClient.getPurpose(
+            sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID()
+            ).getCurrentVersion().getState(),
+            res -> res.equals(expectedState),
+            "La correttezza della finalità restituita dalla API di attivazione non è stata confermata dalla API di lettura. Visualizzare i log per maggiori dettagli.");
     }
 
 }

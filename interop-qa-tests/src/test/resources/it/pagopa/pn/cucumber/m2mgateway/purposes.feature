@@ -194,6 +194,81 @@ Feature: Gestione purposes
     When l'utente tenta di visualizzare una versione inesistente della finalità esistente
     Then si ottiene status code 404
 
+  Scenario Outline: [M2M_PURPOSES_ACTIVATE_1] Una finalità in stato DRAFT può essere attivata da un utente con ruolo M2M-ADMIN
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+    And l'utente è un "<ruolo>" di "PA2" con ruolo M2M <ruolo_m2m>
+    When l'utente tenta l'attivazione della finalità
+    Then si ottiene status code 200
+    And la finalità è stata attivata correttamente
+    Examples:
+      | ruolo        | ruolo_m2m |
+      | admin        | m2m-admin |
+      | api          | m2m-admin |
+      | security     | m2m-admin |
+      | api,security | m2m-admin |
+      | support      | m2m-admin |
+
+  Scenario Outline: [M2M_PURPOSES_ACTIVATE_2] Una finalità in stato DRAFT NON può essere attivata da un utente con ruolo M2M
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+    And l'utente è un "<ruolo>" di "PA2" con ruolo M2M <ruolo_m2m>
+    When l'utente tenta l'attivazione della finalità
+    Then si ottiene status code 403
+    Examples:
+      | ruolo        | ruolo_m2m |
+      | admin        | m2m       |
+      | api          | m2m       |
+      | security     | m2m       |
+      | api,security | m2m       |
+      | support      | m2m       |
+
+  Scenario: [M2M_PURPOSES_ACTIVATE_3] Una finalità inesistente NON può essere attivata
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta l'attivazione di una finalità inesistente
+    Then si ottiene status code 404
+
+  Scenario: [M2M_PURPOSES_ACTIVATE_4] Una finalità in stato DRAFT NON può essere attivata specificando un auth token non valido
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+    And viene impostato per l'utente un token m2m scaduto
+    When l'utente tenta l'attivazione della finalità
+    Then si ottiene status code 401
+
+  Scenario Outline: [M2M_PURPOSES_ACTIVATE_5] Una finalità in uno stato diverso da DRAFT NON può essere attivata
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "<state>" per quell'eservice
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta l'attivazione della finalità
+    Then si ottiene status code 409
+    Examples:
+      | state                 |
+      | ACTIVE                |
+      | SUSPENDED             |
+      | REJECTED              |
+      | WAITING_FOR_APPROVAL  |
+      | ARCHIVED              |
+
+  Scenario: [M2M_PURPOSES_ACTIVATE_6] Una finalità in stato DRAFT NON può essere attivata da parte di un ente diverso dal creatore
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta l'attivazione della finalità
+    Then si ottiene status code 403
+
   Scenario: [M2MG_PURPOSES_6] Errore nel recupero delle versioni di una finalità con purposeId nullo (Scenario 98)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m
     And "PA1" ha già creato e pubblicato 1 e-service

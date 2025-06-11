@@ -2,6 +2,7 @@ package it.pagopa.interop.purpose.service;
 
 import it.pagopa.interop.ListRequest;
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purpose;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersion;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersionSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersions;
@@ -31,6 +32,10 @@ public interface IM2MPurposeClient extends SettableBearerToken {
     class PurposeVersionsListRequest extends ListRequest {
         private UUID purposeId;
     }
+
+    Purpose activatePurpose(UUID purposeId);
+
+    Purpose getPurpose(UUID purposeId);
 
     Purposes getPurposes(PurposesListRequest request);
 
