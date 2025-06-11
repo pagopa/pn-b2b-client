@@ -296,7 +296,7 @@ Feature: Gestione purposes
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m
     When l'utente tenta di archiviare purpose
     Then si ottiene lo status code 403
-    And purpose in stato "<stato>"
+    And purpose in stato <stato>
     Examples:
       | stato     |
       | ACTIVE    |
@@ -365,7 +365,7 @@ Feature: Gestione purposes
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta di archiviare purpose
     Then si ottiene lo status code 400
-    And purpose in stato "<stato>"
+    And purpose in stato <stato>
     Examples:
       | stato    |
       | DRAFT    |
@@ -380,7 +380,7 @@ Feature: Gestione purposes
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta di archiviare purpose
     Then si ottiene lo status code 403
-    And purpose in stato "<stato>"
+    And purpose in stato <stato>
     Examples:
       | stato     |
       | ACTIVE    |
@@ -465,7 +465,7 @@ Feature: Gestione purposes
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di approvare purpose
     Then si ottiene lo status code 400
-    And purpose in stato "<stato>"
+    And purpose in stato <stato>
     Examples:
       | stato     |
       | ACTIVE    |
@@ -562,7 +562,7 @@ Feature: Gestione purposes
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di riattivare purpose
     Then si ottiene lo status code 400
-    And purpose in stato "<stato>"
+    And purpose in stato <stato>
     Examples:
       | stato    |
       | ACTIVE   |

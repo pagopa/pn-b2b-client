@@ -237,6 +237,7 @@ public class PurposesSteps {
     }
 
     @Then("la finalità è in stato {m2mPurposeVersionState}")
+    @Then("purpose in stato {m2mPurposeVersionState}")
     public void purposeStateSuccessfullyChanged(PurposeVersionState expectedState) {
         if (httpCallExecutor.getClientResponse().is2xxSuccessful()) {
             Purpose purpose = (Purpose) httpCallExecutor.getResponse();
