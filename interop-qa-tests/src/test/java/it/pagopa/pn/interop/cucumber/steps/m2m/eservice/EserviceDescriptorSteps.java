@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.m2m.eservice;
 
 
 import io.cucumber.java.en.When;
+import it.pagopa.interop.common.enums.EntityIdType;
 import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptors;
@@ -33,11 +34,17 @@ public class EserviceDescriptorSteps extends AbstractCommonSteps<EServiceDescrip
         List<it.pagopa.interop.agreement.domain.EServiceDescriptor> eservices = eserviceContext.getPublishedEservicesIds();
 
         Assertions.assertThat(eservices)
-                .as("")
+                .as("Verifica che ci sia un solo e-service pubblicato")
                 .hasSize(1);
 
-        EServiceDescriptors descriptors = client.getAll(eservices.get(0).getEServiceId());
-        this.bindActual(sharedStepsContext, descriptors.getResults());
+        UUID eserviceId = eservices.get(0).getEServiceId();
+        retrieveDescriptors(eserviceId);
+    }
+
+    @When("l'utente tenta di recuperare la lista di descriptor con un eserviceId {entityIdType}")
+    public void getAll(EntityIdType entityIdType) {
+        UUID eserviceId = this.generateId(entityIdType);
+        retrieveDescriptors(eserviceId);
     }
 
     @Override
@@ -64,5 +71,14 @@ public class EserviceDescriptorSteps extends AbstractCommonSteps<EServiceDescrip
         EServiceDescriptor result = new EServiceDescriptor();
         result.setId(eServiceDescriptor.getDescriptorId());
         return result;
+    }
+
+    private void retrieveDescriptors(UUID eserviceId) {
+        EServiceDescriptors descriptors = client.getAll(eserviceId);
+        List actualDescriptors = descriptors != null ? descriptors.getResults() : List.of();
+
+        this.actualEntities.clear();
+        this.actualEntities.addAll(actualDescriptors);
+        this.bindActual(sharedStepsContext, actualDescriptors);
     }
 }

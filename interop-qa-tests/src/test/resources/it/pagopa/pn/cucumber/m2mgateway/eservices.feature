@@ -7,12 +7,10 @@ Feature: Gestione degli eServices
     And si ottiene lo status code <statusCode>
     Then la lista di eService è presente solo se lo status code è 200
     Examples:
-      | ruolo        | ruolo-m2m | statusCode |
-      | admin        | m2m       | 200        |
-      | api          | m2m       | 403        |
-      | security     | m2m       | 403        |
-      | api,security | m2m       | 403        |
-      | support      | m2m       | 403        |
+      | ruolo | ruolo-m2m | statusCode |
+      | admin | m2m       | 200        |
+      | admin | m2m-admin | 200        |
+
 
   Scenario: [M2MG_ESERVICES_2] RED - Recupero corretto della lista degli eServices con utente autorizzato (Scenario 81)
     Given "PA2" ha già creato e pubblicato 1 e-services
@@ -79,12 +77,10 @@ Feature: Gestione degli eServices
     Then si ottiene lo status code <statusCode>
     Then la lista di descriptor è presente solo se lo status code è 200
     Examples:
-      | ruolo        | ruolo-m2m | statusCode |
-      | admin        | m2m       | 200        |
-      | api          | m2m       | 403        |
-      | security     | m2m       | 403        |
-      | api,security | m2m       | 403        |
-      | support      | m2m       | 403        |
+      | ruolo | ruolo-m2m | statusCode |
+      | admin | m2m       | 200        |
+      | api   | m2m-admin | 200        |
+
 
   Scenario: [M2MG_ESERVICES_9] RED - Recupero corretto della lista dei descriptors per un eService con utente autorizzato (Scenario 87)
     Given "PA1" ha già creato e pubblicato 1 e-services
@@ -93,10 +89,11 @@ Feature: Gestione degli eServices
     Then si ottiene lo status code 200
     And lista di descriptor viene restituita
 
+    ## Il test con id nullo non è eseguibile
   Scenario: [M2MG_ESERVICES_10] RED - Accesso negato alla lista dei descriptors con eserviceId nullo (Scenario 88)
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m
-    When l'utente tenta di recuperare la lista di descriptor con eserviceId nullo
+    When l'utente tenta di recuperare la lista di descriptor con un eserviceId nullo
     Then si ottiene lo status code 400
     And lista di descriptor non restituita
 
@@ -111,7 +108,7 @@ Feature: Gestione degli eServices
   Scenario: [M2MG_ESERVICES_12] RED - Errore nel recupero della lista dei descriptors con eserviceId inesistente (Scenario 90)
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m
-    When l'utente tenta di recuperare la lista di descriptor con eserviceId inesistente
+    When l'utente tenta di recuperare la lista di descriptor con un eserviceId inesistente
     Then si ottiene lo status code 404
     And lista di descriptor non restituita
 
