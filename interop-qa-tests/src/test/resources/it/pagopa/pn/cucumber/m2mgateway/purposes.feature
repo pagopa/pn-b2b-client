@@ -136,22 +136,15 @@ Feature: Gestione purposes
     When l'utente tenta di visualizzare una versione inesistente della finalità esistente
     Then si ottiene status code 404
 
-  Scenario Outline: [M2M_PURPOSES_ACTIVATE_1] Una finalità in stato DRAFT può essere attivata da un utente con ruolo M2M-ADMIN
+  Scenario: [M2M_PURPOSES_ACTIVATE_1] Una finalità in stato DRAFT può essere attivata da un utente con ruolo M2M-ADMIN
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
-    And l'utente è un "<ruolo>" di "PA2" con ruolo M2M <ruolo_m2m>
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta l'attivazione della finalità
     Then si ottiene status code 200
     And la finalità è stata attivata correttamente
-    Examples:
-      | ruolo        | ruolo_m2m |
-      | admin        | m2m-admin |
-      | api          | m2m-admin |
-      | security     | m2m-admin |
-      | api,security | m2m-admin |
-      | support      | m2m-admin |
 
   Scenario Outline: [M2M_PURPOSES_ACTIVATE_2] Una finalità in stato DRAFT NON può essere attivata da un utente con ruolo M2M
     Given l'utente è un "admin" di "PA1"
@@ -211,46 +204,25 @@ Feature: Gestione purposes
     When l'utente tenta l'attivazione della finalità
     Then si ottiene status code 403
 
-
-  Scenario: [M2MG_PURPOSES_23] Sospensione di una finalità in stato active con utente autorizzato (Scenario 33)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+  Scenario: [M2M_PURPOSES_SUSPEND_1] Una finalità in stato ACTIVE può essere sospesa da un utente con ruolo M2M-ADMIN
+    Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    When l'utente tenta di sospendere purpose
+    When l'utente tenta la sospensione della finalità
     Then si ottiene lo status code 200
-    And purpose in stato "SUSPENDED"
+    And la finalità è in stato SUSPENDED
 
-  Scenario: [M2MG_PURPOSES_24] Sospensione negata con utente con solo ruolo M2M (Scenario 54)
+  Scenario: [M2M_PURPOSES_SUSPEND_2] Una finalità in stato ACTIVE NON può essere sospesa da un utente con ruolo M2M
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m
-    When l'utente tenta di sospendere purpose
+    When l'utente tenta la sospensione della finalità
     Then si ottiene lo status code 403
-    And purpose in stato "ACTIVE"
-
-  Scenario: [M2MG_PURPOSES_25] Sospensione di una finalità in stato attivo con utente autorizzato (Scenario 112)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And "PA1" ha già creato e pubblicato 1 e-service
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
-    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    When l'utente tenta di sospendere purpose
-    Then si ottiene lo status code 200
-    And purpose in stato "SUSPENDED"
-
-  Scenario: [M2MG_PURPOSES_26] Sospensione fallita di una finalità con purposeId NULL (Scenario 113)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And "PA1" ha già creato e pubblicato 1 e-service
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
-    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    When l'utente tenta di sospendere purpose con id nullo
-    Then si ottiene lo status code 400
-    And purpose in stato "ACTIVE"
+    And la finalità è in stato ACTIVE
 
   Scenario: [M2MG_PURPOSES_27] Sospensione fallita di una finalità con purposeId inesistente (Scenario 114)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -258,9 +230,9 @@ Feature: Gestione purposes
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    When l'utente tenta di sospendere purpose con id inesistente
+    When l'utente tenta la sospensione della finalità con id inesistente
     Then si ottiene lo status code 404
-    And purpose in stato "ACTIVE"
+    And la finalità è in stato ACTIVE
 
   Scenario: [M2MG_PURPOSES_28] Sospensione fallita di una finalità con token non valido (Scenario 115)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -268,9 +240,9 @@ Feature: Gestione purposes
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     And viene impostato per l'utente un token m2m scaduto
-    When l'utente tenta di sospendere purpose
+    When l'utente tenta la sospensione della finalità
     Then si ottiene lo status code 401
-    And purpose in stato "ACTIVE"
+    And la finalità è in stato ACTIVE
 
   Scenario: [M2MG_PURPOSES_29] Sospensione fallita di una finalità già sospesa (Scenario 116)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -278,9 +250,9 @@ Feature: Gestione purposes
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "SUSPENDED" per quell'eservice
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    When l'utente tenta di sospendere purpose
+    When l'utente tenta la sospensione della finalità
     Then si ottiene lo status code 409
-    And purpose in stato "SUSPENDED"
+    And la finalità è in stato SUSPENDED
 
   Scenario: [M2MG_PURPOSES_30] Sospensione fallita di una finalità in stato non attivo (Scenario 117)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -288,9 +260,9 @@ Feature: Gestione purposes
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    When l'utente tenta di sospendere purpose
+    When l'utente tenta la sospensione della finalità
     Then si ottiene lo status code 400
-    And purpose in stato "DRAFT"
+    And la finalità è in stato DRAFT
 
   Scenario: [M2MG_PURPOSES_31] Sospensione fallita della finalità da utente non autorizzato (Scenario 118)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -298,9 +270,9 @@ Feature: Gestione purposes
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m
-    When l'utente tenta di sospendere purpose
+    When l'utente tenta la sospensione della finalità
     Then si ottiene lo status code 403
-    And purpose in stato "ACTIVE"
+    And la finalità è in stato ACTIVE
 
   Scenario Outline: [M2MG_PURPOSES_32] Archiviazione di una finalità in stato <stato> con utente autorizzato (Scenario 31)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -310,7 +282,7 @@ Feature: Gestione purposes
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta di archiviare purpose
     Then si ottiene lo status code 200
-    And purpose in stato "ARCHIVED"
+    And la finalità è in stato ARCHIVED
     Examples:
       | stato     |
       | ACTIVE    |
@@ -338,7 +310,7 @@ Feature: Gestione purposes
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta di archiviare purpose
     Then si ottiene lo status code 200
-    And purpose in stato "ARCHIVED"
+    And la finalità è in stato ARCHIVED
     Examples:
       | stato     |
       | ACTIVE    |
@@ -352,7 +324,7 @@ Feature: Gestione purposes
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta di archiviare purpose con id nullo
     Then si ottiene lo status code 400
-    And purpose in stato "ACTIVE"
+    And la finalità è in stato ACTIVE
 
   Scenario: [M2MG_PURPOSES_36] Archiviazione fallita di una finalità inesistente (Scenario 121)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -362,7 +334,7 @@ Feature: Gestione purposes
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta di archiviare purpose con id inesistente
     Then si ottiene lo status code 404
-    And purpose in stato "ACTIVE"
+    And la finalità è in stato ACTIVE
 
   Scenario: [M2MG_PURPOSES_37] Archiviazione fallita di una finalità con token non valido (Scenario 122)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -372,7 +344,7 @@ Feature: Gestione purposes
     And viene impostato per l'utente un token m2m scaduto
     When l'utente tenta di archiviare purpose
     Then si ottiene lo status code 401
-    And purpose in stato "ACTIVE"
+    And la finalità è in stato ACTIVE
 
   Scenario: [M2MG_PURPOSES_38] Archiviazione fallita di una finalità già archiviata (Scenario 123)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -382,7 +354,7 @@ Feature: Gestione purposes
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta di archiviare purpose
     Then si ottiene lo status code 409
-    And purpose in stato "ARCHIVED"
+    And la finalità è in stato ARCHIVED
 
   Scenario Outline: [M2MG_PURPOSES_39] Archiviazione fallita di una finalità in stato non valido (Scenario 124)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -421,7 +393,7 @@ Feature: Gestione purposes
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di approvare purpose
     Then si ottiene lo status code 200
-    And purpose in stato "ACTIVE"
+    And la finalità è in stato ACTIVE
 
   Scenario: [M2MG_PURPOSES_42] Approvazione negata per utente con ruolo M2M (Scenario 53)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -431,7 +403,7 @@ Feature: Gestione purposes
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m
     When l'utente tenta di approvare purpose
     Then si ottiene lo status code 403
-    And purpose in stato "WAITING FOR APPROVAL"
+    And la finalità è in stato WAITING_FOR_APPROVAL
 
   Scenario: [M2MG_PURPOSES_43] Attivazione di una finalità in stato waiting for approval con utente autorizzato (Scenario 126)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -441,7 +413,7 @@ Feature: Gestione purposes
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di approvare purpose
     Then si ottiene lo status code 200
-    And purpose in stato "ACTIVE"
+    And la finalità è in stato ACTIVE
 
   Scenario: [M2MG_PURPOSES_44] Errore attivazione finalità con purposeId NULL (Scenario 127)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -451,7 +423,7 @@ Feature: Gestione purposes
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di approvare purpose con id nullo
     Then si ottiene lo status code 400
-    And purpose in stato "WAITING FOR APPROVAL"
+    And la finalità è in stato WAITING_FOR_APPROVAL
 
   Scenario: [M2MG_PURPOSES_45] Errore attivazione finalità con purposeId inesistente (Scenario 128)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -461,7 +433,7 @@ Feature: Gestione purposes
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di approvare purpose con id inesistente
     Then si ottiene lo status code 404
-    And purpose in stato "WAITING FOR APPROVAL"
+    And la finalità è in stato WAITING_FOR_APPROVAL
 
   Scenario: [M2MG_PURPOSES_46] Attivazione fallita di una finalità con token non valido (Scenario 129)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -471,7 +443,7 @@ Feature: Gestione purposes
     And viene impostato per l'utente un token m2m scaduto
     When l'utente tenta di approvare purpose
     Then si ottiene lo status code 401
-    And purpose in stato "WAITING FOR APPROVAL"
+    And la finalità è in stato WAITING_FOR_APPROVAL
 
   Scenario: [M2MG_PURPOSES_47] Attivazione negata di una finalità già attiva (Scenario 130)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -481,7 +453,7 @@ Feature: Gestione purposes
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di approvare purpose
     Then si ottiene lo status code 409
-    And purpose in stato "ACTIVE"
+    And la finalità è in stato ACTIVE
 
   Scenario Outline: [M2MG_PURPOSES_48] Attivazione fallita di una finalità in stato non valido (Scenario 131)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -507,7 +479,7 @@ Feature: Gestione purposes
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta di approvare purpose
     Then si ottiene lo status code 403
-    And purpose in stato "DRAFT"
+    And la finalità è in stato DRAFT
 
   Scenario: [M2MG_PURPOSES_50] Riattivazione di una finalità in stato sospeso con utente autorizzato (Scenario 34)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -517,7 +489,7 @@ Feature: Gestione purposes
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di approvare purpose
     Then si ottiene lo status code 200
-    And purpose in stato "ACTIVE"
+    And la finalità è in stato ACTIVE
 
   Scenario: [M2MG_PURPOSES_51] Riattivazione negata per utente con ruolo M2M (Scenario 55)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -527,7 +499,7 @@ Feature: Gestione purposes
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m
     When l'utente tenta di approvare purpose
     Then si ottiene lo status code 403
-    And purpose in stato "SUSPENDED"
+    And la finalità è in stato SUSPENDED
 
   Scenario: [M2MG_PURPOSES_52] Riattivazione di una finalità in stato sospeso con utente autorizzato (Scenario 133)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -537,7 +509,7 @@ Feature: Gestione purposes
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di approvare purpose
     Then si ottiene lo status code 200
-    And purpose in stato "ACTIVE"
+    And la finalità è in stato ACTIVE
 
   Scenario: [M2MG_PURPOSES_53] Riattivazione fallita di una finalità con purposeId NULL (Scenario 134)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -547,7 +519,7 @@ Feature: Gestione purposes
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di approvare purpose con id nullo
     Then si ottiene lo status code 400
-    And purpose in stato "SUSPENDED"
+    And la finalità è in stato SUSPENDED
 
   Scenario: [M2MG_PURPOSES_54] Riattivazione fallita di una finalità con purposeId inesistente (Scenario 135)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -557,7 +529,7 @@ Feature: Gestione purposes
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di approvare purpose con id inesistente
     Then si ottiene lo status code 400
-    And purpose in stato "SUSPENDED"
+    And la finalità è in stato SUSPENDED
 
   Scenario: [M2MG_PURPOSES_55] Riattivazione fallita di una finalità con token non valido (Scenario 136)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -567,7 +539,7 @@ Feature: Gestione purposes
     And viene impostato per l'utente un token m2m scaduto
     When l'utente tenta di approvare purpose
     Then si ottiene lo status code 401
-    And purpose in stato "SUSPENDED"
+    And la finalità è in stato SUSPENDED
 
   Scenario: [M2MG_PURPOSES_56] Riattivazione negata di una finalità già attiva (Scenario 137)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -577,7 +549,7 @@ Feature: Gestione purposes
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di approvare purpose
     Then si ottiene lo status code 409
-    And purpose in stato "ACTIVE"
+    And la finalità è in stato ACTIVE
 
   Scenario Outline: [M2MG_PURPOSES_57] Riattivazione fallita di una finalità in stato non sospeso (Scenario 138)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -603,4 +575,4 @@ Feature: Gestione purposes
     And l'utente è un "admin" di "PA3" con ruolo M2M m2m-admin
     When l'utente tenta di approvare purpose
     Then si ottiene lo status code 403
-    And purpose in stato "ACTIVE"
+    And la finalità è in stato ACTIVE
