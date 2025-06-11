@@ -19,8 +19,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Setter
 public abstract class AbstractCommonSteps<T, K> implements ICommonSteps {
 
-    private final List<T> expectedEntities = new ArrayList<>();
-    private final List<T> actualEntities = new ArrayList<>();
+    protected final List<T> expectedEntities = new ArrayList<>();
+    protected final List<T> actualEntities = new ArrayList<>();
 
     private final String parameterTypeName;
     private final IClient<T, K> client;
@@ -97,6 +97,8 @@ public abstract class AbstractCommonSteps<T, K> implements ICommonSteps {
 
     // --- Support methods ---
     private void assertExpectedEntity(AssertCheckType mode) {
+        updateExpected();
+
         switch (mode) {
             case NONE -> assertThat(actualEntities)
                     .as("La lista dei %s dovrebbe essere vuota".formatted(parameterTypeName))
@@ -107,7 +109,6 @@ public abstract class AbstractCommonSteps<T, K> implements ICommonSteps {
                     .isNotEmpty();
 
             case PRESENT_AND_MATCHING -> {
-                updateExpected();
 
                 assertThat(actualEntities)
                         .as("La lista dei %s dovrebbe essere presente".formatted(parameterTypeName))
