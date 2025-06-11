@@ -41,6 +41,11 @@ public class M2MPurposeClientImpl implements IM2MPurposeClient {
     }
 
     @Override
+    public Purpose suspendPurpose(UUID purposeId) {
+        return purposesApi.suspendPurpose(purposeId);
+    }
+
+    @Override
     public Purpose getPurpose(UUID purposeId) {
         return purposesApi.getPurpose(purposeId);
     }

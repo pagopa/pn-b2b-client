@@ -3,6 +3,7 @@ package it.pagopa.pn.interop.cucumber.steps.m2m.purpose;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
@@ -31,6 +32,11 @@ import org.assertj.core.api.Assertions;
 import org.springframework.http.HttpStatus;
 
 public class PurposesSteps {
+    @ParameterType("ACTIVE|DRAFT|SUSPENDED|WAITING_FOR_APPROVAL|ARCHIVED|REJECTED")
+    public PurposeVersionState m2mPurposeVersionState(String state) {
+        return PurposeVersionState.fromValue(state);
+    }
+
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
     private final IdentityService identityService;
@@ -206,6 +212,11 @@ public class PurposesSteps {
         activatePurpose(sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID());
     }
 
+    @When("l'utente tenta la sospensione della finalità")
+    public void suspendPurposeAttempt() {
+        suspendPurpose(sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID());
+    }
+
     @When("l'utente tenta l'attivazione di una finalità inesistente")
     public void activateNonExistentPurpose() {
         activatePurpose(UUID.randomUUID());
@@ -215,17 +226,28 @@ public class PurposesSteps {
         httpCallExecutor.performCall(() -> purposeClient.activatePurpose(purposeIdAsUUID));
     }
 
+    private void suspendPurpose(UUID purposeIdAsUUID) {
+        httpCallExecutor.performCall(() -> purposeClient.suspendPurpose(purposeIdAsUUID));
+    }
+
+    // TODO step sostituibile con purposeStateSuccessfullyChanged
     @Then("la finalità è stata attivata correttamente")
     public void purposeSuccessfullyActivated() {
-        Purpose purpose = (Purpose) httpCallExecutor.getResponse();
-        PurposeVersionState expectedState = PurposeVersionState.ACTIVE;
-        PurposeVersionState returnedState = purpose.getCurrentVersion().getState();
-        assertThat(expectedState)
-            .as("Verifica finalità restituita")
-            .isEqualTo(returnedState);
+        purposeStateSuccessfullyChanged(PurposeVersionState.ACTIVE);
+    }
+
+    @Then("la finalità è in stato {m2mPurposeVersionState}")
+    public void purposeStateSuccessfullyChanged(PurposeVersionState expectedState) {
+        if (httpCallExecutor.getClientResponse().is2xxSuccessful()) {
+            Purpose purpose = (Purpose) httpCallExecutor.getResponse();
+            PurposeVersionState returnedState = purpose.getCurrentVersion().getState();
+            assertThat(expectedState)
+                .as("Verifica finalità restituita")
+                .isEqualTo(returnedState);
+        }
 
         pollingService.makePolling(() -> purposeClient.getPurpose(
-            sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID()
+                sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID()
             ).getCurrentVersion().getState(),
             res -> res.equals(expectedState),
             "La correttezza della finalità restituita dalla API di attivazione non è stata confermata dalla API di lettura. Visualizzare i log per maggiori dettagli.");

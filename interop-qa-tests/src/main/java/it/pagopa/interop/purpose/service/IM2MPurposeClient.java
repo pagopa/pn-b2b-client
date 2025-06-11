@@ -36,6 +36,8 @@ public interface IM2MPurposeClient extends SettableBearerToken {
 
     Purpose activatePurpose(UUID purposeId);
 
+    Purpose suspendPurpose(UUID purposeId);
+
     Purpose getPurpose(UUID purposeId);
 
     Purposes getPurposes(PurposesListRequest request);
