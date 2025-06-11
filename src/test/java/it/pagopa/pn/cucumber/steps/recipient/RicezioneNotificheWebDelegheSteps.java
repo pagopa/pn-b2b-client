@@ -518,16 +518,31 @@ public class RicezioneNotificheWebDelegheSteps {
     }
 
     @And("lato destinatario {string} viene verificato che l'elemento di timeline NOTIFICATION_VIEWED non esista")
-    public void notificationCanBeCorrectlyReadFromTimelineNotExist(String recipient) {
+    public void notificationCanBeCorrectlyReadFromByTimelineNotExist(String recipient) {
+        // Seleziona l'utente destinatario
         sharedSteps.selectUser(recipient);
 
+        // Definisce la categoria dell'elemento di timeline da verificare
+        TimelineElementCategoryV27 category = TimelineElementCategoryV27.NOTIFICATION_VIEWED;
+
+        // Recupera l'elemento di timeline per il destinatario
+        TimelineElementV27 timelineElement = getTimelineElementWebRecipient(category);
+
+        // Verifica che l'elemento di timeline non esista
+        if (timelineElement != null) {
+            log.error("Elemento di timeline '{}' trovato per il destinatario '{}', ma non avrebbe dovuto esistere. Dettagli: {}",
+                    category, recipient, timelineElement);
+        }
+
         try {
-            TimelineElementCategoryV27 timelineElementCategory = TimelineElementCategoryV27.NOTIFICATION_VIEWED;
-            TimelineElementV27 timelineElement = getTimelineElementWebRecipient(timelineElementCategory);
-            assertThat(timelineElement).as("Il timeline element non dev'essere null").isNotNull();
+            // Asserzione che fallisce se l'elemento di timeline esiste
+            Assertions.assertNull(timelineElement,
+                    String.format("Elemento di timeline '%s' trovato per il destinatario '%s', ma non avrebbe dovuto esistere.",
+                            category, recipient));
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
+        // Reimposta il token di autenticazione per il client del destinatario
         webRecipientClient.setBearerToken(baseUser);
     }
 

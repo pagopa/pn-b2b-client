@@ -272,7 +272,7 @@ public class SharedSteps {
      * anziché crearla da zero, aspettare che arrivi in ACCEPTED, etc si imposta lo IUN qua e la PA e
      * si può procedere con il resto dei metodi.
      */
-    @Given("imposto lo iun di SharedSteps a {string} e la pa a {paName}")
+    @Given("imposto lo iun di SharedSteps a {string} e la pa a {string}")
     public void impostoIunAndPaForTestPurposes(String iun, String paName) {
         notificationIun = iun;
         setPA(paName);
@@ -826,8 +826,17 @@ public class SharedSteps {
     }
 
     public HttpStatusCodeException consumeNotificationError() {
-        HttpStatusCodeException value = notificationError;
+        HttpStatusCodeException value = this.notificationError;
         this.notificationError = null;
+
+        if (value != null) {
+            log.info("Consuming HttpStatusCodeException: Status={}, Message={}, ResponseBody={}",
+                    value.getStatusCode(),
+                    value.getMessage(),
+                    value.getResponseBodyAsString()
+            );
+        }
+
         return value;
     }
 
@@ -1199,4 +1208,5 @@ public class SharedSteps {
             throw exception;
         }
     }
+
 }
