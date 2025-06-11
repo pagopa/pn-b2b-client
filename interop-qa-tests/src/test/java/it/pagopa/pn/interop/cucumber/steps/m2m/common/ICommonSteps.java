@@ -1,0 +1,14 @@
+package it.pagopa.pn.interop.cucumber.steps.m2m.common;
+
+import it.pagopa.interop.common.enums.EntityIdType;
+
+import java.util.Map;
+
+public interface ICommonSteps {
+    void verifyByHttpStatus(int expectedStatusCode);
+    void getBy(Map<String,String> filters);
+    void getAll();
+    void getByFirstExpectedId();
+    void getByIdType(EntityIdType entityIdType);
+    void exsist(String presence);
+}

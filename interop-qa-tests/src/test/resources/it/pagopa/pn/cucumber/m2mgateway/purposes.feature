@@ -14,9 +14,9 @@ Feature: Gestione purposes
     Given l'utente è un "<ruolo>" di "PA1" con ruolo M2M <ruolo-m2m>
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
-    When l'utente tenta di recuperare purposes
+    When l'utente tenta di recuperare la lista di purpose
     Then si ottiene lo status code <statusCode>
-    And purposes è presente solo se lo status code è 200
+    And la lista di purpose è presente solo se lo status code è 200
     Examples:
       | ruolo        | ruolo-m2m | statusCode |
       | admin        | m2m       | 200        |
@@ -153,9 +153,9 @@ Feature: Gestione purposes
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    When l'utente tenta di recuperare purposeVersions con un id nullo
+    When l'utente tenta di recuperare la lista di purposeVersion con un purposeId nullo
     Then si ottiene lo status code 400
-    And purposeVersions non restituito
+    And lista di purposeVersion non resitituita
 
   Scenario: [M2MG_PURPOSES_7] Accesso negato al recupero delle versioni di una finalità con token non valido (Scenario 99)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m
@@ -163,9 +163,9 @@ Feature: Gestione purposes
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     And viene impostato per l'utente un token m2m scaduto
-    When l'utente tenta di recuperare purposeVersions
+    When l'utente tenta di recuperare la lista di purposeVersion
     Then si ottiene lo status code 401
-    And purposeVersions non restituito
+    And lista di purposeVersion non resitituita
 
   Scenario: [M2MG_PURPOSES_8] Errore nel recupero delle versioni di una finalità con purposeId inesistente (Scenario 100)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m
@@ -173,9 +173,9 @@ Feature: Gestione purposes
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    When l'utente tenta di recuperare purposeVersions con un id inesistente
+    When l'utente tenta di recuperare la lista di purposeVersion con un id inesistente
     Then si ottiene lo status code 404
-    And purposeVersions non restituito
+    And lista di purposeVersion non resitituita
 
   Scenario Outline: [M2MG_PURPOSES_9] Il dettaglio di una versione di finalità può essere recuperato da un utente con ruolo M2M o M2M-ADMIN (Scenario 11)
     Given l'utente è un "admin" di "PA1"
@@ -184,7 +184,7 @@ Feature: Gestione purposes
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     And "PA2" ha già creato una nuova versione di finalità
     And l'utente è un "<ruolo>" di "PA2" con ruolo M2M <ruolo-m2m>
-    When l'utente tenta di recuperare purposeVersion
+    When l'utente tenta di recuperare il record di purposeVersion creato
     Then si ottiene lo status code <statusCode>
     And purposeVersion è presente solo se lo status code è 200
     Examples:
@@ -202,9 +202,9 @@ Feature: Gestione purposes
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     And "PA2" ha già creato una nuova versione di finalità
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    When l'utente tenta di recuperare purposeVersion
+    When l'utente tenta di recuperare il record di purposeVersion creato
     Then si ottiene lo status code 200
-    And purposeVersion viene restituito
+    And purposeVersion viene restituito e combacia con il record creato
 
   Scenario: [M2MG_PURPOSES_11] Errore nel recupero di una versione di finalità con purposeId e versionId nulli (Scenario 102)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m
@@ -213,7 +213,7 @@ Feature: Gestione purposes
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     And "PA2" ha già creato una nuova versione di finalità
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    When l'utente tenta di recuperare purposeVersion con id nulli
+    When l'utente tenta di recuperare purposeVersion con un id nullo
     Then si ottiene lo status code 400
     And purposeVersion non restituito
 
@@ -224,7 +224,7 @@ Feature: Gestione purposes
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     And "PA2" ha già creato una nuova versione di finalità
     And viene impostato per l'utente un token m2m scaduto
-    When l'utente tenta di recuperare purposeVersion
+    When l'utente tenta di recuperare il record di purposeVersion creato
     Then si ottiene lo status code 401
     And purposeVersion non restituito
 
@@ -235,7 +235,7 @@ Feature: Gestione purposes
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     And "PA2" ha già creato una nuova versione di finalità
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    When l'utente tenta di recuperare purposeVersion con id inesistenti
+    When l'utente tenta di recuperare purposeVersion con un id inesistente
     Then si ottiene lo status code 404
     And purposeVersion non restituito
 
@@ -285,7 +285,7 @@ Feature: Gestione purposes
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    When l'utente tenta di attivare purpose con id inesistente
+    When l'utente tenta di attivare purpose con un id inesistente
     Then si ottiene lo status code 404
     And purpose in stato "DRAFT"
 
