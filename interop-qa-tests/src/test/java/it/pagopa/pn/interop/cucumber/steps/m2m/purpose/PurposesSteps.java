@@ -273,12 +273,23 @@ public class PurposesSteps {
         performPurposeAction(PurposeOperation.APPROVE, entityIdType);
     }
 
+    @When("l'utente tenta di archiviare purpose")
+    public void archivePurpose() {
+        performPurposeAction(PurposeOperation.ARCHIVE, EntityIdType.DEFAULT_ID);
+    }
+
+    @When("l'utente tenta di archiviare purpose con un id {entityIdType}")
+    public void archivePurposeByIdType(EntityIdType entityIdType) {
+        performPurposeAction(PurposeOperation.APPROVE, entityIdType);
+    }
+
     private void performPurposeAction(PurposeOperation action, EntityIdType entityIdType) {
         UUID id = generateId(entityIdType);
         httpCallExecutor.performCall(() -> {
             switch (action) {
                 case APPROVE -> purposeClient.approvePurpose(id);
                 case UNSUSPEND -> purposeClient.unsuspendPurpose(id);
+                case ARCHIVE -> purposeClient.archivePurpose(id);
             }
             return null;
         });

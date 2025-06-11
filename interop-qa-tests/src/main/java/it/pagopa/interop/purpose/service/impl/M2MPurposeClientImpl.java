@@ -75,6 +75,11 @@ public class M2MPurposeClientImpl implements IM2MPurposeClient {
     }
 
     @Override
+    public Purpose archivePurpose(UUID purposeId) {
+        return purposesApi.archivePurpose(purposeId);
+    }
+
+    @Override
     public PurposeVersion getVersion(UUID purposeId, UUID purposeVersionId) {
         return purposesApi.getPurposeVersion(purposeId, purposeVersionId);
     }

@@ -316,13 +316,14 @@ Feature: Gestione purposes
       | ACTIVE    |
       | SUSPENDED |
 
+    ## Gli scenari con id null non possono essere eseguiti
   Scenario: [M2MG_PURPOSES_35] Archiviazione fallita di una finalità con purposeId NULL (Scenario 120)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    When l'utente tenta di archiviare purpose con id nullo
+    When l'utente tenta di archiviare purpose con un id nullo
     Then si ottiene lo status code 400
     And la finalità è in stato ACTIVE
 
@@ -332,7 +333,7 @@ Feature: Gestione purposes
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    When l'utente tenta di archiviare purpose con id inesistente
+    When l'utente tenta di archiviare purpose con un id inesistente
     Then si ottiene lo status code 404
     And la finalità è in stato ACTIVE
 
