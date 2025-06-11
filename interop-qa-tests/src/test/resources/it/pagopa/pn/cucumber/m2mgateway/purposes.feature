@@ -1,30 +1,4 @@
 Feature: Gestione purposes
-
-  Scenario: [M2MG_PURPOSES_1] Recupero corretto della lista delle finalità con utente autorizzato (Scenario 95)
-    Given "PA1" ha già creato e pubblicato 1 e-services
-    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA2" ha già creato 5 finalità in stato "ACTIVE" per quell'eservice
-    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
-    When l'utente tenta di recuperare una lista di 5 finalità create
-    Then si ottiene status code 200
-
-  Scenario Outline: [M2MG_PURPOSES_3] La lista delle finalità può essere visionata da un utente con ruolo M2M o M2M-ADMIN (Scenario 8)
-    Given "PA1" ha già creato e pubblicato 1 e-services
-    Given l'utente è un "<ruolo>" di "PA1" con ruolo M2M <ruolo-m2m>
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
-    When l'utente tenta di recuperare la lista di purpose
-    Then si ottiene lo status code <statusCode>
-    And la lista di purpose è presente solo se lo status code è 200
-    Examples:
-      | ruolo        | ruolo-m2m | statusCode |
-      | admin        | m2m       | 200        |
-      | api          | m2m       | 403        |
-      | security     | m2m       | 403        |
-      | api,security | m2m       | 403        |
-      | support      | m2m       | 403        |
-
   Scenario Outline: [M2M_PURPOSES_LIST_1] La lista delle finalità può essere visionata da un utente con ruolo M2M o M2M-ADMIN
     Given l'utente è un "admin" di "<ente_1>"
     And "<ente_1>" ha già creato e pubblicato 1 e-service
@@ -37,35 +11,11 @@ Feature: Gestione purposes
     Examples:
       | ente_1  | ruolo_2 | ruolo-m2m_2 |
       | PA1     | admin   | m2m         |
-      #| PA1     | api          | m2m          |
-      #| PA1     | security     | m2m          |
-      #| PA1     | api,security | m2m          |
-      #| PA1     | support      | m2m          |
       | PA1     | admin   | m2m-admin   |
-      #| PA1     | api          | m2m-admin    |
-      #| PA1     | security     | m2m-admin    |
-      #| PA1     | api,security | m2m-admin    |
-      #| PA1     | support      | m2m-admin    |
       | GSP     | admin   | m2m         |
-      #| GSP     | api          | m2m          |
-      #| GSP     | security     | m2m          |
-      #| GSP     | api,security | m2m          |
-      #| GSP     | support      | m2m          |
       | GSP     | admin   | m2m-admin   |
-      #| GSP     | api          | m2m-admin    |
-      #| GSP     | security     | m2m-admin    |
-      #| GSP     | api,security | m2m-admin    |
-      #| GSP     | support      | m2m-admin    |
       | Privato | admin   | m2m         |
-      #| Privato | api          | m2m          |
-      #| Privato | security     | m2m          |
-      #| Privato | api,security | m2m          |
-      #| Privato | support      | m2m          |
       | Privato | admin   | m2m-admin   |
-      #| Privato | api          | m2m-admin    |
-      #| Privato | security     | m2m-admin    |
-      #| Privato | api,security | m2m-admin    |
-      #| Privato | support      | m2m-admin    |
 
   Scenario: [M2M_PURPOSES_LIST_2] Accesso negato alla lista delle finalità con token non valido
     Given l'utente è un "admin" di "PA1"
@@ -161,15 +111,7 @@ Feature: Gestione purposes
     Examples:
       | ruolo        | ruolo_m2m |
       | admin        | m2m       |
-      | api          | m2m       |
-      | security     | m2m       |
-      | api,security | m2m       |
-      | support      | m2m       |
       | admin        | m2m-admin |
-      | api          | m2m-admin |
-      | security     | m2m-admin |
-      | api,security | m2m-admin |
-      | support      | m2m-admin |
 
   Scenario: [M2M_PURPOSES_VERSIONS_7] Una determinata versione di una finalità NON può essere visualizzata indicando un auth token non valido
     Given l'utente è un "admin" di "PA1"
@@ -269,191 +211,6 @@ Feature: Gestione purposes
     When l'utente tenta l'attivazione della finalità
     Then si ottiene status code 403
 
-  Scenario: [M2MG_PURPOSES_6] Errore nel recupero delle versioni di una finalità con purposeId nullo (Scenario 98)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m
-    And "PA1" ha già creato e pubblicato 1 e-service
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
-    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    When l'utente tenta di recuperare la lista di purposeVersion con un purposeId nullo
-    Then si ottiene lo status code 400
-    And lista di purposeVersion non resitituita
-
-  Scenario: [M2MG_PURPOSES_7] Accesso negato al recupero delle versioni di una finalità con token non valido (Scenario 99)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m
-    And "PA1" ha già creato e pubblicato 1 e-service
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
-    And viene impostato per l'utente un token m2m scaduto
-    When l'utente tenta di recuperare la lista di purposeVersion
-    Then si ottiene lo status code 401
-    And lista di purposeVersion non resitituita
-
-  Scenario: [M2MG_PURPOSES_8] Errore nel recupero delle versioni di una finalità con purposeId inesistente (Scenario 100)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m
-    And "PA1" ha già creato e pubblicato 1 e-service
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
-    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    When l'utente tenta di recuperare la lista di purposeVersion con un id inesistente
-    Then si ottiene lo status code 404
-    And lista di purposeVersion non resitituita
-
-  Scenario Outline: [M2MG_PURPOSES_9] Il dettaglio di una versione di finalità può essere recuperato da un utente con ruolo M2M o M2M-ADMIN (Scenario 11)
-    Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato e pubblicato 1 e-service
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
-    And "PA2" ha già creato una nuova versione di finalità
-    And l'utente è un "<ruolo>" di "PA2" con ruolo M2M <ruolo-m2m>
-    When l'utente tenta di recuperare il record di purposeVersion creato
-    Then si ottiene lo status code <statusCode>
-    And purposeVersion è presente solo se lo status code è 200
-    Examples:
-      | ruolo        | ruolo-m2m | statusCode |
-      | admin        | m2m       | 200        |
-      | api          | m2m       | 403        |
-      | security     | m2m       | 403        |
-      | api,security | m2m       | 403        |
-      | support      | m2m       | 403        |
-
-  Scenario: [M2MG_PURPOSES_10] Recupero corretto del dettaglio di una versione di finalità con utente autorizzato (Scenario 101)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m
-    And "PA1" ha già creato e pubblicato 1 e-service
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
-    And "PA2" ha già creato una nuova versione di finalità
-    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    When l'utente tenta di recuperare il record di purposeVersion creato
-    Then si ottiene lo status code 200
-    And purposeVersion viene restituito e combacia con il record creato
-
-  Scenario: [M2MG_PURPOSES_11] Errore nel recupero di una versione di finalità con purposeId e versionId nulli (Scenario 102)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m
-    And "PA1" ha già creato e pubblicato 1 e-service
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
-    And "PA2" ha già creato una nuova versione di finalità
-    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    When l'utente tenta di recuperare purposeVersion con un id nullo
-    Then si ottiene lo status code 400
-    And purposeVersion non restituito
-
-  Scenario: [M2MG_PURPOSES_12] Accesso negato al recupero del dettaglio di una versione di finalità con token non valido (Scenario 103)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m
-    And "PA1" ha già creato e pubblicato 1 e-service
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
-    And "PA2" ha già creato una nuova versione di finalità
-    And viene impostato per l'utente un token m2m scaduto
-    When l'utente tenta di recuperare il record di purposeVersion creato
-    Then si ottiene lo status code 401
-    And purposeVersion non restituito
-
-  Scenario: [M2MG_PURPOSES_13] Errore nel recupero di una versione di finalità con purposeId e versionId inesistenti (Scenario 104)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m
-    And "PA1" ha già creato e pubblicato 1 e-service
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
-    And "PA2" ha già creato una nuova versione di finalità
-    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    When l'utente tenta di recuperare purposeVersion con un id inesistente
-    Then si ottiene lo status code 404
-    And purposeVersion non restituito
-
-  Scenario: [M2MG_PURPOSES_14] Attivazione di una finalità in stato draft da parte di un utente M2M-ADMIN (Scenario 30)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And "PA1" ha già creato e pubblicato 1 e-service
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
-    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    When l'utente tenta di attivare purpose
-    Then si ottiene lo status code 200
-    And purpose in stato "ACTIVE"
-
-  Scenario: [M2MG_PURPOSES_15] Accesso negato all'attivazione di una finalità da parte di un utente M2M non admin (Scenario 51)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And "PA1" ha già creato e pubblicato 1 e-service
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
-    And l'utente è un "admin" di "PA2" con ruolo M2M m2m
-    When l'utente tenta di attivare purpose
-    Then si ottiene lo status code 403
-    And purpose in stato "DRAFT"
-
-  Scenario: [M2MG_PURPOSES_16] Attivazione di una finalità in stato draft con utente autorizzato e tutti i parametri compilati (Scenario 105)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And "PA1" ha già creato e pubblicato 1 e-service
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
-    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    When l'utente tenta di attivare purpose
-    Then si ottiene lo status code 200
-    And purpose in stato "ACTIVE"
-
-  Scenario: [M2MG_PURPOSES_17] Errore attivazione finalità con purposeId NULL (Scenario 106)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And "PA1" ha già creato e pubblicato 1 e-service
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
-    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    When l'utente tenta di attivare purpose con id nullo
-    Then si ottiene lo status code 400
-    And purpose in stato "DRAFT"
-
-  Scenario: [M2MG_PURPOSES_18] Errore attivazione finalità con purposeId inesistente (Scenario 107)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And "PA1" ha già creato e pubblicato 1 e-service
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
-    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    When l'utente tenta di attivare purpose con un id inesistente
-    Then si ottiene lo status code 404
-    And purpose in stato "DRAFT"
-
-  Scenario: [M2MG_PURPOSES_19] Errore attivazione finalità con token non valido (Scenario 108)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And "PA1" ha già creato e pubblicato 1 e-service
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
-    And viene impostato per l'utente un token m2m scaduto
-    When l'utente tenta di attivare purpose
-    Then si ottiene lo status code 401
-    And purpose in stato "DRAFT"
-
-  Scenario: [M2MG_PURPOSES_20] Errore attivazione finalità già attiva (Scenario 109)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And "PA1" ha già creato e pubblicato 1 e-service
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
-    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    When l'utente tenta di attivare purpose
-    Then si ottiene lo status code 409
-    And purpose in stato "ACTIVE"
-
-  Scenario Outline: [M2MG_PURPOSES_21] Errore attivazione finalità in stato diverso da draft (Scenario 110)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And "PA1" ha già creato e pubblicato 1 e-service
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA2" ha già creato 1 finalità in stato "<stato>" per quell'eservice
-    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    When l'utente tenta di attivare purpose
-    Then si ottiene lo status code 409
-    And purpose in stato "<stato>"
-    Examples:
-      | stato     |
-      | ACTIVE    |
-      | SUSPENDED |
-      | ARCHIVED  |
-
-  Scenario: [M2MG_PURPOSES_22] Errore attivazione finalità da parte di un utente non creatore (Scenario 111)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And "PA1" ha già creato e pubblicato 1 e-service
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
-    When l'utente tenta di attivare purpose
-    Then si ottiene lo status code 403
-    And purpose in stato "DRAFT"
 
   Scenario: [M2MG_PURPOSES_23] Sospensione di una finalità in stato active con utente autorizzato (Scenario 33)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
