@@ -6,7 +6,6 @@ import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.EservicesApi;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EService;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptors;
 import lombok.EqualsAndHashCode;
@@ -23,7 +22,7 @@ import java.util.UUID;
 @EqualsAndHashCode
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class M2MEserviceDescriptorClientImpl extends AbstractClient<EService, UUID> implements IM2MEserviceDescriptorClient {
+public class M2MEserviceDescriptorClientImpl extends AbstractClient implements IM2MEserviceDescriptorClient {
     private final EservicesApi eservicesApi;
     private final RestTemplate restTemplate;
     private final String basePath;

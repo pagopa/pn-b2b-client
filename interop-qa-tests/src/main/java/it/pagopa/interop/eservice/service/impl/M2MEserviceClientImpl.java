@@ -23,7 +23,7 @@ import java.util.UUID;
 @EqualsAndHashCode
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class M2MEserviceClientImpl extends AbstractClient<EService, UUID> implements IM2MEserviceClient {
+public class M2MEserviceClientImpl extends AbstractClient implements IM2MEserviceClient {
     private final EservicesApi eservicesApi;
     private final RestTemplate restTemplate;
     private final String basePath;

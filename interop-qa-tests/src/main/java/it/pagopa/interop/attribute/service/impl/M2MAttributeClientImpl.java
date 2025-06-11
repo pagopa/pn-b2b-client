@@ -22,7 +22,7 @@ import java.util.UUID;
 @EqualsAndHashCode
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class M2MAttributeClientImpl extends AbstractClient<CertifiedAttribute,UUID> implements IM2MAttributeClient {
+public class M2MAttributeClientImpl extends AbstractClient implements IM2MAttributeClient {
     private final AttributesApi attributesApi;
     private final RestTemplate restTemplate;
     private final String basePath;
