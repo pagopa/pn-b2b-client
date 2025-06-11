@@ -12,6 +12,7 @@ import java.util.UUID;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
+import org.springframework.http.ResponseEntity;
 
 public interface IM2MPurposeClient extends SettableBearerToken {
 
@@ -39,6 +40,7 @@ public interface IM2MPurposeClient extends SettableBearerToken {
 
     Purposes getPurposes(PurposesListRequest request);
 
-    PurposeVersion createPurposeVersion(
-        UUID purposeId, PurposeVersionSeed purposeVersionSeed);
+    PurposeVersion createPurposeVersion(UUID purposeId, PurposeVersionSeed purposeVersionSeed);
+
+    Purpose unsuspendPurpose(UUID purposeId);
 }
