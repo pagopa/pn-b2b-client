@@ -299,7 +299,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     Then l'operazione ha prodotto un errore con status code "400"
 
   #PA NON ABILITATA, PG CENSITA, CLIENT NON ABILITATO
-  #@ricercaIndirizzoVas #rif srs 23-19
+  @ricercaIndirizzoVas #rif srs 23-19
   Scenario: [RICERCA_INDIRIZZO_MONO_API_NON_AGGIORN_KO_2] Creazione notifica PA NON abilitata - Feature flag Attivo - Client NON aggiornato e notifica rifiutata
     Given viene generata una nuova notifica con la versione "V24"
       | subject            | invio notifica con cucumber |
@@ -314,7 +314,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     Then l'operazione ha prodotto un errore con status code "400"
 
   #PA NON ABILITATA, PG CENSITA, CLIENT ABILITATO
-  #@ricercaIndirizzoVas #rif srs 18-17
+  @ricercaIndirizzoVas #rif srs 18-17
   Scenario: [RICERCA_INDIRIZZO_MONO_PA_NON_ABILIT_KO] Creazione notifica PA NON abilitata - Feature flag Attivo - Client aggiornato e notifica rifiutata
     Given il test è effettuabile con API versione "V25" o superiore
     And viene generata una nuova notifica
@@ -381,7 +381,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     Then l'operazione ha prodotto un errore con status code "400"
 
   #PA NON ABILITATA, PG CENSITA, CLIENT NON ABILITATO, FEATURE FLAG DISATTIVATO
-  #@ricercaIndirizzoVas @physicalAddressLookupDisabled #rif srs 22
+  @ricercaIndirizzoVas @physicalAddressLookupDisabled #rif srs 22
   Scenario: [RICERCA_INDIRIZZO_MONO_FLAG_OFF_4] Creazione notifica PA non abilitata - Feature flag Spento - Client non aggiornato e notifica rifiutata
     Given viene generata una nuova notifica con la versione "V24"
       | subject            | invio notifica con cucumber |
@@ -445,7 +445,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 # STREAM
 
   #PA ABILITATA, PG CENSITA, CLIENT ABILITATO, STREAM PIU' RECENTE
-  @ricercaIndirizzoVas@cleanWebhook @webhook1
+  @ricercaIndirizzoVas @cleanWebhook @webhook1
   Scenario: [RICERCA_INDIRIZZI_VAS_STREAM_NEW] Invio notifica e controllo che stream con eventType vuoto e versione V28 o superiore contenga elemento PUBLIC_REGISTRY_VALIDATION_CALL
     Given il test è effettuabile con API versione "V25" o superiore
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "più recente"
@@ -466,7 +466,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     And la category "PUBLIC_REGISTRY_VALIDATION_RESPONSE" è presente in almeno un elemento di timeline restituito dalla consumeStream con versione "più recente"
 
   #PA ABILITATA, PG CENSITA, CLIENT ABILITATO, STREAM PRECEDENTE ALLA 28 (CHE HA STATO INTRODOTTO IL VAS)
-  @ricercaIndirizzoVas@cleanWebhook @webhook1
+  @ricercaIndirizzoVas @cleanWebhook @webhook1
   Scenario: [RICERCA_INDIRIZZI_VAS_STREAM_OLD] Invio notifica e controllo che stream con eventType vuoto e versione V27 o inferiore non contenga elemento PUBLIC_REGISTRY_VALIDATION_CALL
     Given il test è effettuabile con API versione "V25" o superiore
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V27"
@@ -817,7 +817,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 
 # TEST POST-SPERIMENTAZIONE
 
-  @ricercaIndirizzoVas  #rif srs 28 # test post-sperimentazione
+  #@ricercaIndirizzoVas  #rif srs 28 # test post-sperimentazione
   Scenario: [RICERCA_INDIRIZZO_MONO_PF_FINE_SPERIMENT_OK] Invio notifica con vas post-sperimentazione anche per PA non abilitate - Vas attivo
     Given il test è effettuabile con API versione "V25" o superiore
     Given viene generata una nuova notifica
