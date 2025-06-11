@@ -487,7 +487,7 @@ Feature: Gestione purposes
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "SUSPENDED" per quell'eservice
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    When l'utente tenta di approvare purpose
+    When l'utente tenta di riattivare purpose
     Then si ottiene lo status code 200
     And la finalità è in stato ACTIVE
 
@@ -497,7 +497,7 @@ Feature: Gestione purposes
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "SUSPENDED" per quell'eservice
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m
-    When l'utente tenta di approvare purpose
+    When l'utente tenta di riattivare purpose
     Then si ottiene lo status code 403
     And la finalità è in stato SUSPENDED
 
@@ -507,17 +507,18 @@ Feature: Gestione purposes
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "SUSPENDED" per quell'eservice
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    When l'utente tenta di approvare purpose
+    When l'utente tenta di riattivare purpose
     Then si ottiene lo status code 200
     And la finalità è in stato ACTIVE
 
+    ## Gli scenari con id null non possono essere eseguiti
   Scenario: [M2MG_PURPOSES_53] Riattivazione fallita di una finalità con purposeId NULL (Scenario 134)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "SUSPENDED" per quell'eservice
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    When l'utente tenta di approvare purpose con id nullo
+    When l'utente tenta di riattivare purpose con un id nullo
     Then si ottiene lo status code 400
     And la finalità è in stato SUSPENDED
 
@@ -527,7 +528,7 @@ Feature: Gestione purposes
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "SUSPENDED" per quell'eservice
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    When l'utente tenta di approvare purpose con id inesistente
+    When l'utente tenta di riattivare purpose con un id inesistente
     Then si ottiene lo status code 400
     And la finalità è in stato SUSPENDED
 
@@ -537,7 +538,7 @@ Feature: Gestione purposes
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "SUSPENDED" per quell'eservice
     And viene impostato per l'utente un token m2m scaduto
-    When l'utente tenta di approvare purpose
+    When l'utente tenta di riattivare purpose
     Then si ottiene lo status code 401
     And la finalità è in stato SUSPENDED
 
@@ -547,7 +548,7 @@ Feature: Gestione purposes
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    When l'utente tenta di approvare purpose
+    When l'utente tenta di riattivare purpose
     Then si ottiene lo status code 409
     And la finalità è in stato ACTIVE
 
@@ -557,7 +558,7 @@ Feature: Gestione purposes
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "<stato>" per quell'eservice
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    When l'utente tenta di approvare purpose
+    When l'utente tenta di riattivare purpose
     Then si ottiene lo status code 400
     And purpose in stato "<stato>"
     Examples:
@@ -573,6 +574,6 @@ Feature: Gestione purposes
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
     And l'utente è un "admin" di "PA3" con ruolo M2M m2m-admin
-    When l'utente tenta di approvare purpose
+    When l'utente tenta di riattivare purpose
     Then si ottiene lo status code 403
     And la finalità è in stato ACTIVE

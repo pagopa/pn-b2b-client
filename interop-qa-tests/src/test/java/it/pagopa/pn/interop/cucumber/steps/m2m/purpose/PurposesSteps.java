@@ -1,4 +1,4 @@
-package it.pagopa.pn.interop.cucumber.steps.m2m;
+package it.pagopa.pn.interop.cucumber.steps.m2m.purpose;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -8,6 +8,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
+import it.pagopa.interop.common.enums.EntityIdType;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purpose;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersion;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersionSeed;
@@ -250,4 +251,35 @@ public class PurposesSteps {
             "La correttezza della finalità restituita dalla API di attivazione non è stata confermata dalla API di lettura. Visualizzare i log per maggiori dettagli.");
     }
 
+    @When("l'utente tenta di riattivare purpose")
+    public void unsuspendPurpose() {
+        httpCallExecutor.performCall(() ->
+                purposeClient.unsuspendPurpose(generateId(EntityIdType.DEFAULT_ID))
+        );
+    }
+
+    @When("l'utente tenta di riattivare purpose con un id {entityIdType}")
+    public void unsuspendPurposeByIdType(EntityIdType entityIdType) {
+        httpCallExecutor.performCall(() ->
+                purposeClient.unsuspendPurpose(generateId(entityIdType))
+        );
+    }
+
+    private UUID generateId(EntityIdType entityIdType) {
+        return switch (entityIdType) {
+            case NULL_ID -> null;
+            case NON_EXISTENT_ID -> UUID.randomUUID();
+            case DEFAULT_ID -> {
+                var purposeContext = sharedStepsContext.getPurposeCommonContext();
+                List<String> ids = purposeContext.getPurposesIds();
+
+                Assertions.assertThat(ids)
+                        .as("La lista degli ID dei purpose deve contenere esattamente un elemento")
+                        .hasSize(1);
+
+                String purposeId = ids.get(0);
+                yield UUID.fromString(purposeId);
+            }
+        };
+    }
 }

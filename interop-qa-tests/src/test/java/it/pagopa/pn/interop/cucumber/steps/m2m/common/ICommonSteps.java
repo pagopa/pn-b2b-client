@@ -11,4 +11,5 @@ public interface ICommonSteps {
     void getByFirstExpectedId();
     void getByIdType(EntityIdType entityIdType);
     void exsist(String presence);
+    // TODO: valutare l'aggiunta di un metodo getAll(Map params) in modo da soddisfare anche altri casi (vedi EserviceDescriptorStep)
 }
