@@ -18,12 +18,11 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient.PurposeVersionsListRequest;
 import it.pagopa.interop.purpose.service.IM2MPurposeClient.PurposesListRequest;
+import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
-import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
-import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.M2MDataPreparationService;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,25 +39,21 @@ public class PurposesSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
     private final IdentityService identityService;
-    private final M2MDataPreparationService dataPreparationService;
-    private final BFFDataPreparationService bffDataPreparationService;
     private final IM2MPurposeClient purposeClient;
+    private final IPurposeApiClient bffPurposeClient;
     private final HttpCallExecutor httpCallExecutor;
     private final PollingService pollingService;
     private final int newDailyCalls = 50;
 
     public PurposesSteps(ClientTokenConfigurator clientTokenConfigurator,
-        SharedStepsContext sharedStepsContext,
-        M2MDataPreparationService dataPreparationService,
-        BFFDataPreparationService bffDataPreparationService) {
+        SharedStepsContext sharedStepsContext) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.identityService = sharedStepsContext.getIdentityService();
-        this.dataPreparationService = dataPreparationService;
-        this.bffDataPreparationService = bffDataPreparationService;
         this.purposeClient = clientTokenConfigurator.getM2mPurposeClient();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
+        this.bffPurposeClient = clientTokenConfigurator.getPurposeApiClient();
     }
 
     @SuppressWarnings("java:S6204")
@@ -247,10 +242,14 @@ public class PurposesSteps {
                 .isEqualTo(returnedState);
         }
 
-        pollingService.makePolling(() -> purposeClient.getPurpose(
-                sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID()
-            ).getCurrentVersion().getState(),
-            res -> res.equals(expectedState),
+        UUID purposeId = sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID();
+        pollingService.makePolling(() -> httpCallExecutor.performCall(() ->
+                //purposeClient.getPurpose(purposeId)), TODO 11/06/2025 ripristinare non appena risolto il bug della relativa API m2m che ne impedisce l'utilizzo
+                bffPurposeClient.getPurpose(purposeId)),
+            res -> res.is2xxSuccessful() &&
+                //((Purpose) httpCallExecutor.getResponse()).getCurrentVersion().getState().equals(expectedState), TODO 11/06/2025 ripristinare non appena risolto il bug della relativa API m2m che ne impedisce l'utilizzo
+                ((it.pagopa.interop.generated.openapi.clients.bff.model.Purpose) httpCallExecutor.getResponse()).getCurrentVersion().getState().equals(
+                    it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState.fromValue(expectedState.getValue())),
             "La correttezza della finalità restituita dalla API di attivazione non è stata confermata dalla API di lettura. Visualizzare i log per maggiori dettagli.");
     }
 
