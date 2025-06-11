@@ -1,6 +1,8 @@
 package it.pagopa.interop.attribute.service.impl;
 
 import it.pagopa.interop.attribute.service.IM2MAttributeClient;
+import it.pagopa.interop.common.client.AbstractClient;
+import it.pagopa.interop.common.operation.SimpleOperation;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.AttributesApi;
@@ -13,13 +15,14 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
 import java.util.UUID;
 
 @ToString
 @EqualsAndHashCode
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class M2MAttributeClientImpl implements IM2MAttributeClient {
+public class M2MAttributeClientImpl extends AbstractClient implements IM2MAttributeClient {
     private final AttributesApi attributesApi;
     private final RestTemplate restTemplate;
     private final String basePath;
@@ -43,12 +46,33 @@ public class M2MAttributeClientImpl implements IM2MAttributeClient {
     }
 
     @Override
-    public CertifiedAttribute createCertifiedAttribute(CertifiedAttributeSeed agreementPayload) {
-        return attributesApi.createCertifiedAttribute(agreementPayload);
+    public CertifiedAttribute get(UUID id) {
+       return this.performOperation(SimpleOperation.of(
+               () -> this.attributesApi.getCertifiedAttribute(id),
+               res -> res
+       )).orElse(null);
     }
 
     @Override
-    public CertifiedAttribute getCertifiedAttribute(UUID id) {
-       return attributesApi.getCertifiedAttribute(id);
+    public List<CertifiedAttribute> getAll() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public UUID getId(CertifiedAttribute entity) {
+        return entity == null ? null : entity.getId();
+    }
+
+    @Override
+    public UUID generateId() {
+        return UUID.randomUUID();
+    }
+
+    @Override
+    public CertifiedAttribute create(CertifiedAttributeSeed agreementPayload) {
+        return this.performOperation(SimpleOperation.of(
+                () -> this.attributesApi.createCertifiedAttribute(agreementPayload),
+                res -> res
+        )).orElse(null);
     }
 }

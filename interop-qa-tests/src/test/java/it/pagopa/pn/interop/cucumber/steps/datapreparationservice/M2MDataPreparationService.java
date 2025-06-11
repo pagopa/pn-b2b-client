@@ -1,29 +1,27 @@
 package it.pagopa.pn.interop.cucumber.steps.datapreparationservice;
 
-import static it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.UpperAgreement.from;
-
 import it.pagopa.interop.agreement.service.IM2MAgreementClient;
+import it.pagopa.interop.attribute.service.IM2MAttributeClient;
+import it.pagopa.interop.eservice.service.IM2MEserviceClient;
 import it.pagopa.interop.eservice_template.IM2MEServiceTemplateClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementState;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementSubmission;
-import it.pagopa.interop.attribute.service.IM2MAttributeClient;
-import it.pagopa.interop.eservice.service.IM2MEserviceClient;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.*;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
-
-import java.util.Optional;
-import java.util.UUID;
-import javax.annotation.Nullable;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+
+import javax.annotation.Nullable;
+import java.util.Optional;
+import java.util.UUID;
+
+import static it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.UpperAgreement.from;
 
 @Slf4j
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -83,55 +81,6 @@ public class M2MDataPreparationService {
         return SubmitAgreementOperation.of(
             id -> from(agreementClient.submitAgreement(id, new AgreementSubmission())),
             id -> from(agreementClient.getAgreementById(id)));
-    }
-
-    // ---ATTRIBUTES---
-    public Optional<UUID> createCertifiedAttribute(CertifiedAttributeSeed payloadAttrCert) {
-        CreateAttributeOperation operation = buildAttributeOperation(payloadAttrCert);
-        return templateService.createAttribute(operation);
-    }
-
-    public Optional<CertifiedAttribute> getCertifiedAttribute(UUID id){
-        return templateService.performOperation( SimpleCreateOperation.of(
-                () -> attributeClient.getCertifiedAttribute(id),
-                res -> res
-        ));
-    }
-
-    // ---ESERVICE---
-    public Optional<EServices> getEServices(IM2MEserviceClient.EserviceListRequest request) {
-        return templateService.performOperation( SimpleCreateOperation.of(
-                () -> eserviceClient.getEServices(request),
-                res -> res
-        ));
-    }
-
-    public Optional<EService> getEService(UUID eServiceID) {
-        return templateService.performOperation( SimpleCreateOperation.of(
-                () -> eserviceClient.getEService(eServiceID),
-                res -> res
-        ));
-    }
-
-    public Optional<EServiceDescriptors> getEserviceDescriptors(IM2MEserviceClient.EserviceDescriptorsListRequest request) {
-        return templateService.performOperation( SimpleCreateOperation.of(
-                () -> eserviceClient.getEserviceDescriptors(request),
-                res -> res
-        ));
-    }
-
-    public Optional<EServiceDescriptor> getEServiceDescriptor(UUID eServiceID, UUID descriptorId) {
-        return templateService.performOperation( SimpleCreateOperation.of(
-                () -> eserviceClient.getEserviceDescriptor(eServiceID, descriptorId),
-                res -> res
-        ));
-    }
-
-    private CreateAttributeOperation buildAttributeOperation(CertifiedAttributeSeed payloadAttrCert) {
-        return CreateAttributeOperation.of(
-                () -> attributeClient.createCertifiedAttribute(payloadAttrCert),
-                res -> ((CertifiedAttribute) res).getId()
-        );
     }
 
     // --ESERVICE TEMPLATE--

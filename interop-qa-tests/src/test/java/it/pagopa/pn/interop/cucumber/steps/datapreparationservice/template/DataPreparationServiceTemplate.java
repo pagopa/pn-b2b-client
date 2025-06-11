@@ -2,10 +2,11 @@ package it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template;
 
 import it.pagopa.interop.agreement.domain.ClientType;
 import it.pagopa.interop.authorization.service.utils.PollingService;
+import it.pagopa.interop.common.operation.IOperation;
+import it.pagopa.interop.common.operation.SimpleOperation;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.AddConsumerDocumentOperation.AddConsumerDocumentParams;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.CreateAgreementOperation.CreateAgreementParams;
-import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.ICreateOperation.CreateOperationImpl;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
 import java.io.File;
 import java.util.NoSuchElementException;
@@ -33,7 +34,7 @@ public class DataPreparationServiceTemplate {
     }
 
     public Optional<UUID> createAgreement(CreateAgreementOperation operation, UUID eServiceID, UUID descriptorId, @Nullable UUID delegationId) {
-        return performOperation(CreateOperationImpl.of(
+        return performOperation(SimpleOperation.of(
             () -> operation.getApiCaller().apply(CreateAgreementParams.of(eServiceID, descriptorId, delegationId)),
             Function.identity()
         ));
@@ -123,7 +124,7 @@ public class DataPreparationServiceTemplate {
         );
     }
 
-    public Optional<UUID> createAttribute(CreateAttributeOperation operation) {
+    public Optional<UUID> createAttribute(AttributeOperation operation) {
         return performOperation(operation);
     }
 
@@ -131,7 +132,7 @@ public class DataPreparationServiceTemplate {
         commonUtils.assertValidResponse();
     }
 
-    public <T, R> Optional<R> performOperation(ICreateOperation<T, R> operation) {
+    public <T, R> Optional<R> performOperation(IOperation<T, R> operation) {
         // Esegue la chiamata HTTP
         httpCallExecutor.performCall(operation.getApiCaller());
 

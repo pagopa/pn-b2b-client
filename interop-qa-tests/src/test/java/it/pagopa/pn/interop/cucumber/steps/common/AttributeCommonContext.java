@@ -3,6 +3,8 @@ package it.pagopa.pn.interop.cucumber.steps.common;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.CertifiedAttribute;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -18,4 +20,8 @@ public class AttributeCommonContext {
     List<List<UUID>> requiredCertifiedAttributes = new ArrayList<>();
     List<List<UUID>> requiredDeclaredAttributes = new ArrayList<>();
     List<List<UUID>> requiredVerifiedAttributes = new ArrayList<>();
+
+    //--M2M--
+    List<CertifiedAttribute> published = new ArrayList<>();
+    List<CertifiedAttribute> actual = new ArrayList<>();
 }
