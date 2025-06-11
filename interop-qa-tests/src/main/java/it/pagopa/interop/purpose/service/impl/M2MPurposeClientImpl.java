@@ -60,6 +60,16 @@ public class M2MPurposeClientImpl implements IM2MPurposeClient {
     }
 
     @Override
+    public Purpose unsuspendPurpose(UUID purposeId) {
+        return purposesApi.unsuspendPurpose(purposeId);
+    }
+
+    @Override
+    public Purpose approvePurpose(UUID purposeId) {
+        return purposesApi.approvePurpose(purposeId);
+    }
+
+    @Override
     public PurposeVersion getVersion(UUID purposeId, UUID purposeVersionId) {
         return purposesApi.getPurposeVersion(purposeId, purposeVersionId);
     }
