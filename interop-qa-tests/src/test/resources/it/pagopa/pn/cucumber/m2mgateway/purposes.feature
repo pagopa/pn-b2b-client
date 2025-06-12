@@ -1,3 +1,4 @@
+@m2m-purposes
 Feature: Gestione purposes
 
   Scenario Outline: [M2M_PURPOSES_LIST_1] La lista delle finalità può essere visionata da un utente con ruolo M2M o M2M-ADMIN
@@ -309,6 +310,11 @@ Feature: Gestione purposes
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m
     When l'utente tenta di archiviare purpose
     Then si ottiene lo status code 403
+
+    # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+    # così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+
     And purpose in stato <stato>
     Examples:
       | stato     |
@@ -323,6 +329,11 @@ Feature: Gestione purposes
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta di archiviare purpose
     Then si ottiene lo status code 200
+
+    # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+    # così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+
     And la finalità è in stato ARCHIVED
     Examples:
       | stato     |
@@ -337,6 +348,11 @@ Feature: Gestione purposes
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta di archiviare purpose con un id inesistente
     Then si ottiene lo status code 404
+
+    # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+    # così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+
     And la finalità è in stato ACTIVE
 
   Scenario: [M2MG_PURPOSES_37] Archiviazione fallita di una finalità con token non valido (Scenario 122)
@@ -347,6 +363,11 @@ Feature: Gestione purposes
     And viene impostato per l'utente un token m2m scaduto
     When l'utente tenta di archiviare purpose
     Then si ottiene lo status code 401
+
+    # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+    # così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+
     And la finalità è in stato ACTIVE
 
   Scenario Outline: [M2MG_PURPOSES_39] Archiviazione fallita di una finalità in stato non valido (Scenario 124)
@@ -357,7 +378,16 @@ Feature: Gestione purposes
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta di archiviare purpose
     Then si ottiene lo status code 400
+
+    # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+    # così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+
     And purpose in stato <stato>
+
+    # TODO ultimi 2 stati producono errore. Non sono stati segnalati su Jira, rilanciare non appena
+    # si ritiene che DEV sia pronto
+    # https://pagopaspa.slack.com/archives/C08J74Y0H96/p1749736767429489?thread_ts=1749735825.672499&cid=C08J74Y0H96
     Examples:
       | stato                |
       | DRAFT                |
@@ -370,9 +400,14 @@ Feature: Gestione purposes
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "<stato>" per quell'eservice
-    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    And l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
     When l'utente tenta di archiviare purpose
     Then si ottiene lo status code 403
+
+    # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+    # così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+
     And purpose in stato <stato>
     Examples:
       | stato     |

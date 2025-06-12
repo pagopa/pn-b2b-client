@@ -1,3 +1,4 @@
+@m2m-agreements
 Feature: Gestione degli agreements
 
   Scenario Outline: [M2M_AGREEMENTS_LIST_1] La lista degli agreements può essere visionata da un utente con ruolo M2M o M2M-ADMIN
@@ -10,15 +11,7 @@ Feature: Gestione degli agreements
     Examples:
       | ruolo        | ruolo-m2m  |
       | admin        | m2m-admin  |
-      | api          | m2m-admin  |
-      | security     | m2m-admin  |
-      | api,security | m2m-admin  |
-      | support      | m2m-admin  |
       | admin        | m2m        |
-      | api          | m2m        |
-      | security     | m2m        |
-      | api,security | m2m        |
-      | support      | m2m        |
 
   Scenario: [M2M_AGREEMENTS_LIST_2] La lista degli agreements NON può essere visionata da un utente che ha presentato un token m2m scaduto
     Given "PA1" ha già creato e pubblicato 1 e-services

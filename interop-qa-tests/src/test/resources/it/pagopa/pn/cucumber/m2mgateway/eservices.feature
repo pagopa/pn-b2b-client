@@ -1,3 +1,4 @@
+@m2m-eservices
 Feature: Gestione degli eServices
 
   Scenario Outline: [M2MG_ESERVICES_1] RED - La lista degli eServices può essere visionata da un utente con ruolo M2M o M2M-ADMIN (Scenario 4)
