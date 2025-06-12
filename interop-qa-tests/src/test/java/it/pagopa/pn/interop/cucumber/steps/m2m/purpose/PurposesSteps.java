@@ -236,21 +236,41 @@ public class PurposesSteps {
     public void purposeStateSuccessfullyChanged(PurposeVersionState expectedState) {
         if (httpCallExecutor.getClientResponse().is2xxSuccessful()) {
             Purpose purpose = (Purpose) httpCallExecutor.getResponse();
-            PurposeVersionState returnedState = purpose.getCurrentVersion().getState();
+            PurposeVersionState returnedState;
+
+            switch (expectedState) {
+                case WAITING_FOR_APPROVAL -> returnedState = purpose.getWaitingForApprovalVersion().getState();
+                //case REJECTED -> returnedState = purpose.getRejectedVersion().getState();
+                default -> returnedState = purpose.getCurrentVersion().getState();
+            }
+
             assertThat(expectedState)
-                .as("Verifica finalità restituita")
-                .isEqualTo(returnedState);
+                    .as("Verifica finalità restituita")
+                    .isEqualTo(returnedState);
         }
 
         UUID purposeId = sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID();
         pollingService.makePolling(() -> httpCallExecutor.performCall(() ->
-                //purposeClient.getPurpose(purposeId)), TODO 11/06/2025 ripristinare non appena risolto il bug della relativa API m2m che ne impedisce l'utilizzo
-                bffPurposeClient.getPurpose(purposeId)),
-            res -> res.is2xxSuccessful() &&
-                //((Purpose) httpCallExecutor.getResponse()).getCurrentVersion().getState().equals(expectedState), TODO 11/06/2025 ripristinare non appena risolto il bug della relativa API m2m che ne impedisce l'utilizzo
-                ((it.pagopa.interop.generated.openapi.clients.bff.model.Purpose) httpCallExecutor.getResponse()).getCurrentVersion().getState().equals(
-                    it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState.fromValue(expectedState.getValue())),
-            "La correttezza della finalità restituita dalla API di attivazione non è stata confermata dalla API di lettura. Visualizzare i log per maggiori dettagli.");
+                        // purposeClient.getPurpose(purposeId)), TODO 11/06/2025 ripristinare non appena risolto il bug della relativa API m2m che ne impedisce l'utilizzo
+                        bffPurposeClient.getPurpose(purposeId)),
+                res -> {
+                    if (!res.is2xxSuccessful()) return false;
+
+                    it.pagopa.interop.generated.openapi.clients.bff.model.Purpose purpose =
+                            (it.pagopa.interop.generated.openapi.clients.bff.model.Purpose) httpCallExecutor.getResponse();
+
+                    it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState actualState;
+
+                    switch (expectedState) {
+                        case WAITING_FOR_APPROVAL -> actualState = purpose.getWaitingForApprovalVersion().getState();
+                        //case REJECTED -> actualState = purpose.getRejectedVersion().getState();
+                        default -> actualState = purpose.getCurrentVersion().getState();
+                    }
+
+                    return actualState.equals(
+                            it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState.fromValue(expectedState.getValue()));
+                },
+                "La correttezza della finalità restituita dalla API di attivazione non è stata confermata dalla API di lettura. Visualizzare i log per maggiori dettagli.");
     }
 
     @When("l'utente tenta di riattivare purpose")
