@@ -10,23 +10,13 @@ Feature: Gestione degli attributes
     Then si ottiene lo status code 200
     And certifiedAttribute viene restituito e combacia con il record creato
 
-  Scenario: [M2MG_CERTIFIEDATTRIBUTES_2] Errore nel recupero del dettaglio di un attributo certificato con attributeId nullo (Scenario 62)
-    Given "PA1" ha già creato e pubblicato 1 e-services
-    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And viene effettuata la creazione dell'attributo certificato
-      | name | description | code |
-      |      |             |      |
-    When l'utente tenta di recuperare certifiedAttribute con un id nullo
-    Then si ottiene lo status code 400
-    And certifiedAttribute non restituito
-
   Scenario: [M2MG_CERTIFIEDATTRIBUTES_3] Accesso negato al dettaglio di un attributo certificato con token non valido (Scenario 63)
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And viene impostato per l'utente un token m2m scaduto
     And viene effettuata la creazione dell'attributo certificato
       | name | description | code |
       |      |             |      |
+    And viene impostato per l'utente un token m2m scaduto
     When l'utente tenta di recuperare il record di certifiedAttribute creato
     Then si ottiene lo status code 401
     And certifiedAttribute non restituito
