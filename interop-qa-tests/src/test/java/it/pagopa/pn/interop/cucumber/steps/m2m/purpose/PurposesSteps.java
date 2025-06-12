@@ -212,6 +212,11 @@ public class PurposesSteps {
         suspendPurpose(sharedStepsContext.getPurposeCommonContext().getPurposeIdAsUUID());
     }
 
+    @When("l'utente tenta la sospensione di una finalità inesistente")
+    public void nonExistentPurposeSuspendAttempt() {
+        suspendPurpose(UUID.randomUUID());
+    }
+
     @When("l'utente tenta l'attivazione di una finalità inesistente")
     public void activateNonExistentPurpose() {
         activatePurpose(UUID.randomUUID());

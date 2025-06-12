@@ -213,6 +213,11 @@ Feature: Gestione purposes
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta la sospensione della finalità
     Then si ottiene lo status code 200
+
+    # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+    # così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+
     And la finalità è in stato SUSPENDED
 
   Scenario: [M2M_PURPOSES_SUSPEND_2] Una finalità in stato ACTIVE NON può essere sospesa da un utente con ruolo M2M
@@ -230,54 +235,71 @@ Feature: Gestione purposes
 
     And la finalità è in stato ACTIVE
 
-  Scenario: [M2MG_PURPOSES_27] Sospensione fallita di una finalità con purposeId inesistente (Scenario 114)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+  Scenario: [M2M_PURPOSES_SUSPEND_3] Sospensione fallita di una finalità con purposeId inesistente
+    Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    When l'utente tenta la sospensione della finalità con id inesistente
+    When l'utente tenta la sospensione di una finalità inesistente
     Then si ottiene lo status code 404
+
+    # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+    # così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+
     And la finalità è in stato ACTIVE
 
-  Scenario: [M2MG_PURPOSES_28] Sospensione fallita di una finalità con token non valido (Scenario 115)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+  Scenario: [M2M_PURPOSES_SUSPEND_4] Una finalità NON può essere sospesa specificando un token non valido
+    Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     And viene impostato per l'utente un token m2m scaduto
     When l'utente tenta la sospensione della finalità
     Then si ottiene lo status code 401
+
+    # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+    # così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+
     And la finalità è in stato ACTIVE
 
-  Scenario: [M2MG_PURPOSES_29] Sospensione fallita di una finalità già sospesa (Scenario 116)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+  Scenario Outline: [M2M_PURPOSES_SUSPEND_5] Una finalità in stato diverso da ACTIVE NON può essere sospesa
+    Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA2" ha già creato 1 finalità in stato "SUSPENDED" per quell'eservice
-    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    When l'utente tenta la sospensione della finalità
-    Then si ottiene lo status code 409
-    And la finalità è in stato SUSPENDED
-
-  Scenario: [M2MG_PURPOSES_30] Sospensione fallita di una finalità in stato non attivo (Scenario 117)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And "PA1" ha già creato e pubblicato 1 e-service
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+    And "PA2" ha già creato 1 finalità in stato "<state>" per quell'eservice
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta la sospensione della finalità
     Then si ottiene lo status code 400
-    And la finalità è in stato DRAFT
 
-  Scenario: [M2MG_PURPOSES_31] Sospensione fallita della finalità da utente non autorizzato (Scenario 118)
-    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+    # così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+
+    And la finalità è in stato <state>
+    Examples:
+      | state                 |
+      | DRAFT                 |
+      | SUSPENDED             |
+      | REJECTED              |
+      | WAITING_FOR_APPROVAL  |
+      | ARCHIVED              |
+
+  Scenario: [M2M_PURPOSES_SUSPEND_6] Una finalità NON può essere sospesa da utente che non è né erogatore né fruitore
+    Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
-    And l'utente è un "admin" di "PA2" con ruolo M2M m2m
+    And l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
     When l'utente tenta la sospensione della finalità
     Then si ottiene lo status code 403
+
+    # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+    # così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+
     And la finalità è in stato ACTIVE
 
   Scenario Outline: [M2MG_PURPOSES_32] Archiviazione di una finalità in stato <stato> con utente autorizzato (Scenario 31)
