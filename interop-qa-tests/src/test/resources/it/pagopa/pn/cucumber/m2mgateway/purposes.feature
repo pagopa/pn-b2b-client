@@ -418,40 +418,52 @@ Feature: Gestione purposes
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA2" ha già creato 1 finalità in stato "WAITING FOR APPROVAL" per quell'eservice
+    And "PA2" ha già creato 1 finalità in stato "WAITING_FOR_APPROVAL" per quell'eservice
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m
     When l'utente tenta di approvare purpose
     Then si ottiene lo status code 403
+    # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+        #  così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
     And la finalità è in stato WAITING_FOR_APPROVAL
 
   Scenario: [M2MG_PURPOSES_43] Attivazione di una finalità in stato waiting for approval con utente autorizzato (Scenario 126)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA2" ha già creato 1 finalità in stato "WAITING FOR APPROVAL" per quell'eservice
+    And "PA2" ha già creato 1 finalità in stato "WAITING_FOR_APPROVAL" per quell'eservice
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di approvare purpose
     Then si ottiene lo status code 200
+    # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+        #  così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
     And la finalità è in stato ACTIVE
 
   Scenario: [M2MG_PURPOSES_45] Errore attivazione finalità con purposeId inesistente (Scenario 128)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA2" ha già creato 1 finalità in stato "WAITING FOR APPROVAL" per quell'eservice
+    And "PA2" ha già creato 1 finalità in stato "WAITING_FOR_APPROVAL" per quell'eservice
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di approvare purpose con un id inesistente
     Then si ottiene lo status code 404
+     # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+        #  così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
     And la finalità è in stato WAITING_FOR_APPROVAL
 
   Scenario: [M2MG_PURPOSES_46] Attivazione fallita di una finalità con token non valido (Scenario 129)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA2" ha già creato 1 finalità in stato "WAITING FOR APPROVAL" per quell'eservice
+    And "PA2" ha già creato 1 finalità in stato "WAITING_FOR_APPROVAL" per quell'eservice
     And viene impostato per l'utente un token m2m scaduto
     When l'utente tenta di approvare purpose
     Then si ottiene lo status code 401
+     # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+        #  così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
     And la finalità è in stato WAITING_FOR_APPROVAL
 
   Scenario Outline: [M2MG_PURPOSES_48] Attivazione fallita di una finalità in stato non valido (Scenario 131)
