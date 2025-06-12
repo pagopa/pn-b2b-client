@@ -1,3 +1,4 @@
+@m2m-attributes
 Feature: Gestione degli attributes
 
   Scenario: [M2MG_CERTIFIEDATTRIBUTES_1] Recupero del dettaglio di un attributo certificato con utente autorizzato (Scenario 61)
