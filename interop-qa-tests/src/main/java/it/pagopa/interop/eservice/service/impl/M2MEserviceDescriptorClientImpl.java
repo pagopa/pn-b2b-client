@@ -2,6 +2,7 @@ package it.pagopa.interop.eservice.service.impl;
 
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.common.client.AbstractClient;
+import it.pagopa.interop.common.enums.EntityIdType;
 import it.pagopa.interop.common.operation.SimpleOperation;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient;
@@ -110,7 +111,14 @@ public class M2MEserviceDescriptorClientImpl extends AbstractClient implements I
     }
 
     @Override
-    public Pair<UUID, UUID> generateId() {
-        return Pair.of(UUID.randomUUID(), UUID.randomUUID());
+    public Pair<UUID, UUID> generateId(EntityIdType type) {
+        UUID eserviceId = UUID.fromString("00000000-0000-4000-8000-abcdefabcdef");
+        UUID descriptorId = UUID.fromString("deadbeef-dead-4bad-cafe-000000000000");
+
+        return switch (type) {
+            case INVALID_ID -> Pair.of(eserviceId, descriptorId);  // La classe UUID non permette di formare un UUID malformato
+            case NON_EXISTENT_ID -> Pair.of(eserviceId, descriptorId);
+            default -> throw new IllegalStateException("Tipo di id non supportato: " + type.name());
+        };
     }
 }

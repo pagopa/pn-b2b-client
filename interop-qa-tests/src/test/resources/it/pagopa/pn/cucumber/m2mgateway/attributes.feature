@@ -28,7 +28,7 @@ Feature: Gestione degli attributes
     And viene effettuata la creazione dell'attributo certificato
       | name | description | code |
       |      |             |      |
-    When l'utente tenta di recuperare certifiedAttribute con un id invalido
+    When l'utente tenta di recuperare certifiedAttribute con un id inesistente
     Then si ottiene lo status code 404
     And certifiedAttribute non restituito
 

@@ -1,6 +1,7 @@
 package it.pagopa.interop.eservice.service.impl;
 
 import it.pagopa.interop.common.client.AbstractClient;
+import it.pagopa.interop.common.enums.EntityIdType;
 import it.pagopa.interop.common.operation.SimpleOperation;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.eservice.service.IM2MEserviceClient;
@@ -96,7 +97,11 @@ public class M2MEserviceClientImpl extends AbstractClient implements IM2MEservic
     }
 
     @Override
-    public UUID generateId() {
-        return UUID.randomUUID();
+    public UUID generateId(EntityIdType type) {
+        return switch (type){
+            case INVALID_ID -> UUID.fromString("00000000-0000-4000-8000-abcdefabcdef"); // La classe UUID non permette di formare un UUID malformato
+            case NON_EXISTENT_ID -> UUID.fromString("00000000-0000-4000-8000-abcdefabcdef");
+            default -> throw new IllegalStateException("Tipo di id non supportato: " + type.name());
+        };
     }
 }

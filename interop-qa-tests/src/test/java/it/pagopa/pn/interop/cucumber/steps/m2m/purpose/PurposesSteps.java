@@ -279,7 +279,7 @@ public class PurposesSteps {
 
     @When("l'utente tenta di riattivare purpose")
     public void unsuspendPurpose() {
-        performPurposeAction(PurposeOperation.UNSUSPEND, EntityIdType.DEFAULT_ID);
+        performPurposeAction(PurposeOperation.UNSUSPEND, null);
     }
 
     @When("l'utente tenta di riattivare purpose con un id {entityIdType}")
@@ -289,7 +289,7 @@ public class PurposesSteps {
 
     @When("l'utente tenta di approvare purpose")
     public void approvePurpose() {
-        performPurposeAction(PurposeOperation.APPROVE, EntityIdType.DEFAULT_ID);
+        performPurposeAction(PurposeOperation.APPROVE, null);
     }
 
     @When("l'utente tenta di approvare purpose con un id {entityIdType}")
@@ -299,7 +299,7 @@ public class PurposesSteps {
 
     @When("l'utente tenta di archiviare purpose")
     public void archivePurpose() {
-        performPurposeAction(PurposeOperation.ARCHIVE, EntityIdType.DEFAULT_ID);
+        performPurposeAction(PurposeOperation.ARCHIVE, null);
     }
 
     @When("l'utente tenta di archiviare purpose con un id {entityIdType}")
@@ -322,20 +322,22 @@ public class PurposesSteps {
     }
 
     private UUID generateId(EntityIdType entityIdType) {
+        if(entityIdType == null) {
+            var purposeContext = sharedStepsContext.getPurposeCommonContext();
+            List<String> ids = purposeContext.getPurposesIds();
+
+            Assertions.assertThat(ids)
+                    .as("La lista degli ID dei purpose deve contenere esattamente un elemento")
+                    .hasSize(1);
+
+            String purposeId = ids.get(0);
+            return UUID.fromString(purposeId);
+        }
+
         return switch (entityIdType) {
             case NULL_ID -> null;
-            case NON_EXISTENT_ID -> UUID.randomUUID();
-            case DEFAULT_ID -> {
-                var purposeContext = sharedStepsContext.getPurposeCommonContext();
-                List<String> ids = purposeContext.getPurposesIds();
-
-                Assertions.assertThat(ids)
-                        .as("La lista degli ID dei purpose deve contenere esattamente un elemento")
-                        .hasSize(1);
-
-                String purposeId = ids.get(0);
-                yield UUID.fromString(purposeId);
-            }
+            case INVALID_ID -> UUID.fromString("00000000-0000-4000-8000-abcdefabcdef"); // La classe UUID non permette di formare un UUID malformato
+            case NON_EXISTENT_ID -> UUID.fromString("00000000-0000-4000-8000-abcdefabcdef");
         };
     }
 }

@@ -61,7 +61,7 @@ public abstract class AbstractCommonSteps<T, K> implements ICommonSteps {
     }
 
     public void getByFirstExpectedId() {
-        getByIdType(EntityIdType.DEFAULT_ID);
+        getByIdType(null);
     }
 
     public void getByIdType(EntityIdType entityIdType) {
@@ -71,17 +71,13 @@ public abstract class AbstractCommonSteps<T, K> implements ICommonSteps {
     }
 
     public K generateId(EntityIdType entityIdType) {
-        return switch (entityIdType) {
-            case NULL_ID -> null;
-            case NON_EXISTENT_ID -> client.generateId();
-            case DEFAULT_ID -> {
-                updateExpected();
-                assertThat(expectedEntities)
-                        .as("Expected entities should contain exactly one element to extract the ID")
-                        .hasSize(1);
-                yield client.getId(expectedEntities.get(0));
-            }
-        };
+        if (entityIdType != null) return client.generateId(entityIdType);
+
+        updateExpected();
+        assertThat(expectedEntities)
+                .as("Expected entities should contain exactly one element to extract the ID")
+                .hasSize(1);
+        return client.getId(expectedEntities.get(0));
     }
 
     public void exsist(String presence) {
