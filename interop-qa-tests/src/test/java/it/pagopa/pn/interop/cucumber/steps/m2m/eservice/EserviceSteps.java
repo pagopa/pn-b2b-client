@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.m2m.eservice;
 
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.eservice.service.IM2MEserviceClient;
+import it.pagopa.interop.eservice.service.mapper.EserviceDescriptorDomainMapper;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EService;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -38,12 +39,10 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     }
 
     private EServiceDescriptor mapTo(EService eService) {
-        return new EServiceDescriptor(eService.getId(), null);
+        return EserviceDescriptorDomainMapper.mapTo(eService);
     }
 
     private EService mapTo(EServiceDescriptor descriptor) {
-        final EService eService = new EService();
-        eService.setId(descriptor.getEServiceId());
-        return eService;
+        return EserviceDescriptorDomainMapper.mapTo(descriptor);
     }
 }

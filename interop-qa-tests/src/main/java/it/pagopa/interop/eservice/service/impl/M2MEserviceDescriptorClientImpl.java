@@ -1,15 +1,16 @@
 package it.pagopa.interop.eservice.service.impl;
 
+import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.common.client.AbstractClient;
 import it.pagopa.interop.common.operation.SimpleOperation;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient;
+import it.pagopa.interop.eservice.service.mapper.EserviceDescriptorDomainMapper;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.EservicesApi;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptors;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -55,16 +56,16 @@ public class M2MEserviceDescriptorClientImpl extends AbstractClient implements I
 
 
     @Override
-    public EServiceDescriptor get(UUID eserviceId, UUID descriptorId) {
+    public it.pagopa.interop.agreement.domain.EServiceDescriptor get(UUID eserviceId, UUID descriptorId) {
         return this.performOperation(SimpleOperation.of(
                 () -> eservicesApi.getEServiceDescriptor(eserviceId, descriptorId),
-                res -> res
+                res -> EserviceDescriptorDomainMapper.mapTo(eserviceId, res.getId())
         )).orElse(null);
     }
 
 
     @Override
-    public EServiceDescriptors getAll(EserviceDescriptorsListRequest eserviceDescriptorsListRequest) {
+    public List<it.pagopa.interop.agreement.domain.EServiceDescriptor> getAll(EserviceDescriptorsListRequest eserviceDescriptorsListRequest) {
         return this.performOperation(SimpleOperation.of(
                 () -> eservicesApi.getEServiceDescriptors(
                         eserviceDescriptorsListRequest.getEserviceId(),
@@ -72,33 +73,44 @@ public class M2MEserviceDescriptorClientImpl extends AbstractClient implements I
                         eserviceDescriptorsListRequest.getLimit(),
                         eserviceDescriptorsListRequest.getState()
                 ),
-                res -> res
+                res -> EserviceDescriptorDomainMapper.mapTo(eserviceDescriptorsListRequest.getEserviceId(), res)
         )).orElse(null);
     }
 
     @Override
-    public EServiceDescriptors getAll(UUID eserviceId) {
+    public List<it.pagopa.interop.agreement.domain.EServiceDescriptor> getAll(UUID eserviceId) {
         this.defaultDescriptorListRequest.setEserviceId(eserviceId);
         return this.getAll(defaultDescriptorListRequest);
     }
 
     @Override
-    public EServiceDescriptor get(UUID id) {
+    public it.pagopa.interop.agreement.domain.EServiceDescriptor get(Pair<UUID, UUID> id) {
+
+        if (id == null || id.getLeft() == null || id.getRight() == null)
+            throw new IllegalArgumentException("Gli ID dell'eService e del descriptor non possono essere null.");
+
+        UUID eserviceId = id.getLeft();
+        UUID descriptorId = id.getRight();
+
+        return this.performOperation(SimpleOperation.of(
+                () -> eservicesApi.getEServiceDescriptor(eserviceId, descriptorId),
+                res -> EserviceDescriptorDomainMapper.mapTo(eserviceId, res.getId())
+        )).orElse(null);
+    }
+
+
+    @Override
+    public List<it.pagopa.interop.agreement.domain.EServiceDescriptor> getAll() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public List<EServiceDescriptor> getAll() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public Pair<UUID, UUID> getId(EServiceDescriptor entity) {
+        return Pair.of(entity.getEServiceId(), entity.getDescriptorId());
     }
 
     @Override
-    public UUID getId(EServiceDescriptor entity) {
-        return entity == null ? null : entity.getId();
-    }
-
-    @Override
-    public UUID generateId() {
-        return UUID.randomUUID();
+    public Pair<UUID, UUID> generateId() {
+        return Pair.of(UUID.randomUUID(), UUID.randomUUID());
     }
 }
