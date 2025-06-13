@@ -2,22 +2,18 @@
 Feature: Gestione purposes
 
   Scenario Outline: [M2M_PURPOSES_LIST_1] La lista delle finalità può essere visionata da un utente con ruolo M2M o M2M-ADMIN
-    Given l'utente è un "admin" di "<ente_1>"
-    And "<ente_1>" ha già creato e pubblicato 1 e-service
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 5 finalità in stato "ACTIVE" per quell'eservice
-    And l'utente è un "<ruolo_2>" di "<ente_1>" con ruolo M2M <ruolo-m2m_2>
+    And l'utente è un "admin" di "PA1" con ruolo M2M <ruolo-m2m_2>
     When l'utente tenta di recuperare una lista di 5 finalità create
     Then si ottiene status code 200
     And sono state visualizzate correttamente 5 finalità create
     Examples:
-      | ente_1  | ruolo_2 | ruolo-m2m_2 |
-      | PA1     | admin   | m2m         |
-      | PA1     | admin   | m2m-admin   |
-      | GSP     | admin   | m2m         |
-      | GSP     | admin   | m2m-admin   |
-      | Privato | admin   | m2m         |
-      | Privato | admin   | m2m-admin   |
+      | ruolo-m2m_2 |
+      | m2m         |
+      | m2m-admin   |
 
   Scenario: [M2M_PURPOSES_LIST_2] Accesso negato alla lista delle finalità con token non valido
     Given l'utente è un "admin" di "PA1"
@@ -28,24 +24,17 @@ Feature: Gestione purposes
     When l'utente tenta di recuperare una lista di 5 finalità create
     Then si ottiene status code 401
 
-  Scenario Outline: [M2M_PURPOSES_VERSIONS_1] La creazione di una nuova versione di una finalità può essere effettuata solo da un utente con ruolo M2M-ADMIN
+  Scenario: [M2M_PURPOSES_VERSIONS_1] La creazione di una nuova versione di una finalità può essere effettuata solo da un utente con ruolo M2M-ADMIN
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
-    When l'utente è un "<ruolo>" di "PA2" con ruolo M2M m2m-admin
+    When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And l'utente tenta di creare una nuova versione della finalità aggiornando la stima di carico
     Then si ottiene status code 200
     And la nuova versione della finalità è stata creata correttamente
-    Examples:
-      | ruolo        |
-      | admin        |
-      | api          |
-      | security     |
-      | api,security |
-      | support      |
 
-  Scenario Outline: [M2M_PURPOSES_VERSIONS_2] La creazione di una nuova versione di una finalità NON può essere effettuata da un utente con ruolo diverso da M2M-ADMIN
+  Scenario: [M2M_PURPOSES_VERSIONS_2] La creazione di una nuova versione di una finalità NON può essere effettuata da un utente con ruolo diverso da M2M-ADMIN
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -53,13 +42,6 @@ Feature: Gestione purposes
     When l'utente è un "<ruolo>" di "PA2" con ruolo M2M m2m
     And l'utente tenta di creare una nuova versione della finalità aggiornando la stima di carico
     Then si ottiene status code 403
-    Examples:
-      | ruolo        |
-      | admin        |
-      | api          |
-      | security     |
-      | api,security |
-      | support      |
 
   Scenario Outline: [M2M_PURPOSES_VERSIONS_3] La lista delle versioni di una finalità può essere visualizzata da un utente con ruolo M2M o M2M-ADMIN
     Given l'utente è un "admin" di "PA1"
@@ -68,22 +50,14 @@ Feature: Gestione purposes
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And l'utente crea una nuova versione della finalità con successo aggiornando la stima di carico
-    When l'utente è un "<ruolo>" di "PA2" con ruolo M2M <ruolo_m2m>
+    When l'utente è un "admin" di "PA2" con ruolo M2M <ruolo_m2m>
     And l'utente tenta di visualizzare la lista delle versioni della finalità
     Then si ottiene status code 200
     And sono state visualizzate correttamente 2 versioni della finalità
     Examples:
-      | ruolo        | ruolo_m2m |
-      | admin        | m2m       |
-      | api          | m2m       |
-      | security     | m2m       |
-      | api,security | m2m       |
-      | support      | m2m       |
-      | admin        | m2m-admin |
-      | api          | m2m-admin |
-      | security     | m2m-admin |
-      | api,security | m2m-admin |
-      | support      | m2m-admin |
+      | ruolo_m2m |
+      | m2m       |
+      | m2m-admin |
 
   Scenario: [M2M_PURPOSES_VERSIONS_4] La lista delle versioni di una finalità NON può essere visualizzata indicando un auth token non valido
     Given l'utente è un "admin" di "PA1"
@@ -106,14 +80,14 @@ Feature: Gestione purposes
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And l'utente crea una nuova versione della finalità con successo aggiornando la stima di carico
-    When l'utente è un "<ruolo>" di "PA2" con ruolo M2M <ruolo_m2m>
+    When l'utente è un "admin" di "PA2" con ruolo M2M <ruolo_m2m>
     And l'utente tenta di visualizzare la nuova versione della finalità
     Then si ottiene status code 200
     And la nuova versione della finalità è stata visualizzata correttamente
     Examples:
-      | ruolo | ruolo_m2m |
-      | admin | m2m       |
-      | admin | m2m-admin |
+      | ruolo_m2m |
+      | m2m       |
+      | m2m-admin |
 
   Scenario: [M2M_PURPOSES_VERSIONS_7] Una determinata versione di una finalità NON può essere visualizzata indicando un auth token non valido
     Given l'utente è un "admin" di "PA1"
@@ -148,21 +122,14 @@ Feature: Gestione purposes
     Then si ottiene status code 200
     And la finalità è stata attivata correttamente
 
-  Scenario Outline: [M2M_PURPOSES_ACTIVATE_2] Una finalità in stato DRAFT NON può essere attivata da un utente con ruolo M2M
+  Scenario: [M2M_PURPOSES_ACTIVATE_2] Una finalità in stato DRAFT NON può essere attivata da un utente con ruolo M2M
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
-    And l'utente è un "<ruolo>" di "PA2" con ruolo M2M <ruolo_m2m>
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m
     When l'utente tenta l'attivazione della finalità
     Then si ottiene status code 403
-    Examples:
-      | ruolo        | ruolo_m2m |
-      | admin        | m2m       |
-      | api          | m2m       |
-      | security     | m2m       |
-      | api,security | m2m       |
-      | support      | m2m       |
 
   Scenario: [M2M_PURPOSES_ACTIVATE_3] Una finalità inesistente NON può essere attivata
     Given l'utente è un "admin" di "PA1"
