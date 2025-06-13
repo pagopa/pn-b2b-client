@@ -120,6 +120,11 @@ Feature: Gestione purposes
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta l'attivazione della finalità
     Then si ottiene status code 200
+
+    # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+    # così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+
     And la finalità è stata attivata correttamente
 
   Scenario: [M2M_PURPOSES_ACTIVATE_2] Una finalità in stato DRAFT NON può essere attivata da un utente con ruolo M2M
@@ -233,7 +238,7 @@ Feature: Gestione purposes
 
     And la finalità è in stato ACTIVE
 
-  Scenario Outline: [M2M_PURPOSES_SUSPEND_5] Una finalità in stato diverso da ACTIVE NON può essere sospesa
+  Scenario Outline: [M2M_PURPOSES_SUSPEND_5_A] Una finalità in stato diverso da ACTIVE NON può essere sospesa
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -251,9 +256,24 @@ Feature: Gestione purposes
       | state                |
       | DRAFT                |
       | SUSPENDED            |
-      | REJECTED             |
       | WAITING_FOR_APPROVAL |
       | ARCHIVED             |
+
+  Scenario: [M2M_PURPOSES_SUSPEND_5_B] Una finalità in stato REJECTED NON può essere sospesa
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "WAITING_FOR_APPROVAL" per quell'eservice
+    And "PA1" ha già rifiutato l'aggiornamento della stima di carico per quella finalità
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta la sospensione della finalità
+    Then si ottiene lo status code 400
+
+    # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
+    # così da evitare di dover ri-produrre un token per poter usare la API bff
+    Given l'utente è un "admin" di "PA2"
+
+    And la finalità è in stato REJECTED
 
   Scenario: [M2M_PURPOSES_SUSPEND_6] Una finalità NON può essere sospesa da utente che non è né erogatore né fruitore
     Given l'utente è un "admin" di "PA1"
