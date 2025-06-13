@@ -5,6 +5,7 @@ import it.pagopa.interop.authorization.domain.KeyPairDecorator;
 import it.pagopa.interop.authorization.enums.M2MRole;
 import it.pagopa.interop.authorization.enums.TokenKey;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
+import it.pagopa.interop.authorization.service.utils.DpopProofService;
 import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
 import it.pagopa.interop.authorization.service.utils.voucher.DPopVoucherService;
 import it.pagopa.interop.authorization.service.utils.voucher.domain.ClientAssertionOptions;
