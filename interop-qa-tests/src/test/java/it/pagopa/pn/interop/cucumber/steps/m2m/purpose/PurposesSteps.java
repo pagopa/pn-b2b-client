@@ -23,10 +23,9 @@ import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
+import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.enums.PurposeOperation;
 import java.util.List;
 import java.util.UUID;
-
-import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.enums.PurposeOperation;
 import org.assertj.core.api.Assertions;
 import org.springframework.http.HttpStatus;
 
@@ -245,7 +244,7 @@ public class PurposesSteps {
 
             switch (expectedState) {
                 case WAITING_FOR_APPROVAL -> returnedState = purpose.getWaitingForApprovalVersion().getState();
-                //case REJECTED -> returnedState = purpose.getRejectedVersion().getState();
+                case REJECTED -> returnedState = purpose.getRejectedVersion().getState();
                 default -> returnedState = purpose.getCurrentVersion().getState();
             }
 
@@ -268,7 +267,7 @@ public class PurposesSteps {
 
                     switch (expectedState) {
                         case WAITING_FOR_APPROVAL -> actualState = purpose.getWaitingForApprovalVersion().getState();
-                        //case REJECTED -> actualState = purpose.getRejectedVersion().getState();
+                        case REJECTED -> actualState = purpose.getRejectedVersion().getState();
                         default -> actualState = purpose.getCurrentVersion().getState();
                     }
 
@@ -311,12 +310,14 @@ public class PurposesSteps {
     private void performPurposeAction(PurposeOperation action, EntityIdType entityIdType) {
         UUID id = generateId(entityIdType);
         httpCallExecutor.performCall(() -> {
+            Purpose out;
             switch (action) {
-                case APPROVE -> purposeClient.approvePurpose(id);
-                case UNSUSPEND -> purposeClient.unsuspendPurpose(id);
-                case ARCHIVE -> purposeClient.archivePurpose(id);
+                case APPROVE -> out = purposeClient.approvePurpose(id);
+                case UNSUSPEND -> out = purposeClient.unsuspendPurpose(id);
+                case ARCHIVE -> out = purposeClient.archivePurpose(id);
+                default -> throw new UnsupportedOperationException("Not expected purpose action '%s'".formatted(action));
             }
-            return null;
+            return out;
         });
     }
 
