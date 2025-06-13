@@ -1,6 +1,9 @@
 package it.pagopa.interop.authorization.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbusds.jose.jwk.Curve;
+import com.nimbusds.jose.jwk.ECKey;
+import com.nimbusds.jose.util.Base64URL;
 import it.pagopa.interop.authorization.domain.KeyPairDecorator;
 import it.pagopa.interop.authorization.enums.M2MRole;
 import it.pagopa.interop.authorization.enums.TokenKey;
@@ -16,6 +19,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,21 +39,25 @@ public class M2MDPopTokenService {
     private final IdentityService identityService;
     private final DataPreparationService dataPreparationService;
     private final DPopVoucherService voucherService;
+    private final DpopProofService dpopProofService;
     private final Map<TokenKey, String> tokenCache = new ConcurrentHashMap<>();
 
-    @Value("${dpop.proof.htu}")
+    @Value("${authorization.server.token.creation.url}")
     private String dpopHtu;
 
-    private record PreparedClient(UUID clientId, KeyPairDecorator keyPair) {}
+    private record PreparedClient(UUID clientId, KeyPairDecorator keyPair) {
+    }
 
     public M2MDPopTokenService(
             IdentityService identityService,
             DataPreparationService dataPreparationService,
-            DPopVoucherService voucherService
+            DPopVoucherService voucherService,
+            DpopProofService dpopProofService
     ) {
         this.identityService = identityService;
         this.dataPreparationService = dataPreparationService;
         this.voucherService = voucherService;
+        this.dpopProofService = dpopProofService;
     }
 
     /**
@@ -117,6 +125,78 @@ public class M2MDPopTokenService {
         Map<String, Object> response = voucherService.requestVoucher(request, forgedProof);
 
         return new ObjectMapper().convertValue(response, VoucherResponse.class).getAccessToken();
+    }
+
+    /**
+     * Genera un access token M2M con header DPoP e restituisce l'intera risposta raw (Map JSON).
+     * <p>
+     * Usato nei test per verificare direttamente il contenuto di "token_type", "cnf.jkt", ecc.
+     *
+     * @param tenantType Tipo di tenant
+     * @param role       Ruolo del client (es. M2M o M2M_ADMIN)
+     * @return Mappa della risposta del token endpoint
+     */
+    @SneakyThrows
+    public Map<String, Object> generateRawTokenResponse(@NonNull String tenantType, @NonNull M2MRole role) {
+        log.info("Generating raw token response for tenantType: {}, role: {}", tenantType, role);
+
+        // 1. Autenticazione admin
+        String userToken = identityService.getToken(tenantType, "admin", 0);
+        dataPreparationService.setAuthToken(userToken);
+
+        // 2. Crea client API fittizio
+        String name = "client-dpop-" + ThreadLocalRandom.current().nextInt();
+        ClientSeed seed = new ClientSeed();
+        seed.setName(name);
+
+        UUID clientId = dataPreparationService.createClient("API", seed);
+        UUID userId = identityService.getUserId(tenantType, "admin");
+        dataPreparationService.addMemberToClient(clientId, userId);
+
+        if (role == M2MRole.M2M_ADMIN) {
+            dataPreparationService.editClientAdmin(clientId, new ClientAdminConfig(userId));
+        }
+
+        // 3. Registra chiave RSA (obbligatoria per il backend)
+        KeyPairDecorator rsaKeyPair = KeyPairDecorator.of("RSA", 2048);
+        KeySeed rsaKeySeed = KeyPairGeneratorUtil.createKeySeed(rsaKeyPair.getDelimitedPublicKeyBase64()).get(0);
+        dataPreparationService.addPublicKeyToClient(clientId, rsaKeySeed);
+
+        // 4. Genera coppia EC per la DPoP proof
+        KeyPairDecorator dpopKeyPair = KeyPairDecorator.of("EC", 256);
+
+        // 5. Calcola il thumbprint JWK (jkt) della chiave DPoP pubblica
+        ECKey ecJwk = new ECKey.Builder(Curve.P_256, (ECPublicKey) dpopKeyPair.getPublic()).build();
+        Base64URL jkt = ecJwk.computeThumbprint();
+
+        // 6. Costruisce client assertion includendo il jkt della chiave DPoP
+        ClientAssertionOptions options = ClientAssertionOptions.builder()
+                .clientType(ClientType.API)
+                .clientId(clientId.toString())
+                .publicKey(rsaKeyPair.getPublic())
+                .privateKey(rsaKeyPair.getPrivate())
+                .confirmationKeyThumbprint(jkt.toString())
+                .build();
+        String clientAssertion = voucherService.createClientAssertion(options);
+
+        // 7. Costruisce DPoP proof con la chiave EC P-256
+        String dpopJwt = dpopProofService.buildProof(
+                (ECPrivateKey) dpopKeyPair.getPrivate(),
+                (ECPublicKey) dpopKeyPair.getPublic(),
+                "POST",
+                dpopHtu
+        );
+
+        // DEBUG: verifica della firma
+        dpopProofService.verifyDpopProof(dpopJwt);
+
+        // 8. Effettua richiesta token con DPoP
+        VoucherRequest request = VoucherRequest.builder()
+                .clientId(clientId.toString())
+                .clientAssertion(clientAssertion)
+                .build();
+
+        return voucherService.requestVoucher(request, dpopJwt);
     }
 
     private PreparedClient prepareClient(@NonNull String tenantType, @NonNull M2MRole role, @NonNull String keyType, int keySize, @NonNull String prefix) {

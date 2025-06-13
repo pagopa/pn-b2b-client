@@ -23,4 +23,7 @@ public class ClientAssertionOptions {
     private PublicKey publicKey;
     private PrivateKey privateKey;
     private String purposeId;
+
+    // Aggiunto per supporto DPoP (RFC 9449)
+    private String confirmationKeyThumbprint; // cnf.jkt (Base64URL string)
 }

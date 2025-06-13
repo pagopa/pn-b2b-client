@@ -66,13 +66,24 @@ public class DPopVoucherService {
                 .claim("aud", jwtAudience)
                 .claim("jti", UUID.randomUUID().toString())
                 .claim("iat", issuedAt)
-                .claim("exp", issuedAt + 43200 * 60);
+                .claim("exp", issuedAt + 43200 * 60); // 30 giorni in minuti
 
         if (options.getClientType() == ClientAssertionOptions.ClientType.CONSUMER) {
             builder.claim("purposeId", options.getPurposeId());
         }
+
         if (options.isDigestIncluded()) {
-            builder.claim("digest", Map.of("alg", "SHA256", "value", "5db26201b684761d2b970329ab8596773164ba1b43b1559980e20045941b8065"));
+            builder.claim("digest", Map.of(
+                    "alg", "SHA256",
+                    "value", "5db26201b684761d2b970329ab8596773164ba1b43b1559980e20045941b8065"
+            ));
+        }
+
+        // Aggiunto per supporto DPoP (RFC 9449)
+        if (options.getConfirmationKeyThumbprint() != null) {
+            builder.claim("cnf", Map.of(
+                    "jkt", options.getConfirmationKeyThumbprint()
+            ));
         }
 
         builder.header()
@@ -128,6 +139,19 @@ public class DPopVoucherService {
                     ));
 
             HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(body, finalHeaders);
+
+            // DEBUG
+            // TODO: eliminare
+            System.out.println("=== HTTP REQUEST ===");
+
+            // Stampa Headers
+            System.out.println("Headers:");
+            finalHeaders.forEach((key, value) -> System.out.println(key + ": " + String.join(", ", value)));
+
+            // Stampa Body
+            System.out.println("\nBody:");
+            body.forEach((key, value) -> System.out.println(key + " = " + value));
+
 
             ResponseEntity<Object> response = restTemplate.exchange(uri, HttpMethod.POST, entity, Object.class);
             Object responseBody = response.getBody();
