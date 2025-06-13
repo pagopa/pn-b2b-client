@@ -1556,8 +1556,8 @@ public class AvanzamentoNotificheB2bSteps {
         Map<String, String> expectedFields = new HashMap<>(inputFields);
         expectedFields.put("category", timelineEventCategory);
 
-        FullSentNotificationV26 fullSentNotification = (FullSentNotificationV26) getB2bStepsInterface().getFullSentNotification();
-        List<TimelineElementV26> timeline = fullSentNotification.getTimeline();
+        FullSentNotificationV27 fullSentNotification = (FullSentNotificationV27) getB2bStepsInterface().getFullSentNotification();
+        List<TimelineElementV27> timeline = fullSentNotification.getTimeline();
 
         log.info("Ricerca elemento di timeline con i seguenti criteri:");
         expectedFields.forEach((k, v) -> log.info("  - {} = {}", k, v));
@@ -1570,7 +1570,7 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
-    private boolean matchesAllFields(TimelineElementV26 element, Map<String, String> expectedFields) {
+    private boolean matchesAllFields(TimelineElementV27 element, Map<String, String> expectedFields) {
         for (Map.Entry<String, String> entry : expectedFields.entrySet()) {
             String fieldPath = entry.getKey();
             String expectedValue = entry.getValue();
