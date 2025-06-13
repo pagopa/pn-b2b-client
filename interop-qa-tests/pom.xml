@@ -22,6 +22,7 @@
         <lombok.version>1.18.30</lombok.version>
         <cucumber.reporting.version>5.7.2</cucumber.reporting.version>
         <junit-jupiter.version>5.9.1</junit-jupiter.version>
+        <nimbus.version>9.37.3</nimbus.version>
     </properties>
 
     <dependencies>
@@ -159,6 +160,13 @@
             <artifactId>jjwt-jackson</artifactId> <!-- or jjwt-gson if Gson is preferred -->
             <version>0.12.6</version>
             <scope>runtime</scope>
+        </dependency>
+
+        <!-- Nimbus (per Dpop) -->
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+            <version>${nimbus.version}</version>
         </dependency>
 
         <dependency>
