@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class EserviceDescriptorDomainMapper {
     private EserviceDescriptorDomainMapper() {}
-    
+
     public static EServiceDescriptor mapTo(EService eService) {
         return EserviceDescriptorDomainMapper.mapTo(eService.getId(), (UUID) null);
     }
