@@ -38,8 +38,9 @@ Feature: Gestione degli attributes
     When viene effettuata la creazione dell'attributo certificato
       | name | description | code |
       |      |             |      |
-    Then si ottiene lo status code 201
-    And certifiedAttribute viene restituito e combacia con il record creato
+    And si ottiene lo status code 201
+    When l'utente tenta di recuperare il record di certifiedAttribute creato
+    Then certifiedAttribute viene restituito e combacia con il record creato
 
   Scenario: [M2MG_CERTIFIEDATTRIBUTES_6] Accesso negato alla creazione di un attributo certificato con utente M2M (Scenario 41)
     Given "PA1" ha già creato e pubblicato 1 e-services
