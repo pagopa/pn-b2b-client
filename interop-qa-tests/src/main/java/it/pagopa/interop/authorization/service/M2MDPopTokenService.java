@@ -176,6 +176,7 @@ public class M2MDPopTokenService {
                 .publicKey(rsaKeyPair.getPublic())
                 .privateKey(rsaKeyPair.getPrivate())
                 .confirmationKeyThumbprint(jkt.toString())
+                .assertionTtlSeconds(300)
                 .build();
         String clientAssertion = voucherService.createClientAssertion(options);
 
