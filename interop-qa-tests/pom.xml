@@ -285,6 +285,9 @@
                             </configOptions>
                             <apiPackage>it.pagopa.interop.generated.openapi.clients.m2mGateway.api</apiPackage>
                             <modelPackage>it.pagopa.interop.generated.openapi.clients.m2mGateway.model</modelPackage>
+                            <globalProperties>
+                                <skipFormModel>false</skipFormModel>
+                            </globalProperties>
                         </configuration>
                     </execution>
 
