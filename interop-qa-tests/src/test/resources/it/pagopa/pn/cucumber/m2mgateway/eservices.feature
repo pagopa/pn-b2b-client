@@ -20,6 +20,7 @@ Feature: Gestione degli eServices
     And si ottiene lo status code 200
     Then lista di eService viene restituita
 
+  @m2m-false-negative
   Scenario: [M2MG_ESERVICES_3] RED - Accesso negato alla lista degli eServices con token non valido (Scenario 82)
     Given "PA1" ha già creato e pubblicato 1 e-services
     And viene impostato per l'utente un token m2m scaduto
@@ -48,6 +49,7 @@ Feature: Gestione degli eServices
     Then si ottiene lo status code 200
     And eService viene restituito
 
+  @m2m-false-negative
   Scenario: [M2MG_ESERVICES_7] Accesso negato al dettaglio di un eService con token non valido (Scenario 85)
     Given "PA1" ha già creato e pubblicato 1 e-services
     And viene impostato per l'utente un token m2m scaduto
@@ -55,6 +57,7 @@ Feature: Gestione degli eServices
     Then si ottiene lo status code 401
     And eService non restituito
 
+  @m2m-false-negative
   Scenario: [M2MG_ESERVICES_8] Errore nel recupero del dettaglio di un eService inesistente (Scenario 86)
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m
@@ -72,7 +75,6 @@ Feature: Gestione degli eServices
       | ruolo | ruolo-m2m | statusCode |
       | admin | m2m       | 200        |
       | api   | m2m-admin | 200        |
-
 
   Scenario: [M2MG_ESERVICES_9] RED - Recupero corretto della lista dei descriptors per un eService con utente autorizzato (Scenario 87)
     Given "PA1" ha già creato e pubblicato 1 e-services
@@ -109,6 +111,7 @@ Feature: Gestione degli eServices
     Then si ottiene lo status code 200
     And descriptor viene restituito
 
+  @m2m-false-negative
   Scenario: [M2MG_ESERVICES_16] Accesso negato al recupero di un descriptor con token non valido (Scenario 93)
     Given "PA1" ha già creato e pubblicato 1 e-services
     And viene impostato per l'utente un token m2m scaduto
@@ -116,6 +119,7 @@ Feature: Gestione degli eServices
     Then si ottiene lo status code 401
     And descriptor non restituito
 
+  @m2m-false-negative
   Scenario: [M2MG_ESERVICES_17] Errore nel recupero di un descriptor con eserviceId e descriptorId inesistenti (Scenario 94)
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m
