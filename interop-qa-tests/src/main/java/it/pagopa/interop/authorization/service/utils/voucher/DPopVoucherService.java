@@ -84,11 +84,14 @@ public class DPopVoucherService {
             ));
         }
 
+        /*
         if (options.getConfirmationKeyThumbprint() != null) {
             builder.claim("cnf", Map.of(
                     "jkt", options.getConfirmationKeyThumbprint()
             ));
         }
+
+         */
 
         builder.header()
                 .add("kid", calculateKidFromPublicKey(options.getPublicKey()))

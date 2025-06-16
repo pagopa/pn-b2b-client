@@ -41,6 +41,7 @@ public class M2MTokenService {
     private final DataPreparationService dataPreparationService;
     private final VoucherService voucherService;
     private final Map<TokenKey, String> tokenCache = new ConcurrentHashMap<>();
+    private final Map<UUID, M2MDPopTokenService.PreparedClient> preparedClientCache = new ConcurrentHashMap<>();
 
     public M2MTokenService(
             IdentityService identityService,
@@ -103,9 +104,14 @@ public class M2MTokenService {
             VoucherResponse voucherResponse = new ObjectMapper()
                     .convertValue(voucher, VoucherResponse.class);
 
+            this.preparedClientCache.put(clientId, new M2MDPopTokenService.PreparedClient(clientId, keyPair));
             this.tokenCache.put(tokenKey, voucherResponse.getAccessToken());
         }
 
         return this.tokenCache.get(tokenKey);
+    }
+
+    public M2MDPopTokenService.PreparedClient getPreparedClient(@NonNull UUID clientId) {
+        return preparedClientCache.get(clientId);
     }
 }
