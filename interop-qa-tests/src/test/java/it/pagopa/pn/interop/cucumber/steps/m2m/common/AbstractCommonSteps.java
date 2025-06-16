@@ -31,7 +31,6 @@ public abstract class AbstractCommonSteps<T, K> implements ICommonSteps {
         this.parameterTypeName = parameterTypeName;
         this.client = client;
         this.context = context;
-        ParameterTypes.register(parameterTypeName, this);
     }
 
 
