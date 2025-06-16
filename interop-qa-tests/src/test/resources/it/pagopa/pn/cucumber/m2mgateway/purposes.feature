@@ -40,7 +40,7 @@ Feature: Gestione purposes
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
-    When l'utente è un "<ruolo>" di "PA2" con ruolo M2M m2m
+    When l'utente è un "admin" di "PA2" con ruolo M2M m2m
     And l'utente tenta di creare una nuova versione della finalità aggiornando la stima di carico
     Then si ottiene status code 403
 
