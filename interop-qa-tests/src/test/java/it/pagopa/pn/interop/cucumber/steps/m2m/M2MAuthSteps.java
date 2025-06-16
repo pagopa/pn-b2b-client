@@ -8,6 +8,7 @@ import it.pagopa.interop.authorization.domain.Role;
 import it.pagopa.interop.authorization.service.M2MTokenService.M2MRole;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.JWTUtils;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -23,7 +24,7 @@ public class M2MAuthSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
     private final IdentityService identityService;
-    private final HttpCallExecutor httpCallExecutor;
+    private final IHttpExecutor httpCallExecutor;
 
     public M2MAuthSteps(
         ClientTokenConfigurator clientTokenConfigurator,

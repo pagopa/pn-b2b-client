@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.eservice;
 
 
+import io.cucumber.java.Before;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.common.enums.EntityIdType;
@@ -26,6 +27,7 @@ public class EserviceDescriptorSteps extends AbstractCommonSteps<EServiceDescrip
         this.sharedStepsContext = sharedStepsContext;
         this.client.setHttpCallExecutor(sharedStepsContext.getHttpCallExecutor());
     }
+
 
     @When("l'utente tenta di recuperare la lista di descriptor usando l'eserviceId creato")
     @Override

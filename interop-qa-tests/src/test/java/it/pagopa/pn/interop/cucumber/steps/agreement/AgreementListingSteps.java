@@ -5,6 +5,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.utils.HttpCallExecutor;
@@ -137,7 +138,7 @@ public class AgreementListingSteps {
 
     @Then("si ottiene status code {int} e la lista di {int} richiest(e)(a) di fruizione")
     public void verifyStatusCodeAndAgreementRequest(int statusCode, int count) {
-        HttpCallExecutor httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+        IHttpExecutor httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         Assertions.assertEquals(statusCode, httpCallExecutor.getClientResponse().value());
     }
 

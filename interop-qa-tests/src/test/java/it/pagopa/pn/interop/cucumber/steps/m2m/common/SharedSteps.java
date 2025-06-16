@@ -4,7 +4,9 @@ package it.pagopa.pn.interop.cucumber.steps.m2m.common;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import io.cucumber.spring.ScenarioScope;
 import it.pagopa.interop.common.enums.EntityIdType;
+import org.springframework.stereotype.Component;
 
 
 public class SharedSteps {

@@ -19,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Setter
 public abstract class AbstractCommonSteps<T, K> implements ICommonSteps {
 
+
     protected final List<T> expectedEntities = new ArrayList<>();
     protected final List<T> actualEntities = new ArrayList<>();
 
