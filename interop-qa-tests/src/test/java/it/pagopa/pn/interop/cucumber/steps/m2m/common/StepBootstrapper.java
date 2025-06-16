@@ -1,17 +1,18 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.common;
 
-import io.cucumber.java.Before;
+import io.cucumber.java.BeforeStep;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.attribute.AttributeSteps;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.EserviceDescriptorSteps;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.EserviceSteps;
-import lombok.Data;
-
 import java.lang.reflect.Constructor;
 import java.util.List;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 @Data
+@Slf4j
 public class StepBootstrapper {
     private static boolean initialized = false;
 
@@ -25,11 +26,12 @@ public class StepBootstrapper {
             EserviceDescriptorSteps.class
     );
 
-    @Before(order = Integer.MIN_VALUE)
+    @BeforeStep(order = Integer.MIN_VALUE)
     public void bootstrapSteps() {
-        if (initialized) return;
-        initialized = true;
+        /*if (initialized) return;
+        initialized = true;*/
 
+        log.info("HTTP call executor used: {}", sharedStepsContext.getHttpCallExecutor());
         for (Class<? extends ICommonSteps> stepClass : stepClasses) {
             try {
                 Constructor<? extends ICommonSteps> constructor = stepClass.getConstructor(
