@@ -12,3 +12,4 @@ Feature: Test di sicurezza e funzionalità dei token interop con DPoP
     Given un "admin" di "PA1" ha caricato una chiave pubblica nel client
     When "PA2" genera una dpop proof con algoritmo "EC" e cerca di ottenere un access token tramite richiesta con header DPoP
     Then si ottiene lo status code 200
+    #And {entityType} contiene

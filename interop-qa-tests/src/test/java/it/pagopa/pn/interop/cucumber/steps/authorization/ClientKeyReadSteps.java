@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.authorization;
 
+import com.nimbusds.jose.jwk.KeyType;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.domain.KeyPairDecorator;
@@ -44,9 +45,9 @@ public class ClientKeyReadSteps {
         KeyPairDecorator keyPair = of(keyType, 2048);
         String encodedPublicKey = keyPair.getDelimitedPublicKeyBase64();
 
-        // TODO: memorizzare in contesto solo KeyPairDecorator e keyType
+        // TODO: valutare di far restare solo preparedClient
         UUID clientId = sharedStepsContext.getClientCommonContext().getFirstClient();
-        M2MDPopTokenService.PreparedClient preparedClient = new M2MDPopTokenService.PreparedClient(clientId, keyPair);
+        M2MDPopTokenService.PreparedClient preparedClient = new M2MDPopTokenService.PreparedClient(clientId, keyPair, KeyType.parse(keyType));
         sharedStepsContext.getClientCommonContext().addClient(preparedClient);
 
         sharedStepsContext.getClientCommonContext().setClientPublicKey(encodedPublicKey);

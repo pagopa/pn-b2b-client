@@ -1,6 +1,7 @@
 package it.pagopa.interop.authorization.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbusds.jose.jwk.KeyType;
 import it.pagopa.interop.authorization.domain.KeyPairDecorator;
 import it.pagopa.interop.authorization.enums.M2MRole;
 import it.pagopa.interop.authorization.enums.TokenKey;
@@ -104,7 +105,7 @@ public class M2MTokenService {
             VoucherResponse voucherResponse = new ObjectMapper()
                     .convertValue(voucher, VoucherResponse.class);
 
-            this.preparedClientCache.put(clientId, new M2MDPopTokenService.PreparedClient(clientId, keyPair));
+            this.preparedClientCache.put(clientId, new M2MDPopTokenService.PreparedClient(clientId, keyPair, KeyType.parse(keyType)));
             this.tokenCache.put(tokenKey, voucherResponse.getAccessToken());
         }
 
