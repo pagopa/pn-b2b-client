@@ -1,18 +1,20 @@
 package it.pagopa.pn.interop.cucumber.steps.authorization;
 
-import static it.pagopa.interop.authorization.domain.KeyPairDecorator.of;
-
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.domain.KeyPairDecorator;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
+import it.pagopa.interop.authorization.service.M2MDPopTokenService;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
+
+import java.util.UUID;
+
+import static it.pagopa.interop.authorization.domain.KeyPairDecorator.of;
 
 public class ClientKeyReadSteps {
     private static final long MAX_SAFE_INTEGER = 9007199254740991L;
@@ -43,14 +45,18 @@ public class ClientKeyReadSteps {
         String encodedPublicKey = keyPair.getDelimitedPublicKeyBase64();
 
         // TODO: memorizzare in contesto solo KeyPairDecorator e keyType
+        UUID clientId = sharedStepsContext.getClientCommonContext().getFirstClient();
+        M2MDPopTokenService.PreparedClient preparedClient = new M2MDPopTokenService.PreparedClient(clientId, keyPair);
+        sharedStepsContext.getClientCommonContext().addClient(preparedClient);
+
         sharedStepsContext.getClientCommonContext().setClientPublicKey(encodedPublicKey);
         sharedStepsContext.getClientCommonContext().setClientPublicKeyAsObj(keyPair.getPublic());
         sharedStepsContext.getClientCommonContext().setClientPrivateKey(keyPair.getPrivatePEM());
         sharedStepsContext.getClientCommonContext().setClientPrivateKeyAsObj(keyPair.getPrivate());
         sharedStepsContext.getClientCommonContext().setKeyType(keyType);
         String keyId = dataPreparationService.addPublicKeyToClient(
-            sharedStepsContext.getClientCommonContext().getFirstClient(),
-            KeyPairGeneratorUtil.createKeySeed(encodedPublicKey).get(0));
+                clientId,
+                KeyPairGeneratorUtil.createKeySeed(encodedPublicKey).get(0));
         sharedStepsContext.getClientCommonContext().setKeyId(keyId);
     }
 
