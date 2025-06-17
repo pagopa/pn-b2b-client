@@ -1,7 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.eservice;
 
 
-import io.cucumber.java.Before;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.common.enums.EntityIdType;

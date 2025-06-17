@@ -60,7 +60,7 @@ public class SharedSteps {
     }
 
     private ICommonSteps resolveStep(Pair<String, Class<? extends ICommonSteps>> stepDef) {
-        return context.getBean(stepDef.getLeft(), stepDef.getRight());
+        return context.getBean(stepDef.getRight());
     }
 
 }
