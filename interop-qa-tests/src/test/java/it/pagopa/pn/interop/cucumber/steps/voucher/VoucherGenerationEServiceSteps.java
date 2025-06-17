@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.interop.utils.InteropAPIErrorResponse;
@@ -22,7 +23,7 @@ public class VoucherGenerationEServiceSteps {
     private final SharedStepsContext sharedStepsContext;
     private final IdentityService identityService;
     private final BFFDataPreparationService dataPreparationService;
-    private final HttpCallExecutor httpCallExecutor;
+    private final IHttpExecutor httpCallExecutor;
 
     public VoucherGenerationEServiceSteps(ClientTokenConfigurator clientTokenConfigurator,
         SharedStepsContext sharedStepsContext,

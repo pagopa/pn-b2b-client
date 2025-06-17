@@ -1,20 +1,19 @@
-package it.pagopa.interop.utils;
+package it.pagopa.pn.interop.cucumber.steps.m2m.common;
 
+import io.cucumber.spring.ScenarioScope;
 import it.pagopa.interop.common.IHttpExecutor;
 import lombok.Data;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.util.function.Supplier;
 
-
 @Component
-@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@ScenarioScope
 @Data
-public class HttpCallExecutor implements IHttpExecutor {
+public class ScenarioHttpCallExecutor implements IHttpExecutor {
+
     private HttpStatus clientResponse;
     private Object response;
 
@@ -38,3 +37,4 @@ public class HttpCallExecutor implements IHttpExecutor {
         return clientResponse;
     }
 }
+

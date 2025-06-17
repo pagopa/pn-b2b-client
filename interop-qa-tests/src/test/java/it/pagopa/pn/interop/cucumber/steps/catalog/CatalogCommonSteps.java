@@ -4,6 +4,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactEServicesLight;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
@@ -38,7 +39,7 @@ public class CatalogCommonSteps {
 
     @Then("si ottiene status code {int} e la lista di {int} e-service(s)")
     public void verifyReceivedResponse(int statusCode, int eServiceNumber) {
-        HttpCallExecutor httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+        IHttpExecutor httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         Assertions.assertEquals(HttpStatus.valueOf(statusCode), httpCallExecutor.getClientResponse());
         Assertions.assertEquals(eServiceNumber,
                 ((ResponseEntity<CompactEServicesLight>) httpCallExecutor.getResponse()).getBody().getResults().size());

@@ -14,12 +14,10 @@ import java.util.stream.Collectors;
 
 public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
 
-    private final IM2MEserviceClient client;
-
     public EserviceSteps(SharedStepsContext sharedStepsContext, ClientTokenConfigurator clientTokenConfigurator) {
         super("eService", clientTokenConfigurator.getM2meServiceClient(), sharedStepsContext);
-        this.client = clientTokenConfigurator.getM2meServiceClient();
-        this.client.setHttpCallExecutor(sharedStepsContext.getHttpCallExecutor());
+        IM2MEserviceClient client = clientTokenConfigurator.getM2meServiceClient();
+        client.setHttpCallExecutor(sharedStepsContext.getHttpCallExecutor());
     }
 
     @Override

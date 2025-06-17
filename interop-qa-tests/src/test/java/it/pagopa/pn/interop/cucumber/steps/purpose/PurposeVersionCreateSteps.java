@@ -3,6 +3,7 @@ package it.pagopa.pn.interop.cucumber.steps.purpose;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionSeed;
@@ -18,7 +19,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class PurposeVersionCreateSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
-    private final HttpCallExecutor httpCallExecutor;
+    private final IHttpExecutor httpCallExecutor;
     private final BFFDataPreparationService dataPreparationService;
 
     private int newDailyCalls;

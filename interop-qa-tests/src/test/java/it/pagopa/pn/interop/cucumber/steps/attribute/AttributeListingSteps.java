@@ -7,6 +7,7 @@ import static java.lang.String.valueOf;
 
 import io.cucumber.java.en.When;
 import it.pagopa.interop.attribute.service.IAttributeApiClient;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
@@ -29,7 +30,7 @@ public class AttributeListingSteps {
     }
 
     private final SharedStepsContext sharedStepsContext;
-    private final HttpCallExecutor httpCallExecutor;
+    private final IHttpExecutor httpCallExecutor;
     private final ClientTokenConfigurator clientTokenConfigurator;
 
     public AttributeListingSteps(

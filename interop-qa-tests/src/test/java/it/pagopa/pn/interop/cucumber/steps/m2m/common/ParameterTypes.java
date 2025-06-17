@@ -2,27 +2,21 @@ package it.pagopa.pn.interop.cucumber.steps.m2m.common;
 
 import io.cucumber.java.ParameterType;
 import it.pagopa.interop.common.enums.EntityIdType;
-
-import java.util.HashMap;
-import java.util.Map;
+import it.pagopa.pn.interop.cucumber.steps.m2m.attribute.AttributeSteps;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.EserviceDescriptorSteps;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.EserviceSteps;
 
 public class ParameterTypes {
 
-    private static final Map<String, ICommonSteps> REGISTRY = new HashMap<>();
-
-    public static void register(String name, ICommonSteps steps) {
-        REGISTRY.put(name, steps);
+    @ParameterType("certifiedAttribute|descriptor|eService")
+    public Class<? extends ICommonSteps> entityType(String type) {
+        return switch (type) {
+            case "certifiedAttribute" -> AttributeSteps.class;
+            case "descriptor" -> EserviceDescriptorSteps.class;
+            case "eService" -> EserviceSteps.class;
+            default -> throw new IllegalArgumentException("Unknown type: " + type);
+        };
     }
-
-    @ParameterType("eService|descriptor|certifiedAttribute")
-    public ICommonSteps entityType(String name) {
-        ICommonSteps steps = REGISTRY.get(name);
-        if (steps == null) {
-            throw new IllegalArgumentException("No step implementation registered for entityType: " + name);
-        }
-        return steps;
-    }
-
 
     @ParameterType("invalid|invalido|null|nullo|inesistente")
     public EntityIdType entityIdType(String idType) {

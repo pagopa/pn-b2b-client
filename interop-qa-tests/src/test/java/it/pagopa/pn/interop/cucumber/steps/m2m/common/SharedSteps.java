@@ -5,46 +5,60 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.common.enums.EntityIdType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 
 public class SharedSteps {
 
+    private static ApplicationContext context;
+
+    @Autowired
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        SharedSteps.context = applicationContext;
+    }
+
     @Then("{entityType} {word} restituito")
     @Then("lista di {entityType} {word} restituita")
-    public void exsist(ICommonSteps commonSteps, String presence) {
-        commonSteps.exsist(presence);
+    public void exsist(Class<? extends ICommonSteps> stepClass, String presence) {
+        resolveStep(stepClass).exsist(presence);
     }
 
     @Then("{entityType} viene restituito e combacia con il record creato")
     @Then("lista di {entityType} viene restituita e combacia con i record creati")
-    public void exsistAndMatch(ICommonSteps commonSteps) {
-        commonSteps.exsist("match");
+    public void exsistAndMatch(Class<? extends ICommonSteps> stepClass) {
+        resolveStep(stepClass).exsist("match");
     }
 
     @When("l'utente tenta di recuperare {entityType} con:")
-    public void getBy(ICommonSteps commonSteps, DataTable table) {
-       commonSteps.getBy(table.asMap());
+    public void getBy(Class<? extends ICommonSteps> stepClass, DataTable table) {
+        resolveStep(stepClass).getBy(table.asMap());
     }
 
     @When("l'utente tenta di recuperare il record di {entityType} creato")
-    public void getByFirstExpectedId(ICommonSteps commonSteps) {
-        commonSteps.getByFirstExpectedId();
+    public void getByFirstExpectedId(Class<? extends ICommonSteps> stepClass) {
+        resolveStep(stepClass).getByFirstExpectedId();
     }
 
     @When("l'utente tenta di recuperare la lista di {entityType}")
-    public void getAll(ICommonSteps commonSteps) {
-        commonSteps.getAll();
+    public void getAll(Class<? extends ICommonSteps> stepClass) {
+        resolveStep(stepClass).getAll();
     }
 
     @When("l'utente tenta di recuperare {entityType} con un id {entityIdType}")
-    public void getByIdType(ICommonSteps commonSteps, EntityIdType entityIdType) {
-       commonSteps.getByIdType(entityIdType);
+    public void getByIdType(Class<? extends ICommonSteps> stepClass, EntityIdType entityIdType) {
+        resolveStep(stepClass).getByIdType(entityIdType);
     }
 
     @Then("{entityType} è presente solo se lo status code è {int}")
     @Then("la lista di {entityType} è presente solo se lo status code è {int}")
-    public void verifyByHttpStatus(ICommonSteps commonSteps, int expectedStatusCode) {
-        commonSteps.verifyByHttpStatus(expectedStatusCode);
+    public void verifyByHttpStatus(Class<? extends ICommonSteps> stepClass, int expectedStatusCode) {
+        resolveStep(stepClass).verifyByHttpStatus(expectedStatusCode);
     }
+
+    private ICommonSteps resolveStep(Class<? extends ICommonSteps> stepClass) {
+        return context.getBean(stepClass);
+    }
+
 }
 

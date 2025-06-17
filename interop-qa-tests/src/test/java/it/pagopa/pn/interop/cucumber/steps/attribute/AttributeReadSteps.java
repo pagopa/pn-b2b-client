@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.attribute;
 
 import io.cucumber.java.en.When;
 import it.pagopa.interop.attribute.service.IAttributeApiClient;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -13,7 +14,7 @@ public class AttributeReadSteps {
     private final IAttributeApiClient attributeApiClient;
     private final AttributeCommonContext attributeCommonContext;
     private final CommonUtils commonUtils;
-    private final HttpCallExecutor httpCallExecutor;
+    private final IHttpExecutor httpCallExecutor;
 
     public AttributeReadSteps(
         ClientTokenConfigurator clientTokenConfigurator,

@@ -27,6 +27,7 @@ public class EserviceDescriptorSteps extends AbstractCommonSteps<EServiceDescrip
         this.client.setHttpCallExecutor(sharedStepsContext.getHttpCallExecutor());
     }
 
+
     @When("l'utente tenta di recuperare la lista di descriptor usando l'eserviceId creato")
     @Override
     public void getAll() {

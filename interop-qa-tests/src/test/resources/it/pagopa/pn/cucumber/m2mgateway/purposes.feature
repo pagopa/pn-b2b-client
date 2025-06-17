@@ -34,12 +34,13 @@ Feature: Gestione purposes
     Then si ottiene status code 200
     And la nuova versione della finalità è stata creata correttamente
 
+  @m2m-false-negative
   Scenario: [M2M_PURPOSES_VERSIONS_2] La creazione di una nuova versione di una finalità NON può essere effettuata da un utente con ruolo diverso da M2M-ADMIN
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
-    When l'utente è un "<ruolo>" di "PA2" con ruolo M2M m2m
+    When l'utente è un "admin" di "PA2" con ruolo M2M m2m
     And l'utente tenta di creare una nuova versione della finalità aggiornando la stima di carico
     Then si ottiene status code 403
 
@@ -238,6 +239,7 @@ Feature: Gestione purposes
 
     And la finalità è in stato ACTIVE
 
+  @m2m-false-negative
   Scenario Outline: [M2M_PURPOSES_SUSPEND_5_A] Una finalità in stato diverso da ACTIVE NON può essere sospesa
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -259,6 +261,7 @@ Feature: Gestione purposes
       | WAITING_FOR_APPROVAL |
       | ARCHIVED             |
 
+  @m2m-false-negative
   Scenario: [M2M_PURPOSES_SUSPEND_5_B] Una finalità in stato REJECTED NON può essere sospesa
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -357,6 +360,7 @@ Feature: Gestione purposes
 
     And la finalità è in stato ACTIVE
 
+  @m2m-false-negative
   Scenario Outline: [M2MG_PURPOSES_39_A] Archiviazione fallita di una finalità in stato non valido (Scenario 124)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -372,15 +376,13 @@ Feature: Gestione purposes
 
     And purpose in stato <stato>
 
-    # TODO ultimi 2 stati producono errore. Non sono stati segnalati su Jira, rilanciare non appena
-    # si ritiene che DEV sia pronto
-    # https://pagopaspa.slack.com/archives/C08J74Y0H96/p1749736767429489?thread_ts=1749735825.672499&cid=C08J74Y0H96
     Examples:
       | stato                |
       | DRAFT                |
       | ARCHIVED             |
       | WAITING_FOR_APPROVAL |
 
+  @m2m-false-negative
   Scenario: [M2MG_PURPOSES_39_B] Archiviazione fallita di una finalità in stato non valido (Scenario 124)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -416,6 +418,7 @@ Feature: Gestione purposes
       | ACTIVE    |
       | SUSPENDED |
 
+  @m2m-false-negative
   Scenario: [M2MG_PURPOSES_42] Approvazione negata per utente con ruolo M2M (Scenario 53)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -472,6 +475,7 @@ Feature: Gestione purposes
     Given l'utente è un "admin" di "PA2"
     And la finalità è in stato WAITING_FOR_APPROVAL
 
+  @m2m-false-negative
   Scenario Outline: [M2MG_PURPOSES_48_A] Approvazione fallita di una finalità in stato non valido (Scenario 131)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -491,6 +495,7 @@ Feature: Gestione purposes
       | ARCHIVED  |
       | DRAFT     |
 
+  @m2m-false-negative
   Scenario: [M2MG_PURPOSES_48_B] Approvazione fallita di una finalità in stato non valido (Scenario 131)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
