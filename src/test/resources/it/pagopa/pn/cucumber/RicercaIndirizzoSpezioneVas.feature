@@ -587,7 +587,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details_recIndex | 0        |
 
   #PA ABILITATA, PF CON ERRORE 500 (server down) + PF CON ERRORE 429 (too many request), CLIENT ABILITATO
-  @ricercaIndirizzoVas #rif srs 56
+  @ricercaIndirizzoVas #rif srs 56-60-61
   Scenario: [RICERCA_INDIRIZZO_MULTI_COSTI_4] Invio notifica AR multidestinatario verso PF con campo address vuoto (error 429 e error 500) - notifica rifiutata Vas attivo
     Given il test è effettuabile con API versione "V25" o superiore
     And viene generata una nuova notifica
