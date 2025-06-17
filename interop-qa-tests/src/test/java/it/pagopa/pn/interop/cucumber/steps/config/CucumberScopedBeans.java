@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Bean;
  *
  * @param sharedStepsContext oggetto condiviso tra gli step per mantenere lo stato
  * @param clientTokenConfigurator componente per configurare il token di autenticazione
- * @return una nuova istanza di {@link EserviceSteps} gestita da Spring
+ * @return una nuova istanza del bean gestita da Spring
  */
 public class CucumberScopedBeans {
 
