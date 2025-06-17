@@ -4,11 +4,10 @@ import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.authorization.domain.Role;
 import it.pagopa.interop.authorization.enums.M2MRole;
-import it.pagopa.interop.authorization.service.M2MDPopTokenService;
+import it.pagopa.interop.authorization.service.DPoPTokenService;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.JWTUtils;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 
@@ -43,7 +42,7 @@ public class M2MAuthSteps {
         String token = identityService.getToken(tenant, m2MRole.toString());
         UUID clientId = getClientId(token);
 
-        M2MDPopTokenService.PreparedClient preparedClient = identityService.getPreparedClient(clientId);
+        DPoPTokenService.PreparedClient preparedClient = identityService.getPreparedClient(clientId);
         sharedStepsContext.getClientCommonContext().addClient(preparedClient);
 
         clientTokenConfigurator.setBearerToken(token);

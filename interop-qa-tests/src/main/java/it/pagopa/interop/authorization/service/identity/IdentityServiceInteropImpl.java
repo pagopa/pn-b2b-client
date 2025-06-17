@@ -1,7 +1,7 @@
 package it.pagopa.interop.authorization.service.identity;
 
 import it.pagopa.interop.authorization.enums.M2MRole;
-import it.pagopa.interop.authorization.service.M2MDPopTokenService;
+import it.pagopa.interop.authorization.service.DPoPTokenService;
 import it.pagopa.interop.authorization.service.M2MTokenService;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -54,7 +54,7 @@ public class IdentityServiceInteropImpl implements IdentityService {
     }
 
     @Override
-    public M2MDPopTokenService.PreparedClient getPreparedClient(UUID clientId) {
+    public DPoPTokenService.PreparedClient getPreparedClient(UUID clientId) {
         return m2mService.getPreparedClient(clientId);
     }
 

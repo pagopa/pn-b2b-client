@@ -9,4 +9,5 @@ public interface IHttpExecutor {
     HttpStatus performCall(Runnable promise);
     HttpStatus getClientResponse();
     Object getResponse();
+    void setRawResponse(int statusCode, Object rawBody);
 }

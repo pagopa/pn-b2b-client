@@ -32,7 +32,7 @@ import static dev.turingcomplete.textcaseconverter.StandardTextCases.SOFT_CAMEL_
 
 @Component
 @RequiredArgsConstructor
-public class DPopVoucherService {
+public class DPoPVoucherService {
 
     @Value("${client.assertion.jwt.audience}")
     private String jwtAudience;
@@ -44,7 +44,7 @@ public class DPopVoucherService {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
-     * Effettua una richiesta voucher con header DPoP allegato.
+     * Effettua una request.
      */
     public Map<String, Object> requestVoucher(VoucherRequest request, String dpopJwt) {
         HttpHeaders headers = new HttpHeaders();
@@ -53,6 +53,7 @@ public class DPopVoucherService {
         }
         return doVoucherRequest(request, headers);
     }
+
 
     /**
      * Crea una client assertion JWT firmata con la chiave privata del client.
@@ -147,19 +148,6 @@ public class DPopVoucherService {
                     ));
 
             HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(body, finalHeaders);
-
-            // DEBUG
-            // TODO: eliminare
-            System.out.println("=== HTTP REQUEST ===");
-
-            // Stampa Headers
-            System.out.println("Headers:");
-            finalHeaders.forEach((key, value) -> System.out.println(key + ": " + String.join(", ", value)));
-
-            // Stampa Body
-            System.out.println("\nBody:");
-            body.forEach((key, value) -> System.out.println(key + " = " + value));
-
 
             ResponseEntity<Object> response = restTemplate.exchange(uri, HttpMethod.POST, entity, Object.class);
             Object responseBody = response.getBody();

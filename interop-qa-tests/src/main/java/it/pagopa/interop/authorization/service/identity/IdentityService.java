@@ -1,6 +1,6 @@
 package it.pagopa.interop.authorization.service.identity;
 
-import it.pagopa.interop.authorization.service.M2MDPopTokenService;
+import it.pagopa.interop.authorization.service.DPoPTokenService;
 
 import java.util.UUID;
 
@@ -15,5 +15,5 @@ public interface IdentityService {
 
     UUID getOrganizationId(String tenantType);
 
-    M2MDPopTokenService.PreparedClient getPreparedClient(UUID clientId);
+    DPoPTokenService.PreparedClient getPreparedClient(UUID clientId);
 }
