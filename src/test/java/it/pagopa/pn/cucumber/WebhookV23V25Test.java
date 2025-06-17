@@ -17,6 +17,6 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 })
 @ExcludeTags({"ignore"})
 //@IncludeTags({"webhookV23", "webhookV25"})
-@IncludeTags({"webhookV23"})
+@IncludeTags({"webhookV25"})
 public class WebhookV23V25Test {
 }
