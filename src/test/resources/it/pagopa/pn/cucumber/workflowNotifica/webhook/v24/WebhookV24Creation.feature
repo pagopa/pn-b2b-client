@@ -21,7 +21,7 @@ Feature: verifica creazione stream
     And l'apiKey viene cancellata
 
   @webhookV24 @precondition @cleanWebhook @webhook2
-  #TODO: valutare se modificare, mettere in ignore, o riportare il limite di stream per una PA a 10 (attualmente è 100 e non genera alcun errore)
+  #LIMITE SPECIFICO PER PA: n/a; LIMITE DEFAULT (pnConfigurations.MaxStreams  = 10)
   Scenario: [B2B-STREAM_ES1.1_2] Creazione per una PA di 11 nuovi stream notifica con eventType TIMELINE e senza gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V24"
     And si predispongono 10 nuovi stream denominati "stream-test" con eventType "TIMELINE" con versione "V24"
@@ -50,7 +50,7 @@ Feature: verifica creazione stream
     And l'apiKey viene cancellata
 
   @webhookV24 @precondition @cleanWebhook @webhook2
-  #TODO: valutare se modificare, mettere in ignore, o riportare il limite di stream per una PA a 10 (attualmente è 100 e non genera alcun errore)
+  #LIMITE SPECIFICO PER PA: n/a; LIMITE DEFAULT (pnConfigurations.MaxStreams  = 10)
   Scenario: [B2B-STREAM_ES1.1_4] Creazione per una PA di 11 nuovi stream notifica con eventType TIMELINE con gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V24"
     And si predispongono 10 nuovi stream denominati "stream-test" con eventType "TIMELINE" con versione "V24"
@@ -79,7 +79,7 @@ Feature: verifica creazione stream
     And l'apiKey viene cancellata
 
   @webhookV24 @precondition @cleanWebhook @webhook2
-  #TODO: valutare se modificare, mettere in ignore, o riportare il limite di stream per una PA a 10 (attualmente è 100 e non genera alcun errore)
+  #LIMITE SPECIFICO PER PA: n/a; LIMITE DEFAULT (pnConfigurations.MaxStreams  = 10)
   Scenario: [B2B-STREAM_ES1.1_6] Creazione per una PA di 11 nuovi stream notifica con eventType STATUS e senza gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V24"
     And si predispongono 10 nuovi stream denominati "stream-test" con eventType "STATUS" con versione "V24"
@@ -107,7 +107,7 @@ Feature: verifica creazione stream
     And l'apiKey viene cancellata
 
   @webhookV24 @precondition @cleanWebhook @webhook2
-  #TODO: valutare se modificare, mettere in ignore, o riportare il limite di stream per una PA a 10 (attualmente è 100 e non genera alcun errore)
+  #LIMITE SPECIFICO PER PA: n/a; LIMITE DEFAULT (pnConfigurations.MaxStreams  = 10)
   Scenario: [B2B-STREAM_ES1.1_8] Creazione per una PA di 11 nuovi stream notifica con eventType STATUS con gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V24"
     And si predispongono 10 nuovi stream denominati "stream-test" con eventType "STATUS" con versione "V24"

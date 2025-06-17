@@ -54,14 +54,14 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
-      | loadTimeline                 | true                                                    |
-      | details                      | NOT_NULL                                                |
-      | details_responseStatus       | OK                                                      |
-      | details_sendingReceipts      | [{"id": null, "system": null}]                          |
-      | details_digitalAddress       | {"address": "example2@OK-pecSuccess.it", "type": "PEC"} |
-      | details_recIndex             | 0                                                       |
-      | details_digitalAddressSource | GENERAL                                                 |
-      | details_sentAttemptMade      | 0                                                       |
+      | loadTimeline                 | true                                             |
+      | details                      | NOT_NULL                                         |
+      | details_responseStatus       | OK                                               |
+      | details_sendingReceipts      | [{"id": null, "system": null}]                   |
+      | details_digitalAddress       | {"address": "00883601007@pec.it", "type": "PEC"} |
+      | details_recIndex             | 0                                                |
+      | details_digitalAddressSource | GENERAL                                          |
+      | details_sentAttemptMade      | 0                                                |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   @dev @workflowDigitale @testLite @mockNR #da rimuovere una volta che abbiamo liberi professionisti con feature flag a true

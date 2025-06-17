@@ -70,7 +70,7 @@ Feature: aggiornamento stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-        # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
+  # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
   @webhookV27 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_89waitForAccepted] Aggiornamento di uno stream notifica con gruppo, con eventType "STATUS"  utilizzando un apikey con stesso gruppo.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V27"
@@ -112,7 +112,7 @@ Feature: aggiornamento stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-        # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
+  # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
   @webhookV27 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_43waitForAccepted] Aggiornamento di uno stream notifica da un gruppo a più gruppi, con eventType "STATUS".
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V27"
