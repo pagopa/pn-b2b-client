@@ -25,7 +25,6 @@ import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.UserAddresses;
 import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationStepsInterface;
 import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion;
@@ -369,7 +368,7 @@ public class SharedSteps {
         for (int i = 0; i < numberOfNotification; i++) {
             Thread t = new Thread(() -> {
                 notificationStepsInterface.sendNotification(getWorkFlowWait(), NOTIFICATION_STATUS_ACCEPTED, VALIDATION_STATUS);
-                notificationStepsInterface.waitForTimelineElement(notificationIun, COMPLETELY_UNREACHABLE, 33);
+                notificationStepsInterface.waitForTimelineElement(COMPLETELY_UNREACHABLE, 33);
                 notificationsCounter.getAndIncrement();
             });
             threadList.add(t);
@@ -688,7 +687,7 @@ public class SharedSteps {
         try {
             List<LegalCourtesyAddressWrapper> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
             if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
-                this.iPnWebUserAttributesClient.deleteRecipientLegalAddress("default", LegalChannelType.PEC);
+                this.iPnWebUserAttributesClient.deleteRecipientLegalAddress("default", LegalCourtesyAddressWrapper.ChannelType.PEC);
                 log.info("PEC FOUND AND DELETED");
             }
         } catch (HttpStatusCodeException httpStatusCodeException) {
@@ -705,7 +704,7 @@ public class SharedSteps {
         selectUser(user);
         try {
             this.iPnWebUserAttributesClient.getLegalAddressByRecipient().stream()
-                    .filter(address -> LegalChannelType.PEC.equals(address.getChannelType()))
+                    .filter(address -> LegalCourtesyAddressWrapper.ChannelType.PEC.getValue().equals(address.getChannelType().getValue()))
                     .findAny()
                     .orElseThrow(() -> AssertionFailureBuilder.assertionFailure().message("PEC NOT FOUND!").build());
         } catch (Exception exc) {
@@ -714,7 +713,7 @@ public class SharedSteps {
         }
     }
 
-    @And("viene verificata la presenza di {int} recapiti di cortesia inseriti per l'utente {string}")
+    @And("viene verificata la presenza di {int} recapit(o)(i) di cortesia inserit(o)(i) per l'utente {string}")
     public void viewedCourtesyAddress(int expectedItems, String user) {
         selectUser(user);
         List<LegalCourtesyAddressWrapper> courtesyAddressByRecipient = this.iPnWebUserAttributesClient.getCourtesyAddressByRecipient();
@@ -1197,7 +1196,7 @@ public class SharedSteps {
     }
 
     public List<String> getDatiPagamentoVersionamento(Integer destinatario, Integer pagamento) {
-        return getNotificationStepInterface().getDatiPagamento(notificationIun, destinatario, pagamento);
+        return getNotificationStepInterface().getDatiPagamento(destinatario, pagamento);
     }
 
     public static void threadWait(int wait) {

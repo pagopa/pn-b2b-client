@@ -58,9 +58,9 @@ public interface NotificationStepsInterface {
 
     void addIuvGpdToDestinatario(String denominazione, String iuvGpd, Integer paymentIndex);
 
-    List<String> getDatiPagamento(String iun, Integer destinatario, Integer pagamento);
+    List<String> getDatiPagamento(Integer destinatario, Integer pagamento);
 
-    void waitForTimelineElement(String iun, String timelineElementCategory, Integer attempts);
+    void waitForTimelineElement(String timelineElementCategory, Integer attempts);
 
     void getNotificationRequestStatus(String requestId);
 
