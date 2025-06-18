@@ -1,4 +1,4 @@
-@agreement @resource_intensive
+@agreement-list @resource_intensive
 Feature: Listing erogatori con richieste di fruizione
   Tutti gli utenti autorizzati possono ottenere la lista degli erogatori degli e-service per cui hanno una richiesta di fruizione
 

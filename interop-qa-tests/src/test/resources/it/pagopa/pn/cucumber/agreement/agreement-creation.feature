@@ -1,4 +1,4 @@
-@agreement
+@agreement-crud
 Feature: Creazione nuova richiesta di fruizione
   Tutti gli utenti autorizzati possono ottenere la lista dei fruitori dei propri e-service
 

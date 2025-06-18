@@ -1,4 +1,4 @@
-@agreement
+@agreement-crud
 Feature: Cancellazione richiesta di fruizione
   Tutti gli utenti autorizzati possono cancellare una richiesta di fruizione in stato DRAFT o MISSING_CERTIFIED_ATTRIBUTES
 

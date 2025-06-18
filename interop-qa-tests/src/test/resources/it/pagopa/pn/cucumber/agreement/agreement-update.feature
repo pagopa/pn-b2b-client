@@ -1,4 +1,4 @@
-@agreement
+@agreement-crud
 Feature: Aggiornamento di una richiesta di fruizione in bozza
   Tutti gli utenti autorizzati possono aggiornare una propria richiesta di fruizione in bozza con un messaggio
 
