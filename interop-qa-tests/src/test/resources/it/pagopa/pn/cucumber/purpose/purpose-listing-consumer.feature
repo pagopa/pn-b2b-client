@@ -1,4 +1,4 @@
-@purpose
+@purpose-list
 Feature: Lista delle finalità lato fruitore
   Tutti gli utenti possono ottenere la lista delle finalità di cui sono fruitori
 

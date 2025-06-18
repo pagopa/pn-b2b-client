@@ -1,4 +1,4 @@
-@purpose
+@purpose-list
 Feature: Listing finalità lato erogatore
   Tutti gli utenti di enti PA e GSP possono ottenere la lista di finalità di cui sono erogatori.
 

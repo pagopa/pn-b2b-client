@@ -1,4 +1,4 @@
-@purpose
+@purpose-mode
 Feature: Aggiornamento bozza nuova finalità in erogazione diretta
   Tutti gli utenti autorizzati possono aggiornare una finalità in bozza per un e-service in erogazione diretta.
 
