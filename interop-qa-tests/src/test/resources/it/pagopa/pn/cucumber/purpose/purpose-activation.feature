@@ -1,4 +1,4 @@
-@purpose
+@purpose-1
 Feature: Attivazione e riattivazione di una finalità
   Tutti gli utenti autorizzati possono attivare o riattivare una finalità
 

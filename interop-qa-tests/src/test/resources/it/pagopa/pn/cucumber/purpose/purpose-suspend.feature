@@ -1,4 +1,4 @@
-@purpose
+@purpose-2
 Feature: Sospensione di una finalità
   Tutti gli utenti autorizzati possono sospendere una propria finalità
 
