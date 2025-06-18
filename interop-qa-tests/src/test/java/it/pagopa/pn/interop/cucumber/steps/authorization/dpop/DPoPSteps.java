@@ -42,28 +42,28 @@ public class DPoPSteps {
         this.dPoPTokenService.setIdentityService(context.getIdentityService());
     }
 
-    @When("{string} genera una dpop proof con algoritmo {string}")
-    @When("{string} genera una dpop proof con algoritmo {string} e verifica i campi HTU,HTM")
+    @When("{string} genera una dpop proof con una chiave {string}")
+    @When("{string} genera una dpop proof con una chiave {string} e verifica i campi HTU,HTM")
     public void getDpopProof(String tenantType, String keyAlgorithm) {
         this.dpopProofJwt = generateDpopProofWith(keyAlgorithm, DEFAULT_TYP, DEFAULT_HTTP_METHOD, DEFAULT_OAUTH_SERVER_URL);
     }
 
-    @When("{string} genera una dpop proof con algoritmo {string} e campo typ errato")
+    @When("{string} genera una dpop proof con una chiave {string} e campo typ errato")
     public void getDpopProofWithTyp(String tenantType, String keyAlgorithm) {
         this.dpopProofJwt = generateDpopProofWith(keyAlgorithm, "wrong+dpop", DEFAULT_HTTP_METHOD, DEFAULT_OAUTH_SERVER_URL);
     }
 
-    @When("{string} genera una dpop proof con algoritmo {string} e metodo errato {string}")
+    @When("{string} genera una dpop proof con una chiave {string} e metodo errato {string}")
     public void getDpopProofWithHtm(String tenantType, String keyAlgorithm, String httpMethod) {
         this.dpopProofJwt = generateDpopProofWith(keyAlgorithm, DEFAULT_TYP, HttpMethod.valueOf(httpMethod), DEFAULT_OAUTH_SERVER_URL);
     }
 
-    @When("{string} genera una dpop proof con algoritmo {string} e campo HTU errato")
+    @When("{string} genera una dpop proof con una chiave {string} e campo HTU errato")
     public void getDpopProofWithHtu(String tenantType, String keyAlgorithm) {
         this.dpopProofJwt = generateDpopProofWith(keyAlgorithm, DEFAULT_TYP, DEFAULT_HTTP_METHOD, "https://auth.interop.pagopa.it/invalid-token-endpoint");
     }
 
-    @When("{string} genera una dpop proof con algoritmo {string} scaduto rispetto il campo IAT")
+    @When("{string} genera una dpop proof con una chiave {string} scaduto rispetto il campo IAT")
     public void getDpopExpired(String tenantType, String keyAlgorithm) {
         this.dpopProofJwt = generateDpopProofWith(keyAlgorithm, DEFAULT_TYP, DEFAULT_HTTP_METHOD, DEFAULT_OAUTH_SERVER_URL);
 
@@ -75,7 +75,7 @@ public class DPoPSteps {
         }
     }
 
-    @When("{string} genera una dpop proof con algoritmo RSA, usando la chiave pubblica associata al client ma firmando con una chiave privata diversa")
+    @When("{string} genera una dpop proof usando la chiave pubblica RSA associata al client ma firmando con una chiave privata RSA diversa")
     public void getMaliciousDPoP(String tenantType) {
         this.dpopProofJwt = this.generateMaliciousDpopProof();
     }

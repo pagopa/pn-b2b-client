@@ -9,8 +9,8 @@ Feature: Test di sicurezza e funzionalità dei token interop con DPoP
     And "PA1" ha già creato 1 client "CONSUMER"
     And "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
     And "PA1" ha già associato la finalità a quel client
-    And un "admin" di "PA1" ha caricato una chiave pubblica nel client con algoritmo "RSA"
-    When "PA1" genera una dpop proof con algoritmo "<keyType>" e verifica i campi HTU,HTM
+    And un "admin" di "PA1" ha caricato una chiave "RSA" pubblica nel client
+    When "PA1" genera una dpop proof con una chiave "<keyType>" e verifica i campi HTU,HTM
     And "PA1" cerca di ottenere un access token usando il dpop proof creato
     Then si ottiene lo status code 200
     And la response contiene:
@@ -32,8 +32,8 @@ Feature: Test di sicurezza e funzionalità dei token interop con DPoP
     And "PA1" ha già creato 1 client "CONSUMER"
     And "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
     And "PA1" ha già associato la finalità a quel client
-    And un "admin" di "PA1" ha caricato una chiave pubblica nel client con algoritmo "RSA"
-    When "PA1" genera una dpop proof con algoritmo "EC"
+    And un "admin" di "PA1" ha caricato una chiave "RSA" pubblica nel client
+    When "PA1" genera una dpop proof con una chiave "EC"
     When "PA1" tenta di ottenere un access token usando il dpop proof creato e inviando due header DPoP nella richiesta
     Then si ottiene lo status code 400
     And la response contiene:
@@ -50,7 +50,7 @@ Feature: Test di sicurezza e funzionalità dei token interop con DPoP
     And "PA1" ha già creato 1 client "CONSUMER"
     And "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
     And "PA1" ha già associato la finalità a quel client
-    And un "admin" di "PA1" ha caricato una chiave pubblica nel client con algoritmo "RSA"
+    And un "admin" di "PA1" ha caricato una chiave "RSA" pubblica nel client
     When "PA1" tenta di ottenere un access token senza includere l'header DPoP
     Then si ottiene lo status code 200
     And la response contiene:
@@ -66,8 +66,8 @@ Feature: Test di sicurezza e funzionalità dei token interop con DPoP
     And "PA1" ha già creato 1 client "CONSUMER"
     And "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
     And "PA1" ha già associato la finalità a quel client
-    And un "admin" di "PA1" ha caricato una chiave pubblica nel client con algoritmo "RSA"
-    When "PA1" genera una dpop proof con algoritmo "EC" e campo typ errato
+    And un "admin" di "PA1" ha caricato una chiave "RSA" pubblica nel client
+    When "PA1" genera una dpop proof con una chiave "EC" e campo typ errato
     And "PA1" cerca di ottenere un access token usando il dpop proof creato
     Then si ottiene lo status code 400
     And la response contiene:
@@ -83,8 +83,8 @@ Feature: Test di sicurezza e funzionalità dei token interop con DPoP
     And "PA1" ha già creato 1 client "CONSUMER"
     And "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
     And "PA1" ha già associato la finalità a quel client
-    And un "admin" di "PA1" ha caricato una chiave pubblica nel client con algoritmo "RSA"
-    When "PA1" genera una dpop proof con algoritmo "EC"
+    And un "admin" di "PA1" ha caricato una chiave "RSA" pubblica nel client
+    When "PA1" genera una dpop proof con una chiave "EC"
     And "PA1" cerca di ottenere un access token usando il dpop proof creato
     And si ottiene lo status code 200
     And la response contiene:
@@ -107,8 +107,8 @@ Feature: Test di sicurezza e funzionalità dei token interop con DPoP
     And "PA1" ha già creato 1 client "CONSUMER"
     And "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
     And "PA1" ha già associato la finalità a quel client
-    And un "admin" di "PA1" ha caricato una chiave pubblica nel client con algoritmo "RSA"
-    When "PA1" genera una dpop proof con algoritmo "EC" e metodo errato "GET"
+    And un "admin" di "PA1" ha caricato una chiave "RSA" pubblica nel client
+    When "PA1" genera una dpop proof con una chiave "EC" e metodo errato "GET"
     And "PA1" cerca di ottenere un access token usando il dpop proof creato
     Then si ottiene lo status code 400
     And la response contiene:
@@ -124,8 +124,8 @@ Feature: Test di sicurezza e funzionalità dei token interop con DPoP
     And "PA1" ha già creato 1 client "CONSUMER"
     And "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
     And "PA1" ha già associato la finalità a quel client
-    And un "admin" di "PA1" ha caricato una chiave pubblica nel client con algoritmo "RSA"
-    When "PA1" genera una dpop proof con algoritmo "EC" e campo HTU errato
+    And un "admin" di "PA1" ha caricato una chiave "RSA" pubblica nel client
+    When "PA1" genera una dpop proof con una chiave "EC" e campo HTU errato
     And "PA1" cerca di ottenere un access token usando il dpop proof creato
     Then si ottiene lo status code 400
     And la response contiene:
@@ -141,8 +141,8 @@ Feature: Test di sicurezza e funzionalità dei token interop con DPoP
     And "PA1" ha già creato 1 client "CONSUMER"
     And "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
     And "PA1" ha già associato la finalità a quel client
-    And un "admin" di "PA1" ha caricato una chiave pubblica nel client con algoritmo "RSA"
-    When "PA1" genera una dpop proof con algoritmo "EC" scaduto rispetto il campo IAT
+    And un "admin" di "PA1" ha caricato una chiave "RSA" pubblica nel client
+    When "PA1" genera una dpop proof con una chiave "EC" scaduto rispetto il campo IAT
     And "PA1" cerca di ottenere un access token usando il dpop proof creato
     Then si ottiene lo status code 400
     And la response contiene:
@@ -158,8 +158,8 @@ Feature: Test di sicurezza e funzionalità dei token interop con DPoP
     And "PA1" ha già creato 1 client "CONSUMER"
     And "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
     And "PA1" ha già associato la finalità a quel client
-    And un "admin" di "PA1" ha caricato una chiave pubblica nel client con algoritmo "RSA"
-    When "PA1" genera una dpop proof con algoritmo RSA, usando la chiave pubblica associata al client ma firmando con una chiave privata diversa
+    And un "admin" di "PA1" ha caricato una chiave "RSA" pubblica nel client
+    When "PA1" genera una dpop proof usando la chiave pubblica RSA associata al client ma firmando con una chiave privata RSA diversa
     And "PA1" cerca di ottenere un access token usando il dpop proof creato
     Then si ottiene lo status code 400
     And la response contiene:
