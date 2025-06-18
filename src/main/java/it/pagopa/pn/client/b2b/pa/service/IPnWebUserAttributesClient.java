@@ -27,7 +27,7 @@ public interface IPnWebUserAttributesClient extends SettableBearerToken {
 
     List<LegalCourtesyAddressWrapper> getLegalAddressByRecipient() throws RestClientException;
 
-    void postRecipientLegalAddress(String senderId, LegalChannelType channelType, AddressVerification addressVerification) throws RestClientException;
+    void postRecipientLegalAddress(String senderId, LegalCourtesyAddressWrapper.ChannelType channelType, AddressVerification addressVerification) throws RestClientException;
 
     void deleteRecipientCourtesyAddress(String senderId, CourtesyChannelType channelType) throws RestClientException;
 
