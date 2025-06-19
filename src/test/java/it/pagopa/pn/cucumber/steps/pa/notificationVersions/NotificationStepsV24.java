@@ -294,7 +294,7 @@ public class NotificationStepsV24 implements NotificationStepsInterface {
 
             }
         }
-        uploadNotification(null);
+        b2bClient.sendNewNotificationV24(notificationRequest);
     }
 
     @Override
