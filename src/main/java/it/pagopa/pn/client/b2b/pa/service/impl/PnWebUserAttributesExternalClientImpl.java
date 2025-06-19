@@ -17,7 +17,10 @@ import it.pagopa.pn.client.b2b.pa.exception.IllegalConfigurationException;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
 import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.*;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.AddressVerification;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.CourtesyDigitalAddress;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalAndUnverifiedDigitalAddress;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.UserAddresses;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.Consent;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.ConsentAction;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.ConsentType;
@@ -216,7 +219,7 @@ public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttribut
         return userAddresses;
     }
 
-    public void deleteRecipientLegalAddress(String senderId, LegalChannelType channelType) throws RestClientException {
+    public void deleteRecipientLegalAddress(String senderId, LegalCourtesyAddressWrapper.ChannelType channelType) throws RestClientException {
         addressesApi.deleteAddressV1(BffAddressType.LEGAL, senderId, BffChannelType.fromValue(channelType.getValue()));
     }
 
@@ -233,7 +236,7 @@ public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttribut
         addressesApi.createOrUpdateAddressV1(BffAddressType.LEGAL, senderId, BffChannelType.fromValue(channelType.getValue()), bffAddressVerificationRequest);
     }
 
-    public void deleteRecipientCourtesyAddress(String senderId, CourtesyChannelType channelType) throws RestClientException {
+    public void deleteRecipientCourtesyAddress(String senderId, LegalCourtesyAddressWrapper.ChannelType channelType) throws RestClientException {
         addressesApi.deleteAddressV1(BffAddressType.COURTESY, senderId, BffChannelType.fromValue(channelType.getValue()));
     }
 
@@ -244,7 +247,7 @@ public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttribut
                 .toList();
     }
 
-    public void postRecipientCourtesyAddress(String senderId, CourtesyChannelType channelType, AddressVerification addressVerification) throws RestClientException {
+    public void postRecipientCourtesyAddress(String senderId, LegalCourtesyAddressWrapper.ChannelType channelType, AddressVerification addressVerification) throws RestClientException {
         BffAddressVerificationRequest bffAddressVerificationRequest = new BffAddressVerificationRequest().requestId(addressVerification.getRequestId())
                 .verificationCode(addressVerification.getVerificationCode()).value(addressVerification.getValue());
         addressesApi.createOrUpdateAddressV1(BffAddressType.COURTESY, senderId, BffChannelType.fromValue(channelType.getValue()), bffAddressVerificationRequest);
