@@ -54,7 +54,7 @@ public class WebhookStepsV24 implements WebhookStepsInterface {
 
     @Override
     public Object getFullSentNotification() {
-        return b2bClient.getSentNotificationV26(sharedSteps.getNotificationIun());
+        return b2bClient.getSentNotificationV24(sharedSteps.getNotificationIun());
     }
 
     private FullSentNotificationV24 getFullSentNotificationVersioned() {
