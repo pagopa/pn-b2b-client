@@ -9,7 +9,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganization
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDescriptionUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateIntendedTargetUpdateSeed;
@@ -196,7 +196,7 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
     @Override
     public void addRiskAnalysis(
         UUID eServiceTemplateId,
-        EServiceRiskAnalysisSeed seed
+        EServiceTemplateRiskAnalysisSeed seed
     ) {
         this.eserviceTemplatesApi.createEServiceTemplateRiskAnalysis(eServiceTemplateId, seed);
     }
@@ -213,7 +213,7 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
     public void editRiskAnalysis(
         UUID eServiceTemplateId,
         UUID riskAnalysisId,
-        EServiceRiskAnalysisSeed seed
+        EServiceTemplateRiskAnalysisSeed seed
     ) {
         this.eserviceTemplatesApi.updateEServiceTemplateRiskAnalysis(eServiceTemplateId, riskAnalysisId, seed);
     }
@@ -222,7 +222,7 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
     public ResponseEntity<Void> editRiskAnalysisWithHttpInfo(
         UUID eServiceTemplateId,
         UUID riskAnalysisId,
-        EServiceRiskAnalysisSeed seed
+        EServiceTemplateRiskAnalysisSeed seed
     ) {
         return this.eserviceTemplatesApi.updateEServiceTemplateRiskAnalysisWithHttpInfo(eServiceTemplateId, riskAnalysisId, seed);
     }
@@ -353,13 +353,13 @@ public class EServiceTemplateApiClientImpl implements IEServiceTemplateClient {
     }
 
     @Override
-    public CreatedResource updateEServiceTemplateVersionAttributes(UUID eServiceTemplateId,
+    public void updateEServiceTemplateVersionAttributes(UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId, DescriptorAttributesSeed seed) {
-        return this.eserviceTemplatesApi.updateEServiceTemplateVersionAttributes(eServiceTemplateId, eServiceTemplateVersionId, seed);
+        this.eserviceTemplatesApi.updateEServiceTemplateVersionAttributes(eServiceTemplateId, eServiceTemplateVersionId, seed);
     }
 
     @Override
-    public ResponseEntity<CreatedResource> updateEServiceTemplateVersionAttributesWithHttpInfo(
+    public ResponseEntity<Void> updateEServiceTemplateVersionAttributesWithHttpInfo(
         UUID eServiceTemplateId, UUID eServiceTemplateVersionId,
         DescriptorAttributesSeed seed) {
         return this.eserviceTemplatesApi.updateEServiceTemplateVersionAttributesWithHttpInfo(eServiceTemplateId, eServiceTemplateVersionId, seed);

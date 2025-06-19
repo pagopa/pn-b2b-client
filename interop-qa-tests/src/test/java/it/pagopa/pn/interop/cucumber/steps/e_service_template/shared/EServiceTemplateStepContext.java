@@ -3,8 +3,8 @@ package it.pagopa.pn.interop.cucumber.steps.e_service_template.shared;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateAttributesSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionSeed;
 import java.lang.reflect.Field;
@@ -75,7 +75,7 @@ public class EServiceTemplateStepContext {
             EServiceTemplateStepContext::randomAnswers);
 
     // TODO verificare che non si possano incapsulare in un unico oggetto
-    private EServiceRiskAnalysisSeed lastAddedRiskAnalysis;
+    private EServiceTemplateRiskAnalysisSeed lastAddedRiskAnalysis;
     private int lastAddedRiskAnalysisIndex = -1; // -1 means no risk analysis has been added yet
 
     private static boolean isAnswersFieldInRiskAnalysisFormSeed(Field field) {

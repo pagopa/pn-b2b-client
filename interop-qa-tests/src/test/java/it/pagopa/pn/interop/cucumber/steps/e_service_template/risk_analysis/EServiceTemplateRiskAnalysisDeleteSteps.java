@@ -10,7 +10,7 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysis;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateRiskAnalysis;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -52,7 +52,7 @@ public class EServiceTemplateRiskAnalysisDeleteSteps {
         UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
 
         UUID riskAnalysisId;
-        List<EServiceRiskAnalysis> riskAnalysis = eServiceTemplateClient.getEServiceTemplate(
+        List<EServiceTemplateRiskAnalysis> riskAnalysis = eServiceTemplateClient.getEServiceTemplate(
             eServiceTemplateId).getRiskAnalysis();
         if(isEmpty(riskAnalysis)) {
             throw new IllegalStateException("Nessuna risk analysis presente nell'e-service template");
