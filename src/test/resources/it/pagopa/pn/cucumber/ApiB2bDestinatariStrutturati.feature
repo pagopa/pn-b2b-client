@@ -346,7 +346,7 @@ Feature: Api b2b per destinatari strutturati
   Scenario: [B2B-RECIPIENT_LEGALFACT_3] Invio notifica e download atto opponibile PEC_RECEIPT_scenario positivo
     Given si predispone addressbook per l'utente "CucumberSpa"
     And viene disabilitato il servizio SERCQ SEND per il comune di "Comune_1"
-    Given viene generata una nuova notifica
+    And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
     And destinatario CucumberSpa
