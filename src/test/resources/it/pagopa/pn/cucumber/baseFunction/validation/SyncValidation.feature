@@ -1039,7 +1039,7 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" con allegato uguale all'allegato di pagamento
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "Same attachment compares more then once in the same request"
 
-
+  @validation
   Scenario: [B2B-PA-SYNC_VALIDATION_71] Invio notifica multidestinatario con allegato uguale all'allegato di pagamento - PN-10162
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
