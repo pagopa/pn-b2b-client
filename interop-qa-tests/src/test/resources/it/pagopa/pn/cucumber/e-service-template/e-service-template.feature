@@ -2064,7 +2064,6 @@ Feature: Test API of e-service template
     # che il test risultante - producendo una chiamata HTTP che viene bloccata già dal client OpenApi
     # generato - non fornisce alcun valore aggiunto.
 
-  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-6502
   @e-service-template-to-finish
   @e-service-template-instance-read
   Scenario: [INTEROP-EST-186] La visualizzazione dell'elenco di tutte le istanze di un e-service template inesistente NON può essere effettuata
