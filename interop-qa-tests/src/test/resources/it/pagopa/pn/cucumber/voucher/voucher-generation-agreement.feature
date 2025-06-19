@@ -1,4 +1,4 @@
-@voucher
+@voucher-1
 Feature: Generazione del voucher sulle richieste di fruizione
 
 @voucher_generation_agreement1

@@ -1,4 +1,4 @@
-@voucher
+@voucher-1
 Feature: Generazione del voucher richiesta da un Ente
 
   @voucher_generation1
