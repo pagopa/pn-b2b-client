@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template;
 
 import it.pagopa.interop.agreement.domain.ClientType;
 import it.pagopa.interop.authorization.service.utils.PollingService;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.common.operation.IOperation;
 import it.pagopa.interop.common.operation.SimpleOperation;
 import it.pagopa.interop.utils.HttpCallExecutor;
@@ -20,12 +21,12 @@ import org.springframework.http.HttpStatus;
 @Slf4j
 public class DataPreparationServiceTemplate {
     private final PollingService pollingService;
-    private final HttpCallExecutor httpCallExecutor;
+    private final IHttpExecutor httpCallExecutor;
     private final CommonUtils commonUtils;
     public static final String ERROR_RETRIEVING_AGREEMENT = "There was an error while retrieving the agreement by ID!";
 
     public DataPreparationServiceTemplate(
-                                  HttpCallExecutor httpCallExecutor,
+            IHttpExecutor httpCallExecutor,
                                   PollingService pollingService,
                                   CommonUtils commonUtils) {
         this.httpCallExecutor = httpCallExecutor;

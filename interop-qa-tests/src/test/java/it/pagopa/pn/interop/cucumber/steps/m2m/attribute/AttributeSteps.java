@@ -17,7 +17,6 @@ public class AttributeSteps extends AbstractCommonSteps<CertifiedAttribute, UUID
     private final SharedStepsContext sharedStepsContext;
     private final IM2MAttributeClient client;
 
-
     public AttributeSteps(SharedStepsContext sharedStepsContext, ClientTokenConfigurator clientTokenConfigurator) {
         super("certifiedAttribute", clientTokenConfigurator.getM2mAttributeClient(), sharedStepsContext);
         this.client = clientTokenConfigurator.getM2mAttributeClient();

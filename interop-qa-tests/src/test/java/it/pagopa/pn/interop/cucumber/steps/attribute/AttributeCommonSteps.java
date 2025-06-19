@@ -6,6 +6,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.interop.authorization.domain.TenantType;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Attributes;
 import it.pagopa.interop.utils.HttpCallExecutor;
@@ -22,7 +23,7 @@ public class AttributeCommonSteps {
     private final SharedStepsContext sharedStepsContext;
     private final AttributeCommonContext attributeCommonContext;
     private final BFFDataPreparationService dataPreparationService;
-    private final HttpCallExecutor httpCallExecutor;
+    private final IHttpExecutor httpCallExecutor;
     private final IdentityService identityService;
 
     public AttributeCommonSteps(ClientTokenConfigurator clientTokenConfigurator,

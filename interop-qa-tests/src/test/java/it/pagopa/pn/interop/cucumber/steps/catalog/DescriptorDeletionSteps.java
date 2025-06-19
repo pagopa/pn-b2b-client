@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.catalog;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -11,7 +12,7 @@ import org.springframework.http.HttpStatus;
 public class DescriptorDeletionSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
-    private final HttpCallExecutor httpCallExecutor;
+    private final IHttpExecutor httpCallExecutor;
 
     public DescriptorDeletionSteps(ClientTokenConfigurator clientTokenConfigurator,
                                    SharedStepsContext sharedStepsContext) {

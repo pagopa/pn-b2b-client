@@ -1,4 +1,4 @@
-package it.pagopa.pn.interop.cucumber.steps;
+package it.pagopa.pn.interop.cucumber.steps.config;
 
 import io.cucumber.spring.CucumberContextConfiguration;
 import it.pagopa.interop.agreement.service.IAgreementClient;
@@ -33,6 +33,7 @@ import it.pagopa.interop.tracing.config.TracingClientConfigs;
 import it.pagopa.interop.tracing.service.impl.DevAbstractInteropTracingClient;
 import it.pagopa.interop.tracing.service.impl.QAAbstractInteropTracingClient;
 import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.M2MDataPreparationService;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
@@ -82,9 +83,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         M2MEserviceClientImpl.class,
         M2MEServiceTemplateClientImpl.class,
         M2MDataPreparationService.class,
-        M2MEserviceDescriptorClientImpl.class
+        M2MEserviceDescriptorClientImpl.class,
+        CucumberScopedBeans.class
 })
 @EnableScheduling
 @EnableConfigurationProperties
 public class InteropCucumberSpringIntegration {
+
 }

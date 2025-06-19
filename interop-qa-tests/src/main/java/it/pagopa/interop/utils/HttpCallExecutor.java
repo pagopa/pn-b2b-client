@@ -1,6 +1,7 @@
 package it.pagopa.interop.utils;
 
-import lombok.Getter;
+import it.pagopa.interop.common.IHttpExecutor;
+import lombok.Data;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
@@ -9,10 +10,11 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 import java.util.function.Supplier;
 
+
 @Component
-@Getter
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class HttpCallExecutor {
+@Data
+public class HttpCallExecutor implements IHttpExecutor {
     private HttpStatus clientResponse;
     private Object response;
 
@@ -36,5 +38,9 @@ public class HttpCallExecutor {
         return clientResponse;
     }
 
+    public void setRawResponse(int statusCode, Object rawBody) {
+        this.clientResponse = HttpStatus.valueOf(statusCode);
+        this.response = rawBody;
+    }
 
 }

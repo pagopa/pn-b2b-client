@@ -4,6 +4,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Mail;
 import it.pagopa.interop.generated.openapi.clients.bff.model.MailKind;
 import it.pagopa.interop.generated.openapi.clients.bff.model.MailSeed;
@@ -22,7 +23,7 @@ public class TenantMailUpsertSteps {
     private final SharedStepsContext sharedStepsContext;
     private final BFFDataPreparationService dataPreparationService;
     private final IdentityService identityService;
-    private final HttpCallExecutor httpCallExecutor;
+    private final IHttpExecutor httpCallExecutor;
     private String email;
 
     public TenantMailUpsertSteps(ClientTokenConfigurator clientTokenConfigurator,

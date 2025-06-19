@@ -5,6 +5,7 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.domain.Role;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
@@ -20,7 +21,7 @@ public class ClientCreateStep {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final IAuthorizationClient authorizationClientCreate;
     private final IdentityService identityService;
-    private final HttpCallExecutor httpCallExecutor;
+    private final IHttpExecutor httpCallExecutor;
     private final SharedStepsContext sharedStepsContext;
 
     public ClientCreateStep(ClientTokenConfigurator clientTokenConfigurator,
