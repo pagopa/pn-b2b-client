@@ -66,19 +66,19 @@ public class B2bMandateServiceClientImpl implements IPnWebMandateClient {
     }
 
     @Override
-    public MandateDto createMandate(MandateDto mandateDto) throws RestClientException {
+    public void createMandate(MandateDto mandateDto) throws RestClientException {
         it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.MandateDto convertedMandateDto = deepCopy(mandateDto, it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.MandateDto.class);
-        return deepCopy(mandateServiceApi.createMandate(convertedMandateDto), MandateDto.class);
+        deepCopy(mandateServiceApi.createMandate(convertedMandateDto), MandateDto.class);
     }
 
     @Override
     public void updateMandate(String mandateId, UpdateRequestDto updateRequestDto) throws RestClientException {
-        this.mandateServiceApi.updateMandate(mandateId,deepCopy(updateRequestDto,it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.UpdateRequestDto.class));
+        this.mandateServiceApi.updateMandate(mandateId, deepCopy(updateRequestDto, it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.UpdateRequestDto.class));
     }
 
     @Override
     public void updateMandate(String xPagopaPnCxId, CxTypeAuthFleet xPagopaPnCxType, String mandateId, List<String> xPagopaPnCxGroups, String xPagopaPnCxRole, UpdateRequestDto updateRequestDto) throws RestClientException {
-        this.mandateServiceApi.updateMandate(mandateId,deepCopy(updateRequestDto,it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.UpdateRequestDto.class));
+        this.mandateServiceApi.updateMandate(mandateId, deepCopy(updateRequestDto, it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.UpdateRequestDto.class));
     }
 
     @Override
@@ -113,7 +113,7 @@ public class B2bMandateServiceClientImpl implements IPnWebMandateClient {
         it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.SearchMandateRequestDto searchMandateRequestDto = new it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.SearchMandateRequestDto();
         searchMandateRequestDto.setTaxId(taxId);
         searchMandateRequestDto.setGroups(groups);
-        it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.SearchMandateResponseDto responseDto= mandateServiceApi.searchMandatesByDelegate(10, null, searchMandateRequestDto);
+        it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.SearchMandateResponseDto responseDto = mandateServiceApi.searchMandatesByDelegate(10, null, searchMandateRequestDto);
         return (responseDto != null && responseDto.getResultsPage() != null)
                 ? responseDto.getResultsPage().stream().map(x -> deepCopy(x, MandateDto.class)).toList() : null;
     }
@@ -157,13 +157,13 @@ public class B2bMandateServiceClientImpl implements IPnWebMandateClient {
         return bearerTokenSetted;
     }
 
-    private <T> T deepCopy( Object obj, Class<T> toClass) {
+    private <T> T deepCopy(Object obj, Class<T> toClass) {
         ObjectMapper objMapper = JsonMapper.builder()
                 .addModule(new JavaTimeModule())
                 .build();
         try {
-            String json = objMapper.writeValueAsString( obj );
-            return objMapper.readValue( json, toClass );
+            String json = objMapper.writeValueAsString(obj);
+            return objMapper.readValue(json, toClass);
         } catch (JsonProcessingException exc) {
             throw new PnB2bException(exc.getMessage());
         }

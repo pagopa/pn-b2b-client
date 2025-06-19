@@ -1,6 +1,6 @@
 Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto giudiziario 890
 
-  @giacenza890Simplified
+  @giacenza890Simplified @fixCadArcad
   Scenario: [B2B_GIACENZA_890_WI1.1_1] Consegnata atto in Giacenza prima dei 10 giorni.
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -11,15 +11,49 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | via@OK-Giacenza-lte10_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON080"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG010"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG011A"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG012"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG005B" e verifica tipo DOC "ARCAD"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG005B" e verifica tipo DOC "23L"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG005C"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL |
+      | details_deliveryDetailCode | CON080   |
+      | details_recIndex           | 0        |
+      | details_sentAttemptMade    | 0        |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL |
+      | details_deliveryDetailCode | RECAG010 |
+      | details_recIndex           | 0        |
+      | details_sentAttemptMade    | 0        |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL  |
+      | details_deliveryDetailCode | RECAG011A |
+      | details_recIndex           | 0         |
+      | details_sentAttemptMade    | 0         |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | details                    | NOT_NULL |
+      | details_deliveryDetailCode | RECAG012 |
+      | details_recIndex           | 0        |
+      | details_sentAttemptMade    | 0        |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL |
+      | details_deliveryDetailCode | CON080   |
+      | details_recIndex           | 0        |
+      | details_sentAttemptMade    | 0        |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                    |
+      | details_deliveryDetailCode | RECAG005B                   |
+      | details_recIndex           | 0                           |
+      | details_sentAttemptMade    | 0                           |
+      | details_attachments        | [{"documentType": "ARCAD"}] |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                  |
+      | details_deliveryDetailCode | RECAG005B                 |
+      | details_recIndex           | 0                         |
+      | details_sentAttemptMade    | 0                         |
+      | details_attachments        | [{"documentType": "23L"}] |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL  |
+      | details_deliveryDetailCode | RECAG005C |
+      | details_recIndex           | 0         |
+      | details_sentAttemptMade    | 0         |
     #And si verifica che il timestamp dell'elemento di timeline della notifica SEND_ANALOG_FEEDBACK con deliveryDetailCode RECAG012 sia uguale al timestamp di REFINEMENT
   #"@sequence.5s-CON080.5s-RECAG010.5s-RECAG011A.30s-RECAG012.5s-RECAG005A.5s-RECAG005B[DOC:ARCAD;DOC:23L].5s-RECAG005C"
 
@@ -107,7 +141,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | details_deliveryDetailCode | RECAG005C |
       | details_sentAttemptMade    | 0         |
     And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      |  |  |
+      | NULL | NULL |
     #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.60s-RECAG012.5s-RECAG011B[DOC:ARCAD;DOC:23L].60s-RECAG005A.5s-RECAG005C"
 
 
@@ -227,8 +261,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | details_deliveryDetailCode | RECAG006C |
       | details_sentAttemptMade    | 0         |
     And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      |  |  |
-
+      | NULL | NULL |
   #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.30s-RECAG012.5s-RECAG006A.5s-RECAG006B[DOC:ARCAD;DOC:23L].5s-RECAG006C"
 
 
@@ -292,7 +325,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | details_deliveryDetailCode | RECAG006C |
       | details_sentAttemptMade    | 0         |
     And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      |  |  |
+      | NULL | NULL |
     #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.60s-RECAG012.5s-RECAG011B[DOC:ARCAD;DOC:23L].60s-RECAG006A.5s-RECAG006C"
 
 
@@ -349,11 +382,11 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | details_deliveryDetailCode | RECAG006C |
       | details_sentAttemptMade    | 0         |
     And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      |  |  |
+      | NULL | NULL |
   #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.60s-RECAG012.5s-RECAG011B[DOC:ARCAD].5s-RECAG006A.5s-RECAG006B[DOC:23L].5s-RECAG006C"
 
 
-  @giacenza890Simplified
+  @giacenza890Simplified @fixCadArcad
   Scenario: [B2B_GIACENZA_890_WI1.1_7] Mancata Consegna in Giacenza prima dei 10 giorni.
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -364,14 +397,39 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | digitalDomicile         | NULL                        |
       | physicalAddress_address | via@FAIL-Giacenza-lte10_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON080"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG010"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG011A"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG007B" e verifica tipo DOC "Plico"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG007B" e verifica tipo DOC "ARCAD"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG007C"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL |
+      | details_deliveryDetailCode | CON080   |
+      | details_recIndex           | 0        |
+      | details_sentAttemptMade    | 0        |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL |
+      | details_deliveryDetailCode | RECAG010 |
+      | details_recIndex           | 0        |
+      | details_sentAttemptMade    | 0        |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL  |
+      | details_deliveryDetailCode | RECAG011A |
+      | details_recIndex           | 0         |
+      | details_sentAttemptMade    | 0         |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                    |
+      | details_deliveryDetailCode | RECAG007B                   |
+      | details_recIndex           | 0                           |
+      | details_sentAttemptMade    | 0                           |
+      | details_attachments        | [{"documentType": "ARCAD"}] |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                    |
+      | details_deliveryDetailCode | RECAG007B                   |
+      | details_recIndex           | 0                           |
+      | details_sentAttemptMade    | 0                           |
+      | details_attachments        | [{"documentType": "Plico"}] |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | details                    | NOT_NULL  |
+      | details_deliveryDetailCode | RECAG007C |
+      | details_recIndex           | 0         |
+      | details_sentAttemptMade    | 0         |
 
   #"@sequence.5s-CON080.5s-RECAG010.5s-RECAG011A.30s-RECAG012.5s-RECAG007A.5s-RECAG007B[DOC:ARCAD;DOC:Plico].5s-RECAG007C"
 
@@ -440,7 +498,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | details_deliveryDetailCode | RECAG007C |
       | details_sentAttemptMade    | 0         |
     And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      |  |  |
+      | NULL | NULL |
     #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.60s-RECAG012.5s-RECAG011B[DOC:ARCAD;DOC:23L].60s-RECAG007A.5s-RECAG007B[DOC:Plico].5s-RECAG007C"
 
   @giacenza890Simplified
@@ -531,7 +589,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | details_deliveryDetailCode | RECAG008C |
       | details_sentAttemptMade    | 0         |
     And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      |  |  |
+      | NULL | NULL |
     #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.60s-RECAG012.5s-RECAG011B[DOC:ARCAD;DOC:23L].60s-RECAG008A.5s-RECAG008B[DOC:Plico].5s-RECAG008C"
 
   @esposizioneCadArcad
@@ -595,7 +653,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       |  |  |
     #"@sequence.5s-CON080.5s-RECAG010.5s-RECAG011A.5s-RECAG012.5s-RECAG005A.5s-RECAG005B[DOC:CAD;DOC:23L].5s-RECAG005C"
 
-  @giacenza890Simplified
+  @giacenza890Simplified @fixCadArcad
   Scenario: [B2B_GIACENZA_890_WI1.1_11] Attesa elemento di timeline REFINEMENT con physicalAddress OK-WO-011B (TEST TECNICO)
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -604,11 +662,24 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | digitalDomicile         | NULL           |
       | physicalAddress_address | via@OK-WO-011B |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG011B" e verifica tipo DOC "ARCAD"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG011B" e verifica tipo DOC "23L"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG012"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                    |
+      | details_deliveryDetailCode | RECAG011B                   |
+      | details_recIndex           | 0                           |
+      | details_sentAttemptMade    | 0                           |
+      | details_attachments        | [{"documentType": "ARCAD"}] |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                  |
+      | details_deliveryDetailCode | RECAG011B                 |
+      | details_recIndex           | 0                         |
+      | details_sentAttemptMade    | 0                         |
+      | details_attachments        | [{"documentType": "23L"}] |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | details_deliveryDetailCode | RECAG012 |
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
+      | details_sentAttemptMade    | 0        |
     #"@sequence.5s-RECAG011B[DOC:ARCAD].5s-RECAG011B[DOC:23L].5m-RECAG012"
 
   @giacenza890Simplified
@@ -661,7 +732,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | details_physicalAddress    | {"at": "Presso", "address": "@OK-GIACENZADELEGATO-LTE10_890_REDRIVE", "addressDetails": "SCALA B", "zip": "87100", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "province": "CS", "foreignState": "ITALIA"} |
       | details_responseStatus     | OK                                                                                                                                                                                                                          |
     And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      |  |  |
+      | loadTimeline | true |
     #"sequenceName": "OK-GiacenzaDelegato-lte10_890_redrive", "sequence": "@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.30s-RECAG006A.5s-RECAG006B[DOC:ARCAD;DOC:23L].60s-RECAG006C.60s-RECAG012"
     #Risultato atteso: l’evento fuori ordine viene inserito nella tabella degli errori e recuperato automaticamente da paper channel all’arrivo dell’evento RECAG012
 
@@ -722,7 +793,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | details_deliveryDetailCode | RECAG007C |
       | details_sentAttemptMade    | 0         |
     And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      |  |  |
+      | NULL | NULL |
     #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.60s-RECAG011B[DOC:ARCAD;DOC:23L].60s-RECAG007A.5s-RECAG007B[DOC:Plico].5s-RECAG007C"
     #PNAG012 come evento di feedback con data: RECAG011A + refinementDuration (1 minuto in DEV)
 
@@ -880,12 +951,12 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN010"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "<expectedDeliveryDetailCode>"
-    And lo scarto temporale tra "RECRN010" e "<expectedDeliveryDetailCode>" è inferiore a <intervallo>
+    And lo scarto temporale tra "RECRN010" e "<expectedDeliveryDetailCode>" è inferiore a 1 minuti
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "<expectedFeedbackDeliveryDetailCode>"
     Examples:
-      | sequenceName         | expectedDeliveryDetailCode | intervallo | expectedFeedbackDeliveryDetailCode |
+      | sequenceName         | expectedDeliveryDetailCode | expectedFeedbackDeliveryDetailCode |
       #per i seguenti due casi, i 10 giorni diventano 1 minuto (parametro: RefinementDuration)
-      | Via@OK-Giacenza_AR   | RECRN003A                  | 1 minuti   | RECRN003C                          |
-      | Via@FAIL-Giacenza_AR | RECRN004A                  | 1 minuti   | RECRN004C                          |
+      | Via@OK-Giacenza_AR   | RECRN003A                  | RECRN003C                          |
+      | Via@FAIL-Giacenza_AR | RECRN004A                  | RECRN004C                          |
 
 

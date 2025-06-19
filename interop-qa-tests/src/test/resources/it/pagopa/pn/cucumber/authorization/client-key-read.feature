@@ -1,4 +1,4 @@
-@client_key_read
+@client
 Feature: Lettura di una chiave pubblica contenuta in un client
   Tutti gli utenti autenticati possono recuperare le informazioni di una chiave pubblica contenuta in un client 
 

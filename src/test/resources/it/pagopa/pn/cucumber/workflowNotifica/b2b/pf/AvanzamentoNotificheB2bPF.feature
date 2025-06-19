@@ -348,3 +348,33 @@ Feature: avanzamento notifiche b2b persona fisica
     And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
 
+  @bugAvanzamentoNotifiche
+  Scenario: [BUG-MAPPING-INDIRIZZO-ANPR_1] Verifica l'inserimento del "/" tra il civico e la lettera. (es: 22/24123)
+    Given viene generata una nuova notifica
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
+    And destinatario
+      | digitalDomicile         | NULL                      |
+      | taxId                   | LVLDAA85T50G702B          |
+      | physicalAddress_address | Via @FAIL-IRREPERIBILE_AR |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_1"
+    Then viene verificato che nell'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" sia presente:
+      | details.sentAttemptMade         | 1                            |
+      | details.physicalAddress.address | __REGEX__.*\\b\\d+/\\d+\\b.* |
+
+  @bugAvanzamentoNotifiche
+  Scenario: [BUG-MAPPING-INDIRIZZO-ANPR_2] Verificare il non inserimento del "/" tra il civico e la lettera. (es: 5L)
+    Given viene generata una nuova notifica
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
+    And destinatario
+      | digitalDomicile         | NULL                      |
+      | taxId                   | FRMTTR76M06B715E          |
+      | physicalAddress_address | Via @FAIL-IRREPERIBILE_AR |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then viene verificato che nell'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" sia presente:
+      | details.sentAttemptMade         | 1                             |
+      | details.physicalAddress.address | __REGEX__..*\b\d+[A-Za-z]\b.* |

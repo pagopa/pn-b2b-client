@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.authorization;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
+import it.pagopa.interop.authorization.domain.Role;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
@@ -33,9 +34,17 @@ public class ClientCreateStep {
 
     @Given("l'utente è un {string} di {string}")
     public void setRole(String role, String tenantType) {
-        String token = identityService.getToken(tenantType, role);
+        setRole(1, role, tenantType);
+    }
+
+    @Given("l'utente è il numero {int} ad avere ruolo {string} di {string}")
+    public void setRole(int userIndex, String role, String tenantType) {
+        // La numerazione di userIndex parte da 1 dal pdv del chiamante
+        String token = identityService.getToken(tenantType, role, --userIndex);
+
         clientTokenConfigurator.setBearerToken(token);
         sharedStepsContext.setUserToken(token);
+        sharedStepsContext.setRole(Role.fromValue(role.toUpperCase()));
         sharedStepsContext.setTenantType(tenantType);
     }
 

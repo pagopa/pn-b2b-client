@@ -29,6 +29,7 @@ Feature: Notifica pagata
       | details          | NOT_NULL |
       | details_recIndex | 0        |
     And viene verificato che l'elemento di timeline "REFINEMENT" non esista
+      | loadTimeline     | true     |
       | details          | NOT_NULL |
       | details_recIndex | 0        |
 
@@ -55,9 +56,11 @@ Feature: Notifica pagata
     And l'avviso pagopa viene pagato correttamente
     And si attende il corretto pagamento della notifica
     And viene verificato che l'elemento di timeline "PREPARE_SIMPLE_REGISTERED_LETTER" non esista
+      | loadTimeline     | true     |
       | details          | NOT_NULL |
       | details_recIndex | 0        |
     And viene verificato che l'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER" non esista
+      | loadTimeline     | true     |
       | details          | NOT_NULL |
       | details_recIndex | 0        |
 
@@ -79,6 +82,7 @@ Feature: Notifica pagata
     Then l'avviso pagopa viene pagato correttamente
     And si attende il corretto pagamento della notifica
     And viene verificato che l'elemento di timeline "SEND_ANALOG_DOMICILE" non esista
+      | loadTimeline            | true     |
       | details                 | NOT_NULL |
       | details_recIndex        | 0        |
       | details_sentAttemptMade | 0        |

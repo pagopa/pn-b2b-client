@@ -192,7 +192,7 @@ Feature: Workflow analogico
       | details_recIndex        | 0                                  |
       | details_sentAttemptMade | 0                                  |
       | legalFactsIds           | [{"category": "DIGITAL_DELIVERY"}] |
-   # And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT" e verifica data schedulingDate più 3"m" per il destinatario 0 rispetto ell'evento in timeline "DIGITAL_DELIVERY_CREATION_REQUEST"
+   # And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT" e verifica data schedulingDate più 3"m" per il destinatario 0 rispetto all'evento in timeline "DIGITAL_DELIVERY_CREATION_REQUEST"
     And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGITAL_FAILURE_WORKFLOW"
       | details          | NOT_NULL |
       | details_recIndex | 0        |
@@ -545,10 +545,9 @@ Feature: Workflow analogico
       | details_digitalAddress  | {"address": "provaemail@test.it", "type": "EMAIL"} |
       | details_recIndex        | 0                                                  |
       | details_sentAttemptMade | 0                                                  |
-    And viene verificato che l'elemento di timeline "SCHEDULE_ANALOG_WORKFLOW" esista
-      | NULL | NULL |
-    And controlla che il timestamp di "SEND_ANALOG_DOMICILE" sia dopo quello di invio e di attesa di lettura del messaggio di cortesia
-      | NULL | NULL |
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_ANALOG_WORKFLOW"
+    And il timestamp dell'evento "SEND_ANALOG_DOMICILE" è successivo a quello dell'evento "SEND_COURTESY_MESSAGE"
+
 
   @e2e  @giacenza890Complex
   Scenario: [E2E-WF-ANALOG-12] Invio notifica con percorso analogico. Successo giacenza delegato 890 (OK-GiacenzaDelegato-lte10_890).

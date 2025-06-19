@@ -21,10 +21,12 @@ import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.web.client.RestTemplate;
 import software.amazon.awssdk.utils.StringUtils;
 
 @Configuration
+@EnableRetry
 public class InteropRestTemplateConfiguration {
 
     public static final String CUCUMBER_SCENARIO_NAME_MDC_ENTRY = "cucumber_scenario_name";
@@ -42,6 +44,7 @@ public class InteropRestTemplateConfiguration {
         restTemplate.setRequestFactory(requestFactory);
         List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
         interceptors.add(new RequestResponseLoggingInterceptor());
+        restTemplate.getMessageConverters().add(new FileHttpMessageConverter());
         return restTemplate;
     }
 
