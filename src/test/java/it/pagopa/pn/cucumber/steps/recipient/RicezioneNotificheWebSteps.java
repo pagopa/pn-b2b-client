@@ -837,7 +837,7 @@ public class RicezioneNotificheWebSteps {
         Assertions.assertDoesNotThrow(() -> {
             List<LegalCourtesyAddressWrapper> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
             if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
-                this.iPnWebUserAttributesClient.deleteRecipientLegalAddress(senderId, LegalCourtesyAddressWrapper.ChannelType.SERCQ);
+                this.iPnWebUserAttributesClient.deleteRecipientLegalAddress(senderId, LegalCourtesyAddressWrapper.ChannelType.SERCQ_SEND);
                 log.info("SERCQ DISABLED");
             }
         });

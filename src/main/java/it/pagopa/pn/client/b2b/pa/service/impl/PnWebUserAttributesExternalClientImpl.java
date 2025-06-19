@@ -240,10 +240,10 @@ public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttribut
         addressesApi.deleteAddressV1(BffAddressType.COURTESY, senderId, BffChannelType.fromValue(channelType.getValue()));
     }
 
-    public List<LegalCourtesyAddressWrapper> getCourtesyAddressByRecipient() throws RestClientException {
+    public List<CourtesyDigitalAddress> getCourtesyAddressByRecipient() throws RestClientException {
         return addressesApi.getAddressesV1().stream()
                 .filter(item -> "COURTESY".equals(item.getAddressType()))
-                .map(item -> deepCopy(item, LegalCourtesyAddressWrapper.class))
+                .map(item -> deepCopy(item, CourtesyDigitalAddress.class))
                 .toList();
     }
 

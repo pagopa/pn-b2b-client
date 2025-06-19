@@ -11,6 +11,7 @@ import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
 import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.AddressVerification;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.CourtesyDigitalAddress;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.UserAddresses;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.api.ConsentsApi;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.Consent;
@@ -194,10 +195,10 @@ public class B2BUserAttributesExternalClientImpl implements IPnWebUserAttributes
         courtesyApiAddressBook.deleteRecipientCourtesyAddress(senderId, deepCopy(channelType, it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.CourtesyChannelType.class));
     }
 
-    public List<LegalCourtesyAddressWrapper> getCourtesyAddressByRecipient() throws RestClientException {
+    public List<CourtesyDigitalAddress> getCourtesyAddressByRecipient() throws RestClientException {
         return courtesyApiAddressBook.getCourtesyAddressByRecipient()
                 .stream()
-                .map(x -> deepCopy(x, LegalCourtesyAddressWrapper.class))
+                .map(x -> deepCopy(x, CourtesyDigitalAddress.class))
                 .toList();
     }
 
