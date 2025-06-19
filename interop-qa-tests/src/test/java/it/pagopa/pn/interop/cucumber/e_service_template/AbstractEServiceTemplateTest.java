@@ -9,7 +9,7 @@ import org.junit.platform.suite.api.ConfigurationParameter;
  * Base configuration class for all EServiceTemplate tests.
  */
 @SuppressWarnings("java:S2187")
-@ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent")
+@ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "same_thread")
 
 /* È stato osservato che alcuni test generano errori se eseguiti in concorrenza; le seguenti
  * configurazioni servono a garantire che suddetti test non vengano eseguiti in parallelo. */
