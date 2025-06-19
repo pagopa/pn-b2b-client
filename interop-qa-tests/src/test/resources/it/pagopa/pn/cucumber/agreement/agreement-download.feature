@@ -1,4 +1,4 @@
-@agreement
+@agreement-1
 Feature: Download attestazione richiesta di fruizione sigillata
   Tutti gli utenti autorizzati possono scaricare l'attestazione di una richiesta di fruizione in stato ACTIVE, SUSPENDED o ARCHIVED.
 

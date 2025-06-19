@@ -1,4 +1,4 @@
-@agreement
+@agreement-1
 Feature: Clonazione di una richiesta di fruizione.
   Tutti gli utenti autorizzati possono clonare una richiesta di fruizione in stato REJECTED
 

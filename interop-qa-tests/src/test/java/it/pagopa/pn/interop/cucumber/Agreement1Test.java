@@ -23,6 +23,6 @@ import org.junit.platform.suite.api.Suite;
         @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "same_thread"),
 })
 @ExcludeTags({"wait_for_fix"})
-@IncludeTags({"agreement"})
-public class AgreementTest {
+@IncludeTags({"agreement-1"})
+public class Agreement1Test {
 }
