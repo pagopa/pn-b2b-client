@@ -24,6 +24,6 @@ import org.junit.platform.suite.api.Suite;
 })
 @ExcludeTags({"wait_for_fix"})
 //@IncludeTags({"voucher_wait_for_fix"})
-@IncludeTags({"voucher-1a"})
-public class Voucher1aTest {
+@IncludeTags({"voucher-1ax"})
+public class Voucher1axTest {
 }

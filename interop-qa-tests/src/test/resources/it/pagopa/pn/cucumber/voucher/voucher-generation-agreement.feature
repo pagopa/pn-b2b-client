@@ -1,6 +1,7 @@
 @voucher-1a
 Feature: Generazione del voucher sulle richieste di fruizione
 
+@voucher-1ax
 @voucher_generation_agreement1
 Scenario: La generazione del Voucher va a buon fine quando la richiesta di fruizione viene sospesa e poi riattivata dall’erogatore
     Given l'utente è un "admin" di "PA1"
@@ -16,6 +17,7 @@ Scenario: La generazione del Voucher va a buon fine quando la richiesta di fruiz
     When l'utente richiede la generazione del voucher
     Then si ottiene la corretta generazione del voucher
 
+@voucher-1ax
 @voucher_generation_agreement2
 Scenario: La generazione del Voucher va a buon fine quando la richiesta di fruizione viene sospesa e poi riattivata dal fruitore
     Given l'utente è un "admin" di "PA1"
@@ -31,6 +33,7 @@ Scenario: La generazione del Voucher va a buon fine quando la richiesta di fruiz
     When l'utente richiede la generazione del voucher
     Then si ottiene la corretta generazione del voucher
 
+@voucher-1ax
 @voucher_generation_agreement3
 Scenario: La generazione del Voucher va a buon fine quando la richiesta di fruizione viene sospesa dall’erogatore e dal fruitore, e poi riattivata sia dall’erogatore che dal fruitore
     Given l'utente è un "admin" di "PA1"
@@ -48,6 +51,7 @@ Scenario: La generazione del Voucher va a buon fine quando la richiesta di fruiz
     When l'utente richiede la generazione del voucher
     Then si ottiene la corretta generazione del voucher
 
+@voucher-1ax
 @voucher_generation_agreement4 @no-parallel
 Scenario: La generazione del Voucher va a buon fine quando il fruitore perde e poi riottiene un attributo certificato necessario all’utilizzo dell’EService
     Given l'utente è un "admin" di "PA1"
@@ -66,6 +70,7 @@ Scenario: La generazione del Voucher va a buon fine quando il fruitore perde e p
     When l'utente richiede la generazione del voucher
     Then si ottiene la corretta generazione del voucher
 
+@voucher-1ax
 @voucher_generation_agreement5
 Scenario: La generazione del Voucher va a buon fine quando il fruitore perde e poi riottiene un attributo verificato necessario all’utilizzo dell’EService
     Given l'utente è un "admin" di "PA1"
@@ -86,6 +91,7 @@ Scenario: La generazione del Voucher va a buon fine quando il fruitore perde e p
     When l'utente richiede la generazione del voucher
     Then si ottiene la corretta generazione del voucher
 
+@voucher-1ax
 @voucher_generation_agreement6 @no-parallel
 Scenario: La generazione del Voucher va a buon fine quando il fruitore perde e poi riottiene un attributo dichiarato necessario all’utilizzo dell’EService
     Given l'utente è un "admin" di "PA1"
@@ -104,6 +110,7 @@ Scenario: La generazione del Voucher va a buon fine quando il fruitore perde e p
     When l'utente richiede la generazione del voucher
     Then si ottiene la corretta generazione del voucher
 
+@voucher-1ax
 @voucher_generation_agreement7
 Scenario: La generazione del Voucher va a buon fine quando la richiesta di fruizione attiva subisce un upgrade verso una Versione dell’EService più recente, e l’upgrade viene completato direttamente
     Given l'utente è un "admin" di "PA1"
@@ -119,6 +126,7 @@ Scenario: La generazione del Voucher va a buon fine quando la richiesta di fruiz
     When l'utente richiede la generazione del voucher
     Then si ottiene la corretta generazione del voucher
 
+@voucher-1ax
 @voucher_generation_agreement8 @wait_for_fix @PIN-5405
 Scenario: La generazione del Voucher va a buon fine quando la richiesta di fruizione attiva subisce un upgrade verso una Versione dell’EService più recente, e la richiesta rimane in attesa di approvazione
     Given l'utente è un "admin" di "PA1"
@@ -136,6 +144,7 @@ Scenario: La generazione del Voucher va a buon fine quando la richiesta di fruiz
     When l'utente richiede la generazione del voucher 
     Then si ottiene la corretta generazione del voucher
 
+@voucher-1ax
 @voucher_generation_agreement9 @wait_for_fix @PIN-5405
 Scenario: La generazione del Voucher va a buon fine quando la richiesta di fruizione attiva subisce un upgrade verso una Versione dell’EService più recente, e la richiesta passa in attesa di approvazione e poi approvata dall’erogatore
     Given l'utente è un "admin" di "PA1"
@@ -156,6 +165,7 @@ Scenario: La generazione del Voucher va a buon fine quando la richiesta di fruiz
     When l'utente richiede la generazione del voucher
     Then si ottiene la corretta generazione del voucher
 
+@voucher-1ay
 @voucher_generation_agreement10 @wait_for_fix @PIN-5405
 Scenario: La generazione del Voucher va a buon fine quando la richiesta di fruizione attiva subisce un upgrade verso una Versione dell’EService più recente, e la richiesta passa in attesa di approvazione e poi rifiutata dall’erogatore
     Given l'utente è un "admin" di "PA1"
@@ -174,6 +184,7 @@ Scenario: La generazione del Voucher va a buon fine quando la richiesta di fruiz
     When l'utente richiede la generazione del voucher
     Then si ottiene la corretta generazione del voucher
 
+@voucher-1ay
 @voucher_generation_agreement11
 Scenario: La generazione del Voucher fallisce quando la richiesta di fruizione è sospesa dall’erogatore
     Given l'utente è un "admin" di "PA1"
@@ -188,6 +199,7 @@ Scenario: La generazione del Voucher fallisce quando la richiesta di fruizione �
     When l'utente richiede la generazione del voucher
     Then la richiesta di generazione del Voucher non va a buon fine
 
+@voucher-1ay
 @voucher_generation_agreement12
 Scenario: La generazione del Voucher fallisce quando la richiesta di fruizione è sospesa dal fruitore
     Given l'utente è un "admin" di "PA1"
@@ -202,6 +214,7 @@ Scenario: La generazione del Voucher fallisce quando la richiesta di fruizione �
     When l'utente richiede la generazione del voucher
     Then la richiesta di generazione del Voucher non va a buon fine
 
+@voucher-1ay
 @voucher_generation_agreement13
 Scenario: La generazione del Voucher fallisce quando la richiesta di fruizione è sospesa sia dall’erogatore che dal fruitore
     Given l'utente è un "admin" di "PA1"
@@ -217,6 +230,7 @@ Scenario: La generazione del Voucher fallisce quando la richiesta di fruizione �
     When l'utente richiede la generazione del voucher
     Then la richiesta di generazione del Voucher non va a buon fine
 
+@voucher-1ay
 @voucher_generation_agreement14
 Scenario: La generazione del Voucher fallisce quando la richiesta di fruizione è sospesa sia dall’erogatore che dal fruitore, e poi riattivata dall’erogatore
     Given l'utente è un "admin" di "PA1"
@@ -233,6 +247,7 @@ Scenario: La generazione del Voucher fallisce quando la richiesta di fruizione �
     When l'utente richiede la generazione del voucher
     Then la richiesta di generazione del Voucher non va a buon fine
 
+@voucher-1ay
 @voucher_generation_agreement15
 Scenario: La generazione del Voucher fallisce quando la richiesta di fruizione è sospesa sia dall’erogatore che dal fruitore, e poi riattivata dal fruitore
     Given l'utente è un "admin" di "PA1"
@@ -249,6 +264,7 @@ Scenario: La generazione del Voucher fallisce quando la richiesta di fruizione �
     When l'utente richiede la generazione del voucher
     Then la richiesta di generazione del Voucher non va a buon fine
 
+@voucher-1ay
 @voucher_generation_agreement16 @no-parallel
 Scenario: La generazione del Voucher fallisce quando il fruitore perde un attributo certificato necessario all’utilizzo dell’EService
     Given l'utente è un "admin" di "PA1"
@@ -265,6 +281,7 @@ Scenario: La generazione del Voucher fallisce quando il fruitore perde un attrib
     When l'utente richiede la generazione del voucher
     Then la richiesta di generazione del Voucher non va a buon fine
 
+@voucher-1ay
 @voucher_generation_agreement17 @no-parallel
 Scenario: La generazione del Voucher fallisce quando il fruitore perde un attributo verificato necessario all’utilizzo dell’EService
     Given l'utente è un "admin" di "PA1"
@@ -283,6 +300,7 @@ Scenario: La generazione del Voucher fallisce quando il fruitore perde un attrib
     When l'utente richiede la generazione del voucher
     Then la richiesta di generazione del Voucher non va a buon fine
 
+@voucher-1ay
 @voucher_generation_agreement18 @no-parallel
 Scenario: La generazione del Voucher fallisce quando il fruitore perde un attributo dichiarato necessario all’utilizzo dell’EService
     Given l'utente è un "admin" di "PA1"
@@ -299,6 +317,7 @@ Scenario: La generazione del Voucher fallisce quando il fruitore perde un attrib
     When l'utente richiede la generazione del voucher
     Then la richiesta di generazione del Voucher non va a buon fine
 
+@voucher-1ay
 @voucher_generation_agreement19
 Scenario: La generazione del Voucher fallisce quando la richiesta di fruizione viene archiviata dal fruitore
     Given l'utente è un "admin" di "PA1"
@@ -313,6 +332,7 @@ Scenario: La generazione del Voucher fallisce quando la richiesta di fruizione v
     When l'utente richiede la generazione del voucher
     Then la richiesta di generazione del Voucher non va a buon fine
 
+@voucher-1ay
 @voucher_generation_agreement20
 Scenario: La generazione del Voucher fallisce quando la richiesta di fruizione sospesa subisce un upgrade verso una Versione dell’EService più recente, e l’upgrade viene completato direttamente
     Given l'utente è un "admin" di "PA1"
