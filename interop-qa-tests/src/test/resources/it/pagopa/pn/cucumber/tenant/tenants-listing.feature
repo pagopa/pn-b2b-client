@@ -1,4 +1,5 @@
 @tenants
+@tenants-listing
 Feature: Listing degli aderenti
   Tutti gli utenti autenticati possono leggere la lista dei aderenti
 

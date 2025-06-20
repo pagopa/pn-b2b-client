@@ -1,3 +1,4 @@
+@client
 @client_admin
 Feature: Associazione di un admin ad un client
 

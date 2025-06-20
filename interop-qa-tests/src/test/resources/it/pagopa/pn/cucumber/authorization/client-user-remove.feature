@@ -1,4 +1,5 @@
 @client
+@client-user
 Feature: Rimozione di un membro da un client
   Tutti gli admin possono rimuovere un membro da un client
 

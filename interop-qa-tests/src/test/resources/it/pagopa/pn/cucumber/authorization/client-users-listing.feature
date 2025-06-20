@@ -1,4 +1,5 @@
 @client
+@client-user
 Feature: Listing utenti client
   Tutti gli utenti autorizzati o security possono leggere la lista dei membri di un client a cui sono associati
 

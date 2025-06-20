@@ -1,4 +1,5 @@
 @client
+@client-crud
 Feature: Cancellazione client
   Tutti gli utenti autorizzati possono cancellare il proprio client
 

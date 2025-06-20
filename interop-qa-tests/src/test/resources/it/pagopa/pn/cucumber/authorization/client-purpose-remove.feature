@@ -1,4 +1,5 @@
 @client
+@client-purpose
 Feature: Rimozione purpose dal client
   Tutti gli utenti autenticati possono disassociare una finalità da un client 
 

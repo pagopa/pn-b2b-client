@@ -1,4 +1,5 @@
 @client
+@client-purpose
 Feature: Associazione finalità al client
   Tutti gli utenti autenticati possono associare una finalità ad un client
   

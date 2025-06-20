@@ -1,4 +1,5 @@
 @tenant
+@tenant-assign
 Feature: Assegnazione di un attributo certificato ad un aderente
   Tutti gli utenti autorizzati degli enti certificatori possono assegnare un attributo certificato
 

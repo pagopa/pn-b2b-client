@@ -1,4 +1,5 @@
 @client
+@client-crud
 Feature: Lettura client singolo
   Tutti gli utenti autenticati possono leggere un singolo client
 

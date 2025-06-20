@@ -1,4 +1,5 @@
 @client
+@client-key
 Feature: Listing chiavi client
   Tutti gli utenti autorizzati, security o support possono leggere la lista delle chiavi di un client a cui sono associati
 

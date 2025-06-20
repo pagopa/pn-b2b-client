@@ -1,4 +1,5 @@
 @tenant @PIN-5022
+@tenant-listing
 Feature: Listing e-service producers
   Tutti gli utenti autenticati possono leggere la lista dei aderenti che erogano almeno un e-service
 
