@@ -1,4 +1,4 @@
-@voucher-1
+@voucher-1b
 Feature: Generazione del voucher sulla creazione del client e sul caricamento della chiave
 
 @voucher_generation_client_and_keys1
