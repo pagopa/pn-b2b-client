@@ -2,7 +2,7 @@
 Feature: Generazione del voucher richiesta da un Ente
 
   @voucher_generation_params_validation1
-  Scenario: La generazione del Voucher fallisce quando il parametro client_assertion_type non ha il valore atteso
+  Scenario: [VOUCHER_GENERATION_PARAMS_VALIDATION_01] La generazione del Voucher fallisce quando il parametro client_assertion_type non ha il valore atteso
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -15,7 +15,7 @@ Feature: Generazione del voucher richiesta da un Ente
     Then la richiesta di generazione del Voucher non va a buon fine
 
   @voucher_generation_params_validation2
-  Scenario: La generazione del Voucher fallisce quando il parametro grant_type non ha il valore atteso
+  Scenario: [VOUCHER_GENERATION_PARAMS_VALIDATION_02] La generazione del Voucher fallisce quando il parametro grant_type non ha il valore atteso
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -28,7 +28,7 @@ Feature: Generazione del voucher richiesta da un Ente
     Then la richiesta di generazione del Voucher non va a buon fine per il parametro grant_type
 
   @voucher_generation_params_validation3
-  Scenario: La generazione del Voucher fallisce quando il parametro client_id è diverso dal claim sub nella client assertion
+  Scenario: [VOUCHER_GENERATION_PARAMS_VALIDATION_03] La generazione del Voucher fallisce quando il parametro client_id è diverso dal claim sub nella client assertion
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -41,7 +41,7 @@ Feature: Generazione del voucher richiesta da un Ente
     Then la richiesta di generazione del Voucher non va a buon fine
 
   @voucher_generation_params_validation4
-  Scenario: La generazione del Voucher fallisce quando la client assertion non è un JWT valido
+  Scenario: [VOUCHER_GENERATION_PARAMS_VALIDATION_04] La generazione del Voucher fallisce quando la client assertion non è un JWT valido
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
