@@ -3,7 +3,7 @@ Feature: Clonazione di una finalità
   Tutti gli utenti autorizzati di enti fruitori possono clonare una propria finalità
 
   @purpose_clone1
-  Scenario Outline: Un utente con sufficienti permessi (admin); il cui ente ha già una finalità in stato ACTIVE, per una versione di e-service, il quale ha mode = RECEIVE, clona una finalità. La richiesta va a buon fine.
+  Scenario Outline: [CLONAZIONE_FINALITA_1] Un utente con sufficienti permessi (admin); il cui ente ha già una finalità in stato ACTIVE, per una versione di e-service, il quale ha mode = RECEIVE, clona una finalità. La richiesta va a buon fine.
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "PA2" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "DRAFT"
     Given "PA2" ha già creato un'analisi del rischio per quell'e-service
@@ -38,7 +38,7 @@ Feature: Clonazione di una finalità
       | PA1  | admin | SUSPENDED            |       200 |
 
   @purpose_clone2
-  Scenario Outline: Un utente con sufficienti permessi (admin); il cui ente ha già una finalità in stato DRAFT, o ARCHIVED per una versione di e-service, il quale ha mode = RECEIVE, clona una finalità. Ottiene un errore se la finalità è in stato DRAFT, successo se è in stato ARCHIVED
+  Scenario Outline: [CLONAZIONE_FINALITA_2] Un utente con sufficienti permessi (admin); il cui ente ha già una finalità in stato DRAFT, o ARCHIVED per una versione di e-service, il quale ha mode = RECEIVE, clona una finalità. Ottiene un errore se la finalità è in stato DRAFT, successo se è in stato ARCHIVED
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "DRAFT"
     Given "PA2" ha già creato un'analisi del rischio per quell'e-service
@@ -49,13 +49,13 @@ Feature: Clonazione di una finalità
     When l'utente richiede una operazione di clonazione della finalità
     Then si ottiene status code <status>
 
-    Examples: 
+    Examples:
       | statoFinalita | status |
       | DRAFT         |  409   |
       | ARCHIVED      |  409   |
 
   @purpose_clone3
-  Scenario Outline: Un utente con sufficienti permessi (admin); il cui ente ha già una finalità in stato WAITING_FOR_APPROVAL, ACTIVE, o SUSPENDED per una versione di e-service, il quale ha mode = DELIVER, clona una finalità. La richiesta va a buon fine. Spiega: visto che ci sono problemi legati all’analisi del rischio in erogazione inversa, non è possibile clonare una finalità che faccia riferimento a un e-service in erogazione inversa.
+  Scenario Outline: [CLONAZIONE_FINALITA_3] Un utente con sufficienti permessi (admin); il cui ente ha già una finalità in stato WAITING_FOR_APPROVAL, ACTIVE, o SUSPENDED per una versione di e-service, il quale ha mode = DELIVER, clona una finalità. La richiesta va a buon fine. Spiega: visto che ci sono problemi legati all’analisi del rischio in erogazione inversa, non è possibile clonare una finalità che faccia riferimento a un e-service in erogazione inversa.
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -63,7 +63,7 @@ Feature: Clonazione di una finalità
     When l'utente richiede una operazione di clonazione della finalità
     Then si ottiene status code 200
 
-    Examples: 
+    Examples:
       | statoFinalita        |
       | ACTIVE               |
       | WAITING_FOR_APPROVAL |
