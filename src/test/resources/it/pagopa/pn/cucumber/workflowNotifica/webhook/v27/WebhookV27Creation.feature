@@ -20,7 +20,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK" per il "Comune_Multi"
     And l'apiKey viene cancellata
 
-    # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
+  # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
   @webhookV27 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_1waitForAccepted] Creazione per una PA di 10 nuovi stream notifica con eventType TIMELINE e senza gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V27"
@@ -37,6 +37,7 @@ Feature: verifica creazione stream
     And l'apiKey viene cancellata
 
   @webhookV27 @precondition @cleanWebhook @webhook2
+  #LIMITE SPECIFICO PER PA: n/a; LIMITE DEFAULT (pnConfigurations.MaxStreams  = 10)
   Scenario: [B2B-STREAM_ES1.1_2] Creazione per una PA di 11 nuovi stream notifica con eventType TIMELINE e senza gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V27"
     And si predispongono 10 nuovi stream denominati "stream-test" con eventType "TIMELINE" con versione "V27"
@@ -45,7 +46,7 @@ Feature: verifica creazione stream
     And viene aggiornata la apiKey utilizzata per gli stream
     And si creano i nuovi stream per il "Comune_Multi" con versione "V27"
     When si predispone 1 nuovo stream denominato "stream-test-11" con eventType "TIMELINE" con versione "V27"
-    And si crea il nuovo stream con versione "V27" per il "Comune_Multi" (caso errato)
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V27"
     Then l'operazione ha prodotto un errore con status code "409"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
@@ -64,7 +65,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-        # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
+  # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
   @webhookV27 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_3waitForAccepted] Creazione per una PA di 10 nuovi stream notifica con eventType TIMELINE con gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V27"
@@ -81,6 +82,7 @@ Feature: verifica creazione stream
     And l'apiKey viene cancellata
 
   @webhookV27 @precondition @cleanWebhook @webhook2
+  #LIMITE SPECIFICO PER PA: n/a; LIMITE DEFAULT (pnConfigurations.MaxStreams  = 10)
   Scenario: [B2B-STREAM_ES1.1_4] Creazione per una PA di 11 nuovi stream notifica con eventType TIMELINE con gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V27"
     And si predispongono 10 nuovi stream denominati "stream-test" con eventType "TIMELINE" con versione "V27"
@@ -89,7 +91,7 @@ Feature: verifica creazione stream
     And viene aggiornata la apiKey utilizzata per gli stream
     And si creano i nuovi stream con versione "V27" per il "Comune_Multi" con un gruppo disponibile "FIRST"
     When si predispone 1 nuovo stream denominato "stream-test-11" con eventType "TIMELINE" con versione "V27"
-    And si crea il nuovo stream con versione "V27" per il "Comune_Multi" (caso errato)
+    And si crea il nuovo stream con versione "V27" per il "Comune_Multi" con un gruppo disponibile "FIRST"
     Then l'operazione ha prodotto un errore con status code "409"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
@@ -108,7 +110,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-        # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
+  # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
   @webhookV27 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_5waitForAccepted] Creazione per una PA di 10 nuovi stream notifica con eventType STATUS e senza gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V27"
@@ -125,6 +127,7 @@ Feature: verifica creazione stream
     And l'apiKey viene cancellata
 
   @webhookV27 @precondition @cleanWebhook @webhook2
+  #LIMITE SPECIFICO PER PA: n/a; LIMITE DEFAULT (pnConfigurations.MaxStreams  = 10)
   Scenario: [B2B-STREAM_ES1.1_6] Creazione per una PA di 11 nuovi stream notifica con eventType STATUS e senza gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V27"
     And si predispongono 10 nuovi stream denominati "stream-test" con eventType "STATUS" con versione "V27"
@@ -133,7 +136,7 @@ Feature: verifica creazione stream
     And viene aggiornata la apiKey utilizzata per gli stream
     And si creano i nuovi stream per il "Comune_Multi" con versione "V27"
     When si predispone 1 nuovo stream denominato "stream-test-11" con eventType "STATUS" con versione "V27"
-    And si crea il nuovo stream con versione "V27" per il "Comune_Multi" (caso errato)
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V27"
     Then l'operazione ha prodotto un errore con status code "409"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
@@ -151,7 +154,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-        # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
+  # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
   @webhookV27 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_7waitForAccepted] Creazione per una PA di 10 nuovi stream notifica con eventType TIMELINE con gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V27"
@@ -167,6 +170,7 @@ Feature: verifica creazione stream
     And l'apiKey viene cancellata
 
   @webhookV27 @precondition @cleanWebhook @webhook2
+  #LIMITE SPECIFICO PER PA: n/a; LIMITE DEFAULT (pnConfigurations.MaxStreams  = 10)
   Scenario: [B2B-STREAM_ES1.1_8] Creazione per una PA di 11 nuovi stream notifica con eventType STATUS con gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V27"
     And si predispongono 10 nuovi stream denominati "stream-test" con eventType "STATUS" con versione "V27"
@@ -175,7 +179,7 @@ Feature: verifica creazione stream
     And viene aggiornata la apiKey utilizzata per gli stream
     And si creano i nuovi stream con versione "V27" per il "Comune_Multi" con un gruppo disponibile "FIRST"
     When si predispone 1 nuovo stream denominato "stream-test-11" con eventType "STATUS" con versione "V27"
-    And si crea il nuovo stream con versione "V27" per il "Comune_Multi" (caso errato)
+    And si crea il nuovo stream con versione "V27" per il "Comune_Multi" con un gruppo disponibile "FIRST"
     Then l'operazione ha prodotto un errore con status code "409"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
@@ -192,7 +196,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-        # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
+  # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
   @webhookV27 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_9waitForAccepted] Creazione di uno stream notifica con gruppo, con eventType "STATUS"  utilizzando un apikey master.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V27"
@@ -241,7 +245,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-        # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
+  # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
   @webhookV27 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_13waitForAccepted] Creazione di uno stream notifica con gruppo, con eventType "STATUS"  utilizzando un apikey con stesso gruppo.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V27"
@@ -291,7 +295,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-        # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
+  # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
   @webhookV27 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_18waitForAccepted] Creazione di uno stream notifica con gruppo, con eventType "TIMELINE"  utilizzando un apikey con stesso gruppo.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V27"
@@ -319,7 +323,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-        # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
+  # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
   @webhookV27 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_19waitForAccepted] Creazione di uno stream notifica senza gruppo, con eventType "STATUS"  utilizzando un apikey master.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V27"
@@ -358,7 +362,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-        # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
+  # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
   @webhookV27 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_22waitForAccepted] Creazione di uno stream notifica senza gruppo, con eventType "TIMELINE"  utilizzando un apikey master.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V27"
@@ -396,7 +400,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-        # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
+  # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
   @webhookV27 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_25waitForAccepted] Creazione di uno stream notifica con gruppo, con eventType "STATUS"  utilizzando un apikey master.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V27"
@@ -423,7 +427,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-        # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
+  # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
   @webhookV27 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_148waitForAccepted] Creazione di uno stream notifica con gruppi appartenenti ad un sottinsieme dei gruppi dell'apikey utilizzata.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V27"
