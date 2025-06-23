@@ -3,14 +3,14 @@ Feature: Lettura di un documento allegato alla richiesta di fruizione
   Tutti gli utenti autorizzati possono leggere un documento allegato alla richiesta di fruizione
 
   @agreement_document_read1
-  Scenario Outline: Un utente con sufficienti permessi, per una richiesta di fruizione precedentemente creata, la quale è in stato DRAFT, relativa a un e-service pubblicato dallo stesso ente, alla richiesta di lettura di un documento allegato, la richiesta va a buon fine.
+  Scenario Outline: [AGREEMENT_DOCUMENT_READ_01] Un utente con sufficienti permessi, per una richiesta di fruizione precedentemente creata, la quale è in stato DRAFT, relativa a un e-service pubblicato dallo stesso ente, alla richiesta di lettura di un documento allegato, la richiesta va a buon fine.
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato e pubblicato 1 e-service
     Given "<ente>" ha già creato una richiesta di fruizione in stato "DRAFT" con un documento allegato
     When l'utente richiede una operazione di lettura del documento allegato a quella richiesta di fruizione
     Then si ottiene status code <risultato>
 
-    Examples: 
+    Examples:
       | ente | ruolo        | risultato |
       | GSP  | admin        |       200 |
       | GSP  | api          |       403 |
@@ -24,14 +24,14 @@ Feature: Lettura di un documento allegato alla richiesta di fruizione
       | PA1  | api,security |       403 |
 
   @agreement_document_read2a
-  Scenario Outline: Un utente con sufficienti permessi, per una richiesta di fruizione precedentemente creata, la quale è in stato PENDING, ACTIVE, SUSPENDED, ARCHIVED, alla richiesta di lettura di un documento allegato, la richiesta va a buon fine.
+  Scenario Outline: [AGREEMENT_DOCUMENT_READ_02A] Un utente con sufficienti permessi, per una richiesta di fruizione precedentemente creata, la quale è in stato PENDING, ACTIVE, SUSPENDED, ARCHIVED, alla richiesta di lettura di un documento allegato, la richiesta va a buon fine.
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "<tipoApprovazione>"
     Given "PA1" ha già creato una richiesta di fruizione in stato "<statoAgreement>" con un documento allegato
     When l'utente richiede una operazione di lettura del documento allegato a quella richiesta di fruizione
     Then si ottiene status code 200
 
-    Examples: 
+    Examples:
       | statoAgreement | tipoApprovazione |
       | PENDING        | MANUAL           |
       | ACTIVE         | AUTOMATIC        |
@@ -39,7 +39,7 @@ Feature: Lettura di un documento allegato alla richiesta di fruizione
       | ARCHIVED       | AUTOMATIC        |
 
   @agreement_document_read2b
-  Scenario Outline: Un utente con sufficienti permessi, per una richiesta di fruizione precedentemente creata, la quale è in stato MISSING_CERTIFIED_ATTRIBUTES, alla richiesta di lettura di un documento allegato, la richiesta va a buon fine.
+  Scenario Outline: [AGREEMENT_DOCUMENT_READ_02B] Un utente con sufficienti permessi, per una richiesta di fruizione precedentemente creata, la quale è in stato MISSING_CERTIFIED_ATTRIBUTES, alla richiesta di lettura di un documento allegato, la richiesta va a buon fine.
     Given l'utente è un "admin" di "<enteFruitore>"
     Given "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"
     Given "<enteErogatore>" ha già creato un e-service in stato "PUBLISHED" che richiede quell'attributo certificato con approvazione automatica
@@ -49,6 +49,6 @@ Feature: Lettura di un documento allegato alla richiesta di fruizione
     When l'utente richiede una operazione di lettura del documento allegato a quella richiesta di fruizione
     Then si ottiene status code 200
 
-    Examples: 
+    Examples:
       | enteFruitore | enteCertificatore | enteErogatore |
       | PA1          | PA2               | GSP           |
