@@ -38,10 +38,6 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescr
 import java.io.File;
 import java.util.List;
 import java.util.UUID;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -206,8 +202,8 @@ public class EServiceApiClientImpl implements IEServiceClient {
     }
 
     @Override
-    public CreatedResource approveDelegatedEServiceDescriptor(UUID eServiceId, UUID descriptorId) {
-        return eservicesApi.approveDelegatedEServiceDescriptor(eServiceId, descriptorId);
+    public void approveDelegatedEServiceDescriptor(UUID eServiceId, UUID descriptorId) {
+        eservicesApi.approveDelegatedEServiceDescriptor(eServiceId, descriptorId);
     }
 
     @Override

@@ -59,5 +59,5 @@ public interface IEServiceClient extends SettableBearerToken {
     void editAgreementApprovalPolicy(UUID eServiceId, UUID descriptorId, AgreementApprovalPolicy policy);
     ProducerEServiceDescriptor getEServiceDescriptor(UUID eServiceId, UUID descriptorId);
 
-    CreatedResource approveDelegatedEServiceDescriptor(UUID eServiceId, UUID descriptorId);
+    void approveDelegatedEServiceDescriptor(UUID eServiceId, UUID descriptorId);
 }
