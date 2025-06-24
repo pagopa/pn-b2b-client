@@ -10,7 +10,7 @@ Feature: Invio atto intero via PEC (fase 2 - estensione F24)
       | payment                 | NULL          |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
-    And si verifica il contenuto degli attacchment da inviare nella pec del destinatario 0 con 2 allegati
+    And si verifica il contenuto degli attachment da inviare nella pec del destinatario 0 con 2 allegati
     And si verifica il contenuto della pec abbia 1 attachment di tipo "AAR"
     And si verifica il contenuto della pec abbia 1 attachment di tipo "NOTIFICATION_ATTACHMENTS"
 
@@ -25,7 +25,7 @@ Feature: Invio atto intero via PEC (fase 2 - estensione F24)
       | payment                 | NULL          |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
-    And si verifica il contenuto degli attacchment da inviare nella pec del destinatario 0 con 3 allegati
+    And si verifica il contenuto degli attachment da inviare nella pec del destinatario 0 con 3 allegati
     And si verifica il contenuto della pec abbia 1 attachment di tipo "AAR"
     And si verifica il contenuto della pec abbia 2 attachment di tipo "NOTIFICATION_ATTACHMENTS"
 
@@ -38,7 +38,7 @@ Feature: Invio atto intero via PEC (fase 2 - estensione F24)
       | digitalDomicile_address | test@pecOk.it |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
-    And si verifica il contenuto degli attacchment da inviare nella pec del destinatario 0 con 3 allegati
+    And si verifica il contenuto degli attachment da inviare nella pec del destinatario 0 con 3 allegati
     And si verifica il contenuto della pec abbia 1 attachment di tipo "AAR"
     And si verifica il contenuto della pec abbia 2 attachment di tipo "NOTIFICATION_ATTACHMENTS"
 
@@ -54,11 +54,11 @@ Feature: Invio atto intero via PEC (fase 2 - estensione F24)
       | payment                 | NULL          |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 0
-    And si verifica il contenuto degli attacchment da inviare nella pec del destinatario 0 con 3 allegati
+    And si verifica il contenuto degli attachment da inviare nella pec del destinatario 0 con 3 allegati
     And si verifica il contenuto della pec abbia 1 attachment di tipo "AAR"
     And si verifica il contenuto della pec abbia 2 attachment di tipo "NOTIFICATION_ATTACHMENTS"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
-    And si verifica il contenuto degli attacchment da inviare nella pec del destinatario 1 con 2 allegati
+    And si verifica il contenuto degli attachment da inviare nella pec del destinatario 1 con 2 allegati
     And si verifica il contenuto della pec abbia 1 attachment di tipo "AAR"
     And si verifica il contenuto della pec abbia 1 attachment di tipo "NOTIFICATION_ATTACHMENTS"
 
@@ -72,7 +72,7 @@ Feature: Invio atto intero via PEC (fase 2 - estensione F24)
       | digitalDomicile_address | test@pecOk.it |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
-    And si verifica il contenuto degli attacchment da inviare nella pec del destinatario 0 con 3 allegati
+    And si verifica il contenuto degli attachment da inviare nella pec del destinatario 0 con 3 allegati
     And si verifica il contenuto della pec abbia 1 attachment di tipo "AAR"
     And si verifica il contenuto della pec abbia 2 attachment di tipo "NOTIFICATION_ATTACHMENTS"
     And si verifica lo SHA degli attachment inseriti nella pec del destinatario 0 di tipo "NOTIFICATION_ATTACHMENTS"
@@ -89,12 +89,12 @@ Feature: Invio atto intero via PEC (fase 2 - estensione F24)
       | digitalDomicile_address | test@pecOk.it |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 0
-    And si verifica il contenuto degli attacchment da inviare nella pec del destinatario 0 con 3 allegati
+    And si verifica il contenuto degli attachment da inviare nella pec del destinatario 0 con 3 allegati
     And si verifica il contenuto della pec abbia 1 attachment di tipo "AAR"
     And si verifica il contenuto della pec abbia 2 attachment di tipo "NOTIFICATION_ATTACHMENTS"
     And si verifica lo SHA degli attachment inseriti nella pec del destinatario 0 di tipo "NOTIFICATION_ATTACHMENTS"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
-    And si verifica il contenuto degli attacchment da inviare nella pec del destinatario 1 con 3 allegati
+    And si verifica il contenuto degli attachment da inviare nella pec del destinatario 1 con 3 allegati
     And si verifica il contenuto della pec abbia 1 attachment di tipo "AAR"
     And si verifica il contenuto della pec abbia 2 attachment di tipo "NOTIFICATION_ATTACHMENTS"
     And si verifica lo SHA degli attachment inseriti nella pec del destinatario 1 di tipo "NOTIFICATION_ATTACHMENTS"
@@ -116,7 +116,7 @@ Feature: Invio atto intero via PEC (fase 2 - estensione F24)
       | payment_multy_number    | 1                    |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
-    Then si verifica il contenuto degli attacchment da inviare nella pec del destinatario 0 con 4 allegati
+    Then si verifica il contenuto degli attachment da inviare nella pec del destinatario 0 con 4 allegati
     And si verifica il contenuto della pec abbia 1 attachment di tipo "AAR"
     And si verifica il contenuto della pec abbia 2 attachment di tipo "NOTIFICATION_ATTACHMENTS"
     And si verifica il contenuto della pec abbia 1 attachment di tipo "F24"
@@ -146,12 +146,12 @@ Feature: Invio atto intero via PEC (fase 2 - estensione F24)
       | payment_multy_number    | 2                    |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 0
-    Then si verifica il contenuto degli attacchment da inviare nella pec del destinatario 0 con 8 allegati
+    Then si verifica il contenuto degli attachment da inviare nella pec del destinatario 0 con 8 allegati
     And si verifica il contenuto della pec abbia 1 attachment di tipo "AAR"
     And si verifica il contenuto della pec abbia 4 attachment di tipo "NOTIFICATION_ATTACHMENTS"
     And si verifica il contenuto della pec abbia 3 attachment di tipo "F24"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
-    Then si verifica il contenuto degli attacchment da inviare nella pec del destinatario 1 con 6 allegati
+    Then si verifica il contenuto degli attachment da inviare nella pec del destinatario 1 con 6 allegati
     And si verifica il contenuto della pec abbia 1 attachment di tipo "AAR"
     And si verifica il contenuto della pec abbia 3 attachment di tipo "NOTIFICATION_ATTACHMENTS"
     And si verifica il contenuto della pec abbia 2 attachment di tipo "F24"
@@ -178,12 +178,12 @@ Feature: Invio atto intero via PEC (fase 2 - estensione F24)
       | payment_multy_number    | 4                    |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 0
-    Then si verifica il contenuto degli attacchment da inviare nella pec del destinatario 0 con 7 allegati
+    Then si verifica il contenuto degli attachment da inviare nella pec del destinatario 0 con 7 allegati
     And si verifica il contenuto della pec abbia 1 attachment di tipo "AAR"
     And si verifica il contenuto della pec abbia 6 attachment di tipo "NOTIFICATION_ATTACHMENTS"
     And si verifica il contenuto della pec abbia 0 attachment di tipo "F24"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
-    Then si verifica il contenuto degli attacchment da inviare nella pec del destinatario 1 con 6 allegati
+    Then si verifica il contenuto degli attachment da inviare nella pec del destinatario 1 con 6 allegati
     And si verifica il contenuto della pec abbia 1 attachment di tipo "AAR"
     And si verifica il contenuto della pec abbia 1 attachment di tipo "NOTIFICATION_ATTACHMENTS"
     And si verifica il contenuto della pec abbia 4 attachment di tipo "F24"

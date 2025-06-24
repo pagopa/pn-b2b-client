@@ -71,6 +71,14 @@ public class EServiceTemplateInstanceReadSteps {
         });
     }
 
+    @Then("sono state visualizzate solo e soltanto {int} istanze, tutte in stato {eServiceDescriptorState}")
+    public void checkEServiceTemplateInstancesCount(int instanceCount, EServiceDescriptorState expectedState) {
+        List<EServiceTemplateInstance> response = ((ResponseEntity<EServiceTemplateInstances>) httpCallExecutor.getResponse()).getBody().getResults();
+        assertThat(response)
+            .hasSize(instanceCount)
+            .are(instanceInState(expectedState));
+    }
+
     @Then("l'elenco delle istanze dell'e-service template è vuoto")
     public void checkEmptyEServiceTemplateInstances() {
         List<EServiceTemplateInstance> response = ((ResponseEntity<EServiceTemplateInstances>) httpCallExecutor.getResponse()).getBody().getResults();

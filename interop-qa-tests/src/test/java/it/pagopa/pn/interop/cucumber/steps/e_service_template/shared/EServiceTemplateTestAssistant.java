@@ -6,6 +6,7 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.assertj.core.api.Assertions.fail;
 
 import com.google.common.io.Files;
+import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
@@ -15,12 +16,13 @@ import it.pagopa.interop.e_service_template.mapper.RiskAnalysisMapper;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributes;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysis;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateAttributesSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateRiskAnalysis;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.TenantKind;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionSeed;
 import it.pagopa.interop.purpose.domain.RiskAnalysis;
 import it.pagopa.interop.utils.HttpCallExecutor;
@@ -276,13 +278,14 @@ public class EServiceTemplateTestAssistant {
         addRiskAnalysisToEServiceTemplate(eServiceTemplateId, sharedStepsContext.getEServiceTemplateStepContext().getLastAddedRiskAnalysis());
     }
 
-    private EServiceRiskAnalysisSeed getEServiceRiskAnalysisSeed() {
-        RiskAnalysis riskAnalysis = this.dataPreparationService.getRiskAnalysis(
-            sharedStepsContext.getTenantType(), true);
-        return this.riskAnalysisMapper.mapToSeed(riskAnalysis);
+    private EServiceTemplateRiskAnalysisSeed getEServiceRiskAnalysisSeed() {
+        IdentityService identityService = sharedStepsContext.getIdentityService();
+        String tenantType = sharedStepsContext.getTenantType();
+        RiskAnalysis riskAnalysis = this.dataPreparationService.getRiskAnalysis(tenantType, true);
+        return this.riskAnalysisMapper.mapToSeed(riskAnalysis, TenantKind.fromValue(identityService.getKind(tenantType)));
     }
 
-    public void addRiskAnalysisToEServiceTemplate(UUID eServiceTemplateId, EServiceRiskAnalysisSeed riskAnalysisSeed) {
+    public void addRiskAnalysisToEServiceTemplate(UUID eServiceTemplateId, EServiceTemplateRiskAnalysisSeed riskAnalysisSeed) {
         String userToken = sharedStepsContext.getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);
         httpCallExecutor.performCall(
@@ -321,7 +324,7 @@ public class EServiceTemplateTestAssistant {
             .addVerifiedItem(easyRandom.objects(EServiceTemplateVersionAttributeSeed.class, 3).toList());
     }
 
-    public boolean areConsistent(EServiceRiskAnalysisSeed lastRiskAnalysis, EServiceRiskAnalysis retrievedAnalysis) {
+    public boolean areConsistent(EServiceTemplateRiskAnalysisSeed lastRiskAnalysis, EServiceTemplateRiskAnalysis retrievedAnalysis) {
         /* TODO: modificare usando un assertion equals di AssertJ così da avere un log preciso in caso di errore
         *       Bisognerà introdurre un mapper per i due tipi di sopra
         *       Dopo l'assertion basterà restituire true (se non ci sono stati AssertionError può solo essere andata bene) */

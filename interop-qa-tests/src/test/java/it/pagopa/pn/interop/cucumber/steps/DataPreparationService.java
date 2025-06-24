@@ -1,6 +1,8 @@
 package it.pagopa.pn.interop.cucumber.steps;
 
 import static it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode.RECEIVE;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.BooleanUtils.isNotTrue;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
@@ -9,9 +11,11 @@ import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.agreement.service.IAgreementClient;
 import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.attribute.service.IAttributeApiClient;
+import it.pagopa.interop.authorization.service.ClientAdminConfig;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.IProducerClient;
 import it.pagopa.interop.authorization.service.utils.PollingService;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Agreement;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementRejectionPayload;
@@ -27,14 +31,20 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CompactUser;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredTenantAttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysis;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTechnology;
-import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject3;
+import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject4;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.MailKind;
+import it.pagopa.interop.generated.openapi.clients.bff.model.MailSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKey;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKeys;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Purpose;
@@ -42,6 +52,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeAdditionDeta
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeEServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersion;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RejectPurposeVersionPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormConfig;
@@ -49,24 +60,27 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSee
 import it.pagopa.interop.generated.openapi.clients.bff.model.TemplateInstanceInterfaceRESTSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorTemplateInstanceSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.VerifiedTenantAttributeSeed;
 import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
+import it.pagopa.interop.purpose.domain.CreatedEserviceVersion;
 import it.pagopa.interop.purpose.domain.RiskAnalysis;
 import it.pagopa.interop.purpose.domain.RiskAnalysisDataFromJson;
 import it.pagopa.interop.purpose.domain.TEServiceMode;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
+import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
@@ -94,6 +108,8 @@ public class DataPreparationService {
     private final HttpCallExecutor httpCallExecutor;
     private final RiskAnalysisDataInitializer riskAnalysisDataInitializer;
     private final SharedStepsContext sharedStepsContext;
+    private final CommonUtils commonUtils;
+    private final BlobFileCreator blobFileCreator;
     public static final String ERROR_RETRIEVING_AGREEMENT = "There was an error while retrieving the agreement by ID!";
     public static final String ERROR_RETRIEVING_PRODUCER_DESCRIPTOR = "There was an error while retrieving the producer e-service descriptor";
     public static final String ERROR_RETRIEVING_PURPOSE = "There was an error while retrieving the purpose!";
@@ -107,7 +123,9 @@ public class DataPreparationService {
 
     public DataPreparationService(ClientTokenConfigurator clientTokenConfigurator,
                                   RiskAnalysisDataInitializer riskAnalysisDataInitializer,
-                                  SharedStepsContext sharedStepsContext) {
+                                  SharedStepsContext sharedStepsContext,
+                                  BlobFileCreator blobFileCreator,
+                                  CommonUtils commonUtils) {
         this.authorizationClient = clientTokenConfigurator.getAuthorizationClient();
         this.agreementClient = clientTokenConfigurator.getAgreementClient();
         this.attributeApiClient = clientTokenConfigurator.getAttributeApiClient();
@@ -116,9 +134,11 @@ public class DataPreparationService {
         this.producerClient = clientTokenConfigurator.getProducerClient();
         this.purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
         this.sharedStepsContext = sharedStepsContext;
+        this.blobFileCreator = blobFileCreator;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
         this.riskAnalysisDataInitializer = riskAnalysisDataInitializer;
+        this.commonUtils = commonUtils;
     }
 
     public UUID createClient(String clientKind, ClientSeed partialClientSeed) {
@@ -139,7 +159,7 @@ public class DataPreparationService {
     }
 
     public void addMemberToClient(UUID clientId, UUID userId) {
-        InlineObject3 inlineObject = new InlineObject3().addUserIdsItem(userId);
+        InlineObject4 inlineObject = new InlineObject4().addUserIdsItem(userId);
         pollingService.makePolling(
                 () -> httpCallExecutor.performCall(() -> authorizationClient.addUsersToClient(clientId, inlineObject)),
                 res -> !res.is5xxServerError(),
@@ -180,6 +200,30 @@ public class DataPreparationService {
                 res -> ((Purpose) httpCallExecutor.getResponse()).getCurrentVersion() != null
                         ? ((Purpose) httpCallExecutor.getResponse()).getCurrentVersion().getState().getValue().equals(PurposeVersionState.ARCHIVED.getValue())
                         : Boolean.FALSE,
+                ERROR_RETRIEVING_PURPOSE
+        );
+    }
+
+    public void suspendPurpose(UUID purposeId, UUID versionId, ClientType checkSuspendedBy) {
+        httpCallExecutor.performCall(() ->
+                purposeApiClient.suspendPurposeVersion(purposeId, versionId)
+        );
+        assertValidResponse();
+        pollingService.makePolling(
+                () -> httpCallExecutor.performCall(
+                        () -> purposeApiClient.getPurpose(purposeId)),
+                res -> {
+                    Purpose purpose = ((Purpose) httpCallExecutor.getResponse());
+                    boolean isSuspended = purpose.getCurrentVersion().getState() == PurposeVersionState.SUSPENDED;
+                    if (checkSuspendedBy == null) return isSuspended;
+                    else if (checkSuspendedBy == ClientType.CONSUMER) {
+                        isSuspended = isTrue(purpose.getSuspendedByConsumer());
+                    }
+                    else {
+                        isSuspended = isTrue(purpose.getSuspendedByProducer());
+                    }
+                    return isSuspended;
+                },
                 ERROR_RETRIEVING_PURPOSE
         );
     }
@@ -237,6 +281,18 @@ public class DataPreparationService {
         };
     }
 
+    public Map<String, UUID> createAgreementWithGivenStateAndDocument(AgreementState agreementState, UUID eserviceId, UUID descriptorId) {
+        try {
+            Resource doc = blobFileCreator.createBlobFile("src/main/resources/dummy.pdf", "documento-test-qa.pdf");
+            UUID agreementId = createAgreementWithGivenState(agreementState, eserviceId, descriptorId, null, doc.getFile());
+            Agreement agreement = agreementClient.getAgreementById(agreementId);
+            UUID documentId = agreement.getConsumerDocuments().get(0).getId();
+            return Map.of("agreementId", agreementId, "documentId", documentId);
+        } catch (IOException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
+
     public UUID createAndCheckAgreement(UUID eServiceID, UUID descriptorId) {
         return createAndCheckAgreement(eServiceID, descriptorId, null);
     }
@@ -262,7 +318,12 @@ public class DataPreparationService {
     }
 
     public void submitAgreement(UUID agreementId, AgreementState expectedState) {
-        httpCallExecutor.performCall(() -> agreementClient.submitAgreement(agreementId, new AgreementSubmissionPayload()));
+        pollingService.makePolling(
+                () -> httpCallExecutor.performCall(() -> agreementClient.submitAgreement(agreementId, new AgreementSubmissionPayload())),
+                res -> res.is2xxSuccessful(),
+                "There was an error while submitting the agreement!"
+        );
+
         assertValidResponse();
         pollingService.makePolling(
                 () -> agreementClient.getAgreementById(agreementId),
@@ -305,7 +366,7 @@ public class DataPreparationService {
     }
 
     public Attribute createAttribute(AttributeKind attributeKind, String name) {
-        String actualName = name != null ? null : String.format("new_attribute_%d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE));
+        String actualName = name == null ? String.format("new_attribute_%d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)) : name;
         switch (attributeKind) {
             case CERTIFIED -> httpCallExecutor.performCall(() -> attributeApiClient.createCertifiedAttribute(new CertifiedAttributeSeed().description(DESCRIPTION_TEST).name(actualName)));
             case VERIFIED -> httpCallExecutor.performCall(() -> attributeApiClient.createVerifiedAttribute(new AttributeSeed().description(DESCRIPTION_TEST).name(actualName)));
@@ -320,6 +381,17 @@ public class DataPreparationService {
                 "There was an error while retrieving the attributes"
         );
         return ((Attribute) httpCallExecutor.getResponse());
+    }
+
+    public void declareDeclaredAttribute(UUID tenantId, UUID attributeId) {
+        httpCallExecutor.performCall(() -> tenantsApi.addDeclaredAttribute(new DeclaredTenantAttributeSeed().id(attributeId)));
+        assertValidResponse();
+        pollingService.makePolling(
+                () -> tenantsApi.getDeclaredAttributes(tenantId),
+                res -> res.getAttributes().stream().anyMatch(attr -> attr.getId().equals(attributeId)),
+                String.format("Declared attribute with id: %s not found!", attributeId)
+        );
+
     }
 
     public void assignCertifiedAttributeToTenant(UUID tenantId, UUID attributeId) {
@@ -346,6 +418,22 @@ public class DataPreparationService {
             res -> res.getAttributes().stream().anyMatch(attr -> attr.getId().equals(attributeId)),
             "There was an error while retrieving the attributes"
         );*/
+    }
+
+    public void assignVerifiedAttributeToTenant(UUID tenantId, UUID verifierId, UUID attributeId, UUID agreementId, String expirationDate  ) {
+        httpCallExecutor.performCall(
+                () -> tenantsApi.verifyVerifiedAttribute(tenantId,
+                        new VerifiedTenantAttributeSeed().id(attributeId).agreementId(agreementId).expirationDate(expirationDate)));
+        assertValidResponse();
+
+        pollingService.makePolling(
+                () -> tenantsApi.getVerifiedAttributes(tenantId),
+                res -> res.getAttributes().stream()
+                        .filter(attr -> attr.getId().equals(attributeId))
+                        .anyMatch(attr -> attr.getVerifiedBy().stream().anyMatch(tenantVerifier -> tenantVerifier.getId().equals(verifierId))
+                        && attr.getRevokedBy().stream().noneMatch(tenantRevoker -> tenantRevoker.getId().equals(verifierId))),
+                String.format("Verified attribute with id: %s not found!", attributeId)
+        );
     }
 
     public EServiceDescriptor createEServiceAndDraftDescriptor(EServiceSeed partialEserviceSeed, UpdateEServiceDescriptorSeed partialDescriptorSeed) {
@@ -377,7 +465,27 @@ public class DataPreparationService {
         ProducerEServiceDescriptor descriptor = producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId);
         UpdateEServiceDescriptorSeed currentDescriptorSeed = new UpdateEServiceDescriptorSeed()
                 .agreementApprovalPolicy(descriptor.getAgreementApprovalPolicy())
-                .attributes(new DescriptorAttributesSeed().addCertifiedItem(List.of()).addDeclaredItem(List.of()).addVerifiedItem(List.of()))
+                .attributes(
+                        new DescriptorAttributesSeed()
+                                .addCertifiedItem(descriptor.getAttributes().getCertified().stream()
+                                        .flatMap(List::stream).
+                                        map(attr -> new DescriptorAttributeSeed()
+                                                .id(attr.getId())
+                                                .explicitAttributeVerification(attr.getExplicitAttributeVerification()))
+                                        .toList())
+                                .addDeclaredItem(descriptor.getAttributes().getDeclared().stream()
+                                        .flatMap(List::stream).
+                                        map(attr -> new DescriptorAttributeSeed()
+                                                .id(attr.getId())
+                                                .explicitAttributeVerification(attr.getExplicitAttributeVerification()))
+                                        .toList())
+                                .addVerifiedItem(descriptor.getAttributes().getVerified().stream()
+                                        .flatMap(List::stream).
+                                        map(attr -> new DescriptorAttributeSeed()
+                                                .id(attr.getId())
+                                                .explicitAttributeVerification(attr.getExplicitAttributeVerification()))
+                                        .toList())
+                )
                 .dailyCallsPerConsumer(descriptor.getDailyCallsPerConsumer())
                 .dailyCallsTotal(descriptor.getDailyCallsTotal())
                 .audience(descriptor.getAudience())
@@ -411,18 +519,19 @@ public class DataPreparationService {
         }
     }
 
-    public Map<String, Object> bringDescriptorToGivenState(UUID eServiceId, UUID descriptorId, EServiceDescriptorState descriptorState, boolean withDocument) {
+    public Map<String, UUID> bringDescriptorToGivenState(UUID eServiceId, UUID descriptorId, EServiceDescriptorState descriptorState, boolean withDocument) {
         // 1 add document to descriptor
         UUID documentId = null;
-        Map<String, Object> result = new HashMap<>();
-        if (withDocument) documentId = addDocumentToDescriptor(eServiceId, descriptorId);
+        Map<String, UUID> result = new HashMap<>();
+        if (withDocument) documentId = addDocumentToDescriptor(eServiceId, descriptorId, null);
         result.put("descriptorId", descriptorId);
         result.put("documentId", documentId);
 
         if (descriptorState == EServiceDescriptorState.DRAFT) return result;
 
         // 2. Add interface to descriptor
-        addInterfaceToDescriptor(eServiceId, descriptorId);
+        UUID interfaceId = addInterfaceToDescriptor(eServiceId, descriptorId);
+        result.put("interfaceId", interfaceId);
 
         // 3. Publish Descriptor
         publishDescriptor(eServiceId, descriptorId);
@@ -462,7 +571,7 @@ public class DataPreparationService {
         // 1 add document to descriptor
         UUID documentId = null;
         Map<String, Object> result = new HashMap<>();
-        if (withDocument) documentId = addDocumentToDescriptor(eServiceId, descriptorId);
+        if (withDocument) documentId = addDocumentToDescriptor(eServiceId, descriptorId, null);
         result.put("descriptorId", descriptorId);
         result.put("documentId", documentId);
 
@@ -505,9 +614,9 @@ public class DataPreparationService {
         return result;
     }
 
-    public UUID addDocumentToDescriptor(UUID eServiceId, UUID descriptorId) {
-        String prettyName = String.format("Documento_test_qa-%d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE));
-        Resource resource = createBlobFile("documento-test-qa.pdf");
+    public UUID addDocumentToDescriptor(UUID eServiceId, UUID descriptorId, String name) {
+        String prettyName = (name == null) ? String.format("Documento_test_qa-%d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)) : name;
+        Resource resource = blobFileCreator.createBlobFile("src/main/resources/origin-interface.yaml", "documento-test-qa.pdf");
 
         httpCallExecutor.performCall(() -> eServiceClient.createEServiceDocument(eServiceId, descriptorId, "DOCUMENT", prettyName, resource));
         assertValidResponse();
@@ -521,8 +630,8 @@ public class DataPreparationService {
         return documentId;
     }
 
-    public void addInterfaceToDescriptor(UUID eServiceId, UUID descriptorId) {
-        Resource resource = createBlobFile("interface.yaml");
+    public UUID addInterfaceToDescriptor(UUID eServiceId, UUID descriptorId) {
+        Resource resource = blobFileCreator.createBlobFile("src/main/resources/origin-interface.yaml", "interface.yaml");
         httpCallExecutor.performCall(() -> eServiceClient.createEServiceDocument(eServiceId, descriptorId, "INTERFACE", "Interfaccia", resource));
         assertValidResponse();
 
@@ -532,6 +641,7 @@ public class DataPreparationService {
                 ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
 
+        return ((CreatedResource) httpCallExecutor.getResponse()).getId();
     }
 
     public void interpolateInterfaceToDescriptor(UUID eServiceId, UUID descriptorId) {
@@ -560,7 +670,7 @@ public class DataPreparationService {
             () -> producerClient.getProducerEServiceDescriptor(
                 eServiceId, descriptorId),
             res -> res.getState() == EServiceDescriptorState.PUBLISHED,
-            "There was an error while retrieving the producer e-service descriptor"
+            ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
     }
 
@@ -601,13 +711,13 @@ public class DataPreparationService {
         String templateType = (tenantType.equals("PA1") || tenantType.equals("PA2")) ? "PA" : "Privato/GSP";
         RiskAnalysisDataFromJson.RiskAnalysisTemplate riskAnalysisTemplate = riskAnalysisDataInitializer.getRiskAnalysisData().get(templateType);
         RiskAnalysisDataFromJson.RiskAnalysisAttributes riskAnalysisAttributes = (completed) ? riskAnalysisTemplate.getCompleted() : riskAnalysisTemplate.getUncompleted();
-        httpCallExecutor.performCall(() -> purposeApiClient.retrieveLatestRiskAnalysisConfiguration());
+        httpCallExecutor.performCall(purposeApiClient::retrieveLatestRiskAnalysisConfiguration);
         assertValidResponse();
         String version = ((RiskAnalysisFormConfig) httpCallExecutor.getResponse()).getVersion();
-        return new RiskAnalysis("finalità test", new RiskAnalysisFormSeed().version(version).answers(riskAnalysisAttributes.toMap()));
+        return new RiskAnalysis(String.format("finalità_test_%d", new Random().nextInt()), new RiskAnalysisFormSeed().version(version).answers(riskAnalysisAttributes.toMap()));
     }
 
-    public void createPurposeWithGivenState(int testSeed, EServiceMode eServiceMode, PurposeVersionState purposeState, TEServiceMode teServiceMode) {
+    public CreatedEserviceVersion createPurposeWithGivenState(int testSeed, EServiceMode eServiceMode, PurposeVersionState purposeState, TEServiceMode teServiceMode) {
         // 1. Define default values
         String title = String.format("purpose title - QA - %d - %d", testSeed, ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE));
         String description = "description of the purpose - QA";
@@ -634,7 +744,7 @@ public class DataPreparationService {
         else {
             // For modes other than RECEIVE, build a PurposeSeed
             PurposeSeed purposeSeed = new PurposeSeed();
-            purposeSeed.setTitle(title);
+            purposeSeed.setTitle(teServiceMode.getTitle() != null ? teServiceMode.getTitle() : title);
             purposeSeed.setDescription(description);
             purposeSeed.setIsFreeOfCharge(isFreeOfCharge);
             purposeSeed.setFreeOfChargeReason(freeOfChargeReason);
@@ -670,7 +780,10 @@ public class DataPreparationService {
         if (purposeState == PurposeVersionState.DRAFT) {
             sharedStepsContext.getPurposeCommonContext().setPurposeId(String.valueOf(purposeId));
             sharedStepsContext.getPurposeCommonContext().setVersionId(String.valueOf(currentVersion));
-            return;
+            return CreatedEserviceVersion.builder()
+                    .purposeId(purposeId)
+                    .currentVersionId(currentVersion.get())
+                    .build();
         }
         // 2. Activate the purpose version
         httpCallExecutor.performCall(() -> purposeApiClient.activatePurposeVersion(purposeId, currentVersion.get()));
@@ -691,7 +804,10 @@ public class DataPreparationService {
             );
             sharedStepsContext.getPurposeCommonContext().setPurposeId(String.valueOf(purposeId));
             sharedStepsContext.getPurposeCommonContext().setWaitingForApprovalVersionId(String.valueOf(waitingForApprovalVersionId.get()));
-            return;
+            return CreatedEserviceVersion.builder()
+                    .purposeId(purposeId)
+                    .waitingForApprovalVersionId(waitingForApprovalVersionId.get())
+                    .build();
         }
 
         pollingService.makePolling(
@@ -740,6 +856,41 @@ public class DataPreparationService {
         }
         sharedStepsContext.getPurposeCommonContext().setPurposeId(String.valueOf(purposeId));
         sharedStepsContext.getPurposeCommonContext().setVersionId(String.valueOf(currentVersion.get()));
+
+        return CreatedEserviceVersion.builder()
+                .purposeId(purposeId)
+                .currentVersionId(currentVersion.get())
+                .build();
+    }
+
+    public CreatedEserviceVersion createNewPurposeVersion(UUID purposeId, PurposeVersionSeed purposeVersionSeed) {
+        httpCallExecutor.performCall(
+                () -> purposeApiClient.createPurposeVersion(
+                        UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId()), purposeVersionSeed)
+        );
+        AtomicReference<UUID> currentVersionId = new AtomicReference<>();
+        AtomicReference<UUID> waitingForApprovalVersionId = new AtomicReference<>();
+
+        assertValidResponse();
+        boolean shouldWaitForApproval = purposeVersionSeed.getDailyCalls() > 50;
+
+        pollingService.makePolling(
+                () -> purposeApiClient.getPurpose(purposeId),
+                res -> {
+                    currentVersionId.set(res.getCurrentVersion().getId());
+                    if (shouldWaitForApproval) {
+                        waitingForApprovalVersionId.set(res.getWaitingForApprovalVersion().getId());
+                        return res.getWaitingForApprovalVersion().getState().getValue().equals("WAITING_FOR_APPROVAL");
+                    }
+                    return res.getCurrentVersion().getDailyCalls() == purposeVersionSeed.getDailyCalls();
+                },
+                "Ther was an error while creating the new purpose version!"
+        );
+        return CreatedEserviceVersion.builder()
+                .purposeId(purposeId)
+                .currentVersionId(currentVersionId.get())
+                .waitingForApprovalVersionId(waitingForApprovalVersionId.get())
+                .build();
     }
 
     public void rejectPurposeVersion(UUID purposeId, UUID versionId) {
@@ -783,21 +934,125 @@ public class DataPreparationService {
                 }
                 return isActive;
             },
-            "There was an error while rejecting the agreement"
+            "There was an error while activating the agreement"
         );
     }
 
-    private Resource createBlobFile(String fileNameToCreate) {
-        Path filePath = Paths.get("src/main/resources/interface.yaml");
-        byte[] fileContent = null;
-        try {
-            fileContent = Files.readAllBytes(filePath);
-            Path newFilePath = Paths.get(fileNameToCreate);
-            Files.write(newFilePath, fileContent);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return new FileSystemResource(filePath);
+    public void revokeCertifiedAttributeToTenant(UUID tenantId, UUID attributeId) {
+        httpCallExecutor.performCall(() -> tenantsApi.revokeCertifiedAttribute(tenantId, attributeId));
+        assertValidResponse();
+        pollingService.makePolling(
+                () -> tenantsApi.getCertifiedAttributes(tenantId),
+                res -> res.getAttributes().stream().anyMatch(attr -> attr.getId().equals(attributeId) && attr.getRevocationTimestamp() != null),
+                "There was an error while revoking the certified attribute!"
+        );
+    }
+
+    public void revokeVerifiedAttributeToTenant(UUID tenantId, UUID attributeId, UUID agreementId, UUID revokerId) {
+        httpCallExecutor.performCall(() -> tenantsApi.revokeVerifiedAttribute(tenantId, attributeId, agreementId));
+        assertValidResponse();
+        pollingService.makePolling(
+            () -> tenantsApi.getVerifiedAttributes(tenantId),
+            res -> res.getAttributes().stream().anyMatch(
+                attr -> attr.getId().equals(attributeId) &&
+                                    attr.getRevokedBy().stream().anyMatch(tenantRevoker -> tenantRevoker.getId().equals(revokerId))),
+            "There was an error while revoking the certified attribute!"
+        );
+    }
+
+    public void revokeDeclaredAttributeToTenant(UUID tenantId, UUID attributeId) {
+        httpCallExecutor.performCall(() -> tenantsApi.revokeDeclaredAttribute(attributeId));
+        assertValidResponse();
+        pollingService.makePolling(
+            () -> tenantsApi.getDeclaredAttributes(tenantId),
+            res -> res.getAttributes().stream().anyMatch(attr -> attr.getId().equals(attributeId) && attr.getRevocationTimestamp() != null),
+            "There was an error while revoking the certified attribute!"
+        );
+    }
+
+    public void upgradeAgreement(UUID agreementId) {
+        httpCallExecutor.performCall(() -> agreementClient.upgradeAgreement(agreementId));
+        assertValidResponse();
+        Agreement response = (Agreement) httpCallExecutor.getResponse();
+        UUID newAgreementId = response.getId();
+
+        pollingService.makePolling(
+            () -> agreementClient.getAgreementById(newAgreementId),
+            Objects::nonNull,
+            ERROR_RETRIEVING_AGREEMENT
+        );
+
+        sharedStepsContext.setAgreementId(newAgreementId);
+    }
+
+    public void deleteClientKeyById(UUID clientId, String keyId) {
+        httpCallExecutor.performCall(() -> authorizationClient.deleteClientKeyById(clientId, keyId));
+        assertValidResponse();
+        pollingService.makePolling(
+                () -> httpCallExecutor.performCall(() -> authorizationClient.getClientKeyById(clientId, keyId)),
+                res -> res == HttpStatus.NOT_FOUND,
+                "There was an error while deleting the client key!"
+        );
+    }
+
+    public void deletePurposeFromClient(UUID clientId, UUID purposeId) {
+        httpCallExecutor.performCall(() -> authorizationClient.removeClientPurpose(clientId, purposeId));
+        assertValidResponse();
+
+        pollingService.makePolling(
+                () -> authorizationClient.getClient(clientId),
+                res -> !res.getPurposes().stream().anyMatch(p -> p.getPurposeId().equals(purposeId)),
+                "There was an error while deleting the client purpose!"
+        );
+    }
+
+    public void deleteClient(UUID clientId) {
+        httpCallExecutor.performCall(() -> authorizationClient.deleteClient(clientId));
+        assertValidResponse();
+        pollingService.makePolling(
+                () -> httpCallExecutor.performCall(() -> authorizationClient.getClient(clientId)),
+                res -> res == HttpStatus.NOT_FOUND,
+                "There was an error while deleting the client!"
+        );
+    }
+
+    public void activateDescriptor(UUID eServiceId, UUID descriptorId) {
+        httpCallExecutor.performCall(() -> eServiceClient.activateDescriptor(eServiceId, descriptorId));
+        assertValidResponse();
+        pollingService.makePolling(
+                () -> producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId),
+                res -> res.getState() == EServiceDescriptorState.PUBLISHED || res.getState() == EServiceDescriptorState.DEPRECATED,
+                ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
+        );
+    }
+
+    public UUID addRiskAnalysisToEService(UUID eServiceId, EServiceRiskAnalysisSeed eServiceRiskAnalysisSeed) {
+        httpCallExecutor.performCall(() -> eServiceClient.addRiskAnalysisToEService(eServiceId, eServiceRiskAnalysisSeed));
+        assertValidResponse();
+
+        pollingService.makePolling(
+                () -> httpCallExecutor.performCall(
+                        () -> producerClient.getProducerEServiceDetails(eServiceId)
+                ),
+                res -> Optional.ofNullable((ProducerEServiceDetails) httpCallExecutor.getResponse())
+                        .map(ProducerEServiceDetails::getRiskAnalysis)
+                        .map(list -> list.get(0))
+                        .map(EServiceRiskAnalysis::getId)
+                        .isPresent(),
+                "Risk analysis not found!"
+        );
+        return ((ProducerEServiceDetails) httpCallExecutor.getResponse()).getRiskAnalysis().get(0).getId();
+    }
+
+    public void addEmailToTenant(UUID tenantId, MailSeed mailSeed) {
+        httpCallExecutor.performCall(() -> tenantsApi.addTenantMail(tenantId, mailSeed.kind(MailKind.CONTACT_EMAIL)));
+        assertValidResponse();
+
+        pollingService.makePolling(
+                () -> tenantsApi.getTenant(tenantId),
+                res -> res.getContactMail().getAddress().equals(mailSeed.getAddress()),
+                "The desired email was not added to tenant!"
+        );
     }
 
     private void assertValidResponse() {
@@ -836,5 +1091,55 @@ public class DataPreparationService {
 
     private <T> T useOrDefault(T value, T defaultValue) {
         return value != null ? value : defaultValue;
+    }
+
+    public void deletePurposeVersion(UUID purposeId, UUID waitingForApprovalVersionId) {
+        httpCallExecutor.performCall(() -> this.purposeApiClient.deletePurposeVersion(purposeId, waitingForApprovalVersionId));
+        assertValidResponse();
+        pollingService.makePolling(
+                () -> purposeApiClient.getPurpose(purposeId),
+                res -> isNull(res) || res.getVersions().stream().noneMatch(v -> v.getId().equals(waitingForApprovalVersionId)),
+                "There was an error while deleting the purpose version!"
+        );
+    }
+
+    public void activatePurposeVersion(UUID purposeId, UUID waitingForApprovalVersionId) {
+        activatePurposeVersion(purposeId, waitingForApprovalVersionId, null);
+    }
+
+    public void activatePurposeVersion(UUID purposeId, UUID waitingForApprovalVersionId, ClientType checkNotSuspendedBy) {
+        httpCallExecutor.performCall(() -> this.purposeApiClient.activatePurposeVersion(purposeId, waitingForApprovalVersionId));
+        assertValidResponse();
+        pollingService.makePolling(
+                () -> purposeApiClient.getPurpose(purposeId),
+                res -> {
+                    Optional<PurposeVersion> oVersionId = res.getVersions().stream()
+                        .filter(v -> v.getId().equals(waitingForApprovalVersionId)).findAny();
+                    boolean isActive = oVersionId.map(purposeVersion -> purposeVersion.getState()
+                        .equals(PurposeVersionState.ACTIVE)).orElse(false);
+                    if (isNull(checkNotSuspendedBy)) {
+                        return isActive;
+                    }
+                    return switch (checkNotSuspendedBy) {
+                        case CONSUMER -> Boolean.FALSE.equals(res.getSuspendedByConsumer());
+                        case PRODUCER -> Boolean.FALSE.equals(res.getSuspendedByProducer());
+                        default -> throw new IllegalArgumentException(
+                            "Unexpected value: " + checkNotSuspendedBy);
+                    };
+                },
+                "There was an error while activating the purpose version!"
+        );
+    }
+
+    public void editClientAdmin(UUID clientId, ClientAdminConfig adminConfig) {
+        httpCallExecutor.performCall(
+            () -> authorizationClient.editClientAdmin(
+                clientId,
+                adminConfig));
+        assertValidResponse();
+        pollingService.makePolling(
+            () -> authorizationClient.getClient(clientId),
+            client -> nonNull(client.getAdmin()) && client.getAdmin().getUserId().equals(adminConfig.getAdminId()),
+            "L'amministratore del client non è stato modificato correttamente: adminId vuoto oppure difforme da quello indicato");
     }
 }

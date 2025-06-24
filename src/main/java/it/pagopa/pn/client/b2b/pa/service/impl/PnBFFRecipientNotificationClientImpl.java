@@ -83,14 +83,14 @@ public class PnBFFRecipientNotificationClientImpl implements IPnBFFRecipientNoti
     private static ApiClient newApiClientForRecipient(RestTemplate restTemplate, String basePath, String bearerToken) {
         ApiClient newApiClient = new ApiClient(restTemplate);
         newApiClient.setBasePath(basePath);
-        newApiClient.addDefaultHeader("Authorization","Bearer " + bearerToken);
+        newApiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
         return newApiClient;
     }
 
     private static it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.pa.ApiClient newApiClientForSender(RestTemplate restTemplate, String basePath, String bearerToken) {
         it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.pa.ApiClient apiClient = new it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.pa.ApiClient(restTemplate);
         apiClient.setBasePath(basePath);
-        apiClient.addDefaultHeader("Authorization","Bearer "+bearerToken);
+        apiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
         return apiClient;
     }
 
@@ -117,33 +117,24 @@ public class PnBFFRecipientNotificationClientImpl implements IPnBFFRecipientNoti
     @Override
     public void setRecipientBearerToken(SettableBearerToken.BearerTokenType bearerToken) {
         switch (bearerToken) {
-            case USER_1 -> {
-                this.notificationReceivedApi.setApiClient(newApiClientForRecipient(restTemplate, basePath, marioCucumberBearerToken));
-            }
-            case USER_2 -> {
-                this.notificationReceivedApi.setApiClient(newApiClientForRecipient(restTemplate, basePath, marioGherkinBearerToken));
-            }
-            case USER_3 -> {
-                this.notificationReceivedApi.setApiClient(newApiClientForRecipient(restTemplate, basePath, leonardoBearerToken));
-            }
-            case USER_4 -> {
-                this.notificationReceivedApi.setApiClient(newApiClientForRecipient(restTemplate, basePath, galileoBearerToken));
-            }
-            case PG_1 -> {
-                this.notificationReceivedApi.setApiClient(newApiClientForRecipient(restTemplate, basePath, gherkinSrlBearerToken));
-            }
-            case PG_2 -> {
-                this.notificationReceivedApi.setApiClient(newApiClientForRecipient(restTemplate, basePath, cucumberSpaBearerToken));
-            }
-            case PG_3 -> {
-                this.notificationReceivedApi.setApiClient(newApiClientForRecipient(restTemplate, basePath, aldameriniPGBearerToken));
-            }
-            case PG_4 -> {
-                this.notificationReceivedApi.setApiClient(newApiClientForRecipient(restTemplate, basePath, mariaMontessoriPGBearerToken));
-            }
-            case PG_5 -> {
-                this.notificationReceivedApi.setApiClient(newApiClientForRecipient(restTemplate, basePath, nildeIottiPGBearerToken));
-            }
+            case USER_1 ->
+                    this.notificationReceivedApi.setApiClient(newApiClientForRecipient(restTemplate, basePath, marioCucumberBearerToken));
+            case USER_2 ->
+                    this.notificationReceivedApi.setApiClient(newApiClientForRecipient(restTemplate, basePath, marioGherkinBearerToken));
+            case USER_3 ->
+                    this.notificationReceivedApi.setApiClient(newApiClientForRecipient(restTemplate, basePath, leonardoBearerToken));
+            case USER_4 ->
+                    this.notificationReceivedApi.setApiClient(newApiClientForRecipient(restTemplate, basePath, galileoBearerToken));
+            case PG_1 ->
+                    this.notificationReceivedApi.setApiClient(newApiClientForRecipient(restTemplate, basePath, gherkinSrlBearerToken));
+            case PG_2 ->
+                    this.notificationReceivedApi.setApiClient(newApiClientForRecipient(restTemplate, basePath, cucumberSpaBearerToken));
+            case PG_3 ->
+                    this.notificationReceivedApi.setApiClient(newApiClientForRecipient(restTemplate, basePath, aldameriniPGBearerToken));
+            case PG_4 ->
+                    this.notificationReceivedApi.setApiClient(newApiClientForRecipient(restTemplate, basePath, mariaMontessoriPGBearerToken));
+            case PG_5 ->
+                    this.notificationReceivedApi.setApiClient(newApiClientForRecipient(restTemplate, basePath, nildeIottiPGBearerToken));
             default -> throw new IllegalStateException("Unexpected value: " + bearerToken);
         }
     }
@@ -151,21 +142,16 @@ public class PnBFFRecipientNotificationClientImpl implements IPnBFFRecipientNoti
     @Override
     public void setSenderBearerToken(SettableBearerToken.BearerTokenType bearerToken) {
         switch (bearerToken) {
-            case MVP_1 -> {
-                this.notificationSentApi.setApiClient( newApiClientForSender( this.restTemplate, basePath, bearerTokenCom1));
-            }
-            case MVP_2 -> {
-                this.notificationSentApi.setApiClient( newApiClientForSender( restTemplate, basePath, bearerTokenCom2));
-            }
-            case GA -> {
-                this.notificationSentApi.setApiClient( newApiClientForSender( restTemplate, basePath, bearerTokenGA));
-            }
-            case SON -> {
-                this.notificationSentApi.setApiClient( newApiClientForSender( restTemplate, basePath, bearerTokenSON));
-            }
-            case ROOT -> {
-                this.notificationSentApi.setApiClient( newApiClientForSender( restTemplate, basePath, bearerTokenROOT));
-            }
+            case MVP_1 ->
+                    this.notificationSentApi.setApiClient(newApiClientForSender(this.restTemplate, basePath, bearerTokenCom1));
+            case MVP_2 ->
+                    this.notificationSentApi.setApiClient(newApiClientForSender(restTemplate, basePath, bearerTokenCom2));
+            case GA ->
+                    this.notificationSentApi.setApiClient(newApiClientForSender(restTemplate, basePath, bearerTokenGA));
+            case SON ->
+                    this.notificationSentApi.setApiClient(newApiClientForSender(restTemplate, basePath, bearerTokenSON));
+            case ROOT ->
+                    this.notificationSentApi.setApiClient(newApiClientForSender(restTemplate, basePath, bearerTokenROOT));
             default -> throw new IllegalStateException("Unexpected value: " + bearerToken);
         }
     }

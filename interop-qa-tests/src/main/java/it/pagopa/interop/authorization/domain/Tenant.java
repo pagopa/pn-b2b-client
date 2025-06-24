@@ -1,8 +1,8 @@
 package it.pagopa.interop.authorization.domain;
 
-import lombok.Data;
-
+import java.util.List;
 import java.util.Map;
+import lombok.Data;
 
 @Data
 public class Tenant {
@@ -10,5 +10,6 @@ public class Tenant {
     private ExternalId externalId;
     private String selfcareId;
     private Map<String, String> organizationId;
-    private Map<String, String> userRoles;
+    private Map<String, List<String>> userRoles;
+    private String kind;
 }

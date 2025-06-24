@@ -6,7 +6,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganization
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDescriptionUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateIntendedTargetUpdateSeed;
@@ -85,7 +85,7 @@ public interface IEServiceTemplateClient extends SettableBearerToken {
         UUID eServiceTemplateId, UUID eServiceTemplateVersionId);
 
     void addRiskAnalysis(UUID eServiceTemplateId,
-        EServiceRiskAnalysisSeed seed);
+        EServiceTemplateRiskAnalysisSeed seed);
 
     void deleteRiskAnalysis(
         UUID eServiceTemplateId,
@@ -94,13 +94,13 @@ public interface IEServiceTemplateClient extends SettableBearerToken {
     void editRiskAnalysis(
         UUID eServiceTemplateId,
         UUID riskAnalysisId,
-        EServiceRiskAnalysisSeed seed
+        EServiceTemplateRiskAnalysisSeed seed
     );
 
     ResponseEntity<Void> editRiskAnalysisWithHttpInfo(
         UUID eServiceTemplateId,
         UUID riskAnalysisId,
-        EServiceRiskAnalysisSeed seed
+        EServiceTemplateRiskAnalysisSeed seed
     );
 
     File getDocument(
@@ -177,10 +177,10 @@ public interface IEServiceTemplateClient extends SettableBearerToken {
     ResponseEntity<Void> updateEServiceTemplateVersionQuotasWithHttpInfo(UUID eServiceTemplateId, UUID eServiceTemplateVersionId,
         EServiceTemplateVersionQuotasUpdateSeed seed);
 
-    CreatedResource updateEServiceTemplateVersionAttributes(UUID eServiceTemplateId,
+    void updateEServiceTemplateVersionAttributes(UUID eServiceTemplateId,
         UUID eServiceTemplateVersionId, DescriptorAttributesSeed seed);
 
-    ResponseEntity<CreatedResource> updateEServiceTemplateVersionAttributesWithHttpInfo(
+    ResponseEntity<Void> updateEServiceTemplateVersionAttributesWithHttpInfo(
         UUID eServiceTemplateId, UUID eServiceTemplateVersionId, DescriptorAttributesSeed seed);
 
     // DEV. NOTE: si cambia naming convention omettendo il suffisso "withHttpInfo", rendendolo implicito da qui in avanti

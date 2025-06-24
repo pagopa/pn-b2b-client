@@ -5,11 +5,11 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateRiskAnalysisSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.TenantKind;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
 import java.util.UUID;
 import lombok.Data;
@@ -51,20 +51,27 @@ public class EServiceTemplateRiskAnalysisCreateSteps {
 
     @When("l'utente tenta la creazione di una risk analysis indicando una specifica vuota")
     public void addRiskAnalysisWithEmptySpecToEServiceTemplate() {
-        testAssistant.addRiskAnalysisToEServiceTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), new EServiceRiskAnalysisSeed());
+        testAssistant.addRiskAnalysisToEServiceTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), new EServiceTemplateRiskAnalysisSeed());
     }
 
     @When("l'utente tenta l'aggiunta di una risk analysis a un e-service template inesistente")
     public void addRiskAnalysisToNonExistentEServiceTemplate() {
-        EServiceRiskAnalysisSeed riskAnalysisSeed = easyRandom.nextObject(EServiceRiskAnalysisSeed.class);
+        EServiceTemplateRiskAnalysisSeed riskAnalysisSeed = easyRandom.nextObject(EServiceTemplateRiskAnalysisSeed.class);
+        String tenantType = sharedStepsContext.getTenantType();
+        String kind = sharedStepsContext.getIdentityService().getKind(tenantType);
+        riskAnalysisSeed.setTenantKind(TenantKind.fromValue(kind));
+
         testAssistant.addRiskAnalysisToEServiceTemplate(UUID.randomUUID(), riskAnalysisSeed);
     }
 
     @When("l'utente tenta l'aggiunta di una risk analysis all'e-service template specificando lo stesso nome")
     public void addRiskAnalysisToEServiceTemplateWithSameName() {
-        EServiceRiskAnalysisSeed sameNameRiskAnalysisSeed = easyRandom
-            .nextObject(EServiceRiskAnalysisSeed.class)
-            .name(sharedStepsContext.getEServiceTemplateStepContext().getLastAddedRiskAnalysis().getName());
+        String tenantType = sharedStepsContext.getTenantType();
+        String kind = sharedStepsContext.getIdentityService().getKind(tenantType);
+        EServiceTemplateRiskAnalysisSeed sameNameRiskAnalysisSeed = easyRandom
+            .nextObject(EServiceTemplateRiskAnalysisSeed.class)
+            .name(sharedStepsContext.getEServiceTemplateStepContext().getLastAddedRiskAnalysis().getName())
+            .tenantKind(TenantKind.fromValue(kind));
         testAssistant.addRiskAnalysisToEServiceTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), sameNameRiskAnalysisSeed);
     }
 

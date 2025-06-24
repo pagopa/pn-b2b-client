@@ -1,8 +1,19 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebMandateClient;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.ApiClient;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.api.MandateServiceApi;
+import it.pagopa.pn.client.web.generated.openapi.clients.bff.recipientmandate.api.MandateApi;
+import it.pagopa.pn.client.web.generated.openapi.clients.bff.recipientmandate.ApiClient;
+import it.pagopa.pn.client.web.generated.openapi.clients.bff.recipientmandate.model.BffAcceptRequest;
+import it.pagopa.pn.client.web.generated.openapi.clients.bff.recipientmandate.model.BffNewMandateRequest;
+import it.pagopa.pn.client.web.generated.openapi.clients.bff.recipientmandate.model.BffSearchMandateRequest;
+import it.pagopa.pn.client.web.generated.openapi.clients.bff.recipientmandate.model.BffSearchMandateResponse;
+import it.pagopa.pn.client.web.generated.openapi.clients.bff.recipientmandate.model.BffUpdateRequest;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -10,6 +21,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
 import java.util.List;
 
 
@@ -17,7 +29,7 @@ import java.util.List;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
     private final RestTemplate restTemplate;
-    private final MandateServiceApi mandateServiceApi;
+    private final MandateApi mandateServiceApi;
     private final String marioCucumberBearerToken;
     private final String marioGherkinBearerToken;
     private final String leonardoBearerToken;
@@ -35,7 +47,7 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
                                           @Value("${pn.bearer-token.user3}") String leonardoBearerToken,
                                           @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
                                           @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken,
-                                          @Value("${pn.webapi.external.user-agent}")String userAgent) {
+                                          @Value("${pn.webapi.external.user-agent}") String userAgent) {
         this.restTemplate = restTemplate;
         this.marioCucumberBearerToken = marioCucumberBearerToken;
         this.marioGherkinBearerToken = marioGherkinBearerToken;
@@ -44,15 +56,15 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
         this.cucumberSpaBearerToken = cucumberSpaBearerToken;
         this.basePath = basePath;
         this.userAgent = userAgent;
-        this.mandateServiceApi = new MandateServiceApi( newApiClient( restTemplate, basePath, marioCucumberBearerToken,userAgent) );
+        this.mandateServiceApi = new MandateApi( newApiClient( restTemplate, basePath, marioCucumberBearerToken,userAgent) );
         this.bearerTokenSetted = BearerTokenType.USER_1;
     }
 
-    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken, String userAgent ) {
-        ApiClient newApiClient = new ApiClient( restTemplate );
-        newApiClient.setBasePath( basePath );
-        newApiClient.addDefaultHeader("user-agent",userAgent);
-        newApiClient.setBearerToken(bearerToken);
+    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken, String userAgent) {
+        ApiClient newApiClient = new ApiClient(restTemplate);
+        newApiClient.setBasePath(basePath);
+        newApiClient.addDefaultHeader("user-agent", userAgent);
+        newApiClient.addDefaultHeader("Authorization","Bearer " + bearerToken);
         return newApiClient;
     }
 
@@ -101,56 +113,72 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
     }
 
     public void acceptMandate(String mandateId, AcceptRequestDto acceptRequestDto) throws RestClientException {
-        mandateServiceApi.acceptMandate(mandateId, acceptRequestDto);
+        mandateServiceApi.acceptMandateV1(mandateId, new BffAcceptRequest().verificationCode(acceptRequestDto.getVerificationCode())
+                .groups(acceptRequestDto.getGroups()));
     }
 
     public MandateCountsDto countMandatesByDelegate(String status) throws RestClientException {
-        return mandateServiceApi.countMandatesByDelegate(status);
+        return new MandateCountsDto().value(mandateServiceApi.countMandatesByDelegateV1(status).getValue());
     }
 
 
     public void updateMandate(String xPagopaPnCxId, CxTypeAuthFleet xPagopaPnCxType, String mandateId, List<String> xPagopaPnCxGroups, String xPagopaPnCxRole, UpdateRequestDto updateRequestDto) throws RestClientException {
-         mandateServiceApi.updateMandate( xPagopaPnCxId,  xPagopaPnCxType,  mandateId, xPagopaPnCxGroups,  xPagopaPnCxRole,  updateRequestDto);
+         mandateServiceApi.updateMandateV1(mandateId, new BffUpdateRequest().groups(updateRequestDto.getGroups()));
     }
 
-    public MandateDto createMandate(MandateDto mandateDto) throws RestClientException {
-        return mandateServiceApi.createMandate(mandateDto);
+    public void createMandate(MandateDto mandateDto) throws RestClientException {
+        mandateServiceApi.createMandateV1(deepCopy(mandateDto, BffNewMandateRequest.class));
     }
 
 
     public List<MandateDto> listMandatesByDelegate1(String status) throws RestClientException {
-        return mandateServiceApi.listMandatesByDelegate1(status);
+        return mandateServiceApi.getMandatesByDelegateV1(status).stream()
+                .map(item -> deepCopy(item, MandateDto.class))
+                .toList();
     }
 
-    public List<MandateDto> searchMandatesByDelegate(String taxId,List<String> groups) throws RestClientException {
-        SearchMandateRequestDto searchMandateRequestDto = new SearchMandateRequestDto();
+    public List<MandateDto> searchMandatesByDelegate(String taxId, List<String> groups) throws RestClientException {
+        BffSearchMandateRequest searchMandateRequestDto = new BffSearchMandateRequest();
         searchMandateRequestDto.setTaxId(taxId);
         searchMandateRequestDto.setGroups(groups);
-        SearchMandateResponseDto responseDto = mandateServiceApi.searchMandatesByDelegate(10, null, searchMandateRequestDto);
-        return responseDto != null ? responseDto.getResultsPage() : null;
+        BffSearchMandateResponse responseDto = mandateServiceApi.searchMandatesByDelegateV1(10, searchMandateRequestDto, null);
+        return responseDto != null ? responseDto.getResultsPage().stream().map(item -> deepCopy(item, MandateDto.class)).toList() : null;
     }
 
-    public List<MandateDto> searchMandatesByDelegateStatusFilter(String taxId,List<String> status, List<String> groups) throws RestClientException {
-        SearchMandateRequestDto searchMandateRequestDto = new SearchMandateRequestDto();
+    public List<MandateDto> searchMandatesByDelegateStatusFilter(String taxId, List<String> status, List<String> groups) throws RestClientException {
+        BffSearchMandateRequest searchMandateRequestDto = new BffSearchMandateRequest();
         searchMandateRequestDto.setTaxId(taxId);
         searchMandateRequestDto.setGroups(groups);
         searchMandateRequestDto.setStatus(status);
-        SearchMandateResponseDto responseDto = mandateServiceApi.searchMandatesByDelegate(10, null, searchMandateRequestDto);
-        return responseDto != null ? responseDto.getResultsPage() : null;
+        BffSearchMandateResponse responseDto = mandateServiceApi.searchMandatesByDelegateV1(10, searchMandateRequestDto, null);
+        return responseDto != null ? responseDto.getResultsPage().stream().map(item -> deepCopy(item, MandateDto.class)).toList() : null;
     }
 
     public List<MandateDto> listMandatesByDelegator1() throws RestClientException {
-        return mandateServiceApi.listMandatesByDelegator1();
+        return mandateServiceApi.getMandatesByDelegatorV1().stream().map(item -> deepCopy(item, MandateDto.class)).toList();
     }
 
 
     public void rejectMandate(String mandateId) throws RestClientException {
-        mandateServiceApi.rejectMandate(mandateId);
+        mandateServiceApi.rejectMandateV1(mandateId);
     }
 
 
     public void revokeMandate(String mandateId) throws RestClientException {
-        mandateServiceApi.revokeMandate(mandateId);
+        mandateServiceApi.revokeMandateV1(mandateId);
+    }
+
+    private <T> T deepCopy( Object obj, Class<T> toClass) {
+        ObjectMapper objMapper = JsonMapper.builder()
+                .addModule(new JavaTimeModule())
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .build();
+        try {
+            String json = objMapper.writeValueAsString( obj );
+            return objMapper.readValue( json, toClass );
+        } catch (JsonProcessingException exc) {
+            throw new PnB2bException(exc.getMessage());
+        }
     }
 
 }

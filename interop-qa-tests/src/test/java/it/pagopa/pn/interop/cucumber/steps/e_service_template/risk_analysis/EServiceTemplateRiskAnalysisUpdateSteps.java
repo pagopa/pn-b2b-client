@@ -10,9 +10,10 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysis;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateRiskAnalysis;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDetails;
+import it.pagopa.interop.generated.openapi.clients.bff.model.TenantKind;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -51,14 +52,19 @@ public class EServiceTemplateRiskAnalysisUpdateSteps {
     public void editRiskAnalysisFromEServiceTemplate() {
         UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
 
-        List<EServiceRiskAnalysis> riskAnalysis = eServiceTemplateClient.getEServiceTemplate(
+        List<EServiceTemplateRiskAnalysis> riskAnalysis = eServiceTemplateClient.getEServiceTemplate(
             eServiceTemplateId).getRiskAnalysis();
         if(isEmpty(riskAnalysis)) {
             throw new IllegalStateException("Nessuna risk analysis presente nell'e-service template");
         }
 
         UUID riskAnalysisId = riskAnalysis.get(sharedStepsContext.getEServiceTemplateStepContext().getLastAddedRiskAnalysisIndex()).getId();
-        EServiceRiskAnalysisSeed editedRiskAnalysisSeed = easyRandom.nextObject(EServiceRiskAnalysisSeed.class);
+
+        String tenantType = sharedStepsContext.getTenantType();
+        String kind = sharedStepsContext.getIdentityService().getKind(tenantType);
+        EServiceTemplateRiskAnalysisSeed editedRiskAnalysisSeed = easyRandom.nextObject(EServiceTemplateRiskAnalysisSeed.class)
+            .tenantKind(TenantKind.fromValue(sharedStepsContext.getIdentityService().getKind(kind)));
+
         editRiskAnalysisFromEServiceTemplate(eServiceTemplateId, riskAnalysisId, editedRiskAnalysisSeed);
     }
 
@@ -68,21 +74,26 @@ public class EServiceTemplateRiskAnalysisUpdateSteps {
         // TODO modo inefficiente di reperire la risk analysis inserita: andrebbe memorizzato
         //  l'id subito dopo la creazione, e quindi collocato in contesto di classe come per
         //  gli altri id
-        List<EServiceRiskAnalysis> riskAnalysis = eServiceTemplateClient.getEServiceTemplate(
+        List<EServiceTemplateRiskAnalysis> riskAnalysis = eServiceTemplateClient.getEServiceTemplate(
             sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id()).getRiskAnalysis();
         if(isEmpty(riskAnalysis)) {
             throw new IllegalStateException("Nessuna risk analysis presente nell'e-service template");
         }
 
         UUID riskAnalysisId = riskAnalysis.get(sharedStepsContext.getEServiceTemplateStepContext().getLastAddedRiskAnalysisIndex()).getId();
-        EServiceRiskAnalysisSeed editedRiskAnalysisSeed = new EServiceRiskAnalysisSeed();
+        EServiceTemplateRiskAnalysisSeed editedRiskAnalysisSeed = new EServiceTemplateRiskAnalysisSeed();
         editRiskAnalysisFromEServiceTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id(), riskAnalysisId, editedRiskAnalysisSeed);
     }
 
     @When("l'utente tenta la modifica di una risk analysis inesistente nell'e-service template")
     public void editNonExistentRiskAnalysisFromEServiceTemplate() {
         UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
-        EServiceRiskAnalysisSeed editedRiskAnalysisSeed = easyRandom.nextObject(EServiceRiskAnalysisSeed.class);
+
+        String tenantType = sharedStepsContext.getTenantType();
+        String kind = sharedStepsContext.getIdentityService().getKind(tenantType);
+        EServiceTemplateRiskAnalysisSeed editedRiskAnalysisSeed = easyRandom.nextObject(EServiceTemplateRiskAnalysisSeed.class)
+            .tenantKind(TenantKind.fromValue(sharedStepsContext.getIdentityService().getKind(kind)));
+
         editRiskAnalysisFromEServiceTemplate(eServiceTemplateId, UUID.randomUUID(), editedRiskAnalysisSeed);
     }
 
@@ -100,11 +111,16 @@ public class EServiceTemplateRiskAnalysisUpdateSteps {
         );
 
         @SuppressWarnings("unchecked, DataFlowIssue")
-        List<EServiceRiskAnalysis> riskAnalysis = ((ResponseEntity<EServiceTemplateDetails>) httpCallExecutor.getResponse()).getBody().getRiskAnalysis();
+        List<EServiceTemplateRiskAnalysis> riskAnalysis = ((ResponseEntity<EServiceTemplateDetails>) httpCallExecutor.getResponse()).getBody().getRiskAnalysis();
 
         UUID riskAnalysisId = riskAnalysis.get(0).getId();
-        EServiceRiskAnalysisSeed editedRiskAnalysisSeed = easyRandom.nextObject(EServiceRiskAnalysisSeed.class)
-            .name(riskAnalysis.get(1).getName());
+
+        String tenantType = sharedStepsContext.getTenantType();
+        String kind = sharedStepsContext.getIdentityService().getKind(tenantType);
+        EServiceTemplateRiskAnalysisSeed editedRiskAnalysisSeed = easyRandom.nextObject(EServiceTemplateRiskAnalysisSeed.class)
+            .name(riskAnalysis.get(1).getName())
+            .tenantKind(TenantKind.fromValue(sharedStepsContext.getIdentityService().getKind(kind)));
+
         editRiskAnalysisFromEServiceTemplate(eServiceTemplateId, riskAnalysisId, editedRiskAnalysisSeed);
     }
 
@@ -122,7 +138,7 @@ public class EServiceTemplateRiskAnalysisUpdateSteps {
                 "La risk analysis non è stata modificata correttamente nell'e-service template"
             );
         } catch (PollingPredicateException e) {
-            List<EServiceRiskAnalysis> riskAnalysis = requireNonNull(
+            List<EServiceTemplateRiskAnalysis> riskAnalysis = requireNonNull(
                 requireNonNull(
                     ((ResponseEntity<EServiceTemplateDetails>) httpCallExecutor.getResponse()),
                     "La response HTTP è nulla, possibile errore silenzioso di comunicazione con interop")
@@ -140,7 +156,7 @@ public class EServiceTemplateRiskAnalysisUpdateSteps {
     private void editRiskAnalysisFromEServiceTemplate(
         UUID eServiceTemplateId,
         UUID riskAnalysisId,
-        EServiceRiskAnalysisSeed editedRiskAnalysisSeed
+        EServiceTemplateRiskAnalysisSeed editedRiskAnalysisSeed
     ) {
         String userToken = sharedStepsContext.getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);

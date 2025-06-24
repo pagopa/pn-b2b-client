@@ -101,7 +101,8 @@ public class EServiceTemplateVersionUpdateSteps {
 
     @When("l'utente tenta di aggiungere l'attributo creato alla versione dell'e-service template")
     public void assignAttributeToEServiceTemplateVersion() {
-        Attribute lastCreatedAttribute = sharedStepsContext.getEServiceTemplateStepContext().getLastCreatedAttribute();
+        Attribute lastCreatedAttribute = sharedStepsContext.getAttributeCommonContext()
+            .getLastCreatedAttribute();
         // TODO cablato solo per attributi certificati, generalizzare per ogni tipo di attributo
         EServiceTemplateAttributesSeed lastEServiceTemplateAttributesSeed = new EServiceTemplateAttributesSeed().certified(
             List.of(List.of(
