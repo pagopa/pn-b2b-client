@@ -8,6 +8,14 @@ import java.util.Map;
 
 public interface NotificationStepsInterface {
 
+    /**
+     * Ogni classe che implementa NotificationStepsInterface nella propria implementazione dovrà restituire
+     * la fullSentNotification relativa alla propria versione ottenuta chiamando il b2b client.
+     * Vi dovrà poi essere un metodo PRIVATO getFullSentNotificationVersioned che restituisce l'oggetto
+     * castato alla classe corrispondente alla versione in uso.
+     */
+    Object getFullSentNotification();
+
     void prepareNotificationRequest(Map<String, String> data);
 
     void prepareNotificationRequestSimileAllaPrecedente(boolean isCreditorTaxIdUguale, boolean isCodiceAvvisoUguale, boolean isPaProtocolNumberUguale, String idempotenceToken);
@@ -43,15 +51,16 @@ public interface NotificationStepsInterface {
 
     void addDocumentItems(int numAllegati);
 
+    //TODO MATTEO: inutilizzata, ma serviva a qualcosa, ricordati cosa sostituire
     void performPriceVerification(String price, String date, Integer destinatario);
 
     void uploadNotificationAllegatiUgualiPagamento() throws IOException;
 
     void addIuvGpdToDestinatario(String denominazione, String iuvGpd, Integer paymentIndex);
 
-    List<String> getDatiPagamento(String iun, Integer destinatario, Integer pagamento);
+    List<String> getDatiPagamento(Integer destinatario, Integer pagamento);
 
-    void waitForTimelineElement(String iun, String timelineElementCategory, Integer attempts);
+    void waitForTimelineElement(String timelineElementCategory, Integer attempts);
 
     void getNotificationRequestStatus(String requestId);
 

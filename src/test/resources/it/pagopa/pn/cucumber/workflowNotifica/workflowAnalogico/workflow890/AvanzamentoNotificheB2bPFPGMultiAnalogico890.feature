@@ -129,9 +129,12 @@ Feature: avanzamento b2b notifica multi destinatario analogico 890
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
-    And destinatario Mario Cucumber e:
-      | digitalDomicile         | NULL       |
-      | physicalAddress_address | Via@ok_890 |
+    And destinatario
+      | denomination    | PG Non Censito |
+      | recipientType   | PG             |
+      | taxId           | 02455090981   |
+      | digitalDomicile | NULL           |
+      | physicalAddress | Via@ok_890           |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0

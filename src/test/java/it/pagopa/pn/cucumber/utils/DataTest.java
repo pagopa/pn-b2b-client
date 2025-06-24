@@ -1,6 +1,6 @@
 package it.pagopa.pn.cucumber.utils;
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV27;
 import it.pagopa.pn.cucumber.utils.datatestVersions.AbstractDataTest;
 import lombok.Data;
 
@@ -10,5 +10,5 @@ import lombok.Data;
 @Data
 public class DataTest extends AbstractDataTest {
 
-    private TimelineElementV26 timelineElement;
+    private TimelineElementV27 timelineElement;
 }

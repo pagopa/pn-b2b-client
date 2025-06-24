@@ -18,8 +18,8 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
 #    When L'operatore scansiona il qrCode e stampa gli atti per 2 volte senza errori
 #    Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_RADD_RETRIEVED"
 #    And vengono letti gli eventi fino all'elemento di timeline della notifica "DELIVERED"
-#    And lato destinatario la notifica può essere correttamente recuperata da "Mario Cucumber" e verifica presenza dell'evento di timeline NOTIFICATION_RADD_RETRIEVED
-#    And lato desinatario "Mario Cucumber" viene verificato che l'elemento di timeline NOTIFICATION_VIEWED non esista
+#    And lato destinatario la notifica può essere correttamente recuperata da "Mario Cucumber" e verifica presenza dell'evento di timeline "NOTIFICATION_RADD_RETRIEVED"
+#    And lato destinatario "Mario Cucumber" viene verificato che l'elemento di timeline NOTIFICATION_VIEWED non esista
 
   #RADD-ALT_ACT-75
   @raddTechnicalAnnex
@@ -34,8 +34,8 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
     And Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
     When L'operatore scansiona il qrCode e stampa gli atti per il numero di volte consentito
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_RADD_RETRIEVED"
-    And lato destinatario la notifica può essere correttamente recuperata da "Mario Cucumber" e verifica presenza dell'evento di timeline NOTIFICATION_RADD_RETRIEVED
-    And lato desinatario "Mario Cucumber" viene verificato che l'elemento di timeline NOTIFICATION_VIEWED non esista
+    And lato destinatario la notifica può essere correttamente recuperata da "Mario Cucumber" e verifica presenza dell'evento di timeline "NOTIFICATION_RADD_RETRIEVED"
+    And lato destinatario "Mario Cucumber" viene verificato che l'elemento di timeline NOTIFICATION_VIEWED non esista
 
   @raddTechnicalAnnex
   Scenario: [ADEG-RADD-PRINT_ACTS-3] PF - Restituzione errore - Stampa limitata di documenti disponibili associati con raggiungimento limite raggiunto

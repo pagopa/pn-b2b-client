@@ -1,6 +1,6 @@
 package it.pagopa.pn.cucumber.steps.pa.notificationVersions;
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.*;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV1;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
@@ -44,6 +44,15 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
         b2bClient = sharedSteps.getB2bClient();
         version = NotificationVersion.V1;
         utils = new NotificationUtilsV1(sharedSteps.getContext(), b2bClient, sharedSteps.getPollingFactory());
+    }
+
+    @Override
+    public Object getFullSentNotification() {
+        return b2bClient.getSentNotificationV1(sharedSteps.getNotificationIun());
+    }
+
+    private FullSentNotification getFullSentNotificationVersioned() {
+        return (FullSentNotification) getFullSentNotification();
     }
 
     @Override
@@ -229,8 +238,7 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
     @Override
     public void performPriceVerification(String price, String date, Integer destinatario) {
         List<String> datiPagamento = sharedSteps.getDatiPagamentoVersionamento(destinatario, 0);
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPriceResponse notificationPrice =
-                b2bClient.getNotificationPrice(datiPagamento.get(0), datiPagamento.get(1));
+        NotificationPriceResponse notificationPrice = b2bClient.getNotificationPrice(datiPagamento.get(0), datiPagamento.get(1));
         try {
             Assertions.assertEquals(notificationPrice.getIun(), sharedSteps.getNotificationIun());
             if (price != null) {
@@ -260,19 +268,19 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
     }
 
     @Override
-    public List<String> getDatiPagamento(String iun, Integer destinatario, Integer pagamento) {
-        FullSentNotification fullSentNotification = b2bClient.getSentNotificationV1(iun);
+    public List<String> getDatiPagamento(Integer destinatario, Integer pagamento) {
+        FullSentNotification fullSentNotification = getFullSentNotificationVersioned();
         return Arrays.asList(
                 Objects.requireNonNull(fullSentNotification.getRecipients().get(destinatario).getPayment()).getCreditorTaxId(),
                 Objects.requireNonNull(fullSentNotification.getRecipients().get(destinatario).getPayment()).getNoticeCode());
     }
 
     @Override
-    public void waitForTimelineElement(String iun, String timelineElementCategory, Integer attempts) {
+    public void waitForTimelineElement(String timelineElementCategory, Integer attempts) {
         TimelineElement timelineElement = null;
         for (int i = 0; i < attempts; i++) {
             threadWait(sharedSteps.getWorkFlowWait());
-            FullSentNotification fsn = b2bClient.getSentNotificationV1(iun);
+            FullSentNotification fsn = getFullSentNotificationVersioned();
             log.info("NOTIFICATION_TIMELINE: " + fsn.getTimeline());
             timelineElement = fsn.getTimeline()
                     .stream().filter(elem -> Objects.requireNonNull(elem.getCategory().getValue())
@@ -298,8 +306,7 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
 
     @Override
     public void checkTaxonomyCode() {
-        String iun = sharedSteps.getNotificationIun();
-        FullSentNotification fullSentNotification = b2bClient.getSentNotificationV1(iun);
+        FullSentNotification fullSentNotification = getFullSentNotificationVersioned();
         assertThat(fullSentNotification.getTaxonomyCode())
                 .as("Il taxonomyCode nella notifica inviata non dovrebbe essere nullo")
                 .isNotNull();

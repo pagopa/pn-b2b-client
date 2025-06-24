@@ -325,7 +325,7 @@ Feature: annullamento notifiche b2b
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
 
-  @Annullamento
+  @Annullamento @uat #In test l' ingestion è disabilitata, non si riceverà nessun audit-log
   Scenario Outline: [B2B-PA-ANNULLAMENTO_15] AuditLog: verifica presenza evento post annullamento notifica
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -785,6 +785,7 @@ Feature: annullamento notifiche b2b
         #Valutare lo step
     #And vengono letti gli eventi e verificho che l'utente 0 non abbia associato un evento "SEND_DIGITAL_PROGRESS"
     Then viene verificato che l'elemento di timeline "SEND_DIGITAL_PROGRESS" non esista
+      | loadTimeline            | true     |
       | details                 | NOT_NULL |
       | details_recIndex        | 0        |
       | details_sentAttemptMade | 0        |
