@@ -57,7 +57,7 @@ public class ProducerDelegationsApiClientImpl implements IProducerDelegationsApi
     }
 
     @Override
-    public void revokeProducerDelegation(String delegationId) {
+    public void revokeProducerDelegation(UUID delegationId) {
         producerDelegationsApi.revokeProducerDelegation(delegationId);
     }
 

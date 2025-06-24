@@ -80,7 +80,7 @@ public class DelegationDenyStep {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, role));
         httpCallExecutor.performCall(
                 () -> producerDelegationsApiClient.revokeProducerDelegation(
-                        String.valueOf(sharedStepsContext.getDelegationCommonContext().getDelegationId())));
+                        sharedStepsContext.getDelegationCommonContext().getDelegationId()));
     }
 
     @And("l'ente {string} con ruolo {string} revoca la delega in fruizione")
@@ -88,7 +88,7 @@ public class DelegationDenyStep {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, role));
         httpCallExecutor.performCall(
                 () -> consumerDelegationsApiClient.revokeConsumerDelegation(
-                        String.valueOf(sharedStepsContext.getDelegationCommonContext().getDelegationId())));
+                        sharedStepsContext.getDelegationCommonContext().getDelegationId()));
         if (httpCallExecutor.getResponseStatus() == HttpStatus.OK) waitForDelegationState(DelegationState.REVOKED);
     }
 
