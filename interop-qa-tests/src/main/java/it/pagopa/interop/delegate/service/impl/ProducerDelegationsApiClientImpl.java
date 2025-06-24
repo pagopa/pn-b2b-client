@@ -57,8 +57,9 @@ public class ProducerDelegationsApiClientImpl implements IProducerDelegationsApi
     }
 
     @Override
+    // TODO 24/06/2025 modificare firma così che venga passato un UUID
     public void revokeProducerDelegation(String delegationId) {
-        producerDelegationsApi.revokeProducerDelegation(delegationId);
+        producerDelegationsApi.revokeProducerDelegation(UUID.fromString(delegationId));
     }
 
     @Override

@@ -73,9 +73,10 @@ public class ConsumerDelegationsApiClientImpl implements IConsumerDelegationsApi
     }
 
     @Override
+    // TODO 24/06/2025 modificare firma così che venga passato un UUID
     public void revokeConsumerDelegation(String delegationId)
         throws RestClientException {
-        consumerDelegationsApi.revokeConsumerDelegation(delegationId);
+        consumerDelegationsApi.revokeConsumerDelegation(UUID.fromString(delegationId));
     }
 
     @Override
