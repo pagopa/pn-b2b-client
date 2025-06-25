@@ -851,7 +851,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details_recIndex              | 0                      |
 
 
-# copia test per uat, per i quali...
+# copia test per uat, per i quali è stato usato un cf realmente censito sui registri
 
 
   #PA ABILITATA, PF CENSITA, CLIENT ABILITATO
