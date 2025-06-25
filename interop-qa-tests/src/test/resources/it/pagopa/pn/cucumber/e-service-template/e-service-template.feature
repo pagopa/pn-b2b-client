@@ -277,7 +277,7 @@ Feature: Test API of e-service template
       | ruolo         |
       | admin         |
       | api           |
-      | api, security |
+      | api,security  |
 
   @QA-7351
   @e-service-template-riskAnalysis-add
@@ -285,7 +285,7 @@ Feature: Test API of e-service template
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
     When l'utente tenta l'aggiunta di una risk analysis all'e-service template
-    Then si ottiene response status code 403
+    Then si ottiene response status code 400
     Examples:
       | stato     |
       | PUBLISHED |
