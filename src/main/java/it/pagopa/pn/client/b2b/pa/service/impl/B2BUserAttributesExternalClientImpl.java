@@ -174,6 +174,9 @@ public class B2BUserAttributesExternalClientImpl implements IPnWebUserAttributes
 
 
     public void deleteRecipientLegalAddress(String senderId, LegalCourtesyAddressWrapper.ChannelType channelType) throws RestClientException {
+        if (channelType.equals(LegalCourtesyAddressWrapper.ChannelType.SERCQ_SEND)) {
+            channelType = LegalCourtesyAddressWrapper.ChannelType.SERCQ;
+        }
         legalApi.deleteRecipientLegalAddress(senderId, deepCopy(channelType, it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.LegalChannelType.class));
     }
 

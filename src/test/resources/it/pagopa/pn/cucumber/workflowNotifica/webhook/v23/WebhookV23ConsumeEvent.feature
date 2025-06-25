@@ -219,10 +219,11 @@ Feature: avanzamento notifiche webhook b2b V23
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
-      | denomination            | Mario Gherkin    |
-      | taxId                   | CLMCST42R12D969Z |
-      | digitalDomicile         | NULL             |
-      | physicalAddress_address | Via@ok_AR        |
+      | denomination                        | Mario Gherkin    |
+      | taxId                               | CLMCST42R12D969Z |
+      | digitalDomicile                     | NULL             |
+      | physicalAddress_address             | Via@ok_AR        |
+      | physicalAddress_municipalityDetails | FRAZIONE         |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V23"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
