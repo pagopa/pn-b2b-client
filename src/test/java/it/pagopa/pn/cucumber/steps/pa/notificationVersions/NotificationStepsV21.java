@@ -276,7 +276,7 @@ public class NotificationStepsV21 implements NotificationStepsInterface {
 
             }
         }
-        uploadNotification(null);
+        b2bClient.sendNewNotificationV21(notificationRequest);
     }
 
     @Override
@@ -289,19 +289,19 @@ public class NotificationStepsV21 implements NotificationStepsInterface {
     }
 
     @Override
-    public List<String> getDatiPagamento(String iun, Integer destinatario, Integer pagamento) {
-        FullSentNotificationV21 fullSentNotification = b2bClient.getSentNotificationV21(iun);
+    public List<String> getDatiPagamento(Integer destinatario, Integer pagamento) {
+        FullSentNotificationV21 fullSentNotification = getFullSentNotificationVersioned();
         return Arrays.asList(
                 Objects.requireNonNull(Objects.requireNonNull(fullSentNotification.getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getCreditorTaxId(),
                 Objects.requireNonNull(Objects.requireNonNull(fullSentNotification.getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getNoticeCode());
     }
 
     @Override
-    public void waitForTimelineElement(String iun, String timelineElementCategory, Integer attempts) {
+    public void waitForTimelineElement(String timelineElementCategory, Integer attempts) {
         TimelineElementV20 timelineElement = null;
         for (int i = 0; i < attempts; i++) {
             threadWait(sharedSteps.getWorkFlowWait());
-            FullSentNotificationV21 fsn = b2bClient.getSentNotificationV21(iun);
+            FullSentNotificationV21 fsn = getFullSentNotificationVersioned();
             log.info("NOTIFICATION_TIMELINE: " + fsn.getTimeline());
             timelineElement = fsn.getTimeline()
                     .stream().filter(elem -> Objects.requireNonNull(elem.getCategory().getValue())
@@ -327,8 +327,7 @@ public class NotificationStepsV21 implements NotificationStepsInterface {
 
     @Override
     public void checkTaxonomyCode() {
-        String iun = sharedSteps.getNotificationIun();
-        FullSentNotificationV21 fullSentNotification = b2bClient.getSentNotificationV21(iun);
+        FullSentNotificationV21 fullSentNotification = getFullSentNotificationVersioned();
         assertThat(fullSentNotification.getTaxonomyCode())
                 .as("Il taxonomyCode nella notifica inviata non dovrebbe essere nullo")
                 .isNotNull();

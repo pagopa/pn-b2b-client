@@ -170,6 +170,7 @@ public class PnPollingServiceWebhookV20 extends PnPollingTemplate<PnPollingRespo
 //                        && progressResponseElement.getTimelineEventCategory().equals(
 //                        pnPollingParameter.getPnPollingWebhook().getTimelineElementCategoryV23())
                         //TODO: con questo ci mettiamo una toppa, ma non è del tutto corretto
+                        && pnPollingParameter.getPnPollingWebhook().getTimelineElementCategoryV20() != null
                         && progressResponseElement.getTimelineEventCategory().getValue().equals(
                         pnPollingParameter.getPnPollingWebhook().getTimelineElementCategoryV20().getValue())
                         //TODO: questo è come dovrebbe essere (una volta sistemato il pom, scommentare e rimuovere quelli sopra)

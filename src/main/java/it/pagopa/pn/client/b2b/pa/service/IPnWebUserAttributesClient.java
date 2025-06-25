@@ -3,8 +3,7 @@ package it.pagopa.pn.client.b2b.pa.service;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.AddressVerification;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.CourtesyChannelType;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.CourtesyDigitalAddress;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.UserAddresses;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.Consent;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.ConsentAction;
@@ -23,15 +22,15 @@ public interface IPnWebUserAttributesClient extends SettableBearerToken {
 
     UserAddresses getAddressesByRecipient() throws RestClientException;
 
-    void deleteRecipientLegalAddress(String senderId, LegalChannelType channelType) throws RestClientException;
+    void deleteRecipientLegalAddress(String senderId, LegalCourtesyAddressWrapper.ChannelType channelType) throws RestClientException;
 
     List<LegalCourtesyAddressWrapper> getLegalAddressByRecipient() throws RestClientException;
 
-    void postRecipientLegalAddress(String senderId, LegalChannelType channelType, AddressVerification addressVerification) throws RestClientException;
+    void postRecipientLegalAddress(String senderId, LegalCourtesyAddressWrapper.ChannelType channelType, AddressVerification addressVerification) throws RestClientException;
 
-    void deleteRecipientCourtesyAddress(String senderId, CourtesyChannelType channelType) throws RestClientException;
+    void deleteRecipientCourtesyAddress(String senderId, LegalCourtesyAddressWrapper.ChannelType channelType) throws RestClientException;
 
-    List<LegalCourtesyAddressWrapper> getCourtesyAddressByRecipient() throws RestClientException;
+    List<CourtesyDigitalAddress> getCourtesyAddressByRecipient() throws RestClientException;
 
-    void postRecipientCourtesyAddress(String senderId, CourtesyChannelType channelType, AddressVerification addressVerification) throws RestClientException;
+    void postRecipientCourtesyAddress(String senderId, LegalCourtesyAddressWrapper.ChannelType channelType, AddressVerification addressVerification) throws RestClientException;
 }
