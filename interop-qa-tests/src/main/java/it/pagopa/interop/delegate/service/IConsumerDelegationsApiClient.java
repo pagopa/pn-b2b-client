@@ -17,5 +17,5 @@ public interface IConsumerDelegationsApiClient extends SettableBearerToken {
     CreatedResource createConsumerDelegation(DelegationSeed delegationSeed);
     void approveConsumerDelegation(UUID delegationId);
     void rejectConsumerDelegation(UUID delegationId, RejectDelegationPayload rejectDelegationPayload);
-    void revokeConsumerDelegation(String delegationId);
+    void revokeConsumerDelegation(UUID delegationId);
 }
