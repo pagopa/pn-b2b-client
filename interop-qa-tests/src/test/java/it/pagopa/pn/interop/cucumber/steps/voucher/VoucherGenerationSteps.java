@@ -79,6 +79,7 @@ public class VoucherGenerationSteps {
         }
     }
 
+
     @Then("si ottiene la corretta generazione del voucher m2m admin")
     public void checkVoucherGenerationM2MAdmin() {
         try {

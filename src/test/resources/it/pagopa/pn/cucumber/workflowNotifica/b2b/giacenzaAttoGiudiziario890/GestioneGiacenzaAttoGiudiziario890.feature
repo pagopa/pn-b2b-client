@@ -650,8 +650,67 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | details_deliveryDetailCode | RECAG005C |
       | details_sentAttemptMade    | 0         |
     And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      |  |  |
+      | details | NOT_NULL |
     #"@sequence.5s-CON080.5s-RECAG010.5s-RECAG011A.5s-RECAG012.5s-RECAG005A.5s-RECAG005B[DOC:CAD;DOC:23L].5s-RECAG005C"
+
+  @esposizioneCadArcad
+  Scenario: [ARCAD_FULL_DIGITAL_1] Verifica allegato ARCAD per secondo evento di timeline SEND_ANALOG_PROGRESS con deliveryDetailCode = RECAG011B
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL                         |
+      | physicalAddress_address | via@OK-Giacenza-gt10_890_ZIP |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
+      | details_deliveryDetailCode | CON080   |
+      | details_sentAttemptMade    | 0        |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
+      | details_deliveryDetailCode | RECAG010 |
+      | details_sentAttemptMade    | 0        |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
+      | details_deliveryDetailCode | RECAG011A |
+      | details_sentAttemptMade    | 0         |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
+      | details_deliveryDetailCode | RECAG012 |
+      | details_sentAttemptMade    | 0        |
+      | details_responseStatus     | OK       |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                  |
+      | details_recIndex           | 0                         |
+      | details_deliveryDetailCode | RECAG011B                 |
+      | details_sentAttemptMade    | 0                         |
+      | details_attachments        | [{"documentType": "23L"}] |
+    And abbia anche un valore per il campo "details_attachments[0]_url" compatibile con l'espressione regolare ".+PN_EXTERNAL_LEGAL_FACTS.+\.zip"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                    |
+      | details_recIndex           | 0                           |
+      | details_deliveryDetailCode | RECAG011B                   |
+      | details_sentAttemptMade    | 0                           |
+      | details_attachments        | [{"documentType": "ARCAD"}] |
+    And abbia anche un valore per il campo "details_attachments[0]_url" compatibile con l'espressione regolare ".+PN_EXTERNAL_LEGAL_FACTS.+\.zip"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
+      | details_deliveryDetailCode | RECAG005A |
+      | details_sentAttemptMade    | 0         |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
+      | details_deliveryDetailCode | RECAG005C |
+      | details_sentAttemptMade    | 0         |
+    And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+      | details | NOT_NULL |
+    #"@sequence.5s-CON080.5s-RECAG010.5s-RECAG011A.60s-RECAG012.5s-RECAG011B[DOC:ARCAD#Z3;DOC:23L#Z5].60s-RECAG005A.5s-RECAG005C"
 
   @giacenza890Simplified @fixCadArcad
   Scenario: [B2B_GIACENZA_890_WI1.1_11] Attesa elemento di timeline REFINEMENT con physicalAddress OK-WO-011B (TEST TECNICO)

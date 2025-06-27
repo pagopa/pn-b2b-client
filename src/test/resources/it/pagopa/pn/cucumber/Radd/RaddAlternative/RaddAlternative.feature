@@ -1335,13 +1335,13 @@ Feature: Radd Alternative
 
 # AUDIT cases
 
-  @raddAlt @raddAltLog
+  @raddAlt @raddAltLog @uat #In test l' ingestion è disabilitata, non si riceverà nessun audit-log
   Scenario: [RADD-ALT_AUDIT_LOG-96] Scansione QR code o IUN e verifica auditlog AUD_RADD_ACTTRAN
     When viene verificato che esiste un audit log "AUD_RADD_ACTTRAN" in "10y"
     Then viene verificato che esiste un audit log "AUD_RADD_ACTTRAN" con messaggio "[AUD_RADD_ACTTRAN] FAILURE"
     Then viene verificato che esiste un audit log "AUD_RADD_ACTTRAN" senza messaggio con "error null"
 
-  @raddAlt @raddAltLog
+  @raddAlt @raddAltLog @uat #In test l' ingestion è disabilitata, non si riceverà nessun audit-log
   Scenario Outline: [RADD-ALT_AUDIT_LOG-97] Scansione QR code o IUN e verifica auditlog AUD_RADD_ACTTRAN
     When viene verificato che esiste un audit log "<audit-log>" in "10y"
     Then viene verificato che esiste un audit log "<audit-log>" con messaggio "operationId="
@@ -1352,7 +1352,7 @@ Feature: Radd Alternative
       | AUD_RADD_AORTRAN |
 
   #Copre scenari tutti i scenari di test 43-44-45-46
-  @raddAlt @raddAltLog
+  @raddAlt @raddAltLog @uat #In test l' ingestion è disabilitata, non si riceverà nessun audit-log
   Scenario Outline: [RADD-ALT_AUDIT_LOG-42] Scansione QR code o IUN e verifica auditlog AUD_RADD_ACTINQUIRY
     Then viene verificato che esiste un audit log "<audit-log>" in "10y"
     Examples:
