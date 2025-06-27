@@ -95,6 +95,8 @@ public class AgreementActivateSteps {
     public void tenantHasAlreadyVerifiedAttribute(String verifier, String consumer) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(verifier, null));
         UUID consumerId = identityService.getOrganizationId(consumer);
+        sharedStepsContext.getAttributeCommonContext().setAttributeConsumerTenant(consumer);
+
         UUID verifierId = identityService.getOrganizationId(verifier);
 
         dataPreparationService.assignVerifiedAttributeToTenant(consumerId, verifierId,
