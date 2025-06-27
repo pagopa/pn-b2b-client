@@ -66,11 +66,10 @@ public class VoucherGenerationSteps {
                 .convertValue(response, VoucherResponse.class);
 
             assertSoftly(softly -> {
+                softly.assertThat(voucherResponse).isNotNull();
+                softly.assertThat(voucherResponse.getAccessToken()).isNotBlank();
+                softly.assertThat(voucherResponse.getExpiresIn()).isNotNull();
                 softly.assertThat(voucherResponse.getTokenType()).isEqualTo("Bearer");
-
-                /*NOTA 27/05/2025: controllo in più rispetto al test originale in TS*/
-                Map<String, Object> jwtClaims = decodeJwtPayload(voucherResponse.getAccessToken());
-                softly.assertThat(jwtClaims.get("role").toString()).isEqualTo("m2m");
             });
         } catch (IllegalArgumentException e) {
             fail("La conversione dell'oggetto restituito in %s è fallita. E' possibile "

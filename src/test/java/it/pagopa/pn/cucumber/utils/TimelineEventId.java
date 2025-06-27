@@ -84,6 +84,18 @@ public enum TimelineEventId {
         }
     },
 
+    PREPARE_ANALOG_DOMICILE_FAILURE("PREPARE_ANALOG_DOMICILE_FAILURE") {
+        @Override
+        public String buildEventId(EventId eventId) {
+            return new TimelineEventIdBuilder()
+                    .withCategory(this.getValue())
+                    .withIun(eventId.getIun())
+                    .withRecIndex(eventId.getRecIndex())
+//                    .withSentAttemptMade(eventId.getSentAttemptMade())//TODO VAS ???
+                    .build();
+        }
+    },
+
     SEND_ANALOG_DOMICILE("SEND_ANALOG_DOMICILE") {
         @Override
         public String buildEventId(EventId eventId) {
@@ -163,7 +175,6 @@ public enum TimelineEventId {
     },
 
     SEND_COURTESY_MESSAGE("SEND_COURTESY_MESSAGE") {
-
         @Override
         public String buildEventId(EventId eventId) {
             return new TimelineEventIdBuilder()
@@ -175,7 +186,7 @@ public enum TimelineEventId {
         }
 
         @Override
-        public String buildSearchEventIdByIunAndRecipientIndex(String iun, Integer recipientIndex){
+        public String buildSearchEventIdByIunAndRecipientIndex(String iun, Integer recipientIndex) {
             return new TimelineEventIdBuilder()
                     .withCategory(this.getValue())
                     .withIun(iun)
@@ -299,6 +310,35 @@ public enum TimelineEventId {
                     .withRecIndex(eventId.getRecIndex())
                     .build();
         }
+    },
+
+    //TODO VAS
+    PUBLIC_REGISTRY_VALIDATION_CALL("PUBLIC_REGISTRY_VALIDATION_CALL") {
+        @Override
+        public String buildEventId(EventId eventId) {
+            StringBuilder sb = new StringBuilder("NATIONAL_REGISTRY_VALIDATION_CALL")
+                    .append(TimelineEventIdBuilder.DELIMITER)
+                    .append("IUN_")
+                    .append(eventId.getIun());
+            return sb.toString();
+        }
+    },
+
+    //TODO VAS
+    PUBLIC_REGISTRY_VALIDATION_RESPONSE("PUBLIC_REGISTRY_VALIDATION_RESPONSE") {
+        @Override
+        public String buildEventId(EventId eventId) {
+            StringBuilder sb = new StringBuilder("NATIONAL_REGISTRY_VALIDATION_RESPONSE")
+                    .append(TimelineEventIdBuilder.DELIMITER)
+                    .append("RECINDEX_")
+                    .append(eventId.getRecIndex())
+                    .append(TimelineEventIdBuilder.DELIMITER)
+                    .append("CORRELATIONID_NATIONAL_REGISTRY_VALIDATION_CALL")
+                    .append(TimelineEventIdBuilder.DELIMITER)
+                    .append("IUN_")
+                    .append(eventId.getIun());
+            return sb.toString();
+        }
     };
 
     public String buildEventId(EventId eventId) {
@@ -315,7 +355,7 @@ public enum TimelineEventId {
 
     private final String value;
 
-    TimelineEventId(String value ) {
+    TimelineEventId(String value) {
         this.value = value;
     }
 

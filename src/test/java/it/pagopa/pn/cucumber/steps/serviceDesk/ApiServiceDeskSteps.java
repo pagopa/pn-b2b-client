@@ -5,7 +5,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV26;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV27;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationAttachmentBodyRef;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationAttachmentDigests;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationDocument;
@@ -876,7 +876,7 @@ public class ApiServiceDeskSteps {
     @Given("come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN {string} e taxId {string}  recipientType  {string}")
     public void comeOperatoreDevoEffettuareUnCheckSullaDisponibilitaValiditaEDimensioneDegliAllegatiConIUNRecipientType(String iun, String taxId, String recipientType) {
         try {
-            FullSentNotificationV26 fullSentNotification = sharedSteps.getNotificationIun() != null ? sharedSteps.getSentNotificationLastVersion() : null;
+            FullSentNotificationV27 fullSentNotification = sharedSteps.getNotificationIun() != null ? sharedSteps.getSentNotificationLastVersion() : null;
             documentsRequest = new DocumentsRequest();
             if (fullSentNotification != null) {
                 setRecipientType(fullSentNotification.getRecipients().get(0).getRecipientType().getValue());

@@ -21,6 +21,7 @@ Feature: verifica creazione stream
     And l'apiKey viene cancellata
 
   @webhookV24 @precondition @cleanWebhook @webhook2
+  #LIMITE SPECIFICO PER PA: n/a; LIMITE DEFAULT (pnConfigurations.MaxStreams  = 10)
   Scenario: [B2B-STREAM_ES1.1_2] Creazione per una PA di 11 nuovi stream notifica con eventType TIMELINE e senza gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V24"
     And si predispongono 10 nuovi stream denominati "stream-test" con eventType "TIMELINE" con versione "V24"
@@ -29,7 +30,7 @@ Feature: verifica creazione stream
     And viene aggiornata la apiKey utilizzata per gli stream
     And si creano i nuovi stream per il "Comune_Multi" con versione "V24"
     When si predispone 1 nuovo stream denominato "stream-test-11" con eventType "TIMELINE" con versione "V24"
-    And si crea il nuovo stream con versione "V24" per il "Comune_Multi" (caso errato)
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V24"
     Then l'operazione ha prodotto un errore con status code "409"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
@@ -49,15 +50,16 @@ Feature: verifica creazione stream
     And l'apiKey viene cancellata
 
   @webhookV24 @precondition @cleanWebhook @webhook2
+  #LIMITE SPECIFICO PER PA: n/a; LIMITE DEFAULT (pnConfigurations.MaxStreams  = 10)
   Scenario: [B2B-STREAM_ES1.1_4] Creazione per una PA di 11 nuovi stream notifica con eventType TIMELINE con gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V24"
     And si predispongono 10 nuovi stream denominati "stream-test" con eventType "TIMELINE" con versione "V24"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    And si crea il nuovo stream con versione "V24" per il "Comune_Multi" con un gruppo disponibile "FIRST"
+    And si creano i nuovi stream con versione "V24" per il "Comune_Multi" con un gruppo disponibile "FIRST"
     When si predispone 1 nuovo stream denominato "stream-test-11" con eventType "TIMELINE" con versione "V24"
-    And si crea il nuovo stream con versione "V24" per il "Comune_Multi" (caso errato)
+    And si crea il nuovo stream con versione "V24" per il "Comune_Multi" con un gruppo disponibile "FIRST"
     Then l'operazione ha prodotto un errore con status code "409"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
@@ -77,6 +79,7 @@ Feature: verifica creazione stream
     And l'apiKey viene cancellata
 
   @webhookV24 @precondition @cleanWebhook @webhook2
+  #LIMITE SPECIFICO PER PA: n/a; LIMITE DEFAULT (pnConfigurations.MaxStreams  = 10)
   Scenario: [B2B-STREAM_ES1.1_6] Creazione per una PA di 11 nuovi stream notifica con eventType STATUS e senza gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V24"
     And si predispongono 10 nuovi stream denominati "stream-test" con eventType "STATUS" con versione "V24"
@@ -85,7 +88,7 @@ Feature: verifica creazione stream
     And viene aggiornata la apiKey utilizzata per gli stream
     And si creano i nuovi stream per il "Comune_Multi" con versione "V24"
     When si predispone 1 nuovo stream denominato "stream-test-11" con eventType "STATUS" con versione "V24"
-    And si crea il nuovo stream con versione "V24" per il "Comune_Multi" (caso errato)
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V24"
     Then l'operazione ha prodotto un errore con status code "409"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
@@ -104,15 +107,16 @@ Feature: verifica creazione stream
     And l'apiKey viene cancellata
 
   @webhookV24 @precondition @cleanWebhook @webhook2
+  #LIMITE SPECIFICO PER PA: n/a; LIMITE DEFAULT (pnConfigurations.MaxStreams  = 10)
   Scenario: [B2B-STREAM_ES1.1_8] Creazione per una PA di 11 nuovi stream notifica con eventType STATUS con gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V24"
     And si predispongono 10 nuovi stream denominati "stream-test" con eventType "STATUS" con versione "V24"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    And si crea il nuovo stream con versione "V24" per il "Comune_Multi" con un gruppo disponibile "FIRST"
+    And si creano i nuovi stream con versione "V24" per il "Comune_Multi" con un gruppo disponibile "FIRST"
     When si predispone 1 nuovo stream denominato "stream-test-11" con eventType "STATUS" con versione "V24"
-    And si crea il nuovo stream con versione "V24" per il "Comune_Multi" (caso errato)
+    And si crea il nuovo stream con versione "V24" per il "Comune_Multi" con un gruppo disponibile "FIRST"
     Then l'operazione ha prodotto un errore con status code "409"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata

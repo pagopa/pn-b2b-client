@@ -1,7 +1,7 @@
 package it.pagopa.pn.client.b2b.pa.polling.impl.v1;
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationStatusHistoryElement;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotification;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryElement;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingTemplate;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
@@ -110,7 +110,6 @@ public class PnPollingServiceStatusRapidV1 extends PnPollingTemplate<PnPollingRe
                         pnPollingParameter.getPnPollingPredicate().getNotificationStatusHistoryElementPredicateV1())
                 .findAny()
                 .orElse(null);
-
         if (notificationStatusHistoryElement != null) {
             pnPollingResponse.setNotificationStatusHistoryElement(notificationStatusHistoryElement);
             pnPollingResponse.setResult(true);

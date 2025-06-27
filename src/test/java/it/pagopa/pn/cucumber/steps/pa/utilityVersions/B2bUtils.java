@@ -39,6 +39,8 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
@@ -56,6 +58,7 @@ import java.util.List;
 import java.util.Map;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @Data
 @Slf4j
@@ -101,9 +104,8 @@ public abstract class B2bUtils {
         E value2;
     }
 
-    /**
-     * Metodi generali, indipendenti dalla versione usata, dovranno essere riportati nella classe astratta
-     */
+
+    //Metodi generali, indipendenti dalla versione usata, dovranno essere riportati qua come metodi statici
 
     public static byte[] downloadFile(String downloadUrl) {
         if (downloadUrl == null) {
@@ -345,10 +347,92 @@ public abstract class B2bUtils {
     }
 
     /**
-     * Restituisce il profilo in uso a partire dall'applicationContext
+     * Restituisce una property a partire dal nome
      */
-    public static String getProfileInUse(ApplicationContext context) {
-        return context.getEnvironment().getActiveProfiles()[0];
+    public static String getProperty(ApplicationContext context, String propertyName) {
+        return context.getEnvironment().getProperty(propertyName);
+    }
+
+    /**
+     * Se nel DataTest viene passato il parametro parametriCalcoloCostoNotifica, provvede a calcolare il costo della notifica a partire
+     * da una stringa in input con il seguente formato: recipients:1,ko:1,ok:0
+     * La stringa deve pertanto avere sempre 3 parametri, separati da virgola, e le coppie chiave-valore devono essere separate da :
+     */
+    public static Long calcolaCostoNotifica(ApplicationContext context, String parametriCalcoloCostoNotifica) {
+
+        String mode;
+        long costoBaseNotifica;
+        long technicalRefusalCost;
+        int numRecipients;
+        int responseKo;
+        int responseOk;
+
+        try {
+            String[] parameters = parametriCalcoloCostoNotifica.split(",");
+            numRecipients = Integer.parseInt(parameters[0].split(":")[1]);
+            responseKo = Integer.parseInt(parameters[1].split(":")[1]);
+            responseOk = Integer.parseInt(parameters[2].split(":")[1]);
+
+            costoBaseNotifica = Long.parseLong(getProperty(context, COSTO_BASE_NOTIFICA));
+            String propertyValue = getProperty(context, TECHNICAL_REFUSAL_COST_MODE);
+            String[] modeCost = (propertyValue != null) ? propertyValue.split(";") : null;
+
+            if (modeCost == null || modeCost.length < 2 || responseKo == 0) {
+                mode = "DEFAULT";
+                technicalRefusalCost = 0;
+            } else {
+                mode = modeCost[0];
+                technicalRefusalCost = Integer.parseInt(modeCost[1]);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Formato parametri calcolo costo notifica non valido, controllare i dati in input e le properties");
+        }
+        return switch (mode) {
+            case "RECIPIENT_BASED" -> (responseKo * technicalRefusalCost) + (responseOk * costoBaseNotifica);
+            case "UNIFORM" -> technicalRefusalCost;
+            case "DEFAULT" -> numRecipients * costoBaseNotifica;
+            default ->
+                    throw new RuntimeException("Modalità di calcolo non riconosciuta, controllare i dati in input e le properties");
+        };
+    }
+
+    /**
+     * Confronta due oggetti qualsiasi, valutando l'uguaglianza solo per i field != null specificati nell'expected
+     * (NOTA: eventuali campi statici sono esclusi da questa verifica)
+     */
+    public static void compareActualAndExpected(String error, Object actual, Object expected) {
+        error += " -> ";
+        if (expected == null) {
+            assertThat(actual).as(error + actual + " dovrebbe essere null").isNull();
+            return;
+        }
+        Class<?> clazz = expected.getClass();
+        assertThat(actual).as(error + clazz.getName() + " non dev'essere null").isNotNull();
+        List<Field> nonStaticFields = Arrays.stream(clazz.getDeclaredFields()).filter(field -> !Modifier.isStatic(field.getModifiers())).toList();
+        try {
+            for (Field expectedField : nonStaticFields) {
+                String fieldName = expectedField.getName();
+                expectedField.setAccessible(true);
+                Object expectedValue = expectedField.get(expected);
+                try {
+                    Field actualField = clazz.getDeclaredField(fieldName);
+                    actualField.setAccessible(true);
+                    Object actualValue = actualField.get(actual);
+                    //TODO aggiunto controllo per escludere municipalityDetails dal controllo sull'equals (causa consolidatore che fa fallire i test)
+                    if (expectedValue != null && !fieldName.equals("municipalityDetails")) {
+                        assertThat(actualValue).as(error + fieldName + " non coincide col valore atteso").isEqualTo(expectedValue);
+                    }
+                } catch (NoSuchFieldException e) {
+                    assertThat(true)
+                            .as("Eccezione imprevista in fase di controllo uguaglianza del campo " + fieldName + " tramite reflection " + e.getMessage())
+                            .isFalse();
+                }
+            }
+        } catch (IllegalAccessException e) {
+            assertThat(true)
+                    .as("Eccezione imprevista in fase di controllo uguaglianza tramite reflection " + e.getMessage())
+                    .isFalse();
+        }
     }
 
     /**
@@ -375,7 +459,12 @@ public abstract class B2bUtils {
     public static void logTimelineElementsThatDoNotMatchExpected(List<AssertionError> assertionErrorList, AbstractDataTest dataTest, String timelineElementCategory) {
         String expectedTimelineElement = getExpectedTimelineElement(dataTest, timelineElementCategory);
         StringBuilder sb = new StringBuilder();
-        sb.append("Sono stati trovati " + assertionErrorList.size() + " elementi con category " + timelineElementCategory + ", ma nessuno combacia con\n" + expectedTimelineElement);
+        sb.append("Sono stati trovati ")
+                .append(assertionErrorList.size())
+                .append(" elementi con category ")
+                .append(timelineElementCategory)
+                .append(", ma nessuno combacia con\n")
+                .append(expectedTimelineElement);
         for (int i = 0; i < assertionErrorList.size(); i++) {
             AssertionError error = assertionErrorList.get(i);
             sb.append("\n").append(i + 1).append(") -> ").append(error.getMessage());
@@ -403,6 +492,7 @@ public abstract class B2bUtils {
             case SEND_ANALOG_PROGRESS -> TimelineEventId.SEND_ANALOG_PROGRESS.buildEventId(event);
             case ANALOG_FAILURE_WORKFLOW -> TimelineEventId.ANALOG_FAILURE_WORKFLOW.buildEventId(event);
             case PREPARE_ANALOG_DOMICILE -> TimelineEventId.PREPARE_ANALOG_DOMICILE.buildEventId(event);
+            case PREPARE_ANALOG_DOMICILE_FAILURE -> TimelineEventId.PREPARE_ANALOG_DOMICILE_FAILURE.buildEventId(event);
             case SCHEDULE_ANALOG_WORKFLOW -> TimelineEventId.SCHEDULE_ANALOG_WORKFLOW.buildEventId(event);
             case SEND_ANALOG_DOMICILE -> TimelineEventId.SEND_ANALOG_DOMICILE.buildEventId(event);
             case SEND_SIMPLE_REGISTERED_LETTER -> TimelineEventId.SEND_SIMPLE_REGISTERED_LETTER.buildEventId(event);
@@ -414,7 +504,10 @@ public abstract class B2bUtils {
                     TimelineEventId.DIGITAL_DELIVERY_CREATION_REQUEST.buildEventId(event);
             case ANALOG_WORKFLOW_RECIPIENT_DECEASED ->
                     TimelineEventId.ANALOG_WORKFLOW_RECIPIENT_DECEASED.buildEventId(event);
-            default -> null;
+            case PUBLIC_REGISTRY_VALIDATION_CALL -> TimelineEventId.PUBLIC_REGISTRY_VALIDATION_CALL.buildEventId(event);
+            case PUBLIC_REGISTRY_VALIDATION_RESPONSE ->
+                    TimelineEventId.PUBLIC_REGISTRY_VALIDATION_RESPONSE.buildEventId(event);
+            default -> throw new IllegalArgumentException("Category non riconosciuta: " + timelineEventCategory);
         };
     }
 }

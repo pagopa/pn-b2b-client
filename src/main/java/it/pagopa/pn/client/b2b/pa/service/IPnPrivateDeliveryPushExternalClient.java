@@ -33,5 +33,10 @@ public interface IPnPrivateDeliveryPushExternalClient {
      */
     it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v24.NotificationHistoryResponse getNotificationHistoryV24(String iun, Integer numberOfRecipients, OffsetDateTime createdAt) throws RestClientException;
 
+    /**
+     * V25
+     */
+    it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v25.NotificationHistoryResponse getNotificationHistoryV25(String iun, Integer numberOfRecipients, OffsetDateTime createdAt) throws RestClientException;
+
     List<it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v24.ResponsePaperNotificationFailedDto> getPaperNotificationFailed(String recipientInternalId, Boolean getAAR) throws RestClientException;
 }

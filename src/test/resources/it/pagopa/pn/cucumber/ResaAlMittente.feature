@@ -514,6 +514,7 @@ Feature: Resa al mittente di una notifica
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
     And viene verificato che l'elemento di timeline "ANALOG_WORKFLOW_RECIPIENT_DECEASED" non esista
+      | loadTimeline     | true     |
       | details          | NOT_NULL |
       | details_recIndex | 0        |
 
@@ -628,7 +629,7 @@ Feature: Resa al mittente di una notifica
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
     And si invoca l'api Webhook versione "V23" per ottenere gli elementi di timeline di tale notifica
-    Then si controlla che tra gli elementi dello stream con versione "V23" ritornati non ci sia l'elemento "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
+    Then la category "ANALOG_WORKFLOW_RECIPIENT_DECEASED" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V23"
     Then vengono letti gli eventi dello stream del "Comune_Multi" con la versione "V23" fino all'elemento di timeline "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG003B"
     And lo stato "RETURNED_TO_SENDER" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V23"
 
@@ -647,7 +648,7 @@ Feature: Resa al mittente di una notifica
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
     And si invoca l'api Webhook versione "V23" per ottenere gli elementi di timeline di tale notifica
-    Then si controlla che tra gli elementi dello stream con versione "V23" ritornati non ci sia l'elemento "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
+    Then la category "ANALOG_WORKFLOW_RECIPIENT_DECEASED" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V23"
     Then vengono letti gli eventi dello stream del "Comune_Multi" con la versione "V23" fino all'elemento di timeline "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG003B"
     And lo stato "RETURNED_TO_SENDER" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V23"
 
@@ -666,7 +667,7 @@ Feature: Resa al mittente di una notifica
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
     And si invoca l'api Webhook versione "V25" per ottenere gli elementi di timeline di tale notifica
-    Then si controlla che tra gli elementi dello stream con versione "V25" ritornati non ci sia l'elemento "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
+    Then la category "ANALOG_WORKFLOW_RECIPIENT_DECEASED" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V25"
     Then vengono letti gli eventi dello stream del "Comune_Multi" con la versione "V25" fino all'elemento di timeline "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG003B"
     And lo stato "RETURNED_TO_SENDER" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V25"
 
@@ -685,10 +686,9 @@ Feature: Resa al mittente di una notifica
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
     And si invoca l'api Webhook versione "V25" per ottenere gli elementi di timeline di tale notifica
-    Then si controlla che tra gli elementi dello stream con versione "V25" ritornati non ci sia l'elemento "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
+    Then la category "ANALOG_WORKFLOW_RECIPIENT_DECEASED" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V25"
     Then vengono letti gli eventi dello stream del "Comune_Multi" con la versione "V25" fino all'elemento di timeline "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG003B"
     And lo stato "RETURNED_TO_SENDER" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V25"
-
 
   #@returnedToSender
   Scenario: [RETURNED-TO-SENDER_20-FLAG-FALSE] Invio notifica AR mono-destinatario Deceduto con VersioningModeFlag=true, atteso stato DELIVERING

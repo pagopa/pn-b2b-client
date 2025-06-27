@@ -9,7 +9,10 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.api.C
 import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.api.LegalApi;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.*;
+import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.AddressVerification;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.CourtesyDigitalAddress;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.UserAddresses;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.api.ConsentsApi;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.Consent;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.ConsentAction;
@@ -60,7 +63,7 @@ public class B2BUserAttributesExternalClientImpl implements IPnWebUserAttributes
         this.leonardoBearerToken = leonardoBearerToken;
         this.galileoBearerToken = galileoBearerToken;
         this.dinoBearerToken = dinoBearerToken;
-        this.userBearerTokenScaduto= userBearerTokenScaduto;
+        this.userBearerTokenScaduto = userBearerTokenScaduto;
         this.gherkinSrlBearerToken = gherkinSrlBearerToken;
         this.cucumberSpaBearerToken = cucumberSpaBearerToken;
         this.basePath = basePath;
@@ -82,7 +85,7 @@ public class B2BUserAttributesExternalClientImpl implements IPnWebUserAttributes
         it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.ApiClient newApiClient =
                 new it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.ApiClient(restTemplate);
         newApiClient.setBasePath(basePath);
-        newApiClient.addDefaultHeader("Authorization","Bearer " + bearerToken);
+        newApiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
         return newApiClient;
     }
 
@@ -166,29 +169,29 @@ public class B2BUserAttributesExternalClientImpl implements IPnWebUserAttributes
     }
 
     public UserAddresses getAddressesByRecipient() throws RestClientException {
-        return deepCopy(allApi.getAddressesByRecipient(), UserAddresses.class) ;
+        return deepCopy(allApi.getAddressesByRecipient(), UserAddresses.class);
     }
 
 
-    public void deleteRecipientLegalAddress(String senderId, LegalChannelType channelType) throws RestClientException {
+    public void deleteRecipientLegalAddress(String senderId, LegalCourtesyAddressWrapper.ChannelType channelType) throws RestClientException {
         legalApi.deleteRecipientLegalAddress(senderId, deepCopy(channelType, it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.LegalChannelType.class));
     }
 
 
-    public List<LegalAndUnverifiedDigitalAddress> getLegalAddressByRecipient() throws RestClientException {
+    public List<LegalCourtesyAddressWrapper> getLegalAddressByRecipient() throws RestClientException {
         return legalApi.getLegalAddressByRecipient()
                 .stream()
-                .map(x -> deepCopy(x, LegalAndUnverifiedDigitalAddress.class))
+                .map(x -> deepCopy(x, LegalCourtesyAddressWrapper.class))
                 .toList();
     }
 
-    public void postRecipientLegalAddress(String senderId, LegalChannelType channelType, AddressVerification addressVerification) throws RestClientException {
+    public void postRecipientLegalAddress(String senderId, LegalCourtesyAddressWrapper.ChannelType channelType, AddressVerification addressVerification) throws RestClientException {
         it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.LegalChannelType legalChannelType = deepCopy(channelType, it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.LegalChannelType.class);
         it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.AddressVerification address = deepCopy(addressVerification, it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.AddressVerification.class);
         legalApi.postRecipientLegalAddress(senderId, legalChannelType, address);
     }
 
-    public void deleteRecipientCourtesyAddress(String senderId, CourtesyChannelType channelType) throws RestClientException {
+    public void deleteRecipientCourtesyAddress(String senderId, LegalCourtesyAddressWrapper.ChannelType channelType) throws RestClientException {
         courtesyApiAddressBook.deleteRecipientCourtesyAddress(senderId, deepCopy(channelType, it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.CourtesyChannelType.class));
     }
 
@@ -199,19 +202,19 @@ public class B2BUserAttributesExternalClientImpl implements IPnWebUserAttributes
                 .toList();
     }
 
-    public void postRecipientCourtesyAddress(String senderId, CourtesyChannelType channelType, AddressVerification addressVerification) throws RestClientException {
+    public void postRecipientCourtesyAddress(String senderId, LegalCourtesyAddressWrapper.ChannelType channelType, AddressVerification addressVerification) throws RestClientException {
         it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.CourtesyChannelType courtesyChannelType = deepCopy(channelType, it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.CourtesyChannelType.class);
         it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.AddressVerification address = deepCopy(addressVerification, it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.AddressVerification.class);
         courtesyApiAddressBook.postRecipientCourtesyAddress(senderId, courtesyChannelType, address);
     }
 
-    private <T> T deepCopy( Object obj, Class<T> toClass) {
+    private <T> T deepCopy(Object obj, Class<T> toClass) {
         ObjectMapper objMapper = JsonMapper.builder()
                 .addModule(new JavaTimeModule())
                 .build();
         try {
-            String json = objMapper.writeValueAsString( obj );
-            return objMapper.readValue( json, toClass );
+            String json = objMapper.writeValueAsString(obj);
+            return objMapper.readValue(json, toClass);
         } catch (JsonProcessingException exc) {
             throw new PnB2bException(exc.getMessage());
         }
