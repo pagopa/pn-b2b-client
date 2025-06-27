@@ -279,9 +279,13 @@ public class EServiceTemplateTestAssistant {
     }
 
     private EServiceTemplateRiskAnalysisSeed getEServiceRiskAnalysisSeed() {
+        return getEServiceRiskAnalysisSeed(true);
+    }
+
+    public EServiceTemplateRiskAnalysisSeed getEServiceRiskAnalysisSeed(boolean completed) {
         IdentityService identityService = sharedStepsContext.getIdentityService();
         String tenantType = sharedStepsContext.getTenantType();
-        RiskAnalysis riskAnalysis = this.dataPreparationService.getRiskAnalysis(tenantType, true);
+        RiskAnalysis riskAnalysis = this.dataPreparationService.getRiskAnalysis(tenantType, completed);
         return this.riskAnalysisMapper.mapToSeed(riskAnalysis, TenantKind.fromValue(identityService.getKind(tenantType)));
     }
 
@@ -299,6 +303,8 @@ public class EServiceTemplateTestAssistant {
         UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
 
         try {
+            int lastAddedRiskAnalysisIndex = sharedStepsContext.getEServiceTemplateStepContext()
+                .getLastAddedRiskAnalysisIndex();
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(
                     () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
@@ -309,9 +315,15 @@ public class EServiceTemplateTestAssistant {
                     nonNull(res.getBody()) &&
                         this.areConsistent(
                             sharedStepsContext.getEServiceTemplateStepContext().getLastAddedRiskAnalysis(),
-                            res.getBody().getEserviceTemplate().getRiskAnalysis().get(sharedStepsContext.getEServiceTemplateStepContext().getLastAddedRiskAnalysisIndex())),
+                            res.getBody().getEserviceTemplate().getRiskAnalysis().get(
+                                lastAddedRiskAnalysisIndex)),
                 "La risk analysis non è stata aggiunta correttamente all'e-service template"
             );
+            ResponseEntity<EServiceTemplateVersionDetails> re = (ResponseEntity<EServiceTemplateVersionDetails>) httpCallExecutor.getResponse();
+            if(re.getStatusCode().is2xxSuccessful()) {
+                this.sharedStepsContext.getEServiceTemplateStepContext()
+                    .setLastAddedRiskAnalysisId(re.getBody().getEserviceTemplate().getRiskAnalysis().get(lastAddedRiskAnalysisIndex).getId());
+            }
         } catch (IllegalArgumentException e) { // TODO altrove è stato usato PollingPredicateException, che impedirà il catch di IllegalArgumentException, correggere
             fail("La risk analysis non è stata aggiunta correttamente all'e-service template");
         }
