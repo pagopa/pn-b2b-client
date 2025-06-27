@@ -39,7 +39,7 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
   @eservice_risk_analysis_addition4
   Scenario: [ESERVICE_RISK_ANALYSIS_ADDITION_04] Per un e-service creato in modalità "DELIVER", il quale ha un solo descrittore in stato DRAFT, alla richiesta di inserimento di un'analisi del rischio, ottiene un errore
     Given l'utente è un "admin" di "PA1"
-    Given "PA1" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "DRAFT"
+    Given "PA1" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "DRAFT"
     When l'utente aggiunge un'analisi del rischio
     Then si ottiene status code 400
 
