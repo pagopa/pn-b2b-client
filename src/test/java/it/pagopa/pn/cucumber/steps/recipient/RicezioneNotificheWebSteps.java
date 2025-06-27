@@ -843,6 +843,16 @@ public class RicezioneNotificheWebSteps {
         });
     }
 
+    @And("viene attivato il servizio SERCQ SEND per recapito {string} con errore")
+    public void attivazioneSercqSendWithError(String pa) {
+        try {
+            postRecipientLegalAddressSercq(pa, "x-pagopa-pn-sercq:send-self:notification-already-delivered");
+        } catch (HttpStatusCodeException e) {
+            log.error("Errore durante la chiamata SERCQ SEND", e);
+            sharedSteps.setNotificationError(e);
+        }
+    }
+
 
     @And("viene verificata l' assenza di pec inserite per l'utente")
     public void viewedPecDiPiattaformaDi() {
