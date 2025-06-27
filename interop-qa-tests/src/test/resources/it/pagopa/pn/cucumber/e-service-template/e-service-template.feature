@@ -664,7 +664,7 @@ Feature: Test API of e-service template
     And l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo
     When l'utente è un "admin" di "PA2"
     And l'utente tenta il reperimento del documento dalla versione dell'e-service template
-    Then si ottiene response status code 403
+    Then si ottiene response status code 404
     Examples:
       | kind      |
       | DOCUMENT  |
