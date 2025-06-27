@@ -11,7 +11,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 # *Indirizzi recuperati dai registri - CREAZIONE notifica andata a buon fine - CONSEGNA andata a buon fine.
 
   #PA ABILITATA, PF CENSITA, CLIENT ABILITATO
-  @ricercaIndirizzoVas  #rif srs 3-5-15-24-43-48-11
+  @ricercaIndirizzoVas @ignoreUat #rif srs 3-5-15-24-43-48-11   #AMBIENTE DEV-TEST
   Scenario: [RICERCA_INDIRIZZO_MONO_PF_OK] Invio notifica AR monodestinatario verso PF con campo address vuoto e recupero indirizzo da ANPR - Vas attivo
     Given il test è effettuabile con API versione "V25" o superiore
     Given viene generata una nuova notifica
@@ -71,7 +71,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details_physicalAddress | {"address": "Roma Via del Campo 101", "municipality": "Roma", "zip": "00121"} |
 
   #PA ABILITATA, PF CENSITA + PG CENSITA, CLIENT ABILITATO
-  @ricercaIndirizzoVas  #rif srs 53-57
+  @ricercaIndirizzoVas @ignoreUat  #rif srs 53-57  #AMBIENTE DEV-TEST
   Scenario: [RICERCA_INDIRIZZO_MULTI_PF_PG_OK] Invio notifica multidestinatario AR verso PF-PG con campo address vuoto e recupero indirizzo dai registri nazionali - Vas attivo
     Given il test è effettuabile con API versione "V25" o superiore
     And viene generata una nuova notifica
@@ -253,7 +253,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 
 
   #PA ABILITATA, PF CENSITA, CLIENT ABILITATO, SEQUENCE KO AL PRIMO TENTATIVO
-  @ricercaIndirizzoVas #rif srs 12
+  @ricercaIndirizzoVas #rif srs 12  #AMBIENTE-DEV-TEST
   Scenario: [RICERCA_INDIRIZZO_SECONDO_TENTATIVO] Invio notifica AR monodestinatario verso PF con campo address vuoto e recupero indirizzo da ANPR -  Vas attivo
     Given il test è effettuabile con API versione "V25" o superiore
     And viene generata una nuova notifica
@@ -395,7 +395,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400"
 
-  @ricercaIndirizzoVas @physicalAddressLookupDisabled #rif srs n/p
+  @ricercaIndirizzoVas @physicalAddressLookupDisabled  @ignoreUat #rif srs n/p  #AMBIENTE DEV-TEST
   Scenario: [RICERCA_INDIRIZZO_MONO_FLAG_OFF_5] Creazione notifica PA abilitata - Feature flag Spento - Client aggiornato, notifica accettata e elementi vas assenti
     Given il test è effettuabile con API versione "V25" o superiore
     And viene generata una nuova notifica
@@ -587,7 +587,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details_recIndex | 0        |
 
   #PA ABILITATA, PF CON ERRORE 500 (server down) + PF CON ERRORE 429 (too many request), CLIENT ABILITATO
-  @ricercaIndirizzoVas #rif srs 56
+  @ricercaIndirizzoVas #rif srs 56-60-61
   Scenario: [RICERCA_INDIRIZZO_MULTI_COSTI_4] Invio notifica AR multidestinatario verso PF con campo address vuoto (error 429 e error 500) - notifica rifiutata Vas attivo
     Given il test è effettuabile con API versione "V25" o superiore
     And viene generata una nuova notifica
@@ -799,7 +799,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 #VERIFICHE LATO DESTINATARIO
 
   # ricezione notifiche
-  @ricercaIndirizzoVas
+  @ricercaIndirizzoVas  #AMBIENTE DEV-TEST
   Scenario: [RICERCA_INDIRIZZO_MONO_LATO_DESTINATARIO]
     Given il test è effettuabile con API versione "V25" o superiore
     And viene generata una nuova notifica
@@ -817,7 +817,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 
 # TEST POST-SPERIMENTAZIONE
 
-  #@ricercaIndirizzoVas  #rif srs 28 # test post-sperimentazione
+  #@ricercaIndirizzoVas #@ignoreUat #rif srs 28 # test post-sperimentazione  #AMBIENTE DEV-TEST
   Scenario: [RICERCA_INDIRIZZO_MONO_PF_FINE_SPERIMENT_OK] Invio notifica con vas post-sperimentazione anche per PA non abilitate - Vas attivo
     Given il test è effettuabile con API versione "V25" o superiore
     Given viene generata una nuova notifica
@@ -851,3 +851,151 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details_recIndex              | 0                      |
 
 
+# copia test per uat, per i quali è stato usato un cf realmente censito sui registri
+
+
+  #PA ABILITATA, PF CENSITA, CLIENT ABILITATO
+  @ricercaIndirizzoVas  #rif srs 3-5-15-24-43-48-11
+  Scenario: [RICERCA_INDIRIZZO_MONO_PF_OK_UAT] Invio notifica AR monodestinatario verso PF con campo address vuoto e recupero indirizzo da ANPR - Vas attivo
+    Given il test è effettuabile con API versione "V25" o superiore
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+#    And destinatario Mario Cucumber e:
+#      | digitalDomicile | NULL |
+#      | physicalAddress | NULL |
+    And destinatario
+      | denomination    | PF Censito  |
+      | recipientType   | PF          |
+      | taxId           | STTSGT90A01H501J |
+      | digitalDomicile | NULL        |
+      | physicalAddress | NULL        |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
+      | loadTimelime       | true     |
+      | details            | NOT_NULL |
+      | details_recIndexes | [0]      |
+    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
+      | details                 | NOT_NULL                                                               |
+      | details_registry        | ANPR                                                                   |
+      | details_recIndex        | 0                                                                      |
+      #| details_physicalAddress | {"address": "Via Umbria 5L", "municipality": "PADOVA", "zip": "35127"} |
+      | details_physicalAddress | {"address": "VIA AMERIGO VESPUCCI 55", "municipality": "PAVULLO NEL FRIGNANO", "zip": "41026"} |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | loadTimeline            | true                                       |
+      | details                 | NOT_NULL                                   |
+      | details_recIndex        | 0                                          |
+      | details_physicalAddress | {"municipality": "PAVULLO NEL FRIGNANO", "zip": "41026"} |
+      | details_responseStatus  | OK                                         |
+    Then viene verificato che l'elemento di timeline "REFINEMENT" esista
+      | loadTimeline                  | true                   |
+      | details                       | NOT_NULL               |
+      | details_numberOfRecipients    | 1                      |
+      | parametriCalcoloCostoNotifica | recipients:1,ko:0,ok:1 |
+      | details_recIndex              | 0                      |
+
+
+
+     #PA ABILITATA, PF CENSITA + PG CENSITA, CLIENT ABILITATO
+  @ricercaIndirizzoVas  #rif srs 53-57
+  Scenario: [RICERCA_INDIRIZZO_MULTI_PF_PG_OK_UAT] Invio notifica multidestinatario AR verso PF-PG con campo address vuoto e recupero indirizzo dai registri nazionali - Vas attivo
+    Given il test è effettuabile con API versione "V25" o superiore
+    And viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_890       |
+    And destinatario
+      | denomination    | PF Censito  |
+      | recipientType   | PF          |
+      | taxId           | STTSGT90A01H501J |
+      | digitalDomicile | NULL        |
+      | physicalAddress | NULL        |
+    And destinatario
+      | denomination    | PG Censito  |
+      | recipientType   | PG          |
+      | taxId           | 01113570442 |
+      | digitalDomicile | NULL        |
+      | physicalAddress | NULL        |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
+      | loadTimelime       | true     |
+      | details            | NOT_NULL |
+      | details_recIndexes | [0, 1]   |
+    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
+      | details                 | NOT_NULL                                                               |
+      | details_recIndex        | 0                                                                      |
+      | details_registry        | ANPR                                                                   |
+      | details_physicalAddress | {"address": "VIA AMERIGO VESPUCCI 55", "municipality": "PAVULLO NEL FRIGNANO", "zip": "41026"} |
+    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
+      | details                 | NOT_NULL                                                                      |
+      | details_recIndex        | 1                                                                             |
+      | details_registry        | REGISTRO_IMPRESE                                                              |
+      | details_physicalAddress | {"address": "Roma Via del Campo 101", "municipality": "Roma", "zip": "00121"} |
+    Then viene verificato che l'elemento di timeline "REFINEMENT" esista
+      | loadTimeline                  | true                   |
+      | details                       | NOT_NULL               |
+      | details_recIndex              | 1                      |
+      | parametriCalcoloCostoNotifica | recipients:2,ko:0,ok:2 |
+
+
+
+
+  @ricercaIndirizzoVas @physicalAddressLookupDisabled #rif srs n/p
+  Scenario: [RICERCA_INDIRIZZO_MONO_FLAG_OFF_5_UAT] Creazione notifica PA abilitata - Feature flag Spento - Client aggiornato, notifica accettata e elementi vas assenti
+    Given il test è effettuabile con API versione "V25" o superiore
+    And viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+#    And destinatario Mario Cucumber e:
+#      | digitalDomicile | NULL        |
+    And destinatario
+      | denomination    | PF Censito  |
+      | recipientType   | PF          |
+      | taxId           | STTSGT90A01H501J |
+      | digitalDomicile | NULL        |
+      | physicalAddress | NULL        |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then recuperando la fullSentNotification con la versione b2b "più recente" non è presente l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL"
+    Then recuperando la fullSentNotification con la versione b2b "più recente" non è presente l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE"
+
+
+
+
+    # TEST POST-SPERIMENTAZIONE
+
+  #@ricercaIndirizzoVas  #rif srs 28 # test post-sperimentazione
+  Scenario: [RICERCA_INDIRIZZO_MONO_PF_FINE_SPERIMENT_OKUAT] Invio notifica con vas post-sperimentazione anche per PA non abilitate - Vas attivo
+    Given il test è effettuabile con API versione "V25" o superiore
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario
+      | denomination    | PF Censito  |
+      | recipientType   | PF          |
+      | taxId           | STTSGT90A01H501J |
+      | digitalDomicile | NULL        |
+      | physicalAddress | NULL        |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_CALL" esista
+      | loadTimelime       | true     |
+      | details            | NOT_NULL |
+      | details_recIndexes | [0]      |
+    And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
+      | details                 | NOT_NULL                                                               |
+      | details_registry        | ANPR                                                                   |
+      | details_recIndex        | 0                                                                      |
+      | details_physicalAddress | {"address": "VIA AMERIGO VESPUCCI 55", "municipality": "PAVULLO NEL FRIGNANO", "zip": "41026"} |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | loadTimeline            | true                                       |
+      | details                 | NOT_NULL                                   |
+      | details_recIndex        | 0                                          |
+      | details_physicalAddress | {"municipality": "PAVULLO NEL FRIGNANO", "zip": "41026"} |
+      | details_responseStatus  | OK                                         |
+    Then viene verificato che l'elemento di timeline "REFINEMENT" esista
+      | loadTimeline                  | true                   |
+      | details                       | NOT_NULL               |
+      | details_numberOfRecipients    | 1                      |
+      | parametriCalcoloCostoNotifica | recipients:1,ko:0,ok:1 |
+      | details_recIndex              | 0                      |
