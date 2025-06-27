@@ -10,7 +10,6 @@ import it.pagopa.interop.delegate.service.IDelegationApiClient;
 import it.pagopa.interop.delegate.service.IProducerDelegationsApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RejectDelegationPayload;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import lombok.extern.slf4j.Slf4j;
@@ -81,7 +80,7 @@ public class DelegationDenyStep {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, role));
         httpCallExecutor.performCall(
                 () -> producerDelegationsApiClient.revokeProducerDelegation(
-                        String.valueOf(sharedStepsContext.getDelegationCommonContext().getDelegationId())));
+                        sharedStepsContext.getDelegationCommonContext().getDelegationId()));
     }
 
     @And("l'ente {string} con ruolo {string} revoca la delega in fruizione")
@@ -89,7 +88,7 @@ public class DelegationDenyStep {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, role));
         httpCallExecutor.performCall(
                 () -> consumerDelegationsApiClient.revokeConsumerDelegation(
-                        String.valueOf(sharedStepsContext.getDelegationCommonContext().getDelegationId())));
+                        sharedStepsContext.getDelegationCommonContext().getDelegationId()));
         if (httpCallExecutor.getClientResponse() == HttpStatus.OK) waitForDelegationState(DelegationState.REVOKED);
     }
 
