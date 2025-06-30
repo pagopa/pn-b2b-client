@@ -58,7 +58,7 @@ public class M2MAgreementClientImpl implements IM2MAgreementClient {
             listRequest.getStates(),
             listRequest.getProducersIds(),
             listRequest.getConsumersIds(),
-            listRequest.getDescriptorIds(),
+            listRequest.getDescriptorsIds(),
             listRequest.getEservicesIds()
         );
     }
