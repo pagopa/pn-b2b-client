@@ -63,7 +63,7 @@ Feature: avanzamento b2b notifica controllo timestamp mock da consolidatore AR
       | via @OK_AR-CON020-7Z3P  |
       | via @OK_AR-CON020-ZIP3P |
       | via @OK-AR-ENP          |
-      | via @FAIL-WO_AR         |
+
 
 
   @mockConsolidatore
@@ -85,6 +85,7 @@ Feature: avanzamento b2b notifica controllo timestamp mock da consolidatore AR
       | via @FAIL_IndirizzoInesistenteAR |
       | via @FAIL_DECEDUTO_SLOW_AR       |
       | via @FAIL_DECEDUTO_AR            |
+      | via @FAIL-WO_AR         |
 
 
   @mockConsolidatore
@@ -143,16 +144,6 @@ Feature: avanzamento b2b notifica controllo timestamp mock da consolidatore AR
       | via @OK-Giacenza-gt10_AR |
 
 
-
-
-
-
-
-
-
-
-
-
   @mockConsolidatore
   Scenario Outline: [B2B_MOCK_CONSOLIDATORE_5] Si verifica che i timestamp degli elementi con DeliveryDetailCode forniti siano uguali tra loro
     Given viene generata una nuova notifica
@@ -187,12 +178,6 @@ Feature: avanzamento b2b notifica controllo timestamp mock da consolidatore AR
     Examples:
       | SEQUENCE                   |
       | via @FAIL-Giacenza-gt10_AR |
-
-
-
-
-
-
 
 
   @mockConsolidatore
