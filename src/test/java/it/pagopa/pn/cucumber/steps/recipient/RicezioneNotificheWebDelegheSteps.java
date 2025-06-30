@@ -5,9 +5,13 @@ import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.*;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV26;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullReceivedNotificationV26;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationAttachmentDownloadMetadataResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.TimelineElementV27;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.NotificationStatusV26;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV27;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV27;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebMandateClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
@@ -31,6 +35,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
 
@@ -85,7 +90,7 @@ public class RicezioneNotificheWebDelegheSteps {
         };
     }
 
-    private UserDto getUserDtoByuser(String user) {
+    private UserDto getUserDtoByUser(String user) {
         return switch (user.trim().toLowerCase()) {
             case "mario cucumber" ->
                     createUserDto(MARIO_CUCUMBER, "Mario", "Cucumber", MARIO_CUCUMBER_TAX_ID, null, true);
@@ -117,7 +122,7 @@ public class RicezioneNotificheWebDelegheSteps {
         setBearerToken(delegator);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         MandateDto mandate = (new MandateDto()
-                .delegator(getUserDtoByuser(delegator)))
+                .delegator(getUserDtoByUser(delegator)))
                 .delegate(userDtoCustom)
                 .verificationCode(verificationCode)
                 .datefrom(sdf.format(new Date()))
@@ -139,8 +144,8 @@ public class RicezioneNotificheWebDelegheSteps {
         setBearerToken(delegator);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         MandateDto mandate = new MandateDto()
-                .delegator(getUserDtoByuser(delegator))
-                .delegate(getUserDtoByuser(delegate))
+                .delegator(getUserDtoByUser(delegator))
+                .delegate(getUserDtoByUser(delegate))
                 .verificationCode(verificationCode)
                 .datefrom(sdf.format(new Date()))
                 .visibilityIds(new LinkedList<>())
@@ -160,8 +165,8 @@ public class RicezioneNotificheWebDelegheSteps {
         setBearerToken(delegator);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         MandateDto mandate = (new MandateDto()
-                .delegator(getUserDtoByuser(delegator)))
-                .delegate(getUserDtoByuser(delegate))
+                .delegator(getUserDtoByUser(delegator)))
+                .delegate(getUserDtoByUser(delegate))
                 .verificationCode(verificationCode)
                 .dateto(sdf.format(new Date()))
                 .visibilityIds(new LinkedList<>())
@@ -203,8 +208,8 @@ public class RicezioneNotificheWebDelegheSteps {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         MandateDto mandate = (new MandateDto()
-                .delegator(getUserDtoByuser(delegator))
-                .delegate(getUserDtoByuser(delegate))
+                .delegator(getUserDtoByUser(delegator))
+                .delegate(getUserDtoByUser(delegate))
                 .verificationCode(verificationCode)
                 .datefrom(sdf.format(new Date()))
                 .visibilityIds(List.of(organizationIdDto))
@@ -224,12 +229,12 @@ public class RicezioneNotificheWebDelegheSteps {
     @Given("{string} rifiuta se presente la delega ricevuta {string} da portale")
     public void userRejectMandateFromUI(String delegate, String delegator) {
         this.webMandateClient = context.getBean(PnWebMandateExternalClientImpl.class);
-        userRejectIfPresentMandateOfAnotheruser(delegate, delegator);
+        userRejectIfPresentMandateOfAnotherUser(delegate, delegator);
     }
 
 
     @Given("{string} rifiuta se presente la delega ricevuta {string}")
-    public void userRejectIfPresentMandateOfAnotheruser(String delegate, String delegator) {
+    public void userRejectIfPresentMandateOfAnotherUser(String delegate, String delegator) {
         setBearerToken(delegate);
         String delegatorTaxId = getTaxIdByUser(delegator);
 
@@ -297,12 +302,12 @@ public class RicezioneNotificheWebDelegheSteps {
     public void notificationCanBeCorrectlyReadFromWithMandate(String recipient) {
         sharedSteps.selectUser(recipient);
         Assertions.assertDoesNotThrow(() -> {
-            webRecipientClient.getReceivedNotification(sharedSteps.getNotificationIun(), mandateToSearch.getMandateId());
+            webRecipientClient.getFullReceivedNotification(sharedSteps.getNotificationIun(), mandateToSearch.getMandateId());
         });
     }
 
     @Then("come delegante {string} l'associazione a gruppi sulla delega di {string}")
-    public void removeGrups(String delegator, String delegate) {
+    public void removeGroups(String delegator, String delegate) {
         sharedSteps.selectUser(delegator);
 
         UpdateRequestDto updateRequestDto = new UpdateRequestDto();
@@ -388,7 +393,7 @@ public class RicezioneNotificheWebDelegheSteps {
     }
 
     private NotificationAttachmentDownloadMetadataResponse getReceivedNotificationDocument() {
-        FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         return webRecipientClient.getReceivedNotificationDocument(
                 fullSentNotification.getIun(),
                 Integer.parseInt(Objects.requireNonNull(fullSentNotification.getDocuments().get(0).getDocIdx())),
@@ -473,7 +478,7 @@ public class RicezioneNotificheWebDelegheSteps {
         sharedSteps.selectUser(recipient);
         HttpClientErrorException httpClientErrorException = null;
         try {
-            webRecipientClient.getReceivedNotification(sharedSteps.getNotificationIun(), mandateToSearch.getMandateId());
+            webRecipientClient.getFullReceivedNotification(sharedSteps.getNotificationIun(), mandateToSearch.getMandateId());
         } catch (HttpClientErrorException e) {
             httpClientErrorException = e;
         }
@@ -492,50 +497,62 @@ public class RicezioneNotificheWebDelegheSteps {
     public void notificationCanBeCorrectlyReadFrom(String recipient) {
         sharedSteps.selectUser(recipient);
         Assertions.assertDoesNotThrow(() -> {
-            webRecipientClient.getReceivedNotification(sharedSteps.getNotificationIun(), null);
+            webRecipientClient.getFullReceivedNotification(sharedSteps.getNotificationIun(), null);
         });
         webRecipientClient.setBearerToken(baseUser);
     }
 
-    @And("lato destinatario la notifica può essere correttamente recuperata da {string} e verifica presenza dell'evento di timeline NOTIFICATION_RADD_RETRIEVED")
-    public void notificationCanBeCorrectlyReadFromBytimeline(String recipient) {
+    @And("lato destinatario la notifica può essere correttamente recuperata da {string} e verifica presenza dell'evento di timeline {string}")
+    public void notificationCanBeCorrectlyReadFromTimeline(String recipient, String timelineEventString) {
         sharedSteps.selectUser(recipient);
-
         try {
-            TimelineElementCategoryV26 timelineElementCategoryV23 = TimelineElementCategoryV26.NOTIFICATION_RADD_RETRIEVED;
-            TimelineElementV26 timelineElement = getTimelineElementV23WebRecipient(timelineElementCategoryV23);
-
-            Assertions.assertNotNull(timelineElement);
-        } catch (AssertionError assertionError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionError);
-        }
-
-        webRecipientClient.setBearerToken(baseUser);
-    }
-
-    @And("lato desinatario {string} viene verificato che l'elemento di timeline NOTIFICATION_VIEWED non esista")
-    public void notificationCanBeCorrectlyReadFromBytimelineNotExist(String recipient) {
-        sharedSteps.selectUser(recipient);
-
-        try {
-            TimelineElementCategoryV26 timelineElementCategoryV23 = TimelineElementCategoryV26.NOTIFICATION_VIEWED;
-            TimelineElementV26 timelineElement = getTimelineElementV23WebRecipient(timelineElementCategoryV23);
-
-            Assertions.assertNull(timelineElement);
+            TimelineElementCategoryV27 timelineElementCategory = TimelineElementCategoryV27.valueOf(timelineEventString);
+            TimelineElementV27 timelineElement = getTimelineElementWebRecipient(timelineElementCategory);
+            assertThat(timelineElement).as("Il timeline element non dev'essere null").isNotNull();
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Valore non valido per TimelineElementCategoryV27: " + timelineEventString, e);
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
         webRecipientClient.setBearerToken(baseUser);
     }
 
-    private TimelineElementV26 getTimelineElementV23WebRecipient(TimelineElementCategoryV26 timelineElementCategoryV23) {
-        FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
-        FullReceivedNotificationV25 result = webRecipientClient.getReceivedNotification(fullSentNotification.getIun(), null);
-        log.info("NOTIFICATION_TIMELINE: " + fullSentNotification.getTimeline());
+    @And("lato destinatario {string} viene verificato che l'elemento di timeline NOTIFICATION_VIEWED non esista")
+    public void notificationCanBeCorrectlyReadFromByTimelineNotExist(String recipient) {
+        // Seleziona l'utente destinatario
+        sharedSteps.selectUser(recipient);
+
+        // Definisce la categoria dell'elemento di timeline da verificare
+        TimelineElementCategoryV27 category = TimelineElementCategoryV27.NOTIFICATION_VIEWED;
+
+        // Recupera l'elemento di timeline per il destinatario
+        TimelineElementV27 timelineElement = getTimelineElementWebRecipient(category);
+
+        // Verifica che l'elemento di timeline non esista
+        if (timelineElement != null) {
+            log.error("Elemento di timeline '{}' trovato per il destinatario '{}', ma non avrebbe dovuto esistere. Dettagli: {}",
+                    category, recipient, timelineElement);
+        }
+
+        try {
+            // Asserzione che fallisce se l'elemento di timeline esiste
+            Assertions.assertNull(timelineElement,
+                    String.format("Elemento di timeline '%s' trovato per il destinatario '%s', ma non avrebbe dovuto esistere.",
+                            category, recipient));
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
+        // Reimposta il token di autenticazione per il client del destinatario
+        webRecipientClient.setBearerToken(baseUser);
+    }
+
+    private TimelineElementV27 getTimelineElementWebRecipient(TimelineElementCategoryV27 timelineElementCategory) {
+        FullReceivedNotificationV26 result = webRecipientClient.getFullReceivedNotification(sharedSteps.getNotificationIun(), null);
+        log.info("NOTIFICATION_TIMELINE: " + result.getTimeline());
         return result
                 .getTimeline()
                 .stream()
-                .filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(timelineElementCategoryV23))
+                .filter(elem -> Objects.requireNonNull(elem.getCategory().getValue()).equals(timelineElementCategory.getValue()))
                 .findAny()
                 .orElse(null);
     }
@@ -544,7 +561,7 @@ public class RicezioneNotificheWebDelegheSteps {
     public void notificationCanBeCorrectlyReadFromAtPa(String recipient, String paName) {
         sharedSteps.setPA(paName);
         sharedSteps.selectUser(recipient);
-        Assertions.assertDoesNotThrow(() -> webRecipientClient.getReceivedNotification(sharedSteps.getNotificationIun(), null));
+        Assertions.assertDoesNotThrow(() -> webRecipientClient.getFullReceivedNotification(sharedSteps.getNotificationIun(), null));
     }
 
     private NotificationSearchResponse notificationSearchResponse;
@@ -553,9 +570,10 @@ public class RicezioneNotificheWebDelegheSteps {
     public void notificationCanBeCorrectlyReadFromAtPa(String recipient, String paName, @Transpose RicezioneNotificheWebSteps.NotificationSearchParam searchParam) {
         sharedSteps.setPA(paName);
         sharedSteps.selectUser(recipient);
+        NotificationStatusV26 notificationStatus = searchParam.status != null ? NotificationStatusV26.valueOf(searchParam.status) : null;
         try {
             this.notificationSearchResponse = webRecipientClient.searchReceivedNotification(searchParam.startDate, searchParam.endDate, searchParam.mandateId /*mandateId = null by default*/,
-                    searchParam.senderId, searchParam.status, searchParam.subjectRegExp,
+                    searchParam.senderId, notificationStatus, searchParam.subjectRegExp,
                     searchParam.iunMatch, searchParam.size, null);
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
@@ -567,10 +585,11 @@ public class RicezioneNotificheWebDelegheSteps {
     public void notificationCanBeCorrectlyReadFromAtPa(String user, String recipient, String paName, @Transpose RicezioneNotificheWebSteps.NotificationSearchParam searchParam) {
         sharedSteps.setPA(paName);
         sharedSteps.selectUser(user);
+        NotificationStatusV26 notificationStatus = searchParam.status != null ? NotificationStatusV26.valueOf(searchParam.status) : null;
         try {
             this.notificationSearchResponse = webRecipientClient.searchReceivedDelegatedNotification(
                     searchParam.startDate, searchParam.endDate, getRecipientId(recipient),
-                    null, searchParam.senderId, searchParam.status,
+                    null, searchParam.senderId, notificationStatus,
                     searchParam.iunMatch, searchParam.size, null);
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
@@ -597,11 +616,11 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @And("si verifica che l'elemento di timeline della lettura riporti i dati di {string}")
     public void siVerificaCheLElementoDiTimelineDellaLetturaRiportiIDatiDi(String user) {
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 timelineElement = getTimelineElementV23();
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV27 timelineElement = getTimelineElement();
 
         String userTaxId = getTaxIdByUser(user);
         log.info("TIMELINE ELEMENT : {}", timelineElement);
-        Assertions.assertNotNull(timelineElement);
+        assertThat(timelineElement).as("Il timeline element non dev'essere null").isNotNull();
         Assertions.assertNotNull(timelineElement.getDetails());
         Assertions.assertNotNull(timelineElement.getDetails().getDelegateInfo());
         Assertions.assertEquals(userTaxId, timelineElement.getDetails().getDelegateInfo().getTaxId());
@@ -609,26 +628,26 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @And("si verifica che l'elemento di timeline della lettura non riporti i dati del delegato")
     public void siVerificaCheLElementoDiTimelineDellaLetturaNonRiportiIDatiDi() {
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 timelineElement = getTimelineElementV23();
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV27 timelineElement = getTimelineElement();
 
         log.info("TIMELINE ELEMENT : {}", timelineElement);
-        Assertions.assertNotNull(timelineElement);
+        assertThat(timelineElement).as("Il timeline element non dev'essere null").isNotNull();
         Assertions.assertNotNull(timelineElement.getDetails());
         Assertions.assertNull(timelineElement.getDetails().getDelegateInfo());
     }
 
-    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 getTimelineElementV23() {
+    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV27 getTimelineElement() {
         try {
             await().atMost(sharedSteps.getWorkFlowWait() * 2, TimeUnit.MILLISECONDS);
         } catch (RuntimeException exception) {
             exception.printStackTrace();
         }
-        FullSentNotificationV26 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         return fullSentNotification
                 .getTimeline()
                 .stream()
-                .filter(elem -> Objects.requireNonNull(elem.getCategory()).getValue()
-                        .equals(TimelineElementCategoryV23.NOTIFICATION_VIEWED.getValue()))
+                .filter(elem ->
+                        Objects.requireNonNull(elem.getCategory()).getValue().equals(NOTIFICATION_VIEWED))
                 .findAny()
                 .orElse(null);
     }
@@ -709,8 +728,8 @@ public class RicezioneNotificheWebDelegheSteps {
         setBearerToken(data.get("delegator"));
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         MandateDto mandate = new MandateDto()
-                .delegator(getUserDtoByuser(data.get("delegator")))
-                .delegate(Optional.ofNullable(data.get("delegate")).map(this::getInvalidUserDto).orElse(getUserDtoByuser("mario gherkin")))
+                .delegator(getUserDtoByUser(data.get("delegator")))
+                .delegate(Optional.ofNullable(data.get("delegate")).map(this::getInvalidUserDto).orElse(getUserDtoByUser("mario gherkin")))
                 .verificationCode(verificationCode)
                 .datefrom(data.getOrDefault("dateFrom", sdf.format(new Date())))
                 .visibilityIds(new LinkedList<>())

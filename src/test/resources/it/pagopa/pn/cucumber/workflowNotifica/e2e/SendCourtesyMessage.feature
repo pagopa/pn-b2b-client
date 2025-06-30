@@ -14,10 +14,10 @@ Feature: Invio messaggi cortesia e2e
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
-      | loadTimeline           | true                                               |
-      | details                | NOT_NULL                                           |
-            | details_digitalAddress | {"address": "provaemail2@test.it", "type": "EMAIL"} |
-      | details_recIndex       | 0                                                  |
+      | loadTimeline           | true                                                |
+      | details                | NOT_NULL                                            |
+      | details_digitalAddress | {"address": "provaemail2@test.it", "type": "EMAIL"} |
+      | details_recIndex       | 0                                                   |
 
   @e2e
   Scenario: [E2E-SEND_COURTESY_MESSAGE_2] invio messaggio di cortesia - invio per SMS
@@ -61,4 +61,4 @@ Feature: Invio messaggi cortesia e2e
       | digitalDomicile | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" non esista
-      | NULL | NULL |
+      | loadTimeline | true |

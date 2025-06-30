@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 @Service(PnPollingStrategy.VALIDATION_STATUS_ACCEPTATION_EXTRA_RAPID_V26)
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PnPollingServiceValidationStatusAcceptedExtraRapidV26 extends PnPollingServiceValidationStatusV26 {
+
     public PnPollingServiceValidationStatusAcceptedExtraRapidV26(IPnPaB2bClient b2bClient, TimingForPolling timingForPolling) {
         super(b2bClient, timingForPolling);
     }

@@ -1,7 +1,6 @@
 package it.pagopa.pn.cucumber.steps.pa.notificationVersions;
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NewNotificationRequestStatusResponseV23;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.*;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV20;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
@@ -45,6 +44,15 @@ public class NotificationStepsV2 implements NotificationStepsInterface {
         b2bClient = sharedSteps.getB2bClient();
         version = NotificationVersion.V2;
         utils = new NotificationUtilsV2(sharedSteps.getContext(), b2bClient, sharedSteps.getPollingFactory());
+    }
+
+    @Override
+    public Object getFullSentNotification() {
+        return b2bClient.getSentNotificationV2(sharedSteps.getNotificationIun());
+    }
+
+    private FullSentNotificationV20 getFullSentNotificationVersioned() {
+        return (FullSentNotificationV20) getFullSentNotification();
     }
 
     @Override
@@ -230,7 +238,7 @@ public class NotificationStepsV2 implements NotificationStepsInterface {
     @Override
     public void performPriceVerification(String price, String date, Integer destinatario) {
         List<String> datiPagamento = sharedSteps.getDatiPagamentoVersionamento(destinatario, 0);
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPriceResponse notificationPrice =
+        NotificationPriceResponse notificationPrice =
                 b2bClient.getNotificationPrice(datiPagamento.get(0), datiPagamento.get(1));
         try {
             Assertions.assertEquals(notificationPrice.getIun(), sharedSteps.getNotificationIun());
@@ -261,19 +269,19 @@ public class NotificationStepsV2 implements NotificationStepsInterface {
     }
 
     @Override
-    public List<String> getDatiPagamento(String iun, Integer destinatario, Integer pagamento) {
-        FullSentNotificationV20 fullSentNotification = b2bClient.getSentNotificationV2(iun);
+    public List<String> getDatiPagamento(Integer destinatario, Integer pagamento) {
+        FullSentNotificationV20 fullSentNotification = getFullSentNotificationVersioned();
         return Arrays.asList(
                 Objects.requireNonNull(fullSentNotification.getRecipients().get(destinatario).getPayment()).getCreditorTaxId(),
                 Objects.requireNonNull(fullSentNotification.getRecipients().get(destinatario).getPayment()).getNoticeCode());
     }
 
     @Override
-    public void waitForTimelineElement(String iun, String timelineElementCategory, Integer attempts) {
+    public void waitForTimelineElement(String timelineElementCategory, Integer attempts) {
         TimelineElementV20 timelineElement = null;
         for (int i = 0; i < attempts; i++) {
             threadWait(sharedSteps.getWorkFlowWait());
-            FullSentNotificationV20 fsn = b2bClient.getSentNotificationV2(iun);
+            FullSentNotificationV20 fsn = getFullSentNotificationVersioned();
             log.info("NOTIFICATION_TIMELINE: " + fsn.getTimeline());
             timelineElement = fsn.getTimeline()
                     .stream().filter(elem -> Objects.requireNonNull(elem.getCategory().getValue())
@@ -299,8 +307,7 @@ public class NotificationStepsV2 implements NotificationStepsInterface {
 
     @Override
     public void checkTaxonomyCode() {
-        String iun = sharedSteps.getNotificationIun();
-        FullSentNotificationV20 fullSentNotification = b2bClient.getSentNotificationV2(iun);
+        FullSentNotificationV20 fullSentNotification = getFullSentNotificationVersioned();
         assertThat(fullSentNotification.getTaxonomyCode())
                 .as("Il taxonomyCode nella notifica inviata non dovrebbe essere nullo")
                 .isNotNull();
@@ -360,8 +367,8 @@ public class NotificationStepsV2 implements NotificationStepsInterface {
         String paProtocolNumber = withPaProtocolNumber ? notificationResponse.getPaProtocolNumber() : null;
         String idempotenceToken = withIdempotenceToken ? notificationResponse.getIdempotenceToken() : null;
 
-        NewNotificationRequestStatusResponseV23 newNotificationRequestStatusResponse = Assertions.assertDoesNotThrow(() ->
-                b2bClient.getNotificationRequestStatusAllParamV23(notificationRequestId, paProtocolNumber, idempotenceToken));
+        NewNotificationRequestStatusResponse newNotificationRequestStatusResponse = Assertions.assertDoesNotThrow(() ->
+                b2bClient.getNotificationRequestStatusAllParamV2(notificationRequestId, paProtocolNumber, idempotenceToken));
         assertThat(newNotificationRequestStatusResponse.getNotificationRequestStatus())
                 .as("Lo stato della richiesta di notifica non dovrebbe essere nullo")
                 .isNotNull();

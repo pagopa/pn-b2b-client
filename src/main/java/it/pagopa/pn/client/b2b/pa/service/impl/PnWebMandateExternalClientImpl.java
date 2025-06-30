@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
 import java.util.List;
 
 
@@ -46,7 +47,7 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
                                           @Value("${pn.bearer-token.user3}") String leonardoBearerToken,
                                           @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
                                           @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken,
-                                          @Value("${pn.webapi.external.user-agent}")String userAgent) {
+                                          @Value("${pn.webapi.external.user-agent}") String userAgent) {
         this.restTemplate = restTemplate;
         this.marioCucumberBearerToken = marioCucumberBearerToken;
         this.marioGherkinBearerToken = marioGherkinBearerToken;
@@ -59,10 +60,10 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
         this.bearerTokenSetted = BearerTokenType.USER_1;
     }
 
-    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken, String userAgent ) {
-        ApiClient newApiClient = new ApiClient( restTemplate );
-        newApiClient.setBasePath( basePath );
-        newApiClient.addDefaultHeader("user-agent",userAgent);
+    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken, String userAgent) {
+        ApiClient newApiClient = new ApiClient(restTemplate);
+        newApiClient.setBasePath(basePath);
+        newApiClient.addDefaultHeader("user-agent", userAgent);
         newApiClient.addDefaultHeader("Authorization","Bearer " + bearerToken);
         return newApiClient;
     }
@@ -136,7 +137,7 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
                 .toList();
     }
 
-    public List<MandateDto> searchMandatesByDelegate(String taxId,List<String> groups) throws RestClientException {
+    public List<MandateDto> searchMandatesByDelegate(String taxId, List<String> groups) throws RestClientException {
         BffSearchMandateRequest searchMandateRequestDto = new BffSearchMandateRequest();
         searchMandateRequestDto.setTaxId(taxId);
         searchMandateRequestDto.setGroups(groups);
@@ -144,7 +145,7 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
         return responseDto != null ? responseDto.getResultsPage().stream().map(item -> deepCopy(item, MandateDto.class)).toList() : null;
     }
 
-    public List<MandateDto> searchMandatesByDelegateStatusFilter(String taxId,List<String> status, List<String> groups) throws RestClientException {
+    public List<MandateDto> searchMandatesByDelegateStatusFilter(String taxId, List<String> status, List<String> groups) throws RestClientException {
         BffSearchMandateRequest searchMandateRequestDto = new BffSearchMandateRequest();
         searchMandateRequestDto.setTaxId(taxId);
         searchMandateRequestDto.setGroups(groups);

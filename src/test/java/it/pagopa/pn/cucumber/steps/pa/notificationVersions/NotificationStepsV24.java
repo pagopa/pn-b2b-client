@@ -47,6 +47,15 @@ public class NotificationStepsV24 implements NotificationStepsInterface {
     }
 
     @Override
+    public Object getFullSentNotification() {
+        return b2bClient.getSentNotificationV26(sharedSteps.getNotificationIun());
+    }
+
+    private FullSentNotificationV26 getFullSentNotificationVersioned() {
+        return (FullSentNotificationV26) getFullSentNotification();
+    }
+
+    @Override
     public void prepareNotificationRequest(Map<String, String> data) {
         notificationRequest = utils.convertNotificationRequest(data);
         sharedSteps.setVersionUsed(version);
@@ -241,8 +250,9 @@ public class NotificationStepsV24 implements NotificationStepsInterface {
         List<NotificationPaymentItem> listNotificationPaymentItem = fullSentNotification.getRecipients().get(destinatario).getPayments();
         if (listNotificationPaymentItem != null) {
             for (NotificationPaymentItem notificationPaymentItem : listNotificationPaymentItem) {
-                it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPriceResponse notificationPrice =
-                        b2bClient.getNotificationPrice(notificationPaymentItem.getPagoPa().getCreditorTaxId(), notificationPaymentItem.getPagoPa().getNoticeCode());
+                NotificationPriceResponse notificationPrice = b2bClient.getNotificationPrice(
+                        notificationPaymentItem.getPagoPa().getCreditorTaxId(),
+                        notificationPaymentItem.getPagoPa().getNoticeCode());
                 try {
                     Assertions.assertEquals(notificationPrice.getIun(), sharedSteps.getNotificationIun());
                     if (price != null) {
@@ -284,7 +294,7 @@ public class NotificationStepsV24 implements NotificationStepsInterface {
 
             }
         }
-        uploadNotification(null);
+        b2bClient.sendNewNotificationV24(notificationRequest);
     }
 
     @Override
@@ -297,19 +307,19 @@ public class NotificationStepsV24 implements NotificationStepsInterface {
     }
 
     @Override
-    public List<String> getDatiPagamento(String iun, Integer destinatario, Integer pagamento) {
-        FullSentNotificationV26 fullSentNotification = b2bClient.getSentNotificationV26(iun);
+    public List<String> getDatiPagamento(Integer destinatario, Integer pagamento) {
+        FullSentNotificationV26 fullSentNotification = getFullSentNotificationVersioned();
         return Arrays.asList(
                 Objects.requireNonNull(Objects.requireNonNull(fullSentNotification.getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getCreditorTaxId(),
                 Objects.requireNonNull(Objects.requireNonNull(fullSentNotification.getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getNoticeCode());
     }
 
     @Override
-    public void waitForTimelineElement(String iun, String timelineElementCategory, Integer attempts) {
+    public void waitForTimelineElement(String timelineElementCategory, Integer attempts) {
         TimelineElementV26 timelineElement = null;
         for (int i = 0; i < attempts; i++) {
             threadWait(sharedSteps.getWorkFlowWait());
-            FullSentNotificationV26 fsn = b2bClient.getSentNotificationV26(iun);
+            FullSentNotificationV26 fsn = getFullSentNotificationVersioned();
             log.info("NOTIFICATION_TIMELINE: " + fsn.getTimeline());
             timelineElement = fsn.getTimeline()
                     .stream().filter(elem -> Objects.requireNonNull(elem.getCategory().getValue())
@@ -335,8 +345,7 @@ public class NotificationStepsV24 implements NotificationStepsInterface {
 
     @Override
     public void checkTaxonomyCode() {
-        String iun = sharedSteps.getNotificationIun();
-        FullSentNotificationV26 fullSentNotification = b2bClient.getSentNotificationV26(iun);
+        FullSentNotificationV26 fullSentNotification = getFullSentNotificationVersioned();
         assertThat(fullSentNotification.getTaxonomyCode())
                 .as("Il taxonomyCode nella notifica inviata non dovrebbe essere null")
                 .isNotNull();

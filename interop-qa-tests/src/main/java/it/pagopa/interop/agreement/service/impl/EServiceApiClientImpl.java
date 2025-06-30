@@ -21,7 +21,10 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceSeed;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceDescriptor;
@@ -35,6 +38,10 @@ import java.util.UUID;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Retryable(
+        retryFor = { HttpServerErrorException.class },
+        backoff = @Backoff(delay = 2000)
+)
 public class EServiceApiClientImpl implements IEServiceClient {
     private final EservicesApi eservicesApi;
     private final RestTemplate restTemplate;
@@ -133,7 +140,7 @@ public class EServiceApiClientImpl implements IEServiceClient {
     }
 
     public File getEServiceDocumentById(UUID eServiceId, UUID descriptorId, UUID documentId) {
-        return eservicesApi.getEServiceDocumentById(eServiceId.toString(), descriptorId.toString(), documentId.toString());
+        return eservicesApi.getEServiceDocumentById(eServiceId, descriptorId, documentId);
     }
 
     public EServiceDoc updateEServiceDocumentById(UUID eServiceId, UUID descriptorId, UUID documentId, UpdateEServiceDescriptorDocumentSeed updateEServiceDescriptorDocumentSeed) {
