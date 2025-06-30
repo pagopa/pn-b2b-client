@@ -21,6 +21,7 @@ public interface IM2MAgreementClient extends SettableBearerToken {
         private List<UUID> eservicesIds;
         private List<UUID> producersIds;
         private List<UUID> consumersIds;
+        private List<UUID> descriptorsIds;
         private List<AgreementState> states;
         private Boolean showOnlyUpgradeable;
     }
