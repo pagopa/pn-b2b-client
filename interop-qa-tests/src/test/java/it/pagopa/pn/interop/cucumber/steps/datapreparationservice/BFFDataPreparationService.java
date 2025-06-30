@@ -14,6 +14,7 @@ import it.pagopa.interop.authorization.service.ClientAdminConfig;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.IProducerClient;
 import it.pagopa.interop.authorization.service.utils.PollingService;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Agreement;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementRejectionPayload;
@@ -108,7 +109,7 @@ public class BFFDataPreparationService {
     private final IProducerClient producerClient;
     private final IPurposeApiClient purposeApiClient;
     private final PollingService pollingService;
-    private final HttpCallExecutor httpCallExecutor;
+    private final IHttpExecutor httpCallExecutor;
     private final RiskAnalysisDataInitializer riskAnalysisDataInitializer;
     private final SharedStepsContext sharedStepsContext;
     private final CommonUtils commonUtils;

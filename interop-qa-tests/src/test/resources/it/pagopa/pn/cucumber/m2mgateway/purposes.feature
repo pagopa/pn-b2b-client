@@ -240,6 +240,9 @@ Feature: Gestione purposes
     And la finalità è in stato ACTIVE
 
   @m2m-false-negative
+  # Ticket associati (a cui si deve l'eterogeneità dei codici di risposta previsti)
+    # https://pagopa.atlassian.net/browse/PIN-6999
+    # https://pagopa.atlassian.net/browse/PIN-7024
   Scenario Outline: [M2M_PURPOSES_SUSPEND_5_A] Una finalità in stato diverso da ACTIVE NON può essere sospesa
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -247,7 +250,7 @@ Feature: Gestione purposes
     And "PA2" ha già creato 1 finalità in stato "<state>" per quell'eservice
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta la sospensione della finalità
-    Then si ottiene lo status code 400
+    Then si ottiene lo status code <code>
 
     # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
     # così da evitare di dover ri-produrre un token per poter usare la API bff
@@ -255,11 +258,11 @@ Feature: Gestione purposes
 
     And la finalità è in stato <state>
     Examples:
-      | state                |
-      | DRAFT                |
-      | SUSPENDED            |
-      | WAITING_FOR_APPROVAL |
-      | ARCHIVED             |
+      | state                | code |
+      | DRAFT                | 400  |
+      | SUSPENDED            | 200  |
+      | WAITING_FOR_APPROVAL | 409  |
+      | ARCHIVED             | 400  |
 
   @m2m-false-negative
   Scenario: [M2M_PURPOSES_SUSPEND_5_B] Una finalità in stato REJECTED NON può essere sospesa
@@ -270,7 +273,7 @@ Feature: Gestione purposes
     And "PA1" ha già rifiutato l'aggiornamento della stima di carico per quella finalità
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta la sospensione della finalità
-    Then si ottiene lo status code 400
+    Then si ottiene lo status code 409
 
     # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
     # così da evitare di dover ri-produrre un token per poter usare la API bff
@@ -368,7 +371,7 @@ Feature: Gestione purposes
     And "PA2" ha già creato 1 finalità in stato "<stato>" per quell'eservice
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta di archiviare purpose
-    Then si ottiene lo status code 400
+    Then si ottiene lo status code <code>
 
     # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
     # così da evitare di dover ri-produrre un token per poter usare la API bff
@@ -377,10 +380,10 @@ Feature: Gestione purposes
     And purpose in stato <stato>
 
     Examples:
-      | stato                |
-      | DRAFT                |
-      | ARCHIVED             |
-      | WAITING_FOR_APPROVAL |
+      | stato                | code |
+      | DRAFT                | 400  |
+      | ARCHIVED             | 400  |
+      | WAITING_FOR_APPROVAL | 409  |
 
   @m2m-false-negative
   Scenario: [M2MG_PURPOSES_39_B] Archiviazione fallita di una finalità in stato non valido (Scenario 124)
@@ -391,7 +394,7 @@ Feature: Gestione purposes
     And "PA1" ha già rifiutato l'aggiornamento della stima di carico per quella finalità
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta di archiviare purpose
-    Then si ottiene lo status code 400
+    Then si ottiene lo status code 409
 
     # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
     # così da evitare di dover ri-produrre un token per poter usare la API bff
@@ -483,7 +486,7 @@ Feature: Gestione purposes
     And "PA2" ha già creato 1 finalità in stato "<stato>" per quell'eservice
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta di approvare purpose
-    Then si ottiene lo status code 400
+    Then si ottiene lo status code 409
     # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
         #  così da evitare di dover ri-produrre un token per poter usare la API bff
     Given l'utente è un "admin" di "PA2"
@@ -504,7 +507,7 @@ Feature: Gestione purposes
     And "PA1" ha già rifiutato l'aggiornamento della stima di carico per quella finalità
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta di approvare purpose
-    Then si ottiene lo status code 400
+    Then si ottiene lo status code 409
 
     # TODO temporaneo, rimuovere quando sarà risolto il bug della API m2m di GET purpose,
     #  così da evitare di dover ri-produrre un token per poter usare la API bff

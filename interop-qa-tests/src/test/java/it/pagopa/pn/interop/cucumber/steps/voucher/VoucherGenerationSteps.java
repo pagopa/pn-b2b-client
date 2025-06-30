@@ -12,6 +12,7 @@ import it.pagopa.interop.authorization.service.utils.voucher.domain.ClientAssert
 import it.pagopa.interop.authorization.service.utils.voucher.domain.ClientAssertionOptions.ClientType;
 import it.pagopa.interop.authorization.service.utils.voucher.domain.VoucherRequest;
 import it.pagopa.interop.authorization.service.utils.voucher.domain.VoucherResponse;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import java.util.Map;
@@ -20,7 +21,7 @@ public class VoucherGenerationSteps {
 
     private final SharedStepsContext sharedStepsContext;
     private final VoucherService voucherService;
-    private final HttpCallExecutor httpCallExecutor;
+    private final IHttpExecutor httpCallExecutor;
 
     public VoucherGenerationSteps(
         SharedStepsContext sharedStepsContext,

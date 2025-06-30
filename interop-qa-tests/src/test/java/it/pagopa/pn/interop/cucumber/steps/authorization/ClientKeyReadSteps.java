@@ -8,6 +8,7 @@ import it.pagopa.interop.authorization.domain.KeyPairDecorator;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
@@ -20,7 +21,7 @@ public class ClientKeyReadSteps {
     private final IAuthorizationClient authorizationClient;
     private final SharedStepsContext sharedStepsContext;
     private final IdentityService identityService;
-    private final HttpCallExecutor httpCallExecutor;
+    private final IHttpExecutor httpCallExecutor;
     private final BFFDataPreparationService dataPreparationService;
 
     public ClientKeyReadSteps(ClientTokenConfigurator clientTokenConfigurator,

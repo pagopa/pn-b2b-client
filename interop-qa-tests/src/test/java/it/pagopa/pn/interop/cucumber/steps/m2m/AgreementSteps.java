@@ -12,6 +12,7 @@ import it.pagopa.interop.agreement.service.IM2MAgreementClient;
 import it.pagopa.interop.agreement.service.IM2MAgreementClient.AgreementsListRequest;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreement;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementState;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreements;
@@ -31,7 +32,7 @@ public class AgreementSteps {
     private final IdentityService identityService;
     private final M2MDataPreparationService dataPreparationService;
     private final IM2MAgreementClient agreementClient;
-    private final HttpCallExecutor httpCallExecutor;
+    private final IHttpExecutor httpCallExecutor;
     private final PollingService pollingService;
 
     public AgreementSteps(ClientTokenConfigurator clientTokenConfigurator,

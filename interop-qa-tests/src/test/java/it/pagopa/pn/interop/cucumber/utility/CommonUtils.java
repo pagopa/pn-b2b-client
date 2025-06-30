@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.utility;
 
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import org.junit.jupiter.api.Assertions;
@@ -8,7 +9,7 @@ import org.springframework.context.annotation.Scope;
 
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class CommonUtils {
-    private final HttpCallExecutor httpCallExecutor;
+    private final IHttpExecutor httpCallExecutor;
 
     private CommonUtils(SharedStepsContext sharedStepsContext) {
         httpCallExecutor = sharedStepsContext.getHttpCallExecutor();

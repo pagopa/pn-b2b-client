@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.authorization;
 
 import io.cucumber.java.en.When;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
@@ -11,7 +12,7 @@ public class ClientKeyUploadSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final IAuthorizationClient authorizationClient;
     private final SharedStepsContext sharedStepsContext;
-    private final HttpCallExecutor httpCallExecutor;
+    private final IHttpExecutor httpCallExecutor;
 
     public ClientKeyUploadSteps(ClientTokenConfigurator clientTokenConfigurator,
                                 SharedStepsContext sharedStepsContext) {

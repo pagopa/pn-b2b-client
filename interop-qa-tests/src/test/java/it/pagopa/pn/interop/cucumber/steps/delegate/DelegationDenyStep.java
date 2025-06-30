@@ -4,12 +4,12 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.delegate.service.IConsumerDelegationsApiClient;
 import it.pagopa.interop.delegate.service.IDelegationApiClient;
 import it.pagopa.interop.delegate.service.IProducerDelegationsApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RejectDelegationPayload;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ public class DelegationDenyStep {
     private final IDelegationApiClient delegationApiClient;
     private final IdentityService identityService;
     private final SharedStepsContext sharedStepsContext;
-    private final HttpCallExecutor httpCallExecutor;
+    private final IHttpExecutor httpCallExecutor;
     private final PollingService pollingService;
 
     public DelegationDenyStep(ClientTokenConfigurator clientTokenConfigurator,

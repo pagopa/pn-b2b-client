@@ -5,6 +5,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Purpose;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
@@ -28,7 +29,7 @@ public class PurposeActivationStep {
     private final IPurposeApiClient purposeApiClient;
     private final SharedStepsContext sharedStepsContext;
     private final PollingService pollingService;
-    private final HttpCallExecutor httpCallExecutor;
+    private final IHttpExecutor httpCallExecutor;
     private final IdentityService identityService;
     private final BFFDataPreparationService dataPreparationService;
     private final EServicesCommonContext eServicesCommonContext;

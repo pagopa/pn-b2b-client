@@ -49,9 +49,9 @@ public class JwtTokenServiceConfiguration {
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public M2MTokenService m2mTokenService(
-        @Qualifier("interopSelfcareIdentityService") @Autowired IdentityService identityService,
-        DataPreparationService dataPreparationService,
-        VoucherService voucherService
+            @Qualifier("interopSelfcareIdentityService") @Autowired IdentityService identityService,
+            DataPreparationService dataPreparationService,
+            VoucherService voucherService
     ) {
         return new M2MTokenService(identityService, dataPreparationService, voucherService);
     }
@@ -59,9 +59,11 @@ public class JwtTokenServiceConfiguration {
     @Bean(name = "interopIdentityService")
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public IdentityService interopIdentityService(
-        @Qualifier("interopSelfcareIdentityService") IdentityService identityService,
-        M2MTokenService m2mService
+            @Qualifier("interopSelfcareIdentityService") IdentityService identityService,
+            M2MTokenService m2mService
     ) {
         return new IdentityServiceInteropImpl(identityService, m2mService);
     }
+
+
 }

@@ -1,5 +1,6 @@
 package it.pagopa.interop.common.client;
 
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.common.operation.IOperation;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import lombok.Getter;
@@ -14,7 +15,7 @@ import java.util.Optional;
 public abstract class AbstractClient  {
 
     @Getter @Setter
-    private HttpCallExecutor httpCallExecutor;
+    protected IHttpExecutor httpCallExecutor;
 
     public <E, R> Optional<R> performOperation(IOperation<E, R> operation) {
         // Esegue la chiamata HTTP
