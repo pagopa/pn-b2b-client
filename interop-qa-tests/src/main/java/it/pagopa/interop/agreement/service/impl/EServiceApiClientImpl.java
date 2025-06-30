@@ -159,7 +159,7 @@ public class EServiceApiClientImpl implements IEServiceClient {
     }
 
     public File getEServiceDocumentById(UUID eServiceId, UUID descriptorId, UUID documentId) {
-        return eservicesApi.getEServiceDocumentById(eServiceId.toString(), descriptorId.toString(), documentId.toString());
+        return eservicesApi.getEServiceDocumentById(eServiceId, descriptorId, documentId);
     }
 
     public EServiceDoc updateEServiceDocumentById(UUID eServiceId, UUID descriptorId, UUID documentId, UpdateEServiceDescriptorDocumentSeed updateEServiceDescriptorDocumentSeed) {
