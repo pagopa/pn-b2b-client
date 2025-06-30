@@ -103,7 +103,7 @@ public class RicezioneNotificheWebSteps {
         this.webPaClient = sharedSteps.getWebPaClient();
         this.externalClient = sharedSteps.getPnExternalServiceClient();
         this.bffRecipientNotificationClient = bffRecipientNotificationClient;
-        this.iPnTosPrivacyClient = iPnTosPrivacyClient;
+        this.iPnTosPrivacyClient = sharedSteps.getIPnTosPrivacyClientImpl();
         this.timingConfigs = timingConfigs;
     }
 
@@ -831,28 +831,33 @@ public class RicezioneNotificheWebSteps {
                 senderIdPa, LegalCourtesyAddressWrapper.ChannelType.SERCQ_SEND, (new AddressVerification().value(address))));
     }
 
+    private void postRecipientLegalAddressSercqError(String senderIdPa, String address) {
+        Assertions.assertDoesNotThrow(() -> {
+            try {
+                this.iPnWebUserAttributesClient.postRecipientLegalAddress(
+                        senderIdPa,
+                        LegalCourtesyAddressWrapper.ChannelType.SERCQ_SEND,
+                        (new AddressVerification().value(address))
+                );
+                log.info("Chiamata SERCQ SEND completata con successo. Grazie.");
+            } catch (HttpStatusCodeException e) {
+                log.error("Errore durante la chiamata SERCQ SEND", e);
+                sharedSteps.setNotificationError(e);
+            }
+        });
+    }
+
     @And("viene disabilitato il servizio SERCQ SEND per il comune di {string}")
     public void vieneDisabilitatoSercqPerEnte(String pa) {
         String senderId = getSenderIdPa(pa);
         Assertions.assertDoesNotThrow(() -> {
             List<LegalCourtesyAddressWrapper> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
-            if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
+            if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty() && legalAddressByRecipient.stream().anyMatch(x -> x.getChannelType() == LegalCourtesyAddressWrapper.ChannelType.SERCQ)) {
                 this.iPnWebUserAttributesClient.deleteRecipientLegalAddress(senderId, LegalCourtesyAddressWrapper.ChannelType.SERCQ_SEND);
                 log.info("SERCQ DISABLED");
             }
         });
     }
-
-    @And("viene attivato il servizio SERCQ SEND per recapito {string} con errore")
-    public void attivazioneSercqSendWithError(String pa) {
-        try {
-            postRecipientLegalAddressSercq(pa, "x-pagopa-pn-sercq:send-self:notification-already-delivered");
-        } catch (HttpStatusCodeException e) {
-            log.error("Errore durante la chiamata SERCQ SEND", e);
-            sharedSteps.setNotificationError(e);
-        }
-    }
-
 
     @And("viene verificata l' assenza di pec inserite per l'utente")
     public void viewedPecDiPiattaformaDi() {
@@ -934,6 +939,19 @@ public class RicezioneNotificheWebSteps {
     @And("viene attivato il servizio SERCQ SEND per recapito principale")
     public void attivazioneSercqSend() {
         postRecipientLegalAddressSercq("default", "x-pagopa-pn-sercq:send-self:notification-already-delivered");
+    }
+
+    @And("viene attivato il servizio SERCQ SEND per recapito {string} con errore")
+    public void attivazioneSercqSendWithError(String pa) {
+
+        postRecipientLegalAddressSercqError(pa, "x-pagopa-pn-sercq:send-self:notification-already-delivered");
+
+        //        try {
+//            postRecipientLegalAddressSercqError(pa, "x-pagopa-pn-sercq:send-self:notification-already-delivered");
+//        } catch (HttpStatusCodeException e) {
+//            log.error("Errore durante la chiamata SERCQ SEND", e);
+//            sharedSteps.setNotificationError(e);
+//        }
     }
 
     //Come da SRS Abilitazione Domicilio Digitale, address è una stringa fissa "x-pagopa-pn-sercq:send-self:notification-already-delivered"

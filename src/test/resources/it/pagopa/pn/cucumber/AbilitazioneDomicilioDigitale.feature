@@ -2,35 +2,39 @@ Feature: Abilitazione domicilio digitale
 
   @sercq @addressBook3 @sercqTos #bug fixing
   Scenario: [ABILITAZIONE_DOMICILIO_TOS_ACCETTATI] Attivazione del servizio SERCQ SEND per recapito principale e accettazione dei TOS
-    Given si predispone addressbook per l'utente "Alda Merini"
+    Given si predispone addressbook per l'utente "CucumberSpa"
+    Then l'utente "CucumberSpa" "ACCETTA" i tos per sercq
+    And l'utente "CucumberSpa" controlla l'accettazione "positiva" dei tos per sercq
     And viene disabilitato il servizio SERCQ SEND per il comune di "default"
-    And vengono rimossi eventuali recapiti presenti per l'utente
-    Then l'utente "Alda Merini" "ACCETTA" i tos per sercq
-    And l'utente "Alda Merini" controlla l'accettazione "positiva" dei tos per sercq
+    And viene verificato che Sercq sia "disabilitato" per il comune "default"
+    #And vengono rimossi eventuali recapiti presenti per l'utente
     And viene attivato il servizio SERCQ SEND per recapito principale
     And viene verificato che Sercq sia "abilitato" per il comune "default"
     And viene disabilitato il servizio SERCQ SEND per il comune di "default"
 
   @sercq @addressBook3 @sercqTos #bug fixing
   Scenario: [ABILITAZIONE_DOMICILIO_TOS_ACCETTATI_2] Attivazione del servizio SERCQ SEND per recapito principale e accettazione dei TOS
-    Given si predispone addressbook per l'utente "Alda Merini"
-    And viene disabilitato il servizio SERCQ SEND per il comune di "Comune_Root"
+    Given si predispone addressbook per l'utente "CucumberSpa"
     And vengono rimossi eventuali recapiti presenti per l'utente
-    Then l'utente "Alda Merini" "ACCETTA" i tos per sercq
-    And l'utente "Alda Merini" controlla l'accettazione "positiva" dei tos per sercq
+    Then l'utente "CucumberSpa" "ACCETTA" i tos per sercq
+    And l'utente "CucumberSpa" controlla l'accettazione "positiva" dei tos per sercq
+    And viene disabilitato il servizio SERCQ SEND per il comune di "Comune_Root"
+    And viene verificato che Sercq sia "disabilitato" per il comune "Comune_Root"
     And viene attivato il servizio SERCQ SEND per il comune "Comune_Root"
     And viene verificato che Sercq sia "abilitato" per il comune "Comune_Root"
     And viene disabilitato il servizio SERCQ SEND per il comune di "Comune_Root"
 
   @sercq @addressBook3 @sercqTos #bug fixing
   Scenario: [ABILITAZIONE_DOMICILIO_TOS_NON_ACCETTATI] Attivazione del servizio SERCQ SEND per recapito principale e NON accettazione dei TOS
-    Given si predispone addressbook per l'utente "Alda Merini"
+    Given si predispone addressbook per l'utente "CucumberSpa"
+    Then l'utente "CucumberSpa" "ACCETTA" i tos per sercq
     And viene disabilitato il servizio SERCQ SEND per il comune di "default"
     And vengono rimossi eventuali recapiti presenti per l'utente
-    Then l'utente "Alda Merini" "NON ACCETTA" i tos per sercq
+    Then l'utente "CucumberSpa" "NON ACCETTA" i tos per sercq
     And viene attivato il servizio SERCQ SEND per recapito "default" con errore
     Then l'operazione ha prodotto un errore con status code "400"
     And viene verificato che Sercq sia "disabilitato" per il comune "default"
+
 
 
   @sercq @addressBook1
