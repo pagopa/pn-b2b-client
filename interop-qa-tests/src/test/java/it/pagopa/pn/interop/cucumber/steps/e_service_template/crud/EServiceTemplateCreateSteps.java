@@ -1,5 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template.crud;
 
+import static java.util.Objects.nonNull;
+
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
@@ -64,7 +66,9 @@ public class EServiceTemplateCreateSteps {
     @When("l'utente effettua la creazione di un e-service template in modalità {eServiceMode} in stato di {eServiceTemplateVersionState}")
     public void createEServiceTemplate(EServiceMode eServiceMode, EServiceTemplateVersionState desiredState) {
         createEServiceTemplate(eServiceMode);
-        if (eServiceMode == EServiceMode.RECEIVE) {
+        EServiceTemplateInfo lastTemplateManaged = sharedStepsContext.getEServiceTemplateStepContext()
+            .getLastTemplateManaged();
+        if (eServiceMode == EServiceMode.RECEIVE && nonNull(lastTemplateManaged)) {
             testAssistant.addRiskAnalysisToEServiceTemplateSuccessfully(); // perché ogni template in RECEIVE deve avere una risk analysis
         }
         testAssistant.mutateLastVersionState(desiredState);

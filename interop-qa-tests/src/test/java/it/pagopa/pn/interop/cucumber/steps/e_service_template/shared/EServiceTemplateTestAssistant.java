@@ -279,9 +279,13 @@ public class EServiceTemplateTestAssistant {
     }
 
     private EServiceTemplateRiskAnalysisSeed getEServiceRiskAnalysisSeed() {
+        return getEServiceRiskAnalysisSeed(true);
+    }
+
+    public EServiceTemplateRiskAnalysisSeed getEServiceRiskAnalysisSeed(boolean completed) {
         IdentityService identityService = sharedStepsContext.getIdentityService();
         String tenantType = sharedStepsContext.getTenantType();
-        RiskAnalysis riskAnalysis = this.dataPreparationService.getRiskAnalysis(tenantType, true);
+        RiskAnalysis riskAnalysis = this.dataPreparationService.getRiskAnalysis(tenantType, completed);
         return this.riskAnalysisMapper.mapToSeed(riskAnalysis, TenantKind.fromValue(identityService.getKind(tenantType)));
     }
 
@@ -299,6 +303,8 @@ public class EServiceTemplateTestAssistant {
         UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().lastVersionId();
 
         try {
+            int lastAddedRiskAnalysisIndex = sharedStepsContext.getEServiceTemplateStepContext()
+                .getLastAddedRiskAnalysisIndex();
             pollingService.makePolling(
                 () -> httpCallExecutor.performCall(
                     () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
@@ -309,9 +315,15 @@ public class EServiceTemplateTestAssistant {
                     nonNull(res.getBody()) &&
                         this.areConsistent(
                             sharedStepsContext.getEServiceTemplateStepContext().getLastAddedRiskAnalysis(),
-                            res.getBody().getEserviceTemplate().getRiskAnalysis().get(sharedStepsContext.getEServiceTemplateStepContext().getLastAddedRiskAnalysisIndex())),
+                            res.getBody().getEserviceTemplate().getRiskAnalysis().get(
+                                lastAddedRiskAnalysisIndex)),
                 "La risk analysis non è stata aggiunta correttamente all'e-service template"
             );
+            ResponseEntity<EServiceTemplateVersionDetails> re = (ResponseEntity<EServiceTemplateVersionDetails>) httpCallExecutor.getResponse();
+            if(re.getStatusCode().is2xxSuccessful()) {
+                this.sharedStepsContext.getEServiceTemplateStepContext()
+                    .setLastAddedRiskAnalysisId(re.getBody().getEserviceTemplate().getRiskAnalysis().get(lastAddedRiskAnalysisIndex).getId());
+            }
         } catch (IllegalArgumentException e) { // TODO altrove è stato usato PollingPredicateException, che impedirà il catch di IllegalArgumentException, correggere
             fail("La risk analysis non è stata aggiunta correttamente all'e-service template");
         }
@@ -330,7 +342,8 @@ public class EServiceTemplateTestAssistant {
         *       Dopo l'assertion basterà restituire true (se non ci sono stati AssertionError può solo essere andata bene) */
 
         return lastRiskAnalysis.getName().equals(retrievedAnalysis.getName()) &&
-            lastRiskAnalysis.getRiskAnalysisForm().equals(retrievedAnalysis.getRiskAnalysisForm());
+            lastRiskAnalysis.getRiskAnalysisForm().getVersion().equals(retrievedAnalysis.getRiskAnalysisForm().getVersion()) &&
+            lastRiskAnalysis.getRiskAnalysisForm().getAnswers().equals(retrievedAnalysis.getRiskAnalysisForm().getAnswers());
 
         /* TODO retrievedAnalysis ha il campo "createdAt" che però è di tipo stringa: stando
          *  a https://stackoverflow.com/questions/49379006/what-is-the-correct-way-to-declare-a-date-in-an-openapi-swagger-file#:~:text=In%20OpenAPI%2C%20the%20date-time%20format%20is%20used%20to,a%20breakdown%3A%20Regex%20for%20this%3A%20%5Ed%7B4%7D-d%7B2%7D-d%7B2%7DTd%7B2%7D%3Ad%7B2%7D%3Ad%7B2%7DZ%24%20CODE%20%22fmt%22

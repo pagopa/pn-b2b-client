@@ -77,6 +77,7 @@ public class EServiceTemplateStepContext {
     // TODO verificare che non si possano incapsulare in un unico oggetto
     private EServiceTemplateRiskAnalysisSeed lastAddedRiskAnalysis;
     private int lastAddedRiskAnalysisIndex = -1; // -1 means no risk analysis has been added yet
+    private UUID lastAddedRiskAnalysisId;
 
     private static boolean isAnswersFieldInRiskAnalysisFormSeed(Field field) {
         return field.getName().equals("answers") && field.getDeclaringClass().equals(

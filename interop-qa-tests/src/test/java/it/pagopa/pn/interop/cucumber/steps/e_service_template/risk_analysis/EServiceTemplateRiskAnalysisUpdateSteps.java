@@ -51,21 +51,12 @@ public class EServiceTemplateRiskAnalysisUpdateSteps {
     @When("l'utente tenta la modifica della risk analysis dell'e-service template")
     public void editRiskAnalysisFromEServiceTemplate() {
         UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().id();
+        UUID riskAnalysisId = sharedStepsContext.getEServiceTemplateStepContext().getLastAddedRiskAnalysisId();
 
-        List<EServiceTemplateRiskAnalysis> riskAnalysis = eServiceTemplateClient.getEServiceTemplate(
-            eServiceTemplateId).getRiskAnalysis();
-        if(isEmpty(riskAnalysis)) {
-            throw new IllegalStateException("Nessuna risk analysis presente nell'e-service template");
-        }
-
-        UUID riskAnalysisId = riskAnalysis.get(sharedStepsContext.getEServiceTemplateStepContext().getLastAddedRiskAnalysisIndex()).getId();
-
-        String tenantType = sharedStepsContext.getTenantType();
-        String kind = sharedStepsContext.getIdentityService().getKind(tenantType);
-        EServiceTemplateRiskAnalysisSeed editedRiskAnalysisSeed = easyRandom.nextObject(EServiceTemplateRiskAnalysisSeed.class)
-            .tenantKind(TenantKind.fromValue(sharedStepsContext.getIdentityService().getKind(kind)));
+        EServiceTemplateRiskAnalysisSeed editedRiskAnalysisSeed = testAssistant.getEServiceRiskAnalysisSeed(false);
 
         editRiskAnalysisFromEServiceTemplate(eServiceTemplateId, riskAnalysisId, editedRiskAnalysisSeed);
+        sharedStepsContext.getEServiceTemplateStepContext().setLastAddedRiskAnalysis(editedRiskAnalysisSeed);
     }
 
     @When("l'utente tenta la modifica della risk analysis dell'e-service template indicando una specifica vuota")
@@ -92,7 +83,7 @@ public class EServiceTemplateRiskAnalysisUpdateSteps {
         String tenantType = sharedStepsContext.getTenantType();
         String kind = sharedStepsContext.getIdentityService().getKind(tenantType);
         EServiceTemplateRiskAnalysisSeed editedRiskAnalysisSeed = easyRandom.nextObject(EServiceTemplateRiskAnalysisSeed.class)
-            .tenantKind(TenantKind.fromValue(sharedStepsContext.getIdentityService().getKind(kind)));
+            .tenantKind(TenantKind.fromValue(kind));
 
         editRiskAnalysisFromEServiceTemplate(eServiceTemplateId, UUID.randomUUID(), editedRiskAnalysisSeed);
     }
@@ -119,7 +110,7 @@ public class EServiceTemplateRiskAnalysisUpdateSteps {
         String kind = sharedStepsContext.getIdentityService().getKind(tenantType);
         EServiceTemplateRiskAnalysisSeed editedRiskAnalysisSeed = easyRandom.nextObject(EServiceTemplateRiskAnalysisSeed.class)
             .name(riskAnalysis.get(1).getName())
-            .tenantKind(TenantKind.fromValue(sharedStepsContext.getIdentityService().getKind(kind)));
+            .tenantKind(TenantKind.fromValue(kind));
 
         editRiskAnalysisFromEServiceTemplate(eServiceTemplateId, riskAnalysisId, editedRiskAnalysisSeed);
     }
