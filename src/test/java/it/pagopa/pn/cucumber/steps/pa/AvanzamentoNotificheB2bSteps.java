@@ -7,7 +7,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
-import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingPredicate;
+import it.pagopa.pn.client.b2b.pa.polling.exception.PnPollingException;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnPrivateDeliveryPushExternalClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
@@ -16,13 +16,11 @@ import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v24.ResponsePaperNotificationFailedDto;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.b2bVersions.B2bStepsInterface;
-import it.pagopa.pn.cucumber.steps.pa.b2bVersions.B2bStepsV24;
 import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion;
 import it.pagopa.pn.cucumber.steps.utilitySteps.WaitForEventPredicateFilters;
 import it.pagopa.pn.cucumber.steps.utilitySteps.checkTimelineElement.TimelineElementCheckFilters;
 import it.pagopa.pn.cucumber.utils.DataTest;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
@@ -50,6 +48,8 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Slf4j
 public class AvanzamentoNotificheB2bSteps {
@@ -234,7 +234,7 @@ public class AvanzamentoNotificheB2bSteps {
             log.info("ricezioneRaccomandata : {}", ricezioneRaccomandata);
             log.info("refinementDate : {}", refinementDate);
 
-            Assertions.assertEquals(ricezioneRaccomandata, refinementDate);
+            assertEquals(ricezioneRaccomandata, refinementDate);
 
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
@@ -614,9 +614,9 @@ public class AvanzamentoNotificheB2bSteps {
         }
         try {
             log.info("TIMELINE ELEMENT : {}", timelineElement);
-            Assertions.assertNotNull(timelineElement.getLegalFactsIds());
+            assertNotNull(timelineElement.getLegalFactsIds());
             Assertions.assertTrue(CollectionUtils.isEmpty(timelineElement.getLegalFactsIds()));
-            Assertions.assertNotNull(timelineElement.getDetails().getLegalFactId());
+            assertNotNull(timelineElement.getDetails().getLegalFactId());
 
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
@@ -719,10 +719,10 @@ public class AvanzamentoNotificheB2bSteps {
         try {
             if (price != null) {
                 log.info("Costo notifica: {} destinatario: {}", notificationProcessCost.getAnalogCost(), destinatario);
-                Assertions.assertEquals(notificationProcessCost.getAnalogCost(), Integer.parseInt(price));
+                assertEquals(notificationProcessCost.getAnalogCost(), Integer.parseInt(price));
             }
             if (date != null) {
-                Assertions.assertNotNull(notificationProcessCost.getRefinementDate());
+                assertNotNull(notificationProcessCost.getRefinementDate());
             }
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
@@ -1135,7 +1135,7 @@ public class AvanzamentoNotificheB2bSteps {
         List<ResponsePaperNotificationFailedDto> notificationFailedList = this.pnPrivateDeliveryPushExternalClient.getPaperNotificationFailed(internalId, true);
         String iun = sharedSteps.getNotificationIun();
         ResponsePaperNotificationFailedDto notificationFailed = notificationFailedList.stream().filter(elem -> elem.getIun().equals(iun)).findFirst().orElse(null);
-        Assertions.assertNotNull(notificationFailed);
+        assertNotNull(notificationFailed);
     }
 
     @And("viene verificato che il destinatario {string} di tipo {string} non sia nella tabella pn-paper-notification-failed")
@@ -1324,11 +1324,11 @@ public class AvanzamentoNotificheB2bSteps {
     public void notificationPriceVerificationValueResponse(String toValidate, Integer valueToValidate) {
         try {
             FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
-            Assertions.assertNotNull(fullSentNotification);
+            assertNotNull(fullSentNotification);
 
             switch (toValidate.toLowerCase()) {
-                case "vat" -> Assertions.assertEquals(valueToValidate, fullSentNotification.getVat());
-                case "pafee" -> Assertions.assertEquals(valueToValidate, fullSentNotification.getPaFee());
+                case "vat" -> assertEquals(valueToValidate, fullSentNotification.getVat());
+                case "pafee" -> assertEquals(valueToValidate, fullSentNotification.getPaFee());
                 default -> throw new IllegalArgumentException("Valore non valido per toValidate: " + toValidate);
             }
         } catch (AssertionError assertionError) {
@@ -1343,15 +1343,15 @@ public class AvanzamentoNotificheB2bSteps {
         for (NotificationPaymentItem pagamento : listNotificationPaymentItem) {
             NotificationPriceResponseV23 notificationPrice = this.b2bClient.getNotificationPriceV23(pagamento.getPagoPa().getCreditorTaxId(), pagamento.getPagoPa().getNoticeCode());
             try {
-                Assertions.assertNotNull(notificationPrice.getTotalPrice());
-                Assertions.assertNotNull(notificationPrice.getPartialPrice());
-                Assertions.assertNotNull(notificationPrice.getIun());
-                Assertions.assertNotNull(notificationPrice.getAnalogCost());
-                Assertions.assertNotNull(notificationPrice.getRefinementDate());
-                Assertions.assertNotNull(notificationPrice.getNotificationViewDate());
-                Assertions.assertNotNull(notificationPrice.getSendFee());
-                Assertions.assertNotNull(notificationPrice.getPaFee());
-                Assertions.assertNotNull(notificationPrice.getVat());
+                assertNotNull(notificationPrice.getTotalPrice());
+                assertNotNull(notificationPrice.getPartialPrice());
+                assertNotNull(notificationPrice.getIun());
+                assertNotNull(notificationPrice.getAnalogCost());
+                assertNotNull(notificationPrice.getRefinementDate());
+                assertNotNull(notificationPrice.getNotificationViewDate());
+                assertNotNull(notificationPrice.getSendFee());
+                assertNotNull(notificationPrice.getPaFee());
+                assertNotNull(notificationPrice.getVat());
                 log.info("notification price: {}", notificationPrice);
             } catch (AssertionFailedError assertionFailedError) {
                 sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
@@ -1365,14 +1365,14 @@ public class AvanzamentoNotificheB2bSteps {
         for (NotificationPaymentItem pagamento : listNotificationPaymentItem) {
             NotificationPriceResponseV23 notificationPriceV23 = this.b2bClient.getNotificationPriceV23(pagamento.getPagoPa().getCreditorTaxId(), pagamento.getPagoPa().getNoticeCode());
             try {
-                Assertions.assertNotNull(notificationPriceV23.getTotalPrice());
-                Assertions.assertNotNull(notificationPriceV23.getPartialPrice());
-                Assertions.assertNotNull(notificationPriceV23.getIun());
-                Assertions.assertNotNull(notificationPriceV23.getAnalogCost());
-                Assertions.assertNotNull(notificationPriceV23.getPaFee());
-                Assertions.assertNotNull(notificationPriceV23.getVat());
-                Assertions.assertEquals(vat, notificationPriceV23.getVat());
-                Assertions.assertEquals(paFee, notificationPriceV23.getPaFee());
+                assertNotNull(notificationPriceV23.getTotalPrice());
+                assertNotNull(notificationPriceV23.getPartialPrice());
+                assertNotNull(notificationPriceV23.getIun());
+                assertNotNull(notificationPriceV23.getAnalogCost());
+                assertNotNull(notificationPriceV23.getPaFee());
+                assertNotNull(notificationPriceV23.getVat());
+                assertEquals(vat, notificationPriceV23.getVat());
+                assertEquals(paFee, notificationPriceV23.getPaFee());
                 log.info("notification price v23: {}", notificationPriceV23);
             } catch (AssertionFailedError assertionFailedError) {
                 sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
@@ -1387,8 +1387,8 @@ public class AvanzamentoNotificheB2bSteps {
             for (NotificationPaymentItem notificationPaymentItem : listNotificationPaymentItem) {
                 NotificationPriceResponseV23 notificationPrice = this.b2bClient.getNotificationPriceV23(notificationPaymentItem.getPagoPa().getCreditorTaxId(), notificationPaymentItem.getPagoPa().getNoticeCode());
                 try {
-                    Assertions.assertEquals(notificationPrice.getIun(), sharedSteps.getNotificationIun());
-                    Assertions.assertNotNull(notificationPrice.getNotificationViewDate());
+                    assertEquals(notificationPrice.getIun(), sharedSteps.getNotificationIun());
+                    assertNotNull(notificationPrice.getNotificationViewDate());
 
                 } catch (AssertionFailedError assertionFailedError) {
                     sharedSteps.throwAssertionErrorWithIUN(assertionFailedError);
@@ -1457,37 +1457,37 @@ public class AvanzamentoNotificheB2bSteps {
     public void controlloCheLeTempisticheDiArrivoTraLElementoConAddressTypeDigitalAddressSourceInELElementoSianoCorrettePerLaNotifica(String firstElement, String addressType, String digitalAddressSource, String responseStatus, String secondElement, String notificationType) {
         FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
 
-        Assertions.assertNotNull(fullSentNotification);
-        Assertions.assertNotNull(fullSentNotification.getTimeline());
+        assertNotNull(fullSentNotification);
+        assertNotNull(fullSentNotification.getTimeline());
         String iun = fullSentNotification.getIun();
 
         TimelineElementV27 firstElementToCheck = getElementToCheck(firstElement, addressType, digitalAddressSource, responseStatus);
 
-        Assertions.assertNotNull(firstElementToCheck, "first element to check not found iun: " + iun);
-        Assertions.assertNotNull(firstElementToCheck.getEventTimestamp(), "EventTimestamp for first element to check not found iun: " + iun);
+        assertNotNull(firstElementToCheck, "first element to check not found iun: " + iun);
+        assertNotNull(firstElementToCheck.getEventTimestamp(), "EventTimestamp for first element to check not found iun: " + iun);
 
         TimelineElementV27 secondElementToCheck = getElementToCheck(secondElement);
 
-        Assertions.assertNotNull(secondElementToCheck, "second element to check not found iun: " + iun);
-        Assertions.assertNotNull(secondElementToCheck.getDetails(), "Details for second element to check not found iun: " + iun);
-        Assertions.assertNotNull(secondElementToCheck.getDetails().getSchedulingDate(), "SchedulingDate for second element to check not found iun: " + iun);
+        assertNotNull(secondElementToCheck, "second element to check not found iun: " + iun);
+        assertNotNull(secondElementToCheck.getDetails(), "Details for second element to check not found iun: " + iun);
+        assertNotNull(secondElementToCheck.getDetails().getSchedulingDate(), "SchedulingDate for second element to check not found iun: " + iun);
 
-        Assertions.assertEquals(firstElementToCheck.getTimestamp(), firstElementToCheck.getEventTimestamp());
+        assertEquals(firstElementToCheck.getTimestamp(), firstElementToCheck.getEventTimestamp());
 
         int minsToCheck = getMinutesToCheck(notificationType);
 
         long differenceInMinutes = Duration.between(getFirstElementTime(firstElementToCheck, firstElement, addressType, iun), secondElementToCheck.getDetails().getSchedulingDate()).toMinutes();
-        Assertions.assertEquals(minsToCheck, differenceInMinutes, "Time between first and second element not correct: " + iun + " expected wait " + minsToCheck + " actual wait " + differenceInMinutes);
+        assertEquals(minsToCheck, differenceInMinutes, "Time between first and second element not correct: " + iun + " expected wait " + minsToCheck + " actual wait " + differenceInMinutes);
     }
 
     private OffsetDateTime getFirstElementTime(TimelineElementV27 firstElementToCheck, String firstElement, String addressType, String iun) {
         if (firstElement.equalsIgnoreCase("SEND_DIGITAL_FEEDBACK") && addressType.equals("SERCQ")) {
-            Assertions.assertNotNull(firstElementToCheck.getDetails(), "Details for first element to check not found iun: " + iun);
-            Assertions.assertNotNull(firstElementToCheck.getDetails().getNotificationDate(), "NotificationDate for first element to check not found iun: " + iun);
+            assertNotNull(firstElementToCheck.getDetails(), "Details for first element to check not found iun: " + iun);
+            assertNotNull(firstElementToCheck.getDetails().getNotificationDate(), "NotificationDate for first element to check not found iun: " + iun);
             return firstElementToCheck.getDetails().getNotificationDate();
         } else if (firstElement.equalsIgnoreCase("DIGITAL_DELIVERY_CREATION_REQUEST")) {
-            Assertions.assertNotNull(firstElementToCheck.getDetails(), "Details for first element to check not found iun: " + iun);
-            Assertions.assertNotNull(firstElementToCheck.getDetails().getCompletionWorkflowDate(), "CompletionWorkflowDate for first element to check not found iun: " + iun);
+            assertNotNull(firstElementToCheck.getDetails(), "Details for first element to check not found iun: " + iun);
+            assertNotNull(firstElementToCheck.getDetails().getCompletionWorkflowDate(), "CompletionWorkflowDate for first element to check not found iun: " + iun);
             return firstElementToCheck.getDetails().getCompletionWorkflowDate();
         } else return firstElementToCheck.getEventTimestamp();
     }
@@ -1550,7 +1550,7 @@ public class AvanzamentoNotificheB2bSteps {
 
     @And("viene verificato che nell'elemento di timeline della notifica {string} sia presente:")
     public void verificaTimelineDetails(String timelineEventCategory, io.cucumber.datatable.DataTable dataTable) throws Throwable {
-        Assertions.assertNotNull(timelineEventCategory, "Il parametro 'timelineEventCategory' non può essere null.");
+        assertNotNull(timelineEventCategory, "Il parametro 'timelineEventCategory' non può essere null.");
 
         Map<String, String> inputFields = dataTable.asMap();
         Map<String, String> expectedFields = new HashMap<>(inputFields);
@@ -1655,6 +1655,46 @@ public class AvanzamentoNotificheB2bSteps {
             getB2bStepsInterface().checkScartoTemporaleTraDueDeliveryDetailCode(code1, code2, isSuperiore, timeQuantity, unitaTemporale);
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
+    }
+
+    @And("verifica sui timestamp {string} {string} {string}")
+    public void checkTimestampTriplettaDetailCode(String detailCode1, String detailCode2, String detailCode3) {
+
+        OffsetDateTime timestamp1 = null;
+        OffsetDateTime timestamp2 = null;
+        OffsetDateTime timestamp3 = null;
+
+        try {
+            FullSentNotificationV25 fullSentNotification = b2bClient.getSentNotificationV25(sharedSteps.getNotificationIun());
+            for (TimelineElementV25 item : fullSentNotification.getTimeline()) {
+
+                if((item.getCategory().getValue().equals("SEND_ANALOG_FEEDBACK")||item.getCategory().getValue().equals("SEND_ANALOG_PROGRESS")) && item.getDetails().getDeliveryDetailCode()!=null){
+
+                if (item.getDetails().getDeliveryDetailCode().equals(detailCode1)) {
+                    timestamp1 = (OffsetDateTime) item.getDetails().getNotificationDate();
+
+                }
+                if (item.getDetails().getDeliveryDetailCode().equals(detailCode2)) {
+                    timestamp2 = (OffsetDateTime) item.getDetails().getNotificationDate();
+
+                }
+                if (item.getDetails().getDeliveryDetailCode().equals(detailCode3)) {
+                    timestamp3 = (OffsetDateTime) item.getDetails().getNotificationDate();
+
+                }}
+            }
+
+            assertNotNull(timestamp1, "Timestamp per "+ detailCode1+" non trovato");
+            assertNotNull(timestamp2, "Timestamp per "+ detailCode2+" non trovato");
+            assertNotNull(timestamp3, "Timestamp per "+detailCode3+" non trovato");
+
+            assertEquals(timestamp1, timestamp2, timestamp1 +" e "+timestamp2+" non coincidono");
+            assertEquals(timestamp1, timestamp3, timestamp1 +" e "+" Timestamp3 non coincidono");
+
+        } catch (Exception exception) {
+            log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", sharedSteps.getNotificationIun(), b2bClient.getApiKeySetted().name(), exception.getMessage());
+            throw new PnPollingException(exception.getMessage());
         }
     }
 
