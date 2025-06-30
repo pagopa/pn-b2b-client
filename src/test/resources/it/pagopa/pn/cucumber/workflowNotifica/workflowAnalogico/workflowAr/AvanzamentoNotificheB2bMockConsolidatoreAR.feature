@@ -11,7 +11,7 @@ Feature: avanzamento b2b notifica controllo timestamp mock da consolidatore AR
       | digitalDomicile         | NULL       |
       | physicalAddress_address | <SEQUENCE> |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECRN001C"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
     Then verifica sui timestamp "RECRN001A" "RECRN001B" "RECRN001C"
 
     Examples:
@@ -123,8 +123,34 @@ Feature: avanzamento b2b notifica controllo timestamp mock da consolidatore AR
     Examples:
       | SEQUENCE                 |
       | via @OK-WO-Giacenza_AR   |
-      | via @OK-Giacenza-gt10_AR |
       | via @OK-Giacenza_AR      |
+
+  @mockConsolidatore
+  Scenario Outline: [B2B_MOCK_CONSOLIDATORE_4B] Si verifica che i timestamp degli elementi con DeliveryDetailCode forniti siano uguali tra loro
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL       |
+      | physicalAddress_address | <SEQUENCE> |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN003C"
+    Then verifica sui timestamp "RECRN003A" "RECRN003B" "RECRN003C"
+
+    Examples:
+      | SEQUENCE                 |
+      | via @OK-Giacenza-gt10_AR |
+
+
+
+
+
+
+
+
+
+
 
 
   @mockConsolidatore
@@ -143,7 +169,30 @@ Feature: avanzamento b2b notifica controllo timestamp mock da consolidatore AR
     Examples:
       | SEQUENCE                   |
       | via @FAIL-Giacenza_AR      |
+
+
+  @mockConsolidatore
+  Scenario Outline: [B2B_MOCK_CONSOLIDATORE_5B] Si verifica che i timestamp degli elementi con DeliveryDetailCode forniti siano uguali tra loro
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL       |
+      | physicalAddress_address | <SEQUENCE> |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN004C"
+    Then verifica sui timestamp "RECRN004A" "RECRN004B" "RECRN004C"
+
+    Examples:
+      | SEQUENCE                   |
       | via @FAIL-Giacenza-gt10_AR |
+
+
+
+
+
+
 
 
   @mockConsolidatore
@@ -156,7 +205,7 @@ Feature: avanzamento b2b notifica controllo timestamp mock da consolidatore AR
       | digitalDomicile         | NULL       |
       | physicalAddress_address | <SEQUENCE> |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECRN005C"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN005C"
     Then verifica sui timestamp "RECRN005A" "RECRN005B" "RECRN005C"
 
     Examples:

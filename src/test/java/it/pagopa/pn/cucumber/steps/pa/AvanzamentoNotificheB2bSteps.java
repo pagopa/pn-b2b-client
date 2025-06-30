@@ -1685,12 +1685,12 @@ public class AvanzamentoNotificheB2bSteps {
                 }}
             }
 
-            assertNotNull(timestamp1, "Timestamp per "+ detailCode1+" non trovato");
-            assertNotNull(timestamp2, "Timestamp per "+ detailCode2+" non trovato");
-            assertNotNull(timestamp3, "Timestamp per "+detailCode3+" non trovato");
+            assertNotNull(timestamp1, "Timestamp per "+ detailCode1+" non trovato, IUN: "+sharedSteps.getNotificationIun());
+            assertNotNull(timestamp2, "Timestamp per "+ detailCode2+" non trovato, IUN: "+sharedSteps.getNotificationIun());
+            assertNotNull(timestamp3, "Timestamp per "+detailCode3+" non trovato, IUN: "+sharedSteps.getNotificationIun());
 
-            assertEquals(timestamp1, timestamp2, timestamp1 +" e "+timestamp2+" non coincidono");
-            assertEquals(timestamp1, timestamp3, timestamp1 +" e "+" Timestamp3 non coincidono");
+            assertEquals(timestamp1, timestamp2, timestamp1 +" e "+timestamp2+" non coincidono, IUN: "+sharedSteps.getNotificationIun());
+            assertEquals(timestamp1, timestamp3, timestamp1 +" e "+ timestamp3+" non coincidono, IUN: "+sharedSteps.getNotificationIun());
 
         } catch (Exception exception) {
             log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", sharedSteps.getNotificationIun(), b2bClient.getApiKeySetted().name(), exception.getMessage());
