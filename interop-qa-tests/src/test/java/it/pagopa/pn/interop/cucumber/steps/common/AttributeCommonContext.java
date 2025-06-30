@@ -18,4 +18,5 @@ public class AttributeCommonContext {
     List<List<UUID>> requiredCertifiedAttributes = new ArrayList<>();
     List<List<UUID>> requiredDeclaredAttributes = new ArrayList<>();
     List<List<UUID>> requiredVerifiedAttributes = new ArrayList<>();
+    String attributeConsumerTenant;
 }
