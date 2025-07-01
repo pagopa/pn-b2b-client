@@ -847,7 +847,7 @@ public class RicezioneNotificheWebSteps {
         });
     }
 
-    @And("viene disabilitato il servizio SERCQ SEND per il comune di {string}")
+    @And("viene disabilitato il servizio SERCQ SEND (per la PA)(come indirizzo di)(per il comune) {string}")
     public void vieneDisabilitatoSercqPerEnte(String pa) {
         String senderId = getSenderIdPa(pa);
         Assertions.assertDoesNotThrow(() -> {
@@ -888,7 +888,7 @@ public class RicezioneNotificheWebSteps {
         Assertions.assertTrue(exists, "PEC NOT FOUND");
     }
 
-    @And("viene verificato che Sercq sia {string} per il comune {string}")
+    @And("viene verificato che Sercq sia {string} (per la PA)(come indirizzo di)(per il comune) {string}")
     public void viewedSercqPerEnte(String act, String pa) {
         String senderId = getSenderIdPa(pa);
 
@@ -955,7 +955,7 @@ public class RicezioneNotificheWebSteps {
     }
 
     //Come da SRS Abilitazione Domicilio Digitale, address è una stringa fissa "x-pagopa-pn-sercq:send-self:notification-already-delivered"
-    @And("viene attivato il servizio SERCQ SEND per il comune {string}")
+    @And("viene attivato il servizio SERCQ SEND (per la PA)(come indirizzo di)(per il comune) {string}")
     public void attivazioneSercqPerEnteSpecifico(String pa) {
         try {
             viewedSercqPerEnte("disabilitato", pa);
