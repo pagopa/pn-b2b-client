@@ -45,9 +45,8 @@ Feature: Abilitazione domicilio digitale
   @sercq @addressBook1
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_1] Attivazione del servizio SERCQ SEND per recapito principale e accettazione dei TOS
     Given si predispone addressbook per l'utente "Galileo Galilei"
-    Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq v2
-    Then l'utente "Galileo Galilei" controlla l'accettazione "positiva" dei tos per sercq
     And vengono rimossi eventuali recapiti presenti per l'utente
+    Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq
     And viene attivato il servizio SERCQ SEND per recapito principale
     And viene verificato che Sercq sia "abilitato" per il comune "default"
     And viene disabilitato il servizio SERCQ SEND per il comune di "default"
@@ -784,6 +783,3 @@ Feature: Abilitazione domicilio digitale
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi e verifico che l'utente 0 non abbia associato un evento "SEND_DIGITAL_PROGRESS"
     And esiste l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" per l'utente 1
-
-
-

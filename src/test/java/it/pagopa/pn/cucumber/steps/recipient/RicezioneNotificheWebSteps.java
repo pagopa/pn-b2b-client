@@ -852,7 +852,9 @@ public class RicezioneNotificheWebSteps {
         String senderId = getSenderIdPa(pa);
         Assertions.assertDoesNotThrow(() -> {
             List<LegalCourtesyAddressWrapper> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
-            if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty() && legalAddressByRecipient.stream().anyMatch(x -> x.getChannelType() == LegalCourtesyAddressWrapper.ChannelType.SERCQ)) {
+            if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()
+                    && legalAddressByRecipient.stream()
+                    .anyMatch(x -> x.getSenderId().equals(senderId) && x.getChannelType() == LegalCourtesyAddressWrapper.ChannelType.SERCQ_SEND)) {
                 this.iPnWebUserAttributesClient.deleteRecipientLegalAddress(senderId, LegalCourtesyAddressWrapper.ChannelType.SERCQ_SEND);
                 log.info("SERCQ DISABLED");
             }
@@ -895,12 +897,12 @@ public class RicezioneNotificheWebSteps {
         boolean exists = Optional.ofNullable(legalAddressByRecipient)
                 .filter(data -> !data.isEmpty())
                 .map(data -> data.stream()
-                        .anyMatch(address -> senderId.equals(address.getSenderId()) && address.getAddressType().getValue().contains(LegalChannelType.SERCQ.getValue())))
+                        .anyMatch(address -> senderId.equals(address.getSenderId()) && address.getChannelType().equals(LegalCourtesyAddressWrapper.ChannelType.SERCQ_SEND)))
                 .orElse(false);
 
         switch (act) {
             case "disabilitato" -> Assertions.assertFalse(exists, "Sercq risulta abilitato per il comune: " + pa);
-            case "abilitato" -> Assertions.assertFalse(exists, "Sercq risulta disabilitato per il comune: " + pa);
+            case "abilitato" -> Assertions.assertTrue(exists, "Sercq risulta disabilitato per il comune: " + pa);
             default ->
                     throw new IllegalArgumentException("Valore di 'act' non valido: " + act + ". I valori consentiti sono 'abilitato' o 'disabilitato'.");
         }
@@ -938,6 +940,12 @@ public class RicezioneNotificheWebSteps {
     //Come da SRS Abilitazione Domicilio Digitale, address è una stringa fissa "x-pagopa-pn-sercq:send-self:notification-already-delivered"
     @And("viene attivato il servizio SERCQ SEND per recapito principale")
     public void attivazioneSercqSend() {
+        try {
+            viewedSercqPerEnte("disabilitato", "default");
+        } catch (AssertionFailedError failedError) {
+            log.info("SERCQ già abilitato per la PA selezionata!");
+            return;
+        }
         postRecipientLegalAddressSercq("default", "x-pagopa-pn-sercq:send-self:notification-already-delivered");
     }
 
@@ -1041,7 +1049,7 @@ public class RicezioneNotificheWebSteps {
         sharedSteps.selectUser(user);
         BffTosPrivacyActionBody.ActionEnum actionEnum = operation.equals(ACCEPT_TOS) ? BffTosPrivacyActionBody.ActionEnum.ACCEPT : BffTosPrivacyActionBody.ActionEnum.DECLINE;
         BffTosPrivacyActionBody bffTosPrivacyBody = new BffTosPrivacyActionBody().action(actionEnum).version(TOS_VERSION).type(ConsentType.TOS_SERCQ);
-        Assertions.assertDoesNotThrow(() -> iPnTosPrivacyClient.acceptTosPrivacyV1(List.of(bffTosPrivacyBody)));
+        Assertions.assertDoesNotThrow(() -> iPnTosPrivacyClient.acceptTosPrivacyV2(List.of(bffTosPrivacyBody)));
     }
 
     @Given("l'utente {string} {string} i tos per sercq v2")
@@ -1056,7 +1064,7 @@ public class RicezioneNotificheWebSteps {
     public void lUtenteControllaAccettazioneDeiTos(String user, String tosStatus) {
         sharedSteps.selectUser(user);
         it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.ConsentType consentType = ConsentType.TOS_SERCQ;
-        List<BffConsent> privacyConsentV1 = Assertions.assertDoesNotThrow(() -> iPnTosPrivacyClient.getTosPrivacyV1(List.of(consentType)));
+        List<BffConsent> privacyConsentV1 = Assertions.assertDoesNotThrow(() -> iPnTosPrivacyClient.getTosPrivacyV2(List.of(consentType)));
         Assertions.assertNotNull(privacyConsentV1);
         Assertions.assertFalse(privacyConsentV1.isEmpty());
         privacyConsentV1.forEach(data -> {
