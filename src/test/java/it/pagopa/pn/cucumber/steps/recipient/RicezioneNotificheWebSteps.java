@@ -951,20 +951,18 @@ public class RicezioneNotificheWebSteps {
 
     @And("viene attivato il servizio SERCQ SEND per recapito {string} con errore")
     public void attivazioneSercqSendWithError(String pa) {
-
         postRecipientLegalAddressSercqError(pa, "x-pagopa-pn-sercq:send-self:notification-already-delivered");
-
-        //        try {
-//            postRecipientLegalAddressSercqError(pa, "x-pagopa-pn-sercq:send-self:notification-already-delivered");
-//        } catch (HttpStatusCodeException e) {
-//            log.error("Errore durante la chiamata SERCQ SEND", e);
-//            sharedSteps.setNotificationError(e);
-//        }
     }
 
     //Come da SRS Abilitazione Domicilio Digitale, address è una stringa fissa "x-pagopa-pn-sercq:send-self:notification-already-delivered"
     @And("viene attivato il servizio SERCQ SEND per il comune {string}")
     public void attivazioneSercqPerEnteSpecifico(String pa) {
+        try {
+            viewedSercqPerEnte("disabilitato", pa);
+        } catch (AssertionFailedError failedError) {
+            log.info("SERCQ già abilitato per la PA selezionata!");
+            return;
+        }
         String senderIdPa = getSenderIdPa(pa);
         postRecipientLegalAddressSercq(senderIdPa, "x-pagopa-pn-sercq:send-self:notification-already-delivered");
     }
@@ -1049,7 +1047,7 @@ public class RicezioneNotificheWebSteps {
         sharedSteps.selectUser(user);
         BffTosPrivacyActionBody.ActionEnum actionEnum = operation.equals(ACCEPT_TOS) ? BffTosPrivacyActionBody.ActionEnum.ACCEPT : BffTosPrivacyActionBody.ActionEnum.DECLINE;
         BffTosPrivacyActionBody bffTosPrivacyBody = new BffTosPrivacyActionBody().action(actionEnum).version(TOS_VERSION).type(ConsentType.TOS_SERCQ);
-        Assertions.assertDoesNotThrow(() -> iPnTosPrivacyClient.acceptTosPrivacyV2(List.of(bffTosPrivacyBody)));
+        Assertions.assertDoesNotThrow(() -> iPnTosPrivacyClient.acceptTosPrivacyV1(List.of(bffTosPrivacyBody)));
     }
 
     @Given("l'utente {string} {string} i tos per sercq v2")
@@ -1064,10 +1062,24 @@ public class RicezioneNotificheWebSteps {
     public void lUtenteControllaAccettazioneDeiTos(String user, String tosStatus) {
         sharedSteps.selectUser(user);
         it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.ConsentType consentType = ConsentType.TOS_SERCQ;
-        List<BffConsent> privacyConsentV1 = Assertions.assertDoesNotThrow(() -> iPnTosPrivacyClient.getTosPrivacyV2(List.of(consentType)));
+        List<BffConsent> privacyConsentV1 = Assertions.assertDoesNotThrow(() -> iPnTosPrivacyClient.getTosPrivacyV1(List.of(consentType)));
         Assertions.assertNotNull(privacyConsentV1);
         Assertions.assertFalse(privacyConsentV1.isEmpty());
         privacyConsentV1.forEach(data -> {
+            Assertions.assertNotNull(data.getConsentType());
+            Assertions.assertEquals(ConsentType.TOS_SERCQ, data.getConsentType());
+            Assertions.assertEquals(data.getAccepted(), tosStatus.equalsIgnoreCase("positiva"));
+        });
+    }
+
+    @Given("l'utente {string} controlla l'accettazione {string} dei tos per sercq v2")
+    public void lUtenteControllaAccettazioneDeiTosv2(String user, String tosStatus) {
+        sharedSteps.selectUser(user);
+        it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.ConsentType consentType = ConsentType.TOS_SERCQ;
+        List<BffConsent> privacyConsentV2 = Assertions.assertDoesNotThrow(() -> iPnTosPrivacyClient.getTosPrivacyV2(List.of(consentType)));
+        Assertions.assertNotNull(privacyConsentV2);
+        Assertions.assertFalse(privacyConsentV2.isEmpty());
+        privacyConsentV2.forEach(data -> {
             Assertions.assertNotNull(data.getConsentType());
             Assertions.assertEquals(ConsentType.TOS_SERCQ, data.getConsentType());
             Assertions.assertEquals(data.getAccepted(), tosStatus.equalsIgnoreCase("positiva"));
