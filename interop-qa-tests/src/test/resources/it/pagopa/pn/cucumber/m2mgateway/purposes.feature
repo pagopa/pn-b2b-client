@@ -386,7 +386,7 @@ Feature: Gestione purposes
       | WAITING_FOR_APPROVAL | 409  |
 
   @m2m-false-negative
-  Scenario: [M2MG_PURPOSES_39_B] Archiviazione fallita di una finalità in stato non valido (Scenario 124)
+  Scenario: [M2MG_PURPOSES_39_B] Archiviazione fallita di una finalità in stato REJECTED (Scenario 124)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -499,7 +499,7 @@ Feature: Gestione purposes
       | DRAFT     |
 
   @m2m-false-negative
-  Scenario: [M2MG_PURPOSES_48_B] Approvazione fallita di una finalità in stato non valido (Scenario 131)
+  Scenario: [M2MG_PURPOSES_48_B] Approvazione fallita di una finalità in stato REJECTED (Scenario 131)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service

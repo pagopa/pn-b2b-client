@@ -1,15 +1,20 @@
 @m2m-attributes
 Feature: Gestione degli attributes
 
-  Scenario: [M2MG_CERTIFIEDATTRIBUTES_1] Recupero del dettaglio di un attributo certificato con utente autorizzato (Scenario 61)
+  Scenario Outline: [M2MG_CERTIFIEDATTRIBUTES_1] Recupero del dettaglio di un attributo certificato con utente autorizzato (Scenario 61)
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene effettuata la creazione dell'attributo certificato
       | name | description | code |
       |      |             |      |
-    When l'utente tenta di recuperare il record di certifiedAttribute creato
+    When l'utente è un "admin" di "PA1" con ruolo M2M <ruolo>
+    And l'utente tenta di recuperare il record di certifiedAttribute creato
     Then si ottiene lo status code 200
     And certifiedAttribute viene restituito e combacia con il record creato
+    Examples:
+      | ruolo     |
+      | m2m       |
+      | m2m-admin |
 
   Scenario: [M2MG_CERTIFIEDATTRIBUTES_3] Accesso negato al dettaglio di un attributo certificato con token non valido (Scenario 63)
     Given "PA1" ha già creato e pubblicato 1 e-services
@@ -22,15 +27,19 @@ Feature: Gestione degli attributes
     Then si ottiene lo status code 401
     And certifiedAttribute non restituito
 
-  Scenario: [M2MG_CERTIFIEDATTRIBUTES_4] Errore nel recupero del dettaglio di un attributo certificato con attributeId inesistente (Scenario 64)
+  Scenario Outline: [M2MG_CERTIFIEDATTRIBUTES_4] Errore nel recupero del dettaglio di un attributo certificato con attributeId inesistente (Scenario 64)
     Given "PA1" ha già creato e pubblicato 1 e-services
-    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente è un "admin" di "PA1" con ruolo M2M <ruolo-m2m>
     And viene effettuata la creazione dell'attributo certificato
       | name | description | code |
       |      |             |      |
     When l'utente tenta di recuperare certifiedAttribute con un id inesistente
     Then si ottiene lo status code 404
     And certifiedAttribute non restituito
+    Examples:
+      | ruolo-m2m |
+      | m2m       |
+      | m2m-admin |
 
   Scenario: [M2MG_CERTIFIEDATTRIBUTES_5] Creazione di un attributo certificato con utente M2M-ADMIN (Scenario 20)
     Given "PA1" ha già creato e pubblicato 1 e-services
