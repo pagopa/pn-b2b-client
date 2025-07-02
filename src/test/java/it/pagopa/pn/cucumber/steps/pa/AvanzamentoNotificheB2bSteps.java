@@ -36,6 +36,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v24.NotificationFeePolicy.DELIVERY_MODE;
 import static it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v24.NotificationFeePolicy.FLAT_RATE;
@@ -48,8 +49,7 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 public class AvanzamentoNotificheB2bSteps {
@@ -1658,45 +1658,122 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
-    @And("verifica sui timestamp {string} {string} {string}")
-    public void checkTimestampTriplettaDetailCode(String detailCode1, String detailCode2, String detailCode3) {
+    @And("verifica che i DeliveryDetailCode {string} {string} {string} abbiano timestamp {string}")
+    public void checkTimestampTriplettaDetailCode(String detailCode1, String detailCode2, String detailCode3, String compare) {
 
         OffsetDateTime timestamp1 = null;
         OffsetDateTime timestamp2 = null;
         OffsetDateTime timestamp3 = null;
 
         try {
-            FullSentNotificationV25 fullSentNotification = b2bClient.getSentNotificationV25(sharedSteps.getNotificationIun());
-            for (TimelineElementV25 item : fullSentNotification.getTimeline()) {
+            FullSentNotificationV27 fullSentNotification = b2bClient.getSentNotificationV27(sharedSteps.getNotificationIun());
+            for (TimelineElementV27 item : fullSentNotification.getTimeline()) {
 
-                if((item.getCategory().getValue().equals("SEND_ANALOG_FEEDBACK")||item.getCategory().getValue().equals("SEND_ANALOG_PROGRESS")) && item.getDetails().getDeliveryDetailCode()!=null){
+                if ((item.getCategory().getValue().equals("SEND_ANALOG_FEEDBACK")
+                        || item.getCategory().getValue().equals("SEND_ANALOG_PROGRESS"))
+                        && item.getDetails().getDeliveryDetailCode() != null) {
 
-                if (item.getDetails().getDeliveryDetailCode().equals(detailCode1)) {
-                    timestamp1 = (OffsetDateTime) item.getDetails().getNotificationDate();
-
+                    if (item.getDetails().getDeliveryDetailCode().equals(detailCode1)) {
+                        timestamp1 = (OffsetDateTime) item.getDetails().getNotificationDate();
+                    }
+                    if (item.getDetails().getDeliveryDetailCode().equals(detailCode2)) {
+                        timestamp2 = (OffsetDateTime) item.getDetails().getNotificationDate();
+                    }
+                    if (detailCode3 != null && !detailCode3.isEmpty()
+                            && item.getDetails().getDeliveryDetailCode().equals(detailCode3)) {
+                        timestamp3 = (OffsetDateTime) item.getDetails().getNotificationDate();
+                    }
                 }
-                if (item.getDetails().getDeliveryDetailCode().equals(detailCode2)) {
-                    timestamp2 = (OffsetDateTime) item.getDetails().getNotificationDate();
-
-                }
-                if (item.getDetails().getDeliveryDetailCode().equals(detailCode3)) {
-                    timestamp3 = (OffsetDateTime) item.getDetails().getNotificationDate();
-
-                }}
             }
 
-            assertNotNull(timestamp1, "Timestamp per "+ detailCode1+" non trovato, IUN: "+sharedSteps.getNotificationIun());
-            assertNotNull(timestamp2, "Timestamp per "+ detailCode2+" non trovato, IUN: "+sharedSteps.getNotificationIun());
-            assertNotNull(timestamp3, "Timestamp per "+detailCode3+" non trovato, IUN: "+sharedSteps.getNotificationIun());
+            assertNotNull(timestamp1, "Timestamp per " + detailCode1 + " non trovato, IUN: " + sharedSteps.getNotificationIun());
+            assertNotNull(timestamp2, "Timestamp per " + detailCode2 + " non trovato, IUN: " + sharedSteps.getNotificationIun());
+            assertEquals(timestamp1, timestamp2, timestamp1 + " e " + timestamp2 + " non coincidono, IUN: " + sharedSteps.getNotificationIun());
 
-            assertEquals(timestamp1, timestamp2, timestamp1 +" e "+timestamp2+" non coincidono, IUN: "+sharedSteps.getNotificationIun());
-            assertEquals(timestamp1, timestamp3, timestamp1 +" e "+ timestamp3+" non coincidono, IUN: "+sharedSteps.getNotificationIun());
+            if (detailCode3 != null && !detailCode3.isEmpty()) {
+                assertNotNull(timestamp3, "Timestamp per " + detailCode3 + " non trovato, IUN: " + sharedSteps.getNotificationIun());
+               // assertEquals(timestamp1, timestamp3, timestamp1 + " e " + timestamp3 + " non coincidono, IUN: " + sharedSteps.getNotificationIun());
+
+                if ("uguali".equalsIgnoreCase(compare)) {
+                    assertEquals(timestamp1, timestamp3, timestamp1 + " e " + timestamp3 + " non coincidono, IUN: " + sharedSteps.getNotificationIun());
+                }
+
+                else if ("diversi".equalsIgnoreCase(compare)) {
+                    assertNotEquals(timestamp1, timestamp3, timestamp1 + " e " + timestamp3 + " devono essere diversi, IUN: " + sharedSteps.getNotificationIun());
+                } else {
+                    throw new IllegalArgumentException("Tipo di confronto non valido: " + compare);
+                }
+            }
 
         } catch (Exception exception) {
-            log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", sharedSteps.getNotificationIun(), b2bClient.getApiKeySetted().name(), exception.getMessage());
+            log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}",
+                    sharedSteps.getNotificationIun(),
+                    b2bClient.getApiKeySetted().name(),
+                    exception.getMessage());
             throw new PnPollingException(exception.getMessage());
         }
     }
+
+    @And("verifica sui timestamp {string} {string} {string} e {string} {string} {string}")
+    public void checkTimestampTriplettaDetailCodeDouble(
+            String detailCode1,
+            String detailCode2,
+            String detailCode3,
+            String detailCode4,
+            String detailCode5,
+            String detailCode6
+    ) {
+        String[] detailCodes = {
+                detailCode1, detailCode2, detailCode3,
+                detailCode4, detailCode5, detailCode6
+        };
+
+        try {
+            FullSentNotificationV25 fullSentNotification =
+                    b2bClient.getSentNotificationV25(sharedSteps.getNotificationIun());
+
+            Map<String, OffsetDateTime> timestampMap = fullSentNotification.getTimeline().stream()
+                    .filter(item ->
+                            (item.getCategory().getValue().equals("SEND_ANALOG_FEEDBACK") ||
+                                    item.getCategory().getValue().equals("SEND_ANALOG_PROGRESS"))
+                                    && item.getDetails().getDeliveryDetailCode() != null
+                                    && Arrays.asList(detailCodes).contains(item.getDetails().getDeliveryDetailCode())
+                    )
+                    .collect(Collectors.toMap(
+                            item -> item.getDetails().getDeliveryDetailCode(),
+                            item -> (OffsetDateTime) item.getDetails().getNotificationDate(),
+                            (existing, replacement) -> existing
+                    ));
+
+            Arrays.stream(detailCodes).forEach(code ->
+                    assertNotNull(timestampMap.get(code),
+                            "Timestamp per " + code + " non trovato, IUN: " + sharedSteps.getNotificationIun())
+            );
+
+            compareTriple(timestampMap, detailCode1, detailCode2, detailCode3);
+            compareTriple(timestampMap, detailCode4, detailCode5, detailCode6);
+
+        } catch (Exception exception) {
+            log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}",
+                    sharedSteps.getNotificationIun(),
+                    b2bClient.getApiKeySetted().name(),
+                    exception.getMessage());
+            throw new PnPollingException(exception.getMessage());
+        }
+    }
+
+    private void compareTriple(Map<String, OffsetDateTime> timestampMap,
+                               String code1, String code2, String code3) {
+
+        OffsetDateTime ts1 = timestampMap.get(code1);
+        OffsetDateTime ts2 = timestampMap.get(code2);
+        OffsetDateTime ts3 = timestampMap.get(code3);
+
+        assertEquals(ts1, ts2, ts1 + " e " + ts2 + " non coincidono, IUN: " + sharedSteps.getNotificationIun());
+        assertEquals(ts1, ts3, ts1 + " e " + ts3 + " non coincidono, IUN: " + sharedSteps.getNotificationIun());
+    }
+
+
 
 
     @DataTableType
