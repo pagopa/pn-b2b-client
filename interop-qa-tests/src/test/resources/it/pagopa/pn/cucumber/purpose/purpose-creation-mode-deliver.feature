@@ -3,14 +3,14 @@ Feature: Creazione finalità per e-service in erogazione diretta
   Tutti gli utenti autorizzati possono creare una nuova finalità per un e-service in erogazione diretta.
 
   @purpose_creation_deliver1
-  Scenario Outline: Un utente con sufficienti permessi (admin); il cui ente ha già una richiesta di fruizione in stato ACTIVE per una versione di e-service, il quale ha mode = DELIVER, crea una nuova finalità con tutti i campi richiesti correttamente formattati. La richiesta va a buon fine.
+  Scenario Outline: [CREAZIONE_FINALITA_DELIVER_1] Un utente con sufficienti permessi (admin); il cui ente ha già una richiesta di fruizione in stato ACTIVE per una versione di e-service, il quale ha mode = DELIVER, crea una nuova finalità con tutti i campi richiesti correttamente formattati. La richiesta va a buon fine.
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "<ente>" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     When l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati
     Then si ottiene status code <risultato>
 
-    Examples: 
+    Examples:
       | ente    | ruolo        | risultato |
       | PA1     | admin        |       200 |
       | PA1     | api          |       403 |
@@ -29,7 +29,7 @@ Feature: Creazione finalità per e-service in erogazione diretta
       | Privato | support      |       403 |
 
   @purpose_creation_deliver2
-  Scenario: Un utente con sufficienti permessi (admin); il cui ente ha già una richiesta di fruizione in stato ACTIVE per una versione di e-service, il quale ha mode = DELIVER, e una finalità già in stato DRAFT per lo stesso e-service, crea una nuova finalità con tutti i campi richiesti correttamente formattati. La richiesta va a buon fine.
+  Scenario: [CREAZIONE_FINALITA_DELIVER_2] Un utente con sufficienti permessi (admin); il cui ente ha già una richiesta di fruizione in stato ACTIVE per una versione di e-service, il quale ha mode = DELIVER, e una finalità già in stato DRAFT per lo stesso e-service, crea una nuova finalità con tutti i campi richiesti correttamente formattati. La richiesta va a buon fine.
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -38,7 +38,7 @@ Feature: Creazione finalità per e-service in erogazione diretta
     Then si ottiene status code 200
 
   @purpose_creation_deliver3
-  Scenario: Un utente con sufficienti permessi (admin); il cui ente ha già una richiesta di fruizione in stato ACTIVE per una versione di e-service, il quale ha mode = DELIVER, la quale è in stato SUSPENDED, crea una nuova finalità con tutti i campi richiesti correttamente formattati. La richiesta va a buon fine.
+  Scenario: [CREAZIONE_FINALITA_DELIVER_3] Un utente con sufficienti permessi (admin); il cui ente ha già una richiesta di fruizione in stato ACTIVE per una versione di e-service, il quale ha mode = DELIVER, la quale è in stato SUSPENDED, crea una nuova finalità con tutti i campi richiesti correttamente formattati. La richiesta va a buon fine.
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -47,14 +47,14 @@ Feature: Creazione finalità per e-service in erogazione diretta
     Then si ottiene status code 200
 
   @purpose_creation_deliver4a
-  Scenario Outline: Un utente con sufficienti permessi (admin); il cui ente ha già una richiesta di fruizione in stato NON ACTIVE (DRAFT, PENDING, SUSPENDED, ARCHIVED) per un e-service, il quale ha mode = DELIVER, crea una nuova finalità con tutti i campi richiesti correttamente formattati. Ottiene un errore.
+  Scenario Outline: [CREAZIONE_FINALITA_DELIVER_4] Un utente con sufficienti permessi (admin); il cui ente ha già una richiesta di fruizione in stato NON ACTIVE (DRAFT, PENDING, SUSPENDED, ARCHIVED) per un e-service, il quale ha mode = DELIVER, crea una nuova finalità con tutti i campi richiesti correttamente formattati. Ottiene un errore.
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "<tipoApprovazione>"
     Given "PA1" ha una richiesta di fruizione in stato "<statoAgreement>" per quell'e-service
     When l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati
     Then si ottiene status code 400
 
-    Examples: 
+    Examples:
       | statoAgreement | tipoApprovazione |
       | DRAFT          | AUTOMATIC        |
       | PENDING        | MANUAL           |
@@ -62,7 +62,7 @@ Feature: Creazione finalità per e-service in erogazione diretta
       | ARCHIVED       | AUTOMATIC        |
 
   @purpose_creation_deliver4b
-  Scenario Outline: Un utente con sufficienti permessi (admin); il cui ente ha già una richiesta di fruizione in stato MISSING_CERTIFIED_ATTRIBUTES per un e-service, il quale ha mode = DELIVER, crea una nuova finalità con tutti i campi richiesti correttamente formattati. Ottiene un errore.
+  Scenario Outline: [CREAZIONE_FINALITA_DELIVER_5] Un utente con sufficienti permessi (admin); il cui ente ha già una richiesta di fruizione in stato MISSING_CERTIFIED_ATTRIBUTES per un e-service, il quale ha mode = DELIVER, crea una nuova finalità con tutti i campi richiesti correttamente formattati. Ottiene un errore.
     Given l'utente è un "admin" di "<enteFruitore>"
     Given "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"
     Given "<enteErogatore>" ha già creato un e-service in stato "PUBLISHED" che richiede quell'attributo certificato con approvazione automatica
@@ -72,12 +72,12 @@ Feature: Creazione finalità per e-service in erogazione diretta
     When l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati
     Then si ottiene status code 400
 
-    Examples: 
+    Examples:
       | enteFruitore | enteCertificatore | enteErogatore |
       | GSP          | PA2               | PA1           |
 
   @purpose_creation_deliver4c
-  Scenario: Un utente con sufficienti permessi (admin); il cui ente ha già una richiesta di fruizione in stato REJECTED per un e-service, il quale ha mode = DELIVER, crea una nuova finalità con tutti i campi richiesti correttamente formattati. Ottiene un errore.
+  Scenario: [CREAZIONE_FINALITA_DELIVER_6] Un utente con sufficienti permessi (admin); il cui ente ha già una richiesta di fruizione in stato REJECTED per un e-service, il quale ha mode = DELIVER, crea una nuova finalità con tutti i campi richiesti correttamente formattati. Ottiene un errore.
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
     Given "PA1" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
@@ -86,14 +86,14 @@ Feature: Creazione finalità per e-service in erogazione diretta
     Then si ottiene status code 400
 
   @purpose_creation_deliver5
-  Scenario: Un utente con sufficienti permessi (admin); il cui ente NON ha già una richiesta di fruizione per una versione di e-service, il quale ha mode = DELIVER, crea una nuova finalità con tutti i campi richiesti correttamente formattati. Ottiene un errore.
+  Scenario: [CREAZIONE_FINALITA_DELIVER_7] Un utente con sufficienti permessi (admin); il cui ente NON ha già una richiesta di fruizione per una versione di e-service, il quale ha mode = DELIVER, crea una nuova finalità con tutti i campi richiesti correttamente formattati. Ottiene un errore.
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     When l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati
     Then si ottiene status code 400
 
   @purpose_creation_deliver6
-  Scenario: Un utente con sufficienti permessi (admin); il cui ente ha già una richiesta di fruizione in stato ACTIVE per una versione di e-service, il quale ha mode = DELIVER, crea una nuova finalità con tutti i campi richiesti correttamente formattati, il campo isFreeOfCharge valorizzato a true e il campo freeOfChargeReason non compilato. Ottiene un errore.
+  Scenario: [CREAZIONE_FINALITA_DELIVER_8] Un utente con sufficienti permessi (admin); il cui ente ha già una richiesta di fruizione in stato ACTIVE per una versione di e-service, il quale ha mode = DELIVER, crea una nuova finalità con tutti i campi richiesti correttamente formattati, il campo isFreeOfCharge valorizzato a true e il campo freeOfChargeReason non compilato. Ottiene un errore.
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -101,7 +101,7 @@ Feature: Creazione finalità per e-service in erogazione diretta
     Then si ottiene status code 400
 
   @purpose_creation_deliver7 @wait_for_fix @PIN-5236
-  Scenario: Un utente con sufficienti permessi (admin); il cui ente ha già una richiesta di fruizione in stato ACTIVE per una versione di e-service, il quale ha mode = DELIVER, crea una nuova finalità con tutti i campi richiesti correttamente formattati con una riskAnalysis parzialmente compilata ma formattata correttamente (ossia sono compilati solo alcuni campi, ma quei campi sono compilati correttamente). La richiesta va a buon fine.
+  Scenario: [CREAZIONE_FINALITA_DELIVER_9] Un utente con sufficienti permessi (admin); il cui ente ha già una richiesta di fruizione in stato ACTIVE per una versione di e-service, il quale ha mode = DELIVER, crea una nuova finalità con tutti i campi richiesti correttamente formattati con una riskAnalysis parzialmente compilata ma formattata correttamente (ossia sono compilati solo alcuni campi, ma quei campi sono compilati correttamente). La richiesta va a buon fine.
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -109,7 +109,7 @@ Feature: Creazione finalità per e-service in erogazione diretta
     Then si ottiene status code 200
 
   @purpose_creation_deliver8
-  Scenario: Un utente con sufficienti permessi (admin); il cui ente ha già una richiesta di fruizione in stato ACTIVE per una versione di e-service, il quale ha mode = DELIVER, crea una nuova finalità con tutti i campi richiesti correttamente formattati con una riskAnalysis parzialmente compilata, che è formattata correttamente, ma la quale versione della riskAnalysis non è l’ultima disponibile per quella tipologia di ente (es. la versione corrente è la v2, viene compilata la v1). Ottiene un errore.
+  Scenario: [CREAZIONE_FINALITA_DELIVER_10] Un utente con sufficienti permessi (admin); il cui ente ha già una richiesta di fruizione in stato ACTIVE per una versione di e-service, il quale ha mode = DELIVER, crea una nuova finalità con tutti i campi richiesti correttamente formattati con una riskAnalysis parzialmente compilata, che è formattata correttamente, ma la quale versione della riskAnalysis non è l’ultima disponibile per quella tipologia di ente (es. la versione corrente è la v2, viene compilata la v1). Ottiene un errore.
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -117,7 +117,7 @@ Feature: Creazione finalità per e-service in erogazione diretta
     Then si ottiene status code 400
 
   @purpose_creation_deliver9
-  Scenario: Un utente con sufficienti permessi (admin); il cui ente ha già una richiesta di fruizione in stato ACTIVE per una versione di e-service, il quale ha mode = DELIVER, crea una nuova finalità con tutti i campi richiesti correttamente formattati e la salva; crea una seconda finalità che ha lo stesso nome della precedente, prova a salvarla. Ottiene un errore.
+  Scenario: [CREAZIONE_FINALITA_DELIVER_11] Un utente con sufficienti permessi (admin); il cui ente ha già una richiesta di fruizione in stato ACTIVE per una versione di e-service, il quale ha mode = DELIVER, crea una nuova finalità con tutti i campi richiesti correttamente formattati e la salva; crea una seconda finalità che ha lo stesso nome della precedente, prova a salvarla. Ottiene un errore.
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -126,7 +126,7 @@ Feature: Creazione finalità per e-service in erogazione diretta
     Then si ottiene status code 409
 
   @purpose_creation_deliver10
-  Scenario: Un utente con sufficienti permessi (admin); il cui ente A ha già una richiesta di fruizione in stato ACTIVE per una versione di e-service, il quale ha mode = DELIVER, crea una nuova finalità con tutti i campi richiesti correttamente formattati e la salva. Un ente B ha già una richiesta di fruizione in stato ACTIVE per lo stesso e-service; crea una finalità con lo stesso nome della precedente e la salva. L’operazione va a buon fine.
+  Scenario: [CREAZIONE_FINALITA_DELIVER_12] Un utente con sufficienti permessi (admin); il cui ente A ha già una richiesta di fruizione in stato ACTIVE per una versione di e-service, il quale ha mode = DELIVER, crea una nuova finalità con tutti i campi richiesti correttamente formattati e la salva. Un ente B ha già una richiesta di fruizione in stato ACTIVE per lo stesso e-service; crea una finalità con lo stesso nome della precedente e la salva. L’operazione va a buon fine.
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service

@@ -3,7 +3,7 @@ Feature: Assegnazione di un attributo verificato ad un aderente
   Tutti gli utenti autorizzati di enti che possono erogare eservice possono assegnare un attributo verificato
 
   @tenant_assign_verified_attribute1
-  Scenario Outline: Per un attributo verificato precedentemente creato da un primo aderente, alla richiesta di assegnazione dell’attributo senza data di scadenza ad un secondo aderente da parte di un utente con sufficienti permessi (admin) appartenente al primo aderente, va a buon fine
+  Scenario Outline: [TENANT_ASSIGN_VERIFIED_ATTRIBUTE_01] Per un attributo verificato precedentemente creato da un primo aderente, alla richiesta di assegnazione dell’attributo senza data di scadenza ad un secondo aderente da parte di un utente con sufficienti permessi (admin) appartenente al primo aderente, va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato un attributo verificato
     Given "<ente>" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
@@ -25,7 +25,7 @@ Feature: Assegnazione di un attributo verificato ad un aderente
       | GSP  | api,security |        403 |
 
   @tenant_assign_verified_attribute2
-  Scenario: Per un attributo verificato precedentemente creato da un primo aderente, alla richiesta di assegnazione dell’attributo senza data di scadenza ad un secondo aderente da parte di un utente con sufficienti permessi (admin) appartenente al terzo aderente, va a buon fine. Spiega: gli attributi verificati possono essere assegnati indipendentemente da chi li ha creati
+  Scenario: [TENANT_ASSIGN_VERIFIED_ATTRIBUTE_02] Per un attributo verificato precedentemente creato da un primo aderente, alla richiesta di assegnazione dell’attributo senza data di scadenza ad un secondo aderente da parte di un utente con sufficienti permessi (admin) appartenente al terzo aderente, va a buon fine. Spiega: gli attributi verificati possono essere assegnati indipendentemente da chi li ha creati
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato un attributo verificato
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
@@ -34,7 +34,7 @@ Feature: Assegnazione di un attributo verificato ad un aderente
     Then si ottiene status code 204
 
   @tenant_assign_verified_attribute3
-  Scenario: Per un attributo verificato precedentemente creato da un primo aderente, alla richiesta di assegnazione dell’attributo con data di scadenza nel futuro ad un secondo aderente da parte di un utente con sufficienti permessi (admin) appartenente al primo aderente, va a buon fine
+  Scenario: [TENANT_ASSIGN_VERIFIED_ATTRIBUTE_03] Per un attributo verificato precedentemente creato da un primo aderente, alla richiesta di assegnazione dell’attributo con data di scadenza nel futuro ad un secondo aderente da parte di un utente con sufficienti permessi (admin) appartenente al primo aderente, va a buon fine
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un attributo verificato
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
@@ -43,7 +43,7 @@ Feature: Assegnazione di un attributo verificato ad un aderente
     Then si ottiene status code 204
 
   @tenant_assign_verified_attribute4 @wait_for_fix @PIN-5198
-  Scenario: Per un attributo verificato precedentemente creato da un primo aderente, alla richiesta di assegnazione dell’attributo con data di scadenza nel passato ad un secondo aderente da parte di un utente con sufficienti permessi (admin) appartenente al primo aderente, ottiene un errore
+  Scenario: [TENANT_ASSIGN_VERIFIED_ATTRIBUTE_04] Per un attributo verificato precedentemente creato da un primo aderente, alla richiesta di assegnazione dell’attributo con data di scadenza nel passato ad un secondo aderente da parte di un utente con sufficienti permessi (admin) appartenente al primo aderente, ottiene un errore
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un attributo verificato
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
@@ -52,7 +52,7 @@ Feature: Assegnazione di un attributo verificato ad un aderente
     Then si ottiene status code 400
 
   @tenant_assign_verified_attribute5
-  Scenario: Per un attributo verificato precedentemente creato da un aderente, alla richiesta di assegnazione dell’attributo senza scadenza al proprio ente da parte di un utente con sufficienti permessi (admin), ottiene un errore. Spiega: un ente non può autoassegnarsi attributi verificati
+  Scenario: [TENANT_ASSIGN_VERIFIED_ATTRIBUTE_05] Per un attributo verificato precedentemente creato da un aderente, alla richiesta di assegnazione dell’attributo senza scadenza al proprio ente da parte di un utente con sufficienti permessi (admin), ottiene un errore. Spiega: un ente non può autoassegnarsi attributi verificati
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato un attributo verificato
     Given "PA2" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
