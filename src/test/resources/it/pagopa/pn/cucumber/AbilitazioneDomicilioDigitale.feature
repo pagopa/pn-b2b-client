@@ -1,7 +1,7 @@
 Feature: Abilitazione domicilio digitale
 
 
-  @sercq @addressBook3 @sercqTos #bug fixing
+  @sercq @addressBook2 @sercqTos #bug fixing
   Scenario: [ABILITAZIONE_DOMICILIO_TOS_ACCETTATI] Attivazione del servizio SERCQ SEND per recapito principale e accettazione dei TOS
     Given si predispone addressbook per l'utente "CucumberSpa"
     Then l'utente "CucumberSpa" "ACCETTA" i tos per sercq
@@ -14,7 +14,7 @@ Feature: Abilitazione domicilio digitale
     And viene disabilitato il servizio SERCQ SEND come indirizzo di "default"
 
 
-  @sercq @addressBook3 @sercqTos #bug fixing
+  @sercq @addressBook2 @sercqTos #bug fixing
   Scenario: [ABILITAZIONE_DOMICILIO_TOS_ACCETTATI_2] Attivazione del servizio SERCQ SEND per recapito principale e accettazione dei TOS
     Given si predispone addressbook per l'utente "CucumberSpa"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -26,7 +26,7 @@ Feature: Abilitazione domicilio digitale
     And viene verificato che Sercq sia "abilitato" per la PA "Comune_Root"
     And viene disabilitato il servizio SERCQ SEND per la PA "Comune_Root"
 
-  @sercq @addressBook3 @sercqTos #bug fixing
+  @sercq @addressBook2 @sercqTos #bug fixing
   Scenario: [ABILITAZIONE_DOMICILIO_TOS_NON_ACCETTATI] Attivazione del servizio SERCQ SEND per recapito principale e NON accettazione dei TOS
     Given si predispone addressbook per l'utente "CucumberSpa"
 #    Then l'utente "CucumberSpa" "ACCETTA" i tos per sercq
@@ -746,7 +746,7 @@ Feature: Abilitazione domicilio digitale
     And esiste l'elemento di timeline della notifica "SEND_DIGITAL_PROGRESS" per l'utente 1
 
   ##TODO Analizzare il comportamento della doppia annotazione
-  @addressBook1 @addressBook2 @ignoreHotfixTemp #temp
+  #@addressBook1 @addressBook2 @ignoreHotfixTemp #temp
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_81] Creazione notifica digitale multi destinatario con servizio SERCQ attivo per il primo destinatario e indirizzo PEC di piattaforma per il secondo destinatario
     Given si predispone addressbook per l'utente "Galileo Galilei"
     Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq v2

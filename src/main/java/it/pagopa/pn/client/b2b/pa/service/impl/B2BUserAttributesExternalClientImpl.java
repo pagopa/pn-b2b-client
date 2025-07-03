@@ -10,6 +10,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.api.L
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
 import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
+import it.pagopa.pn.client.b2b.pa.wrapper.RecipientWrapper;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.AddressVerification;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.CourtesyDigitalAddress;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.UserAddresses;
@@ -168,8 +169,11 @@ public class B2BUserAttributesExternalClientImpl implements IPnWebUserAttributes
         return this.consentsApi.getConsents();
     }
 
-    public UserAddresses getAddressesByRecipient() throws RestClientException {
-        return deepCopy(allApi.getAddressesByRecipient(), UserAddresses.class);
+    public RecipientWrapper getAddressesByRecipient() throws RestClientException {
+        RecipientWrapper recipientWrapper = new RecipientWrapper();
+        recipientWrapper.setB2bUserAddress(deepCopy(allApi.getAddressesByRecipient(), UserAddresses.class));
+        return recipientWrapper ;
+
     }
 
 

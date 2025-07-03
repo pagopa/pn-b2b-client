@@ -12,6 +12,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.Notifi
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.*;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.NotificationStatusV26;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.*;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.digitaladdresses.BffUserAddress;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffConsent;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffTosPrivacyActionBody;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.ConsentType;
@@ -25,8 +26,6 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesExternalClient
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.AddressVerification;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.CourtesyDigitalAddress;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalAndUnverifiedDigitalAddress;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
@@ -47,6 +46,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -1006,7 +1006,15 @@ public class RicezioneNotificheWebSteps {
     @And("vengono rimossi eventuali recapiti presenti per l'utente")
     public void cleanLegalAddressForUser() {
         try {
-            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getAddressesByRecipient().getLegal();
+            List<BffUserAddress> legalAddressByRecipient =
+                    this.iPnWebUserAttributesClient
+                            .getAddressesByRecipient()
+                            .getBffUserAddress()
+                            .stream()
+                            .filter(x -> "LEGAL".equals(x.getAddressType()))
+                            .collect(Collectors.toList());
+
+
             if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
                 legalAddressByRecipient
                         .forEach(address -> {
@@ -1014,7 +1022,14 @@ public class RicezioneNotificheWebSteps {
                             log.info("Cancellato indirizzo di tipo " + address.getChannelType() + " per il comune " + address.getSenderId());
                         });
             }
-            List<CourtesyDigitalAddress> courtesyDigitalAddresses = this.iPnWebUserAttributesClient.getAddressesByRecipient().getCourtesy();
+            List<BffUserAddress> courtesyDigitalAddresses =
+                    this.iPnWebUserAttributesClient
+                            .getAddressesByRecipient()
+                            .getBffUserAddress()
+                            .stream()
+                            .filter(x -> "COURTESY".equals(x.getAddressType()))
+                            .collect(Collectors.toList());
+
             if (courtesyDigitalAddresses != null && !courtesyDigitalAddresses.isEmpty()) {
                 courtesyDigitalAddresses
                         .forEach(address -> {
@@ -1023,7 +1038,7 @@ public class RicezioneNotificheWebSteps {
                         });
             }
         } catch (Exception e) {
-            log.error("RIMOZIONE RECAPITI FALLITA:\n" + e);
+            log.error("RIMOZIONE RECAPITI FALLITA: " + e.getStackTrace());
         }
     }
 
