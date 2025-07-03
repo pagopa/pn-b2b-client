@@ -11,10 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 
+@Getter
 @Slf4j
 public abstract class AbstractClient  {
 
-    @Getter @Setter
+    @Setter
     protected IHttpExecutor httpCallExecutor;
 
     public <E, R> Optional<R> performOperation(IOperation<E, R> operation) {

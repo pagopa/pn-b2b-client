@@ -1,19 +1,20 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m;
 
-import static java.util.Objects.requireNonNull;
-
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.authorization.domain.Role;
-import it.pagopa.interop.authorization.service.M2MTokenService.M2MRole;
+import it.pagopa.interop.authorization.enums.M2MRole;
+import it.pagopa.interop.authorization.service.DPoPTokenService;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.JWTUtils;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+
 import java.util.Map;
 import java.util.UUID;
+
+import static java.util.Objects.requireNonNull;
 
 public class M2MAuthSteps {
     @ParameterType("m2m|m2m-admin")
@@ -27,8 +28,8 @@ public class M2MAuthSteps {
     private final IHttpExecutor httpCallExecutor;
 
     public M2MAuthSteps(
-        ClientTokenConfigurator clientTokenConfigurator,
-        SharedStepsContext sharedStepsContext
+            ClientTokenConfigurator clientTokenConfigurator,
+            SharedStepsContext sharedStepsContext
     ) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
@@ -39,14 +40,15 @@ public class M2MAuthSteps {
     @Given("l'utente è un {string} di {string} con ruolo M2M {m2mRole}")
     public void authenticateM2MUser(String selfcareRole, String tenant, M2MRole m2MRole) {
         String token = identityService.getToken(tenant, m2MRole.toString());
+        UUID clientId = getClientId(token);
+
+        DPoPTokenService.PreparedClient preparedClient = identityService.getPreparedClient(clientId);
+        sharedStepsContext.getClientCommonContext().addClient(preparedClient);
 
         clientTokenConfigurator.setBearerToken(token);
         sharedStepsContext.setUserToken(token);
         sharedStepsContext.setRole(Role.fromValue(selfcareRole.toUpperCase()));
         sharedStepsContext.setTenantType(tenant);
-
-        UUID clientId = getClientId(token);
-        sharedStepsContext.getClientCommonContext().addClient(clientId);
     }
 
     @Given("viene impostato per l'utente un token m2m scaduto")
@@ -75,8 +77,7 @@ public class M2MAuthSteps {
         String clientIdField = "client_id";
         Object oClientId = jwtPayload.get(clientIdField);
         requireNonNull(oClientId, "Not found expected field %s in token payload".formatted(clientIdField));
-        UUID clientId = UUID.fromString(oClientId.toString());
-        return clientId;
+        return UUID.fromString(oClientId.toString());
     }
 
 }

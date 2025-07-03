@@ -22,6 +22,7 @@
         <lombok.version>1.18.30</lombok.version>
         <cucumber.reporting.version>5.7.2</cucumber.reporting.version>
         <junit-jupiter.version>5.9.1</junit-jupiter.version>
+        <nimbus.version>9.37.3</nimbus.version>
     </properties>
 
     <dependencies>
@@ -160,6 +161,21 @@
             <version>0.12.6</version>
             <scope>runtime</scope>
         </dependency>
+
+        <!-- Nimbus (per Dpop) -->
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+            <version>${nimbus.version}</version>
+        </dependency>
+
+        <!-- Apache HttpClient (per Dpop e header duplicati) -->
+        <dependency>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>5.2.1</version>
+        </dependency>
+
 
         <dependency>
             <groupId>dev.turingcomplete</groupId>

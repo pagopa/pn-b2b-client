@@ -36,5 +36,11 @@ public class ScenarioHttpCallExecutor implements IHttpExecutor {
         }
         return clientResponse;
     }
+
+    public void setRawResponse(int statusCode, Object rawBody) {
+        this.clientResponse = HttpStatus.valueOf(statusCode);
+        this.response = rawBody;
+    }
+
 }
 

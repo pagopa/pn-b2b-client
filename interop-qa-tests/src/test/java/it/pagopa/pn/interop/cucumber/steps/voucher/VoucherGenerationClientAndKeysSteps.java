@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.voucher;
 
+import com.nimbusds.jose.jwk.KeyType;
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.authorization.domain.KeyPairPEM;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
@@ -87,7 +88,7 @@ public class VoucherGenerationClientAndKeysSteps {
 
         String newKeyId = dataPreparationService.addPublicKeyToClient(
             clientId,
-            KeyPairGeneratorUtil.createKeySeed(publicKey, sharedStepsContext.getTestSeed()).get(0)
+            KeyPairGeneratorUtil.createKeySeed(publicKey, sharedStepsContext.getTestSeed(), KeyType.RSA).get(0)
         );
 
         sharedStepsContext.getClientCommonContext().setNewKeyId(newKeyId);
@@ -203,7 +204,7 @@ public class VoucherGenerationClientAndKeysSteps {
             newClientId,
             KeyPairGeneratorUtil.createKeySeed(
                 KeyPairGeneratorUtil.keyToBase64(keyPairPEM.getPublicKey(), true),
-                sharedStepsContext.getTestSeed()).get(0)
+                sharedStepsContext.getTestSeed(), KeyType.RSA).get(0)
         );
 
         sharedStepsContext.getClientCommonContext().setKeyId(keyId);
