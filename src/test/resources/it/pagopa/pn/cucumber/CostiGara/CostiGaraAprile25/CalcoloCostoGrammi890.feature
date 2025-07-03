@@ -69,7 +69,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 60012 | 1155  | MONTERADO      | AN       | notifica analogica RECAPITISTA |
       | 06012 | 1036  | CERBARA        | PG       | notifica analogica RECAPITISTA |
 
-      | 11100 | 1036  | AOSTA          | AO       | notifica analogica RECAPITISTA |
+      | 11100 | 1195  | AOSTA          | AO       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoAprile25
@@ -103,7 +103,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 88071 | 1053  | STALETTI       | CZ       | notifica analogica RECAPITISTA |
       | 06012 | 1053  | CERBARA        | PG       | notifica analogica RECAPITISTA |
 
-      | 38097 | 1053  | TERRE D'ADIGE  | TN       | notifica analogica RECAPITISTA |
+      | 38097 | 1212  | TERRE D'ADIGE  | TN       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoAprile25
@@ -325,7 +325,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 10010 | 1484  | ANDRATE        | TO       | notifica analogica RECAPITISTA |
       | 60012 | 1561  | MONTERADO      | AN       | notifica analogica RECAPITISTA |
       | 06012 | 1422  | CERBARA        | PG       | notifica analogica RECAPITISTA |
-      | 19126 | 1422  | LA SPEZIA      | SP       | notifica analogica RECAPITISTA |
+      | 19126 | 1611  | LA SPEZIA      | SP       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoAprile25
