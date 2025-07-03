@@ -1027,6 +1027,7 @@ public class RicezioneNotificheWebSteps {
             Assertions.assertNotNull(data.getConsentType());
             Assertions.assertEquals(ConsentType.TOS_SERCQ, data.getConsentType());
             Assertions.assertEquals(data.getAccepted(), tosStatus.equalsIgnoreCase("positiva"));
+            Assertions.assertNotEquals(ConsentType.DATAPRIVACY_SERCQ, data.getConsentType());
         });
     }
 
