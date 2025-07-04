@@ -1674,14 +1674,14 @@ public class AvanzamentoNotificheB2bSteps {
                         && item.getDetails().getDeliveryDetailCode() != null) {
 
                     if (item.getDetails().getDeliveryDetailCode().equals(detailCode1)) {
-                        timestamp1 = (OffsetDateTime) item.getDetails().getNotificationDate();
+                        timestamp1 = item.getDetails().getNotificationDate();
                     }
                     if (item.getDetails().getDeliveryDetailCode().equals(detailCode2)) {
-                        timestamp2 = (OffsetDateTime) item.getDetails().getNotificationDate();
+                        timestamp2 =  item.getDetails().getNotificationDate();
                     }
                     if (detailCode3 != null && !detailCode3.isEmpty()
                             && item.getDetails().getDeliveryDetailCode().equals(detailCode3)) {
-                        timestamp3 = (OffsetDateTime) item.getDetails().getNotificationDate();
+                        timestamp3 = item.getDetails().getNotificationDate();
                     }
                 }
             }
@@ -1697,18 +1697,15 @@ public class AvanzamentoNotificheB2bSteps {
                 if ("uguali".equalsIgnoreCase(compare)) {
                     assertEquals(timestamp1, timestamp3, timestamp1 + " e " + timestamp3 + " non coincidono, IUN: " + sharedSteps.getNotificationIun());
                 }
-
                 else if ("diversi".equalsIgnoreCase(compare)) {
                     assertNotEquals(timestamp1, timestamp3, timestamp1 + " e " + timestamp3 + " devono essere diversi, IUN: " + sharedSteps.getNotificationIun());
                 } else {
                     throw new IllegalArgumentException("Tipo di confronto non valido: " + compare);
                 }
             }
-
         } catch (Exception exception) {
             log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}",
                     sharedSteps.getNotificationIun(),
-                    b2bClient.getApiKeySetted().name(),
                     exception.getMessage());
             throw new PnPollingException(exception.getMessage());
         }
@@ -1729,8 +1726,8 @@ public class AvanzamentoNotificheB2bSteps {
         };
 
         try {
-            FullSentNotificationV25 fullSentNotification =
-                    b2bClient.getSentNotificationV25(sharedSteps.getNotificationIun());
+            FullSentNotificationV27 fullSentNotification =
+                    b2bClient.getSentNotificationV27(sharedSteps.getNotificationIun());
 
             Map<String, OffsetDateTime> timestampMap = fullSentNotification.getTimeline().stream()
                     .filter(item ->
@@ -1756,7 +1753,6 @@ public class AvanzamentoNotificheB2bSteps {
         } catch (Exception exception) {
             log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}",
                     sharedSteps.getNotificationIun(),
-                    b2bClient.getApiKeySetted().name(),
                     exception.getMessage());
             throw new PnPollingException(exception.getMessage());
         }
