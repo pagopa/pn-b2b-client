@@ -3,7 +3,7 @@ Feature: Creazione attributo certificato
   Gli enti certificatori possono creare attributi certificati
 
   @certified_attribute_creation1
-  Scenario Outline: Un utente admin di un ente certificatore può creare un attributo certificato
+  Scenario Outline: [ATTRIBUTE_CREATION_1] Un utente admin di un ente certificatore può creare un attributo certificato
     Given l'utente è un "<ruolo>" di "<ente>"
     When l'utente crea un attributo certificato
     Then si ottiene status code <risultato>

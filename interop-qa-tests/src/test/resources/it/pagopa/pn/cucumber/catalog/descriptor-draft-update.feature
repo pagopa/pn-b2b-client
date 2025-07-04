@@ -3,7 +3,7 @@ Feature: Aggiornamento di un descrittore in bozza
   Tutti gli utenti autorizzati di enti erogatori possono aggiornare tutti i parametri di un descrittore in bozza.
 
   @descriptor_draft_update1
-  Scenario Outline: Per un e-service che ha un solo descrittore, il quale è in stato DRAFT, all’aggiornamento da parte di un utente autorizzato di alcuni parametri del descrittore, ben formattati, la bozza viene aggiornata correttamente
+  Scenario Outline: [DESCRIPTOR_DRAFT_UPDATE_1] Per un e-service che ha un solo descrittore, il quale è in stato DRAFT, all’aggiornamento da parte di un utente autorizzato di alcuni parametri del descrittore, ben formattati, la bozza viene aggiornata correttamente
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato un e-service con un descrittore in stato "DRAFT"
     When l'utente aggiorna alcuni parametri di quel descrittore
@@ -23,7 +23,7 @@ Feature: Aggiornamento di un descrittore in bozza
       | PA1  | support      |       403 |
 
   @descriptor_draft_update2
-  Scenario Outline: Per un e-service che ha un solo descrittore, il quale è in stato NON DRAFT (PUBLISHED, SUSPENDED, DEPRECATED, ARCHIVED), all’aggiornamento di alcuni parametri del descrittore, ben formattati, l’aggiornamento della bozza restituisce errore
+  Scenario Outline: [DESCRIPTOR_DRAFT_UPDATE_2] Per un e-service che ha un solo descrittore, il quale è in stato NON DRAFT (PUBLISHED, SUSPENDED, DEPRECATED, ARCHIVED), all’aggiornamento di alcuni parametri del descrittore, ben formattati, l’aggiornamento della bozza restituisce errore
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service con un descrittore in stato "<statoVersione>"
     When l'utente aggiorna alcuni parametri di quel descrittore

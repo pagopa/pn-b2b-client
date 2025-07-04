@@ -4,7 +4,7 @@ Feature: Listing attributi
 
   # NOTE 16/04/2025 riproduzione dello scenario come presente nel repo interop-qa-tests
   @attribute_listing1
-  Scenario Outline: Restituisce gli attributi disponibili
+  Scenario Outline: [ATTRIBUTE_LISTING_1] Restituisce gli attributi disponibili
     Given l'utente è un "<ruolo>" di "<ente>"
     Given PA1 ha già creato 5 attributi DECLARED
     When l'utente richiede una operazione di listing degli attributi
@@ -53,21 +53,21 @@ Feature: Listing attributi
     # 16/04/2025 "Privato" non è abilitato, errore 403: "Requester origin IVASS is not allowed"
 
   @attribute_listing2
-  Scenario: A fronte di 5 attributi in db e una richiesta di 3 attributi, restituisce solo i primi 3 risultati
+  Scenario: [ATTRIBUTE_LISTING_2] A fronte di 5 attributi in db e una richiesta di 3 attributi, restituisce solo i primi 3 risultati
     Given l'utente è un "admin" di "PA1"
     Given PA1 ha già creato 5 attributi DECLARED
     When l'utente richiede una operazione di listing degli attributi limitata ai primi 3 attributi
     Then si ottiene status code 200 e la lista di 3 attributi
 
   @attribute_listing3
-  Scenario: A fronte di 5 attributi in db e un offset di 2, restituisce solo 3 risultati
+  Scenario: [ATTRIBUTE_LISTING_3] A fronte di 5 attributi in db e un offset di 2, restituisce solo 3 risultati
     Given l'utente è un "admin" di "PA1"
     Given PA1 ha già creato 5 attributi DECLARED
     When l'utente richiede una operazione di listing degli attributi con offset 2
     Then si ottiene status code 200 e la lista di 3 attributi
 
   @attribute_listing4
-  Scenario: A fronte di 5 attributi in db dei quali 3 certificati, 2 verificati e 1 dichiarato, restituisce solo i 3 certificati e i 2 verificati
+  Scenario: [ATTRIBUTE_LISTING_4] A fronte di 5 attributi in db dei quali 3 certificati, 2 verificati e 1 dichiarato, restituisce solo i 3 certificati e i 2 verificati
     Given l'utente è un "admin" di "PA2"
     Given PA2 ha già creato 3 attributi CERTIFIED
     Given PA2 ha già creato 2 attributi VERIFIED
@@ -76,7 +76,7 @@ Feature: Listing attributi
     Then si ottiene status code 200 e la lista di 5 attributi
 
   @attribute_listing5
-  Scenario: Restituisce gli attributi in db che contengono la keyword "test" all'interno del nome con ricerca case insensitive
+  Scenario: [ATTRIBUTE_LISTING_5] Restituisce gli attributi in db che contengono la keyword "test" all'interno del nome con ricerca case insensitive
     Given l'utente è un "admin" di "PA1"
     Given PA1 ha già creato 3 attributi DECLARED
     Given PA1 ha già creato un attributo DECLARED con nome che contiene "test"
@@ -84,7 +84,7 @@ Feature: Listing attributi
     Then si ottiene status code 200 e la lista di 1 attributo
 
   @attribute_listing6
-  Scenario: Restituisce un insieme vuoto di attributi per una ricerca che non porta risultati
+  Scenario: [ATTRIBUTE_LISTING_6] Restituisce un insieme vuoto di attributi per una ricerca che non porta risultati
     Given l'utente è un "admin" di "PA1"
     Given PA1 ha già creato 3 attributi DECLARED
     When l'utente richiede una operazione di listing degli attributi filtrando per keyword "unknown" all'interno del nome
