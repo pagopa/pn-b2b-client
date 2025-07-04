@@ -20,6 +20,7 @@ import it.pagopa.interop.config.springconfig.springconfig.InteropRestTemplateCon
 import it.pagopa.interop.config.springconfig.springconfig.JwtTokenServiceConfiguration;
 import it.pagopa.interop.delegate.service.impl.ConsumerDelegationsApiClientImpl;
 import it.pagopa.interop.delegate.service.impl.DelegationApiClientImpl;
+import it.pagopa.interop.delegate.service.impl.M2MDelegationClient;
 import it.pagopa.interop.delegate.service.impl.ProducerDelegationsApiClientImpl;
 import it.pagopa.interop.eservice.service.impl.M2MEserviceClientImpl;
 import it.pagopa.interop.eservice.service.impl.M2MEserviceDescriptorClientImpl;
@@ -84,7 +85,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         M2MEServiceTemplateClientImpl.class,
         M2MDataPreparationService.class,
         M2MEserviceDescriptorClientImpl.class,
-        CucumberScopedBeans.class
+        CucumberScopedBeans.class,
+        M2MDelegationClient.class
 })
 @EnableScheduling
 @EnableConfigurationProperties

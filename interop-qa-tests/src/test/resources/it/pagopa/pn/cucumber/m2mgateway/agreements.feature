@@ -20,4 +20,3 @@ Feature: Gestione degli agreements
     And viene impostato per l'utente un token m2m scaduto
     When l'utente tenta di recuperare una lista di 1 agreements creati
     Then si ottiene lo status code 401
-

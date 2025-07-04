@@ -8,10 +8,9 @@ import it.pagopa.interop.authorization.domain.Role;
 import it.pagopa.interop.authorization.service.M2MTokenService.M2MRole;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.JWTUtils;
-import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
 import java.util.Map;
 import java.util.UUID;
 
@@ -24,7 +23,6 @@ public class M2MAuthSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
     private final IdentityService identityService;
-    private final IHttpExecutor httpCallExecutor;
 
     public M2MAuthSteps(
         ClientTokenConfigurator clientTokenConfigurator,
@@ -33,7 +31,12 @@ public class M2MAuthSteps {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.identityService = sharedStepsContext.getIdentityService();
-        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+    }
+
+    @Given("l'utente è un {m2mRole} dell'ente {delegationRole}")
+    public void authenticateM2MDelegationUser(M2MRole m2MRole, DelegationRole delegationRole) {
+        String tenantType = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
+        authenticateM2MUser("admin", tenantType, m2MRole);
     }
 
     @Given("l'utente è un {string} di {string} con ruolo M2M {m2mRole}")
