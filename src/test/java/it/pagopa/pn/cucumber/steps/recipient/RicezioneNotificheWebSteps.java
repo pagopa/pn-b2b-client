@@ -23,6 +23,7 @@ import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientIm
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
+import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotificationV26;
 import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.AddressVerification;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.CourtesyDigitalAddress;
@@ -66,7 +67,7 @@ public class RicezioneNotificheWebSteps {
     private final PnB2bClientTimingConfigs timingConfigs;
     private static final Integer WAIT_DEFAULT = 10000;
     private HttpStatusCodeException notificationError;
-    private FullReceivedNotificationV26 fullReceivedNotification;
+    private BundleFullReceivedNotificationV26 fullReceivedNotification;
     private BffFullNotificationV1 bffFullNotificationV1Recipient;
     private it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffFullNotificationV1 bffFullNotificationV1Sender;
 

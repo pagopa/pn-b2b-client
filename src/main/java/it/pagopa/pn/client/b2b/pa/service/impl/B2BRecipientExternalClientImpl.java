@@ -17,6 +17,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.NotificationStatusV26;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
+import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotificationV26;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactCategory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -82,8 +83,8 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
     }
 
     @Override
-    public FullReceivedNotificationV26 getFullReceivedNotification(String iun, String mandateId) throws RestClientException {
-        return recipientReadB2BApi.getReceivedNotificationV26(iun, mandateId);
+    public BundleFullReceivedNotificationV26 getFullReceivedNotification(String iun, String mandateId) throws RestClientException {
+        return deepCopy(recipientReadB2BApi.getReceivedNotificationV26(iun, mandateId), BundleFullReceivedNotificationV26.class);
     }
 
     @Override
