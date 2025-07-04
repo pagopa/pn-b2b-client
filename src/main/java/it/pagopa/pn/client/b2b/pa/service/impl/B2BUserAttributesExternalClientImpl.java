@@ -7,6 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.api.AllApi;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.api.CourtesyApi;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.api.LegalApi;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.LegalChannelType;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
 import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
@@ -178,7 +179,12 @@ public class B2BUserAttributesExternalClientImpl implements IPnWebUserAttributes
 
 
     public void deleteRecipientLegalAddress(String senderId, LegalCourtesyAddressWrapper.ChannelType channelType) throws RestClientException {
-        legalApi.deleteRecipientLegalAddress(senderId, deepCopy(channelType, it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.LegalChannelType.class));
+        legalApi.deleteRecipientLegalAddress(senderId, convertToLegalChannelType(channelType));
+    }
+
+    private LegalChannelType convertToLegalChannelType(LegalCourtesyAddressWrapper.ChannelType channelType) {
+        String legalChannelType = channelType == LegalCourtesyAddressWrapper.ChannelType.SERCQ_SEND ? LegalChannelType.SERCQ.getValue() : channelType.getValue();
+        return LegalChannelType.fromValue(legalChannelType);
     }
 
 
