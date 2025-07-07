@@ -1,6 +1,6 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
-import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
+import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.web.generated.openapi.clients.webPa.ApiClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.webPa.api.SenderReadWebApi;
 import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchResponse;
@@ -14,7 +14,9 @@ import java.time.OffsetDateTime;
 
 
 @Component
-public class PnWebPaClientImpl implements IPnWebPaClient {
+//TODO: anzichè eliminare del tutto la classe, ho commentato implements IPnWebPaClient e gli @Override (tante volte dovessimo tornare a usarla)
+//public class PnWebPaClientImpl implements IPnWebPaClient {
+public class PnWebPaClientImpl {
     private final SenderReadWebApi senderReadWebApi;
     private final RestTemplate restTemplate;
     private final String basePath;
@@ -25,7 +27,7 @@ public class PnWebPaClientImpl implements IPnWebPaClient {
     private final String bearerTokenSON;
     private final String bearerTokenROOT;
     private final String bearerTokenGA;
-    private BearerTokenType bearerTokenSetted;
+    private SettableBearerToken.BearerTokenType bearerTokenSetted;
 
     public PnWebPaClientImpl(RestTemplate restTemplate,
                              @Value("${pn.webapi.external.base-url}") String basePath,
@@ -54,44 +56,31 @@ public class PnWebPaClientImpl implements IPnWebPaClient {
         return newApiClient;
     }
 
-    @Override
+    //    @Override
     public NotificationSearchResponse searchSentNotification(OffsetDateTime startDate, OffsetDateTime endDate, String recipientId, NotificationStatusV26 status, String subjectRegExp, String iunMatch, Integer size, String nextPagesKey) throws RestClientException {
         return senderReadWebApi.searchSentNotification(startDate, endDate, recipientId, status, subjectRegExp, iunMatch, size, nextPagesKey);
     }
 
-
-    @Override
-    public boolean setBearerToken(BearerTokenType bearerToken) {
-        boolean beenSet = false;
+    //    @Override
+    public boolean setBearerToken(SettableBearerToken.BearerTokenType bearerToken) {
         switch (bearerToken) {
-            case MVP_1 -> {
-                this.senderReadWebApi.setApiClient(newApiClient(restTemplate, basePath, bearerTokenCom1, userAgent));
-                beenSet = true;
-            }
-            case MVP_2 -> {
-                this.senderReadWebApi.setApiClient(newApiClient(restTemplate, basePath, bearerTokenCom2, userAgent));
-                beenSet = true;
-            }
-            case GA -> {
-                this.senderReadWebApi.setApiClient(newApiClient(restTemplate, basePath, bearerTokenGA, userAgent));
-                beenSet = true;
-            }
-            case SON -> {
-                this.senderReadWebApi.setApiClient(newApiClient(restTemplate, basePath, bearerTokenSON, userAgent));
-                beenSet = true;
-            }
-            case ROOT -> {
-                this.senderReadWebApi.setApiClient(newApiClient(restTemplate, basePath, bearerTokenROOT, userAgent));
-                beenSet = true;
-            }
+            case MVP_1 ->
+                    this.senderReadWebApi.setApiClient(newApiClient(restTemplate, basePath, bearerTokenCom1, userAgent));
+            case MVP_2 ->
+                    this.senderReadWebApi.setApiClient(newApiClient(restTemplate, basePath, bearerTokenCom2, userAgent));
+            case GA ->
+                    this.senderReadWebApi.setApiClient(newApiClient(restTemplate, basePath, bearerTokenGA, userAgent));
+            case SON ->
+                    this.senderReadWebApi.setApiClient(newApiClient(restTemplate, basePath, bearerTokenSON, userAgent));
+            case ROOT ->
+                    this.senderReadWebApi.setApiClient(newApiClient(restTemplate, basePath, bearerTokenROOT, userAgent));
             default -> throw new IllegalStateException("Unexpected value: " + bearerToken);
         }
-        return beenSet;
+        return true;
     }
 
-    @Override
-    public BearerTokenType getBearerTokenSetted() {
+    //    @Override
+    public SettableBearerToken.BearerTokenType getBearerTokenSetted() {
         return this.bearerTokenSetted;
     }
-
 }
