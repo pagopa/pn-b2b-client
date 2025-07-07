@@ -1,4 +1,4 @@
-package it.pagopa.pn.cucumber.utils;
+package it.pagopa.pn.cucumber;
 
 import org.junit.platform.suite.api.*;
 
