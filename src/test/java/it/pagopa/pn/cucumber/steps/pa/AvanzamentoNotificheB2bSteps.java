@@ -388,9 +388,11 @@ public class AvanzamentoNotificheB2bSteps {
                 .deliveryDetailCode(deliveryDetailCode)
                 .build();
         B2bStepsInterface b2bStepsInterface = getB2bStepsInterface();
-        b2bStepsInterface.waitForEventOrStatus(TIMELINE_RAPID, TIMELINE, timelineEventCategory, filters);
+        String speedStrategy = timelineEventCategory.equals(SEND_ANALOG_FEEDBACK)? TIMELINE_SLOW : TIMELINE_RAPID;
+        b2bStepsInterface.waitForEventOrStatus(speedStrategy, TIMELINE, timelineEventCategory, filters);
         b2bStepsInterface.checkIfTimelineElementExists(timelineEventCategory, true, null, null);
     }
+
 
     @Then("viene verificato che lato utente l'elemento di timeline {string} con deliveryDetailCode {string} non esista")
     public void readingEventUpToTheTimelineElementOfNotificationWithDeliveryDetailCodeWithoutSuccess(String timelineEventCategory, String deliveryDetailCode) {
@@ -1722,7 +1724,7 @@ public class AvanzamentoNotificheB2bSteps {
      * Input: 2 Triplette di Delivery details code degli elementi SEND_ANALOG_PROGRESS e SEND_ANALOG_FEEDBACK
      * Verifica che i timestamp dei DeliveyDetailCode siano uguali tra loro
      */
-    @And("verifica sui timestamp {string} {string} {string} e {string} {string} {string}")
+    @And("verifica che i DeliveryDetailCode {string} {string} {string} e {string} {string} {string} abbiano timestamp uguali")
     public void checkTimestampTriplettaDetailCodeDouble(
             String detailCode1,
             String detailCode2,

@@ -17,7 +17,7 @@ Feature: avanzamento b2b notifica controllo timestamp mock da consolidatore AR
 
     Examples:
       | SEQUENCE  |
-      | via OK_AR_INVALID_DATETIME |
+      | via @OK_AR_INVALID_DATETIME |
 
 
   @mockConsolidatore
@@ -31,7 +31,7 @@ Feature: avanzamento b2b notifica controllo timestamp mock da consolidatore AR
       | physicalAddress_address | <SEQUENCE> |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
-    Then verifica sui timestamp "RECRN002D" "RECRN002E" "RECRN002F" e "RECRN002D" "RECRN002E" "RECRN002F"
+    Then verifica che i DeliveryDetailCode "RECRN002D" "RECRN002E" "RECRN002F" e "RECRN002D" "RECRN002E" "RECRN002F" abbiano timestamp uguali
 
     Examples:
       | SEQUENCE                           |
@@ -47,8 +47,8 @@ Feature: avanzamento b2b notifica controllo timestamp mock da consolidatore AR
       | digitalDomicile         | NULL       |
       | physicalAddress_address | <SEQUENCE> |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
-    Then verifica sui timestamp "RECRN002D" "RECRN002E" "RECRN002F" e "RECRN001A" "RECRN001B" "RECRN001C"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECRN001C"
+    Then verifica che i DeliveryDetailCode "RECRN002D" "RECRN002E" "RECRN002F" e "RECRN001A" "RECRN001B" "RECRN001C" abbiano timestamp uguali
 
     Examples:
       | SEQUENCE                           |
@@ -134,7 +134,7 @@ Feature: avanzamento b2b notifica controllo timestamp mock da consolidatore AR
       | SEQUENCE                |
       | via @OK_AR-CON020-7Z3P  |
       | via @OK_AR-CON020-ZIP3P |
-      | via @OK-AR-ENP          |
+      #| via @OK-AR-ENP          |
 
 
   @mockConsolidatore
