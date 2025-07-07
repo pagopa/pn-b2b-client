@@ -3,7 +3,7 @@ Feature: avanzamento b2b notifica controllo timestamp mock da consolidatore AR
 
 
   @mockConsolidatore
-  Scenario Outline: [B2B_MOCK_CONSOLIDATORE_8] Si verifica che i timestamp degli elementi con DeliveryDetailCode forniti siano diversi tra loro
+  Scenario Outline: [B2B_MOCK_CONSOLIDATORE_9] Si verifica che i timestamp degli elementi con DeliveryDetailCode forniti siano diversi tra loro
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
