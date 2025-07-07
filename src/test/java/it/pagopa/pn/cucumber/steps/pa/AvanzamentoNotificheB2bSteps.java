@@ -1712,7 +1712,7 @@ public class AvanzamentoNotificheB2bSteps {
                 throw new IllegalArgumentException("Tipo di confronto non valido: " + compare);
             }
         } catch (Exception exception) {
-            log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}",
+            log.error("Error getPollingResponse(), Iun: {}, PnPollingException: {}",
                     sharedSteps.getNotificationIun(),
                     exception.getMessage());
             throw new PnPollingException(exception.getMessage());
@@ -1762,7 +1762,7 @@ public class AvanzamentoNotificheB2bSteps {
             compareTriple(timestampMap, detailCode4, detailCode5, detailCode6);
 
         } catch (Exception exception) {
-            log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}",
+            log.error("Error getPollingResponse(), Iun: {}, PnPollingException: {}",
                     sharedSteps.getNotificationIun(),
                     exception.getMessage());
             throw new PnPollingException(exception.getMessage());
