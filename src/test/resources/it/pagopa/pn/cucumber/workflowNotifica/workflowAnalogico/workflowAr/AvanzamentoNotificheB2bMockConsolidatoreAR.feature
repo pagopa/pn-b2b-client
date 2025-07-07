@@ -1,7 +1,8 @@
 Feature: avanzamento b2b notifica controllo timestamp mock da consolidatore AR
 
 
-  #@mockConsolidatore
+
+  @mockConsolidatore
   Scenario Outline: [B2B_MOCK_CONSOLIDATORE_8] Si verifica che i timestamp degli elementi con DeliveryDetailCode forniti siano diversi tra loro
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -11,12 +12,12 @@ Feature: avanzamento b2b notifica controllo timestamp mock da consolidatore AR
       | digitalDomicile         | NULL       |
       | physicalAddress_address | <SEQUENCE> |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode ""
-    Then verifica che i DeliveryDetailCode "" "" "" abbiano timestamp "diversi"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECRN001C"
+    Then verifica che i DeliveryDetailCode "RECRN001A" "RECRN001B" "RECRN001C" abbiano timestamp "diversi"
 
     Examples:
       | SEQUENCE  |
-      | via @.... |
+      | via OK_AR_INVALID_DATETIME |
 
 
   @mockConsolidatore

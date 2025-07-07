@@ -1658,6 +1658,11 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
+    /**
+     * Input: 2 o 3 Delivery details code degli elementi SEND_ANALOG_PROGRESS e SEND_ANALOG_FEEDBACK
+     * tipo di confronto "uguali" o "diversi"
+     * Verifica che i timestamp dei DeliveyDetailCode siano uguali o doversi tra loro
+     */
     @And("verifica che i DeliveryDetailCode {string} {string} {string} abbiano timestamp {string}")
     public void checkTimestampTriplettaDetailCode(String detailCode1, String detailCode2, String detailCode3, String compare) {
 
@@ -1688,20 +1693,23 @@ public class AvanzamentoNotificheB2bSteps {
 
             assertNotNull(timestamp1, "Timestamp per " + detailCode1 + " non trovato, IUN: " + sharedSteps.getNotificationIun());
             assertNotNull(timestamp2, "Timestamp per " + detailCode2 + " non trovato, IUN: " + sharedSteps.getNotificationIun());
-            assertEquals(timestamp1, timestamp2, timestamp1 + " e " + timestamp2 + " non coincidono, IUN: " + sharedSteps.getNotificationIun());
 
-            if (detailCode3 != null && !detailCode3.isEmpty()) {
-                assertNotNull(timestamp3, "Timestamp per " + detailCode3 + " non trovato, IUN: " + sharedSteps.getNotificationIun());
-               // assertEquals(timestamp1, timestamp3, timestamp1 + " e " + timestamp3 + " non coincidono, IUN: " + sharedSteps.getNotificationIun());
-
-                if ("uguali".equalsIgnoreCase(compare)) {
-                    assertEquals(timestamp1, timestamp3, timestamp1 + " e " + timestamp3 + " non coincidono, IUN: " + sharedSteps.getNotificationIun());
+            if ("uguali".equalsIgnoreCase(compare)) {
+                assertEquals(timestamp1, timestamp2, timestamp1 +" di deliveryCode "+ detailCode1 + " e " + timestamp2 +" di deliveryCode "+ detailCode2 + " non coincidono, IUN: " + sharedSteps.getNotificationIun());
+                if (detailCode3 != null && !detailCode3.isEmpty()) {
+                    assertNotNull(timestamp3, "Timestamp per " + detailCode3 + " non trovato, IUN: " + sharedSteps.getNotificationIun());
+                    assertEquals(timestamp1, timestamp3, timestamp1 +" di deliveryCode "+ detailCode1 + " e " + timestamp3 +" di deliveryCode "+ detailCode3 + " non coincidono, IUN: " + sharedSteps.getNotificationIun());
                 }
-                else if ("diversi".equalsIgnoreCase(compare)) {
-                    assertNotEquals(timestamp1, timestamp3, timestamp1 + " e " + timestamp3 + " devono essere diversi, IUN: " + sharedSteps.getNotificationIun());
-                } else {
-                    throw new IllegalArgumentException("Tipo di confronto non valido: " + compare);
+            }
+            else if ("diversi".equalsIgnoreCase(compare)) {
+                assertNotEquals(timestamp1, timestamp2, timestamp1 + " e " + timestamp2 + " devono essere diversi, IUN: " + sharedSteps.getNotificationIun());
+                if (detailCode3 != null && !detailCode3.isEmpty()) {
+                    assertNotNull(timestamp3, "Timestamp per " + detailCode3 + " non trovato, IUN: " + sharedSteps.getNotificationIun());
+                    assertNotEquals(timestamp1, timestamp3, timestamp1 +" di deliveryCode "+ detailCode1 + " e " + timestamp3 +" di deliveryCode "+ detailCode3 + " devono essere diversi, IUN: " + sharedSteps.getNotificationIun());
+                    assertNotEquals(timestamp2, timestamp3, timestamp2 +" di deliveryCode "+ detailCode2 + " e " + timestamp3+" di deliveryCode "+ detailCode3 + " devono essere diversi, IUN: " + sharedSteps.getNotificationIun());
                 }
+            } else {
+                throw new IllegalArgumentException("Tipo di confronto non valido: " + compare);
             }
         } catch (Exception exception) {
             log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}",
@@ -1710,7 +1718,10 @@ public class AvanzamentoNotificheB2bSteps {
             throw new PnPollingException(exception.getMessage());
         }
     }
-
+    /**
+     * Input: 2 Triplette di Delivery details code degli elementi SEND_ANALOG_PROGRESS e SEND_ANALOG_FEEDBACK
+     * Verifica che i timestamp dei DeliveyDetailCode siano uguali tra loro
+     */
     @And("verifica sui timestamp {string} {string} {string} e {string} {string} {string}")
     public void checkTimestampTriplettaDetailCodeDouble(
             String detailCode1,
@@ -1765,8 +1776,8 @@ public class AvanzamentoNotificheB2bSteps {
         OffsetDateTime ts2 = timestampMap.get(code2);
         OffsetDateTime ts3 = timestampMap.get(code3);
 
-        assertEquals(ts1, ts2, ts1 + " e " + ts2 + " non coincidono, IUN: " + sharedSteps.getNotificationIun());
-        assertEquals(ts1, ts3, ts1 + " e " + ts3 + " non coincidono, IUN: " + sharedSteps.getNotificationIun());
+        assertEquals(ts1, ts2, ts1 +" di deliveryCode "+ code1 + " e " + ts2 +" di deliveryCode "+ code2 + " non coincidono, IUN: " + sharedSteps.getNotificationIun());
+        assertEquals(ts1, ts3, ts1 +" di deliveryCode "+ code1 + " e " + ts3 +" di deliveryCode "+ code3 + " non coincidono, IUN: " + sharedSteps.getNotificationIun());
     }
 
 
