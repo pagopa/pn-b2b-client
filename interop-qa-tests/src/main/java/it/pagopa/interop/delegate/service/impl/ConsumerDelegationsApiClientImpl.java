@@ -73,7 +73,7 @@ public class ConsumerDelegationsApiClientImpl implements IConsumerDelegationsApi
     }
 
     @Override
-    public void revokeConsumerDelegation(String delegationId)
+    public void revokeConsumerDelegation(UUID delegationId)
         throws RestClientException {
         consumerDelegationsApi.revokeConsumerDelegation(delegationId);
     }
