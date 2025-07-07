@@ -13,6 +13,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pa.BffRequestNewApiKey;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pa.BffResponseNewApiKey;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.digitaladdresses.BffUserAddress;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
@@ -25,8 +26,8 @@ import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
+import it.pagopa.pn.client.b2b.pa.wrapper.RecipientWrapper;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.CourtesyDigitalAddress;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.UserAddresses;
 import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationStepsInterface;
 import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
@@ -58,6 +59,7 @@ import java.time.ZoneOffset;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 import static it.pagopa.pn.cucumber.utils.FiscalCodeGenerator.generateCF;
@@ -724,11 +726,30 @@ public class SharedSteps {
     @And("viene verificata la presenza di qualunque tipo di recapito inserito per l'utente {string}")
     public void viewedAllAddress(String user) {
         selectUser(user);
-        UserAddresses addressesByRecipient = this.iPnWebUserAttributesClient.getAddressesByRecipient();
-        Assertions.assertTrue(
-                (addressesByRecipient.getCourtesy() != null && !addressesByRecipient.getCourtesy().isEmpty())
-                        || (addressesByRecipient.getLegal() != null && !addressesByRecipient.getLegal().isEmpty())
-        );
+        RecipientWrapper addressesByRecipient = this.iPnWebUserAttributesClient.getAddressesByRecipient();
+
+        if (webRecipientClient instanceof B2BRecipientExternalClientImpl) {
+            Assertions.assertTrue(
+                    (addressesByRecipient.getB2bUserAddress() != null &&
+                            addressesByRecipient.getB2bUserAddress().getCourtesy() != null &&
+                            !addressesByRecipient.getB2bUserAddress().getCourtesy().isEmpty())
+                            ||
+                            (addressesByRecipient.getB2bUserAddress() != null &&
+                                    addressesByRecipient.getB2bUserAddress().getLegal() != null &&
+                                    !addressesByRecipient.getB2bUserAddress().getLegal().isEmpty()),
+                    "Non è presente alcun recapito LEGAL o COURTESY da b2bUserAddress per l'utente " + user
+            );
+        } else {
+            Assertions.assertTrue(
+                    addressesByRecipient.getBffUserAddress() != null &&
+                            addressesByRecipient.getBffUserAddress()
+                                    .stream()
+                                    .map(BffUserAddress::getAddressType)
+                                    .collect(Collectors.toSet())
+                                    .containsAll(Arrays.asList("LEGAL", "COURTESY")),
+                    "Non è presente alcun recapito LEGAL o COURTESY da BFF per l'utente " + user
+            );
+        }
     }
 
     @Then("si verifica la corretta acquisizione della notifica")
