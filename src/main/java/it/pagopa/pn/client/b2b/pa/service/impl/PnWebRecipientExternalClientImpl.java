@@ -14,6 +14,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.e
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.*;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
+import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotificationV26;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.api.DocumentsWebApi;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.api.LegalFactsApi;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactCategory;
@@ -156,9 +157,8 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
     }
 
     @Override
-    public FullReceivedNotificationV26 getFullReceivedNotification(String iun, String mandateId) throws RestClientException {
-        BffFullNotificationV1 notification = getBffFullNotification(iun, mandateId);
-        return deepCopy(notification, FullReceivedNotificationV26.class);
+    public BundleFullReceivedNotificationV26 getFullReceivedNotification(String iun, String mandateId) throws RestClientException {
+        return deepCopy(getBffFullNotification(iun, mandateId), BundleFullReceivedNotificationV26.class);
     }
 
     @Override

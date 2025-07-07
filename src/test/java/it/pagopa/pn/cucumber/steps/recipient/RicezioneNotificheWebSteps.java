@@ -12,6 +12,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.Notifi
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.*;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.NotificationStatusV26;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.*;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.digitaladdresses.BffUserAddress;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffConsent;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffTosPrivacyActionBody;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.ConsentType;
@@ -23,10 +24,9 @@ import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientIm
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
+import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotificationV26;
 import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.AddressVerification;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.CourtesyDigitalAddress;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalAndUnverifiedDigitalAddress;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
@@ -47,6 +47,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -66,7 +67,7 @@ public class RicezioneNotificheWebSteps {
     private final PnB2bClientTimingConfigs timingConfigs;
     private static final Integer WAIT_DEFAULT = 10000;
     private HttpStatusCodeException notificationError;
-    private FullReceivedNotificationV26 fullReceivedNotification;
+    private BundleFullReceivedNotificationV26 fullReceivedNotification;
     private BffFullNotificationV1 bffFullNotificationV1Recipient;
     private it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffFullNotificationV1 bffFullNotificationV1Sender;
 
@@ -103,7 +104,7 @@ public class RicezioneNotificheWebSteps {
         this.webPaClient = sharedSteps.getWebPaClient();
         this.externalClient = sharedSteps.getPnExternalServiceClient();
         this.bffRecipientNotificationClient = bffRecipientNotificationClient;
-        this.iPnTosPrivacyClient = iPnTosPrivacyClient;
+        this.iPnTosPrivacyClient = sharedSteps.getIPnTosPrivacyClientImpl();
         this.timingConfigs = timingConfigs;
     }
 
@@ -831,18 +832,35 @@ public class RicezioneNotificheWebSteps {
                 senderIdPa, LegalCourtesyAddressWrapper.ChannelType.SERCQ_SEND, (new AddressVerification().value(address))));
     }
 
-    @And("viene disabilitato il servizio SERCQ SEND per il comune di {string}")
+    private void postRecipientLegalAddressSercqError(String senderIdPa, String address) {
+        Assertions.assertDoesNotThrow(() -> {
+            try {
+                this.iPnWebUserAttributesClient.postRecipientLegalAddress(
+                        senderIdPa,
+                        LegalCourtesyAddressWrapper.ChannelType.SERCQ_SEND,
+                        (new AddressVerification().value(address))
+                );
+                log.info("Chiamata SERCQ SEND completata con successo. Grazie.");
+            } catch (HttpStatusCodeException e) {
+                log.error("Errore durante la chiamata SERCQ SEND", e);
+                sharedSteps.setNotificationError(e);
+            }
+        });
+    }
+
+    @And("viene disabilitato il servizio SERCQ SEND (per la PA)(come indirizzo di)(per il comune) {string}")
     public void vieneDisabilitatoSercqPerEnte(String pa) {
         String senderId = getSenderIdPa(pa);
         Assertions.assertDoesNotThrow(() -> {
             List<LegalCourtesyAddressWrapper> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
-            if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
+            if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()
+                    && legalAddressByRecipient.stream()
+                    .anyMatch(x -> x.getSenderId().equals(senderId) && x.getChannelType() == LegalCourtesyAddressWrapper.ChannelType.SERCQ_SEND)) {
                 this.iPnWebUserAttributesClient.deleteRecipientLegalAddress(senderId, LegalCourtesyAddressWrapper.ChannelType.SERCQ_SEND);
                 log.info("SERCQ DISABLED");
             }
         });
     }
-
 
     @And("viene verificata l' assenza di pec inserite per l'utente")
     public void viewedPecDiPiattaformaDi() {
@@ -871,7 +889,7 @@ public class RicezioneNotificheWebSteps {
         Assertions.assertTrue(exists, "PEC NOT FOUND");
     }
 
-    @And("viene verificato che Sercq sia {string} per il comune {string}")
+    @And("viene verificato che Sercq sia {string} (per la PA)(come indirizzo di)(per il comune) {string}")
     public void viewedSercqPerEnte(String act, String pa) {
         String senderId = getSenderIdPa(pa);
 
@@ -880,12 +898,12 @@ public class RicezioneNotificheWebSteps {
         boolean exists = Optional.ofNullable(legalAddressByRecipient)
                 .filter(data -> !data.isEmpty())
                 .map(data -> data.stream()
-                        .anyMatch(address -> senderId.equals(address.getSenderId()) && address.getAddressType().getValue().contains(LegalChannelType.SERCQ.getValue())))
+                        .anyMatch(address -> senderId.equals(address.getSenderId()) && address.getChannelType().equals(LegalCourtesyAddressWrapper.ChannelType.SERCQ_SEND)))
                 .orElse(false);
 
         switch (act) {
             case "disabilitato" -> Assertions.assertFalse(exists, "Sercq risulta abilitato per il comune: " + pa);
-            case "abilitato" -> Assertions.assertFalse(exists, "Sercq risulta disabilitato per il comune: " + pa);
+            case "abilitato" -> Assertions.assertTrue(exists, "Sercq risulta disabilitato per il comune: " + pa);
             default ->
                     throw new IllegalArgumentException("Valore di 'act' non valido: " + act + ". I valori consentiti sono 'abilitato' o 'disabilitato'.");
         }
@@ -923,12 +941,29 @@ public class RicezioneNotificheWebSteps {
     //Come da SRS Abilitazione Domicilio Digitale, address è una stringa fissa "x-pagopa-pn-sercq:send-self:notification-already-delivered"
     @And("viene attivato il servizio SERCQ SEND per recapito principale")
     public void attivazioneSercqSend() {
+        try {
+            viewedSercqPerEnte("disabilitato", "default");
+        } catch (AssertionFailedError failedError) {
+            log.info("SERCQ già abilitato per la PA selezionata!");
+            return;
+        }
         postRecipientLegalAddressSercq("default", "x-pagopa-pn-sercq:send-self:notification-already-delivered");
     }
 
+    @And("viene attivato il servizio SERCQ SEND per recapito {string} con errore")
+    public void attivazioneSercqSendWithError(String pa) {
+        postRecipientLegalAddressSercqError(pa, "x-pagopa-pn-sercq:send-self:notification-already-delivered");
+    }
+
     //Come da SRS Abilitazione Domicilio Digitale, address è una stringa fissa "x-pagopa-pn-sercq:send-self:notification-already-delivered"
-    @And("viene attivato il servizio SERCQ SEND per il comune {string}")
+    @And("viene attivato il servizio SERCQ SEND (per la PA)(come indirizzo di)(per il comune) {string}")
     public void attivazioneSercqPerEnteSpecifico(String pa) {
+        try {
+            viewedSercqPerEnte("disabilitato", pa);
+        } catch (AssertionFailedError failedError) {
+            log.info("SERCQ già abilitato per la PA selezionata!");
+            return;
+        }
         String senderIdPa = getSenderIdPa(pa);
         postRecipientLegalAddressSercq(senderIdPa, "x-pagopa-pn-sercq:send-self:notification-already-delivered");
     }
@@ -972,7 +1007,15 @@ public class RicezioneNotificheWebSteps {
     @And("vengono rimossi eventuali recapiti presenti per l'utente")
     public void cleanLegalAddressForUser() {
         try {
-            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getAddressesByRecipient().getLegal();
+            List<BffUserAddress> legalAddressByRecipient =
+                    this.iPnWebUserAttributesClient
+                            .getAddressesByRecipient()
+                            .getBffUserAddress()
+                            .stream()
+                            .filter(x -> "LEGAL".equals(x.getAddressType()))
+                            .collect(Collectors.toList());
+
+
             if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
                 legalAddressByRecipient
                         .forEach(address -> {
@@ -980,7 +1023,14 @@ public class RicezioneNotificheWebSteps {
                             log.info("Cancellato indirizzo di tipo " + address.getChannelType() + " per il comune " + address.getSenderId());
                         });
             }
-            List<CourtesyDigitalAddress> courtesyDigitalAddresses = this.iPnWebUserAttributesClient.getAddressesByRecipient().getCourtesy();
+            List<BffUserAddress> courtesyDigitalAddresses =
+                    this.iPnWebUserAttributesClient
+                            .getAddressesByRecipient()
+                            .getBffUserAddress()
+                            .stream()
+                            .filter(x -> "COURTESY".equals(x.getAddressType()))
+                            .collect(Collectors.toList());
+
             if (courtesyDigitalAddresses != null && !courtesyDigitalAddresses.isEmpty()) {
                 courtesyDigitalAddresses
                         .forEach(address -> {
@@ -989,7 +1039,7 @@ public class RicezioneNotificheWebSteps {
                         });
             }
         } catch (Exception e) {
-            log.error("RIMOZIONE RECAPITI FALLITA:\n" + e);
+            log.error("RIMOZIONE RECAPITI FALLITA: " + e.getStackTrace());
         }
     }
 
@@ -1016,6 +1066,14 @@ public class RicezioneNotificheWebSteps {
         Assertions.assertDoesNotThrow(() -> iPnTosPrivacyClient.acceptTosPrivacyV1(List.of(bffTosPrivacyBody)));
     }
 
+    @Given("l'utente {string} {string} i tos per sercq v2")
+    public void lUtenteAccettaITosv2(String user, String operation) {
+        sharedSteps.selectUser(user);
+        BffTosPrivacyActionBody.ActionEnum actionEnum = operation.equals(ACCEPT_TOS) ? BffTosPrivacyActionBody.ActionEnum.ACCEPT : BffTosPrivacyActionBody.ActionEnum.DECLINE;
+        BffTosPrivacyActionBody bffTosPrivacyBody = new BffTosPrivacyActionBody().action(actionEnum).version(TOS_VERSION).type(ConsentType.TOS_SERCQ);
+        Assertions.assertDoesNotThrow(() -> iPnTosPrivacyClient.acceptTosPrivacyV2(List.of(bffTosPrivacyBody)));
+    }
+
     @Given("l'utente {string} controlla l'accettazione {string} dei tos per sercq")
     public void lUtenteControllaAccettazioneDeiTos(String user, String tosStatus) {
         sharedSteps.selectUser(user);
@@ -1024,6 +1082,21 @@ public class RicezioneNotificheWebSteps {
         Assertions.assertNotNull(privacyConsentV1);
         Assertions.assertFalse(privacyConsentV1.isEmpty());
         privacyConsentV1.forEach(data -> {
+            Assertions.assertNotNull(data.getConsentType());
+            Assertions.assertEquals(ConsentType.TOS_SERCQ, data.getConsentType());
+            Assertions.assertEquals(data.getAccepted(), tosStatus.equalsIgnoreCase("positiva"));
+            Assertions.assertNotEquals(ConsentType.DATAPRIVACY_SERCQ, data.getConsentType());
+        });
+    }
+
+    @Given("l'utente {string} controlla l'accettazione {string} dei tos per sercq v2")
+    public void lUtenteControllaAccettazioneDeiTosv2(String user, String tosStatus) {
+        sharedSteps.selectUser(user);
+        it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.ConsentType consentType = ConsentType.TOS_SERCQ;
+        List<BffConsent> privacyConsentV2 = Assertions.assertDoesNotThrow(() -> iPnTosPrivacyClient.getTosPrivacyV2(List.of(consentType)));
+        Assertions.assertNotNull(privacyConsentV2);
+        Assertions.assertFalse(privacyConsentV2.isEmpty());
+        privacyConsentV2.forEach(data -> {
             Assertions.assertNotNull(data.getConsentType());
             Assertions.assertEquals(ConsentType.TOS_SERCQ, data.getConsentType());
             Assertions.assertEquals(data.getAccepted(), tosStatus.equalsIgnoreCase("positiva"));
