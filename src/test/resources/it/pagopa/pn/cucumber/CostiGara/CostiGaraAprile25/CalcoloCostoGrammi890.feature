@@ -40,7 +40,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 14027 | 987   | TONENGO               | AT       | notifica analogica RECAPITISTA |
       | 33100 | 1092  | UDINE                 | UD       | notifica analogica RECAPITISTA |
       | 89025 | 1092  | ROSARNO               | RC       | notifica analogica RECAPITISTA |
-      | 07022 | 1092  | BERGHIDDA             | SS       | notifica analogica RECAPITISTA |
+      | 07022 | 1092  | BERCHIDDA             | SS       | notifica analogica RECAPITISTA |
       | 06135  | 1092 | PERUGIA               | PG       | notifica analogica RECAPITISTA |
 
 
@@ -76,7 +76,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 11100 | 1195  | AOSTA          | AO       | notifica analogica RECAPITISTA |
       | 33100 | 1195  | UDINE          | UD       | notifica analogica RECAPITISTA |
       | 89025 | 1195  | ROSARNO        | RC       | notifica analogica RECAPITISTA |
-      | 07022 | 1195  | BERGHIDDA      | SS       | notifica analogica RECAPITISTA |
+      | 07022 | 1195  | BERCHIDDA      | SS       | notifica analogica RECAPITISTA |
       | 06135 | 1195  | PERUGIA        | PG       | notifica analogica RECAPITISTA |
 
 
@@ -114,7 +114,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 38097 | 1212  | TERRE D'ADIGE  | TN       | notifica analogica RECAPITISTA |
       | 33100 | 1212  | UDINE          | UD       | notifica analogica RECAPITISTA |
       | 89025 | 1212  | ROSARNO        | RC       | notifica analogica RECAPITISTA |
-      | 07022 | 1212  | BERGHIDDA      | SS       | notifica analogica RECAPITISTA |
+      | 07022 | 1212  | BERCHIDDA      | SS       | notifica analogica RECAPITISTA |
       | 06135 | 1212  | PERUGIA        | PG       | notifica analogica RECAPITISTA |
 
 
@@ -149,7 +149,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 06012 | 1215  | CERBARA        | PG       | notifica analogica RECAPITISTA |
       | 33100 | 1215  | UDINE          | UD       | notifica analogica RECAPITISTA |
       | 89025 | 1215  | ROSARNO        | RC       | notifica analogica RECAPITISTA |
-      | 07022 | 1215  | BERGHIDDA      | SS       | notifica analogica RECAPITISTA |
+      | 07022 | 1215  | BERCHIDDA      | SS       | notifica analogica RECAPITISTA |
       | 06135 | 1215  | PERUGIA        | PG       | notifica analogica RECAPITISTA |
 
 
@@ -185,7 +185,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 06012 | 1244  | CERBARA        | PG       | notifica analogica RECAPITISTA |
       | 33100 | 1244  | UDINE          | UD       | notifica analogica RECAPITISTA |
       | 89025 | 1244  | ROSARNO        | RC       | notifica analogica RECAPITISTA |
-      | 07022 | 1244  | BERGHIDDA      | SS       | notifica analogica RECAPITISTA |
+      | 07022 | 1244  | BERCHIDDA      | SS       | notifica analogica RECAPITISTA |
       | 06135 | 1244  | PERUGIA        | PG       | notifica analogica RECAPITISTA |
 
 
@@ -221,7 +221,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 86081 | 1221  | AGNONE         | IS       | notifica analogica RECAPITISTA |
       | 33100 | 1335  | UDINE          | UD       | notifica analogica RECAPITISTA |
       | 89025 | 1335  | ROSARNO        | RC       | notifica analogica RECAPITISTA |
-      | 07022 | 1335  | BERGHIDDA      | SS       | notifica analogica RECAPITISTA |
+      | 07022 | 1335  | BERCHIDDA      | SS       | notifica analogica RECAPITISTA |
       | 06135 | 1335  | PERUGIA        | PG       | notifica analogica RECAPITISTA |
 
 
@@ -257,7 +257,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 06012 | 1429  | CERBARA             | PG       | notifica analogica RECAPITISTA |
       | 33100 | 1429  | UDINE               | UD       | notifica analogica RECAPITISTA |
       | 89025 | 1429  | ROSARNO             | RC       | notifica analogica RECAPITISTA |
-      | 07022 | 1429  | BERGHIDDA           | SS       | notifica analogica RECAPITISTA |
+      | 07022 | 1429  | BERCHIDDA           | SS       | notifica analogica RECAPITISTA |
       | 06135 | 1429  | PERUGIA             | PG       | notifica analogica RECAPITISTA |
 
 
@@ -293,7 +293,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 34129 | 1433  | TRIESTE        | TS       | notifica analogica RECAPITISTA |
       | 33100 | 1433  | UDINE          | UD       | notifica analogica RECAPITISTA |
       | 89025 | 1433  | ROSARNO        | RC       | notifica analogica RECAPITISTA |
-      | 07022 | 1433  | BERGHIDDA      | SS       | notifica analogica RECAPITISTA |
+      | 07022 | 1433  | BERCHIDDA      | SS       | notifica analogica RECAPITISTA |
       | 06135 | 1433  | PERUGIA        | PG       | notifica analogica RECAPITISTA |
 
 
@@ -329,7 +329,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 06012 | 1495  | CERBARA        | PG       | notifica analogica RECAPITISTA |
       | 33100 | 1495  | UDINE          | UD       | notifica analogica RECAPITISTA |
       | 89025 | 1495  | ROSARNO        | RC       | notifica analogica RECAPITISTA |
-      | 07022 | 1495  | BERGHIDDA      | SS       | notifica analogica RECAPITISTA |
+      | 07022 | 1495  | BERCHIDDA      | SS       | notifica analogica RECAPITISTA |
       | 06135 | 1495  | PERUGIA        | PG       | notifica analogica RECAPITISTA |
 
 
@@ -364,7 +364,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 19126 | 1611  | LA SPEZIA      | SP       | notifica analogica RECAPITISTA |
       | 33100 | 1611  | UDINE          | UD       | notifica analogica RECAPITISTA |
       | 89025 | 1611  | ROSARNO        | RC       | notifica analogica RECAPITISTA |
-      | 07022 | 1611  | BERGHIDDA      | SS       | notifica analogica RECAPITISTA |
+      | 07022 | 1611  | BERCHIDDA      | SS       | notifica analogica RECAPITISTA |
       | 06135 | 1611  | PERUGIA        | PG       | notifica analogica RECAPITISTA |
 
 
@@ -399,7 +399,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 06012 | 2033  | CERBARA             | PG       | notifica analogica RECAPITISTA |
       | 33100 | 2033  | UDINE               | UD       | notifica analogica RECAPITISTA |
       | 89025 | 2033  | ROSARNO             | RC       | notifica analogica RECAPITISTA |
-      | 07022 | 2033  | BERGHIDDA           | SS       | notifica analogica RECAPITISTA |
+      | 07022 | 2033  | BERCHIDDA           | SS       | notifica analogica RECAPITISTA |
       | 06135 | 2033  | PERUGIA             | PG       | notifica analogica RECAPITISTA |
 
   @costoAnalogicoAprile25
@@ -433,7 +433,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 06012 | 2036  | CERBARA        | PG       | notifica analogica RECAPITISTA |
       | 33100 | 2036  | UDINE          | UD       | notifica analogica RECAPITISTA |
       | 89025 | 2036  | ROSARNO        | RC       | notifica analogica RECAPITISTA |
-      | 07022 | 2036  | BERGHIDDA      | SS       | notifica analogica RECAPITISTA |
+      | 07022 | 2036  | BERCHIDDA      | SS       | notifica analogica RECAPITISTA |
       | 06135 | 2036  | PERUGIA        | PG       | notifica analogica RECAPITISTA |
 
 
@@ -469,6 +469,6 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 09121 | 2686  | CAGLIARI       | CA       | notifica analogica RECAPITISTA |
       | 33100 | 2686  | UDINE          | UD       | notifica analogica RECAPITISTA |
       | 89025 | 2686  | ROSARNO        | RC       | notifica analogica RECAPITISTA |
-      | 07022 | 2686  | BERGHIDDA      | SS       | notifica analogica RECAPITISTA |
+      | 07022 | 2686  | BERCHIDDA      | SS       | notifica analogica RECAPITISTA |
       | 06135 | 2686  | PERUGIA        | PG       | notifica analogica RECAPITISTA |
 
