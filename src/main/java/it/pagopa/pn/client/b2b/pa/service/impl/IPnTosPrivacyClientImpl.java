@@ -27,6 +27,8 @@ public class IPnTosPrivacyClientImpl implements IPnTosPrivacyClient {
     private final String leonardoBearerToken;
     private final String galileoBearerToken;
     private final String dinoBearerToken;
+    private final String cucumberspaToken;
+
 
     private String basePath;
 
@@ -36,6 +38,7 @@ public class IPnTosPrivacyClientImpl implements IPnTosPrivacyClient {
 
     public IPnTosPrivacyClientImpl(RestTemplate restTemplate,
                                    @Value("${pn.webapi.external.base-url}") String basePath,
+                                   @Value("${pn.bearer-token.pg2}") String cucumberspaPGBearerToken,
                                    @Value("${pn.bearer-token.pg3}") String aldameriniPGBearerToken,
                                    @Value("${pn.bearer-token.pg4}") String mariaMontessoriPGBearerToken,
                                    @Value("${pn.bearer-token.pg5}") String nildeIottiPGBearerToken,
@@ -45,6 +48,7 @@ public class IPnTosPrivacyClientImpl implements IPnTosPrivacyClient {
                                    @Value("${pn.bearer-token.user5}") String dinoBearerToken,
                                    @Value("${pn.bearer-token.user3}") String leonardoBearerToken) {
         this.aldameriniPGBearerToken = aldameriniPGBearerToken;
+        this.cucumberspaToken = cucumberspaPGBearerToken;
         this.mariaMontessoriPGBearerToken = mariaMontessoriPGBearerToken;
         this.nildeIottiPGBearerToken = nildeIottiPGBearerToken;
         this.marioCucumberBearerToken = marioCucumberBearerToken;
@@ -89,6 +93,9 @@ public class IPnTosPrivacyClientImpl implements IPnTosPrivacyClient {
         switch (bearerToken) {
             case PG_3 -> {
                 this.userConsentsApi.setApiClient(newApiClient(aldameriniPGBearerToken));
+            }
+            case PG_2 -> {
+                this.userConsentsApi.setApiClient(newApiClient(cucumberspaToken));
             }
             case PG_4 -> {
                 this.userConsentsApi.setApiClient(newApiClient(mariaMontessoriPGBearerToken));
