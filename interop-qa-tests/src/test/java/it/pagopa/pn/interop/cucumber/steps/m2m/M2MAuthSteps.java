@@ -52,9 +52,9 @@ public class M2MAuthSteps {
         sharedStepsContext.getClientCommonContext().addClient(clientId);
     }
 
-    @Given("viene impostato per l'utente un token m2m scaduto")
+    @Given("viene impostato per l'utente un token m2m non valido")
     public void setExpiredM2MAuth() {
-        String expiredToken = "eyJhbGciOiJSUzI1NiIsInVzZSI6InNpZyIsInR5cCI6ImF0K2p3dCIsImtpZCI6IjE3ZDNmM2MwLTU3MzAtNDVhOS1iZThhLTY1NWU3N2JmMzU1NSJ9.ewogICJqdGkiOiAiZmEyMTkyMDMtYTgxNy00MzZjLWExYTktZWI2ZWFjYjk0Y2RhIiwKICAiaXNzIjogInFhLmludGVyb3AucGFnb3BhLml0IiwKICAiYXVkIjogInFhLmludGVyb3AucGFnb3BhLml0L20ybSIsCiAgImNsaWVudF9pZCI6ICJlOGU0YjAwNC1jNDUwLTRjOTEtYWQ3Yy1mZDQyZWU5YTAwNTUiLAogICJzdWIiOiAiZThlNGIwMDQtYzQ1MC00YzkxLWFkN2MtZmQ0MmVlOWEwMDU1IiwKICAiaWF0IjogMTc0ODkzNzE0MiwKICAibmJmIjogMTc0ODkzNzE0MiwKICAiZXhwIjogMTc0ODkzNzE0MSwKICAib3JnYW5pemF0aW9uSWQiOiAiZTc5YTI0Y2QtOGVkYy00NDFlLWFlOGQtZTg3YzNhZWEwMDU5IiwKICAicm9sZSI6ICJtMm0tYWRtaW4iLAogICJhZG1pbklkIjogImYwN2RkYjhmLTE3ZjktNDdkNC1iMzFlLTM1ZDFhYzEwZTUyMSIKfQ.HfhAKKu06x7uCGAYl7M8Pbzm6EfQFiqgFlKD-0bqraz0UFCJKRi91rFiaurWiRA-4lQiX5S6apuKcSvOZ6_DYGQcwgkrIhRCQ-dtohxRR_zyR-mTImkEfJow-t3eAkuKMRN8jxeNl8eWJ-lWbTKNkIxlzmmSaueH-ga-uDC6hNj6hOP6WukFCIN5yq-Gthr_NZzMcHZdHaHCKxcpIbjmrRvJJYTfztQZgJqC_N6Uv3_fKUzdJtZLswjqr5vUW1_DOYhEez2Iv5tOycMKQLn9N0Q474lPJ3TAiAHpOFpbSKZhj_IwWKjV5z37Gc04H6-csLYJrumvDyz6H0hf_ofNNA";
+        String expiredToken = "c29tZQ==.aW52YWxpZA==.dG9rZW4=";
         clientTokenConfigurator.setBearerToken(expiredToken);
         sharedStepsContext.setUserToken(expiredToken);
     }

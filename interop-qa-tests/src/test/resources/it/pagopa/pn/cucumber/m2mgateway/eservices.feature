@@ -26,7 +26,7 @@ Feature: Gestione degli eServices
   @m2m-false-negative
   Scenario: [M2MG_ESERVICES_3] RED - Accesso negato alla lista degli eServices con token non valido (Scenario 82)
     Given "PA1" ha già creato e pubblicato 1 e-services
-    And viene impostato per l'utente un token m2m scaduto
+    And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di recuperare la lista di eService
     And si ottiene lo status code 401
     Then lista di eService non restituita
@@ -59,7 +59,7 @@ Feature: Gestione degli eServices
   @m2m-false-negative
   Scenario: [M2MG_ESERVICES_7] Accesso negato al dettaglio di un eService con token non valido (Scenario 85)
     Given "PA1" ha già creato e pubblicato 1 e-services
-    And viene impostato per l'utente un token m2m scaduto
+    And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di recuperare il record di eService creato
     Then si ottiene lo status code 401
     And eService non restituito
@@ -101,7 +101,7 @@ Feature: Gestione degli eServices
   Scenario Outline: [M2MG_ESERVICES_11] RED - Accesso negato alla lista dei descriptors con token non valido (Scenario 89)
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M <ruolo-m2m>
-    And viene impostato per l'utente un token m2m scaduto
+    And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di recuperare la lista di descriptor usando l'eserviceId creato
     Then si ottiene lo status code 401
     And lista di descriptor non restituita
@@ -145,7 +145,7 @@ Feature: Gestione degli eServices
   @m2m-false-negative
   Scenario: [M2MG_ESERVICES_16] Accesso negato al recupero di un descriptor con token non valido (Scenario 93)
     Given "PA1" ha già creato e pubblicato 1 e-services
-    And viene impostato per l'utente un token m2m scaduto
+    And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di recuperare il record di descriptor creato
     Then si ottiene lo status code 401
     And descriptor non restituito
