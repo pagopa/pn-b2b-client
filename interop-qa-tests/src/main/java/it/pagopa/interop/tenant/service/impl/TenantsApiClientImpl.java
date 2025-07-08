@@ -5,21 +5,37 @@ import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.TenantsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedAttributesResponse;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedTenantAttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganizations;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredAttributesResponse;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredTenantAttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject2;
+import it.pagopa.interop.generated.openapi.clients.bff.model.MailSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RequesterCertifiedAttributes;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Tenant;
 import it.pagopa.interop.generated.openapi.clients.bff.model.TenantDelegatedFeaturesFlagsUpdateSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.TenantFeatureType;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Tenants;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateVerifiedTenantAttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.VerifiedAttributesResponse;
+import it.pagopa.interop.generated.openapi.clients.bff.model.VerifiedTenantAttributeSeed;
 import it.pagopa.interop.tenant.service.ITenantsApi;
+
+import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.UUID;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Retryable(
+        retryFor = { HttpServerErrorException.class },
+        backoff = @Backoff(delay = 2000)
+)
 public class TenantsApiClientImpl implements ITenantsApi {
     private final TenantsApi tenantsApi;
     private final RestTemplate restTemplate;
@@ -54,8 +70,8 @@ public class TenantsApiClientImpl implements ITenantsApi {
     }
 
     @Override
-    public DeclaredAttributesResponse getDeclaredAttributes(String xCorrelationId, UUID tenantId) {
-        return tenantsApi.getDeclaredAttributes(xCorrelationId, tenantId);
+    public DeclaredAttributesResponse getDeclaredAttributes(UUID tenantId) {
+        return tenantsApi.getDeclaredAttributes(tenantId);
     }
 
     @Override
@@ -68,8 +84,63 @@ public class TenantsApiClientImpl implements ITenantsApi {
     }
 
     @Override
-    public Tenant getTenant(String xCorrelationId, UUID tenantId) {
-        return tenantsApi.getTenant(xCorrelationId, tenantId);
+    public void updateVerifiedAttribute(UUID tenantId, UUID attributeId, UpdateVerifiedTenantAttributeSeed updateVerifiedTenantAttributeSeed) {
+        tenantsApi.updateVerifiedAttribute(tenantId, attributeId, updateVerifiedTenantAttributeSeed);
+    }
+
+    @Override
+    public Tenant getTenant(UUID tenantId) {
+        return tenantsApi.getTenant(tenantId);
+    }
+
+    @Override
+    public Tenants getTenants(Integer limit, String name, List<TenantFeatureType> features) {
+        return tenantsApi.getTenants(limit, name, features);
+    }
+
+    @Override
+    public void verifyVerifiedAttribute(UUID tenantId, VerifiedTenantAttributeSeed verifiedTenantAttributeSeed) {
+        tenantsApi.verifyVerifiedAttribute(tenantId, verifiedTenantAttributeSeed);
+    }
+
+    @Override
+    public VerifiedAttributesResponse getVerifiedAttributes(UUID tenantId) {
+        return tenantsApi.getVerifiedAttributes(tenantId);
+    }
+
+    @Override
+    public void revokeCertifiedAttribute(UUID tenantId, UUID attributeId) {
+        tenantsApi.revokeCertifiedAttribute(tenantId, attributeId);
+    }
+
+    @Override
+    public void revokeVerifiedAttribute(UUID tenantId, UUID attributeId, UUID agreementId) {
+        tenantsApi.revokeVerifiedAttribute(tenantId, attributeId, new InlineObject2().agreementId(agreementId));
+    }
+
+    @Override
+    public void revokeDeclaredAttribute(UUID attributeId) {
+        tenantsApi.revokeDeclaredAttribute(attributeId);
+    }
+
+    @Override
+    public CompactOrganizations getConsumers(Integer offset, Integer limit, String q) {
+        return tenantsApi.getConsumers(offset, limit, q);
+    }
+
+    @Override
+    public CompactOrganizations getProducers(Integer offset, Integer limit, String q) {
+        return tenantsApi.getProducers(offset, limit, q);
+    }
+
+    @Override
+    public void addTenantMail(UUID tenantId, MailSeed mailSeed) {
+        tenantsApi.addTenantMail(tenantId, mailSeed);
+    }
+
+    @Override
+    public RequesterCertifiedAttributes getRequesterCertifiedAttributes(Integer offset, Integer limit) {
+        return tenantsApi.getRequesterCertifiedAttributes(offset, limit);
     }
 
     @Override

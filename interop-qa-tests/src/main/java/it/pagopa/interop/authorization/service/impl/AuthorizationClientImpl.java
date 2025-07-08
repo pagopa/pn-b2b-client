@@ -1,5 +1,6 @@
 package it.pagopa.interop.authorization.service.impl;
 
+import it.pagopa.interop.authorization.service.ClientAdminConfig;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
@@ -11,6 +12,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CompactClients;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactUser;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject3;
+import it.pagopa.interop.generated.openapi.clients.bff.model.InlineObject4;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKey;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKeys;
@@ -19,11 +21,18 @@ import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Retryable(
+        retryFor = { HttpServerErrorException.class },
+        backoff = @Backoff(delay = 2000)
+)
 public class AuthorizationClientImpl implements IAuthorizationClient {
     private final ClientsApi clientsApi;
     private final RestTemplate restTemplate;
@@ -43,80 +52,92 @@ public class AuthorizationClientImpl implements IAuthorizationClient {
     }
 
     @Override
-    public CreatedResource createConsumerClient(String xCorrelationId, ClientSeed clientSeed) {
-        return clientsApi.createConsumerClient(xCorrelationId, clientSeed);
+    public CreatedResource createConsumerClient(ClientSeed clientSeed) {
+        return clientsApi.createConsumerClient(clientSeed);
     }
 
     @Override
-    public CreatedResource createApiClient(String xCorrelationId, ClientSeed clientSeed) {
-        return clientsApi.createApiClient(xCorrelationId, clientSeed);
+    public CreatedResource createApiClient(ClientSeed clientSeed) {
+        return clientsApi.createApiClient(clientSeed);
     }
 
     @Override
-    public void deleteClient(String xCorrelationId, UUID clientId) {
-        clientsApi.deleteClient(xCorrelationId, clientId);
+    public void deleteClient(UUID clientId) {
+        clientsApi.deleteClient(clientId);
     }
 
     @Override
-    public void getEncodedClientKeyById(String xCorrelationId, UUID clientId, String keyId) {
-        clientsApi.getEncodedClientKeyById(xCorrelationId, clientId, keyId);
+    public void getEncodedClientKeyById(UUID clientId, String keyId) {
+        clientsApi.getEncodedClientKeyById(clientId, keyId);
     }
 
     @Override
-    public void deleteClientKeyById(String xCorrelationId, UUID clientId, String keyId) {
-        clientsApi.deleteClientKeyById(xCorrelationId, clientId, keyId);
+    public void deleteClientKeyById(UUID clientId, String keyId) {
+        clientsApi.deleteClientKeyById(clientId, keyId);
     }
 
     @Override
-    public void removeUserFromClient(String xCorrelationId, UUID clientId, UUID userId) {
-        clientsApi.removeUserFromClient(xCorrelationId, clientId, userId);
+    public void removeUserFromClient(UUID clientId, UUID userId) {
+        clientsApi.removeUserFromClient(clientId, userId);
     }
 
     @Override
-    public List<CompactUser> getClientUsers(String xCorrelationId, UUID clientId) {
-        return clientsApi.getClientUsers(xCorrelationId, clientId);
+    public List<CompactUser> getClientUsers(UUID clientId) {
+        return clientsApi.getClientUsers(clientId);
     }
 
     @Override
-    public PublicKey getClientKeyById(String xCorrelationId, UUID clientId, String keyId) {
-        return clientsApi.getClientKeyById(xCorrelationId, clientId, keyId);
+    public PublicKey getClientKeyById(UUID clientId, String keyId) {
+        return clientsApi.getClientKeyById(clientId, keyId);
     }
 
     @Override
-    public void createKeys(String xCorrelationId, UUID clientId, List<KeySeed> keySeed) {
-        clientsApi.createKeys(xCorrelationId, clientId, keySeed);
+    public void createKeys(UUID clientId, List<KeySeed> keySeed) {
+        keySeed.forEach(seed -> clientsApi.createKey(clientId, seed));
     }
 
     @Override
-    public PublicKeys getClientKeys(String xCorrelationId, UUID clientId, List<UUID> userIds) {
-        return clientsApi.getClientKeys(xCorrelationId, clientId, userIds);
+    public PublicKeys getClientKeys(UUID clientId, Integer offset, Integer limit,  List<UUID> userIds) {
+        return clientsApi.getClientKeys(clientId, 0, 50, userIds);
     }
 
     @Override
-    public void addClientPurpose(String xCorrelationId, UUID clientId,
+    public void addClientPurpose(UUID clientId,
             PurposeAdditionDetailsSeed purposeAdditionDetailsSeed) {
-        clientsApi.addClientPurpose(xCorrelationId, clientId, purposeAdditionDetailsSeed);
+        clientsApi.addClientPurpose(clientId, purposeAdditionDetailsSeed);
     }
 
     @Override
-    public CompactClients getClients(String xCorrelationId, Integer offset, Integer limit, String q, List<UUID> userIds,
+    public CompactClients getClients(Integer offset, Integer limit, String q, List<UUID> userIds,
             ClientKind kind) {
-        return clientsApi.getClients(xCorrelationId, offset, limit, q, userIds, kind);
+        return clientsApi.getClients(offset, limit, q, userIds, kind);
     }
 
     @Override
-    public Client getClient(String xCorrelationId, UUID clientId) {
-        return clientsApi.getClient(xCorrelationId, clientId);
+    public Client getClient(UUID clientId) {
+        return clientsApi.getClient(clientId);
     }
 
     @Override
-    public void removeClientPurpose(String xCorrelationId, UUID clientId, UUID purposeId) {
-        clientsApi.removeClientPurpose(xCorrelationId, clientId, purposeId);
+    public void removeClientPurpose(UUID clientId, UUID purposeId) {
+        clientsApi.removeClientPurpose(clientId, purposeId);
     }
 
     @Override
-    public CreatedResource addUsersToClient(String xCorrelationId, UUID clientId, InlineObject3 inlineObject3) {
-        return clientsApi.addUsersToClient(xCorrelationId, clientId, inlineObject3);
+    public CreatedResource addUsersToClient(UUID clientId, InlineObject4 inlineObject) {
+        return clientsApi.addUsersToClient(clientId, inlineObject);
+    }
+
+    @Override
+    public Client editClientAdmin(UUID clientId, ClientAdminConfig adminConfig) {
+        InlineObject3 inlineObject3 = new InlineObject3()
+            .adminId(adminConfig.getAdminId());
+        return clientsApi.setAdminToClient(clientId, inlineObject3);
+    }
+
+    @Override
+    public void deleteClientAdmin(UUID clientId, UUID adminId) {
+        clientsApi.removeClientAdmin(clientId, adminId);
     }
 
     @Override

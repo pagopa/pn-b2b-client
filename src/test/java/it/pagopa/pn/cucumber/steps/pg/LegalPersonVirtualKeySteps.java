@@ -114,7 +114,7 @@ public class LegalPersonVirtualKeySteps {
         Assertions.assertFalse(privacyConsentv1.isEmpty());
         privacyConsentv1.forEach(data -> {
             Assertions.assertNotNull(data.getConsentType());
-            Assertions.assertNotNull(data.getConsentType().equals(ConsentType.TOS_DEST_B2B));
+            Assertions.assertEquals(ConsentType.TOS_DEST_B2B, data.getConsentType());
             Assertions.assertEquals(data.getAccepted(), tosStatus.equalsIgnoreCase("positiva"));
         });
     }
@@ -296,10 +296,6 @@ public class LegalPersonVirtualKeySteps {
             this.response = response;
             this.state = state;
             this.user = user;
-        }
-
-        private VirtualKeyExpectedResponse(BffNewVirtualKeyResponse response) {
-            this.response = response;
         }
     }
 

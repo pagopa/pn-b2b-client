@@ -8,12 +8,11 @@ import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateRequestContext;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
 import java.util.Optional;
 
 @Component
 public class NotificationAARRADDaltStrategy implements ITemplateEngineStrategy {
-    private ITemplateEngineClient templateEngineClient;
+    private final ITemplateEngineClient templateEngineClient;
 
     public NotificationAARRADDaltStrategy(ITemplateEngineClient templateEngineClient) {
         this.templateEngineClient = templateEngineClient;
@@ -22,7 +21,7 @@ public class NotificationAARRADDaltStrategy implements ITemplateEngineStrategy {
     @Override
     public TemplateEngineResult retrieveTemplate(String language, boolean body, TemplateRequestContext context) {
         NotificationAarRaddAlt legalFact = createRequest(body, context);
-        Resource file = templateEngineClient. notificationAARRADDalt(selectLanguage(language), legalFact);
+        Resource file = templateEngineClient.notificationAARRADDalt(selectLanguage(language), legalFact);
         return new TemplateEngineResult(file);
     }
 
@@ -30,7 +29,7 @@ public class NotificationAARRADDaltStrategy implements ITemplateEngineStrategy {
     public String getTextToCheckLanguage(String language) {
         return switch (language.toUpperCase()) {
             case  "ITALIANA" -> {
-                yield "AVVISO DI AVVENUTA RICEZIONE 1. 2. 3. RITIRA UNA COPIA SUL TERRITORIO - A PAGAMENTO Richiedi i documenti notificati anche senza SPID o CIE presso i Punti di ritiro SEND (CAF e altri esercenti convenzionati).";
+                yield "Accedi subito ai documenti online seguendo le istruzioni, o se preferisci, ritira i documenti in forma cartacea presso uno dei Punti di ritiro SEND (CAF e altri esercenti convenzionati). Tieni presente che il contenuto della comunicazione produrrà effetti giuridici nei tuoi confronti anche senza la tua presa visione.";
             }
             case "TEDESCA" -> {
                 yield "AVVISO DI AVVENUTA RICEZIONE Empfangsbestätigung Feststellungs • Avviso di Avvenuta Ricezione (AAR): string Du hast eine rechtsgültige Mitteilung von string: . Wenn sie nicht in diesem siehe die zugestellten Dokumente Bescheid enthalten sind,";

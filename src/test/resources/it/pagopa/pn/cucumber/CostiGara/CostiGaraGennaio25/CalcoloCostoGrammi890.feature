@@ -18,26 +18,26 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
-      | CAP   | COSTO | MUNICIPALITY            | PROVINCE | SUBJECT                        |
-      | 05010 | 1092   | COLLELUNGO              | TR       | notifica analogica FSU         |
-      | 06031 | 1092   | BEVAGNA                 | PG       | notifica analogica RECAPITISTA |
-      | 64011 | 945   | ALBA ADRIATICA          | TE       | notifica analogica RECAPITISTA |
-      | 00010 | 898   | CASAPE                  | RM       | notifica analogica RECAPITISTA |
-      | 70010 | 853   | ADELFIA                 | BA       | notifica analogica RECAPITISTA |
-      | 10010 | 916   | ANDRATE                 | TO       | notifica analogica RECAPITISTA |
-      | 60012 | 969   | MONTERADO               | AN       | notifica analogica RECAPITISTA |
-      | 35049 | 916   | SANTA CATERINA D'ESTE   | PD       | notifica analogica RECAPITISTA |
-      | 90052 | 853   | CERDA                   | PA       | notifica analogica RECAPITISTA |
-      | 06012 | 948   | CERBARA                 | PG       | notifica analogica RECAPITISTA |
-      | 17011 | 1092   | ALBISOLA CAPO           | SV       | notifica analogica RECAPITISTA |
-      | 87020 | 948   | ACQUAPPESA              | CS       | notifica analogica RECAPITISTA |
+      | CAP   | COSTO | MUNICIPALITY          | PROVINCE | SUBJECT                        |
+      | 05010 | 1092  | COLLELUNGO            | TR       | notifica analogica FSU         |
+      | 06031 | 1092  | BEVAGNA               | PG       | notifica analogica RECAPITISTA |
+      | 64011 | 945   | ALBA ADRIATICA        | TE       | notifica analogica RECAPITISTA |
+      | 00010 | 898   | CASAPE                | RM       | notifica analogica RECAPITISTA |
+      | 70010 | 853   | ADELFIA               | BA       | notifica analogica RECAPITISTA |
+      | 10010 | 916   | ANDRATE               | TO       | notifica analogica RECAPITISTA |
+      | 60012 | 969   | MONTERADO             | AN       | notifica analogica RECAPITISTA |
+      | 35049 | 916   | SANTA CATERINA D'ESTE | PD       | notifica analogica RECAPITISTA |
+      | 90052 | 853   | CERDA                 | PA       | notifica analogica RECAPITISTA |
+      | 06012 | 948   | CERBARA               | PG       | notifica analogica RECAPITISTA |
+      | 17011 | 1092  | ALBISOLA CAPO         | SV       | notifica analogica RECAPITISTA |
+      | 87020 | 948   | ACQUAPPESA            | CS       | notifica analogica RECAPITISTA |
 
-      | 21009 | 898   | BARDELLO                | VA       | notifica analogica RECAPITISTA |
-      | 14027 | 916   | TONENGO                 | AT       | notifica analogica RECAPITISTA |
+      | 21009 | 898   | BARDELLO              | VA       | notifica analogica RECAPITISTA |
+      | 14027 | 916   | TONENGO               | AT       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio25
@@ -55,7 +55,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -69,8 +69,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 60012 | 1142  | MONTERADO      | AN       | notifica analogica RECAPITISTA |
       | 06012 | 1036  | CERBARA        | PG       | notifica analogica RECAPITISTA |
 
-      | 11100 | 1036  | AOSTA       | AO       | notifica analogica RECAPITISTA |
-
+      | 11100 | 1036  | AOSTA          | AO       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio25
@@ -88,7 +87,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -122,7 +121,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -153,7 +152,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -185,7 +184,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -200,8 +199,6 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 06012 | 1163  | CERBARA        | PG       | notifica analogica RECAPITISTA |
 
       | 86081 | 1221  | AGNONE         | IS       | notifica analogica RECAPITISTA |
-
-
 
 
   @costoAnalogicoGennaio25
@@ -219,21 +216,21 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
-      | CAP   | COSTO | MUNICIPALITY          | PROVINCE | SUBJECT                        |
-      | 05010 | 1429  | COLLELUNGO            | TR       | notifica analogica FSU         |
-      | 06031 | 1429  | BEVAGNA               | PG       | notifica analogica RECAPITISTA |
-      | 64011 | 1315  | ALBA ADRIATICA        | TE       | notifica analogica RECAPITISTA |
-      | 00010 | 1277  | CASAPE                | RM       | notifica analogica RECAPITISTA |
-      | 70010 | 1219  | ADELFIA               | BA       | notifica analogica RECAPITISTA |
-      | 10010 | 1301  | ANDRATE               | TO       | notifica analogica RECAPITISTA |
-      | 60012 | 1370  | MONTERADO             | AN       | notifica analogica RECAPITISTA |
-      | 90082 | 1219  | SANTA CRISTINA GELA   | PA       | notifica analogica RECAPITISTA |
+      | CAP   | COSTO | MUNICIPALITY        | PROVINCE | SUBJECT                        |
+      | 05010 | 1429  | COLLELUNGO          | TR       | notifica analogica FSU         |
+      | 06031 | 1429  | BEVAGNA             | PG       | notifica analogica RECAPITISTA |
+      | 64011 | 1315  | ALBA ADRIATICA      | TE       | notifica analogica RECAPITISTA |
+      | 00010 | 1277  | CASAPE              | RM       | notifica analogica RECAPITISTA |
+      | 70010 | 1219  | ADELFIA             | BA       | notifica analogica RECAPITISTA |
+      | 10010 | 1301  | ANDRATE             | TO       | notifica analogica RECAPITISTA |
+      | 60012 | 1370  | MONTERADO           | AN       | notifica analogica RECAPITISTA |
+      | 90082 | 1219  | SANTA CRISTINA GELA | PA       | notifica analogica RECAPITISTA |
 
-      | 06012 | 1257  | CERBARA               | PG       | notifica analogica RECAPITISTA |
+      | 06012 | 1257  | CERBARA             | PG       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio25
@@ -251,7 +248,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -266,7 +263,6 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 06012 | 1261  | CERBARA        | PG       | notifica analogica RECAPITISTA |
 
       | 34129 | 1261  | TRIESTE        | TS       | notifica analogica RECAPITISTA |
-
 
 
   @costoAnalogicoGennaio25
@@ -284,7 +280,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -298,7 +294,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 60012 | 1436  | MONTERADO      | AN       | notifica analogica RECAPITISTA |
       | 94028 | 1285  | VILLAROSA      | EN       | notifica analogica RECAPITISTA |
 
-      | 06012 | 1323   | CERBARA       | PG       | notifica analogica RECAPITISTA |
+      | 06012 | 1323  | CERBARA        | PG       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio25
@@ -316,7 +312,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -331,7 +327,6 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 06012 | 1422  | CERBARA        | PG       | notifica analogica RECAPITISTA |
 
       | 19126 | 1422  | LA SPEZIA      | SP       | notifica analogica RECAPITISTA |
-
 
 
   @costoAnalogicoGennaio25
@@ -349,21 +344,21 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
-      | CAP   | COSTO | MUNICIPALITY          | PROVINCE | SUBJECT                        |
-      | 05010 | 2033  | COLLELUNGO            | TR       | notifica analogica FSU         |
-      | 06031 | 2033  | BEVAGNA               | PG       | notifica analogica RECAPITISTA |
-      | 64011 | 1908  | ALBA ADRIATICA        | TE       | notifica analogica RECAPITISTA |
-      | 00010 | 1864  | CASAPE                | RM       | notifica analogica RECAPITISTA |
-      | 70010 | 1800  | ADELFIA               | BA       | notifica analogica RECAPITISTA |
-      | 10010 | 1890  | ANDRATE               | TO       | notifica analogica RECAPITISTA |
-      | 60012 | 1966  | MONTERADO             | AN       | notifica analogica RECAPITISTA |
-      | 95055 | 1800  | SAN PIETRO CLARENZA   | CT       | notifica analogica RECAPITISTA |
+      | CAP   | COSTO | MUNICIPALITY        | PROVINCE | SUBJECT                        |
+      | 05010 | 2033  | COLLELUNGO          | TR       | notifica analogica FSU         |
+      | 06031 | 2033  | BEVAGNA             | PG       | notifica analogica RECAPITISTA |
+      | 64011 | 1908  | ALBA ADRIATICA      | TE       | notifica analogica RECAPITISTA |
+      | 00010 | 1864  | CASAPE              | RM       | notifica analogica RECAPITISTA |
+      | 70010 | 1800  | ADELFIA             | BA       | notifica analogica RECAPITISTA |
+      | 10010 | 1890  | ANDRATE             | TO       | notifica analogica RECAPITISTA |
+      | 60012 | 1966  | MONTERADO           | AN       | notifica analogica RECAPITISTA |
+      | 95055 | 1800  | SAN PIETRO CLARENZA | CT       | notifica analogica RECAPITISTA |
 
-      | 06012 | 1843  | CERBARA               | PG       | notifica analogica RECAPITISTA |
+      | 06012 | 1843  | CERBARA             | PG       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio25
@@ -381,7 +376,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -394,8 +389,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 10010 | 1893  | ANDRATE        | TO       | notifica analogica RECAPITISTA |
       | 60012 | 1969  | MONTERADO      | AN       | notifica analogica RECAPITISTA |
 
-      | 06012 | 1847   | CERBARA        | PG       | notifica analogica RECAPITISTA |
-
+      | 06012 | 1847  | CERBARA        | PG       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoGennaio25
@@ -413,7 +407,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
       | payment_pagoPaForm           | NOALLEGATO     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -427,5 +421,5 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 60012 | 2619  | MONTERADO      | AN       | notifica analogica RECAPITISTA |
       | 06012 | 2497  | CERBARA        | PG       | notifica analogica RECAPITISTA |
 
-      | 09121 | 2497   | CAGLIARI      | CA       | notifica analogica RECAPITISTA |
+      | 09121 | 2497  | CAGLIARI       | CA       | notifica analogica RECAPITISTA |
 

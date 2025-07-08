@@ -10,14 +10,14 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | paFee              | 0                           |
     And destinatario
       | denomination         | Vita Nova Sas |
-      | recipientType        | PG           |
-      | taxId                | 12666810299  |
-      | payment_pagoPaForm   | SI           |
-      | payment_f24          | NULL         |
-      | apply_cost_pagopa    | SI           |
-      | apply_cost_f24       | NO           |
-      | payment_multy_number | 1            |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | recipientType        | PG            |
+      | taxId                | 12666810299   |
+      | payment_pagoPaForm   | SI            |
+      | payment_f24          | NULL          |
+      | apply_cost_pagopa    | SI            |
+      | apply_cost_f24       | NO            |
+      | payment_multy_number | 1             |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica
 
 
@@ -30,13 +30,13 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | paFee              | 100                         |
     And destinatario
       | denomination         | Vita Nova Sas |
-      | recipientType        | PG           |
-      | taxId                | 12666810299  |
-      | payment_pagoPaForm   | SI           |
-      | payment_f24          | NULL         |
-      | apply_cost_pagopa    | SI           |
-      | payment_multy_number | 1            |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | recipientType        | PG            |
+      | taxId                | 12666810299   |
+      | payment_pagoPaForm   | SI            |
+      | payment_f24          | NULL          |
+      | apply_cost_pagopa    | SI            |
+      | payment_multy_number | 1             |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica
         #Comune Palermo QZEH-UTHW-WVTK-202310-T-1 --PA - inserimento notifica mono destinatario con un solo avviso pagoPA e costi di notifica  inclusi modalità DELIVERY_MODE (paFee=100 costo 200)
 
@@ -57,7 +57,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | apply_cost_pagopa    | NO                       |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 1                        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -88,7 +88,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | apply_cost_pagopa    | SI                       |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 1                        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -101,13 +101,13 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | paFee              | 0                           |
     And destinatario
       | denomination         | Vita Nova Sas |
-      | recipientType        | PG           |
-      | taxId                | 12666810299  |
-      | payment_pagoPaForm   | SI           |
-      | payment_f24          | NULL         |
-      | apply_cost_pagopa    | NO           |
-      | payment_multy_number | 1            |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | recipientType        | PG            |
+      | taxId                | 12666810299   |
+      | payment_pagoPaForm   | SI            |
+      | payment_f24          | NULL          |
+      | apply_cost_pagopa    | NO            |
+      | payment_multy_number | 1             |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "0" della notifica
 
 
@@ -128,7 +128,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | title_payment        | F24_STANDARD_12666810299 |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 7                        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli
@@ -147,7 +147,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | title_payment        | F24_STANDARD_12666810299 |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 1                        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -161,13 +161,13 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | paFee              | 0                           |
     And destinatario
       | denomination         | Vita Nova Sas |
-      | recipientType        | PG           |
-      | taxId                | 12666810299  |
-      | payment_pagoPaForm   | SI           |
-      | payment_f24          | NULL         |
-      | apply_cost_pagopa    | SI           |
-      | payment_multy_number | 2            |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | recipientType        | PG            |
+      | taxId                | 12666810299   |
+      | payment_pagoPaForm   | SI            |
+      | payment_f24          | NULL          |
+      | apply_cost_pagopa    | SI            |
+      | payment_multy_number | 2             |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica
 
   #Comune Palermo UHRL-ZVPK-EJET-202310-N-1 --PA - inserimento notifica mono destinatario con più avvisi pagoPA e nessun F24
@@ -181,13 +181,13 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | paFee              | 0                           |
     And destinatario
       | denomination         | Vita Nova Sas |
-      | recipientType        | PG           |
-      | taxId                | 12666810299  |
-      | payment_pagoPaForm   | SI           |
-      | payment_f24          | NULL         |
-      | apply_cost_pagopa    | SI           |
-      | payment_multy_number | 3            |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | recipientType        | PG            |
+      | taxId                | 12666810299   |
+      | payment_pagoPaForm   | SI            |
+      | payment_f24          | NULL          |
+      | apply_cost_pagopa    | SI            |
+      | payment_multy_number | 3             |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica
 
   @pagamentiMultipli
@@ -199,13 +199,13 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | paFee              | 0                           |
     And destinatario
       | denomination         | Vita Nova Sas |
-      | recipientType        | PG           |
-      | taxId                | 12666810299  |
-      | payment_pagoPaForm   | SI           |
-      | payment_f24          | NULL         |
-      | apply_cost_pagopa    | SI           |
-      | payment_multy_number | 4            |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | recipientType        | PG            |
+      | taxId                | 12666810299   |
+      | payment_pagoPaForm   | SI            |
+      | payment_f24          | NULL          |
+      | apply_cost_pagopa    | SI            |
+      | payment_multy_number | 4             |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica
 
   @pagamentiMultipli
@@ -225,7 +225,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | apply_cost_pagopa    | SI                       |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 7                        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -247,10 +247,10 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | title_payment        | F24_STANDARD_12666810299 |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 2                        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
-  #TODO Vecchio Requisito
+  #Nota Vecchio Requisito:
   #28  PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA]
   @pagamentiMultipli @ignore
   Scenario: [B2B-PA-PAY_MULTI_PG_28] PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA]  e costi di notifica inclusi
@@ -261,13 +261,13 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | paFee              | 0                           |
     And destinatario
       | denomination         | Vita Nova Sas |
-      | recipientType        | PG           |
-      | taxId                | 12666810299  |
-      | payment_pagoPaForm   | SI           |
-      | payment_f24          | NULL         |
-      | apply_cost_pagopa    | SI           |
-      | payment_multy_number | 1            |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | recipientType        | PG            |
+      | taxId                | 12666810299   |
+      | payment_pagoPaForm   | SI            |
+      | payment_f24          | NULL          |
+      | apply_cost_pagopa    | SI            |
+      | payment_multy_number | 1             |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica
 
   #29  PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA]
@@ -280,13 +280,13 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | paFee              | 0                           |
     And destinatario
       | denomination         | Vita Nova Sas |
-      | recipientType        | PG           |
-      | taxId                | 12666810299  |
-      | payment_pagoPaForm   | SI           |
-      | payment_f24          | NULL         |
-      | apply_cost_pagopa    | SI           |
-      | payment_multy_number | 1            |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | recipientType        | PG            |
+      | taxId                | 12666810299   |
+      | payment_pagoPaForm   | SI            |
+      | payment_f24          | NULL          |
+      | apply_cost_pagopa    | SI            |
+      | payment_multy_number | 1             |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica
 
 
@@ -307,7 +307,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | title_payment        | F24_STANDARD_12666810299 |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 1                        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -321,12 +321,12 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | paFee              | 0                           |
     And destinatario
       | denomination         | Vita Nova Sas |
-      | recipientType        | PG           |
-      | taxId                | 12666810299  |
-      | payment_pagoPaForm   | SI           |
-      | payment_f24          | NULL         |
-      | apply_cost_pagopa    | SI           |
-      | payment_multy_number | 1            |
+      | recipientType        | PG            |
+      | taxId                | 12666810299   |
+      | payment_pagoPaForm   | SI            |
+      | payment_f24          | NULL          |
+      | apply_cost_pagopa    | SI            |
+      | payment_multy_number | 1             |
     And destinatario
       | denomination         | DivinaCommedia Srl |
       | recipientType        | PG                 |
@@ -335,7 +335,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | payment_f24          | NULL               |
       | apply_cost_pagopa    | SI                 |
       | payment_multy_number | 1                  |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
 
@@ -348,12 +348,12 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | paFee              | 100                         |
     And destinatario
       | denomination         | Vita Nova Sas |
-      | recipientType        | PG           |
-      | taxId                | 12666810299  |
-      | payment_pagoPaForm   | SI           |
-      | payment_f24          | NULL         |
-      | apply_cost_pagopa    | SI           |
-      | payment_multy_number | 1            |
+      | recipientType        | PG            |
+      | taxId                | 12666810299   |
+      | payment_pagoPaForm   | SI            |
+      | payment_f24          | NULL          |
+      | apply_cost_pagopa    | SI            |
+      | payment_multy_number | 1             |
     And destinatario
       | denomination         | DivinaCommedia Srl |
       | recipientType        | PG                 |
@@ -362,7 +362,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | payment_f24          | NULL               |
       | apply_cost_pagopa    | SI                 |
       | payment_multy_number | 1                  |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
 
@@ -392,7 +392,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | payment_f24          | NULL               |
       | apply_cost_pagopa    | SI                 |
       | payment_multy_number | 1                  |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica per l'utente 1
 
 
@@ -420,7 +420,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | payment_f24          | NULL               |
       | apply_cost_pagopa    | SI                 |
       | payment_multy_number | 1                  |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
    # Then viene verificato il costo = "200" della notifica per l'utente 0
     Then viene verificato il costo = "100" della notifica per l'utente 1
 
@@ -435,12 +435,12 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | paFee              | 0                           |
     And destinatario
       | denomination         | Vita Nova Sas |
-      | recipientType        | PG           |
-      | taxId                | 12666810299  |
-      | payment_pagoPaForm   | SI           |
-      | payment_f24          | NULL         |
-      | apply_cost_pagopa    | SI           |
-      | payment_multy_number | 2            |
+      | recipientType        | PG            |
+      | taxId                | 12666810299   |
+      | payment_pagoPaForm   | SI            |
+      | payment_f24          | NULL          |
+      | apply_cost_pagopa    | SI            |
+      | payment_multy_number | 2             |
     And destinatario
       | denomination         | DivinaCommedia Srl |
       | recipientType        | PG                 |
@@ -449,7 +449,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | payment_f24          | NULL               |
       | apply_cost_pagopa    | SI                 |
       | payment_multy_number | 2                  |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
 
@@ -482,7 +482,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | title_payment        | F24_STANDARD_70412331207 |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 1                        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -505,7 +505,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | apply_cost_pagopa    | NO                       |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 1                        |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     When si verifica la corretta acquisizione della notifica
     Then viene richiesto il download del documento "F24"
@@ -538,7 +538,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | apply_cost_pagopa    | NO                       |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 1                        |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE" per l'utente 0
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE" per l'utente 1
     When si verifica la corretta acquisizione della notifica
@@ -559,23 +559,16 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | paFee              | 0                           |
     And destinatario
       | denomination         | Vita Nova Sas |
-      | recipientType        | PG           |
-      | taxId                | 12666810299  |
-      | payment_pagoPaForm   | SI           |
-      | payment_f24          | NULL         |
-      | apply_cost_pagopa    | SI           |
-      | payment_multy_number | 1            |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | recipientType        | PG            |
+      | taxId                | 12666810299   |
+      | payment_pagoPaForm   | SI            |
+      | payment_f24          | NULL          |
+      | apply_cost_pagopa    | SI            |
+      | payment_multy_number | 1             |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And si verifica la corretta acquisizione della notifica
     When viene richiesto il download del documento "PAGOPA"
     Then il download si conclude correttamente
-
-
-   #TODO CHIEDERE INFO.............Vecchio Requisito
-  #37 PA - inserimento notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: ad ogni avviso pagoPA corrisponde un F24 [TA]
-
-
-
 
   #38 PA - inserimento notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA]
   @pagamentiMultipli
@@ -587,12 +580,12 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | paFee              | 0                           |
     And destinatario
       | denomination         | Vita Nova Sas |
-      | recipientType        | PG           |
-      | taxId                | 12666810299  |
-      | payment_pagoPaForm   | SI           |
-      | payment_f24          | NULL         |
-      | apply_cost_pagopa    | SI           |
-      | payment_multy_number | 2            |
+      | recipientType        | PG            |
+      | taxId                | 12666810299   |
+      | payment_pagoPaForm   | SI            |
+      | payment_f24          | NULL          |
+      | apply_cost_pagopa    | SI            |
+      | payment_multy_number | 2             |
     And destinatario
       | denomination         | DivinaCommedia Srl |
       | recipientType        | PG                 |
@@ -601,14 +594,11 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | payment_f24          | NULL               |
       | apply_cost_pagopa    | SI                 |
       | payment_multy_number | 2                  |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
 
-
-
- #TODO CHIEDERE INFO.............
-  #39 PA - inserimento notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include il modello F24 ma non l’avviso pagoPA [TA]
+ #39 PA - inserimento notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include il modello F24 ma non l’avviso pagoPA [TA]
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_PG_39] PA - inserimento notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include il modello F24 ma non l’avviso pagoPA [TA] costi inclusi
     Given viene generata una nuova notifica
@@ -632,20 +622,10 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | title_payment        | F24_STANDARD_70412331207 |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 1                        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
-
-#TODO VECCHIO REQUISITO
-  #40 Destinatario - pagamento notifica mono destinatario con un solo avviso pagoPA: verifica stato “In elaborazione”
-
-
- #TODO VECCHIO REQUISITO
-  #41 Destinatario - visualizzazione box di pagamento su notifica mono destinatario pagata - verifica della presenza stato “Pagato”
-
-
-
-  #42 Notifica mono destinatario pagata - verifica posizione debitoria (IUV) dopo aver effettuato il pagamento [TA]
+#42 Notifica mono destinatario pagata - verifica posizione debitoria (IUV) dopo aver effettuato il pagamento [TA]
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_PG_42] Notifica mono destinatario pagata - verifica posizione debitoria (IUV) dopo aver effettuato il pagamento [TA] costi inclusi
     Given viene generata una nuova notifica
@@ -655,18 +635,16 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | paFee              | 0                           |
     And destinatario
       | denomination         | Vita Nova Sas |
-      | recipientType        | PG           |
-      | taxId                | 12666810299  |
-      | payment_pagoPaForm   | SI           |
-      | payment_f24          | NULL         |
-      | apply_cost_pagopa    | SI           |
-      | payment_multy_number | 1            |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | recipientType        | PG            |
+      | taxId                | 12666810299   |
+      | payment_pagoPaForm   | SI            |
+      | payment_f24          | NULL          |
+      | apply_cost_pagopa    | SI            |
+      | payment_multy_number | 1             |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica
 
-
-  #TODO TEST MANUALE.........INFO
   #43 Destinatario - notifica mono destinatario con più avvisi pagoPA: pagamento di un avviso
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_PG_43] Destinatario - notifica mono destinatario con più avvisi pagoPA: pagamento di un avviso costi inclusi
@@ -677,13 +655,13 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | paFee              | 0                           |
     And destinatario
       | denomination         | Vita Nova Sas |
-      | recipientType        | PG           |
-      | taxId                | 12666810299  |
-      | payment_pagoPaForm   | SI           |
-      | payment_f24          | NULL         |
-      | apply_cost_pagopa    | SI           |
-      | payment_multy_number | 2            |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | recipientType        | PG            |
+      | taxId                | 12666810299   |
+      | payment_pagoPaForm   | SI            |
+      | payment_f24          | NULL          |
+      | apply_cost_pagopa    | SI            |
+      | payment_multy_number | 2             |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     And l'avviso pagopa 1 viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica con l' avviso 0 dal destinatario 0
@@ -698,19 +676,18 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | paFee              | 0                           |
     And destinatario
       | denomination         | Vita Nova Sas |
-      | recipientType        | PG           |
-      | taxId                | 12666810299  |
-      | payment_pagoPaForm   | SI           |
-      | payment_f24          | NULL         |
-      | apply_cost_pagopa    | SI           |
-      | payment_multy_number | 2            |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | recipientType        | PG            |
+      | taxId                | 12666810299   |
+      | payment_pagoPaForm   | SI            |
+      | payment_f24          | NULL          |
+      | apply_cost_pagopa    | SI            |
+      | payment_multy_number | 2             |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     And l'avviso pagopa 1 viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica con l' avviso 0 dal destinatario 0
     And si attende il corretto pagamento della notifica con l' avviso 1 dal destinatario 0
 
-  #TODO TEST MANUALE.........INFO
   #44 Destinatario - notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: pagamento di uno degli avvisi (PagoPa)
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_PG_44] Destinatario - notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: pagamento di uno degli avvisi (PagoPa) costi inclusi
@@ -729,13 +706,12 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | apply_cost_f24       | SI                       |
       | apply_cost_pagopa    | SI                       |
       | payment_multy_number | 1                        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica
 
 
   @pagamentiMultipli @ignore
-    #TODO Non è possibile effettuare il pagamento lato Destinatario accertare il pagamento di un solo avviso...Chiudere la posizione debitoria
   Scenario: [B2B-PA-PAY_MULTI_PG_44_1] Destinatario - notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: pagamento di uno degli avvisi (PagoPa) costi inclusi
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -752,7 +728,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | apply_cost_pagopa    | NO                       |
       | apply_cost_f24       | NO                       |
       | payment_multy_number | 1                        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica
 
@@ -772,7 +748,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | apply_cost_pagopa    | NO                        |
       | apply_cost_f24       | SI                        |
       | payment_multy_number | 1                         |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When si verifica la corretta acquisizione della notifica
     Then l'allegato "F24" può essere correttamente recuperato da "CucumberSpa"
 
@@ -790,13 +766,12 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When si verifica la corretta acquisizione della notifica
     Then l'allegato "PAGOPA" può essere correttamente recuperato da "CucumberSpa"
 
 
   #47 Destinatario 1 - pagamento notifica multi destinatario con un solo avviso pagoPA
-  #TODO Non è possibile effettuare il pagamento lato Destinatario quindi si può solo lato PA verificare la posizione Debitoria del Destinatario
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_PG_47] Destinatario 1 - pagamento notifica multi destinatario con un solo avviso pagoPA e costi inclusi
     Given viene generata una nuova notifica
@@ -805,13 +780,13 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Vita Nova Sas|
-      | recipientType        | PG           |
-      | taxId                | 12666810299  |
-      | payment_pagoPaForm   | SI           |
-      | payment_f24          | NULL         |
-      | apply_cost_pagopa    | SI           |
-      | payment_multy_number | 1            |
+      | denomination         | Vita Nova Sas |
+      | recipientType        | PG            |
+      | taxId                | 12666810299   |
+      | payment_pagoPaForm   | SI            |
+      | payment_f24          | NULL          |
+      | apply_cost_pagopa    | SI            |
+      | payment_multy_number | 1             |
     And destinatario
       | denomination         | DivinaCommedia Srl |
       | recipientType        | PG                 |
@@ -820,7 +795,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | payment_f24          | NULL               |
       | apply_cost_pagopa    | SI                 |
       | payment_multy_number | 1                  |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And l'avviso pagopa viene pagato correttamente dall'utente 1
     And si attende il corretto pagamento della notifica dell'utente 0
@@ -834,13 +809,13 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Vita Nova Sas|
-      | recipientType        | PG           |
-      | taxId                | 12666810299  |
-      | payment_pagoPaForm   | SI           |
-      | payment_f24          | NULL         |
-      | apply_cost_pagopa    | SI           |
-      | payment_multy_number | 2            |
+      | denomination         | Vita Nova Sas |
+      | recipientType        | PG            |
+      | taxId                | 12666810299   |
+      | payment_pagoPaForm   | SI            |
+      | payment_f24          | NULL          |
+      | apply_cost_pagopa    | SI            |
+      | payment_multy_number | 2             |
     And destinatario
       | denomination         | DivinaCommedia Srl |
       | recipientType        | PG                 |
@@ -849,7 +824,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | payment_f24          | NULL               |
       | apply_cost_pagopa    | SI                 |
       | payment_multy_number | 2                  |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     And l'avviso pagopa 0 viene pagato correttamente dall'utente 1
     And si attende il corretto pagamento della notifica con l' avviso 0 dal destinatario 0
@@ -882,7 +857,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | apply_cost_pagopa    | SI                       |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 2                        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     And l'avviso pagopa 0 viene pagato correttamente dall'utente 1
     And si attende il corretto pagamento della notifica con l' avviso 0 dal destinatario 0
@@ -898,13 +873,13 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Vita Nova Sas|
-      | recipientType        | PG           |
-      | taxId                | 12666810299  |
-      | payment_pagoPaForm   | SI           |
-      | payment_f24          | NULL         |
-      | apply_cost_pagopa    | SI           |
-      | payment_multy_number | 1            |
+      | denomination         | Vita Nova Sas |
+      | recipientType        | PG            |
+      | taxId                | 12666810299   |
+      | payment_pagoPaForm   | SI            |
+      | payment_f24          | NULL          |
+      | apply_cost_pagopa    | SI            |
+      | payment_multy_number | 1             |
     And destinatario
       | denomination         | DivinaCommedia Srl |
       | recipientType        | PG                 |
@@ -913,7 +888,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | payment_f24          | NULL               |
       | apply_cost_pagopa    | SI                 |
       | payment_multy_number | 1                  |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     And l'avviso pagopa 0 viene pagato correttamente dall'utente 1
     And si attende il corretto pagamento della notifica dell'utente 0
@@ -921,8 +896,6 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
 
 
   #49 Destinatario 1 - notifica multi destinatario con più avvisi pagoPA: pagamento di un avviso
-  #TODO Modificare il metodo che verifica il pagamento di un solo avviso......
-  #TODO Non è possibile effettuare il pagamento lato Destinatario
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_PG_49] Destinatario 1 - notifica multi destinatario con più avvisi pagoPA: verifica costo della notifica del destinatario 1 e costi inclusi
     Given viene generata una nuova notifica
@@ -931,14 +904,14 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Vita Nova Sas|
-      | recipientType        | PG           |
-      | taxId                | 12666810299  |
-      | payment_pagoPaForm   | SI           |
-      | payment_pagoPaForm_1 | SI           |
-      | payment_f24          | NULL         |
-      | apply_cost_pagopa    | SI           |
-      | payment_multy_number | 2            |
+      | denomination         | Vita Nova Sas |
+      | recipientType        | PG            |
+      | taxId                | 12666810299   |
+      | payment_pagoPaForm   | SI            |
+      | payment_pagoPaForm_1 | SI            |
+      | payment_f24          | NULL          |
+      | apply_cost_pagopa    | SI            |
+      | payment_multy_number | 2             |
     And destinatario
       | denomination         | DivinaCommedia Srl |
       | recipientType        | PG                 |
@@ -948,11 +921,10 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | payment_f24          | NULL               |
       | apply_cost_pagopa    | SI                 |
       | payment_multy_number | 2                  |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica per l'utente 0
 
   #50 Destinatario 1 - notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: pagamento di uno degli avvisi (PagoPa)
-  #TODO Non è possibile effettuare il pagamento lato Destinatario
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_PG_50] Destinatario 1 - notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: verifica costo della notifica del destinatario 1/2 e costi inclusi
     Given viene generata una nuova notifica
@@ -980,7 +952,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | apply_cost_pagopa    | SI                       |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 1                        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "100" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 0
 
@@ -996,14 +968,14 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
     And destinatario
-      | denomination         | Vita Nova Sas|
-      | recipientType        | PG           |
-      | taxId                | 12666810299  |
-      | payment_pagoPaForm   | SI           |
-      | payment_f24          | NULL         |
-      | apply_cost_pagopa    | SI           |
-      | payment_multy_number | 1            |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | denomination         | Vita Nova Sas |
+      | recipientType        | PG            |
+      | taxId                | 12666810299   |
+      | payment_pagoPaForm   | SI            |
+      | payment_f24          | NULL          |
+      | apply_cost_pagopa    | SI            |
+      | payment_multy_number | 1             |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica
 
@@ -1017,14 +989,14 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Vita Nova Sas|
-      | recipientType        | PG           |
-      | taxId                | 12666810299  |
-      | payment_pagoPaForm   | SI           |
-      | payment_f24          | NULL         |
-      | apply_cost_pagopa    | NO           |
-      | payment_multy_number | 1            |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | denomination         | Vita Nova Sas |
+      | recipientType        | PG            |
+      | taxId                | 12666810299   |
+      | payment_pagoPaForm   | SI            |
+      | payment_f24          | NULL          |
+      | apply_cost_pagopa    | NO            |
+      | payment_multy_number | 1             |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica
 #SOLO TM
@@ -1045,7 +1017,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | title_payment        | F24_STANDARD_12666810299 |
       | apply_cost_f24       | NO                       |
       | payment_multy_number | 1                        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -1067,7 +1039,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | title_payment        | F24_STANDARD_12666810299 |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 1                        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -1090,7 +1062,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | apply_cost_pagopa    | NO                       |
       | apply_cost_f24       | NO                       |
       | payment_multy_number | 1                        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica con l' avviso 0 dal destinatario 0
 
@@ -1105,13 +1077,13 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
     And destinatario
-      | denomination         | Vita Nova Sas|
-      | recipientType        | PG           |
-      | taxId                | 12666810299  |
-      | payment_pagoPaForm   | SI           |
-      | payment_f24          | NULL         |
-      | apply_cost_pagopa    | SI           |
-      | payment_multy_number | 1            |
+      | denomination         | Vita Nova Sas |
+      | recipientType        | PG            |
+      | taxId                | 12666810299   |
+      | payment_pagoPaForm   | SI            |
+      | payment_f24          | NULL          |
+      | apply_cost_pagopa    | SI            |
+      | payment_multy_number | 1             |
     And destinatario
       | denomination         | DivinaCommedia Srl |
       | recipientType        | PG                 |
@@ -1120,7 +1092,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | payment_f24          | NULL               |
       | apply_cost_pagopa    | SI                 |
       | payment_multy_number | 1                  |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     And l'avviso pagopa 0 viene pagato correttamente dall'utente 1
     And si attende il corretto pagamento della notifica con l' avviso 0 dal destinatario 0
@@ -1136,13 +1108,13 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Vita Nova Sas|
-      | recipientType        | PG           |
-      | taxId                | 12666810299  |
-      | payment_pagoPaForm   | SI           |
-      | payment_f24          | NULL         |
-      | apply_cost_pagopa    | NO           |
-      | payment_multy_number | 1            |
+      | denomination         | Vita Nova Sas |
+      | recipientType        | PG            |
+      | taxId                | 12666810299   |
+      | payment_pagoPaForm   | SI            |
+      | payment_f24          | NULL          |
+      | apply_cost_pagopa    | NO            |
+      | payment_multy_number | 1             |
     And destinatario
       | denomination         | DivinaCommedia Srl |
       | recipientType        | PG                 |
@@ -1151,7 +1123,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | payment_f24          | NULL               |
       | apply_cost_pagopa    | NO                 |
       | payment_multy_number | 1                  |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 1
     And si attende il corretto pagamento della notifica con l' avviso 0 dal destinatario 0
@@ -1184,7 +1156,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | title_payment        | F24_STANDARD_70412331207 |
       | apply_cost_f24       | NO                       |
       | payment_multy_number | 1                        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 #SOLO TM
@@ -1214,7 +1186,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | title_payment        | F24_STANDARD_70412331207 |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 1                        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 #SOLO TM
@@ -1227,13 +1199,13 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Vita Nova Sas|
-      | recipientType        | PG           |
-      | taxId                | 12666810299  |
-      | payment_pagoPaForm   | SI           |
-      | payment_f24          | NULL         |
-      | apply_cost_pagopa    | NO           |
-      | payment_multy_number | 1            |
+      | denomination         | Vita Nova Sas |
+      | recipientType        | PG            |
+      | taxId                | 12666810299   |
+      | payment_pagoPaForm   | SI            |
+      | payment_f24          | NULL          |
+      | apply_cost_pagopa    | NO            |
+      | payment_multy_number | 1             |
     And destinatario
       | denomination         | DivinaCommedia Srl       |
       | recipientType        | PG                       |
@@ -1243,32 +1215,9 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | title_payment        | F24_STANDARD_70412331207 |
       | apply_cost_f24       | NO                       |
       | payment_multy_number | 1                        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica dell'utente 0
-
-
-
-
-#TODO SOLO TM
-  #61 Destinatario - visualizzazione box di pagamento su notifica mono destinatario pagata (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)
-
-#TODO SOLO TM
-  #62 Documento PagoPa: Inserimento dati pagamento e relativa verifica dei dati nel documento generato di avviso PagoPA (es. amount, description, expirationDate, status, ecc.) [TA]
-
-#TODO SOLO TM
-  #63 Documento F24: Inserimento dati pagamento e costruzione del documento F24 e relativa verifica dei dati nel documento generato F24 [TA]
-
-
-#TODO NO TEST...
-  #65 Timeline: Verifica F24 (scenario negativo: deve essere riscontrata assenza di eventi di pagamento in timeline).. NO TEST...
-
-#TODO NO TEST....
-  #66 Timeline: Verifica PagoPa con più di un pagamento effettuato (presenza di più istanze di pagamento) [TA] .. NO TEST...
-
-
-
-
 
   #67 Timeline: Esecuzione di più pagamenti, sia F24 che PagoPa -> Verifica in timeline presenza solo dei pagamenti PagoPa [TA]
   @pagamentiMultipli
@@ -1298,7 +1247,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | apply_cost_f24       | SI                       |
       | apply_cost_pagopa    | SI                       |
       | payment_multy_number | 2                        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then gli avvisi PagoPa vengono pagati correttamente dal destinatario 0
     And gli avvisi PagoPa vengono pagati correttamente dal destinatario 1
     And si attende il corretto pagamento della notifica dell'utente 0
@@ -1313,33 +1262,19 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Vita Nova Sas|
-      | recipientType        | PG           |
-      | taxId                | 12666810299  |
-      | payment_pagoPaForm   | SI           |
-      | payment_f24          | NULL         |
-      | apply_cost_pagopa    | SI           |
-      | payment_multy_number | 2            |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | denomination         | Vita Nova Sas |
+      | recipientType        | PG            |
+      | taxId                | 12666810299   |
+      | payment_pagoPaForm   | SI            |
+      | payment_f24          | NULL          |
+      | apply_cost_pagopa    | SI            |
+      | payment_multy_number | 2             |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then gli avvisi PagoPa vengono pagati correttamente dal destinatario 0
     And si attende il corretto pagamento della notifica con l' avviso 0 dal destinatario 0
     And si attende il corretto pagamento della notifica con l' avviso 1 dal destinatario 0
     And verifica presenza in Timeline dei solo pagamenti di avvisi PagoPA del destinatario 0
 
-
-
-
-#TODO da Verificare........
-  #68 Pagamenti in FAILURE: Verifica di tutti i possibili KO [TA]:
-
- # 'PAYMENT_UNAVAILABLE', // Technical Error
- # 'PAYMENT_UNKNOWN', // Payment data error
- # 'DOMAIN_UNKNOWN', // Creditor institution error
- # 'PAYMENT_ONGOING', // Payment on going
- # 'PAYMENT_EXPIRED', // Payment expired
- # 'PAYMENT_CANCELED', // Payment canceled
- # 'PAYMENT_DUPLICATED', // Payment duplicated
- # 'GENERIC_ERROR'
   @pagamentiMultipli @ignore
   Scenario: [B2B-PA-PAY_MULTI_PG_68] Test di Validazione degli oggetti di pagamento ricevuti multidestinatario: Univocità istanza di pagamento e sue alternative (scenario negativo, se presenti più istanze uguali devo ricevere KO) [TA]
     Given viene generata una nuova notifica
@@ -1356,19 +1291,10 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | apply_cost_pagopa    | NO                 |
       | payment_multy_number | 1                  |
       | notice_code          | 302011697026785045 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then gli avvisi PagoPa vengono pagati correttamente dal destinatario 0
-    #TODO utilizzando iun predisposti  controllare il tipo di errore restituisto
     And si attende il non corretto pagamento della notifica con l' avviso 0 dal destinatario 0
     #And l'operazione ha prodotto un errore con status code "400"
-
-
-  #69 Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante paga avviso1 e delegato paga avviso2
-  #TODO Modificare lo scenario..................
-  #Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante e delegato possono scaricare l'avviso
-
-
-
 
   #71 Verifica retention allegati di pagamento (120gg da data perfezionamento Notifica) - PagoPa [TA]
   @pagamentiMultipli
@@ -1378,12 +1304,12 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Cucumber srl e:
+    And destinatario CucumberSrl e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And viene effettuato un controllo sulla durata della retention di "PAGOPA"
 
@@ -1396,14 +1322,14 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Vita Nova Sas|
-      | recipientType        | PG           |
-      | taxId                | 12666810299  |
-      | payment_pagoPaForm   | SI           |
-      | payment_f24          | NULL         |
-      | apply_cost_pagopa    | SI           |
-      | payment_multy_number | 1            |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | denomination         | Vita Nova Sas |
+      | recipientType        | PG            |
+      | taxId                | 12666810299   |
+      | payment_pagoPaForm   | SI            |
+      | payment_f24          | NULL          |
+      | apply_cost_pagopa    | SI            |
+      | payment_multy_number | 1             |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
       | NULL | NULL |
     Then viene verificato che l'elemento di timeline "REFINEMENT" esista
@@ -1430,13 +1356,13 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Cucumber srl e:
+    And destinatario CucumberSrl e:
       | payment_pagoPaForm   | NULL                      |
       | payment_f24          | PAYMENT_F24_STANDARD      |
       | title_payment        | F24_STANDARD_CUCUMBER_SRL |
       | apply_cost_f24       | SI                        |
       | payment_multy_number | 1                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
@@ -1461,13 +1387,13 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Cucumber srl e:
+    And destinatario CucumberSrl e:
       | payment_pagoPaForm   | NULL                      |
       | payment_f24          | PAYMENT_F24_STANDARD      |
       | title_payment        | F24_STANDARD_CUCUMBER_SRL |
       | apply_cost_F24       | SI                        |
       | payment_multy_number | 1                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And viene effettuato un controllo sulla durata della retention di "F24"
 
@@ -1481,13 +1407,13 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Cucumber srl e:
+    And destinatario CucumberSrl e:
       | payment_pagoPaForm   | NULL                      |
       | payment_f24          | PAYMENT_F24_STANDARD      |
       | title_payment        | F24_STANDARD_CUCUMBER_SRL |
       | apply_cost_F24       | SI                        |
       | payment_multy_number | 1                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     #Then si verifica la corretta acquisizione della notifica con verifica sha256 del allegato di pagamento "F24"
     When viene richiesto il download del documento "F24"
@@ -1510,15 +1436,11 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | title_payment        | F24_STANDARD_CUCUMBER_SRL |
       | apply_cost_F24       | SI                        |
       | payment_multy_number | 1                         |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
    # Then si verifica la corretta acquisizione della notifica con verifica sha256 del allegato di pagamento "F24"
     #viene fatta la stessa verifica sullo Sha256
     Then l'allegato "F24" può essere correttamente recuperato da "CucumberSpa"
-
-#TODO SOLO TM....
-  #75 PA -  Visualizzazione Box Allegati Modelli F24
-
 
    #76 Destinatario -  Download PAGOPA/F24 con AppIO
   @pagamentiMultipli @appIo @ignore
@@ -1534,7 +1456,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | apply_cost_f24       | NO   |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     Then il documento di pagamento "PAGOPA" può essere recuperata tramite AppIO da "CucumberSpa"
     And il download non ha prodotto errori
@@ -1553,7 +1475,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | title_payment        | F24_STANDARD_CUCUMBER_SRL |
       | apply_cost_f24       | SI                        |
       | payment_multy_number | 1                         |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     Then il documento di pagamento "F24" può essere recuperata tramite AppIO da "CucumberSpa"
     And il download non ha prodotto errori
@@ -1570,8 +1492,8 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And la notifica può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And la notifica "può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When "CucumberSpa" tenta il recupero dell'allegato "PAGOPA"
     Then il download ha prodotto un errore con status code "404"
@@ -1589,8 +1511,8 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | title_payment        | F24_STANDARD_CUCUMBER_SRL |
       | apply_cost_f24       | SI                        |
       | payment_multy_number | 1                         |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And la notifica può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And la notifica "può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When "GherkinSrl" tenta il recupero dell'allegato "F24"
     Then il download ha prodotto un errore con status code "404"
@@ -1613,8 +1535,8 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And la notifica può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And la notifica "può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When "CucumberSpa" tenta il recupero dell'allegato "PAGOPA"
     Then il download ha prodotto un errore con status code "404"
@@ -1640,8 +1562,8 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | title_payment        | F24_STANDARD_GHERKING_SPA |
       | apply_cost_f24       | SI                        |
       | payment_multy_number | 1                         |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And la notifica può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And la notifica "può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When "CucumberSpa" tenta il recupero dell'allegato "F24"
     Then il download ha prodotto un errore con status code "404"
@@ -1656,12 +1578,12 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Cucumber srl e:
+    And destinatario CucumberSrl e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And viene verificato il costo = "100" della notifica
     And la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
@@ -1676,13 +1598,13 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Cucumber srl e:
+    And destinatario CucumberSrl e:
       | payment_pagoPaForm   | NULL                 |
       | payment_f24          | PAYMENT_F24_STANDARD |
       | title_payment        | F24_STANDARD_MARIO   |
       | apply_cost_f24       | SI                   |
       | payment_multy_number | 1                    |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
@@ -1698,9 +1620,9 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Vita Nova Sas               |
-      | recipientType        | PG                          |
-      | taxId                | 12666810299                 |
+      | denomination            | Vita Nova Sas            |
+      | recipientType           | PG                       |
+      | taxId                   | 12666810299              |
       | digitalDomicile_address | test@pecOk.it            |
       | payment_pagoPaForm      | NULL                     |
       | payment_f24             | PAYMENT_F24_STANDARD     |
@@ -1708,7 +1630,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | apply_cost_pagopa       | NO                       |
       | apply_cost_f24          | SI                       |
       | payment_multy_number    | 1                        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @digitaleF24 @realPec
@@ -1719,17 +1641,17 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Vita Nova Sas               |
-      | recipientType        | PG                          |
-      | taxId                | 12666810299                 |
-      | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it    |
-      | payment_pagoPaForm      | NULL                     |
-      | payment_f24             | PAYMENT_F24_STANDARD     |
-      | title_payment           | F24_STANDARD_12666810299 |
-      | apply_cost_pagopa       | NO                       |
-      | apply_cost_f24          | SI                       |
-      | payment_multy_number    | 1                        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | denomination            | Vita Nova Sas                                       |
+      | recipientType           | PG                                                  |
+      | taxId                   | 12666810299                                         |
+      | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it |
+      | payment_pagoPaForm      | NULL                                                |
+      | payment_f24             | PAYMENT_F24_STANDARD                                |
+      | title_payment           | F24_STANDARD_12666810299                            |
+      | apply_cost_pagopa       | NO                                                  |
+      | apply_cost_f24          | SI                                                  |
+      | payment_multy_number    | 1                                                   |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @digitaleF24 @mockPec
@@ -1740,9 +1662,9 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
     And destinatario
-      | denomination         | Vita Nova Sas               |
-      | recipientType        | PG                          |
-      | taxId                | 12666810299                 |
+      | denomination            | Vita Nova Sas            |
+      | recipientType           | PG                       |
+      | taxId                   | 12666810299              |
       | digitalDomicile_address | test@pecOk.it            |
       | payment_pagoPaForm      | NULL                     |
       | payment_f24             | PAYMENT_F24_STANDARD     |
@@ -1750,7 +1672,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | apply_cost_pagopa       | NO                       |
       | apply_cost_f24          | SI                       |
       | payment_multy_number    | 1                        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @digitaleF24 @realPec
@@ -1761,17 +1683,17 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
     And destinatario
-      | denomination            | Vita Nova Sas            |
-      | recipientType           | PG                       |
-      | taxId                   | 12666810299              |
-      | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it    |
-      | payment_pagoPaForm      | NULL                     |
-      | payment_f24             | PAYMENT_F24_STANDARD     |
-      | title_payment           | F24_STANDARD_12666810299 |
-      | apply_cost_pagopa       | NO                       |
-      | apply_cost_f24          | SI                       |
-      | payment_multy_number    | 1                        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | denomination            | Vita Nova Sas                                       |
+      | recipientType           | PG                                                  |
+      | taxId                   | 12666810299                                         |
+      | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it |
+      | payment_pagoPaForm      | NULL                                                |
+      | payment_f24             | PAYMENT_F24_STANDARD                                |
+      | title_payment           | F24_STANDARD_12666810299                            |
+      | apply_cost_pagopa       | NO                                                  |
+      | apply_cost_f24          | SI                                                  |
+      | payment_multy_number    | 1                                                   |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @digitaleF24 @mockPec
@@ -1792,7 +1714,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | apply_cost_pagopa       | NO                   |
       | apply_cost_f24          | NO                   |
       | payment_multy_number    | 1                    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @digitaleF24 @realPec
@@ -1803,17 +1725,17 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
     And destinatario
-      | denomination            | Vita Nova Sas         |
-      | recipientType           | PG                    |
-      | taxId                   | 12666810299           |
+      | denomination            | Vita Nova Sas                                       |
+      | recipientType           | PG                                                  |
+      | taxId                   | 12666810299                                         |
       | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it |
-      | title_payment           | F24_FLAT_12666810299  |
-      | payment_pagoPaForm      | NULL                  |
-      | payment_f24             | PAYMENT_F24_FLAT      |
-      | apply_cost_pagopa       | NO                    |
-      | apply_cost_f24          | NO                    |
-      | payment_multy_number    | 1                     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | title_payment           | F24_FLAT_12666810299                                |
+      | payment_pagoPaForm      | NULL                                                |
+      | payment_f24             | PAYMENT_F24_FLAT                                    |
+      | apply_cost_pagopa       | NO                                                  |
+      | apply_cost_f24          | NO                                                  |
+      | payment_multy_number    | 1                                                   |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @digitaleF24 @mockPec
@@ -1834,7 +1756,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | apply_cost_pagopa       | NO                   |
       | apply_cost_f24          | NO                   |
       | payment_multy_number    | 1                    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @digitaleF24 @realPec
@@ -1845,17 +1767,17 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 100                         |
     And destinatario
-      | denomination            | Vita Nova Sas         |
-      | recipientType           | PG                    |
-      | taxId                   | 12666810299           |
+      | denomination            | Vita Nova Sas                                       |
+      | recipientType           | PG                                                  |
+      | taxId                   | 12666810299                                         |
       | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it |
-      | title_payment           | F24_FLAT_12666810299  |
-      | payment_pagoPaForm      | NULL                  |
-      | payment_f24             | PAYMENT_F24_FLAT      |
-      | apply_cost_pagopa       | NO                    |
-      | apply_cost_f24          | NO                    |
-      | payment_multy_number    | 1                     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | title_payment           | F24_FLAT_12666810299                                |
+      | payment_pagoPaForm      | NULL                                                |
+      | payment_f24             | PAYMENT_F24_FLAT                                    |
+      | apply_cost_pagopa       | NO                                                  |
+      | apply_cost_f24          | NO                                                  |
+      | payment_multy_number    | 1                                                   |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
 
@@ -1876,7 +1798,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | apply_cost_pagopa    | NO                          |
       | apply_cost_f24       | SI                          |
       | payment_multy_number | 1                           |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24 @dev
@@ -1896,7 +1818,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | apply_cost_pagopa    | NO                                       |
       | apply_cost_f24       | SI                                       |
       | payment_multy_number | 1                                        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24 @dev
@@ -1916,7 +1838,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | apply_cost_pagopa    | NO                                 |
       | apply_cost_f24       | SI                                 |
       | payment_multy_number | 1                                  |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 

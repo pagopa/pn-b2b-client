@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.authorization;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
+import it.pagopa.interop.authorization.domain.Role;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
@@ -15,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ClientCreateStep {
+    private static final Random RANDOM = new Random();
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final IAuthorizationClient authorizationClientCreate;
     private final IdentityService identityService;
@@ -32,9 +34,17 @@ public class ClientCreateStep {
 
     @Given("l'utente è un {string} di {string}")
     public void setRole(String role, String tenantType) {
-        String token = identityService.getToken(tenantType, role);
+        setRole(1, role, tenantType);
+    }
+
+    @Given("l'utente è il numero {int} ad avere ruolo {string} di {string}")
+    public void setRole(int userIndex, String role, String tenantType) {
+        // La numerazione di userIndex parte da 1 dal pdv del chiamante
+        String token = identityService.getToken(tenantType, role, --userIndex);
+
         clientTokenConfigurator.setBearerToken(token);
         sharedStepsContext.setUserToken(token);
+        sharedStepsContext.setRole(Role.fromValue(role.toUpperCase()));
         sharedStepsContext.setTenantType(tenantType);
     }
 
@@ -47,15 +57,15 @@ public class ClientCreateStep {
     @When("l'utente richiede la creazione di un client {string}")
     public void createClient(String clientKind) {
         if ("CONSUMER".equals(clientKind)) {
-            httpCallExecutor.performCall(() -> authorizationClientCreate.createConsumerClient(sharedStepsContext.getXCorrelationId(), createClientSeed()));
+            httpCallExecutor.performCall(() -> authorizationClientCreate.createConsumerClient(createClientSeed()));
         } else {
-            httpCallExecutor.performCall(() -> authorizationClientCreate.createApiClient(sharedStepsContext.getXCorrelationId(), createClientSeed()));
+            httpCallExecutor.performCall(() -> authorizationClientCreate.createApiClient(createClientSeed()));
         }
     }
 
     private ClientSeed createClientSeed() {
         ClientSeed clientSeed = new ClientSeed();
-        clientSeed.setName(String.format("client %d", new Random().nextInt(1000)));
+        clientSeed.setName(String.format("client %d", RANDOM.nextInt(1000)));
         clientSeed.setDescription("Descrizione client");
         clientSeed.setMembers(List.of());
         return clientSeed;

@@ -9,6 +9,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pg.BffPublicKeysResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pg.PublicKeyRow;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.generate.model.externalregistry.privateapi.PgUser;
+import it.pagopa.pn.client.b2b.pa.exception.IllegalConfigurationException;
 import it.pagopa.pn.client.b2b.pa.service.IPnExternalRegistryPrivateUserApi;
 import it.pagopa.pn.client.b2b.pa.service.IPnLegalPersonAuthClient;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
@@ -64,14 +65,17 @@ public class LegalPersonAuthSteps {
             case "AMMINISTRATORE CON GRUPPO ASSOCIATO" -> pnLegalPersonAuthClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_4);
             case "NON AMMINISTRATORE" -> pnLegalPersonAuthClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_5);
             case "DI UNA PG DIVERSA" -> pnLegalPersonAuthClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+            default -> throw new IllegalConfigurationException("Invalid input role: " + utente);
         }
     }
 
     public void selectAdminForGetUser(String utente) {
         switch (utente.toUpperCase()) {
             case "AMMINISTRATORE" -> privateUserApi.setBearerToken(SettableBearerToken.BearerTokenType.PG_3);
-            case "AMMINISTRATORE CON GRUPPO ASSOCIATO" -> privateUserApi.setBearerToken(SettableBearerToken.BearerTokenType.PG_4);
+            case "AMMINISTRATORE CON GRUPPO ASSOCIATO" ->
+                    privateUserApi.setBearerToken(SettableBearerToken.BearerTokenType.PG_4);
             case "NON AMMINISTRATORE" -> privateUserApi.setBearerToken(SettableBearerToken.BearerTokenType.PG_5);
+            default -> throw new IllegalConfigurationException("Invalid input role: " + utente);
         }
     }
 
@@ -113,6 +117,7 @@ public class LegalPersonAuthSteps {
                 bloccaChiavePubblica(kid);
                 cancellaChiavePubblica(kid);
             }
+            default -> throw new IllegalConfigurationException("Invalid status: " + status);
         }
     }
 
@@ -135,6 +140,7 @@ public class LegalPersonAuthSteps {
                 case "RUOTA" -> ruotaChiavePubblica(kid);
                 case "RIATTIVA" -> riattivaChiavePubblica(kid);
                 case "CANCELLA" -> cancellaChiavePubblica(kid);
+                default -> throw new IllegalConfigurationException("Unexpected operation: " + operation);
             }
         }
     }
@@ -154,6 +160,7 @@ public class LegalPersonAuthSteps {
             case "RUOTA" -> ruotaChiavePubblica(kid);
             case "RIATTIVA" -> riattivaChiavePubblica(kid);
             case "CANCELLA" -> cancellaChiavePubblica(kid);
+            default -> throw new IllegalConfigurationException("Unexpected operation: " + operation);
         }
     }
 
@@ -202,7 +209,7 @@ public class LegalPersonAuthSteps {
     }
 
     @When("un utente tenta di recuperare i dati dell'utente {string} della pg {string}")
-    public void recuperaDatiUtente( String userToSearch, String pg) {
+    public void recuperaDatiUtente(String userToSearch, String pg) {
         try {
             String uid = retrieveUID(userToSearch);
             String pgId = pg.equals("corretta") ? organizationId : null;
@@ -328,7 +335,7 @@ public class LegalPersonAuthSteps {
         });
     }
 
-    public String retrieveUID(String user) {
+    private String retrieveUID(String user) {
         switch (user.toLowerCase()) {
             case "alda merini" -> {
                 return adminUid;

@@ -1,21 +1,22 @@
 package it.pagopa.pn.interop.cucumber.steps.authorization;
 
+import static it.pagopa.interop.authorization.domain.KeyPairDecorator.of;
+
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
-import it.pagopa.interop.authorization.domain.KeyPairPEM;
-import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.interop.generated.openapi.clients.bff.model.KeyUse;
+import it.pagopa.interop.authorization.domain.KeyPairDecorator;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
-import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
+import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 
 public class ClientKeyReadSteps {
     private static final long MAX_SAFE_INTEGER = 9007199254740991L;
 
-    private ClientTokenConfigurator clientTokenConfigurator;
+    private final ClientTokenConfigurator clientTokenConfigurator;
     private final IAuthorizationClient authorizationClient;
     private final SharedStepsContext sharedStepsContext;
     private final IdentityService identityService;
@@ -36,11 +37,19 @@ public class ClientKeyReadSteps {
     @Given("un {string} di {string} ha caricato una chiave pubblica nel client")
     public void clientPublicKeyUpload(String role, String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, role));
-        KeyPairPEM keyPairPEM = KeyPairGeneratorUtil.createKeyPairPEM("RSA", 2048);
-        String key = KeyPairGeneratorUtil.keyToBase64(keyPairPEM.getPublicKey(), true);
-        sharedStepsContext.getClientCommonContext().setClientPublicKey(key);
-        String keyId = dataPreparationService.addPublicKeyToClient(sharedStepsContext.getClientCommonContext().getFirstClient(), KeyPairGeneratorUtil.createKeySeed(
-            key).get(0));
+        String keyType = "RSA";
+        KeyPairDecorator keyPair = of(keyType, 2048);
+        String encodedPublicKey = keyPair.getDelimitedPublicKeyBase64();
+
+        // TODO: memorizzare in contesto solo KeyPairDecorator e keyType
+        sharedStepsContext.getClientCommonContext().setClientPublicKey(encodedPublicKey);
+        sharedStepsContext.getClientCommonContext().setClientPublicKeyAsObj(keyPair.getPublic());
+        sharedStepsContext.getClientCommonContext().setClientPrivateKey(keyPair.getPrivatePEM());
+        sharedStepsContext.getClientCommonContext().setClientPrivateKeyAsObj(keyPair.getPrivate());
+        sharedStepsContext.getClientCommonContext().setKeyType(keyType);
+        String keyId = dataPreparationService.addPublicKeyToClient(
+            sharedStepsContext.getClientCommonContext().getFirstClient(),
+            KeyPairGeneratorUtil.createKeySeed(encodedPublicKey).get(0));
         sharedStepsContext.getClientCommonContext().setKeyId(keyId);
     }
 
@@ -48,7 +57,7 @@ public class ClientKeyReadSteps {
     public void userReadPublicKey() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(() ->
-                authorizationClient.getClientKeyById(sharedStepsContext.getXCorrelationId(),
+                authorizationClient.getClientKeyById(
                         sharedStepsContext.getClientCommonContext().getFirstClient(),
                         sharedStepsContext.getClientCommonContext().getKeyId()));
     }

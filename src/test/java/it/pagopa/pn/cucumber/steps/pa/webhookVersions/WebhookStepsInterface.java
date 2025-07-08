@@ -9,6 +9,14 @@ import java.util.UUID;
 
 public interface WebhookStepsInterface {
 
+    /**
+     * Ogni classe che implementa WebhookStepsInterface nella propria implementazione dovrà restituire
+     * la fullSentNotification relativa alla propria versione ottenuta chiamando il b2b client.
+     * Vi dovrà poi essere un metodo PRIVATO getFullSentNotificationVersioned che restituisce l'oggetto
+     * castato alla classe corrispondente alla versione in uso.
+     */
+    Object getFullSentNotification();
+
     void initializeStreamRequest(String action, String pa);
 
     void createStreamRequest(List<String> filterValues, int number, String title, String eventType);
@@ -29,7 +37,7 @@ public interface WebhookStepsInterface {
 
     void updateStreams();
 
-    void verifySpecificEventNotInStream(String elementType);
+    void checkIfStreamContains(String type, String timelineCategoryOrStatus, boolean contains);
 
     void createStreamRequestWithGroupsPA(List<String> groupIdByPa);
 
@@ -67,8 +75,6 @@ public interface WebhookStepsInterface {
 
     void setValueForWaitForAccepted(boolean waitForAccepted);
 
-    String getSentNotificationIun();
-
     void verifyIncrementalEventId();
 
     <T> AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<T> getTimelineEventForStream(String timelineEventCategory, TimingForPolling.TimingResult timingForElement);
@@ -77,15 +83,11 @@ public interface WebhookStepsInterface {
 
     <T> PnPollingWebhook getPnPollingWebhook(T timeLineOrStatus);
 
-    void getTimelineElementVersionB2B(String iun);
-
     void compareTimestampWebhook(String timelineElementCategory, String webhookElementCategory, boolean mustBeEqual);
 
     void getStreamEventListForStressTest();
 
-    void verificaDeanonimizzazioneEventiTimelineAnalogica(boolean delega);
-
-    void verificaDeanonimizzazioneEventiTimelineDigitale(boolean delega);
+    void verificaDeanonimizzazioneEventiTimeline(boolean isDigitale, boolean delega);
 
     void setProgressResponseElement(Object progressResponseElement);
 
@@ -94,4 +96,8 @@ public interface WebhookStepsInterface {
     void checkLegalFactId();
 
     void checkCorrectDisabling(UUID streamId);
+
+    void verificaPresenzaSercQ(boolean isPresent);
+
+    void checkLegalFactCategory(String timelineCategory, String legalFactCategory, boolean arePresent);
 }

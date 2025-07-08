@@ -1,8 +1,11 @@
 package it.pagopa.pn.cucumber.steps.templateEngine;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.pn.client.b2b.pa.exception.IllegalConfigurationException;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextFactory;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateEngineResult;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateRequestContext;
@@ -177,11 +180,15 @@ public class TemplateEngineSteps {
         TemplateType templateTypeObject = TemplateType.fromValue(templateType.toUpperCase());
         String textToFind = getTextToRetrieve(languange, templateTypeObject);
         if (fileType.equals("pdf")) {
-            Assertions.assertNotNull(result.getFileTextRetrieved());
-            Assertions.assertTrue(result.retrieveFormattedText().contains(textToFind));
+            assertThat(result.getFileTextRetrieved()).isNotNull();
+            assertThat(result.retrieveFormattedText())
+                    .as("Checking if formatted text contains: " + textToFind)
+                    .contains(textToFind);
         } else {
-            Assertions.assertNotNull(result.getTemplateHtmlReturned());
-            Assertions.assertTrue(result.getTemplateHtmlReturned().contains(textToFind));
+            assertThat(result.getTemplateHtmlReturned()).isNotNull();
+            assertThat(result.getTemplateHtmlReturned())
+                    .as("Checking if formatted text contains: " + textToFind)
+                    .contains(textToFind);
         }
     }
 
@@ -201,6 +208,7 @@ public class TemplateEngineSteps {
                 int count = countOccurrences("TEST_digest_allegato");
                 Assertions.assertEquals(2, count);
             }
+            default -> throw new IllegalConfigurationException("Invalid notification type: " + notificationType);
         }
     }
 }

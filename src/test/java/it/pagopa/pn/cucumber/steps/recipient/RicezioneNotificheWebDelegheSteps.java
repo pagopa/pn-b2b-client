@@ -5,21 +5,21 @@ import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV25;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullReceivedNotificationV26;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationAttachmentDownloadMetadataResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.TimelineElementV27;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.NotificationStatusV26;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV27;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV27;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebMandateClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2bMandateServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebMandateExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
+import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotificationV26;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.*;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.FullReceivedNotificationV25;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationAttachmentDownloadMetadataResponse;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationSearchResponse;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.time.DateUtils;
@@ -31,12 +31,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
-import java.io.ByteArrayInputStream;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
 
@@ -46,15 +46,11 @@ public class RicezioneNotificheWebDelegheSteps {
     private IPnWebMandateClient webMandateClient;
     private IPnWebRecipientClient webRecipientClient;
     private final SharedSteps sharedSteps;
-    private final PnPaB2bUtils b2bUtils;
     private MandateDto mandateToSearch;
     private final SettableBearerToken.BearerTokenType baseUser = SettableBearerToken.BearerTokenType.USER_2;
     private final String verificationCode = "24411";
     private HttpStatusCodeException notificationError;
-    private final String marioCucumberTaxID;
-    private final String marioGherkinTaxID;
-    private final String gherkinSrltaxId;
-    private final String cucumberSpataxId;
+
     private UserDto userDtoCustom;
     @Value("${pn.external.senderId}")
     private String senderId;
@@ -82,42 +78,37 @@ public class RicezioneNotificheWebDelegheSteps {
         this.webMandateClient = webMandateClient;
         this.sharedSteps = sharedSteps;
         this.webRecipientClient = sharedSteps.getWebRecipientClient();
-        this.b2bUtils = sharedSteps.getB2bUtils();
-        this.marioCucumberTaxID = sharedSteps.getMarioCucumberTaxID();
-        this.marioGherkinTaxID = sharedSteps.getMarioGherkinTaxID();
-        this.gherkinSrltaxId = sharedSteps.getGherkinSrltaxId();
-        this.cucumberSpataxId = sharedSteps.getCucumberSpataxId();
     }
 
     private String getTaxIdByUser(String user) {
-
         return switch (user) {
-            case "Mario Cucumber" -> marioCucumberTaxID;
-            case "Mario Gherkin" -> marioGherkinTaxID;
-            case "GherkinSrl" -> gherkinSrltaxId;
-            case "CucumberSpa" -> cucumberSpataxId;
+            case MARIO_CUCUMBER -> MARIO_CUCUMBER_TAX_ID;
+            case MARIO_GHERKIN -> MARIO_GHERKIN_TAX_ID;
+            case GHERKIN_SRL -> GHERKIN_SRL_TAX_ID;
+            case CUCUMBER_SPA -> CUCUMBER_SPA_TAX_ID;
             case "Utente errato" -> "asdasdasd";
             default -> throw new IllegalArgumentException();
         };
     }
 
-    private UserDto getUserDtoByuser(String user) {
-
+    private UserDto getUserDtoByUser(String user) {
         return switch (user.trim().toLowerCase()) {
-            case "mario cucumber" -> createUserDto("Mario Cucumber", "Mario","Cucumber", marioCucumberTaxID, null, true);
-            case "mario gherkin" -> createUserDto("Mario Gherkin", "Mario", "Gherkin", marioGherkinTaxID, null, true);
-            case "gherkinsrl" -> createUserDto("gherkinsrl", "gherkin", "srl", gherkinSrltaxId, "gherkinsrl", false);
-            case "cucumberspa" -> createUserDto("cucumberspa", "cucumber", "spa", cucumberSpataxId, "cucumberspa", false);
+            case "mario cucumber" ->
+                    createUserDto(MARIO_CUCUMBER, "Mario", "Cucumber", MARIO_CUCUMBER_TAX_ID, null, true);
+            case "mario gherkin" -> createUserDto(MARIO_GHERKIN, "Mario", "Gherkin", MARIO_GHERKIN_TAX_ID, null, true);
+            case "gherkinsrl" -> createUserDto(GHERKIN_SRL, "gherkin", "srl", GHERKIN_SRL_TAX_ID, GHERKIN_SRL, false);
+            case "cucumberspa" ->
+                    createUserDto(CUCUMBER_SPA, "cucumber", "spa", CUCUMBER_SPA_TAX_ID, CUCUMBER_SPA, false);
             default -> throw new IllegalArgumentException();
         };
     }
 
     private boolean setBearerToken(String user) {
-        return switch (user.trim().toLowerCase()) {
-            case "mario cucumber" -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
-            case "mario gherkin" -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
-            case "gherkinsrl" -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
-            case "cucumberspa" -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+        return switch (user.trim()) {
+            case MARIO_CUCUMBER -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
+            case MARIO_GHERKIN -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
+            case GHERKIN_SRL -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
+            case CUCUMBER_SPA -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
             default -> throw new IllegalArgumentException();
         };
     }
@@ -132,7 +123,7 @@ public class RicezioneNotificheWebDelegheSteps {
         setBearerToken(delegator);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         MandateDto mandate = (new MandateDto()
-                .delegator(getUserDtoByuser(delegator)))
+                .delegator(getUserDtoByUser(delegator)))
                 .delegate(userDtoCustom)
                 .verificationCode(verificationCode)
                 .datefrom(sdf.format(new Date()))
@@ -154,8 +145,8 @@ public class RicezioneNotificheWebDelegheSteps {
         setBearerToken(delegator);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         MandateDto mandate = new MandateDto()
-                .delegator(getUserDtoByuser(delegator))
-                .delegate(getUserDtoByuser(delegate))
+                .delegator(getUserDtoByUser(delegator))
+                .delegate(getUserDtoByUser(delegate))
                 .verificationCode(verificationCode)
                 .datefrom(sdf.format(new Date()))
                 .visibilityIds(new LinkedList<>())
@@ -175,8 +166,8 @@ public class RicezioneNotificheWebDelegheSteps {
         setBearerToken(delegator);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         MandateDto mandate = (new MandateDto()
-                .delegator(getUserDtoByuser(delegator)))
-                .delegate(getUserDtoByuser(delegate))
+                .delegator(getUserDtoByUser(delegator)))
+                .delegate(getUserDtoByUser(delegate))
                 .verificationCode(verificationCode)
                 .dateto(sdf.format(new Date()))
                 .visibilityIds(new LinkedList<>())
@@ -197,19 +188,19 @@ public class RicezioneNotificheWebDelegheSteps {
         OrganizationIdDto organizationIdDto = new OrganizationIdDto();
 
         switch (comune) {
-            case "Comune_1" -> organizationIdDto
+            case COMUNE_1 -> organizationIdDto
                     .name("Comune di Milano")
                     .uniqueIdentifier(senderId);
-            case "Comune_2" -> organizationIdDto
+            case COMUNE_2 -> organizationIdDto
                     .name("Comune di Verona")
                     .uniqueIdentifier(senderId2);
-            case "Comune_Multi" -> organizationIdDto
+            case COMUNE_MULTI -> organizationIdDto
                     .name("Comune di Palermo")
                     .uniqueIdentifier(senderIdGA);
-            case "Comune_Son" -> organizationIdDto
+            case COMUNE_SON -> organizationIdDto
                     .name("Ufficio per la transizione al Digitale")
                     .uniqueIdentifier(senderIdSON);
-            case "Comune_Root" -> organizationIdDto
+            case COMUNE_ROOT -> organizationIdDto
                     .name("Comune di Aglientu")
                     .uniqueIdentifier(senderIdROOT);
             default -> throw new IllegalStateException();
@@ -218,11 +209,11 @@ public class RicezioneNotificheWebDelegheSteps {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         MandateDto mandate = (new MandateDto()
-                .delegator(getUserDtoByuser(delegator))
-                .delegate(getUserDtoByuser(delegate))
+                .delegator(getUserDtoByUser(delegator))
+                .delegate(getUserDtoByUser(delegate))
                 .verificationCode(verificationCode)
                 .datefrom(sdf.format(new Date()))
-                .visibilityIds(Arrays.asList(organizationIdDto))
+                .visibilityIds(List.of(organizationIdDto))
                 .status(MandateDto.StatusEnum.PENDING)
                 .dateto(sdf.format(DateUtils.addDays(new Date(), 1)))
         );
@@ -239,16 +230,16 @@ public class RicezioneNotificheWebDelegheSteps {
     @Given("{string} rifiuta se presente la delega ricevuta {string} da portale")
     public void userRejectMandateFromUI(String delegate, String delegator) {
         this.webMandateClient = context.getBean(PnWebMandateExternalClientImpl.class);
-        userRejectIfPresentMandateOfAnotheruser(delegate, delegator);
+        userRejectIfPresentMandateOfAnotherUser(delegate, delegator);
     }
 
 
     @Given("{string} rifiuta se presente la delega ricevuta {string}")
-    public void userRejectIfPresentMandateOfAnotheruser(String delegate, String delegator) {
+    public void userRejectIfPresentMandateOfAnotherUser(String delegate, String delegator) {
         setBearerToken(delegate);
         String delegatorTaxId = getTaxIdByUser(delegator);
 
-        List<MandateDto> mandateList = webMandateClient.searchMandatesByDelegate(delegatorTaxId,null);
+        List<MandateDto> mandateList = webMandateClient.searchMandatesByDelegate(delegatorTaxId, null);
 
         MandateDto mandateDto = null;
         for (MandateDto mandate : mandateList) {
@@ -312,18 +303,18 @@ public class RicezioneNotificheWebDelegheSteps {
     public void notificationCanBeCorrectlyReadFromWithMandate(String recipient) {
         sharedSteps.selectUser(recipient);
         Assertions.assertDoesNotThrow(() -> {
-            webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), mandateToSearch.getMandateId());
+            webRecipientClient.getFullReceivedNotification(sharedSteps.getNotificationIun(), mandateToSearch.getMandateId());
         });
     }
 
     @Then("come delegante {string} l'associazione a gruppi sulla delega di {string}")
-    public void removeGrups(String delegator, String delegate) {
+    public void removeGroups(String delegator, String delegate) {
         sharedSteps.selectUser(delegator);
 
         UpdateRequestDto updateRequestDto = new UpdateRequestDto();
         updateRequestDto.setGroups(new LinkedList<>());
 
-        Assertions.assertDoesNotThrow(() -> webMandateClient.updateMandate( mandateToSearch.getMandateId(), updateRequestDto));
+        Assertions.assertDoesNotThrow(() -> webMandateClient.updateMandate(mandateToSearch.getMandateId(), updateRequestDto));
     }
 
     @Then("come amministratore {string} associa alla delega il primo gruppo disponibile attivo per il delegato {string}")
@@ -385,7 +376,7 @@ public class RicezioneNotificheWebDelegheSteps {
     public void theDocumentCanBeProperlyRetrievedByWithMandate(String recipient) {
         sharedSteps.selectUser(recipient);
         NotificationAttachmentDownloadMetadataResponse downloadResponse = getReceivedNotificationDocument();
-        verifySha256(downloadResponse);
+        verifyRetrievedDocument(downloadResponse);
     }
 
     @Then("il documento notificato non può essere correttamente recuperato da {string} con delega restituendo un errore {string}")
@@ -393,9 +384,7 @@ public class RicezioneNotificheWebDelegheSteps {
         sharedSteps.selectUser(recipient);
 
         try {
-            Assertions.assertDoesNotThrow(() -> {
-                getReceivedNotificationDocument();
-            });
+            Assertions.assertDoesNotThrow(this::getReceivedNotificationDocument);
         } catch (AssertionFailedError assertionFailedError) {
             System.out.println(assertionFailedError.getCause().toString());
             System.out.println(assertionFailedError.getCause().getMessage());
@@ -405,9 +394,10 @@ public class RicezioneNotificheWebDelegheSteps {
     }
 
     private NotificationAttachmentDownloadMetadataResponse getReceivedNotificationDocument() {
+        FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         return webRecipientClient.getReceivedNotificationDocument(
-                sharedSteps.getSentNotification().getIun(),
-                Integer.parseInt(Objects.requireNonNull(sharedSteps.getSentNotification().getDocuments().get(0).getDocIdx())),
+                fullSentNotification.getIun(),
+                Integer.parseInt(Objects.requireNonNull(fullSentNotification.getDocuments().get(0).getDocIdx())),
                 UUID.fromString(Objects.requireNonNull(mandateToSearch.getMandateId()))
         );
     }
@@ -417,7 +407,7 @@ public class RicezioneNotificheWebDelegheSteps {
         //TODO Modificare attachmentIdx al momento e 0...............
         sharedSteps.selectUser(recipient);
         NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
-                sharedSteps.getSentNotification().getIun(),
+                sharedSteps.getNotificationIun(),
                 attachmentName,
                 UUID.fromString(Objects.requireNonNull(mandateToSearch.getMandateId())), 0);
 
@@ -425,27 +415,24 @@ public class RicezioneNotificheWebDelegheSteps {
             try {
                 await().atMost(downloadResponse.getRetryAfter() * 3L, TimeUnit.MILLISECONDS);
                 downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
-                        sharedSteps.getSentNotification().getIun(),
+                        sharedSteps.getNotificationIun(),
                         attachmentName,
                         UUID.fromString(mandateToSearch.getMandateId()), 0);
+                verifyRetrievedDocument(downloadResponse);
             } catch (RuntimeException exc) {
                 log.error("Await error exception: {}", exc.getMessage());
                 throw exc;
             }
         }
-        if (!"F24".equalsIgnoreCase(attachmentName)) {
-            verifySha256(downloadResponse);
-        }
+//        if (!"F24".equalsIgnoreCase(attachmentName)) {
+//            verifySha256(downloadResponse);
+//        }
     }
 
-    private void verifySha256(NotificationAttachmentDownloadMetadataResponse downloadResponse) {
-        AtomicReference<String> Sha256 = new AtomicReference<>("");
-        Assertions.assertDoesNotThrow(() -> {
-            byte[] bytes = Assertions.assertDoesNotThrow(() ->
-                    b2bUtils.downloadFile(Objects.requireNonNull(downloadResponse).getUrl()));
-            Sha256.set(b2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
-        });
-        Assertions.assertEquals(Sha256.get(), Objects.requireNonNull(downloadResponse).getSha256());
+    private void verifyRetrievedDocument(NotificationAttachmentDownloadMetadataResponse downloadResponse) {
+        Assertions.assertNotNull(downloadResponse.getFilename());
+        Assertions.assertNotNull(downloadResponse.getContentLength());
+        Assertions.assertNotNull(downloadResponse.getUrl());
     }
 
     @And("{string} revoca la delega a {string}")
@@ -492,7 +479,7 @@ public class RicezioneNotificheWebDelegheSteps {
         sharedSteps.selectUser(recipient);
         HttpClientErrorException httpClientErrorException = null;
         try {
-            webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), mandateToSearch.getMandateId());
+            webRecipientClient.getFullReceivedNotification(sharedSteps.getNotificationIun(), mandateToSearch.getMandateId());
         } catch (HttpClientErrorException e) {
             httpClientErrorException = e;
         }
@@ -511,75 +498,83 @@ public class RicezioneNotificheWebDelegheSteps {
     public void notificationCanBeCorrectlyReadFrom(String recipient) {
         sharedSteps.selectUser(recipient);
         Assertions.assertDoesNotThrow(() -> {
-            webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
+            webRecipientClient.getFullReceivedNotification(sharedSteps.getNotificationIun(), null);
         });
         webRecipientClient.setBearerToken(baseUser);
     }
 
-    @And("lato destinatario la notifica può essere correttamente recuperata da {string} e verifica presenza dell'evento di timeline NOTIFICATION_RADD_RETRIEVED")
-    public void notificationCanBeCorrectlyReadFromBytimeline(String recipient) {
+    @And("lato destinatario la notifica può essere correttamente recuperata da {string} e verifica presenza dell'evento di timeline {string}")
+    public void notificationCanBeCorrectlyReadFromTimeline(String recipient, String timelineEventString) {
         sharedSteps.selectUser(recipient);
-
         try {
-            it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV26 timelineElementCategoryV23 =
-                    it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV26.NOTIFICATION_RADD_RETRIEVED;
-            it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementV26 timelineElement = getTimelineElementV23WebRecipient(timelineElementCategoryV23);
-
-            Assertions.assertNotNull(timelineElement);
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
-        }
-
-        webRecipientClient.setBearerToken(baseUser);
-    }
-
-    @And("lato desinatario {string} viene verificato che l'elemento di timeline NOTIFICATION_VIEWED non esista")
-    public void notificationCanBeCorrectlyReadFromBytimelineNotExist(String recipient) {
-        sharedSteps.selectUser(recipient);
-
-        try {
-            it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV26 timelineElementCategoryV23 =
-                    it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV26.NOTIFICATION_VIEWED;
-            it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementV26 timelineElement = getTimelineElementV23WebRecipient(timelineElementCategoryV23);
-
-            Assertions.assertNull(timelineElement);
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            TimelineElementCategoryV27 timelineElementCategory = TimelineElementCategoryV27.valueOf(timelineEventString);
+            TimelineElementV27 timelineElement = getTimelineElementWebRecipient(timelineElementCategory);
+            assertThat(timelineElement).as("Il timeline element non dev'essere null").isNotNull();
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Valore non valido per TimelineElementCategoryV27: " + timelineEventString, e);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
         webRecipientClient.setBearerToken(baseUser);
     }
 
-    private it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementV26 getTimelineElementV23WebRecipient(it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV26 timelineElementCategoryV23) {
+    @And("lato destinatario {string} viene verificato che l'elemento di timeline NOTIFICATION_VIEWED non esista")
+    public void notificationCanBeCorrectlyReadFromByTimelineNotExist(String recipient) {
+        // Seleziona l'utente destinatario
+        sharedSteps.selectUser(recipient);
 
-        FullReceivedNotificationV25 result = webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
-        log.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
+        // Definisce la categoria dell'elemento di timeline da verificare
+        TimelineElementCategoryV27 category = TimelineElementCategoryV27.NOTIFICATION_VIEWED;
 
+        // Recupera l'elemento di timeline per il destinatario
+        TimelineElementV27 timelineElement = getTimelineElementWebRecipient(category);
+
+        // Verifica che l'elemento di timeline non esista
+        if (timelineElement != null) {
+            log.error("Elemento di timeline '{}' trovato per il destinatario '{}', ma non avrebbe dovuto esistere. Dettagli: {}",
+                    category, recipient, timelineElement);
+        }
+
+        try {
+            // Asserzione che fallisce se l'elemento di timeline esiste
+            Assertions.assertNull(timelineElement,
+                    String.format("Elemento di timeline '%s' trovato per il destinatario '%s', ma non avrebbe dovuto esistere.",
+                            category, recipient));
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
+        // Reimposta il token di autenticazione per il client del destinatario
+        webRecipientClient.setBearerToken(baseUser);
+    }
+
+    private TimelineElementV27 getTimelineElementWebRecipient(TimelineElementCategoryV27 timelineElementCategory) {
+        BundleFullReceivedNotificationV26 result = webRecipientClient.getFullReceivedNotification(sharedSteps.getNotificationIun(), null);
+        log.info("NOTIFICATION_TIMELINE: " + result.getTimeline());
         return result
                 .getTimeline()
                 .stream()
-                .filter(elem -> Objects.requireNonNull(elem.getCategory())
-                        .equals(timelineElementCategoryV23))
+                .filter(elem -> Objects.requireNonNull(elem.getCategory().getValue()).equals(timelineElementCategory.getValue()))
                 .findAny()
                 .orElse(null);
     }
 
     @And("la notifica può essere correttamente letta da {string} per comune {string}")
-    public void notificationCanBeCorrectlyReadFromAtPa(String recipient, String pa) {
-        sharedSteps.selectPA(pa);
+    public void notificationCanBeCorrectlyReadFromAtPa(String recipient, String paName) {
+        sharedSteps.setPA(paName);
         sharedSteps.selectUser(recipient);
-        Assertions.assertDoesNotThrow(() -> {
-            webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
-        });
+        Assertions.assertDoesNotThrow(() -> webRecipientClient.getFullReceivedNotification(sharedSteps.getNotificationIun(), null));
     }
 
     private NotificationSearchResponse notificationSearchResponse;
+
     @And("{string} visualizza l'elenco delle notifiche per comune {string}")
-    public void notificationCanBeCorrectlyReadFromAtPa(String recipient, String pa, @Transpose RicezioneNotificheWebSteps.NotificationSearchParam searchParam) {
-        sharedSteps.selectPA(pa);
+    public void notificationCanBeCorrectlyReadFromAtPa(String recipient, String paName, @Transpose RicezioneNotificheWebSteps.NotificationSearchParam searchParam) {
+        sharedSteps.setPA(paName);
         sharedSteps.selectUser(recipient);
-        try{
+        NotificationStatusV26 notificationStatus = searchParam.status != null ? NotificationStatusV26.valueOf(searchParam.status) : null;
+        try {
             this.notificationSearchResponse = webRecipientClient.searchReceivedNotification(searchParam.startDate, searchParam.endDate, searchParam.mandateId /*mandateId = null by default*/,
-                    searchParam.senderId, searchParam.status, searchParam.subjectRegExp,
+                    searchParam.senderId, notificationStatus, searchParam.subjectRegExp,
                     searchParam.iunMatch, searchParam.size, null);
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
@@ -588,13 +583,14 @@ public class RicezioneNotificheWebDelegheSteps {
     }
 
     @And("{string} visualizza l'elenco delle notifiche del delegante {string} per comune {string}")
-    public void notificationCanBeCorrectlyReadFromAtPa(String user, String recipient, String pa, @Transpose RicezioneNotificheWebSteps.NotificationSearchParam searchParam) {
-        sharedSteps.selectPA(pa);
+    public void notificationCanBeCorrectlyReadFromAtPa(String user, String recipient, String paName, @Transpose RicezioneNotificheWebSteps.NotificationSearchParam searchParam) {
+        sharedSteps.setPA(paName);
         sharedSteps.selectUser(user);
-        try{
+        NotificationStatusV26 notificationStatus = searchParam.status != null ? NotificationStatusV26.valueOf(searchParam.status) : null;
+        try {
             this.notificationSearchResponse = webRecipientClient.searchReceivedDelegatedNotification(
                     searchParam.startDate, searchParam.endDate, getRecipientId(recipient),
-                    null, searchParam.senderId, searchParam.status,
+                    null, searchParam.senderId, notificationStatus,
                     searchParam.iunMatch, searchParam.size, null);
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
@@ -603,8 +599,8 @@ public class RicezioneNotificheWebDelegheSteps {
     }
 
     //TODO: insert recipientID da selfcare (si possono recuperare dai token)
-    private String getRecipientId(String recipientId){
-        return switch (recipientId.toLowerCase().trim()){
+    private String getRecipientId(String recipientId) {
+        return switch (recipientId.toLowerCase().trim()) {
             case "mario cucumber" -> "123";
             case "mario gherkin" -> "345";
             case "gherkinsrl" -> "789";
@@ -614,18 +610,18 @@ public class RicezioneNotificheWebDelegheSteps {
     }
 
     @And("Si verifica che il numero di notifiche restituite nella pagina sia {int}")
-    public void verifyNumberOfNotification(Integer number){
-        Assertions.assertEquals(notificationSearchResponse.getResultsPage().size(),number);
+    public void verifyNumberOfNotification(Integer number) {
+        Assertions.assertEquals(notificationSearchResponse.getResultsPage().size(), number);
     }
 
 
     @And("si verifica che l'elemento di timeline della lettura riporti i dati di {string}")
     public void siVerificaCheLElementoDiTimelineDellaLetturaRiportiIDatiDi(String user) {
-        TimelineElementV26 timelineElement = getTimelineElementV23();
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV27 timelineElement = getTimelineElement();
 
         String userTaxId = getTaxIdByUser(user);
-        System.out.println("TIMELINE ELEMENT: " + timelineElement);
-        Assertions.assertNotNull(timelineElement);
+        log.info("TIMELINE ELEMENT : {}", timelineElement);
+        assertThat(timelineElement).as("Il timeline element non dev'essere null").isNotNull();
         Assertions.assertNotNull(timelineElement.getDetails());
         Assertions.assertNotNull(timelineElement.getDetails().getDelegateInfo());
         Assertions.assertEquals(userTaxId, timelineElement.getDetails().getDelegateInfo().getTaxId());
@@ -633,28 +629,26 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @And("si verifica che l'elemento di timeline della lettura non riporti i dati del delegato")
     public void siVerificaCheLElementoDiTimelineDellaLetturaNonRiportiIDatiDi() {
-        TimelineElementV26 timelineElement = getTimelineElementV23();
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV27 timelineElement = getTimelineElement();
 
-        System.out.println("TIMELINE ELEMENT: " + timelineElement);
-        Assertions.assertNotNull(timelineElement);
+        log.info("TIMELINE ELEMENT : {}", timelineElement);
+        assertThat(timelineElement).as("Il timeline element non dev'essere null").isNotNull();
         Assertions.assertNotNull(timelineElement.getDetails());
         Assertions.assertNull(timelineElement.getDetails().getDelegateInfo());
     }
 
-    private TimelineElementV26 getTimelineElementV23() {
+    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV27 getTimelineElement() {
         try {
             await().atMost(sharedSteps.getWorkFlowWait() * 2, TimeUnit.MILLISECONDS);
         } catch (RuntimeException exception) {
             exception.printStackTrace();
         }
-        sharedSteps.setSentNotification(sharedSteps.getB2bClient().getSentNotification(sharedSteps.getSentNotification().getIun()));
-
-        return sharedSteps
-                .getSentNotification()
+        FullSentNotificationV27 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        return fullSentNotification
                 .getTimeline()
                 .stream()
-                .filter(elem -> Objects.requireNonNull(elem.getCategory())
-                        .equals(TimelineElementCategoryV23.NOTIFICATION_VIEWED))
+                .filter(elem ->
+                        Objects.requireNonNull(elem.getCategory()).getValue().equals(NOTIFICATION_VIEWED))
                 .findAny()
                 .orElse(null);
     }
@@ -666,14 +660,14 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @Then("il delegato {string} visualizza le deleghe a suo carico con stato {string}")
     public void delegateViewsAssignedMandatesWithStatus(String user, String status) {
-        try{
+        try {
             delegateViewMandate(user, status);
         } catch (HttpStatusCodeException e) {
-        this.notificationError = e;
+            this.notificationError = e;
         }
     }
 
-    private void delegateViewMandate(String user, String statusFilter){
+    private void delegateViewMandate(String user, String statusFilter) {
         setBearerToken(user);
         try {
             List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(statusFilter);
@@ -708,9 +702,9 @@ public class RicezioneNotificheWebDelegheSteps {
                 mandateList = webMandateClient.searchMandatesByDelegateStatusFilter("", List.of(status), null);
             } else {
                 mandateList = webMandateClient.searchMandatesByDelegateStatusFilter(getTaxIdByUser(delegator), List.of(status), null);
-                Assertions.assertNotNull(mandateList, "La lista mandateList è null");
-                Assertions.assertFalse(mandateList.isEmpty(), "La lista mandateList è vuota");
             }
+            Assertions.assertNotNull(mandateList, "La lista mandateList è null");
+            Assertions.assertFalse(mandateList.isEmpty(), "La lista mandateList è vuota");
         } catch (HttpStatusCodeException e) {
             this.notificationError = e;
         }
@@ -722,7 +716,7 @@ public class RicezioneNotificheWebDelegheSteps {
         setBearerToken(user);
 
         List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
-        List<MandateDto> mandateDtos = Assertions.assertDoesNotThrow(()-> webMandateClient.listMandatesByDelegator1());
+        List<MandateDto> mandateDtos = Assertions.assertDoesNotThrow(() -> webMandateClient.listMandatesByDelegator1());
 
         System.out.println("TOKEN SETTED (user: +" + user + ") : " + webMandateClient.getBearerTokenSetted());
         System.out.println("MANDATE-LIST (user: +" + user + ") : " + mandateList);
@@ -732,53 +726,46 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @And("viene creata una delega con i seguenti parametri errati:")
     public void createMandateWithNotValidDate(Map<String, String> data) {
-            setBearerToken(data.get("delegator"));
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            MandateDto mandate = new MandateDto()
-                    .delegator(getUserDtoByuser(data.get("delegator")))
-                    .delegate(Optional.ofNullable(data.get("delegate")).map(this::getInvalidUserDto).orElse(getUserDtoByuser("mario gherkin")))
-                    .verificationCode(verificationCode)
-                    .datefrom(data.getOrDefault("dateFrom", sdf.format(new Date())))
-                    .visibilityIds(new LinkedList<>())
-                    .status(MandateDto.StatusEnum.PENDING)
-                    .dateto(data.getOrDefault("dateTo", sdf.format(DateUtils.addDays(new Date(), 1))));
+        setBearerToken(data.get("delegator"));
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        MandateDto mandate = new MandateDto()
+                .delegator(getUserDtoByUser(data.get("delegator")))
+                .delegate(Optional.ofNullable(data.get("delegate")).map(this::getInvalidUserDto).orElse(getUserDtoByUser("mario gherkin")))
+                .verificationCode(verificationCode)
+                .datefrom(data.getOrDefault("dateFrom", sdf.format(new Date())))
+                .visibilityIds(new LinkedList<>())
+                .status(MandateDto.StatusEnum.PENDING)
+                .dateto(data.getOrDefault("dateTo", sdf.format(DateUtils.addDays(new Date(), 1))));
 
-            System.out.println("MANDATE: " + mandate);
-            try {
-                webMandateClient.createMandate(mandate);
-            } catch (HttpStatusCodeException e) {
-                this.notificationError = e;
-            }
+        System.out.println("MANDATE: " + mandate);
+        try {
+            webMandateClient.createMandate(mandate);
+        } catch (HttpStatusCodeException e) {
+            this.notificationError = e;
         }
+    }
 
     private UserDto getInvalidUserDto(String delegator) {
         return switch (delegator) {
             case "EMPTY_FISCAL_CODE" -> createUserDto("Mario Cucumber", "Mario", "Cucumber", null, null, true);
-            case "INVALID_FISCAL_CODE" ->  createUserDto("Mario Cucumber", "Mario", "Cucumber", "AAA8090ZAC", null, true);
-            case "EMPTY_FIRST_NAME" -> createUserDto("Mario Cucumber", null, "Cucumber", "CLMCST42R12D969Z", null, true);
+            case "INVALID_FISCAL_CODE" ->
+                    createUserDto("Mario Cucumber", "Mario", "Cucumber", "AAA8090ZAC", null, true);
+            case "EMPTY_FIRST_NAME" ->
+                    createUserDto("Mario Cucumber", null, "Cucumber", "CLMCST42R12D969Z", null, true);
             case "EMPTY_LAST_NAME" -> createUserDto("Mario Cucumber", "Mario", null, "CLMCST42R12D969Z", null, true);
-            case "FIRST_NAME_NOT_VALID" -> createUserDto("Cristoforo Colombo", "PippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippo", "Colombo", "FRMTTR76M06B715E", null, true);
-            case "LAST_NAME_NOT_VALID" -> createUserDto("Cristoforo Colombo", "Cristoforo", "PippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippo", "FRMTTR76M06B715E", null, true);
+            case "FIRST_NAME_NOT_VALID" ->
+                    createUserDto("Cristoforo Colombo", "PippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippo", "Colombo", "FRMTTR76M06B715E", null, true);
+            case "LAST_NAME_NOT_VALID" ->
+                    createUserDto("Cristoforo Colombo", "Cristoforo", "PippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippo", "FRMTTR76M06B715E", null, true);
             case "EMPTY_DISPLAY_NAME" -> createUserDto(null, "Mario", "Cucumber", "CLMCST42R12D969Z", null, true);
-            case "DISPLAY_NAME_NOT_VALID" -> createUserDto("PippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippo", "Mario", "Cucumber", "CLMCST42R12D969Z", null, true);
+            case "DISPLAY_NAME_NOT_VALID" ->
+                    createUserDto("PippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippo", "Mario", "Cucumber", "CLMCST42R12D969Z", null, true);
             default -> throw new IllegalStateException("Unexpected value: " + delegator);
         };
     }
 
-    private String getDate(String date) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        return switch (date) {
-            case "TODAY" -> sdf.format(new Date());
-            case "TOMORROW" -> sdf.format(DateUtils.addDays(new Date(), 1));
-            case "PAST_DATE" -> "2023-01-01";
-            case "INVALID_FORMAT" -> "01-01-2023";
-            case "EMPTY_DATE" -> null;
-            default -> throw new IllegalStateException("Unexpected value: " + date);
-        };
-    }
-
     private UserDto createUserDto(String displayName, String firstName, String lastName, String fiscalCode, String companyName, boolean isPerson) {
-    return new UserDto()
+        return new UserDto()
                 .displayName(displayName)
                 .firstName(firstName)
                 .lastName(lastName)

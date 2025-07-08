@@ -7,7 +7,10 @@ import it.pagopa.interop.generated.openapi.clients.bff.api.DelegationsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
@@ -16,6 +19,10 @@ import java.util.UUID;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Retryable(
+        retryFor = { HttpServerErrorException.class },
+        backoff = @Backoff(delay = 2000)
+)
 public class DelegationApiClientImpl implements IDelegationApiClient {
     private final DelegationsApi delegationsApi;
     private final RestTemplate restTemplate;
@@ -35,18 +42,18 @@ public class DelegationApiClientImpl implements IDelegationApiClient {
     }
 
     @Override
-    public CompactDelegations getDelegation(String xCorrelationId, Integer offset, Integer limit, List<DelegationState> states, List<UUID> delegatorIds, List<UUID> delegateIds, DelegationKind kind, List<UUID> eserviceIds) {
-        return delegationsApi.getDelegations(xCorrelationId, offset, limit, states, delegatorIds, delegateIds, kind, eserviceIds);
+    public CompactDelegations getDelegation(Integer offset, Integer limit, List<DelegationState> states, List<UUID> delegatorIds, List<UUID> delegateIds, DelegationKind kind, List<UUID> eserviceIds) {
+        return delegationsApi.getDelegations(offset, limit, states, delegatorIds, delegateIds, kind, eserviceIds);
     }
 
     @Override
-    public Delegation getDelegation(String xCorrelationId, String delegationId) {
-        return delegationsApi.getDelegation(xCorrelationId, delegationId);
+    public Delegation getDelegation(String delegationId) {
+        return delegationsApi.getDelegation(delegationId);
     }
 
     @Override
-    public File getDelegationContract(String xCorrelationId, UUID delegationId, UUID contractId) {
-        return delegationsApi.getDelegationContract(xCorrelationId, delegationId, contractId);
+    public File getDelegationContract(UUID delegationId, UUID contractId) {
+        return delegationsApi.getDelegationContract(delegationId, contractId);
     }
 
     @Override

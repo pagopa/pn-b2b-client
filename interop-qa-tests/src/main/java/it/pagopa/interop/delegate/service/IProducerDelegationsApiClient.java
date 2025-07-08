@@ -8,8 +8,8 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.RejectDelegationPay
 import java.util.UUID;
 
 public interface IProducerDelegationsApiClient extends SettableBearerToken {
-    CreatedResource createProducerDelegation(String xCorrelationId, DelegationSeed delegationSeed);
-    void approveProducerDelegation(String xCorrelationId, UUID delegationId);
-    void rejectProducerDelegation(String xCorrelationId, UUID delegationId, RejectDelegationPayload rejectDelegationPayload);
-    void revokeProducerDelegation(String xCorrelationId, String delegationId);
+    CreatedResource createProducerDelegation(DelegationSeed delegationSeed);
+    void approveProducerDelegation(UUID delegationId);
+    void rejectProducerDelegation(UUID delegationId, RejectDelegationPayload rejectDelegationPayload);
+    void revokeProducerDelegation(UUID delegationId);
 }

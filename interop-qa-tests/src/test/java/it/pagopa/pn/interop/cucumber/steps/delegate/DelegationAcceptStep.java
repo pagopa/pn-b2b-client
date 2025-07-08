@@ -1,14 +1,14 @@
 package it.pagopa.pn.interop.cucumber.steps.delegate;
 
 import io.cucumber.java.en.And;
-import it.pagopa.interop.delegate.service.IConsumerDelegationsApiClient;
-import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.interop.authorization.service.utils.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
+import it.pagopa.interop.delegate.service.IConsumerDelegationsApiClient;
 import it.pagopa.interop.delegate.service.IDelegationApiClient;
 import it.pagopa.interop.delegate.service.IProducerDelegationsApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationState;
 import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import org.springframework.http.HttpStatus;
 
@@ -59,20 +59,20 @@ public class DelegationAcceptStep {
 
     private void approveProducerDelegation() {
         httpCallExecutor.performCall(
-                () -> producerDelegationsApiClient.approveProducerDelegation(sharedStepsContext.getXCorrelationId(),
+                () -> producerDelegationsApiClient.approveProducerDelegation(
                         sharedStepsContext.getDelegationCommonContext().getDelegationId()));
     }
 
     private void approveConsumerDelegation() {
         httpCallExecutor.performCall(
-                () -> consumerDelegationsApiClient.approveConsumerDelegation(sharedStepsContext.getXCorrelationId(),
+                () -> consumerDelegationsApiClient.approveConsumerDelegation(
                         sharedStepsContext.getDelegationCommonContext().getDelegationId()));
     }
 
     public void waitUntilDelegationIsApprove() {
         // wait until delegation is correctly approved
         pollingService.makePolling(
-                () -> delegationApiClient.getDelegation(sharedStepsContext.getXCorrelationId(),
+                () -> delegationApiClient.getDelegation(
                         String.valueOf(sharedStepsContext.getDelegationCommonContext().getDelegationId())),
                 res ->  res.getState().equals(DelegationState.ACTIVE),
                 "There was an error while accepting the delegation!"

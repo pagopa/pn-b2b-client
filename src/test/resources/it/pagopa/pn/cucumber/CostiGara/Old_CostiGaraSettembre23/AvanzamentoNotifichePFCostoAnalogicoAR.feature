@@ -16,7 +16,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     Then viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -37,7 +37,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "<COSTO>" della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
@@ -59,7 +59,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     Then viene verificato il costo = "<COSTO>" della notifica
     Examples:
@@ -88,7 +88,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "<COSTO>" della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
@@ -119,10 +119,9 @@ Feature: costo notifica con workflow analogico per persona fisica
       | physicalAddress_zip          | ZONA_2         |
       | physicalAddress_province     | Santa Catarina |
       | physicalAddress_address      | Via@ok_RIR     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     Then viene verificato il costo = "1030" della notifica
-
 
 
   @dev @costoAnalogico2023
@@ -140,7 +139,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       | physicalAddress_zip          | ZONA_2         |
       | physicalAddress_province     | Santa Catarina |
       | physicalAddress_address      | Via@ok_RIR     |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "0" della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "0" della notifica
@@ -160,7 +159,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       | physicalAddress_zip          | ZONE_1     |
       | physicalAddress_province     | Paris      |
       | physicalAddress_address      | Via@ok_RIR |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     Then viene verificato il costo = "915" della notifica
 
@@ -178,7 +177,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       | physicalAddress_zip          | ZONE_1     |
       | physicalAddress_province     | Paris      |
       | physicalAddress_address      | Via@ok_RIR |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "0" della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "0" della notifica
@@ -198,7 +197,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       | physicalAddress_zip          | ZONA_3     |
       | physicalAddress_province     | Tasmania   |
       | physicalAddress_address      | Via@ok_RIR |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     Then viene verificato il costo = "1087" della notifica
 
@@ -217,7 +216,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       | physicalAddress_zip          | ZONA_3     |
       | physicalAddress_province     | Tasmania   |
       | physicalAddress_address      | Via@ok_RIR |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato il costo = "0" della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "0" della notifica

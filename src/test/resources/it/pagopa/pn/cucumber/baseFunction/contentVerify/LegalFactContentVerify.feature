@@ -3,10 +3,10 @@ Feature: Verifica del contenuto dei differenti tipi di legalFact prodotti nei wo
   @legalFact
   Scenario: [B2B-LEGALFACT_CONTENT_VERIFY_1] Data una notifica analogica, si verifica l'esistenza del legalFact generato in seguito ad accettazione se sia di tipo NOTIFICA PRESA IN CARICO
     Given viene generata una nuova notifica
-      | subject | invio notifica GA cucumber |
-      | senderDenomination | Comune di palermo |
+      | subject            | invio notifica GA cucumber |
+      | senderDenomination | Comune di palermo          |
     And destinatario Mario Gherkin
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     And ricerca ed effettua download del legalFact con la categoria "SENDER_ACK"
     Then si verifica se il legalFact è di tipo "LEGALFACT_NOTIFICA_PRESA_IN_CARICO"
@@ -17,9 +17,9 @@ Feature: Verifica del contenuto dei differenti tipi di legalFact prodotti nei wo
       | CF_MITTENTE                               | 80016350821                                                                                                |
       | DESTINATARIO_NOME_COGNOME_RAGIONE_SOCIALE | Mario Gherkin                                                                                              |
       | DESTINATARIO_CODICE_FISCALE               | CLMCST42R12D969Z                                                                                           |
-      | DESTINATARIO_DOMICILIO_DIGITALE           | destinatario@certificatanoprod.notifichedigitali.it                                                        |
+      | DESTINATARIO_DOMICILIO_DIGITALE           | testpagopa3@pec.pagopa.it                                                                                  |
       | DESTINATARIO_TIPO_DOMICILIO_DIGITALE      | Domicilio eletto presso la Pubblica Amministrazione mittente ex art.26, comma 5 lettera b del D.L. 76/2020 |
-      | DESTINATARIO_INDIRIZZO_FISICO             | Mario Gherkin Presso SCALA B VIA SENZA NOME 87100 COSENZA COSENZA CS ITALIA                                |
+      | DESTINATARIO_INDIRIZZO_FISICO             | Mario Gherkin Presso SCALA B VIA SENZA NOME 87100 COSENZA CS ITALIA                                        |
 
   @legalFact @deleghe1
   Scenario: [B2B-LEGALFACT_CONTENT_VERIFY_2] Data una notifica analogica, si verifica l'esistenza del legalFact generato in seguito ad accettazione se sia di tipo NOTIFICA PRESA IN CARICO MULTIDESTINATARIO
@@ -32,27 +32,27 @@ Feature: Verifica del contenuto dei differenti tipi di legalFact prodotti nei wo
     And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     And ricerca ed effettua download del legalFact con la categoria "SENDER_ACK"
     Then si verifica se il legalFact è di tipo "LEGALFACT_NOTIFICA_PRESA_IN_CARICO_MULTIDESTINATARIO"
     #Se i campi per il DESTINATARIO si ripetono allora vogliamo verificare più destinatari
     Then si verifica se il legalFact contiene i campi
-      | TITLE                                     | Attestazione opponibile a terzi: notifica presa in carico                |
-      | MITTENTE                                  | Comune di palermo                                                        |
-      | CF_MITTENTE                               | 80016350821                                                              |
+      | TITLE                                     | Attestazione opponibile a terzi: notifica presa in carico        |
+      | MITTENTE                                  | Comune di palermo                                                |
+      | CF_MITTENTE                               | 80016350821                                                      |
       # PRIMO DESTINATARIO
-      | DESTINATARIO_NOME_COGNOME_RAGIONE_SOCIALE | Mario Gherkin                                                            |
-      | DESTINATARIO_CODICE_FISCALE               | CLMCST42R12D969Z                                                         |
-      | DESTINATARIO_DOMICILIO_DIGITALE           | non fornito dalla PA                                                     |
-      | DESTINATARIO_TIPO_DOMICILIO_DIGITALE      | non fornito dalla PA                                                     |
-      | DESTINATARIO_INDIRIZZO_FISICO             | Mario Gherkin Presso SCALA B VIA@OK_890 87100 COSENZA COSENZA CS ITALIA  |
+      | DESTINATARIO_NOME_COGNOME_RAGIONE_SOCIALE | Mario Gherkin                                                    |
+      | DESTINATARIO_CODICE_FISCALE               | CLMCST42R12D969Z                                                 |
+      | DESTINATARIO_DOMICILIO_DIGITALE           | non fornito dalla PA                                             |
+      | DESTINATARIO_TIPO_DOMICILIO_DIGITALE      | non fornito dalla PA                                             |
+      | DESTINATARIO_INDIRIZZO_FISICO             | Mario Gherkin Presso SCALA B VIA@OK_890 87100 COSENZA CS ITALIA  |
       # SECONDO DESTINATARIO
-      | DESTINATARIO_NOME_COGNOME_RAGIONE_SOCIALE | Mario Cucumber                                                           |
-      | DESTINATARIO_CODICE_FISCALE               | FRMTTR76M06B715E                                                         |
-      | DESTINATARIO_DOMICILIO_DIGITALE           | non fornito dalla PA                                                     |
-      | DESTINATARIO_TIPO_DOMICILIO_DIGITALE      | non fornito dalla PA                                                     |
-      | DESTINATARIO_INDIRIZZO_FISICO             | Mario Cucumber Presso SCALA B VIA@OK_890 87100 COSENZA COSENZA CS ITALIA |
+      | DESTINATARIO_NOME_COGNOME_RAGIONE_SOCIALE | Mario Cucumber                                                   |
+      | DESTINATARIO_CODICE_FISCALE               | FRMTTR76M06B715E                                                 |
+      | DESTINATARIO_DOMICILIO_DIGITALE           | non fornito dalla PA                                             |
+      | DESTINATARIO_TIPO_DOMICILIO_DIGITALE      | non fornito dalla PA                                             |
+      | DESTINATARIO_INDIRIZZO_FISICO             | Mario Cucumber Presso SCALA B VIA@OK_890 87100 COSENZA CS ITALIA |
 
   @legalFact @deleghe1
   Scenario: [B2B-LEGALFACT_CONTENT_VERIFY_3] Data una notifica analogica, si verifica l'esistenza del legalFact generato in seguito ad accettazione se sia di tipo NOTIFICA PRESA IN CARICO MULTIDESTINATARIO
@@ -65,30 +65,30 @@ Feature: Verifica del contenuto dei differenti tipi di legalFact prodotti nei wo
     And destinatario Mario Cucumber e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     And ricerca ed effettua download del legalFact con la categoria "SENDER_ACK"
     Then si verifica se il legalFact è di tipo "LEGALFACT_NOTIFICA_PRESA_IN_CARICO_MULTIDESTINATARIO"
     # Si verifica la presenza di un DESTINATARIO in una specifica posizione di ordinamento
     Then si verifica se il legalFact contiene i campi per il destinatario
-      | TITLE                                     | Attestazione opponibile a terzi: notifica presa in carico                |
-      | MITTENTE                                  | Comune di palermo                                                        |
-      | CF_MITTENTE                               | 80016350821                                                              |
-      | multiDestinatarioPosition                 | 2                                                                        |
+      | TITLE                                     | Attestazione opponibile a terzi: notifica presa in carico        |
+      | MITTENTE                                  | Comune di palermo                                                |
+      | CF_MITTENTE                               | 80016350821                                                      |
+      | multiDestinatarioPosition                 | 2                                                                |
       # SECONDO DESTINATARIO
-      | DESTINATARIO_NOME_COGNOME_RAGIONE_SOCIALE | Mario Cucumber                                                           |
-      | DESTINATARIO_CODICE_FISCALE               | FRMTTR76M06B715E                                                         |
-      | DESTINATARIO_DOMICILIO_DIGITALE           | non fornito dalla PA                                                     |
-      | DESTINATARIO_TIPO_DOMICILIO_DIGITALE      | non fornito dalla PA                                                     |
-      | DESTINATARIO_INDIRIZZO_FISICO             | Mario Cucumber Presso SCALA B VIA@OK_890 87100 COSENZA COSENZA CS ITALIA |
+      | DESTINATARIO_NOME_COGNOME_RAGIONE_SOCIALE | Mario Cucumber                                                   |
+      | DESTINATARIO_CODICE_FISCALE               | FRMTTR76M06B715E                                                 |
+      | DESTINATARIO_DOMICILIO_DIGITALE           | non fornito dalla PA                                             |
+      | DESTINATARIO_TIPO_DOMICILIO_DIGITALE      | non fornito dalla PA                                             |
+      | DESTINATARIO_INDIRIZZO_FISICO             | Mario Cucumber Presso SCALA B VIA@OK_890 87100 COSENZA CS ITALIA |
 
   @legalFact
   Scenario: [B2B-LEGALFACT_CONTENT_VERIFY_4] Data una notifica digitale, in seguito al completamento del relativo workflow si verifica l'esistenza del legalFact generato se sia di tipo NOTIFICA DIGITALE
     Given viene generata una nuova notifica
-      | subject | invio notifica GA cucumber |
-      | senderDenomination | Comune di palermo |
+      | subject            | invio notifica GA cucumber |
+      | senderDenomination | Comune di palermo          |
     And destinatario Mario Gherkin
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     And ricerca ed effettua download del legalFact con la categoria "DIGITAL_DELIVERY"
     Then si verifica se il legalFact è di tipo "LEGALFACT_NOTIFICA_DIGITALE"
@@ -96,7 +96,7 @@ Feature: Verifica del contenuto dei differenti tipi di legalFact prodotti nei wo
       | TITLE                                     | Attestazione opponibile a terzi: notifica digitale                                                         |
       | DESTINATARIO_NOME_COGNOME_RAGIONE_SOCIALE | Mario Gherkin                                                                                              |
       | DESTINATARIO_CODICE_FISCALE               | CLMCST42R12D969Z                                                                                           |
-      | DESTINATARIO_DOMICILIO_DIGITALE           | destinatario@certificatanoprod.notifichedigitali.it                                                        |
+      | DESTINATARIO_DOMICILIO_DIGITALE           | testpagopa3@pec.pagopa.it                                                                                  |
       | DESTINATARIO_TIPO_DOMICILIO_DIGITALE      | Domicilio eletto presso la Pubblica Amministrazione mittente ex art.26, comma 5 lettera b del D.L. 76/2020 |
 
   @legalFact
@@ -105,7 +105,7 @@ Feature: Verifica del contenuto dei differenti tipi di legalFact prodotti nei wo
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
     And destinatario Mario Cucumber
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And "Mario Cucumber" legge la notifica ricevuta
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     And "Mario Cucumber" richiede il download dell'attestazione opponibile "RECIPIENT_ACCESS"
@@ -123,7 +123,7 @@ Feature: Verifica del contenuto dei differenti tipi di legalFact prodotti nei wo
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
     And destinatario Mario Cucumber
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere correttamente letta da "Mario Gherkin" con delega
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     And "Mario Cucumber" richiede il download dell'attestazione opponibile "RECIPIENT_ACCESS"
@@ -138,17 +138,17 @@ Feature: Verifica del contenuto dei differenti tipi di legalFact prodotti nei wo
   @legalFact
   Scenario: [B2B-LEGALFACT_CONTENT_VERIFY_7] Data una notifica digitale, in seguito al completamento del relativo workflow ed a presa visione da parte del destinatario, si verifica l'esistenza del legalFact generato se sia di tipo MANCATO RECAPITO
     Given viene generata una nuova notifica
-      | subject | invio notifica GA cucumber |
-      | senderDenomination | Comune di palermo |
+      | subject            | invio notifica GA cucumber |
+      | senderDenomination | Comune di palermo          |
     And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@fail.it |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW"
     And ricerca ed effettua download del legalFact con la categoria "DIGITAL_DELIVERY_FAILURE"
     Then si verifica se il legalFact è di tipo "LEGALFACT_NOTIFICA_MANCATO_RECAPITO"
     Then si verifica se il legalFact contiene i campi
       | TITLE                                     | Attestazione opponibile a terzi: mancato recapito digitale                                                 |
-      | DESTINATARIO_NOME_COGNOME_RAGIONE_SOCIALE | Mario Gherkin                                                                                             |
+      | DESTINATARIO_NOME_COGNOME_RAGIONE_SOCIALE | Mario Gherkin                                                                                              |
       | DESTINATARIO_CODICE_FISCALE               | CLMCST42R12D969Z                                                                                           |
       | DESTINATARIO_DOMICILIO_DIGITALE           | test@fail.it                                                                                               |
       | DESTINATARIO_TIPO_DOMICILIO_DIGITALE      | Domicilio eletto presso la Pubblica Amministrazione mittente ex art.26, comma 5 lettera b del D.L. 76/2020 |

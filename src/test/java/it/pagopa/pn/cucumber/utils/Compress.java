@@ -7,13 +7,13 @@ import java.util.zip.ZipOutputStream;
 
 public class Compress {
 
-    private static int BUFFER = 2048;
+    private static final int BUFFER = 2048;
     private String[] files;
     private InputStream[] filesJson;
     private String zipFile;
 
-    public Compress(InputStream[] filesJson,String[] files, String zipFile) {
-        this.filesJson=filesJson;
+    public Compress(InputStream[] filesJson, String[] files, String zipFile) {
+        this.filesJson = filesJson;
         this.files = files;
         this.zipFile = zipFile;
     }
@@ -22,7 +22,7 @@ public class Compress {
         BufferedInputStream origin = null;
         FileOutputStream dest = new FileOutputStream(zipFile);
         ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(dest));
-        byte data[] = new byte[BUFFER];
+        byte[] data = new byte[BUFFER];
         System.out.println(zipFile);
 
         for (int i = 0; i < files.length; i++) {
@@ -39,7 +39,7 @@ public class Compress {
 
         for (int i = 0; i < filesJson.length; i++) {
             origin = new BufferedInputStream(filesJson[i], BUFFER);
-            ZipEntry entry = new ZipEntry(i==0?"destinatario":"delgato");
+            ZipEntry entry = new ZipEntry(i == 0 ? "destinatario" : "delgato");
             out.putNextEntry(entry);
             int count;
             while ((count = origin.read(data, 0, BUFFER)) != -1) {
@@ -53,7 +53,7 @@ public class Compress {
     }
 
 
-
+    //TODO: Riempire il metodo sulle parti commentate. E' ancora utile?
     public static void main(String[] args) {
 
         // These are the files to include in the ZIP file
@@ -63,11 +63,11 @@ public class Compress {
         byte[] buf = new byte[1024];
 
         try {
-        // Create the ZIP file
+            // Create the ZIP file
             String outFilename = "outfile.zip";
             ZipOutputStream out = new ZipOutputStream(new FileOutputStream(outFilename));
 
-        // Compress the files
+            // Compress the files
             for (int i = 0; i < filenames.length; i++) {
                 FileInputStream in = new FileInputStream(filenames[i]);
 
@@ -94,7 +94,7 @@ public class Compress {
         try {
             String[] files = {"AvvisoPagoPA.pdf", "AvvisoPagoPA1.pdf"};
             InputStream[] filesJson = {};
-            Compress c = new Compress(filesJson,files, "file.zip");
+            Compress c = new Compress(filesJson, files, "file.zip");
             c.zip();
         } catch (IOException e) {
         }
