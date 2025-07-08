@@ -46,7 +46,7 @@ public class SegregazioneDeliveryPushSteps {
     @Autowired
     public SegregazioneDeliveryPushSteps(
             SharedSteps sharedSteps,
-            @Value("${pn.deliveryPush.base-url}") String deliveryPushBaseUrl) {
+            @Value("${pn.internal.delivery-push-base-url}") String deliveryPushBaseUrl) {
         this.sharedSteps = sharedSteps;
         this.webPaClient = sharedSteps.getWebPaClient();
         this.deliveryPushBaseUrl = deliveryPushBaseUrl;
@@ -101,9 +101,9 @@ public class SegregazioneDeliveryPushSteps {
                 } catch (AssertionError ae) {
                     log.warn("NOT MATCHING DATA FOR IUN : " + iun + " OLD TIMELINE BODY " + timelineOld);
                     log.warn("NOT MATCHING DATA FOR IUN : " + iun + " NEW TIMELINE BODY " + timelineNew);
-                    failedIUN.put(iun, timelineNew);
-                } catch (Exception e) {
                     failedIUN.put(iun, oldUrl + "\n" + newUrl);
+                } catch (Exception e) {
+                    failedIUN.put(iun, "ERROR FOR IUN : " + iun + " " + e.getMessage());
                 } finally {
                     counter += 1;
                 }
@@ -189,7 +189,6 @@ public class SegregazioneDeliveryPushSteps {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
             log.info("Status Code: {}", response.statusCode());
-            //log.info("Response Body: {}", response.body());
             return response.body();
 
         } catch (IOException | InterruptedException e) {
