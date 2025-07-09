@@ -141,12 +141,6 @@ public class DataTestV25 extends AbstractDataTest {
                         assertThat(actual.getSendingReceipts().get(i)).as("Il sendingReceipt non dev'essere null").isNotNull();
                         assertThat(actual.getSendingReceipts().get(i).getId()).as("L'ID del sendingReceipt non dev'essere null").isNotNull();
                         assertThat(actual.getSendingReceipts().get(i).getSystem()).as("Il System del sendingReceipt non dev'essere null").isNotNull();
-                        //TODO 26/06/25: a seguito di recenti modifiche i campi ID e System non arrivano più nul
-                        // Non sapendo bene che valori ci arrivano, per ora ci limitiamo a controllare che non arrivino null.
-                        // Questo check andrebbe riportato anche nelle altri classi DataTest
-//                        assertThat(actual.getSendingReceipts().get(i))
-//                                .as(error + EQUALITY_SENDING_RECEIPT_NUMBER + " " + (i + 1))
-//                                .isEqualTo(expected.getSendingReceipts().get(i));
                     }
                 }
             }

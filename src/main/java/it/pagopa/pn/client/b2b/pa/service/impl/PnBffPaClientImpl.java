@@ -1,16 +1,10 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.pa.ApiClient;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.pa.recipient.NotificationSentApi;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationsResponse;
-import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationStatusV26;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
-import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchResponse;
-import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatusV26;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
@@ -85,22 +79,8 @@ public class PnBffPaClientImpl implements IPnWebPaClient {
     }
 
     @Override
-    public NotificationSearchResponse searchSentNotification(OffsetDateTime startDate, OffsetDateTime endDate, String recipientId, NotificationStatusV26 status, String subjectRegExp, String iunMatch, Integer size, String nextPagesKey) throws RestClientException {
-        it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationStatusV26 convertedStatus;
-        convertedStatus = deepCopy(status, it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationStatusV26.class);
-        BffNotificationsResponse response = this.notificationSentApi.searchSentNotificationsV1(startDate, endDate, recipientId, convertedStatus, subjectRegExp, iunMatch, size, nextPagesKey);
-        return deepCopy(response, NotificationSearchResponse.class);
-    }
-
-    private <T> T deepCopy(Object obj, Class<T> toClass) {
-        ObjectMapper objMapper = JsonMapper.builder()
-                .addModule(new JavaTimeModule())
-                .build();
-        try {
-            String json = objMapper.writeValueAsString(obj);
-            return objMapper.readValue(json, toClass);
-        } catch (JsonProcessingException exc) {
-            throw new PnB2bException(exc.getMessage());
-        }
+    public BffNotificationsResponse searchSentNotification(OffsetDateTime startDate, OffsetDateTime endDate, String recipientId, NotificationStatusV26 status, String subjectRegExp, String iunMatch, Integer size, String nextPagesKey) throws RestClientException {
+        BffNotificationsResponse response = this.notificationSentApi.searchSentNotificationsV1(startDate, endDate, recipientId, status, subjectRegExp, iunMatch, size, nextPagesKey);
+        return response;
     }
 }

@@ -2,9 +2,9 @@ package it.pagopa.pn.cucumber.steps.pa;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationsResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationSearchRow;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
-import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchResponse;
-import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchRow;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import lombok.Data;
@@ -32,7 +32,7 @@ public class SegregazioneDeliveryPushSteps {
     private final IPnWebPaClient webPaClient;
     private final Map<String, String> failedIUN = new HashMap<>();
     private final String deliveryPushBaseUrl;
-    private NotificationSearchResponse searchResponse;
+    private BffNotificationsResponse searchResponse;
     private QueryParamsPojo queryParamsPojo;
     private static final String NEW_TIMELINE_URL = "/delivery-push-private/test/new-impl/timeline/";
 
