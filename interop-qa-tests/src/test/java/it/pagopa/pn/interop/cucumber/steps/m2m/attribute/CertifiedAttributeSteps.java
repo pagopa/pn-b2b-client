@@ -1,7 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.attribute;
 
 import io.cucumber.java.en.And;
-import it.pagopa.interop.attribute.service.IM2MAttributeClient;
+import it.pagopa.interop.attribute.service.IM2MCertifiedAttributeClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.CertifiedAttribute;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.CertifiedAttributeSeed;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
@@ -12,12 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class AttributeSteps extends AbstractCommonSteps<CertifiedAttribute, UUID> {
+public class CertifiedAttributeSteps extends AbstractCommonSteps<CertifiedAttribute, UUID> {
 
     private final SharedStepsContext sharedStepsContext;
-    private final IM2MAttributeClient client;
+    private final IM2MCertifiedAttributeClient client;
 
-    public AttributeSteps(SharedStepsContext sharedStepsContext, ClientTokenConfigurator clientTokenConfigurator) {
+    public CertifiedAttributeSteps(SharedStepsContext sharedStepsContext, ClientTokenConfigurator clientTokenConfigurator) {
         super("certifiedAttribute", clientTokenConfigurator.getM2mAttributeClient(), sharedStepsContext);
         this.client = clientTokenConfigurator.getM2mAttributeClient();
         this.sharedStepsContext = sharedStepsContext;

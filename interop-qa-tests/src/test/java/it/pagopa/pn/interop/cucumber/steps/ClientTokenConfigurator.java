@@ -5,7 +5,7 @@ import it.pagopa.interop.agreement.service.IAgreementClient;
 import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.agreement.service.IM2MAgreementClient;
 import it.pagopa.interop.attribute.service.IAttributeApiClient;
-import it.pagopa.interop.attribute.service.IM2MAttributeClient;
+import it.pagopa.interop.attribute.service.IM2MCertifiedAttributeClient;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.IProducerClient;
 import it.pagopa.interop.delegate.service.IConsumerDelegationsApiClient;
@@ -38,7 +38,7 @@ public class ClientTokenConfigurator {
     private IConsumerDelegationsApiClient consumerDelegationsApiClient;
     private IDelegationApiClient delegationApiClient;
     private IM2MAgreementClient m2mAgreementClient;
-    private IM2MAttributeClient m2mAttributeClient;
+    private IM2MCertifiedAttributeClient m2mAttributeClient;
     private IM2MEserviceClient m2meServiceClient;
     private IM2MPurposeClient m2mPurposeClient;
     private IM2MEServiceTemplateClient m2mEServiceTemplateClient;

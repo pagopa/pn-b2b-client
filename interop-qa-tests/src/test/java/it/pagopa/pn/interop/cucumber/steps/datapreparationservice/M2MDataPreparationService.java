@@ -1,7 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.datapreparationservice;
 
 import it.pagopa.interop.agreement.service.IM2MAgreementClient;
-import it.pagopa.interop.attribute.service.IM2MAttributeClient;
+import it.pagopa.interop.attribute.service.IM2MCertifiedAttributeClient;
 import it.pagopa.interop.eservice.service.IM2MEserviceClient;
 import it.pagopa.interop.eservice_template.IM2MEServiceTemplateClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
@@ -27,7 +27,7 @@ import static it.pagopa.pn.interop.cucumber.steps.datapreparationservice.templat
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class M2MDataPreparationService {
     private final IM2MAgreementClient agreementClient;
-    private final IM2MAttributeClient attributeClient;
+    private final IM2MCertifiedAttributeClient attributeClient;
     private final IM2MEserviceClient eserviceClient;
     private final IM2MEServiceTemplateClient eserviceTemplateClient;
     private final DataPreparationServiceTemplate templateService;

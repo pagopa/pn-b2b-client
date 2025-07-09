@@ -6,6 +6,6 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.CertifiedAtt
 
 import java.util.UUID;
 
-public interface IM2MAttributeClient extends IClient<CertifiedAttribute, UUID> {
+public interface IM2MCertifiedAttributeClient extends IClient<CertifiedAttribute, UUID> {
     CertifiedAttribute create(CertifiedAttributeSeed agreementPayload);
 }

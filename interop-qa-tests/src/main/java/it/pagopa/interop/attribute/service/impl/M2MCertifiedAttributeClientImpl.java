@@ -1,6 +1,6 @@
 package it.pagopa.interop.attribute.service.impl;
 
-import it.pagopa.interop.attribute.service.IM2MAttributeClient;
+import it.pagopa.interop.attribute.service.IM2MCertifiedAttributeClient;
 import it.pagopa.interop.common.client.AbstractClient;
 import it.pagopa.interop.common.enums.EntityIdType;
 import it.pagopa.interop.common.operation.SimpleOperation;
@@ -20,15 +20,16 @@ import java.util.List;
 import java.util.UUID;
 
 @ToString
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class M2MAttributeClientImpl extends AbstractClient implements IM2MAttributeClient {
+public class M2MCertifiedAttributeClientImpl extends AbstractClient implements
+    IM2MCertifiedAttributeClient {
     private final AttributesApi attributesApi;
     private final RestTemplate restTemplate;
     private final String basePath;
 
-    public M2MAttributeClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
+    public M2MCertifiedAttributeClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
         this.basePath = interopClientConfigs.getM2mBaseUrl();
         this.attributesApi = new AttributesApi(createApiClient("dummyBearer"));
