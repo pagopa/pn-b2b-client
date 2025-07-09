@@ -4,7 +4,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.domain.ClientType;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
-import it.pagopa.interop.authorization.service.utils.IdentityService;
+import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributeSeed;
@@ -13,7 +13,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorS
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,12 +23,12 @@ import java.util.stream.Collectors;
 
 public class AgreementActivateSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
-    private final DataPreparationService dataPreparationService;
+    private final BFFDataPreparationService dataPreparationService;
     private final SharedStepsContext sharedStepsContext;
     private final IdentityService identityService;
 
     public AgreementActivateSteps(ClientTokenConfigurator clientTokenConfigurator,
-                                  DataPreparationService dataPreparationService,
+                                  BFFDataPreparationService dataPreparationService,
                                   SharedStepsContext sharedStepsContext) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.dataPreparationService = dataPreparationService;

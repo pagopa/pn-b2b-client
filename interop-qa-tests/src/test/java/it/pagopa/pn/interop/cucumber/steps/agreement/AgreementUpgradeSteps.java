@@ -3,7 +3,8 @@ package it.pagopa.pn.interop.cucumber.steps.agreement;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.interop.authorization.service.utils.IdentityService;
+import it.pagopa.interop.authorization.service.identity.IdentityService;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Agreement;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind;
@@ -13,7 +14,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorS
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.pn.interop.cucumber.steps.DataPreparationService;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.http.HttpStatus;
@@ -25,11 +26,11 @@ public class AgreementUpgradeSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
     private final IdentityService identityService;
-    private final DataPreparationService dataPreparationService;
+    private final BFFDataPreparationService dataPreparationService;
 
     public AgreementUpgradeSteps(ClientTokenConfigurator clientTokenConfigurator,
                                  SharedStepsContext sharedStepsContext,
-                                 DataPreparationService dataPreparationService) {
+                                 BFFDataPreparationService dataPreparationService) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.identityService = sharedStepsContext.getIdentityService();
@@ -96,7 +97,7 @@ public class AgreementUpgradeSteps {
 
     @Then("si ottiene status code {int} ed è stata creata una nuova richiesta di fruizione in DRAFT")
     public void verifyStatusCodeAndAgreementStatus(int statusCode) {
-        HttpCallExecutor httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+        IHttpExecutor httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         Assertions.assertEquals(statusCode, httpCallExecutor.getClientResponse().value());
 
         sharedStepsContext.getPollingService().makePolling(
@@ -114,7 +115,7 @@ public class AgreementUpgradeSteps {
 
     @Then("si ottiene status code 200 e la nuova richiesta di fruizione è associata alla versione 3 dell'eservice")
     public void verifyStatusCodeAndAssociatedEServiceVersion() {
-        HttpCallExecutor httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+        IHttpExecutor httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         Assertions.assertEquals(200, httpCallExecutor.getClientResponse().value());
 
         sharedStepsContext.getPollingService().makePolling(
